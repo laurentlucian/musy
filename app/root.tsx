@@ -6,7 +6,6 @@ import { ServerStyleContext, ClientStyleContext } from './lib/emotion/context';
 import { useContext, useEffect } from 'react';
 import { theme } from './lib/theme';
 import Layout from './components/Layout';
-import type { User } from '@prisma/client';
 import type { Session } from 'remix-auth-spotify';
 
 import { spotifyStrategy } from '~/services/auth.server';
