@@ -10,19 +10,19 @@ interface ClientCacheProviderProps {
   children: React.ReactNode;
 }
 
-function ClientCacheProvider({ children }: ClientCacheProviderProps) {
+const ClientCacheProvider = ({ children }: ClientCacheProviderProps) => {
   const [cache, setCache] = React.useState(createEmotionCache());
 
-  function reset() {
+  const reset = () => {
     setCache(createEmotionCache());
-  }
+  };
 
   return (
     <ClientStyleContext.Provider value={{ reset }}>
       <CacheProvider value={cache}>{children}</CacheProvider>
     </ClientStyleContext.Provider>
   );
-}
+};
 
 hydrateRoot(
   document,
