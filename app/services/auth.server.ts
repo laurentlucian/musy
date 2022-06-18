@@ -16,7 +16,7 @@ if (!process.env.SPOTIFY_CALLBACK_URL) {
 }
 
 // See https://developer.spotify.com/documentation/general/guides/authorization/scopes
-const scopes = ['user-read-email', 'user-read-playback-state'].join(' ');
+const scopes = ['user-read-email', 'streaming', 'user-read-private', 'user-read-playback-state'].join(' ');
 
 export const spotifyStrategy = new SpotifyStrategy(
   {
