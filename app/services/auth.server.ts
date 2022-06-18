@@ -29,14 +29,11 @@ const scopes = [
   'playlist-modify-public', //can create playlists with custom image
 ].join(' ');
 
-// const redirect_uri = 'http://localhost:3000/callback';
-
 export const spotifyStrategy = new SpotifyStrategy(
   {
-    response_type: 'code',
     clientID: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirect_uri: process.env.SPOTIFY_CALLBACK_URL, //callbackURL and redirect_uri used interchangeably, but redirect_uri is a req param for req user authorization also specify redirect_uri in spotify dev dashboard (must match)
+    callbackURL: process.env.SPOTIFY_CALLBACK_URL, //callbackURL and redirect_uri used interchangeably, but redirect_uri is a req param for req user authorization also specify redirect_uri in spotify dev dashboard (must match)
     sessionStorage,
     scope: scopes,
   },
@@ -53,8 +50,6 @@ export const spotifyStrategy = new SpotifyStrategy(
     },
   }),
 );
-
-
 
 export const authenticator = new Authenticator(sessionStorage, {
   sessionKey: spotifyStrategy.sessionKey,
