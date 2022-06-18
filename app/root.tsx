@@ -9,7 +9,6 @@ import Layout from './components/Layout';
 import type { Session } from 'remix-auth-spotify';
 
 import { spotifyStrategy } from '~/services/auth.server';
-import { SpotifyClientProvider } from './hooks/useSpotifyClient';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);
@@ -21,11 +20,9 @@ export default function App() {
   return (
     <Document>
       <ChakraProvider theme={theme}>
-        <SpotifyClientProvider>
-          <Layout user={data?.user}>
-            <Outlet />
-          </Layout>
-        </SpotifyClientProvider>
+        <Layout user={data?.user}>
+          <Outlet />
+        </Layout>
       </ChakraProvider>
     </Document>
   );

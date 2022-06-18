@@ -4,64 +4,55 @@ import { useLoaderData } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
 
 import { spotifyStrategy } from '~/services/auth.server';
-import type { SpotifyPlayerStatus } from '~/lib/types/spotify';
-import useSpotifyClient from '~/hooks/useSpotifyClient';
-import { useEffect, useState } from 'react';
+import { spotifyApi } from '~/services/spotify.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await spotifyStrategy.getSession(request);
+  const client = await spotifyApi(request);
 
-  if (session) {
-    const response = await fetch('https://api.spotify.com/v1/me/player', {
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const res: SpotifyPlayerStatus = await response.json();
-    return { session, state: res };
+  if (session && client) {
+    const { body: user } = await client.getMe();
+    const { body: playback } = await client.getMyCurrentPlaybackState();
+    return { session, user, playback };
   }
 
   return null;
 };
 
 export default function Index() {
-  const data = useLoaderData<{ session: Session; state: SpotifyPlayerStatus }>();
-  const client = useSpotifyClient();
-  const [me, setMe] = useState<SpotifyApi.CurrentUsersProfileResponse>();
-  const user = data?.session.user;
-
-  const fetchMe = async () => {
-    const newMe = await client.getMe();
-    setMe(newMe);
-  };
-
-  useEffect(() => {
-    fetchMe();
-  }, []);
+  const data = useLoaderData<{
+    session: Session;
+    user: SpotifyApi.CurrentUsersProfileResponse;
+    playback: SpotifyApi.CurrentPlaybackResponse;
+  }>();
 
   return (
     <Stack textAlign="center" p={20}>
-      {me && (
+      {data && (
         <HStack spacing={5}>
-          <Avatar size="lg" src={me.images?.[0].url} />
+          <Avatar size="lg" src={data.user.images?.[0].url} />
           <Stack align="flex-start">
             <HStack>
-              <Text fontWeight="bold">{me.display_name} - </Text>
-              <Text>{me.followers?.total} followers</Text>
+              <Text fontWeight="bold">{data.user.display_name} - </Text>
+              <Text>{data.user.followers?.total} followers</Text>
             </HStack>
-            <Text>{me.email}</Text>
-            {user && (
+            <Text>{data.user.email}</Text>
+            {data.playback.is_playing ? (
               <Stack align="flex-start">
-                {data?.state.is_playing && (
-                  <>
-                    <Text>
-                      {data.state.item.name} - {data.state.item.album.artists[0].name}
-                    </Text>
-                    <Text>{data.state.device.name}</Text>
-                  </>
+                {data.playback.item?.type === 'track' ? (
+                  <Text>
+                    {data.playback.item?.name} - {data.playback.item?.album?.name}
+                  </Text>
+                ) : (
+                  <Text>
+                    {data.playback.item?.name} - {data.playback.item?.show.name}
+                  </Text>
                 )}
+
+                <Text>{data.playback.device.name}</Text>
               </Stack>
+            ) : (
+              <Text>Not playing</Text>
             )}
           </Stack>
         </HStack>
