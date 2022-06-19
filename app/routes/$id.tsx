@@ -34,11 +34,11 @@ const Profile = () => {
     recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
   }>();
   let { refresh } = useDataRefresh();
-  console.log('playback', playback);
+  // console.log('playback', playback);
   const [progress, setProgress] = useState(0);
   const duration = playback.item?.duration_ms;
   const percentage = duration ? (progress / duration) * 100 : 0;
-  console.log('recent', recent);
+  // console.log('recent', recent);
 
   useEffect(() => {
     const _progress = playback.progress_ms;
@@ -74,7 +74,9 @@ const Profile = () => {
                     <>
                       <Stack pl="7px" pt="7px" py={0} spacing={1} h="100%" w="100%">
                         <Text>{playback.item?.name}</Text>
-                        <Text opacity={0.8}>{playback.item?.album?.artists[0].name}</Text>
+                        <Text opacity={0.8} fontSize="13px">
+                          {playback.item?.album?.artists[0].name}
+                        </Text>
                         <Text>{playback.device.name}</Text>
                       </Stack>
                       <Image src={playback.item?.album.images[1].url} m={0} boxSize={108} borderRadius={2} />
@@ -99,7 +101,35 @@ const Profile = () => {
                 />
               </Stack>
             ) : (
-              <Text>Not playing</Text>
+              <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
+                <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">
+                  {playback.item?.type != 'track' && (
+                    <>
+                      <Stack pl="7px" pt="7px" py={0} spacing={1} h="100%" w="100%">
+                        <Text>{recent.items[0].track.name}</Text>
+                        <Text opacity={0.8} fontSize="13px">
+                          {recent.items[0].track.artists[0].name}
+                        </Text>
+                      </Stack>
+                      <Image src={recent.items[0].track.album.images[1].url} m={0} boxSize={108} borderRadius={2} />
+                    </>
+                  )}
+                </HStack>
+                <Progress
+                  sx={{
+                    '> div': {
+                      backgroundColor: 'white',
+                    },
+                  }}
+                  borderBottomLeftRadius={2}
+                  borderBottomRightRadius={2}
+                  size="sm"
+                  height="2px"
+                  value={percentage}
+                />
+              </Stack>
+
+              // <Text>Not playing</Text>
             )}
           </Stack>
           <Stack spacing={5}>
