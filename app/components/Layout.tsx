@@ -11,7 +11,7 @@ type AppLayoutProps = {
 export default function Layout({ user, children }: PropsWithChildren<AppLayoutProps>): ReactElement {
   return (
     <Flex justify="center">
-      <Box minW={500}>
+      <Box minW={['100vw', 500]} px={13}>
         <Nav user={user} />
         {children}
       </Box>

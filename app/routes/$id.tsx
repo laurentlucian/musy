@@ -56,28 +56,28 @@ const Profile = () => {
   }, 1000);
 
   return (
-    <Stack spacing={10} h="100vh" w="550px">
+    <Stack spacing={10} w={['100vw', '550px']}>
       {user ? (
         <>
-          <HStack spacing={7}>
-            <Stack>
-              <Avatar size="xl" boxSize={150} src={user.image} />
+          <Stack spacing={7}>
+            <HStack>
+              <Avatar size="xl" boxSize={93} src={user.image} />
               <Heading size="lg" fontWeight="bold">
                 {user.name}
+                {/*user.bio*/}
               </Heading>
-            </Stack>
+            </HStack>
             {playback.is_playing ? (
-              <Stack w="100%" bg="#101010" spacing={0} borderRadius={5}>
-                <HStack h="100%" spacing={4} px={5} py={4}>
+              <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
+                <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">
                   {playback.item?.type === 'track' ? (
                     <>
-                      <Image src={playback.item?.album.images[1].url} boxSize={140} borderRadius={5} />
-                      <Stack align="flex-start" spacing={1} h="140px">
-                        <Text textAlign="left">{playback.item?.name}</Text>
+                      <Stack pl="7px" pt="7px" py={0} spacing={1} h="100%" w="100%">
+                        <Text>{playback.item?.name}</Text>
                         <Text opacity={0.8}>{playback.item?.album?.artists[0].name}</Text>
-
                         <Text>{playback.device.name}</Text>
                       </Stack>
+                      <Image src={playback.item?.album.images[1].url} m={0} boxSize={108} borderRadius={2} />
                     </>
                   ) : (
                     <Text>
@@ -94,13 +94,32 @@ const Profile = () => {
                   borderBottomLeftRadius={2}
                   borderBottomRightRadius={2}
                   size="sm"
+                  height="2px"
                   value={percentage}
                 />
               </Stack>
             ) : (
               <Text>Not playing</Text>
             )}
-          </HStack>
+          </Stack>
+          <Stack spacing={5}>
+            <Heading fontSize={20}>Queue +</Heading>
+            <HStack className="scrollbar" overflow="auto" pb={3} align="flex-start">
+              {recent.items.map(({ track }) => {
+                return (
+                  <Stack key={track.id} flex="0 0 200px">
+                    <Image src={track.album.images[1].url} borderRadius={5} />
+                    <Stack spacing={0}>
+                      <Text fontSize="sm">{track.name}</Text>
+                      <Text fontSize="xs" opacity={0.8}>
+                        {track.album.artists[0].name}
+                      </Text>
+                    </Stack>
+                  </Stack>
+                );
+              })}
+            </HStack>
+          </Stack>
           <Stack spacing={5}>
             <Heading size="md">Recently played</Heading>
             <HStack className="scrollbar" overflow="auto" pb={3} align="flex-start">

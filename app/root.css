@@ -7,7 +7,7 @@ body::-webkit-scrollbar-track,
 body::-webkit-scrollbar,
 .scrollbar::-webkit-scrollbar {
   width: 10px;
-  height: 5px;
+  height: 2px;
   background-color: #f5f5f5;
 }
 
