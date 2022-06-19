@@ -1,7 +1,10 @@
+import { prisma } from './db.server';
 import { Authenticator } from 'remix-auth';
+import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
 
 import { sessionStorage } from '~/services/session.server';
+import { redirect } from 'remix';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -29,6 +32,56 @@ const scopes = [
   'playlist-modify-public', //can create playlists with custom image
 ].join(' ');
 
+type CreateUser = {
+  id: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+  tokenType: string;
+  user: {
+    create: {
+      name: string;
+      email: string;
+      image: string;
+    };
+  };
+};
+
+export const createUser = async (data: CreateUser) => {
+  const newUser = await prisma.user.create({ data, include: { user: true } });
+  return newUser;
+};
+
+export const getUser = async (id: string) => {
+  let user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  if (!user) return null;
+  return user;
+};
+
+export const getCurrentUser = async (request: Request) => {
+  const session = await spotifyStrategy.getSession(request);
+  if (!session || !session.user) return null;
+  const id = session.user?.id;
+  let user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  if (!user) return null;
+  return user;
+};
+
+export const getAllUsers = async () => {
+  const data = await prisma.user.findMany({ select: { user: true } });
+  const users = data.map((user) => user.user);
+  return users;
+};
+
+// export async function requireUserId(request: Request, redirectTo: string = new URL(request.url).pathname) {
+//   let userId = await getUserId(request);
+//   if (!userId) {
+//     let params = new URLSearchParams([['redirectTo', redirectTo]]);
+//     throw redirect(`/login?${params}`);
+//   }
+//   return userId;
+// }
+
 export const spotifyStrategy = new SpotifyStrategy(
   {
     clientID: process.env.SPOTIFY_CLIENT_ID,
@@ -51,7 +104,7 @@ export const spotifyStrategy = new SpotifyStrategy(
   }),
 );
 
-export const authenticator = new Authenticator(sessionStorage, {
+export const authenticator = new Authenticator<Session>(sessionStorage, {
   sessionKey: spotifyStrategy.sessionKey,
   sessionErrorKey: spotifyStrategy.sessionErrorKey,
 });

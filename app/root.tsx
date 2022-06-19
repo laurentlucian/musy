@@ -75,7 +75,7 @@ interface DocumentProps {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Syncify',
+  title: 'Musy',
   viewport: 'width=device-width,initial-scale=1',
 });
 
