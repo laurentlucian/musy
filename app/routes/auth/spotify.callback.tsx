@@ -1,35 +1,24 @@
+import { Progress, Text } from '@chakra-ui/react';
 import type { LoaderFunction } from '@remix-run/node';
 import { authenticator } from '~/services/auth.server';
 
-export const loader: LoaderFunction = ({ request }) => {
-  return authenticator.authenticate('spotify', request, {
-    successRedirect: '/',
-    failureRedirect: '/',
-  });
+export const loader: LoaderFunction = async ({ request }) => {
+  try {
+    const auth = await authenticator.authenticate('spotify', request, {
+      successRedirect: '/',
+    });
+    return auth;
+  } catch (e) {
+    throw new Error('Error authenticating. Spotify Premium account required.');
+  }
 };
 
-// app.get('/callback', function(req, res) {
+const SpotifyCallback = () => {
+  return <Progress size="xs" isIndeterminate />;
+};
 
-//   var code = req.query.code || null;
-//   var state = req.query.state || null;
+export const ErrorBoundary = ({ error }: any) => {
+  return <Text color="white">{error.message}</Text>;
+};
 
-//   if (state === null) {
-//     res.redirect('/#' +
-//       querystring.stringify({
-//         error: 'state_mismatch'
-//       }));
-//   } else {
-//     var authOptions = {
-//       url: 'https://accounts.spotify.com/api/token',
-//       form: {
-//         code: code,
-//         redirect_uri: redirect_uri,
-//         grant_type: 'authorization_code'
-//       },
-//       headers: {
-//         'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-//       },
-//       json: true
-//     };
-//   }
-// });
+export default SpotifyCallback;

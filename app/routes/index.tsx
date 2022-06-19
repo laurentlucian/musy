@@ -1,4 +1,4 @@
-import { Avatar, HStack, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Box, Heading, HStack, Stack, Text } from '@chakra-ui/react';
 import type { LoaderFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
@@ -60,3 +60,24 @@ export default function Index() {
     </Stack>
   );
 }
+
+export const CatchBoundary = () => {
+  return (
+    <Box>
+      <Heading as="h2">I caught some condition</Heading>
+    </Box>
+  );
+};
+
+export const ErrorBoundary = ({ error }: any) => {
+  return (
+    <Box bg="red.400" px={4} py={2}>
+      <Heading as="h3" size="lg" color="white">
+        Something is really wrong!
+      </Heading>
+      <Box color="white" fontSize={22}>
+        {error.message}
+      </Box>
+    </Box>
+  );
+};

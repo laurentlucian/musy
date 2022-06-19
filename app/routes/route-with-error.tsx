@@ -9,15 +9,15 @@ export const meta: MetaFunction = () => {
   };
 };
 
-export function CatchBoundary() {
+export const CatchBoundary = () => {
   return (
     <Box>
       <Heading as="h2">I caught some condition</Heading>
     </Box>
   );
-}
+};
 
-export function ErrorBoundary({ error }: any) {
+export const ErrorBoundary = ({ error }: any) => {
   return (
     <Box bg="red.400" px={4} py={2}>
       <Heading as="h3" size="lg" color="white">
@@ -28,7 +28,7 @@ export function ErrorBoundary({ error }: any) {
       </Box>
     </Box>
   );
-}
+};
 
 // Don't import Text from @chakra-ui/react
 // If you do the error won't be thrown
