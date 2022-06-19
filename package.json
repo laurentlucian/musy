@@ -29,6 +29,7 @@
     "remix": "^1.5.1",
     "remix-auth": "^3.2.2",
     "remix-auth-spotify": "^1.2.1",
+    "remix-utils": "^3.3.0",
     "spotify-web-api-node": "^5.0.2",
     "tiny-invariant": "^1.2.0"
   },

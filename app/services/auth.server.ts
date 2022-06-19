@@ -4,8 +4,6 @@ import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
 
 import { sessionStorage } from '~/services/session.server';
-import { redirect } from 'remix';
-import type { Profile, User } from '@prisma/client';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');

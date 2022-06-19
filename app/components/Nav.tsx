@@ -14,7 +14,7 @@ export default function Nav({ user }: { user: User | null }) {
       </HStack>
       <Form action={user ? '/logout' : '/auth/spotify'} method="post">
         <Button isLoading={transition.state === 'submitting'} type="submit">
-          {user ? 'Logout' : 'Log in with Spotify'}
+          {user ? 'Logout' : 'Login'}
         </Button>
       </Form>
     </Flex>

@@ -19,7 +19,7 @@ export const theme = extendTheme({
       body: {
         fontFamily: 'body',
         color: mode('#161616', '#EEE6E2')(props),
-        bg: mode('#EEE6E2', '#131415')(props),
+        bg: mode('#EEE6E2', '#050404')(props),
         lineHeight: 'base',
       },
     }),

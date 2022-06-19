@@ -1,11 +1,134 @@
-import { Avatar, Box, Heading, HStack, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Box, Heading, HStack, Image, Progress, Stack, Text } from '@chakra-ui/react';
 import type { Profile as ProfileType } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { useEffect, useRef, useState } from 'react';
+import { useDataRefresh } from 'remix-utils';
 
 import { getUser, updateToken } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
+
+const useInterval = (callback: () => void, delay: number | null) => {
+  const savedCallback = useRef<() => void>(callback);
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    const tick = () => {
+      savedCallback.current();
+    };
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+};
+
+const Profile = () => {
+  const { user, playback, recent } = useLoaderData<{
+    user: ProfileType;
+    playback: SpotifyApi.CurrentPlaybackResponse;
+    recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
+  }>();
+  let { refresh } = useDataRefresh();
+  console.log('playback', playback);
+  const [progress, setProgress] = useState(0);
+  const duration = playback.item?.duration_ms;
+  const percentage = duration ? (progress / duration) * 100 : 0;
+  console.log('recent', recent);
+
+  useEffect(() => {
+    const _progress = playback.progress_ms;
+    if (_progress) {
+      setProgress(_progress);
+    }
+  }, [playback]);
+
+  useInterval(() => {
+    if (!duration) return null;
+    if (progress > duration) {
+      refresh();
+    }
+    setProgress((prev) => prev + 1000);
+  }, 1000);
+
+  return (
+    <Stack spacing={10} h="100vh" w="550px">
+      {user ? (
+        <>
+          <HStack spacing={7}>
+            <Stack>
+              <Avatar size="xl" boxSize={150} src={user.image} />
+              <Heading size="lg" fontWeight="bold">
+                {user.name}
+              </Heading>
+            </Stack>
+            {playback.is_playing ? (
+              <Stack w="100%" bg="#101010" spacing={0} borderRadius={5}>
+                <HStack h="100%" spacing={4} px={5} py={4}>
+                  {playback.item?.type === 'track' ? (
+                    <>
+                      <Image src={playback.item?.album.images[1].url} boxSize={140} borderRadius={5} />
+                      <Stack align="flex-start" spacing={1} h="140px">
+                        <Text textAlign="left">{playback.item?.name}</Text>
+                        <Text opacity={0.8}>{playback.item?.album?.artists[0].name}</Text>
+
+                        <Text>{playback.device.name}</Text>
+                      </Stack>
+                    </>
+                  ) : (
+                    <Text>
+                      {playback.item?.name} - {playback.item?.show.name}
+                    </Text>
+                  )}
+                </HStack>
+                <Progress
+                  sx={{
+                    '> div': {
+                      backgroundColor: 'white',
+                    },
+                  }}
+                  borderBottomLeftRadius={2}
+                  borderBottomRightRadius={2}
+                  size="sm"
+                  value={percentage}
+                />
+              </Stack>
+            ) : (
+              <Text>Not playing</Text>
+            )}
+          </HStack>
+          <Stack spacing={5}>
+            <Heading size="md">Recently played</Heading>
+            <HStack className="scrollbar" overflow="auto" pb={3} align="flex-start">
+              {recent.items.map(({ track }) => {
+                return (
+                  <Stack key={track.id} flex="0 0 200px">
+                    <Image src={track.album.images[1].url} borderRadius={5} />
+                    <Stack spacing={0}>
+                      <Text fontSize="sm">{track.name}</Text>
+                      <Text fontSize="xs" opacity={0.8}>
+                        {track.album.artists[0].name}
+                      </Text>
+                    </Stack>
+                  </Stack>
+                );
+              })}
+            </HStack>
+          </Stack>
+        </>
+      ) : (
+        <Stack>
+          <Heading size="md">404 Not Found</Heading>
+          <Text>User not found</Text>
+        </Stack>
+      )}
+    </Stack>
+  );
+};
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const id = params.id;
@@ -29,53 +152,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const { body: playback } = await client.getMyCurrentPlaybackState();
+  const { body: recent } = await client.getMyRecentlyPlayedTracks();
 
-  return { user: data.user, playback };
-};
-
-const Profile = () => {
-  const { user, playback } = useLoaderData<{ user: ProfileType; playback: SpotifyApi.CurrentPlaybackResponse }>();
-
-  return (
-    <Stack textAlign="center">
-      {user ? (
-        <>
-          <HStack spacing={5}>
-            <Avatar size="xl" src={user.image} />
-            <Stack align="flex-start">
-              <HStack>
-                <Heading size="lg" fontWeight="bold">
-                  {user.name}
-                </Heading>
-              </HStack>
-              {playback.is_playing ? (
-                <Stack align="flex-start">
-                  {playback.item?.type === 'track' ? (
-                    <Text>
-                      {playback.item?.name} - {playback.item?.album?.name}
-                    </Text>
-                  ) : (
-                    <Text>
-                      {playback.item?.name} - {playback.item?.show.name}
-                    </Text>
-                  )}
-
-                  <Text>{playback.device.name}</Text>
-                </Stack>
-              ) : (
-                <Text>Not playing</Text>
-              )}
-            </Stack>
-          </HStack>
-        </>
-      ) : (
-        <Stack>
-          <Heading size="md">404 Not Found</Heading>
-          <Text>User not found</Text>
-        </Stack>
-      )}
-    </Stack>
-  );
+  return { user: data.user, playback, recent };
 };
 
 export default Profile;

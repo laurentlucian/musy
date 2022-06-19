@@ -9,6 +9,7 @@ import Layout from './components/Layout';
 import type { Session } from 'remix-auth-spotify';
 
 import { spotifyStrategy } from '~/services/auth.server';
+import styles from './root.css';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);
@@ -87,6 +88,7 @@ export let links: LinksFunction = () => {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap',
     },
+    { rel: 'stylesheet', href: styles },
   ];
 };
 
