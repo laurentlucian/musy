@@ -1,7 +1,7 @@
 import { Progress, Text } from '@chakra-ui/react';
 import type { LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { authenticator, createUser, getUser } from '~/services/auth.server';
+import { authenticator, createUser, getUser, updateToken } from '~/services/auth.server';
 import { commitSession, getSession } from '~/services/session.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -16,7 +16,10 @@ export const loader: LoaderFunction = async ({ request }) => {
   let headers = new Headers({ 'Set-Cookie': await commitSession(_session) });
 
   const existingUser = await getUser(session.user.id);
+
   if (existingUser) {
+    console.log('session.expiresAt', new Date(session.expiresAt).toLocaleString('en-US'));
+    await updateToken(session.user.id, session.accessToken, session.expiresAt);
     return redirect('/', { headers });
   }
 

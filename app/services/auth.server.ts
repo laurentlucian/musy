@@ -53,9 +53,14 @@ export const createUser = async (data: CreateUser) => {
 };
 
 export const getUser = async (id: string) => {
-  let user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  const user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
   if (!user) return null;
   return user;
+};
+
+export const updateToken = async (id: string, token: string, expiresAt: number) => {
+  const data = await prisma.user.update({ where: { id }, data: { accessToken: token, expiresAt } });
+  return data.expiresAt;
 };
 
 export const getCurrentUser = async (request: Request) => {
@@ -72,15 +77,6 @@ export const getAllUsers = async () => {
   const users = data.map((user) => user.user);
   return users;
 };
-
-// export async function requireUserId(request: Request, redirectTo: string = new URL(request.url).pathname) {
-//   let userId = await getUserId(request);
-//   if (!userId) {
-//     let params = new URLSearchParams([['redirectTo', redirectTo]]);
-//     throw redirect(`/login?${params}`);
-//   }
-//   return userId;
-// }
 
 export const spotifyStrategy = new SpotifyStrategy(
   {

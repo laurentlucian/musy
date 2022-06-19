@@ -10,9 +10,7 @@ import { spotifyApi } from '~/services/spotify.server';
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await spotifyStrategy.getSession(request);
   const client = await spotifyApi(request);
-  const user = await getCurrentUser(request);
   const users = await getAllUsers();
-  console.log('user', user);
 
   if (session && client) {
     const { body: user } = await client.getMe();
