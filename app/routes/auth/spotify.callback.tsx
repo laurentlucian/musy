@@ -3,14 +3,10 @@ import type { LoaderFunction } from '@remix-run/node';
 import { authenticator } from '~/services/auth.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  try {
-    const auth = await authenticator.authenticate('spotify', request, {
-      successRedirect: '/',
-    });
-    return auth;
-  } catch (e) {
-    throw new Error('Error authenticating. Spotify Premium account required.');
-  }
+  const auth = await authenticator.authenticate('spotify', request, {
+    successRedirect: '/',
+  });
+  return auth;
 };
 
 const SpotifyCallback = () => {
@@ -18,7 +14,7 @@ const SpotifyCallback = () => {
 };
 
 export const ErrorBoundary = ({ error }: any) => {
-  return <Text color="white">{error.message}</Text>;
+  return <Text color="white">Error authenticating. Spotify Premium account required.</Text>;
 };
 
 export default SpotifyCallback;
