@@ -5,6 +5,7 @@ import { SpotifyStrategy } from 'remix-auth-spotify';
 
 import { sessionStorage } from '~/services/session.server';
 import { redirect } from 'remix';
+import type { Profile, User } from '@prisma/client';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -54,12 +55,13 @@ export const createUser = async (data: CreateUser) => {
 
 export const getUser = async (id: string) => {
   const user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
-  if (!user) return null;
+  if (!user || !user.user) return null;
   return user;
 };
 
 export const updateToken = async (id: string, token: string, expiresAt: number) => {
   const data = await prisma.user.update({ where: { id }, data: { accessToken: token, expiresAt } });
+  console.log('updateToken -> data', new Date(data.expiresAt).toLocaleTimeString('en-US'));
   return data.expiresAt;
 };
 

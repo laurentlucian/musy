@@ -4,21 +4,19 @@ import type { LoaderFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
 
-import { getAllUsers, getCurrentUser, getUser, spotifyStrategy } from '~/services/auth.server';
+import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await spotifyStrategy.getSession(request);
-  const client = await spotifyApi(request);
   const users = await getAllUsers();
 
-  if (session && client) {
-    const { body: user } = await client.getMe();
-    const { body: playback } = await client.getMyCurrentPlaybackState();
-    return { users, auth: { user, playback, session } };
-  }
+  if (!session) return { users, auth: null };
 
-  return { users, auth: null };
+  const client = await spotifyApi(session.accessToken);
+  const { body: user } = await client.getMe();
+  const { body: playback } = await client.getMyCurrentPlaybackState();
+  return { users, auth: { user, playback, session } };
 };
 
 const Index = () => {
