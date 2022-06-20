@@ -9,7 +9,6 @@ import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
 import { ServerStyleContext, ClientStyleContext } from '~/lib/emotion/context';
 import { spotifyStrategy } from '~/services/auth.server';
-import styles from '~/root.css';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);
@@ -96,7 +95,6 @@ export let links: LinksFunction = () => {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
     },
-    { rel: 'stylesheet', href: styles },
   ];
 };
 

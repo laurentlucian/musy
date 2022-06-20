@@ -1,4 +1,4 @@
-import { HStack, Image, Progress, Stack, Text } from '@chakra-ui/react';
+import { HStack, Image, Progress, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 type Type = {
   name: string | undefined;
@@ -10,8 +10,11 @@ type Type = {
 };
 
 const Player = ({ name, artist, image, device, type, progress }: Type) => {
+  const bg = useColorModeValue('#EEF2F7', '#101010');
+  const color = useColorModeValue('#101010', '#EEF2F7');
+
   return (
-    <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
+    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">
         {type === 'track' ? (
           <>
@@ -33,13 +36,12 @@ const Player = ({ name, artist, image, device, type, progress }: Type) => {
       <Progress
         sx={{
           '> div': {
-            backgroundColor: 'white',
+            backgroundColor: color,
           },
         }}
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
-        size="sm"
-        height="2px"
+        h="2px"
         value={progress}
       />
     </Stack>

@@ -22,6 +22,17 @@ export const theme = extendTheme({
         bg: mode('#EEE6E2', '#050404')(props),
         lineHeight: 'base',
       },
+      '*::-webkit-scrollbar-track': {
+        bg: mode('#EEE6E2', '#050404')(props),
+      },
+      '*::-webkit-scrollbar-thumb': {
+        bg: mode('#050404', '#f5f5f5')(props),
+      },
+      '*::-webkit-scrollbar': {
+        w: '3px',
+        h: '2px',
+        bg: mode('#050404', '#f5f5f5')(props),
+      },
     }),
   },
   components: {

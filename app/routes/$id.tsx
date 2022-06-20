@@ -98,44 +98,23 @@ const Profile = () => {
               </Heading>
             </HStack>
             {playback.is_playing ? (
-              <>
-                <Player
-                  name={playback.item?.name}
-                  image={playback.item?.type === 'track' ? playback.item.album?.images[0].url : ''}
-                  artist={playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''}
-                  device={playback.device.name}
-                  type={playback.item?.type}
-                  progress={percentage}
-                />
-              </>
+              <Player
+                name={playback.item?.name}
+                artist={playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''}
+                image={playback.item?.type === 'track' ? playback.item.album?.images[0].url : ''}
+                device={playback.device.name}
+                type={playback.item?.type}
+                progress={percentage}
+              />
             ) : (
-              <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
-                <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">
-                  {playback.item?.type != 'track' && (
-                    <>
-                      <Stack pl="7px" pt="7px" py={0} spacing={1} h="100%" w="100%">
-                        <Text>{recent.items[0].track.name}</Text>
-                        <Text opacity={0.8} fontSize="13px">
-                          {recent.items[0].track.artists[0].name}
-                        </Text>
-                      </Stack>
-                      <Image src={recent.items[0].track.album.images[1].url} m={0} boxSize={108} borderRadius={2} />
-                    </>
-                  )}
-                </HStack>
-                <Progress
-                  sx={{
-                    '> div': {
-                      backgroundColor: 'white',
-                    },
-                  }}
-                  borderBottomLeftRadius={2}
-                  borderBottomRightRadius={2}
-                  size="sm"
-                  height="2px"
-                  value={percentage}
-                />
-              </Stack>
+              <Player
+                name={recent.items[0].track.name}
+                artist={recent.items[0].track.artists[0].name}
+                image={recent.items[0].track.album.images[1].url}
+                device={playback.device.name}
+                type={playback.item?.type}
+                progress={percentage}
+              />
             )}
           </Stack>
           <Stack spacing={5}>
@@ -189,19 +168,20 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const now = new Date();
   const isExpired = new Date(data.expiresAt) < now;
-  const client = await spotifyApi(data.accessToken);
+  const spotify = await spotifyApi(data.accessToken);
   if (isExpired) {
     console.log('Access Token expired');
-    client.setRefreshToken(data.refreshToken);
-    const { body } = await client.refreshAccessToken();
-    client.setAccessToken(body.access_token);
+    spotify.setRefreshToken(data.refreshToken);
+    const { body } = await spotify.refreshAccessToken();
+    spotify.setAccessToken(body.access_token);
 
     const expiresAt = Date.now() + body.expires_in * 1000;
     await updateToken(data.user.userId, body.access_token, expiresAt);
   }
 
-  const { body: playback } = await client.getMyCurrentPlaybackState();
-  const { body: recent } = await client.getMyRecentlyPlayedTracks();
+  // make api calls to spotify below
+  const { body: playback } = await spotify.getMyCurrentPlaybackState();
+  const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
 
   return { user: data.user, playback, recent };
 };
