@@ -5,9 +5,12 @@ import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
+import Tile from '~/components/Tile';
+import Tiles from '~/components/Tiles';
 
 import { getUser, updateToken } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
+import { useHorizontalScroll } from '~/utils';
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef<() => void>(callback);
@@ -34,11 +37,9 @@ const Profile = () => {
     recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
   }>();
   let { refresh } = useDataRefresh();
-  // console.log('playback', playback);
   const [progress, setProgress] = useState(0);
   const duration = playback.item?.duration_ms;
   const percentage = duration ? (progress / duration) * 100 : 0;
-  // console.log('recent', recent);
 
   useEffect(() => {
     const _progress = playback.progress_ms;
@@ -128,45 +129,37 @@ const Profile = () => {
                   value={percentage}
                 />
               </Stack>
-
-              // <Text>Not playing</Text>
             )}
           </Stack>
           <Stack spacing={5}>
             <Heading fontSize={20}>Queue +</Heading>
-            <HStack className="scrollbar" overflow="auto" pb={3} align="flex-start">
+            <Tiles>
               {recent.items.map(({ track }) => {
                 return (
-                  <Stack key={track.id} flex="0 0 200px">
-                    <Image src={track.album.images[1].url} borderRadius={5} />
-                    <Stack spacing={0}>
-                      <Text fontSize="sm">{track.name}</Text>
-                      <Text fontSize="xs" opacity={0.8}>
-                        {track.album.artists[0].name}
-                      </Text>
-                    </Stack>
-                  </Stack>
+                  <Tile
+                    key={track.id}
+                    image={track.album.images[1].url}
+                    name={track.name}
+                    artist={track.album.artists[0].name}
+                  />
                 );
               })}
-            </HStack>
+            </Tiles>
           </Stack>
           <Stack spacing={5}>
             <Heading size="md">Recently played</Heading>
-            <HStack className="scrollbar" overflow="auto" pb={3} align="flex-start">
+            <Tiles>
               {recent.items.map(({ track }) => {
                 return (
-                  <Stack key={track.id} flex="0 0 200px">
-                    <Image src={track.album.images[1].url} borderRadius={5} />
-                    <Stack spacing={0}>
-                      <Text fontSize="sm">{track.name}</Text>
-                      <Text fontSize="xs" opacity={0.8}>
-                        {track.album.artists[0].name}
-                      </Text>
-                    </Stack>
-                  </Stack>
+                  <Tile
+                    key={track.id}
+                    image={track.album.images[1].url}
+                    name={track.name}
+                    artist={track.album.artists[0].name}
+                  />
                 );
               })}
-            </HStack>
+            </Tiles>
           </Stack>
         </>
       ) : (
