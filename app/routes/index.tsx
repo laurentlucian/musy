@@ -7,18 +7,6 @@ import type { Session } from 'remix-auth-spotify';
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const session = await spotifyStrategy.getSession(request);
-  const users = await getAllUsers();
-
-  if (!session) return { users, auth: null };
-
-  const client = await spotifyApi(session.accessToken);
-  const { body: user } = await client.getMe();
-  const { body: playback } = await client.getMyCurrentPlaybackState();
-  return { users, auth: { user, playback, session } };
-};
-
 const Index = () => {
   const loader = useLoaderData<{
     auth: {
@@ -29,39 +17,48 @@ const Index = () => {
     users: Profile[];
   }>();
   const transition = useTransition();
-  console.log('transition', transition);
   const data = loader.auth;
 
   return (
-    <Stack textAlign="center" spacing={10}>
-      <Stack>
-        {loader.users.map((user) => {
-          return (
-            <Button
-              as={Link}
-              to={`/${user.userId}`}
-              isLoading={transition.state === 'loading' && transition.location.pathname.includes(user.userId)}
-              key={user.userId}
-              variant="ghost"
-              h="70px"
-            >
-              <HStack spacing={3} w="100%">
-                <Avatar src={user.image} size="md" />
-                <Text fontWeight="bold">{user.name}</Text>
-              </HStack>
-            </Button>
-          );
-        })}
-        {!data && (
-          <Form action={'/auth/spotify'} method="post">
-            <Button isLoading={transition.state === 'submitting'} type="submit">
-              Join
-            </Button>
-          </Form>
-        )}
-      </Stack>
+    <Stack>
+      {loader.users.map((user) => {
+        return (
+          <Button
+            as={Link}
+            to={`/${user.userId}`}
+            isLoading={transition.state === 'loading' && transition.location.pathname.includes(user.userId)}
+            key={user.userId}
+            variant="ghost"
+            h="70px"
+          >
+            <HStack spacing={3} w="100%">
+              <Avatar src={user.image} size="md" />
+              <Text fontWeight="bold">{user.name}</Text>
+            </HStack>
+          </Button>
+        );
+      })}
+      {!data && (
+        <Form action={'/auth/spotify'} method="post">
+          <Button isLoading={transition.state === 'submitting'} type="submit">
+            Join
+          </Button>
+        </Form>
+      )}
     </Stack>
   );
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await spotifyStrategy.getSession(request);
+  const users = await getAllUsers();
+
+  if (!session) return { users, auth: null };
+
+  const client = await spotifyApi(session.accessToken);
+  const { body: user } = await client.getMe();
+  const { body: playback } = await client.getMyCurrentPlaybackState();
+  return { users, auth: { user, playback, session } };
 };
 
 export default Index;

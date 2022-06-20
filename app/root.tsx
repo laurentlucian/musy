@@ -2,14 +2,14 @@ import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch, 
 import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node';
 import { VStack, Heading, ChakraProvider, Text } from '@chakra-ui/react';
 import { withEmotionCache } from '@emotion/react';
-import { ServerStyleContext, ClientStyleContext } from './lib/emotion/context';
 import { useContext, useEffect } from 'react';
-import { theme } from './lib/theme';
-import Layout from './components/Layout';
 import type { Session } from 'remix-auth-spotify';
 
+import { theme } from '~/lib/theme';
+import Layout from '~/components/Layout';
+import { ServerStyleContext, ClientStyleContext } from '~/lib/emotion/context';
 import { spotifyStrategy } from '~/services/auth.server';
-import styles from './root.css';
+import styles from '~/root.css';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);

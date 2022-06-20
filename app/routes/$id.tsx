@@ -5,10 +5,10 @@ import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
+
 import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
-
 import { getUser, updateToken } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
@@ -86,7 +86,7 @@ const Profile = () => {
   }, 1000);
 
   return (
-    <Stack spacing={10} w={['100vw', '450px', '750px']} px={13}>
+    <Stack spacing={10}>
       {user ? (
         <>
           <Stack spacing={7}>
