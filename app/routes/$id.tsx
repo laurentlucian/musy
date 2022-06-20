@@ -61,17 +61,17 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
   const { user, playback, recent } = useLoaderData<{
-    user: ProfileType;
-    playback: SpotifyApi.CurrentPlaybackResponse;
-    recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
+    user: ProfileType | null;
+    playback: SpotifyApi.CurrentPlaybackResponse | null;
+    recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
   }>();
   let { refresh } = useDataRefresh();
   const [progress, setProgress] = useState(0);
-  const duration = playback.item?.duration_ms;
+  const duration = playback?.item?.duration_ms;
   const percentage = duration ? (progress / duration) * 100 : 0;
 
   useEffect(() => {
-    const _progress = playback.progress_ms;
+    const _progress = playback?.progress_ms;
     if (_progress) {
       setProgress(_progress);
     }
@@ -87,7 +87,7 @@ const Profile = () => {
 
   return (
     <Stack spacing={10}>
-      {user ? (
+      {user && playback && recent ? (
         <>
           <Stack spacing={7}>
             <HStack>
@@ -99,6 +99,7 @@ const Profile = () => {
             </HStack>
             {playback.is_playing ? (
               <Player
+                id={user.id}
                 name={playback.item?.name}
                 artist={playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''}
                 image={playback.item?.type === 'track' ? playback.item.album?.images[0].url : ''}
@@ -108,6 +109,7 @@ const Profile = () => {
               />
             ) : (
               <Player
+                id={user.id}
                 name={recent.items[0].track.name}
                 artist={recent.items[0].track.artists[0].name}
                 image={recent.items[0].track.album.images[1].url}
@@ -150,7 +152,7 @@ const Profile = () => {
         </>
       ) : (
         <Stack>
-          <Heading size="md">404 Not Found</Heading>
+          <Heading size="md">404</Heading>
           <Text>User not found</Text>
         </Stack>
       )}
@@ -164,7 +166,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const data = await getUser(id);
 
   // @todo(type-fix) data.user should never be null if data exists
-  if (!data || !data.user) return { user: null, playback: null };
+  if (!data || !data.user) return { user: null, playback: null, recent: null };
+  console.log('data', data);
 
   const now = new Date();
   const isExpired = new Date(data.expiresAt) < now;

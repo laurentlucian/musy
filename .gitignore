@@ -10,5 +10,5 @@ node_modules
 /api/index.js
 /api/index.js.map
 
-/prisma/dev.db
+data.db
 .env
