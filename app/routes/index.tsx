@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Divider, Heading, HStack, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
@@ -28,6 +28,7 @@ const Index = () => {
     } | null;
     users: Profile[];
   }>();
+  const transition = useTransition();
   const data = loader.auth;
 
   return (
@@ -67,7 +68,6 @@ const Index = () => {
       )}
 
       <Stack>
-        <Heading size="md">Users</Heading>
         {loader.users.map((user) => {
           return (
             <Button as={Link} to={`/${user.userId}`} key={user.userId} variant="ghost" h="70px">
@@ -78,6 +78,13 @@ const Index = () => {
             </Button>
           );
         })}
+        {!data && (
+          <Form action={'/auth/spotify'} method="post">
+            <Button isLoading={transition.state === 'submitting'} type="submit">
+              Join
+            </Button>
+          </Form>
+        )}
       </Stack>
     </Stack>
   );

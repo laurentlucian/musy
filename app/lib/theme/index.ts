@@ -8,7 +8,7 @@ import { Input } from './components/Input';
 export const theme = extendTheme({
   config: {
     useSystemColorMode: false,
-    initialColorMode: 'light',
+    initialColorMode: 'dark',
   },
   fonts: {
     body: 'Roboto Mono, sans-serif',
