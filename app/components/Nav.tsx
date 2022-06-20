@@ -6,7 +6,7 @@ export default function Nav({ user }: { user: User | null }) {
   const transition = useTransition();
 
   return (
-    <Flex w={['100vw', '100%']} as="header" px={2} py={[2, 5]} mb={0} justify="space-between">
+    <Flex w={['100vw', '100%']} as="header" px={13} py={[2, 5]} mb={0} justify="space-between">
       <HStack spacing={4}>
         <Heading as={Link} to="/" size="sm">
           Musy
@@ -14,7 +14,7 @@ export default function Nav({ user }: { user: User | null }) {
       </HStack>
       {user && (
         <Form action={'/logout'} method="post">
-          <Button isLoading={transition.state === 'submitting'} type="submit">
+          <Button size="sm" isLoading={transition.state === 'submitting'} type="submit">
             Logout
           </Button>
         </Form>

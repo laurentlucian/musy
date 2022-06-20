@@ -29,6 +29,7 @@ const Index = () => {
     users: Profile[];
   }>();
   const transition = useTransition();
+  console.log('transition', transition);
   const data = loader.auth;
 
   return (
@@ -36,7 +37,14 @@ const Index = () => {
       <Stack>
         {loader.users.map((user) => {
           return (
-            <Button as={Link} to={`/${user.userId}`} key={user.userId} variant="ghost" h="70px">
+            <Button
+              as={Link}
+              to={`/${user.userId}`}
+              isLoading={transition.state === 'loading' && transition.location.pathname.includes(user.userId)}
+              key={user.userId}
+              variant="ghost"
+              h="70px"
+            >
               <HStack spacing={3} w="100%">
                 <Avatar src={user.image} size="md" />
                 <Text fontWeight="bold">{user.name}</Text>

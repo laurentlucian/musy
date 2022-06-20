@@ -1,15 +1,14 @@
 import { Image, Stack, Text } from '@chakra-ui/react';
 
 type Type = {
-  key: string;
   image: string;
   name: string;
   artist: string;
 };
 
-const Tile = ({ key, image, name, artist }: Type) => {
+const Tile = ({ image, name, artist }: Type) => {
   return (
-    <Stack key={key} flex="0 0 200px">
+    <Stack flex="0 0 200px">
       <Image src={image} borderRadius={5} draggable={false} />
       <Stack spacing={0}>
         <Text fontSize="sm">{name}</Text>

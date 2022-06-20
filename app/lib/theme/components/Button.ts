@@ -1,5 +1,5 @@
 export const Button = {
   baseStyle: {
-    borderRadius: "lg",
+    borderRadius: 'sm',
   },
-}
+};

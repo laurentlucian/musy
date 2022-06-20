@@ -11,8 +11,8 @@ export const theme = extendTheme({
     initialColorMode: 'dark',
   },
   fonts: {
-    body: 'Roboto Mono, sans-serif',
-    heading: 'Roboto Mono, serif',
+    body: 'Montserrat, Poppins, Roboto Mono, sans-serif',
+    heading: 'Montserrat, Poppins, Roboto Mono, serif',
   },
   styles: {
     global: (props: GlobalStyleProps) => ({
