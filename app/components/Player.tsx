@@ -10,8 +10,8 @@ type Type = {
 };
 
 const Player = ({ name, artist, image, device, type, progress }: Type) => {
-  const bg = useColorModeValue('#EEF2F7', '#101010');
-  const color = useColorModeValue('#101010', '#EEF2F7');
+  const bg = useColorModeValue('music.50', 'music.900');
+  const color = useColorModeValue('music.900', 'music.50');
 
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
@@ -35,6 +35,7 @@ const Player = ({ name, artist, image, device, type, progress }: Type) => {
       </HStack>
       <Progress
         sx={{
+          backgroundColor: bg,
           '> div': {
             backgroundColor: color,
           },
