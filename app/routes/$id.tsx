@@ -12,6 +12,7 @@ import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { spotifyApi } from '~/services/spotify.server';
 import { getCurrentUser } from '~/services/auth.server';
+import { timeSince } from '~/hooks/utils';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party } = useLoaderData<{
@@ -43,7 +44,7 @@ const Profile = () => {
 
   return (
     <Stack spacing={10}>
-      {user && playback && recent ? (
+      {user ? (
         <>
           <Stack spacing={7}>
             <HStack>
@@ -53,7 +54,7 @@ const Profile = () => {
                 {/*user.bio*/}
               </Heading>
             </HStack>
-            {playback.is_playing ? (
+            {playback?.is_playing ? (
               <Player
                 id={user.userId}
                 name={playback.item?.name}
@@ -67,18 +68,20 @@ const Profile = () => {
                 currentUser={currentUser}
                 party={party}
               />
-            ) : (
+            ) : recent ? (
               <Player
                 id={user.userId}
                 name={recent.items[0].track.name}
                 artist={recent.items[0].track.artists[0].name}
                 image={recent.items[0].track.album.images[1].url}
-                device={playback.device.name}
-                type={playback.item?.type}
+                device={timeSince(new Date(recent.items[0].played_at)) + ' ago'}
+                type={recent.items[0].track.type}
                 progress={percentage}
                 currentUser={currentUser}
                 party={party}
               />
+            ) : (
+              <></>
             )}
           </Stack>
           {/* <Stack spacing={5}>
@@ -100,7 +103,7 @@ const Profile = () => {
           <Stack spacing={5}>
             <Heading size="md">Recently played</Heading>
             <Tiles>
-              {recent.items.map(({ track, played_at }) => {
+              {recent?.items.map(({ track, played_at }) => {
                 return (
                   <Tile
                     key={played_at}
