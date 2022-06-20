@@ -1,4 +1,4 @@
-import { Avatar, Box, Heading, HStack, Image, Progress, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Box, Heading, HStack, Image, Input, Progress, Stack, Text, VStack } from '@chakra-ui/react';
 import type { Profile as ProfileType } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
@@ -8,6 +8,8 @@ import { useDataRefresh } from 'remix-utils';
 
 import { getUser, updateToken } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
+
+import SpotifyWebApi from 'spotify-web-api-node';
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef<() => void>(callback);
@@ -25,6 +27,52 @@ const useInterval = (callback: () => void, delay: number | null) => {
       return () => clearInterval(id);
     }
   }, [delay]);
+};
+
+const Search = () => {
+  const spotifyApi = new SpotifyWebApi({ clientId: process.env.SPOTIFY_CLIENT_ID });
+  const [search, setSearch] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<{ title: string; artist: string; art: string }[] | undefined>([]);
+  // const { searchTracks } = useLoaderData<{
+  //   searchTracks: SpotifyApi.SingleTrackResponse;
+  // }>();
+
+  // useEffect(() => {
+  //   if (!updateToken) return;
+  //   spotifyApi.setAccessToken(updateToken.id);
+  // }, [updateToken]);
+
+  useEffect(() => {
+    if (!search) return setSearchResults([]);
+    // if (!updateToken) return;
+    let isSearching = false;
+    spotifyApi.searchTracks(search).then((res) => {
+      if (isSearching) return;
+      setSearchResults(
+        res.body.tracks?.items.map((track) => {
+          return { title: track.name, artist: track.artists[0].name, art: track.album.images[1].url };
+        }),
+      );
+    });
+    return (isSearching = true);
+  }, [search]);
+
+  return (
+    <Stack height={['100vh']} width={['100vw']}>
+      <Input type="search" placeholder="songs" value={search} onChange={(e) => setSearch(e.target.value)} />
+      {searchResults?.map((track) => (
+        <VStack key={track.art}>
+          <HStack>
+            <Image src={track.art} boxSize="50px" />
+            <VStack>
+              <Text>{track.title}</Text>
+              <Text>{track.artist}</Text>
+            </VStack>
+          </HStack>
+        </VStack>
+      ))}
+    </Stack>
+  );
 };
 
 const Profile = () => {
@@ -128,8 +176,6 @@ const Profile = () => {
                   value={percentage}
                 />
               </Stack>
-
-              // <Text>Not playing</Text>
             )}
           </Stack>
           <Stack spacing={5}>
@@ -220,7 +266,7 @@ export const ErrorBoundary = ({ error }: any) => {
   return (
     <Box bg="red.400" px={4} py={2}>
       <Heading as="h3" size="lg" color="white">
-        Something is really wrong!
+        Something is really wrong!{' >:('}
       </Heading>
       <Box color="white" fontSize={22}>
         {error.message}
