@@ -10,7 +10,7 @@ type Type = {
 const Tile = ({ key, image, name, artist }: Type) => {
   return (
     <Stack key={key} flex="0 0 200px">
-      <Image src={image} borderRadius={5} />
+      <Image src={image} borderRadius={5} draggable={false} />
       <Stack spacing={0}>
         <Text fontSize="sm">{name}</Text>
         <Text fontSize="xs" opacity={0.8}>

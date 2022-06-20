@@ -5,12 +5,12 @@ import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
+import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 
 import { getUser, updateToken } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
-import { useHorizontalScroll } from '~/utils';
 
 const useInterval = (callback: () => void, delay: number | null) => {
   const savedCallback = useRef<() => void>(callback);
@@ -69,38 +69,16 @@ const Profile = () => {
               </Heading>
             </HStack>
             {playback.is_playing ? (
-              <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
-                <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">
-                  {playback.item?.type === 'track' ? (
-                    <>
-                      <Stack pl="7px" pt="7px" py={0} spacing={1} h="100%" w="100%">
-                        <Text>{playback.item?.name}</Text>
-                        <Text opacity={0.8} fontSize="13px">
-                          {playback.item?.album?.artists[0].name}
-                        </Text>
-                        <Text>{playback.device.name}</Text>
-                      </Stack>
-                      <Image src={playback.item?.album.images[1].url} m={0} boxSize={108} borderRadius={2} />
-                    </>
-                  ) : (
-                    <Text>
-                      {playback.item?.name} - {playback.item?.show.name}
-                    </Text>
-                  )}
-                </HStack>
-                <Progress
-                  sx={{
-                    '> div': {
-                      backgroundColor: 'white',
-                    },
-                  }}
-                  borderBottomLeftRadius={2}
-                  borderBottomRightRadius={2}
-                  size="sm"
-                  height="2px"
-                  value={percentage}
+              <>
+                <Player
+                  name={playback.item?.name}
+                  image={playback.item?.type === 'track' ? playback.item.album?.images[0].url : ''}
+                  artist={playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''}
+                  device={playback.device.name}
+                  type={playback.item?.type}
+                  progress={0}
                 />
-              </Stack>
+              </>
             ) : (
               <Stack w={[363, '100%']} bg="#101010" spacing={0} borderRadius={5}>
                 <HStack h={['112']} spacing={2} px="2px" py="2px" justify="space-between">

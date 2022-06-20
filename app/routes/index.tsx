@@ -3,6 +3,7 @@ import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
+import Player from '~/components/Player';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -33,40 +34,6 @@ const Index = () => {
 
   return (
     <Stack textAlign="center" spacing={10}>
-      {data && (
-        <>
-          <Heading size="md">You</Heading>
-          <HStack spacing={5}>
-            <Avatar size="lg" src={data.user.images?.[0].url} />
-            <Stack align="flex-start">
-              <HStack>
-                <Text fontWeight="bold">{data.user.display_name} - </Text>
-                <Text>{data.user.followers?.total} followers</Text>
-              </HStack>
-              <Text>{data.user.email}</Text>
-              {data.playback.is_playing ? (
-                <Stack align="flex-start">
-                  {data.playback.item?.type === 'track' ? (
-                    <Text>
-                      {data.playback.item?.name} - {data.playback.item?.album?.name}
-                    </Text>
-                  ) : (
-                    <Text>
-                      {data.playback.item?.name} - {data.playback.item?.show.name}
-                    </Text>
-                  )}
-
-                  <Text>{data.playback.device.name}</Text>
-                </Stack>
-              ) : (
-                <Text>Not playing</Text>
-              )}
-            </Stack>
-          </HStack>
-          <Divider />
-        </>
-      )}
-
       <Stack>
         {loader.users.map((user) => {
           return (

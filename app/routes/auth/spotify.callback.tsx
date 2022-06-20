@@ -20,7 +20,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (existingUser) {
     console.log('session.expiresAt', new Date(session.expiresAt).toLocaleString('en-US'));
     await updateToken(session.user.id, session.accessToken, session.expiresAt);
-    return redirect('/', { headers });
+    return redirect('/' + existingUser.id, { headers });
   }
 
   if (!session.refreshToken || !session.tokenType || !session.user.name || !session.user.image) {
@@ -42,9 +42,9 @@ export const loader: LoaderFunction = async ({ request }) => {
     },
   };
 
-  await createUser(user);
+  const newUser = await createUser(user);
 
-  return redirect('/', { headers });
+  return redirect('/' + newUser.id, { headers });
 };
 
 const SpotifyCallback = () => {
