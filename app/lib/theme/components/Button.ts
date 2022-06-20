@@ -1,5 +1,5 @@
-import { mode, transparentize } from '@chakra-ui/theme-tools';
-import type { SystemStyleObject, SystemStyleFunction } from '@chakra-ui/theme-tools';
+import { mode } from '@chakra-ui/theme-tools';
+import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
 
 type AccessibleColor = {
   bg?: string;
@@ -27,7 +27,12 @@ const accessibleColorMap: { [key: string]: AccessibleColor } = {
 const variantMusic: SystemStyleFunction = (props) => {
   const { colorScheme: c } = props;
 
-  const { bg = `${c}.500`, color = 'white', hoverBg = `${c}.600`, activeBg = `${c}.700` } = accessibleColorMap[c] ?? {};
+  const {
+    bg = `${c}.500`,
+    color = 'white',
+    hoverBg = `${c}.600`,
+    activeBg = `${c}.700`,
+  } = accessibleColorMap[c] ?? {};
 
   const background = mode(`${c}.200`, bg)(props);
 

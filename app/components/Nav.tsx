@@ -1,5 +1,6 @@
-import { Button, Flex, Heading, HStack, useColorMode } from '@chakra-ui/react';
+import { Flex, Heading, HStack, IconButton, useColorMode } from '@chakra-ui/react';
 import { Form, Link, useTransition } from '@remix-run/react';
+import { Logout, Moon, Sun1 } from 'iconsax-react';
 import type { User } from 'remix-auth-spotify';
 
 export default function Nav({ user }: { user: User | null }) {
@@ -14,14 +15,23 @@ export default function Nav({ user }: { user: User | null }) {
         </Heading>
       </HStack>
       <HStack>
-        <Button size="sm" onClick={toggleColorMode}>
-          {colorMode === 'light' ? 'Dark' : 'Light'}
-        </Button>
+        <IconButton
+          aria-label={colorMode === 'light' ? 'Dark' : 'Light'}
+          icon={colorMode === 'light' ? <Moon /> : <Sun1 />}
+          variant="ghost"
+          onClick={toggleColorMode}
+          cursor="pointer"
+        />
         {user && (
           <Form action={'/logout'} method="post">
-            <Button size="sm" isLoading={transition.state === 'submitting'} type="submit">
-              Logout
-            </Button>
+            <IconButton
+              aria-label="Logout"
+              icon={<Logout />}
+              isLoading={transition.state === 'submitting'}
+              variant="ghost"
+              cursor="pointer"
+              type="submit"
+            />
           </Form>
         )}
       </HStack>

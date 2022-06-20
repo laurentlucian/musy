@@ -19,7 +19,8 @@ model User {
   expiresAt    Int
   tokenType    String
 
-  user Profile?
+  user  Profile?
+  party Party[]
 }
 
 model Profile {
@@ -32,4 +33,17 @@ model Profile {
   name  String
   email String
   image String
+  party Party?
+}
+
+model Party {
+  owner     User    @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  user      Profile @relation(fields: [userId], references: [userId])
+  userId    String  @unique
+  userName  String
+  userImage String
+
+  assignedAt DateTime @default(now())
+  @@id([ownerId, userId])
 }

@@ -1,7 +1,7 @@
-const baseFieldStyle = { field: { borderRadius: "lg" } }
+const baseFieldStyle = { field: { borderRadius: 'lg' } };
 
-export const Input = {
-  parts: ["field", "addon"],
+export default {
+  parts: ['field', 'addon'],
   // Styles for the base style
   baseStyle: {},
   // Styles for the size variations
@@ -13,7 +13,7 @@ export const Input = {
   },
   // The default `size` or `variant` values
   defaultProps: {
-    variant: "filled",
-    focusBorderColor: "purple.500",
+    variant: 'filled',
+    focusBorderColor: 'purple.500',
   },
-}
+};

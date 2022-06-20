@@ -3,7 +3,7 @@ import { mode } from '@chakra-ui/theme-tools';
 import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 
 import Button from './components/Button';
-import { Input } from './components/Input';
+import Input from './components/Input';
 import colors from './foundations/colors';
 
 export const theme = extendTheme({
