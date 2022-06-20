@@ -2,26 +2,19 @@ import { Avatar, Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/re
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
-import type { Session } from 'remix-auth-spotify';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
-import { spotifyApi } from '~/services/spotify.server';
 
 const Index = () => {
-  const loader = useLoaderData<{
-    auth: {
-      session: Session;
-      user: SpotifyApi.CurrentUsersProfileResponse;
-      playback: SpotifyApi.CurrentPlaybackResponse;
-    } | null;
+  const { user, users } = useLoaderData<{
+    user: SpotifyApi.CurrentUsersProfileResponse;
     users: Profile[];
   }>();
   const transition = useTransition();
-  const data = loader.auth;
 
   return (
     <Stack>
-      {loader.users.map((user) => {
+      {users.map((user) => {
         return (
           <Button
             as={Link}
@@ -38,7 +31,7 @@ const Index = () => {
           </Button>
         );
       })}
-      {!data && (
+      {!user && (
         <Form action={'/auth/spotify'} method="post">
           <Button isLoading={transition.state === 'submitting'} type="submit">
             Join
@@ -50,15 +43,12 @@ const Index = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await spotifyStrategy.getSession(request);
   const users = await getAllUsers();
+  // getSession() is supposed to refreshToken when expired but isn't
+  // it's okay for now because we only need it once from authentication
+  const session = await spotifyStrategy.getSession(request);
 
-  if (!session) return { users, auth: null };
-
-  const client = await spotifyApi(session.accessToken);
-  const { body: user } = await client.getMe();
-  const { body: playback } = await client.getMyCurrentPlaybackState();
-  return { users, auth: { user, playback, session } };
+  return { users, user: session?.user };
 };
 
 export default Index;
