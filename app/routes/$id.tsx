@@ -86,7 +86,7 @@ const Profile = () => {
   }, 1000);
 
   return (
-    <Stack spacing={10} w={['100vw', '550px']}>
+    <Stack spacing={10} w={['100vw', '450px', '750px']} px={13}>
       {user ? (
         <>
           <Stack spacing={7}>
@@ -105,7 +105,7 @@ const Profile = () => {
                   artist={playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''}
                   device={playback.device.name}
                   type={playback.item?.type}
-                  progress={0}
+                  progress={percentage}
                 />
               </>
             ) : (

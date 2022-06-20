@@ -1,9 +1,8 @@
-import { Avatar, Box, Button, Divider, Heading, HStack, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
 import type { Session } from 'remix-auth-spotify';
-import Player from '~/components/Player';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
