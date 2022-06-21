@@ -144,53 +144,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default Profile;
 
-// import SpotifyWebApi from 'spotify-web-api-node';
-// const Search = () => {
-//   const spotifyApi = new SpotifyWebApi({ clientId: process.env.SPOTIFY_CLIENT_ID });
-//   const [search, setSearch] = useState<string>('');
-//   const [searchResults, setSearchResults] = useState<{ title: string; artist: string; art: string }[] | undefined>([]);
-//   // const { searchTracks } = useLoaderData<{
-//   //   searchTracks: SpotifyApi.SingleTrackResponse;
-//   // }>();
-
-//   // useEffect(() => {
-//   //   if (!updateToken) return;
-//   //   spotifyApi.setAccessToken(updateToken.id);
-//   // }, [updateToken]);
-
-//   useEffect(() => {
-//     if (!search) return setSearchResults([]);
-//     // if (!updateToken) return;
-//     let isSearching = false;
-//     spotifyApi.searchTracks(search).then((res) => {
-//       if (isSearching) return;
-//       setSearchResults(
-//         res.body.tracks?.items.map((track) => {
-//           return { title: track.name, artist: track.artists[0].name, art: track.album.images[1].url };
-//         }),
-//       );
-//     });
-//     return (isSearching = true);
-//   }, [search]);
-
-//   return (
-//     <Stack height={['100vh']} width={['100vw']}>
-//       <Input type="search" placeholder="songs" value={search} onChange={(e) => setSearch(e.target.value)} />
-//       {searchResults?.map((track) => (
-//         <VStack key={track.art}>
-//           <HStack>
-//             <Image src={track.art} boxSize="50px" />
-//             <VStack>
-//               <Text>{track.title}</Text>
-//               <Text>{track.artist}</Text>
-//             </VStack>
-//           </HStack>
-//         </VStack>
-//       ))}
-//     </Stack>
-//   );
-// };
-
 export const CatchBoundary = () => {
   return (
     <Box>
