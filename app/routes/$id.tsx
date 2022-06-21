@@ -67,6 +67,7 @@ const Profile = () => {
                 progress={percentage}
                 currentUser={currentUser}
                 party={party}
+                active={true}
               />
             ) : recent ? (
               <Player
@@ -79,6 +80,7 @@ const Profile = () => {
                 progress={percentage}
                 currentUser={currentUser}
                 party={party}
+                active={false}
               />
             ) : (
               <></>

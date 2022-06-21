@@ -29,9 +29,21 @@ type Type = {
 
   currentUser: Profile | null;
   party: Party[];
+
+  active: boolean;
 };
 
-const Player = ({ id, name, artist, image, device, progress, currentUser, party }: Type) => {
+const Player = ({
+  id,
+  name,
+  artist,
+  image,
+  device,
+  progress,
+  currentUser,
+  party,
+  active,
+}: Type) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
@@ -52,7 +64,7 @@ const Player = ({ id, name, artist, image, device, progress, currentUser, party 
           </Flex>
 
           {/* letting owner join own party for testing */}
-          {currentUser && (
+          {currentUser && active && (
             <HStack>
               <Form
                 action={currentParty ? `/party/leave/${id}` : `/party/join/${id}`}
@@ -78,9 +90,6 @@ const Player = ({ id, name, artist, image, device, progress, currentUser, party 
                 })}
               </AvatarGroup>
               <Image boxSize="22px" src={spotify_icon} />
-              {/* <Text fontSize="14px" opacity={0.8} flexGrow={1} textAlign="right">
-                9 plays
-              </Text> */}
             </HStack>
           )}
         </Stack>
