@@ -26,6 +26,7 @@
     "bullmq": "^1.86.2",
     "framer-motion": "^6.2.8",
     "iconsax-react": "^0.0.8",
+    "ioredis": "^5.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-spotify-web-playback-sdk": "^3.0.1",

@@ -37,8 +37,10 @@ model Profile {
 }
 
 model Party {
-  owner     User    @relation(fields: [ownerId], references: [id])
-  ownerId   String
+  owner        User   @relation(fields: [ownerId], references: [id])
+  ownerId      String
+  currentTrack String
+
   user      Profile @relation(fields: [userId], references: [userId])
   userId    String  @unique
   userName  String
