@@ -8,6 +8,9 @@ import { spotifyApi } from '~/services/spotify.server';
 // - get currentTrack of existing owners' party
 // - adds currentTrack to queue of listeners
 
+// @todo check all active parties and create ownerQ jobs if doesn't exist
+// in case of edge cases? what if ownerQ fails and doesn't readd itself to queue?
+
 export const listenerQ = Queue<{ userId: string; currentTrack: string }>(
   'queue_track',
   async (job) => {

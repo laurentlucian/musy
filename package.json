@@ -6,10 +6,10 @@
   "sideEffects": false,
   "scripts": {
     "build:remix": "remix build",
-    "build": "prisma migrate deploy && prisma generate && remix build",
-    "dev": "remix dev",
-    "postinstall": "remix setup node",
-    "prisma": "npx prisma"
+    "build": "remix build",
+    "start": "remix-serve build",
+    "dev": "prisma generate && remix dev",
+    "deploy": "fly deploy --remote-only"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.6",

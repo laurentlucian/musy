@@ -1,6 +1,7 @@
 import { spotifyApi } from '~/services/spotify.server';
-import { Form, redirect, useLoaderData, useSubmit } from 'remix';
-import type { LoaderFunction } from 'remix';
+import { redirect } from '@remix-run/node';
+import { Form, useLoaderData, useSubmit } from '@remix-run/react';
+import type { LoaderFunction } from '@remix-run/node';
 import { HStack, Image, Input, Stack, Text, VStack } from '@chakra-ui/react';
 
 const Search = () => {

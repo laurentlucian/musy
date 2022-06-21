@@ -20,7 +20,19 @@ const redisOptions: RedisOptions = {
 // the server with every change, but we want to make sure we don't
 // create a new connection to the Redis with every change either
 if (process.env.NODE_ENV === 'production') {
-  redis = new Redis(process.env.REDIS_URL, redisOptions);
+  if (!process.env.REDIS_PASSWORD) {
+    throw new Error('Missing REDIS_URL env');
+  }
+
+  const _redisOption: RedisOptions = {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+    port: 6379,
+    family: 6,
+    host: process.env.REDIS_URL,
+    password: process.env.REDIS_PASSWORD,
+  };
+  redis = new Redis(process.env.REDIS_URL, _redisOption);
 } else {
   if (!global.__redis) {
     global.__redis = new Redis(process.env.REDIS_URL, redisOptions);
