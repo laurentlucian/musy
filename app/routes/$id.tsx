@@ -1,9 +1,9 @@
-import { Avatar, Box, Heading, HStack, Stack, Text, useInterval } from '@chakra-ui/react';
+import { Avatar, Box, Heading, HStack, Stack, Text, useInterval, Button } from '@chakra-ui/react';
 import { prisma } from '~/services/db.server';
 import type { Party, Profile as ProfileType } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 
@@ -86,10 +86,11 @@ const Profile = () => {
               <></>
             )}
           </Stack>
-          {/* <Stack spacing={5}>
-            <Heading fontSize={20}>Queue +</Heading>
+          <Stack spacing={5}>
+            <Heading fontSize={20}>Queue</Heading>
+            <Button as={Link} to={`/${user.userId}/search`}>+</Button>
             <Tiles>
-              {recent.items.map(({ track, played_at }) => {
+              {/* {recent.items.map(({ track, played_at }) => {
                 return (
                   <Tile
                     // if use track.id then key will be repeated if user replays a song
@@ -99,9 +100,9 @@ const Profile = () => {
                     artist={track.album.artists[0].name}
                   />
                 );
-              })}
+              })} */}
             </Tiles>
-          </Stack> */}
+          </Stack>
           <Stack spacing={5}>
             <Heading size="md">Recently played</Heading>
             <Tiles>
