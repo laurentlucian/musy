@@ -3,7 +3,7 @@ import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 // - get all existing parties
-// - delete related parties if owner has stopped
+// - @todo delete related parties if owner has stopped
 // - delete unique party if listener has stopped
 // - get currentTrack of existing owners' party
 // - adds currentTrack to queue of listeners

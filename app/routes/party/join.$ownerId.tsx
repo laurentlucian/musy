@@ -21,7 +21,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (!session || !session.user || !session.user.name || !session.user.image) {
     console.log('Party join failed -> no authentication');
-    return redirect('/' + ownerId);
+    return redirect(request.url);
   }
   const userId = session.user.id;
 
@@ -33,20 +33,20 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     // party with both users already exists, refresh page?
-    return redirect('/' + ownerId);
+    return redirect(request.url);
   }
 
   const { spotify: owner_spotify } = await spotifyApi(ownerId);
   if (!owner_spotify) {
     console.log('Party join failed -> no spotify API');
-    return redirect('/' + ownerId);
+    return redirect(request.url);
   }
 
   const { body: playback } = await owner_spotify.getMyCurrentPlaybackState();
   const currentTrack = playback.item?.uri;
   if (!currentTrack) {
     console.log('Party join failed -> no currentTrack found');
-    return redirect('/' + ownerId);
+    return redirect(request.url);
   }
   await prisma.user.update({
     where: { id: ownerId },
@@ -70,7 +70,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (ownerJob) {
     // BullMQ automatically ignores new jobs with same id but checking here anyway for now
     console.log('OwnerQ -> ownerJob already in scheduler');
-    return null;
+    return redirect(request.url);
   }
 
   if (playback?.progress_ms && playback.item?.duration_ms) {
@@ -86,5 +86,5 @@ export const action: ActionFunction = async ({ request, params }) => {
     console.log('ownerQ -> add ownerJob with', timeLeftMs, 'ms delay');
   }
 
-  return redirect('/' + ownerId);
+  return redirect(request.url);
 };

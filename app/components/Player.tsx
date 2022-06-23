@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useInterval,
 } from '@chakra-ui/react';
 import type { Party, Profile } from '@prisma/client';
 import { Form } from '@remix-run/react';
@@ -17,20 +18,20 @@ import { Stop } from 'iconsax-react';
 import listen_width from '~/assets/listen-with.svg';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
+import { useEffect, useState } from 'react';
+import { useDataRefresh } from 'remix-utils';
 
-type Type = {
+type PlayerType = {
   id: string;
   name: string | undefined;
   artist: string;
   image: string;
   device: string;
-  progress: number;
-  type: 'track' | 'episode' | undefined;
-
   currentUser: Profile | null;
   party: Party[];
-
   active: boolean;
+  progress: number;
+  duration: number;
 };
 
 const Player = ({
@@ -39,15 +40,34 @@ const Player = ({
   artist,
   image,
   device,
-  progress,
   currentUser,
   party,
   active,
-}: Type) => {
+  progress,
+  duration,
+}: PlayerType) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
   const currentParty = party.find((e) => e.userId !== currentUser?.userId);
+
+  const { refresh } = useDataRefresh();
+  const [current, setCurrent] = useState(0);
+  const percentage = duration ? (current / duration) * 100 : 0;
+
+  useEffect(() => {
+    if (progress) {
+      setCurrent(progress);
+    }
+  }, [progress]);
+
+  useInterval(() => {
+    if (!duration) return null;
+    if (progress > duration) {
+      refresh();
+    }
+    setCurrent((prev) => prev + 1000);
+  }, 1000);
 
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
@@ -110,7 +130,7 @@ const Player = ({
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
         h="2px"
-        value={progress}
+        value={percentage}
       />
     </Stack>
   );
