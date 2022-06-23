@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Heading, HStack, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
@@ -19,13 +19,16 @@ const Index = () => {
           <Button
             as={Link}
             to={`/${user.userId}`}
-            isLoading={transition.state === 'loading' && transition.location.pathname.includes(user.userId)}
+            isLoading={
+              transition.state === 'loading' && transition.location.pathname.includes(user.userId)
+            }
             key={user.userId}
             variant="ghost"
-            h="70px"
+            h="auto"
+            p={2}
           >
             <HStack spacing={3} w="100%">
-              <Avatar src={user.image} size="md" />
+              <Image w="50px" borderRadius={50} src={user.image} />
               <Text fontWeight="bold">{user.name}</Text>
             </HStack>
           </Button>

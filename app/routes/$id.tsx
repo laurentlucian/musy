@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-  Avatar,
   Box,
   Heading,
   HStack,
@@ -11,6 +10,7 @@ import {
   InputGroup,
   InputRightElement,
   Spinner,
+  Image,
 } from '@chakra-ui/react';
 import {
   Form,
@@ -58,7 +58,7 @@ const Profile = () => {
         <>
           <Stack spacing={7}>
             <HStack>
-              <Avatar size="xl" boxSize={93} src={user.image} />
+              <Image borderRadius={50} boxSize={93} src={user.image} />
               <Heading size="lg" fontWeight="bold">
                 {user.name}
                 {/* {user.bio} */}

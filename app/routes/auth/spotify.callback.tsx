@@ -53,7 +53,7 @@ const SpotifyCallback = () => {
 
 export const ErrorBoundary = ({ error }: any) => {
   console.log('error', error);
-  return <Text color="white">Error authenticating. Spotify Premium account required.</Text>;
+  return <Text color="white">Only authorized users while in development</Text>;
 };
 
 export default SpotifyCallback;
