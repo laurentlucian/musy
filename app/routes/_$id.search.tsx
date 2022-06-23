@@ -16,6 +16,7 @@ import { Back } from 'iconsax-react';
 import { spotifyApi } from '~/services/spotify.server';
 import SearchItem from '~/components/SearchItem';
 
+
 const Search = () => {
   const response = useLoaderData<SpotifyApi.TrackSearchResponse | null>();
   const transition = useTransition();
@@ -57,6 +58,7 @@ const Search = () => {
             name={track.name}
             image={track.album.images[1].url}
             artist={track.artists[0].name}
+            // explicit={track.explicit && explicit}
           />
         ))}
       </Stack>

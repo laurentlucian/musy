@@ -18,6 +18,7 @@ import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
 import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
+import explicitImage from '~/assets/explicit-solid.svg';
 
 type PlayerType = {
   id: string;
@@ -30,6 +31,7 @@ type PlayerType = {
   active: boolean;
   progress: number;
   duration: number;
+  explicit: boolean | undefined;
 };
 
 const Player = ({
@@ -43,6 +45,7 @@ const Player = ({
   active,
   progress,
   duration,
+  explicit,
 }: PlayerType) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
@@ -73,9 +76,12 @@ const Player = ({
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
             <Text noOfLines={[1]}>{name}</Text>
-            <Text opacity={0.8} fontSize="13px">
-              {artist}
-            </Text>
+            <Flex>
+              {explicit && <Image src={explicitImage} w="19px" />}
+              <Text opacity={0.8} fontSize="13px">
+                {artist}
+              </Text>
+            </Flex>
             <Text fontSize="14px" fontWeight="semibold">
               {device}
             </Text>

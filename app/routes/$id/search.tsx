@@ -5,6 +5,7 @@ import type { LoaderFunction } from '@remix-run/node';
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
+// import explicit from '~/assets/explicit-solid.svg';
 
 const Search = () => {
   const response = useLoaderData<SpotifyApi.TrackSearchResponse | null>();
@@ -19,6 +20,7 @@ const Search = () => {
           image={track.album.images[1].url}
           name={track.name}
           artist={track.album.artists[0].name}
+          explicit={track.explicit}
         />
       ))}
     </Tiles>

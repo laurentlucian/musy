@@ -78,6 +78,7 @@ const Profile = () => {
                 active={true}
                 progress={progress}
                 duration={duration}
+                explicit={playback.item?.explicit}
               />
             ) : recent ? (
               <Player
@@ -91,6 +92,7 @@ const Profile = () => {
                 active={false}
                 progress={progress}
                 duration={duration}
+                explicit={playback?.item?.explicit}
               />
             ) : null}
           </Stack>
@@ -179,6 +181,7 @@ const Profile = () => {
                     image={track.album.images[1].url}
                     name={track.name}
                     artist={track.album.artists[0].name}
+                    explicit={track.explicit}
                   />
                 );
               })}

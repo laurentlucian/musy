@@ -1,12 +1,14 @@
 import { Button, Flex, HStack, Icon, Image, Input, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { TickSquare } from 'iconsax-react';
+// import explicit from '../assets/explicit-solid.svg';
 
 type SearchItemType = {
   uri: string;
   name: string;
   image: string;
   artist: string;
+  // explicit: string;
 };
 
 const SearchItem = ({ uri, name, image, artist }: SearchItemType) => {
@@ -35,9 +37,11 @@ const SearchItem = ({ uri, name, image, artist }: SearchItemType) => {
             <Text fontSize="13px" textAlign="left" noOfLines={1} whiteSpace="normal">
               {name}
             </Text>
-            <Text fontSize="13px" noOfLines={1} whiteSpace="normal">
-              {artist}
-            </Text>
+            <Flex>
+              <Text fontSize="13px" noOfLines={1} whiteSpace="normal">
+                {artist}
+              </Text>
+            </Flex>
           </VStack>
         </HStack>
         {isAdding && <Spinner ml="auto" mr={2} />}

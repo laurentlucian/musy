@@ -1,15 +1,17 @@
 import { Flex, Icon, IconButton, Image, Input, Spinner, Stack, Text } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { AddSquare, TickSquare } from 'iconsax-react';
+import explicitImage from '~/assets/explicit-solid.svg';
 
 type Type = {
   uri: string;
   image: string;
   name: string;
   artist: string;
+  explicit: boolean;
 };
 
-const Tile = ({ uri, image, name, artist }: Type) => {
+const Tile = ({ uri, image, name, artist, explicit }: Type) => {
   const { id } = useParams();
   const fetcher = useFetcher();
 
@@ -22,9 +24,12 @@ const Tile = ({ uri, image, name, artist }: Type) => {
       <Flex justify="space-between">
         <Stack spacing={0}>
           <Text fontSize="sm">{name}</Text>
-          <Text fontSize="xs" opacity={0.8}>
-            {artist}
-          </Text>
+          <Flex>
+            {explicit && <Image src={explicitImage} w="19px" />}
+            <Text fontSize="xs" opacity={0.8}>
+              {artist}
+            </Text>
+          </Flex>
         </Stack>
         {!isAdding && !isDone ? (
           <Flex as={fetcher.Form} replace method="post" action={`/${id}/add`}>
