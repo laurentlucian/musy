@@ -52,18 +52,13 @@ const Player = ({
   const currentParty = party.find((e) => e.userId !== currentUser?.userId);
 
   const { refresh } = useDataRefresh();
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(progress);
   const percentage = duration ? (current / duration) * 100 : 0;
 
-  useEffect(() => {
-    if (progress) {
-      setCurrent(progress);
-    }
-  }, [progress]);
-
+  // simulating a seek bar
   useInterval(() => {
     if (!duration) return null;
-    if (progress > duration) {
+    if (current > duration) {
       refresh();
     }
     setCurrent((prev) => prev + 1000);
@@ -115,6 +110,7 @@ const Player = ({
               )}
 
               <Image boxSize="22px" src={spotify_icon} />
+              <Button onClick={refresh}>Refresh</Button>
             </HStack>
           )}
         </Stack>
