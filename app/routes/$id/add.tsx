@@ -11,8 +11,15 @@ export const action: LoaderFunction = async ({ request, params }) => {
 
   const { spotify } = await spotifyApi(id);
   if (!spotify) return json('No access to spotify API', { status: 500 });
-  const res = await spotify.addToQueue(uri);
-  if (res.statusCode !== 204) return json("Couldn't add to queue", { status: res.statusCode });
+
+  try {
+    await spotify.addToQueue(uri);
+  } catch {
+    // @todo handle errors gracefully
+    // tell user when queue didn't work (can't queue when user isn't playing)
+    // if (res.statusCode !== 204) return json("Couldn't add to queue", { status: res.statusCode });
+    return null;
+  }
 
   return null;
 };
