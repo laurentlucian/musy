@@ -1,112 +1,143 @@
 import { prisma } from '~/services/db.server';
-import { Queue } from '~/services/scheduler/queue.server';
+import { Queue, registeredQueues } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 // - get all existing parties
-// - @todo delete related parties if owner has stopped
-// - delete unique party if listener has stopped
+// - delete related parties if owner has paused @todo only after 10 minutes of pause
+// - delete unique party if listener has paused
 // - get currentTrack of existing owners' party
 // - adds currentTrack to queue of listeners
 
 // @todo check all active parties and create ownerQ jobs if doesn't exist
-// in case of edge cases? what if ownerQ fails and doesn't readd itself to queue?
 
-export const listenerQ = Queue<{ userId: string; currentTrack: string }>(
-  'queue_track',
-  async (job) => {
-    console.log('listenerQ -> starting...');
-    const { userId, currentTrack } = job.data;
+// registeredQueues['queue_track']?.worker.on('completed', (job) => {
+//   console.log('listenerQ.on -> job complete', job.data);
+// });
+// registeredQueues['queue_track']?.worker.on('failed', (job) => {
+//   console.log('listenerQ.on -> job failed', job.data);
+// });
+// registeredQueues['update_track']?.worker.on('completed', (job) => {
+//   console.log('ownerQ.on -> job complete', job.data);
+// });
+// registeredQueues['update_track']?.worker.on('failed', (job) => {
+//   console.log('ownerQ.on -> job failed', job.data);
+// });
 
-    try {
-      const { spotify } = await spotifyApi(userId);
-      if (!spotify) {
-        console.log('listenerQ -> failed: spotify null');
-        return null;
-      }
-      const { body: playback } = await spotify.getMyCurrentPlaybackState();
-      if (!playback.is_playing) {
-        console.log('listenerQ -> listener has paused playback; removing from party');
-        await prisma.party.delete({ where: { userId } });
-        return null;
-      }
+export const listenerQ = Queue<{
+  userId: string;
+  currentTrack: string;
+  repeat: 'track' | 'context' | 'off';
+}>('queue_track', async (job) => {
+  console.log('listenerQ -> starting...');
+  const { userId, currentTrack, repeat } = job.data;
 
-      await spotify.addToQueue(currentTrack);
-      console.log('listenerQ -> success: added owner currentTrack to listener queue', currentTrack);
-    } catch {
-      console.log('listenerQ -> caught an error');
-      return null;
+  try {
+    const { spotify } = await spotifyApi(userId);
+    if (!spotify) {
+      console.log('listenerQ -> failed: spotify null');
+      throw 'spotifyApi null';
     }
-  },
-);
+    const { body: playback } = await spotify.getMyCurrentPlaybackState();
+    if (playback.repeat_state !== repeat) {
+      spotify.setRepeat(repeat);
+    }
+
+    if (!playback.is_playing) {
+      console.log('listenerQ -> listener has paused playback; removing from party');
+      await prisma.party.delete({ where: { userId } });
+      throw 'listener has paused playback; removing from party';
+    }
+
+    await spotify.addToQueue(currentTrack);
+    console.log('listenerQ -> success: added owner currentTrack to listener queue', currentTrack);
+    return null;
+  } catch {
+    console.log('listenerQ -> caught an error');
+    throw 'caught an error';
+  }
+});
 
 export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track', async (job) => {
-  console.log('OwnerQ update_track job starting...');
-  const { ownerId, userId } = job.data;
+  console.log('ownerQ update_track job starting...');
+  const { ownerId } = job.data;
 
   try {
     const parties = await prisma.party.findMany({ where: { ownerId: ownerId } });
     if (parties.length === 0) {
       console.log('ownerQ -> failed: no active parties');
-      return null;
+      const jobs = await ownerQ.getRepeatableJobs();
+      console.log('jobs', jobs);
+      await ownerQ.removeRepeatableByKey(jobs[0].key);
+      throw 'no active parties';
     }
 
     const { spotify } = await spotifyApi(ownerId);
     if (!spotify) {
       console.log('ownerQ -> no spotify API from owner');
-      return null;
+      throw 'ownerQ -> no spotify API from owner';
     }
 
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
+
     if (!playback.is_playing) {
       console.log('ownerQ -> failed: owner has paused playback');
-      return null;
+      await prisma.party.deleteMany({ where: { ownerId } });
+      const jobs = await ownerQ.getRepeatableJobs();
+      console.log('jobs', jobs);
+      await ownerQ.removeRepeatableByKey(jobs[0].key);
+      throw 'owner has paused playback -> deleted all parties by owner';
     }
 
-    const currentTrack = playback.item?.uri;
-    await prisma.party.updateMany({
-      where: { ownerId: ownerId },
-      data: {
-        currentTrack,
-      },
-    });
-    console.log('OwnerQ -> updated currentTrack', playback.item?.name);
-
-    listenerQ.addBulk(
-      parties.map((party) => ({
-        name: 'queue_track',
+    const currentTrack = playback.item?.uri ?? '';
+    // const percentage = playback.item?.duration_ms && playback?.progress_ms ? (playback.progress_ms / playback.item.duration_ms) * 100 : 0;
+    if (currentTrack !== parties[0].currentTrack) {
+      await prisma.party.updateMany({
+        where: { ownerId: ownerId },
         data: {
-          currentTrack: party.currentTrack,
-          userId: party.userId,
+          currentTrack,
         },
-      })),
-    );
-    console.log('OwnerQ -> added all listeners jobs');
+      });
+      console.log('ownerQ -> old uri - new uri', currentTrack, parties[0].currentTrack);
+      console.log('ownerQ -> updated currentTrack', playback.item?.name);
 
-    if (!playback.item) {
-      console.log('ownerQ -> failed: no duration_ms');
-      return null;
+      listenerQ.addBulk(
+        parties.map((party) => ({
+          name: 'queue_track',
+          data: {
+            currentTrack: currentTrack,
+            userId: party.userId,
+            repeat: playback.repeat_state,
+          },
+        })),
+      );
+      console.log('ownerQ -> added all listeners jobs');
+    } else {
+      console.log('ownerQ -> currentTrack is the same');
     }
 
-    // @todo handle owner skipping songs
-    const res = await ownerQ.add(
-      'update_track',
-      {
-        ownerId,
-        userId,
-      },
-      // would it ignore new job if jobId is the same as the one calling it?
-      {
-        delay: playback.item.duration_ms,
-        jobId: ownerId,
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
-
-    console.log('OwnerQ -> next update_track job with', playback.item.duration_ms, 'ms delay', res);
     return null;
   } catch {
-    console.log('ownerQ -> caught an error!');
-    return null;
+    console.log('ownerQ -> caught an error');
+    throw 'ownerQ -> caught an error!';
   }
 });
+
+const startUp = async () => {
+  console.log('startUp -> starting...');
+  const parties = await prisma.party.findMany();
+  console.log('startUp -> parties..', parties);
+  console.log('startUp -> queues..', await registeredQueues['update_track']?.queue.getJobCounts());
+
+  ownerQ.addBulk(
+    parties.map((party) => ({
+      name: 'queue_track',
+      data: {
+        ownerId: party.ownerId,
+        userId: party.userId,
+      },
+    })),
+  );
+  console.log('startUp -> done');
+};
+
+// startUp();
