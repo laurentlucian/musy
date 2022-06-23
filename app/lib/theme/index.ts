@@ -10,7 +10,7 @@ export const theme = extendTheme({
   config: {
     useSystemColorMode: false,
     initialColorMode: 'dark',
-    prefix: 'musy',
+    cssVarPrefix: 'musy',
   },
   fonts: {
     body: 'Montserrat, Poppins, Roboto Mono, sans-serif',

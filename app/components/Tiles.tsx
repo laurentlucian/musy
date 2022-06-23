@@ -6,7 +6,14 @@ const Tiles = ({ children }: { children: ReactNode }) => {
   const { scrollRef, props } = useHorizontalScroll('reverse');
 
   return (
-    <HStack ref={scrollRef} className="scrollbar" overflow="auto" align="flex-start" {...props}>
+    <HStack
+      ref={scrollRef}
+      className="scrollbar"
+      overflow="auto"
+      align="flex-start"
+      pb={2}
+      {...props}
+    >
       {children}
     </HStack>
   );

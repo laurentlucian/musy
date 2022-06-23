@@ -1,32 +1,20 @@
 import { json, redirect } from '@remix-run/node';
-import {
-  Form,
-  Link,
-  useFetcher,
-  useLoaderData,
-  useParams,
-  useSubmit,
-  useTransition,
-} from '@remix-run/react';
+import { Form, Link, useLoaderData, useParams, useSubmit, useTransition } from '@remix-run/react';
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
 import {
-  Button,
   Flex,
   HStack,
-  Icon,
   IconButton,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
   Spinner,
   Stack,
-  Text,
-  VStack,
 } from '@chakra-ui/react';
-import { Back, Verify } from 'iconsax-react';
+import { Back } from 'iconsax-react';
 
 import { spotifyApi } from '~/services/spotify.server';
+import SearchItem from '~/components/SearchItem';
 
 const Search = () => {
   const response = useLoaderData<SpotifyApi.TrackSearchResponse | null>();
@@ -55,8 +43,7 @@ const Search = () => {
               placeholder="nectar, kendrick lamar, etc"
               onChange={(e) => submit(e.currentTarget.form)}
               fontSize="15px"
-
-              // w="287.87px"
+              w="287.87px"
             />
             {isLoading && <InputRightElement h="30px" children={<Spinner size="xs" />} />}
           </InputGroup>
@@ -107,48 +94,3 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default Search;
-
-type SearchItemType = {
-  uri: string;
-  name: string;
-  image: string;
-  artist: string;
-};
-
-export const SearchItem = ({ uri, name, image, artist }: SearchItemType) => {
-  const fetcher = useFetcher();
-
-  const isAdding = fetcher.submission?.formData.get('track') === uri;
-  const isDone = fetcher.type === 'done';
-
-  return (
-    // https://remix.run/docs/en/v1.5.1/api/remix#fetcherform
-    <Flex as={fetcher.Form} replace method="post">
-      <Input type="hidden" name="track" value={uri} />
-      <Button
-        type="submit"
-        aria-label="queue"
-        variant="ghost"
-        justifyContent="start"
-        h="auto"
-        w="100%"
-        p={0}
-        _hover={{ bg: 'none' }}
-      >
-        <HStack justify="start">
-          <Image src={image} w="50px" alt="track-cover" />
-          <VStack align="start">
-            <Text fontSize="13px" textAlign="left" noOfLines={1} whiteSpace="normal">
-              {name}
-            </Text>
-            <Text fontSize="13px" noOfLines={1} whiteSpace="normal">
-              {artist}
-            </Text>
-          </VStack>
-        </HStack>
-        {isAdding && <Spinner ml="auto" mr={2} />}
-        {isDone && <Icon ml="auto" textAlign="right" boxSize="25px" as={Verify} mr={2} />}
-      </Button>
-    </Flex>
-  );
-};
