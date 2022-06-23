@@ -18,7 +18,7 @@ import { Stop } from 'iconsax-react';
 import listen_width from '~/assets/listen-with.svg';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 
 type PlayerType = {
@@ -49,7 +49,7 @@ const Player = ({
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
-  const currentParty = party.find((e) => e.userId !== currentUser?.userId);
+  const currentParty = party.find((e) => e.userId === currentUser?.userId);
 
   const { refresh } = useDataRefresh();
   const [current, setCurrent] = useState(progress);
@@ -110,7 +110,6 @@ const Player = ({
               )}
 
               <Image boxSize="22px" src={spotify_icon} />
-              <Button onClick={refresh}>Refresh</Button>
             </HStack>
           )}
         </Stack>
