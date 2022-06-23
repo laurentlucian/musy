@@ -18,7 +18,7 @@ import { Stop } from 'iconsax-react';
 import listen_width from '~/assets/listen-with.svg';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 
 type PlayerType = {
@@ -52,8 +52,13 @@ const Player = ({
   const currentParty = party.find((e) => e.userId === currentUser?.userId);
 
   const { refresh } = useDataRefresh();
-  const [current, setCurrent] = useState(progress);
+  const [current, setCurrent] = useState(0);
   const percentage = duration ? (current / duration) * 100 : 0;
+
+  // reset progress on new song
+  useEffect(() => {
+    setCurrent(progress);
+  }, [progress]);
 
   // simulating a seek bar
   useInterval(() => {
