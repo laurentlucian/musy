@@ -21,7 +21,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (!session || !session.user || !session.user.name || !session.user.image) {
     console.log('Party join failed -> no authentication');
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
   const userId = session.user.id;
 
@@ -33,20 +33,20 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
 
     // party with both users already exists, refresh page?
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
 
   const { spotify: owner_spotify } = await spotifyApi(ownerId);
   if (!owner_spotify) {
     console.log('Party join failed -> no spotify API');
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
 
   const { body: playback } = await owner_spotify.getMyCurrentPlaybackState();
   const currentTrack = playback.item?.uri;
   if (!currentTrack) {
     console.log('Party join failed -> no currentTrack found');
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
   await prisma.user.update({
     where: { id: ownerId },
@@ -64,27 +64,23 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const { spotify: listener_spotify } = await spotifyApi(userId);
   await listener_spotify?.play({ uris: [currentTrack] });
-  console.log('Joined party');
-
-  const ownerJob = await ownerQ.getJob(ownerId);
-  if (ownerJob) {
-    // BullMQ automatically ignores new jobs with same id but checking here anyway for now
-    console.log('OwnerQ -> ownerJob already in scheduler');
-    return redirect(request.url);
-  }
+  console.log('Party join -> played song');
 
   if (playback?.progress_ms && playback.item?.duration_ms) {
-    const timeLeftMs = playback.item?.duration_ms - playback?.progress_ms;
     await ownerQ.add(
       'update_track',
       {
         ownerId,
         userId,
       },
-      { jobId: ownerId, delay: timeLeftMs, removeOnComplete: true, removeOnFail: true },
+      {
+        repeat: {
+          every: 30000,
+        },
+      },
     );
-    console.log('ownerQ -> add ownerJob with', timeLeftMs, 'ms delay');
   }
+  console.log('Party join -> add ownerQ update_track');
 
-  return redirect(request.url);
+  return redirect('/' + ownerId);
 };

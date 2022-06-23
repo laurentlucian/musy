@@ -6,6 +6,7 @@ import type { User } from 'remix-auth-spotify';
 export default function Nav({ user }: { user: User | null }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
+  const busy = transition.submission?.formData.has('logout') ?? false;
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
@@ -25,9 +26,10 @@ export default function Nav({ user }: { user: User | null }) {
         {user && (
           <Form action={'/logout'} method="post">
             <IconButton
-              aria-label="Logout"
+              aria-label="logout"
+              name="logout"
               icon={<Logout />}
-              isLoading={transition.state === 'submitting'}
+              isLoading={busy}
               variant="ghost"
               cursor="pointer"
               type="submit"

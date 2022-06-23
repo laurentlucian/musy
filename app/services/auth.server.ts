@@ -67,9 +67,9 @@ export const getCurrentUser = async (request: Request) => {
   const session = await spotifyStrategy.getSession(request);
   if (!session || !session.user) return null;
   const id = session.user?.id;
-  let user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
-  if (!user) return null;
-  return user;
+  let data = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  if (!data) return null;
+  return data.user;
 };
 
 export const getAllUsers = async () => {

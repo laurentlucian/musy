@@ -38,15 +38,15 @@ const Profile = () => {
     user: ProfileType | null;
     playback: SpotifyApi.CurrentPlaybackResponse | null;
     recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
-    currentUser: ProfileType | null;
+    currentUser: null;
     party: Party[];
   }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useTransition();
+  const busy = transition.submission?.formData.has('spotify') ?? false;
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
-
   const search = searchParams.get('spotify');
   // remove Outlet instantly, before new "empty search" completes
   const [isSearching, setisSearching] = useState(search ? true : false);
@@ -124,8 +124,8 @@ const Profile = () => {
                     justifyContent="end"
                     children={
                       <>
-                        {transition.state === 'submitting' && <Spinner size="xs" mr={5} />}
-                        {transition.state === 'loading' && <Spinner size="xs" mr={5} />}
+                        {busy && <Spinner size="xs" mr={5} />}
+                        {/* {transition.state === 'loading' && <Spinner size="xs" mr={5} />} */}
                         {isSearching && (
                           <CloseSquare
                             onClick={() => {

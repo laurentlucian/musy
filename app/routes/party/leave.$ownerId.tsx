@@ -14,7 +14,7 @@ export const action: LoaderFunction = async ({ request, params }) => {
 
   if (!session || !session.user) {
     console.log('Leave failed -> no authentication');
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
 
   const userId = session.user.id;
@@ -23,12 +23,12 @@ export const action: LoaderFunction = async ({ request, params }) => {
   // shouldn't be here if not in party
   if (!party) {
     console.log('Leave failed -> not in a party');
-    return redirect(request.url);
+    return redirect('/' + ownerId);
   }
   await prisma.party.delete({ where: { userId } });
 
   console.log('Left party');
-  return redirect(request.url);
+  return redirect('/' + ownerId);
 };
 
 export const loader: LoaderFunction = () => {

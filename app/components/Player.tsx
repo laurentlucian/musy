@@ -1,7 +1,6 @@
 import {
   Avatar,
   AvatarGroup,
-  Button,
   Flex,
   HStack,
   IconButton,
@@ -14,8 +13,7 @@ import {
 } from '@chakra-ui/react';
 import type { Party, Profile } from '@prisma/client';
 import { Form } from '@remix-run/react';
-import { Stop } from 'iconsax-react';
-import listen_width from '~/assets/listen-with.svg';
+import { LoginCurve, LogoutCurve } from 'iconsax-react';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
 import { useEffect, useState } from 'react';
@@ -49,18 +47,18 @@ const Player = ({
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
-  const currentParty = party.find((e) => e.userId === currentUser?.userId);
+  const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
 
   const { refresh } = useDataRefresh();
   const [current, setCurrent] = useState(0);
   const percentage = duration ? (current / duration) * 100 : 0;
 
-  // reset progress on new song
+  // reset seek bar on new song
   useEffect(() => {
     setCurrent(progress);
   }, [progress]);
 
-  // simulating a seek bar
+  // simulating a seek bar tick
   useInterval(() => {
     if (!duration) return null;
     if (current > duration) {
@@ -83,26 +81,34 @@ const Player = ({
             </Text>
           </Flex>
 
-          {/* letting owner join own party for testing */}
           {active && (
             <HStack>
-              {currentUser && (
+              {/* letting owner join own party for testing */}
+              {/* {currentUser && ( */}
+              {currentUser?.userId !== id && (
                 <Form
-                  action={currentParty ? `/party/leave/${id}` : `/party/join/${id}`}
+                  action={isUserInParty ? `/party/leave/${id}` : `/party/join/${id}`}
                   method="post"
                 >
-                  {currentParty ? (
+                  {isUserInParty ? (
                     <IconButton
                       aria-label="Leave"
-                      icon={<Stop size="24px" />}
+                      icon={<LogoutCurve size="24px" />}
                       variant="ghost"
                       type="submit"
                       cursor="pointer"
                     />
                   ) : (
-                    <Button px={0} variant="ghost" type="submit">
-                      <Image boxSize="24px" src={listen_width} />
-                    </Button>
+                    <IconButton
+                      aria-label="Leave"
+                      icon={<LoginCurve size="24px" />}
+                      variant="ghost"
+                      type="submit"
+                      cursor="pointer"
+                    />
+                    // <Button px={0} variant="ghost" type="submit">
+                    //   <Image boxSize="24px" src={listen_width} />
+                    // </Button>
                   )}
                 </Form>
               )}
