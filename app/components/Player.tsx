@@ -64,31 +64,36 @@ const Player = ({
           </Flex>
 
           {/* letting owner join own party for testing */}
-          {currentUser && active && (
+          {active && (
             <HStack>
-              <Form
-                action={currentParty ? `/party/leave/${id}` : `/party/join/${id}`}
-                method="post"
-              >
-                {currentParty ? (
-                  <IconButton
-                    aria-label="Leave"
-                    icon={<Stop size="24px" />}
-                    variant="ghost"
-                    type="submit"
-                    cursor="pointer"
-                  />
-                ) : (
-                  <Button px={0} variant="ghost" type="submit">
-                    <Image boxSize="24px" src={listen_width} />
-                  </Button>
-                )}
-              </Form>
-              <AvatarGroup size="xs" spacing={-2} max={5}>
-                {party.map((v) => {
-                  return <Avatar key={v.userId} name={v.userName} src={v.userImage} />;
-                })}
-              </AvatarGroup>
+              {currentUser && (
+                <Form
+                  action={currentParty ? `/party/leave/${id}` : `/party/join/${id}`}
+                  method="post"
+                >
+                  {currentParty ? (
+                    <IconButton
+                      aria-label="Leave"
+                      icon={<Stop size="24px" />}
+                      variant="ghost"
+                      type="submit"
+                      cursor="pointer"
+                    />
+                  ) : (
+                    <Button px={0} variant="ghost" type="submit">
+                      <Image boxSize="24px" src={listen_width} />
+                    </Button>
+                  )}
+                </Form>
+              )}
+              {party.length && (
+                <AvatarGroup size="xs" spacing={-2} max={5}>
+                  {party.map((v) => {
+                    return <Avatar key={v.userId} name={v.userName} src={v.userImage} />;
+                  })}
+                </AvatarGroup>
+              )}
+
               <Image boxSize="22px" src={spotify_icon} />
             </HStack>
           )}
