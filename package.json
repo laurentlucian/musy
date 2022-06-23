@@ -1,5 +1,5 @@
 {
-  "name": "remix-template",
+  "name": "musy",
   "private": true,
   "description": "",
   "license": "",
@@ -8,7 +8,7 @@
     "build:remix": "remix build",
     "build": "remix build",
     "start": "remix-serve build",
-    "dev": "prisma generate && remix dev",
+    "dev": "prisma generate && prisma migrate dev && remix dev",
     "deploy": "fly deploy --remote-only"
   },
   "dependencies": {
