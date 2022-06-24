@@ -7,7 +7,7 @@ if (!sessionSecret) {
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
-    name: '_sessionify',
+    name: '_musy-session',
     sameSite: 'lax',
     path: '/',
     httpOnly: true,
