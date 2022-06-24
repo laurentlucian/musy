@@ -50,8 +50,10 @@ const Profile = () => {
   const search = searchParams.get('spotify');
   // remove Outlet instantly, before new "empty search" completes
   const [isSearching, setisSearching] = useState(search ? true : false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [isQueueing, setIsQueueing] = useState(false);
+  const [isRecommending, setIsRecommending] = useState(false);
 
+  const formRef = useRef<HTMLFormElement>(null);
   return (
     <Stack spacing={4}>
       {user ? (
@@ -100,25 +102,95 @@ const Profile = () => {
             <Form ref={formRef} method="get" action="search">
               <Flex flex={1}>
                 <InputGroup>
-                  <Input
-                    name="spotify"
-                    h="35px"
-                    defaultValue={search ?? ''}
-                    placeholder="Add to queue"
-                    autoComplete="off"
-                    borderRadius={3}
-                    onChange={(e) => {
-                      if (e.currentTarget.value.trim()) {
-                        submit(e.currentTarget.form);
-                        setisSearching(true);
-                      } else {
-                        setisSearching(false);
-                        searchParams.delete('spotify');
-                        setSearchParams(searchParams);
-                      }
-                    }}
-                    fontSize="15px"
-                  />
+                  {(!isQueueing && !isRecommending) && (
+                    <>
+                      <Input
+                        autoComplete="off"
+                        borderRadius={0}
+                        border="none"
+                        outline="none"
+                        // borderBottom="solid 1px black"
+                        focusBorderColor="none"
+                        onClick={() => setIsQueueing(true)}
+                        placeholder="queue +"
+                        textAlign="left"
+                        cursor="pointer"
+                        w={['120px']}
+                        h="35px"
+                        fontSize="15px"
+                        mr={'-40px'}
+                      />
+                      <Input
+                        autoComplete="off"
+                        borderRadius={0}
+                        border="none"
+                        outline="none"
+                        // borderBottom="solid 1px black"
+                        focusBorderColor="none"
+                        onClick={() => setIsRecommending(true)}
+                        placeholder="/     recommend +"
+                        textAlign="left"
+                        cursor="pointer"
+                        w="fit-content"
+                        h="35px"
+                        fontSize="15px"
+                      />
+                    </>
+                  )}
+                  {isQueueing && (
+                    <Input
+                      name="spotify"
+                      h="35px"
+                      defaultValue={search ?? ''}
+                      placeholder="add to queue"
+                      autoComplete="off"
+                      borderRadius={0}
+                      border="none"
+                      outline="none"
+                      borderBottom="solid 1px black"
+                      focusBorderColor="none"
+                      onBlur={() => setIsQueueing(false)}
+                      autoFocus
+                      onChange={(e) => {
+                        if (e.currentTarget.value.trim()) {
+                          submit(e.currentTarget.form);
+                          setisSearching(true);
+                        } else {
+                          setisSearching(false);
+                          searchParams.delete('spotify');
+                          setSearchParams(searchParams);
+                        }
+                      }}
+                      fontSize="15px"
+                    />
+                  )}
+                  {isRecommending && (
+                    <Input
+                      name="spotify"
+                      h="35px"
+                      defaultValue={search ?? ''}
+                      placeholder="recommend a song"
+                      autoComplete="off"
+                      borderRadius={0}
+                      border="none"
+                      outline="none"
+                      borderBottom="solid 1px black"
+                      focusBorderColor="none"
+                      onBlur={() => setIsRecommending(false)}
+                      autoFocus
+                      onChange={(e) => {
+                        if (e.currentTarget.value.trim()) {
+                          submit(e.currentTarget.form);
+                          setisSearching(true);
+                        } else {
+                          setisSearching(false);
+                          searchParams.delete('spotify');
+                          setSearchParams(searchParams);
+                        }
+                      }}
+                      fontSize="15px"
+                    />
+                  )}
                   <InputRightElement
                     h="35px"
                     w="65px"
