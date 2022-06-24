@@ -1,12 +1,19 @@
-import { Flex, Heading, HStack, IconButton, useColorMode } from '@chakra-ui/react';
-import { Form, Link, useTransition } from '@remix-run/react';
-import { Logout, Moon, Sun1 } from 'iconsax-react';
+import { Flex, Heading, HStack, IconButton, Input, useColorMode } from '@chakra-ui/react';
+import { Form, Link, useLocation, useTransition } from '@remix-run/react';
+import { Login, Logout, Moon, Sun1 } from 'iconsax-react';
 import type { User } from 'remix-auth-spotify';
 
-export default function Nav({ user }: { user: User | null }) {
+const Nav = ({ user }: { user: User | null }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
-  const busy = transition.submission?.formData.has('logout') ?? false;
+  const location = useLocation();
+  const busy =
+    (transition.submission?.formData.has('logout') ||
+      transition.submission?.formData.has('login')) ??
+    false;
+  // don't display login button on Index page (where there's a join button)
+  // both shows loading same if join is cliced (@todo separate loading states)
+  const showAuth = user ? true : location.pathname === '/' ? false : true;
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
@@ -23,12 +30,14 @@ export default function Nav({ user }: { user: User | null }) {
           onClick={toggleColorMode}
           cursor="pointer"
         />
-        {user && (
-          <Form action={'/logout'} method="post">
+
+        {showAuth && (
+          <Form action={user ? '/logout' : '/auth/spotify'} method="post">
+            {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
             <IconButton
-              aria-label="logout"
-              name="logout"
-              icon={<Logout />}
+              aria-label={user ? 'logout' : 'login'}
+              name={user ? 'logout' : 'login'}
+              icon={user ? <Logout /> : <Login />}
               isLoading={busy}
               variant="ghost"
               cursor="pointer"
@@ -39,4 +48,6 @@ export default function Nav({ user }: { user: User | null }) {
       </HStack>
     </Flex>
   );
-}
+};
+
+export default Nav;
