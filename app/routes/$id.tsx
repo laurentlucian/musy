@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-  Box,
   Heading,
   HStack,
   Stack,
@@ -15,12 +14,12 @@ import {
 import {
   Form,
   Outlet,
+  useCatch,
   useLoaderData,
   useSearchParams,
   useSubmit,
   useTransition,
 } from '@remix-run/react';
-import { CloseSquare } from 'iconsax-react';
 import { redirect } from '@remix-run/node';
 import type { LoaderFunction } from '@remix-run/node';
 import type { Party, Profile as ProfileType, Queue } from '@prisma/client';
@@ -32,16 +31,22 @@ import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
+import { CloseSquare } from 'iconsax-react';
+
+type ProfileComponent = {
+  user: ProfileType | null;
+  playback: SpotifyApi.CurrentPlaybackResponse | null;
+  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
+  liked: SpotifyApi.UsersSavedTracksResponse | null;
+  top: SpotifyApi.UsersTopTracksResponse | null;
+  currentUser: null;
+  party: Party[];
+  queue: Queue[];
+};
 
 const Profile = () => {
-  const { user, playback, recent, currentUser, party, queue } = useLoaderData<{
-    user: ProfileType | null;
-    playback: SpotifyApi.CurrentPlaybackResponse | null;
-    recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
-    currentUser: null;
-    party: Party[];
-    queue: Queue[];
-  }>();
+  const { user, playback, recent, currentUser, party, liked, top, queue } =
+    useLoaderData<ProfileComponent>();
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useTransition();
@@ -57,10 +62,10 @@ const Profile = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Stack spacing={4}>
+    <Stack spacing={5} pb={5}>
       {user ? (
         <>
-          <Stack spacing={7}>
+          <Stack spacing={3}>
             <HStack>
               <Image borderRadius={50} boxSize={93} src={user.image} />
               <Heading size="lg" fontWeight="bold">
@@ -202,21 +207,84 @@ const Profile = () => {
                     justifyContent="end"
                     children={
                       <>
-                        {busy && <Spinner size="xs" mr={5} />}
-                        {/* {transition.state === 'loading' && <Spinner size="xs" mr={5} />} */}
-                        {isSearching && (
-                          <CloseSquare
-                            onClick={() => {
-                              setisSearching(false);
-                              searchParams.delete('spotify');
-                              setSearchParams(searchParams);
-                              formRef?.current?.reset();
-                            }}
-                          />
-                        )}
+                        <Input
+                          autoComplete="off"
+                          borderRadius={0}
+                          border="none"
+                          outline="none"
+                          // borderBottom="solid 1px black"
+                          focusBorderColor="none"
+                          onClick={() => setIsQueueing(true)}
+                          placeholder="queue +"
+                          textAlign="left"
+                          cursor="pointer"
+                          w={['120px']}
+                          h="35px"
+                          fontSize="15px"
+                          mr={'-40px'}
+                        />
+                        <Input
+                          autoComplete="off"
+                          borderRadius={0}
+                          border="none"
+                          outline="none"
+                          // borderBottom="solid 1px black"
+                          focusBorderColor="none"
+                          onClick={() => setIsRecommending(true)}
+                          placeholder="/     recommend +"
+                          textAlign="left"
+                          cursor="pointer"
+                          w="fit-content"
+                          h="35px"
+                          fontSize="15px"
+                        />
                       </>
                     }
                   />
+                                      {/* <Input
+                      name="spotify"
+                      h="35px"
+                      defaultValue={search ?? ''}
+                      placeholder="Add to queue"
+                      autoComplete="off"
+                      borderRadius={3}
+                      onChange={(e) => {
+                        if (e.currentTarget.value.trim()) {
+                          submit(e.currentTarget.form);
+                          setisSearching(true);
+                        } else {
+                          setisSearching(false);
+                          // @todo-fix causes page to refresh and scrolls back to top
+                          // searchParams.delete('spotify');
+                          // setSearchParams(searchParams);
+                        }
+                      }}
+                      fontSize="15px"
+                    />
+                    <InputRightElement
+                      h="35px"
+                      w="65px"
+                      pr={2}
+                      justifyContent="end"
+                      children={
+                        <>
+                          {busy && <Spinner size="xs" mr={2} />}
+                          {isSearching && (
+                            <CloseSquare
+                              onClick={() => {
+                                setisSearching(false);
+                                // @todo-fix causes page to refresh and scrolls back to top
+                                searchParams.delete('spotify');
+                                setSearchParams(searchParams);
+
+                                // trying to empty input field without controlling through state (not working)
+                                formRef?.current?.reset();
+                              }}
+                            />
+                          )}
+                        </>
+                      }
+                    /> */}
                 </InputGroup>
               </Flex>
             </Form>
@@ -275,6 +343,64 @@ const Profile = () => {
               })}
             </Tiles>
           </Stack>
+          {recent && (
+            <Stack spacing={5}>
+              <Heading fontSize={['md', 'lg']}>Recently played</Heading>
+              <Tiles>
+                {recent?.items.map(({ track, played_at }) => {
+                  return (
+                    <Tile
+                      // in case song is on repeat
+                      key={played_at}
+                      uri={track.uri}
+                      image={track.album.images[1].url}
+                      name={track.name}
+                      artist={track.album.artists[0].name}
+                      explicit={track.explicit}
+                    />
+                  );
+                })}
+              </Tiles>
+            </Stack>
+          )}
+          {liked && (
+            <Stack spacing={5}>
+              <Heading fontSize={['md', 'lg']}>Recently liked</Heading>
+              <Tiles>
+                {liked.items.map(({ track }) => {
+                  return (
+                    <Tile
+                      key={track.id}
+                      uri={track.uri}
+                      image={track.album.images[1].url}
+                      name={track.name}
+                      artist={track.album.artists[0].name}
+                      explicit={track.explicit}
+                    />
+                  );
+                })}
+              </Tiles>
+            </Stack>
+          )}
+          {top && (
+            <Stack spacing={5}>
+              <Heading fontSize={['md', 'lg']}>Top</Heading>
+              <Tiles>
+                {top.items.map((track) => {
+                  return (
+                    <Tile
+                      key={track.id}
+                      uri={track.uri}
+                      image={track.album.images[1].url}
+                      name={track.name}
+                      artist={track.album.artists[0].name}
+                      explicit={track.explicit}
+                    />
+                  );
+                })}
+              </Tiles>
+            </Stack>
+          )}
         </>
       ) : (
         <Stack>
@@ -291,37 +417,68 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!id) throw redirect('/');
   const { spotify, user } = await spotifyApi(id);
 
-  if (!spotify) return { user: null, playback: null, recent: null, party: null, currentUser: null };
+  if (!spotify)
+    return {
+      user: null,
+      playback: null,
+      recent: null,
+      party: null,
+      currentUser: null,
+      liked: null,
+      top: null,
+    };
 
   const queue = await prisma.queue.findMany();
   const party = await prisma.party.findMany({ where: { ownerId: id } });
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
-
+  const { body: liked } = await spotify.getMySavedTracks();
   const currentUser = await getCurrentUser(request);
 
-  return { user, playback, recent, party, queue, currentUser };
+  try {
+    const { body: top } = await spotify.getMyTopTracks();
+    return { user, playback, recent, party, currentUser, liked, top, queue };
+  } catch {
+    // will catch error if existingUser doesn't have required scopes in spotify authorization
+    // user needs to reauthenticate
+    return { user, playback, recent, party, currentUser, liked, queue, top: null };
+  }
 };
 
 export default Profile;
 
-export const CatchBoundary = () => {
+export const ErrorBoundary = (error: { error: Error }) => {
+  console.log('error', error);
   return (
-    <Box>
-      <Heading as="h2">I caught some condition</Heading>
-    </Box>
+    <>
+      <Heading fontSize={['xl', 'xxl']}>401</Heading>
+      {/* error message useless (might be because of spotify stragegy) */}
+      {/* <Text fontSize="md">Trace(for debug): {error.message} </Text> */}
+    </>
   );
 };
 
-export const ErrorBoundary = ({ error }: any) => {
+export const CatchBoundary = () => {
+  let caught = useCatch();
+  let message;
+  switch (caught.status) {
+    case 401:
+      message = <Text>Oops, you shouldn't be here (No access)</Text>;
+      break;
+    case 404:
+      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      break;
+
+    default:
+      throw new Error(caught.data || caught.statusText);
+  }
+
   return (
-    <Box bg="red.400" px={4} py={2}>
-      <Heading as="h3" size="lg" color="white">
-        Something is really wrong!{' >:('}
+    <>
+      <Heading fontSize={['xl', 'xxl']}>
+        {caught.status}: {caught.statusText}
       </Heading>
-      <Box color="white" fontSize={22}>
-        {error.message}
-      </Box>
-    </Box>
+      <Text fontSize="md">{message}</Text>
+    </>
   );
 };

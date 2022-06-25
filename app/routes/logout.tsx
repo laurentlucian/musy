@@ -4,7 +4,10 @@ import { json, redirect } from '@remix-run/node';
 import { destroySession, getSession } from '~/services/session.server';
 
 export const action: ActionFunction = async ({ request }) => {
-  return redirect('/', {
+  const body = await request.formData();
+  const redirectTo = (body.get('redirectTo') as string) ?? '/';
+
+  return redirect(redirectTo, {
     headers: {
       'Set-Cookie': await destroySession(await getSession(request.headers.get('cookie'))),
     },

@@ -89,9 +89,9 @@ const Player = ({
 
           {active && (
             <HStack>
-              {/* letting owner join own party for testing */}
+              {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
-              {currentUser?.userId !== id && (
+              {currentUser && currentUser.userId !== id && (
                 <Form
                   action={isUserInParty ? `/party/leave/${id}` : `/party/join/${id}`}
                   method="post"

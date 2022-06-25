@@ -10,11 +10,14 @@ import {
 } from '@remix-run/react';
 import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node';
 import { Heading, ChakraProvider, Text } from '@chakra-ui/react';
+import { withEmotionCache } from '@emotion/react';
 import type { Session } from 'remix-auth-spotify';
 
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
+import { ServerStyleContext, ClientStyleContext } from '~/lib/emotion/context';
 import { spotifyStrategy } from '~/services/auth.server';
+import { useContext, useEffect } from 'react';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);
@@ -37,7 +40,7 @@ const App = () => {
 export const ErrorBoundary = ({ error }: { error: Error }) => {
   console.error(error);
   return (
-    <Document title="Error">
+    <Document>
       <ChakraProvider theme={theme}>
         <Layout user={null}>
           <Heading fontSize={['xl', 'xxl']}>Oops, unhandled error</Heading>
@@ -64,7 +67,7 @@ export const CatchBoundary = () => {
   }
 
   return (
-    <Document title={`${caught.status} ${caught.statusText}`}>
+    <Document>
       <ChakraProvider theme={theme}>
         <Layout user={null}>
           <Heading fontSize={['xl', 'xxl']}>
@@ -77,6 +80,10 @@ export const CatchBoundary = () => {
   );
 };
 
+interface DocumentProps {
+  children: React.ReactNode;
+}
+
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Musy',
@@ -88,39 +95,59 @@ export let links: LinksFunction = () => {
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstaticom' },
     {
-      as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap',
     },
     {
-      as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap',
     },
     {
-      as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
     },
   ];
 };
 
-const Document = ({ children, title = 'Musy' }: { children: React.ReactNode; title?: string }) => {
+const Document = withEmotionCache(({ children }: DocumentProps, emotionCache) => {
+  const serverSyleData = useContext(ServerStyleContext);
+  const clientStyleData = useContext(ClientStyleContext);
+
+  // Only executed on client
+  useEffect(() => {
+    // re-link sheet container
+    emotionCache.sheet.container = document.head;
+    // re-inject tags
+    const tags = emotionCache.sheet.tags;
+    emotionCache.sheet.flush();
+    tags.forEach((tag) => {
+      (emotionCache.sheet as any)._insertTag(tag);
+    });
+    // reset cache to reapply global styles
+    clientStyleData?.reset();
+  }, []);
+
   return (
     <html lang="en">
       <head>
         <Meta />
-        <title>{title}</title>
         <Links />
+        {serverSyleData?.map(({ key, ids, css }) => (
+          <style
+            key={key}
+            data-emotion={`${key} ${ids.join(' ')}`}
+            dangerouslySetInnerHTML={{ __html: css }}
+          />
+        ))}
       </head>
       <body>
         {children}
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
+        {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
       </body>
     </html>
   );
-};
+});
 
 export default App;

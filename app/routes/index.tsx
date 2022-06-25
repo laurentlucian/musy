@@ -1,7 +1,8 @@
-import { Box, Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Button, Heading, HStack, Image, Input, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { Form, Link, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, Link, Outlet, useCatch, useLoaderData, useTransition } from '@remix-run/react';
+import Layout from '~/components/Layout';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
 
@@ -36,6 +37,7 @@ const Index = () => {
       })}
       {!user && (
         <Form action={'/auth/spotify'} method="post">
+          <Input type="hidden" value="/" name="redirectTo" />
           <Button isLoading={transition.state === 'submitting'} type="submit">
             Join
           </Button>
@@ -48,7 +50,7 @@ const Index = () => {
 export const loader: LoaderFunction = async ({ request }) => {
   const users = await getAllUsers();
   // getSession() is supposed to refreshToken when expired but isn't
-  // it's okay for now because we only need it once from authentication
+  // it's okay for now because we only need it once from registration
   const session = await spotifyStrategy.getSession(request);
 
   return { users, user: session?.user };
@@ -56,23 +58,37 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default Index;
 
-export const CatchBoundary = () => {
+export const ErrorBoundary = ({ error }: { error: Error }) => {
+  console.error(error);
   return (
-    <Box>
-      <Heading as="h2">I caught some condition</Heading>
-    </Box>
+    <Layout user={null}>
+      <Heading fontSize={['xl', 'xxl']}>Oops, unhandled error</Heading>
+      <Text fontSize="md">Trace(for debug): {error.message}</Text>
+    </Layout>
   );
 };
 
-export const ErrorBoundary = ({ error }: any) => {
+export const CatchBoundary = () => {
+  let caught = useCatch();
+  let message;
+  switch (caught.status) {
+    case 401:
+      message = <Text>Oops, you shouldn't be here (No access)</Text>;
+      break;
+    case 404:
+      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      break;
+
+    default:
+      throw new Error(caught.data || caught.statusText);
+  }
+
   return (
-    <Box bg="red.400" px={4} py={2}>
-      <Heading as="h3" size="lg" color="white">
-        Something is really wrong!
+    <Layout user={null}>
+      <Heading fontSize={['xl', 'xxl']}>
+        {caught.status}: {caught.statusText}
       </Heading>
-      <Box color="white" fontSize={22}>
-        {error.message}
-      </Box>
-    </Box>
+      <Text fontSize="md">{message}</Text>
+    </Layout>
   );
 };
