@@ -5,7 +5,6 @@ import type { LoaderFunction } from '@remix-run/node';
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
-// import explicit from '~/assets/explicit-solid.svg';
 
 const Search = () => {
   const response = useLoaderData<SpotifyApi.TrackSearchResponse | null>();

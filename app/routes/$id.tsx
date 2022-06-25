@@ -23,7 +23,7 @@ import {
 import { CloseSquare } from 'iconsax-react';
 import { redirect } from '@remix-run/node';
 import type { LoaderFunction } from '@remix-run/node';
-import type { Party, Profile as ProfileType } from '@prisma/client';
+import type { Party, Profile as ProfileType, Queue } from '@prisma/client';
 
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -34,12 +34,13 @@ import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 
 const Profile = () => {
-  const { user, playback, recent, currentUser, party } = useLoaderData<{
+  const { user, playback, recent, currentUser, party, queue } = useLoaderData<{
     user: ProfileType | null;
     playback: SpotifyApi.CurrentPlaybackResponse | null;
     recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
     currentUser: null;
     party: Party[];
+    queue: Queue[];
   }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
@@ -54,6 +55,7 @@ const Profile = () => {
   const [isRecommending, setIsRecommending] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
+
   return (
     <Stack spacing={4}>
       {user ? (
@@ -98,11 +100,12 @@ const Profile = () => {
               />
             ) : null}
           </Stack>
+          
           <Stack spacing={5}>
             <Form ref={formRef} method="get" action="search">
               <Flex flex={1}>
                 <InputGroup>
-                  {(!isQueueing && !isRecommending) && (
+                  {!isQueueing && (
                     <>
                       <Input
                         autoComplete="off"
@@ -110,6 +113,7 @@ const Profile = () => {
                         border="none"
                         outline="none"
                         // borderBottom="solid 1px black"
+                        // queue={queue}
                         focusBorderColor="none"
                         onClick={() => setIsQueueing(true)}
                         placeholder="queue +"
@@ -120,7 +124,7 @@ const Profile = () => {
                         fontSize="15px"
                         mr={'-40px'}
                       />
-                      <Input
+                      {/* <Input
                         autoComplete="off"
                         borderRadius={0}
                         border="none"
@@ -134,7 +138,7 @@ const Profile = () => {
                         w="fit-content"
                         h="35px"
                         fontSize="15px"
-                      />
+                      /> */}
                     </>
                   )}
                   {isQueueing && (
@@ -164,7 +168,7 @@ const Profile = () => {
                       fontSize="15px"
                     />
                   )}
-                  {isRecommending && (
+                  {/* {isRecommending && (
                     <Input
                       name="spotify"
                       h="35px"
@@ -190,7 +194,7 @@ const Profile = () => {
                       }}
                       fontSize="15px"
                     />
-                  )}
+                  )} */}
                   <InputRightElement
                     h="35px"
                     w="65px"
@@ -217,7 +221,19 @@ const Profile = () => {
               </Flex>
             </Form>
             {isSearching && <Outlet />}
-
+{!isSearching && <Tiles>
+            
+            {queue?.map((songs) => (
+              <Tile
+                      key={songs.id}
+                      uri={"hi"}
+                      image={songs.image}
+                      name={songs.trackName}
+                      artist={songs.artist}
+                      explicit={songs.explicit}
+                    />
+            ))}
+          </Tiles>}
             {/* <HStack>
               <Heading fontSize={20}>Queue</Heading>
               <IconButton
@@ -277,13 +293,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   if (!spotify) return { user: null, playback: null, recent: null, party: null, currentUser: null };
 
+  const queue = await prisma.queue.findMany();
   const party = await prisma.party.findMany({ where: { ownerId: id } });
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
 
   const currentUser = await getCurrentUser(request);
 
-  return { user, playback, recent, party, currentUser };
+  return { user, playback, recent, party, queue, currentUser };
 };
 
 export default Profile;

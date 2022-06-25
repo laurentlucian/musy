@@ -1,6 +1,9 @@
 import { Button, Flex, HStack, Icon, Image, Input, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { TickSquare } from 'iconsax-react';
+// import { Queue } from '@prisma/client';
+// import type { ActionFunction } from '@remix-run/node';
+// import { prisma } from '~/services/db.server';
 // import explicit from '../assets/explicit-solid.svg';
 
 type SearchItemType = {
@@ -34,9 +37,14 @@ const SearchItem = ({ uri, name, image, artist }: SearchItemType) => {
         <HStack justify="start">
           <Image src={image} w="50px" alt="track-cover" />
           <VStack align="start">
-            <Text fontSize="13px" textAlign="left" noOfLines={1} whiteSpace="normal">
-              {name}
-            </Text>
+            <Input
+              fontSize="13px"
+              textAlign="left"
+              noOfLines={1}
+              whiteSpace="normal"
+              value={name}
+              name="name"
+            />
             <Flex>
               <Text fontSize="13px" noOfLines={1} whiteSpace="normal">
                 {artist}
@@ -52,3 +60,17 @@ const SearchItem = ({ uri, name, image, artist }: SearchItemType) => {
 };
 
 export default SearchItem;
+
+// export const action: ActionFunction = async ({ request }) => {
+//   const form = await request.formData();
+//   const trackName = form.get('name');
+
+//   if (typeof trackName !== 'string') {
+//     throw new Error(`Form not submitted correctly.`);
+//   }
+
+//   const fields = { trackName };
+
+//   const queuedSong = await prisma.queue.create({ data: fields });
+//   return queuedSong;
+// };
