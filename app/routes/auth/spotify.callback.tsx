@@ -4,19 +4,20 @@ import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { authenticator, createUser, getUser, updateToken } from '~/services/auth.server';
-import { commitSession, getSession } from '~/services/session.server';
+import { commitSession, getSession, returnToCookie } from '~/services/session.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   try {
+    const returnTo: string = (await returnToCookie.parse(request.headers.get('Cookie'))) ?? '/';
     const session = await authenticator.authenticate('spotify', request);
     if (!session || !session.user) {
-      throw Error('spotify_callback -> No Session');
+      throw Error('spotify_callback -> no Session');
     }
 
     // https://github.com/sergiodxa/remix-auth#custom-redirect-url-based-on-the-user
-    let _session = await getSession(request.headers.get('cookie'));
+    const _session = await getSession(request.headers.get('cookie'));
     _session.set(authenticator.sessionKey, session);
-    let headers = new Headers({ 'Set-Cookie': await commitSession(_session) });
+    const headers = new Headers({ 'Set-Cookie': await commitSession(_session) });
 
     const existingUser = await getUser(session.user.id);
 
@@ -26,10 +27,8 @@ export const loader: LoaderFunction = async ({ request }) => {
         new Date(session.expiresAt).toLocaleString('en-US'),
       );
       await updateToken(session.user.id, session.accessToken, session.expiresAt);
-      // @todo redirect back to original url 💭
-      // - not included in headers bc it's a separate router structure, request router would be auth/spotify/callback
-      // - can't get access to form bc it goes to auth/spotify first
-      return redirect('/' + existingUser.id, { headers });
+
+      return redirect(returnTo === '/' ? '/' + existingUser.id : returnTo, { headers });
     }
 
     if (!session.refreshToken || !session.tokenType || !session.user.name || !session.user.image) {
@@ -53,7 +52,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     };
 
     const newUser = await createUser(user);
-    return redirect('/' + newUser.id, { headers });
+    return redirect(returnTo === '/' ? '/' + newUser.id : returnTo, { headers });
   } catch (e) {
     if (typeof e === 'string') {
       e.toUpperCase(); // narrowed to string

@@ -32,7 +32,7 @@ const Nav = ({ user }: { user: User | null }) => {
         />
 
         {showAuth && (
-          <Form action={user ? '/logout' : '/auth/spotify'} method="post">
+          <Form action={user ? '/logout' : '/auth/spotify?' + location.pathname} method="post">
             {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
             <IconButton
               aria-label={user ? 'logout' : 'login'}
