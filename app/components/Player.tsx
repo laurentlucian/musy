@@ -65,13 +65,16 @@ const Player = ({
   }, [progress]);
 
   // simulating a seek bar tick
-  useInterval(() => {
-    if (!duration) return null;
-    if (current > duration) {
-      refresh();
-    }
-    setCurrent((prev) => prev + 1000);
-  }, 1000);
+  useInterval(
+    () => {
+      if (!duration) return null;
+      if (current > duration) {
+        refresh();
+      }
+      setCurrent((prev) => prev + 1000);
+    },
+    active ? 1000 : null,
+  );
 
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
@@ -134,7 +137,7 @@ const Player = ({
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
         h="2px"
-        value={active ? percentage : 0}
+        value={percentage}
       />
     </Stack>
   );
