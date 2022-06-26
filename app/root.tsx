@@ -4,7 +4,6 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
   useCatch,
   useLoaderData,
 } from '@remix-run/react';
@@ -15,6 +14,7 @@ import type { Session } from 'remix-auth-spotify';
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
 import { spotifyStrategy } from '~/services/auth.server';
+import { ScrollRestoration } from './hooks/useScrollRestoration';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return spotifyStrategy.getSession(request);

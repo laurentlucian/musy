@@ -48,19 +48,18 @@ type ProfileComponent = {
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, queue } =
     useLoaderData<ProfileComponent>();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useTransition();
+  const search = searchParams.get('spotify');
+  const formRef = useRef<HTMLFormElement>(null);
   const busy = transition.submission?.formData.has('spotify') ?? false;
+  // remove Outlet instantly, before new "empty search" completes
+  const [isSearching, setIsSearching] = useState(search ? true : false);
+
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
-  const search = searchParams.get('spotify');
-  // remove Outlet instantly, before new "empty search" completes
-  const [isSearching, setisSearching] = useState(search ? true : false);
-  const [isQueueing, setIsQueueing] = useState(false);
-
-  const formRef = useRef<HTMLFormElement>(null);
-
   return (
     <Stack spacing={5} pb={5}>
       {user ? (
@@ -109,7 +108,7 @@ const Profile = () => {
             {playback?.is_playing && (
               <Form ref={formRef} method="get" action="search">
                 <Flex flex={1} align="center">
-                  {!isQueueing && (
+                  {!isSearching && (
                     <>
                       <Heading fontSize={['md', 'lg']} mr={2}>
                         Queue
@@ -119,11 +118,18 @@ const Profile = () => {
                         icon={<MusicSquareSearch size="20px" />}
                         size="sm"
                         variant="ghost"
-                        onClick={() => setIsQueueing(true)}
+                        onClick={() => {
+                          setIsSearching(true);
+                          searchParams.delete('spotify');
+                          setSearchParams(searchParams, {
+                            replace: true,
+                            state: { scroll: false },
+                          });
+                        }}
                       />
                     </>
                   )}
-                  {isQueueing && (
+                  {isSearching && (
                     <InputGroup>
                       <Input
                         name="spotify"
@@ -133,15 +139,18 @@ const Profile = () => {
                         size="sm"
                         defaultValue={search ?? ''}
                         placeholder="joji, willow, ribs, etc"
-                        onBlur={() => setIsQueueing(false)}
+                        // onBlur={() => setIsSearching(false)}
                         onChange={(e) => {
                           if (e.currentTarget.value.trim()) {
                             submit(e.currentTarget.form);
-                            setisSearching(true);
+                            setIsSearching(true);
                           } else {
-                            setisSearching(false);
+                            setIsSearching(false);
                             searchParams.delete('spotify');
-                            setSearchParams(searchParams);
+                            setSearchParams(searchParams, {
+                              replace: true,
+                              state: { scroll: false },
+                            });
                           }
                         }}
                       />
@@ -153,19 +162,16 @@ const Profile = () => {
                         children={
                           <>
                             {busy && <Spinner size="xs" mr={2} />}
-                            {isSearching && (
-                              <CloseSquare
-                                onClick={() => {
-                                  setisSearching(false);
-                                  // @todo-fix causes page to refresh and scrolls back to top
-                                  // searchParams.delete('spotify');
-                                  // setSearchParams(searchParams);
-
-                                  // trying to empty input field without controlling through state (not working)
-                                  // formRef?.current?.reset();
-                                }}
-                              />
-                            )}
+                            <CloseSquare
+                              onClick={() => {
+                                setIsSearching(false);
+                                searchParams.delete('spotify');
+                                setSearchParams(searchParams, {
+                                  replace: true,
+                                  state: { scroll: false },
+                                });
+                              }}
+                            />
                           </>
                         }
                       />
@@ -276,7 +282,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
       top: null,
     };
 
-  const queue = await prisma.queue.findMany();
+  const queue = await prisma.queue.findMany({ where: { ownerId: id } });
   const party = await prisma.party.findMany({ where: { ownerId: id } });
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
@@ -293,15 +299,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 };
 
-export default Profile;
-
 export const ErrorBoundary = (error: { error: Error }) => {
   console.log('error', error);
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>401</Heading>
       {/* error message useless (might be because of spotify stragegy) */}
-      {/* <Text fontSize="md">Trace(for debug): {error.message} </Text> */}
+      {/* <Text fontSize="md">Trace(for debug): {JSON.stringify(error, null, 2)} </Text> */}
     </>
   );
 };
@@ -330,3 +334,5 @@ export const CatchBoundary = () => {
     </>
   );
 };
+
+export default Profile;

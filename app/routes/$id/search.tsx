@@ -10,6 +10,8 @@ const Search = () => {
   const response = useLoaderData<SpotifyApi.TrackSearchResponse | null>();
   const tracks = response?.tracks?.items ?? [];
 
+  if (tracks.length === 0) return <></>;
+
   return (
     <Tiles>
       {tracks?.map((track) => (
