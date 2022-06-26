@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -21,10 +20,6 @@ model User {
 
   user  Profile?
   party Party[]
-
-
-  Queue       Queue[]
-  Recommended Recommended[]
 }
 
 model Profile {
@@ -34,12 +29,12 @@ model Profile {
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
 
-  name        String
-  email       String
-  image       String
-  party       Party?
-  recommended Recommended[]
-  Queue       Queue[]
+  name  String
+  bio   String?
+  email String
+  image String
+  party Party?
+  queue Queue[]
 }
 
 model Party {
@@ -57,35 +52,18 @@ model Party {
 }
 
 model Queue {
-  id      String @id @default(uuid())
-  owner   User   @relation(fields: [ownerId], references: [id])
+  id      Int     @id @default(autoincrement())
+  owner   Profile @relation(fields: [ownerId], references: [userId])
   ownerId String
 
   createdAt DateTime @default(now())
-  trackName String
-  image     String
-  artist    String
-  explicit  Boolean
-
-
-  Profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId Int?
-  queuerId  String?
-}
-
-model Recommended {
-  id        String   @id @default(uuid())
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  uri       String
   name      String
-  trackName String
   image     String
   artist    String
   explicit  Boolean
-  comment   String
 
-  Recommender   Profile? @relation(fields: [recommenderId], references: [id])
-  recommenderId Int?
+  // can be anonymous
+  userId    String?
+  userImage String?
 }

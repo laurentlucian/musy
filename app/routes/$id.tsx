@@ -183,12 +183,12 @@ const Profile = () => {
             {isSearching && <Outlet />}
             {!isSearching && queue.length !== 0 && (
               <Tiles>
-                {queue.map((songs) => (
+                {queue.reverse().map((songs) => (
                   <Tile
                     key={songs.id}
-                    uri={'hi'}
+                    uri={songs.uri}
                     image={songs.image}
-                    name={songs.trackName}
+                    name={songs.name}
                     artist={songs.artist}
                     explicit={songs.explicit}
                   />

@@ -7,23 +7,23 @@ export const action: ActionFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
   const data = await request.formData();
-  const { track } = Object.fromEntries(data);
-  const uri = track.valueOf() as string;
+  const uri = data.get('uri');
   const image = data.get('image');
-  const trackName = data.get('trackName');
+  const name = data.get('name');
   const artist = data.get('artist');
   const explicit = Boolean(data.get('explicit'));
 
   if (
+    typeof uri !== 'string' ||
     typeof image !== 'string' ||
-    typeof trackName !== 'string' ||
+    typeof name !== 'string' ||
     typeof artist !== 'string' ||
     typeof explicit !== 'boolean'
   ) {
-    throw new Error(`Form not submitted correctly.`);
+    return json('Form submitted incorrectly', { status: 403 });
   }
 
-  const fields = { trackName, image, artist, explicit, ownerId: id };
+  const fields = { uri, name, image, artist, explicit, ownerId: id };
 
   const { spotify } = await spotifyApi(id);
   if (!spotify) return json('No access to spotify API', { status: 500 });

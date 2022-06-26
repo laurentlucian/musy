@@ -33,11 +33,12 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
         </Stack>
         {!isAdding && !isDone ? (
           <Flex as={fetcher.Form} replace method="post" action={`/${id}/add`}>
-            <Input type="hidden" name="track" value={uri} />
+            <Input type="hidden" name="uri" value={uri} />
             <Input type="hidden" name="image" value={image} />
-            <Input type="hidden" name="trackName" value={name} />
+            <Input type="hidden" name="name" value={name} />
             <Input type="hidden" name="artist" value={artist} />
-            {explicit && <Input type="hidden" name="explicit" value={'true'} />}
+            {/* empty string is falsy */}
+            <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
             <IconButton type="submit" aria-label="queue" icon={<AddSquare />} variant="ghost" />
           </Flex>
         ) : !isDone ? (
