@@ -24,8 +24,8 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
       <Flex justify="space-between">
         <Stack spacing={0}>
           <Text fontSize="sm">{name}</Text>
-          <Flex>
-            {explicit && <Image src={explicitImage} w="19px" />}
+          <Flex align="center">
+            {explicit && <Image src={explicitImage} mr={1} w="19px" />}
             <Text fontSize="xs" opacity={0.8}>
               {artist}
             </Text>
@@ -37,7 +37,7 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
             <Input type="hidden" name="image" value={image} />
             <Input type="hidden" name="trackName" value={name} />
             <Input type="hidden" name="artist" value={artist} />
-            {explicit && <Input type="hidden" name="explicit" value={"true"} />}
+            {explicit && <Input type="hidden" name="explicit" value={'true'} />}
             <IconButton type="submit" aria-label="queue" icon={<AddSquare />} variant="ghost" />
           </Flex>
         ) : !isDone ? (

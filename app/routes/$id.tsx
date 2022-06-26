@@ -10,6 +10,7 @@ import {
   InputRightElement,
   Spinner,
   Image,
+  IconButton,
 } from '@chakra-ui/react';
 import {
   Form,
@@ -31,7 +32,7 @@ import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
-import { CloseSquare } from 'iconsax-react';
+import { CloseSquare, MusicSquareSearch } from 'iconsax-react';
 
 type ProfileComponent = {
   user: ProfileType | null;
@@ -107,41 +108,32 @@ const Profile = () => {
           <Stack spacing={5}>
             {playback?.is_playing && (
               <Form ref={formRef} method="get" action="search">
-                <Flex flex={1}>
-                  <InputGroup>
-                    {!isQueueing && (
-                      <>
-                        <Input
-                          autoComplete="off"
-                          borderRadius={0}
-                          border="none"
-                          outline="none"
-                          focusBorderColor="none"
-                          onClick={() => setIsQueueing(true)}
-                          placeholder="queue +"
-                          textAlign="left"
-                          cursor="pointer"
-                          w={['120px']}
-                          h="35px"
-                          fontSize="15px"
-                          mr={'-40px'}
-                        />
-                      </>
-                    )}
-                    {isQueueing && (
+                <Flex flex={1} align="center">
+                  {!isQueueing && (
+                    <>
+                      <Heading fontSize={['md', 'lg']} mr={2}>
+                        Queue
+                      </Heading>
+                      <IconButton
+                        aria-label="Add to Queue"
+                        icon={<MusicSquareSearch size="20px" />}
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setIsQueueing(true)}
+                      />
+                    </>
+                  )}
+                  {isQueueing && (
+                    <InputGroup>
                       <Input
                         name="spotify"
-                        h="35px"
-                        defaultValue={search ?? ''}
-                        placeholder="add to queue"
+                        variant="flushed"
                         autoComplete="off"
-                        borderRadius={0}
-                        border="none"
-                        outline="none"
-                        borderBottom="solid 1px black"
-                        focusBorderColor="none"
-                        onBlur={() => setIsQueueing(false)}
                         autoFocus
+                        size="sm"
+                        defaultValue={search ?? ''}
+                        placeholder="joji, willow, ribs, etc"
+                        onBlur={() => setIsQueueing(false)}
                         onChange={(e) => {
                           if (e.currentTarget.value.trim()) {
                             submit(e.currentTarget.form);
@@ -152,61 +144,40 @@ const Profile = () => {
                             setSearchParams(searchParams);
                           }
                         }}
-                        fontSize="15px"
                       />
-                    )}
-                    {/* <Input
-                      name="spotify"
-                      h="35px"
-                      defaultValue={search ?? ''}
-                      placeholder="Add to queue"
-                      autoComplete="off"
-                      borderRadius={3}
-                      onChange={(e) => {
-                        if (e.currentTarget.value.trim()) {
-                          submit(e.currentTarget.form);
-                          setisSearching(true);
-                        } else {
-                          setisSearching(false);
-                          // @todo-fix causes page to refresh and scrolls back to top
-                          // searchParams.delete('spotify');
-                          // setSearchParams(searchParams);
-                        }
-                      }}
-                      fontSize="15px"
-                    /> */}
-                    <InputRightElement
-                      h="35px"
-                      w="65px"
-                      pr={2}
-                      justifyContent="end"
-                      children={
-                        <>
-                          {busy && <Spinner size="xs" mr={2} />}
-                          {isSearching && (
-                            <CloseSquare
-                              onClick={() => {
-                                setisSearching(false);
-                                // @todo-fix causes page to refresh and scrolls back to top
-                                // searchParams.delete('spotify');
-                                // setSearchParams(searchParams);
+                      <InputRightElement
+                        h="35px"
+                        w="65px"
+                        pr={2}
+                        justifyContent="end"
+                        children={
+                          <>
+                            {busy && <Spinner size="xs" mr={2} />}
+                            {isSearching && (
+                              <CloseSquare
+                                onClick={() => {
+                                  setisSearching(false);
+                                  // @todo-fix causes page to refresh and scrolls back to top
+                                  // searchParams.delete('spotify');
+                                  // setSearchParams(searchParams);
 
-                                // trying to empty input field without controlling through state (not working)
-                                // formRef?.current?.reset();
-                              }}
-                            />
-                          )}
-                        </>
-                      }
-                    />
-                  </InputGroup>
+                                  // trying to empty input field without controlling through state (not working)
+                                  // formRef?.current?.reset();
+                                }}
+                              />
+                            )}
+                          </>
+                        }
+                      />
+                    </InputGroup>
+                  )}
                 </Flex>
               </Form>
             )}
             {isSearching && <Outlet />}
-            {!isSearching && (
+            {!isSearching && queue.length !== 0 && (
               <Tiles>
-                {queue?.map((songs) => (
+                {queue.map((songs) => (
                   <Tile
                     key={songs.id}
                     uri={'hi'}
@@ -280,10 +251,10 @@ const Profile = () => {
           )}
         </>
       ) : (
-        <Stack>
+        <>
           <Heading size="md">404</Heading>
           <Text>User not found</Text>
-        </Stack>
+        </>
       )}
     </Stack>
   );
