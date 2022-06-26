@@ -155,6 +155,26 @@ const Profile = () => {
                         fontSize="15px"
                       />
                     )}
+                    {/* <Input
+                      name="spotify"
+                      h="35px"
+                      defaultValue={search ?? ''}
+                      placeholder="Add to queue"
+                      autoComplete="off"
+                      borderRadius={3}
+                      onChange={(e) => {
+                        if (e.currentTarget.value.trim()) {
+                          submit(e.currentTarget.form);
+                          setisSearching(true);
+                        } else {
+                          setisSearching(false);
+                          // @todo-fix causes page to refresh and scrolls back to top
+                          // searchParams.delete('spotify');
+                          // setSearchParams(searchParams);
+                        }
+                      }}
+                      fontSize="15px"
+                    /> */}
                     <InputRightElement
                       h="35px"
                       w="65px"
@@ -179,50 +199,6 @@ const Profile = () => {
                         </>
                       }
                     />
-                    {/* <Input
-                      name="spotify"
-                      h="35px"
-                      defaultValue={search ?? ''}
-                      placeholder="Add to queue"
-                      autoComplete="off"
-                      borderRadius={3}
-                      onChange={(e) => {
-                        if (e.currentTarget.value.trim()) {
-                          submit(e.currentTarget.form);
-                          setisSearching(true);
-                        } else {
-                          setisSearching(false);
-                          // @todo-fix causes page to refresh and scrolls back to top
-                          // searchParams.delete('spotify');
-                          // setSearchParams(searchParams);
-                        }
-                      }}
-                      fontSize="15px"
-                    />
-                    <InputRightElement
-                      h="35px"
-                      w="65px"
-                      pr={2}
-                      justifyContent="end"
-                      children={
-                        <>
-                          {busy && <Spinner size="xs" mr={2} />}
-                          {isSearching && (
-                            <CloseSquare
-                              onClick={() => {
-                                setisSearching(false);
-                                // @todo-fix causes page to refresh and scrolls back to top
-                                searchParams.delete('spotify');
-                                setSearchParams(searchParams);
-
-                                // trying to empty input field without controlling through state (not working)
-                                formRef?.current?.reset();
-                              }}
-                            />
-                          )}
-                        </>
-                      }
-                    /> */}
                   </InputGroup>
                 </Flex>
               </Form>
