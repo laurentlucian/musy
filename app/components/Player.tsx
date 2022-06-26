@@ -142,7 +142,7 @@ const Player = ({
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
         h="2px"
-        value={percentage}
+        value={active ? percentage : 0}
       />
     </Stack>
   );
