@@ -1,7 +1,7 @@
 import { Button, Heading, HStack, Image, Input, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { Form, Link, Outlet, useCatch, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, Link, useCatch, useLoaderData, useTransition } from '@remix-run/react';
 import Layout from '~/components/Layout';
 
 import { getAllUsers, spotifyStrategy } from '~/services/auth.server';

@@ -4,7 +4,7 @@ import { prisma } from '~/services/db.server';
 import { json, redirect } from '@remix-run/node';
 
 export const action: LoaderFunction = async ({ request, params }) => {
-  const ownerId = params.ownerId;
+  const ownerId = params.id;
   console.log('Leaving party...');
   if (!ownerId) {
     console.log('Leave failed -> missing ownerId parameter');

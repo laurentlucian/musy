@@ -12,7 +12,7 @@ import {
   useInterval,
 } from '@chakra-ui/react';
 import type { Party, Profile } from '@prisma/client';
-import { Form } from '@remix-run/react';
+import { Form, useTransition } from '@remix-run/react';
 import { LoginCurve, LogoutCurve } from 'iconsax-react';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
@@ -56,6 +56,9 @@ const Player = ({
   const [current, setCurrent] = useState(0);
   const percentage = duration ? (current / duration) * 100 : 0;
 
+  const transition = useTransition();
+  const busy = transition.submission?.formData.has('party') ?? false;
+
   // reset seek bar on new song
   useEffect(() => {
     setCurrent(progress);
@@ -92,30 +95,19 @@ const Player = ({
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
               {currentUser && currentUser.userId !== id && (
-                <Form
-                  action={isUserInParty ? `/party/leave/${id}` : `/party/join/${id}`}
-                  method="post"
-                >
-                  {isUserInParty ? (
-                    <IconButton
-                      aria-label="Leave"
-                      icon={<LogoutCurve size="24px" />}
-                      variant="ghost"
-                      type="submit"
-                      cursor="pointer"
-                    />
-                  ) : (
-                    <IconButton
-                      aria-label="Leave"
-                      icon={<LoginCurve size="24px" />}
-                      variant="ghost"
-                      type="submit"
-                      cursor="pointer"
-                    />
-                    // <Button px={0} variant="ghost" type="submit">
-                    //   <Image boxSize="24px" src={listen_width} />
-                    // </Button>
-                  )}
+                <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
+                  <IconButton
+                    aria-label={isUserInParty ? 'Leave' : 'Join'}
+                    name="party"
+                    icon={isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />}
+                    variant="ghost"
+                    type="submit"
+                    cursor="pointer"
+                    isLoading={busy}
+                  />
+                  {/* <Button px={0} variant="ghost" type="submit">
+                       <Image boxSize="24px" src={listen_width} />
+                      </Button> */}
                 </Form>
               )}
               {party.length && (
