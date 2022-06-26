@@ -57,7 +57,6 @@ const Profile = () => {
   // remove Outlet instantly, before new "empty search" completes
   const [isSearching, setisSearching] = useState(search ? true : false);
   const [isQueueing, setIsQueueing] = useState(false);
-  const [isRecommending, setIsRecommending] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -70,7 +69,6 @@ const Profile = () => {
               <Image borderRadius={50} boxSize={93} src={user.image} />
               <Heading size="lg" fontWeight="bold">
                 {user.name}
-                {/* {user.bio} */}
               </Heading>
             </HStack>
             {playback?.is_playing ? (
@@ -105,114 +103,19 @@ const Profile = () => {
               />
             ) : null}
           </Stack>
-          
+
           <Stack spacing={5}>
-            <Form ref={formRef} method="get" action="search">
-              <Flex flex={1}>
-                <InputGroup>
-                  {!isQueueing && (
-                    <>
-                      <Input
-                        autoComplete="off"
-                        borderRadius={0}
-                        border="none"
-                        outline="none"
-                        // borderBottom="solid 1px black"
-                        // queue={queue}
-                        focusBorderColor="none"
-                        onClick={() => setIsQueueing(true)}
-                        placeholder="queue +"
-                        textAlign="left"
-                        cursor="pointer"
-                        w={['120px']}
-                        h="35px"
-                        fontSize="15px"
-                        mr={'-40px'}
-                      />
-                      {/* <Input
-                        autoComplete="off"
-                        borderRadius={0}
-                        border="none"
-                        outline="none"
-                        // borderBottom="solid 1px black"
-                        focusBorderColor="none"
-                        onClick={() => setIsRecommending(true)}
-                        placeholder="/     recommend +"
-                        textAlign="left"
-                        cursor="pointer"
-                        w="fit-content"
-                        h="35px"
-                        fontSize="15px"
-                      /> */}
-                    </>
-                  )}
-                  {isQueueing && (
-                    <Input
-                      name="spotify"
-                      h="35px"
-                      defaultValue={search ?? ''}
-                      placeholder="add to queue"
-                      autoComplete="off"
-                      borderRadius={0}
-                      border="none"
-                      outline="none"
-                      borderBottom="solid 1px black"
-                      focusBorderColor="none"
-                      onBlur={() => setIsQueueing(false)}
-                      autoFocus
-                      onChange={(e) => {
-                        if (e.currentTarget.value.trim()) {
-                          submit(e.currentTarget.form);
-                          setisSearching(true);
-                        } else {
-                          setisSearching(false);
-                          searchParams.delete('spotify');
-                          setSearchParams(searchParams);
-                        }
-                      }}
-                      fontSize="15px"
-                    />
-                  )}
-                  {/* {isRecommending && (
-                    <Input
-                      name="spotify"
-                      h="35px"
-                      defaultValue={search ?? ''}
-                      placeholder="recommend a song"
-                      autoComplete="off"
-                      borderRadius={0}
-                      border="none"
-                      outline="none"
-                      borderBottom="solid 1px black"
-                      focusBorderColor="none"
-                      onBlur={() => setIsRecommending(false)}
-                      autoFocus
-                      onChange={(e) => {
-                        if (e.currentTarget.value.trim()) {
-                          submit(e.currentTarget.form);
-                          setisSearching(true);
-                        } else {
-                          setisSearching(false);
-                          searchParams.delete('spotify');
-                          setSearchParams(searchParams);
-                        }
-                      }}
-                      fontSize="15px"
-                    />
-                  )} */}
-                  <InputRightElement
-                    h="35px"
-                    w="65px"
-                    pr={2}
-                    justifyContent="end"
-                    children={
+            {playback?.is_playing && (
+              <Form ref={formRef} method="get" action="search">
+                <Flex flex={1}>
+                  <InputGroup>
+                    {!isQueueing && (
                       <>
                         <Input
                           autoComplete="off"
                           borderRadius={0}
                           border="none"
                           outline="none"
-                          // borderBottom="solid 1px black"
                           focusBorderColor="none"
                           onClick={() => setIsQueueing(true)}
                           placeholder="queue +"
@@ -223,25 +126,60 @@ const Profile = () => {
                           fontSize="15px"
                           mr={'-40px'}
                         />
-                        <Input
-                          autoComplete="off"
-                          borderRadius={0}
-                          border="none"
-                          outline="none"
-                          // borderBottom="solid 1px black"
-                          focusBorderColor="none"
-                          onClick={() => setIsRecommending(true)}
-                          placeholder="/     recommend +"
-                          textAlign="left"
-                          cursor="pointer"
-                          w="fit-content"
-                          h="35px"
-                          fontSize="15px"
-                        />
                       </>
-                    }
-                  />
-                                      {/* <Input
+                    )}
+                    {isQueueing && (
+                      <Input
+                        name="spotify"
+                        h="35px"
+                        defaultValue={search ?? ''}
+                        placeholder="add to queue"
+                        autoComplete="off"
+                        borderRadius={0}
+                        border="none"
+                        outline="none"
+                        borderBottom="solid 1px black"
+                        focusBorderColor="none"
+                        onBlur={() => setIsQueueing(false)}
+                        autoFocus
+                        onChange={(e) => {
+                          if (e.currentTarget.value.trim()) {
+                            submit(e.currentTarget.form);
+                            setisSearching(true);
+                          } else {
+                            setisSearching(false);
+                            searchParams.delete('spotify');
+                            setSearchParams(searchParams);
+                          }
+                        }}
+                        fontSize="15px"
+                      />
+                    )}
+                    <InputRightElement
+                      h="35px"
+                      w="65px"
+                      pr={2}
+                      justifyContent="end"
+                      children={
+                        <>
+                          {busy && <Spinner size="xs" mr={2} />}
+                          {isSearching && (
+                            <CloseSquare
+                              onClick={() => {
+                                setisSearching(false);
+                                // @todo-fix causes page to refresh and scrolls back to top
+                                // searchParams.delete('spotify');
+                                // setSearchParams(searchParams);
+
+                                // trying to empty input field without controlling through state (not working)
+                                // formRef?.current?.reset();
+                              }}
+                            />
+                          )}
+                        </>
+                      }
+                    />
+                    {/* <Input
                       name="spotify"
                       h="35px"
                       defaultValue={search ?? ''}
@@ -285,65 +223,28 @@ const Profile = () => {
                         </>
                       }
                     /> */}
-                </InputGroup>
-              </Flex>
-            </Form>
+                  </InputGroup>
+                </Flex>
+              </Form>
+            )}
             {isSearching && <Outlet />}
-{!isSearching && <Tiles>
-            
-            {queue?.map((songs) => (
-              <Tile
-                      key={songs.id}
-                      uri={"hi"}
-                      image={songs.image}
-                      name={songs.trackName}
-                      artist={songs.artist}
-                      explicit={songs.explicit}
-                    />
-            ))}
-          </Tiles>}
-            {/* <HStack>
-              <Heading fontSize={20}>Queue</Heading>
-              <IconButton
-                aria-label="add"
-                to={`/${user.userId}/search`}
-                as={Link}
-                icon={<Add />}
-                variant="ghost"
-              />
-            </HStack>
-            <Tiles>
-              {recent?.items.map(({ track, played_at }) => {
-                return (
+            {!isSearching && (
+              <Tiles>
+                {queue?.map((songs) => (
                   <Tile
-                    // if use track.id then key will be repeated if user replays a song
-                    key={played_at}
-                    image={track.album.images[1].url}
-                    name={track.name}
-                    artist={track.album.artists[0].name}
+                    key={songs.id}
+                    uri={'hi'}
+                    image={songs.image}
+                    name={songs.trackName}
+                    artist={songs.artist}
+                    explicit={songs.explicit}
                   />
-                );
-              })}
-            </Tiles> */}
+                ))}
+              </Tiles>
+            )}
           </Stack>
-          <Stack spacing={5}>
-            <Heading size="md">Recently played</Heading>
-            <Tiles>
-              {recent?.items.map(({ track, played_at }) => {
-                return (
-                  <Tile
-                    key={played_at}
-                    uri={track.uri}
-                    image={track.album.images[1].url}
-                    name={track.name}
-                    artist={track.album.artists[0].name}
-                    explicit={track.explicit}
-                  />
-                );
-              })}
-            </Tiles>
-          </Stack>
-          {recent && (
+          {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
+          {recent && recent?.items.length !== 0 && (
             <Stack spacing={5}>
               <Heading fontSize={['md', 'lg']}>Recently played</Heading>
               <Tiles>
@@ -363,7 +264,7 @@ const Profile = () => {
               </Tiles>
             </Stack>
           )}
-          {liked && (
+          {liked && liked?.items.length !== 0 && (
             <Stack spacing={5}>
               <Heading fontSize={['md', 'lg']}>Recently liked</Heading>
               <Tiles>
@@ -382,7 +283,7 @@ const Profile = () => {
               </Tiles>
             </Stack>
           )}
-          {top && (
+          {top && top?.items.length !== 0 && (
             <Stack spacing={5}>
               <Heading fontSize={['md', 'lg']}>Top</Heading>
               <Tiles>
