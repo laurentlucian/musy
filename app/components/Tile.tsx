@@ -15,7 +15,7 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
   const { id } = useParams();
   const fetcher = useFetcher();
 
-  const isAdding = fetcher.submission?.formData.get('track') === uri;
+  const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
 
   return (
@@ -31,21 +31,29 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
             </Text>
           </Flex>
         </Stack>
-        {!isAdding && !isDone ? (
-          <Flex as={fetcher.Form} replace method="post" action={`/${id}/add`}>
-            <Input type="hidden" name="uri" value={uri} />
-            <Input type="hidden" name="image" value={image} />
-            <Input type="hidden" name="name" value={name} />
-            <Input type="hidden" name="artist" value={artist} />
-            {/* empty string is falsy */}
-            <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
-            <IconButton type="submit" aria-label="queue" icon={<AddSquare />} variant="ghost" />
-          </Flex>
-        ) : !isDone ? (
-          <Spinner ml="auto" mr={2} />
-        ) : (
-          <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} mr={2} />
-        )}
+        <Flex justify="center">
+          {!isAdding && !isDone ? (
+            <fetcher.Form replace method="post" action={`/${id}/add`}>
+              <Input type="hidden" name="uri" value={uri} />
+              <Input type="hidden" name="image" value={image} />
+              <Input type="hidden" name="name" value={name} />
+              <Input type="hidden" name="artist" value={artist} />
+              {/* empty string is falsy */}
+              <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
+              <IconButton
+                type="submit"
+                aria-label="queue"
+                icon={<AddSquare />}
+                variant="ghost"
+                p={0}
+              />
+            </fetcher.Form>
+          ) : !isDone ? (
+            <Spinner ml="auto" />
+          ) : (
+            <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
+          )}
+        </Flex>
       </Flex>
     </Stack>
   );
