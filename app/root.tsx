@@ -64,16 +64,26 @@ export const CatchBoundary = () => {
   }
 
   return (
-    <Document title={`${caught.status} ${caught.statusText}`}>
-      <ChakraProvider theme={theme}>
-        <Layout user={null}>
-          <Heading fontSize={['xl', 'xxl']}>
-            {caught.status}: {caught.statusText}
-          </Heading>
-          <Text fontSize="md">{message}</Text>
-        </Layout>
-      </ChakraProvider>
-    </Document>
+    <html lang="en">
+      <head>
+        <Meta />
+        <title>{`${caught.status} ${caught.statusText}`}</title>
+        <Links />
+      </head>
+      <body>
+        <ChakraProvider theme={theme}>
+          <Layout user={null}>
+            <Heading fontSize={['xl', 'xxl']}>
+              {caught.status}: {caught.statusText}
+            </Heading>
+            <Text fontSize="md">{message}</Text>
+          </Layout>
+        </ChakraProvider>
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
   );
 };
 
