@@ -1,7 +1,8 @@
 import { Flex, Icon, IconButton, Image, Input, Spinner, Stack, Text } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
-import { AddSquare, TickSquare } from 'iconsax-react';
+import { AddSquare, Send2, TickSquare } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
+import Tooltip from './Tooltip';
 
 type Type = {
   uri: string;
@@ -9,9 +10,14 @@ type Type = {
   name: string;
   artist: string;
   explicit: boolean;
+
+  // @todo figure out a better way to require authentication on click;
+  // after authentication redirect, add to queue isn't successful. user needs to click again
+  // not authenticated when `null`; `undefined` when not supposed to add to currentUser queue
+  userId?: string | null;
 };
 
-const Tile = ({ uri, image, name, artist, explicit }: Type) => {
+const Tile = ({ uri, image, name, artist, explicit, userId }: Type) => {
   const { id } = useParams();
   const fetcher = useFetcher();
 
@@ -33,20 +39,26 @@ const Tile = ({ uri, image, name, artist, explicit }: Type) => {
         </Stack>
         <Flex justify="center">
           {!isAdding && !isDone ? (
-            <fetcher.Form replace method="post" action={`/${id}/add`}>
+            <fetcher.Form
+              replace
+              method="post"
+              action={userId === null ? '/auth/spotify?/' + id : `/${userId ?? id}/add`}
+            >
               <Input type="hidden" name="uri" value={uri} />
               <Input type="hidden" name="image" value={image} />
               <Input type="hidden" name="name" value={name} />
               <Input type="hidden" name="artist" value={artist} />
               {/* empty string is falsy */}
               <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
-              <IconButton
-                type="submit"
-                aria-label="queue"
-                icon={<AddSquare />}
-                variant="ghost"
-                p={0}
-              />
+              <Tooltip label={userId === null || userId ? 'Add to your queue' : ''}>
+                <IconButton
+                  type="submit"
+                  aria-label="queue"
+                  icon={userId === null || userId ? <AddSquare /> : <Send2 />}
+                  variant="ghost"
+                  p={0}
+                />
+              </Tooltip>
             </fetcher.Form>
           ) : !isDone ? (
             <Spinner ml="auto" />

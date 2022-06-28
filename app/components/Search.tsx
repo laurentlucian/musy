@@ -83,7 +83,11 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                 children={
                   <>
                     {busy && <Spinner size="xs" mr={2} />}
-                    <CloseSquare
+                    <IconButton
+                      aria-label="close"
+                      variant="ghost"
+                      size="xs"
+                      borderRadius={8}
                       onClick={() => {
                         setIsSearching(false);
                         searchParams.delete('spotify');
@@ -92,6 +96,7 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                           state: { scroll: false },
                         });
                       }}
+                      icon={<CloseSquare />}
                     />
                   </>
                 }
@@ -99,27 +104,27 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
             </InputGroup>
           )}
           {/* <Input
-                    name="spotify"
-                    size="sm"
-                    defaultValue={search ?? ''}
-                    placeholder="Add to queue"
-                    autoComplete="off"
-                    borderRadius={3}
-                    onChange={(e) => {
-                      if (e.currentTarget.value.trim()) {
-                        submit(e.currentTarget.form);
-                        setIsSearching(true);
-                      } else {
-                        setIsSearching(false);
-                        searchParams.delete('spotify');
-                        setSearchParams(searchParams, {
-                          replace: true,
-                          state: { scroll: false },
-                        });
-                      }
-                    }}
-                    fontSize="15px"
-                  /> */}
+            name="spotify"
+            size="sm"
+            defaultValue={search ?? ''}
+            placeholder="Add to queue"
+            autoComplete="off"
+            borderRadius={3}
+            onChange={(e) => {
+              if (e.currentTarget.value.trim()) {
+                submit(e.currentTarget.form);
+                setIsSearching(true);
+              } else {
+                setIsSearching(false);
+                searchParams.delete('spotify');
+                setSearchParams(searchParams, {
+                  replace: true,
+                  state: { scroll: false },
+                });
+              }
+            }}
+            fontSize="15px"
+          /> */}
         </Flex>
       </Form>
     </>

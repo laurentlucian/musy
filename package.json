@@ -30,6 +30,7 @@
     "ioredis": "^5.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
     "react-spotify-web-playback-sdk": "^3.0.1",
     "remix": "^1.6.1",
     "remix-auth": "^3.2.2",

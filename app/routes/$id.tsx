@@ -32,7 +32,6 @@ import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
-import { CloseSquare, MusicSquareSearch } from 'iconsax-react';
 import Search from '~/components/Search';
 
 type ProfileComponent = {
@@ -117,7 +116,7 @@ const Profile = () => {
                     name={songs.name}
                     artist={songs.artist}
                     explicit={songs.explicit}
-                    userId={currentUser?.userId}
+                    userId={currentUser?.userId ?? null}
                   />
                 ))}
               </Tiles>
@@ -138,7 +137,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId}
+                      userId={currentUser?.userId ?? null}
                     />
                   );
                 })}
@@ -158,7 +157,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId}
+                      userId={currentUser?.userId ?? null}
                     />
                   );
                 })}
