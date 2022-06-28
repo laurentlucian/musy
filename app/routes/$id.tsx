@@ -33,6 +33,7 @@ import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 import { CloseSquare, MusicSquareSearch } from 'iconsax-react';
+import Search from '~/components/Search';
 
 type ProfileComponent = {
   user: ProfileType | null;
@@ -40,7 +41,7 @@ type ProfileComponent = {
   recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
   liked: SpotifyApi.UsersSavedTracksResponse | null;
   top: SpotifyApi.UsersTopTracksResponse | null;
-  currentUser: null;
+  currentUser: ProfileType | null;
   party: Party[];
   queue: Queue[];
 };
@@ -49,12 +50,8 @@ const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, queue } =
     useLoaderData<ProfileComponent>();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const submit = useSubmit();
-  const transition = useTransition();
+  const [searchParams] = useSearchParams();
   const search = searchParams.get('spotify');
-  const formRef = useRef<HTMLFormElement>(null);
-  const busy = transition.submission?.formData.has('spotify') ?? false;
   // remove Outlet instantly, before new "empty search" completes
   const [isSearching, setIsSearching] = useState(search ? true : false);
 
@@ -106,84 +103,13 @@ const Profile = () => {
 
           <Stack spacing={5}>
             {playback?.is_playing && (
-              <Form ref={formRef} method="get" action="search">
-                <Flex flex={1} align="center">
-                  {!isSearching && (
-                    <>
-                      <Heading fontSize={['md', 'lg']} mr={2}>
-                        Queue
-                      </Heading>
-                      <IconButton
-                        aria-label="Add to Queue"
-                        icon={<MusicSquareSearch size="20px" />}
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setIsSearching(true);
-                          searchParams.delete('spotify');
-                          setSearchParams(searchParams, {
-                            replace: true,
-                            state: { scroll: false },
-                          });
-                        }}
-                      />
-                    </>
-                  )}
-                  {isSearching && (
-                    <InputGroup>
-                      <Input
-                        name="spotify"
-                        variant="flushed"
-                        autoComplete="off"
-                        autoFocus
-                        size="sm"
-                        defaultValue={search ?? ''}
-                        placeholder="joji, willow, ribs, etc"
-                        // onBlur={() => setIsSearching(false)}
-                        onChange={(e) => {
-                          if (e.currentTarget.value.trim()) {
-                            submit(e.currentTarget.form);
-                            setIsSearching(true);
-                          } else {
-                            setIsSearching(false);
-                            searchParams.delete('spotify');
-                            setSearchParams(searchParams, {
-                              replace: true,
-                              state: { scroll: false },
-                            });
-                          }
-                        }}
-                      />
-                      <InputRightElement
-                        h="35px"
-                        w="65px"
-                        pr={2}
-                        justifyContent="end"
-                        children={
-                          <>
-                            {busy && <Spinner size="xs" mr={2} />}
-                            <CloseSquare
-                              onClick={() => {
-                                setIsSearching(false);
-                                searchParams.delete('spotify');
-                                setSearchParams(searchParams, {
-                                  replace: true,
-                                  state: { scroll: false },
-                                });
-                              }}
-                            />
-                          </>
-                        }
-                      />
-                    </InputGroup>
-                  )}
-                </Flex>
-              </Form>
+              <Search isSearching={isSearching} setIsSearching={setIsSearching} />
             )}
             {isSearching && <Outlet />}
+            {/* switch on results, not on input focus */}
             {!isSearching && queue.length !== 0 && (
               <Tiles>
-                {queue.reverse().map((songs) => (
+                {queue.map((songs) => (
                   <Tile
                     key={songs.id}
                     uri={songs.uri}
@@ -191,6 +117,7 @@ const Profile = () => {
                     name={songs.name}
                     artist={songs.artist}
                     explicit={songs.explicit}
+                    userId={currentUser?.userId}
                   />
                 ))}
               </Tiles>
@@ -211,6 +138,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
+                      userId={currentUser?.userId}
                     />
                   );
                 })}
@@ -230,6 +158,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
+                      userId={currentUser?.userId}
                     />
                   );
                 })}
@@ -249,6 +178,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
+                      userId={currentUser?.userId}
                     />
                   );
                 })}
