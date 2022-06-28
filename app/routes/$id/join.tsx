@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (!session || !session.user || !session.user.name || !session.user.image) {
     console.log('Party join failed -> no authentication');
-    return redirect('/' + ownerId);
+    return redirect('/auth/spotify?/' + ownerId);
   }
   const userId = session.user.id;
 
