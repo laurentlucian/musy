@@ -76,6 +76,14 @@ const Player = ({
     active ? 1000 : null,
   );
 
+  // checks if user started playing every 30s
+  useInterval(
+    () => {
+      refresh();
+    },
+    active ? null : 30000,
+  );
+
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
@@ -97,7 +105,7 @@ const Player = ({
             <HStack>
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
-              {currentUser && currentUser.userId !== id && (
+              {currentUser?.userId !== id && (
                 <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
                   <IconButton
                     aria-label={isUserInParty ? 'Leave' : 'Join'}
@@ -108,9 +116,6 @@ const Player = ({
                     cursor="pointer"
                     isLoading={busy}
                   />
-                  {/* <Button px={0} variant="ghost" type="submit">
-                       <Image boxSize="24px" src={listen_width} />
-                      </Button> */}
                 </Form>
               )}
               {party.length && (
