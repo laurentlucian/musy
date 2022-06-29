@@ -9,27 +9,24 @@ import {
 } from '@chakra-ui/react';
 import { Form, useSubmit, useTransition } from '@remix-run/react';
 import { CloseSquare, MusicSquareSearch } from 'iconsax-react';
-import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-type SearchType = {
-  isSearching: boolean;
-  setIsSearching: (T: boolean) => void;
+type SearchComponent = {
+  search: string;
+  setSearch: (T: string) => void;
 };
 
-const Search = ({ isSearching, setIsSearching }: SearchType) => {
+const Search = ({ search, setSearch }: SearchComponent) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useTransition();
-  const search = searchParams.get('spotify');
-  const formRef = useRef<HTMLFormElement>(null);
   const busy = transition.submission?.formData.has('spotify') ?? false;
 
   return (
     <>
-      <Form ref={formRef} method="get" action="search">
+      <Form method="get" action="search">
         <Flex flex={1} align="center">
-          {!isSearching && (
+          {/* {!isSearching && (
             <>
               <Heading fontSize={['md', 'lg']} mr={2}>
                 Queue
@@ -40,7 +37,8 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                 size="sm"
                 variant="ghost"
                 onClick={() => {
-                  setIsSearching(true);
+                  // @todo show search input
+                  setSearch('');
                   searchParams.delete('spotify');
                   setSearchParams(searchParams, {
                     replace: true,
@@ -58,15 +56,15 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                 autoComplete="off"
                 autoFocus
                 size="sm"
-                defaultValue={search ?? ''}
+                value={search}
                 placeholder="joji, willow, ribs, etc"
-                // onBlur={() => setIsSearching(false)}
+                // onBlur={() => setIsSearching('')}
                 onChange={(e) => {
                   if (e.currentTarget.value.trim()) {
+                    setSearch(e.currentTarget.value);
                     submit(e.currentTarget.form);
-                    setIsSearching(true);
                   } else {
-                    setIsSearching(false);
+                    setSearch('');
                     searchParams.delete('spotify');
                     setSearchParams(searchParams, {
                       replace: true,
@@ -89,7 +87,7 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                       size="xs"
                       borderRadius={8}
                       onClick={() => {
-                        setIsSearching(false);
+                        setIsSearching('');
                         searchParams.delete('spotify');
                         setSearchParams(searchParams, {
                           replace: true,
@@ -102,29 +100,60 @@ const Search = ({ isSearching, setIsSearching }: SearchType) => {
                 }
               />
             </InputGroup>
-          )}
-          {/* <Input
-            name="spotify"
-            size="sm"
-            defaultValue={search ?? ''}
-            placeholder="Add to queue"
-            autoComplete="off"
-            borderRadius={3}
-            onChange={(e) => {
-              if (e.currentTarget.value.trim()) {
-                submit(e.currentTarget.form);
-                setIsSearching(true);
-              } else {
-                setIsSearching(false);
-                searchParams.delete('spotify');
-                setSearchParams(searchParams, {
-                  replace: true,
-                  state: { scroll: false },
-                });
-              }
-            }}
-            fontSize="15px"
-          /> */}
+          )} */}
+          <InputGroup>
+            <Input
+              name="spotify"
+              variant="flushed"
+              size="sm"
+              value={search}
+              placeholder="Send a song"
+              autoComplete="off"
+              borderRadius={3}
+              onChange={(e) => {
+                if (e.currentTarget.value.trim()) {
+                  setSearch(e.currentTarget.value);
+                  submit(e.currentTarget.form);
+                } else {
+                  setSearch('');
+                  searchParams.delete('spotify');
+                  setSearchParams(searchParams, {
+                    replace: true,
+                    state: { scroll: false },
+                  });
+                }
+              }}
+              fontSize="15px"
+            />
+            {search && (
+              <InputRightElement
+                h="35px"
+                w="65px"
+                pr={2}
+                justifyContent="end"
+                children={
+                  <>
+                    {busy && <Spinner size="xs" mr={2} />}
+                    <IconButton
+                      aria-label="close"
+                      variant="ghost"
+                      size="xs"
+                      borderRadius={8}
+                      onClick={() => {
+                        setSearch('');
+                        searchParams.delete('spotify');
+                        setSearchParams(searchParams, {
+                          replace: true,
+                          state: { scroll: false },
+                        });
+                      }}
+                      icon={<CloseSquare />}
+                    />
+                  </>
+                }
+              />
+            )}
+          </InputGroup>
         </Flex>
       </Form>
     </>

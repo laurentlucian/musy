@@ -1,6 +1,6 @@
 import { Flex, Icon, IconButton, Image, Input, Spinner, Stack, Text } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
-import { AddSquare, Send2, TickSquare } from 'iconsax-react';
+import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import Tooltip from './Tooltip';
 
@@ -13,23 +13,27 @@ type Type = {
 
   // @todo figure out a better way to require authentication on click;
   // after authentication redirect, add to queue isn't successful. user needs to click again
-  // not authenticated when `null`; `undefined` when not supposed to add to currentUser queue
-  userId?: string | null;
+  userId?: string;
+  // user.name
+  sendTo?: string;
 };
 
-const Tile = ({ uri, image, name, artist, explicit, userId }: Type) => {
+const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: Type) => {
   const { id } = useParams();
   const fetcher = useFetcher();
 
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
+  const isError = Boolean(fetcher.data);
 
   return (
     <Stack flex="0 0 200px">
       <Image src={image} borderRadius={5} draggable={false} />
       <Flex justify="space-between">
         <Stack spacing={0}>
-          <Text fontSize="sm">{name}</Text>
+          <Text fontSize="sm" noOfLines={3} whiteSpace="normal">
+            {name}
+          </Text>
           <Flex align="center">
             {explicit && <Image src={explicitImage} mr={1} w="19px" />}
             <Text fontSize="xs" opacity={0.8}>
@@ -42,7 +46,7 @@ const Tile = ({ uri, image, name, artist, explicit, userId }: Type) => {
             <fetcher.Form
               replace
               method="post"
-              action={userId === null ? '/auth/spotify?/' + id : `/${userId ?? id}/add`}
+              action={sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?/' + id}
             >
               <Input type="hidden" name="uri" value={uri} />
               <Input type="hidden" name="image" value={image} />
@@ -50,11 +54,11 @@ const Tile = ({ uri, image, name, artist, explicit, userId }: Type) => {
               <Input type="hidden" name="artist" value={artist} />
               {/* empty string is falsy */}
               <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
-              <Tooltip label={userId === null || userId ? 'Add to your queue' : ''}>
+              <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
                 <IconButton
                   type="submit"
                   aria-label="queue"
-                  icon={userId === null || userId ? <AddSquare /> : <Send2 />}
+                  icon={sendTo ? <Send2 /> : <AddSquare />}
                   variant="ghost"
                   p={0}
                 />
@@ -62,6 +66,10 @@ const Tile = ({ uri, image, name, artist, explicit, userId }: Type) => {
             </fetcher.Form>
           ) : !isDone ? (
             <Spinner ml="auto" />
+          ) : isError ? (
+            <Tooltip label="Failed" defaultIsOpen closeDelay={500}>
+              <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
+            </Tooltip>
           ) : (
             <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
           )}

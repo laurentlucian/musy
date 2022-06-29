@@ -1,27 +1,7 @@
-import { useRef, useState } from 'react';
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Input,
-  Flex,
-  InputGroup,
-  InputRightElement,
-  Spinner,
-  Image,
-  IconButton,
-} from '@chakra-ui/react';
-import {
-  Form,
-  Outlet,
-  useCatch,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-  useTransition,
-} from '@remix-run/react';
-import { redirect } from '@remix-run/node';
+import { useState } from 'react';
+import { Heading, HStack, Stack, Text, Image } from '@chakra-ui/react';
+import { Outlet, useCatch, useLoaderData, useSearchParams } from '@remix-run/react';
+import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction } from '@remix-run/node';
 import type { Party, Profile as ProfileType, Queue } from '@prisma/client';
 
@@ -35,11 +15,11 @@ import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
 
 type ProfileComponent = {
-  user: ProfileType | null;
-  playback: SpotifyApi.CurrentPlaybackResponse | null;
-  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
-  liked: SpotifyApi.UsersSavedTracksResponse | null;
-  top: SpotifyApi.UsersTopTracksResponse | null;
+  user: ProfileType;
+  playback: SpotifyApi.CurrentPlaybackResponse;
+  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
+  liked: SpotifyApi.UsersSavedTracksResponse;
+  top: SpotifyApi.UsersTopTracksResponse;
   currentUser: ProfileType | null;
   party: Party[];
   queue: Queue[];
@@ -50,9 +30,8 @@ const Profile = () => {
     useLoaderData<ProfileComponent>();
 
   const [searchParams] = useSearchParams();
-  const search = searchParams.get('spotify');
-  // remove Outlet instantly, before new "empty search" completes
-  const [isSearching, setIsSearching] = useState(search ? true : false);
+  const searchDefault = searchParams.get('spotify');
+  const [search, setSearch] = useState(searchDefault ?? '');
 
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
@@ -67,23 +46,29 @@ const Profile = () => {
                 {user.name}
               </Heading>
             </HStack>
-            {playback?.is_playing ? (
+            {playback?.item ? (
               <Player
                 id={user.userId}
                 name={playback.item?.name}
                 artist={
-                  playback.item?.type === 'track' ? playback.item?.album?.artists[0].name : ''
+                  playback.item?.type === 'track'
+                    ? playback.item?.album?.artists[0].name
+                    : playback.item.show.name
                 }
-                image={playback.item?.type === 'track' ? playback.item.album?.images[0].url : ''}
+                image={
+                  playback.item?.type === 'track'
+                    ? playback.item.album?.images[0].url
+                    : playback.item.images[0].url
+                }
                 device={playback.device.name}
                 currentUser={currentUser}
                 party={party}
-                active={true}
+                active={playback.is_playing}
                 progress={progress}
                 duration={duration}
                 explicit={playback.item?.explicit}
               />
-            ) : recent ? (
+            ) : (
               <Player
                 id={user.userId}
                 name={recent.items[0].track.name}
@@ -95,28 +80,26 @@ const Profile = () => {
                 active={false}
                 progress={progress}
                 duration={duration}
-                explicit={playback?.item?.explicit}
+                explicit={recent.items[0].track.explicit}
               />
-            ) : null}
+            )}
           </Stack>
 
           <Stack spacing={5}>
-            {playback?.is_playing && (
-              <Search isSearching={isSearching} setIsSearching={setIsSearching} />
-            )}
-            {isSearching && <Outlet />}
-            {/* switch on results, not on input focus */}
-            {!isSearching && queue.length !== 0 && (
+            {playback?.is_playing && <Search search={search} setSearch={setSearch} />}
+            {search && <Outlet />}
+            {/* @todo switch on results, not on input focus */}
+            {!search && queue.length !== 0 && (
               <Tiles>
-                {queue.map((songs) => (
+                {queue.map((track) => (
                   <Tile
-                    key={songs.id}
-                    uri={songs.uri}
-                    image={songs.image}
-                    name={songs.name}
-                    artist={songs.artist}
-                    explicit={songs.explicit}
-                    userId={currentUser?.userId ?? null}
+                    key={track.id}
+                    uri={track.uri}
+                    image={track.image}
+                    name={track.name}
+                    artist={track.artist}
+                    explicit={track.explicit}
+                    userId={currentUser?.userId}
                   />
                 ))}
               </Tiles>
@@ -137,7 +120,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId ?? null}
+                      userId={currentUser?.userId}
                     />
                   );
                 })}
@@ -157,7 +140,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId ?? null}
+                      userId={currentUser?.userId}
                     />
                   );
                 })}
@@ -200,16 +183,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   if (!id) throw redirect('/');
   const { spotify, user } = await spotifyApi(id);
 
-  if (!spotify)
-    return {
-      user: null,
-      playback: null,
-      recent: null,
-      party: null,
-      currentUser: null,
-      liked: null,
-      top: null,
-    };
+  if (!spotify || !user) return json('Spotify API Error', 500);
 
   const queue = await prisma.queue.findMany({ where: { ownerId: id } });
   const party = await prisma.party.findMany({ where: { ownerId: id } });
@@ -220,11 +194,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   try {
     const { body: top } = await spotify.getMyTopTracks();
-    return { user, playback, recent, party, currentUser, liked, top, queue };
+    return json({ user, playback, recent, party, currentUser, liked, top, queue });
   } catch {
     // will catch error if existingUser doesn't have required scopes in spotify authorization
     // user needs to reauthenticate
-    return { user, playback, recent, party, currentUser, liked, queue, top: null };
+    return json({ user, playback, recent, party, currentUser, liked, queue, top: null });
   }
 };
 

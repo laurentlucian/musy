@@ -122,6 +122,7 @@ function useScrollRestoration() {
         return;
       }
 
+      // don't do anything if caller includes scroll=false
       if (
         location.state &&
         typeof location.state === 'object' &&
