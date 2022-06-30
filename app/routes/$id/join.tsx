@@ -66,6 +66,7 @@ export const action: ActionFunction = async ({ request, params }) => {
           repeat: {
             every: 30000,
           },
+          jobId: ownerId,
         },
       );
     }

@@ -58,11 +58,12 @@ export const action: ActionFunction = async ({ request, params }) => {
           repeat: {
             every: 30000,
           },
+          jobId: String(activity.id),
         },
       );
       console.log('add -> created Job on ', res.queueName);
       // tell user when queue didn't work (can't queue when user isn't playing)
-      return json('Will queue once play resume');
+      return json('Will queue once play resumes');
     } else {
       // not adding to Activity when user queues song from their own page
       return json('Error: resume play first', { status: 500 });
