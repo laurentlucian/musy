@@ -231,7 +231,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   if (!spotify || !user) return json('Spotify API Error', 500);
 
-  const queue = await prisma.queue.findMany({ where: { ownerId: id }, include: { user: true } });
+  const queue = await prisma.queue.findMany({
+    where: { ownerId: id },
+    include: { user: true },
+    orderBy: { createdAt: 'desc' },
+  });
   const party = await prisma.party.findMany({ where: { ownerId: id } });
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
