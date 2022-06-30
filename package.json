@@ -34,7 +34,7 @@
     "react-spotify-web-playback-sdk": "^3.0.1",
     "remix": "^1.6.1",
     "remix-auth": "^3.2.2",
-    "remix-auth-spotify": "^1.2.3",
+    "remix-auth-oauth2": "^1.2.2",
     "remix-utils": "^3.3.0",
     "spotify-web-api-node": "^5.0.2",
     "tiny-invariant": "^1.2.0"

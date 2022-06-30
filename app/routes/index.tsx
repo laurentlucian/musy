@@ -4,7 +4,7 @@ import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useCatch, useLoaderData, useTransition } from '@remix-run/react';
 import Layout from '~/components/Layout';
 
-import { getAllUsers, spotifyStrategy } from '~/services/auth.server';
+import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Index = () => {
   const { user, users } = useLoaderData<{
@@ -36,7 +36,7 @@ const Index = () => {
         );
       })}
       {!user && (
-        <Form action={'/auth/spotify'} method="post">
+        <Form action="/auth/spotify" method="post">
           <Input type="hidden" value="/" name="redirectTo" />
           <Button isLoading={transition.state === 'submitting'} type="submit">
             Join
@@ -49,9 +49,7 @@ const Index = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const users = await getAllUsers();
-  // getSession() is supposed to refreshToken when expired but isn't
-  // it's okay for now because we only need it once from registration
-  const session = await spotifyStrategy.getSession(request);
+  const session = await authenticator.isAuthenticated(request);
 
   return { users, user: session?.user };
 };

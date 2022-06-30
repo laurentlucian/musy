@@ -9,24 +9,24 @@ import {
 } from '@remix-run/react';
 import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node';
 import { Heading, ChakraProvider, Text } from '@chakra-ui/react';
-import type { Session } from 'remix-auth-spotify';
 
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
-import { spotifyStrategy } from '~/services/auth.server';
+import type { UserProfile } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { ScrollRestoration } from './hooks/useScrollRestoration';
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return spotifyStrategy.getSession(request);
+  return authenticator.isAuthenticated(request);
 };
 
 const App = () => {
-  const data = useLoaderData<Session>();
+  const data = useLoaderData<UserProfile>();
 
   return (
     <Document>
       <ChakraProvider theme={theme}>
-        <Layout user={data?.user}>
+        <Layout user={data}>
           <Outlet />
         </Layout>
       </ChakraProvider>

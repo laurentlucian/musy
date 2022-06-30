@@ -7164,14 +7164,6 @@ remix-auth-oauth2@^1.2.2:
     remix-auth "^3.2.2"
     uuid "^8.3.2"
 
-remix-auth-spotify@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/remix-auth-spotify/-/remix-auth-spotify-1.2.3.tgz#fa63eb4d2426356de744a93941a5d670e6c76387"
-  integrity sha512-iJC14x2ZFdvrO1fNM9jLnzkYXjDB+Ao/zUOk1hUbjE4oES4zirajAz/Fx2S1tCX4rHPQAjxImdHjrtKGAoPE0Q==
-  dependencies:
-    remix-auth "^3.2.2"
-    remix-auth-oauth2 "^1.2.2"
-
 remix-auth@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/remix-auth/-/remix-auth-3.2.2.tgz#8941a6b57cd523872b7aacf200976d77c055a9f7"

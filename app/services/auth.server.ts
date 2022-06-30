@@ -1,9 +1,9 @@
 import { prisma } from './db.server';
 import { Authenticator } from 'remix-auth';
-import type { Session } from 'remix-auth-spotify';
-import { SpotifyStrategy } from 'remix-auth-spotify';
-
 import { sessionStorage } from '~/services/session.server';
+import type { Prisma } from '@prisma/client';
+import type { Session } from './spotify-strategy.server';
+import { SpotifyStrategy } from './spotify-strategy.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -31,6 +31,8 @@ const scopes = [
   'playlist-modify-public', // create playlists with custom image
   'user-top-read', // get top tracks
 ].join(' ');
+
+export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
 
 type CreateUser = {
   id: string;
@@ -65,9 +67,9 @@ export const updateToken = async (id: string, token: string, expiresAt: number) 
 };
 
 export const getCurrentUser = async (request: Request) => {
-  const session = await spotifyStrategy.getSession(request);
+  const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
-  const id = session.user?.id;
+  const id = session.user.id;
   let data = await prisma.user.findUnique({ where: { id }, include: { user: true } });
   if (!data) return null;
   return data.user;
@@ -83,22 +85,54 @@ export const spotifyStrategy = new SpotifyStrategy(
   {
     clientID: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    callbackURL: process.env.SPOTIFY_CALLBACK_URL, //callbackURL and redirect_uri used interchangeably, but redirect_uri is a req param for req user authorization also specify redirect_uri in spotify dev dashboard (must match)
+    callbackURL: process.env.SPOTIFY_CALLBACK_URL,
     sessionStorage,
     scope: scopes,
   },
-  async ({ accessToken, refreshToken, extraParams, profile }) => ({
-    accessToken,
-    refreshToken,
-    expiresAt: Date.now() + extraParams.expiresIn * 1000,
-    tokenType: extraParams.tokenType,
-    user: {
-      id: profile.id,
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      image: profile.__json.images?.[0].url,
-    },
-  }),
+  async ({ accessToken, refreshToken, extraParams, profile }) => {
+    const response = {
+      accessToken,
+      refreshToken,
+      expiresAt: Date.now() + extraParams.expiresIn * 1000,
+      tokenType: extraParams.tokenType,
+      user: {
+        id: profile.id,
+        email: profile.emails[0].value,
+        name: profile.displayName,
+        image: profile.__json.images?.[0].url,
+      },
+    };
+
+    const existingUser = await getUser(profile.id);
+
+    if (existingUser) {
+      console.log(
+        'spotify_callback -> session.expiresAt',
+        new Date(response.expiresAt).toLocaleString('en-US'),
+      );
+      await updateToken(profile.id, response.accessToken, response.expiresAt);
+      return response;
+    }
+
+    const user = {
+      id: response.user.id,
+      accessToken: response.accessToken,
+      refreshToken: response.refreshToken,
+      expiresAt: response.expiresAt,
+      tokenType: response.tokenType,
+      user: {
+        create: {
+          email: response.user.email,
+          name: response.user.name,
+          image: response.user.image,
+        },
+      },
+    };
+
+    await createUser(user);
+
+    return response;
+  },
 );
 
 export const authenticator = new Authenticator<Session>(sessionStorage, {

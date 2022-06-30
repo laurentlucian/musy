@@ -1,9 +1,9 @@
 import { Flex, Heading, HStack, IconButton, Input, useColorMode } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Login, Logout, Moon, Sun1 } from 'iconsax-react';
-import type { User } from 'remix-auth-spotify';
+import type { UserProfile } from '~/services/auth.server';
 
-const Nav = ({ user }: { user: User | null }) => {
+const Nav = ({ user }: { user: UserProfile }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
   const location = useLocation();
@@ -32,7 +32,10 @@ const Nav = ({ user }: { user: User | null }) => {
         />
 
         {showAuth && (
-          <Form action={user ? '/logout' : '/auth/spotify?' + location.pathname} method="post">
+          <Form
+            action={user ? '/logout' : '/auth/spotify?returnTo=' + location.pathname}
+            method="post"
+          >
             {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
             <IconButton
               aria-label={user ? 'logout' : 'login'}
