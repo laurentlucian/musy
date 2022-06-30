@@ -54,15 +54,16 @@ model Party {
 }
 
 model Queue {
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String @id
-
+  id        Int      @id @default(autoincrement())
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
   createdAt DateTime @default(now())
-  uri       String
-  name      String
-  image     String
-  artist    String
-  explicit  Boolean
+
+  uri      String
+  name     String
+  image    String
+  artist   String
+  explicit Boolean
 
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])

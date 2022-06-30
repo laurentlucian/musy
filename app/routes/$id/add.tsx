@@ -1,6 +1,5 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
@@ -40,17 +39,16 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (!spotify) return json('Error');
 
   try {
-    console.log('added to spotify');
     await spotify.addToQueue(uri);
     // syncronizing with prisma only after spotify.api is successful
-    // @todo use scheduler to send to spotify when user starts listening
+    // @todo use scheduler to send to spotify only when user starts listening
     if (id !== fromUserId) {
       // and only if currentUser is adding from someone's else page
-      console.log('added to prisma');
       await prisma.queue.create({ data: fields });
     }
     return json(null);
-  } catch {
+  } catch (error) {
+    console.log('error', error);
     // tell user when queue didn't work (can't queue when user isn't playing)
     return json('Error');
   }

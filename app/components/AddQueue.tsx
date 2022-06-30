@@ -57,7 +57,7 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
       ) : !isDone ? (
         <Spinner ml="auto" />
       ) : isError ? (
-        <Tooltip label="Failed" defaultIsOpen>
+        <Tooltip label="Failed (must be playing)" defaultIsOpen>
           <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
