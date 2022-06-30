@@ -46,7 +46,9 @@ const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: Type) => {
             <fetcher.Form
               replace
               method="post"
-              action={sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?/' + id}
+              action={
+                sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?returnTo=/' + id
+              }
             >
               <Input type="hidden" name="uri" value={uri} />
               <Input type="hidden" name="image" value={image} />

@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { Heading, HStack, Stack, Text, Image } from '@chakra-ui/react';
-import { Outlet, useCatch, useLoaderData, useSearchParams } from '@remix-run/react';
+import { Heading, HStack, Stack, Text, Image, Input, Textarea, Box } from '@chakra-ui/react';
+import {
+  Form,
+  Outlet,
+  useCatch,
+  useLoaderData,
+  useSearchParams,
+  useSubmit,
+} from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderFunction, ActionFunction } from '@remix-run/node';
 import type { Party, Profile as ProfileType, Queue } from '@prisma/client';
 
 import { prisma } from '~/services/db.server';
@@ -33,6 +40,8 @@ const Profile = () => {
   const searchDefault = searchParams.get('spotify');
   const [search, setSearch] = useState(searchDefault ?? '');
 
+  const submit = useSubmit();
+
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
   return (
@@ -42,9 +51,32 @@ const Profile = () => {
           <Stack spacing={3}>
             <HStack>
               <Image borderRadius={50} boxSize={93} src={user.image} />
-              <Heading size="lg" fontWeight="bold">
-                {user.name}
-              </Heading>
+              <Stack flex={1} maxW="calc(100% - 100px)">
+                <Heading size="md" fontWeight="bold">
+                  {user.name}
+                </Heading>
+                {user.id === currentUser?.id ? (
+                  <Form method="post" replace>
+                    <Textarea
+                      name="bio"
+                      size="sm"
+                      variant="flushed"
+                      defaultValue={user.bio ?? ''}
+                      placeholder="write something :)"
+                      onBlur={(e) => submit(e.currentTarget.form)}
+                      resize="none"
+                      maxLength={75}
+                      rows={2}
+                      py={0}
+                      focusBorderColor="purple.500"
+                    />
+                  </Form>
+                ) : (
+                  <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
+                    {user.bio}
+                  </Text>
+                )}
+              </Stack>
             </HStack>
             {playback?.item ? (
               <Player
@@ -200,6 +232,20 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     // user needs to reauthenticate
     return json({ user, playback, recent, party, currentUser, liked, queue, top: null });
   }
+};
+
+export const action: ActionFunction = async ({ request, params }) => {
+  const id = params.id;
+  if (!id) throw redirect('/');
+  const data = await request.formData();
+  const bio = data.get('bio');
+
+  if (typeof bio !== 'string') {
+    return json('Form submitted incorrectly');
+  }
+
+  const user = await prisma.profile.update({ where: { userId: id }, data: { bio: bio ?? '' } });
+  return user;
 };
 
 export const ErrorBoundary = (error: { error: Error }) => {

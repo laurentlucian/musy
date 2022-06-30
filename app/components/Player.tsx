@@ -19,6 +19,7 @@ import spotify_icon_black from '~/assets/spotify-icon-black.png';
 import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import explicitImage from '~/assets/explicit-solid.svg';
+import Tooltip from './Tooltip';
 
 type PlayerType = {
   id: string;
@@ -91,7 +92,7 @@ const Player = ({
           <Flex direction="column">
             <Text noOfLines={[1]}>{name}</Text>
             <Flex>
-              {explicit && <Image src={explicitImage} w="19px" />}
+              {explicit && <Image mr={1} src={explicitImage} w="19px" />}
               <Text opacity={0.8} fontSize="13px">
                 {artist}
               </Text>
@@ -107,21 +108,25 @@ const Player = ({
               {/* {currentUser && ( */}
               {currentUser?.userId !== id && (
                 <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
-                  <IconButton
-                    aria-label={isUserInParty ? 'Leave' : 'Join'}
-                    name="party"
-                    icon={isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />}
-                    variant="ghost"
-                    type="submit"
-                    cursor="pointer"
-                    isLoading={busy}
-                  />
+                  <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                    <IconButton
+                      aria-label={isUserInParty ? 'Leave' : 'Join'}
+                      name="party"
+                      icon={
+                        isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />
+                      }
+                      variant="ghost"
+                      type="submit"
+                      cursor="pointer"
+                      isLoading={busy}
+                    />
+                  </Tooltip>
                 </Form>
               )}
               {party.length && (
                 <AvatarGroup size="xs" spacing={-2} max={5}>
-                  {party.map((v) => {
-                    return <Avatar key={v.userId} name={v.userName} src={v.userImage} />;
+                  {party.map((u) => {
+                    return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
                   })}
                 </AvatarGroup>
               )}
