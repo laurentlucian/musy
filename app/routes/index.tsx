@@ -2,7 +2,6 @@ import { Button, Heading, HStack, Image, Input, Stack, Text } from '@chakra-ui/r
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
 import { Form, Link, useCatch, useLoaderData, useTransition } from '@remix-run/react';
-import Layout from '~/components/Layout';
 
 import { authenticator, getAllUsers } from '~/services/auth.server';
 
@@ -59,10 +58,10 @@ export default Index;
 export const ErrorBoundary = ({ error }: { error: Error }) => {
   console.error(error);
   return (
-    <Layout user={null}>
-      <Heading fontSize={['xl', 'xxl']}>Oops, unhandled error</Heading>
-      <Text fontSize="md">Trace(for debug): {error.message}</Text>
-    </Layout>
+    <>
+      <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
+      <Text fontSize="sm">Trace(for debug): {error.message}</Text>
+    </>
   );
 };
 
@@ -82,11 +81,11 @@ export const CatchBoundary = () => {
   }
 
   return (
-    <Layout user={null}>
-      <Heading fontSize={['xl', 'xxl']}>
+    <>
+      <Heading fontSize={['sm', 'md']}>
         {caught.status}: {caught.statusText}
       </Heading>
-      <Text fontSize="md">{message}</Text>
-    </Layout>
+      <Text fontSize="sm">{message}</Text>
+    </>
   );
 };
