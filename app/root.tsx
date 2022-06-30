@@ -38,12 +38,10 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
   console.error(error);
   return (
     <Document title="Error">
-      <ChakraProvider theme={theme}>
-        <Layout user={null}>
-          <Heading fontSize={['xl', 'xxl']}>Oops, unhandled error</Heading>
-          <Text fontSize="md">Trace(for debug): {error.message}</Text>
-        </Layout>
-      </ChakraProvider>
+      <Layout user={null}>
+        <Heading fontSize={['xl', 'xxl']}>Oops, unhandled error</Heading>
+        <Text fontSize="md">Trace(for debug): {error.message}</Text>
+      </Layout>
     </Document>
   );
 };
@@ -64,26 +62,14 @@ export const CatchBoundary = () => {
   }
 
   return (
-    <html lang="en">
-      <head>
-        <Meta />
-        <title>{`${caught.status} ${caught.statusText}`}</title>
-        <Links />
-      </head>
-      <body>
-        <ChakraProvider theme={theme}>
-          <Layout user={null}>
-            <Heading fontSize={['xl', 'xxl']}>
-              {caught.status}: {caught.statusText}
-            </Heading>
-            <Text fontSize="md">{message}</Text>
-          </Layout>
-        </ChakraProvider>
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
+    <Document title="Error">
+      <Layout user={null}>
+        <Heading fontSize={['xl', 'xxl']}>
+          {caught.status}: {caught.statusText}
+        </Heading>
+        <Text fontSize="md">{message}</Text>
+      </Layout>
+    </Document>
   );
 };
 
