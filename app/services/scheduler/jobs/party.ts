@@ -65,16 +65,18 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
     const parties = await prisma.party.findMany({ where: { ownerId: ownerId } });
     if (parties.length === 0) {
       console.log('ownerQ -> failed: no active parties');
-      const jobs = await ownerQ.getRepeatableJobs();
-      console.log('jobs', jobs);
-      await ownerQ.removeRepeatableByKey(jobs[0].key);
-      throw 'no active parties';
+      const jobKey = job.repeatJobKey;
+      if (jobKey) {
+        await ownerQ.removeRepeatableByKey(jobKey);
+        console.log('ownerQ -> removed repeatable job');
+      }
+      return 'ownerQ -> no active parties';
     }
 
     const { spotify } = await spotifyApi(ownerId);
     if (!spotify) {
       console.log('ownerQ -> no spotify API from owner');
-      throw 'ownerQ -> no spotify API from owner';
+      return 'ownerQ -> no spotify API from owner';
     }
 
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
@@ -88,7 +90,7 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
       }
       // const jobs = await ownerQ.getRepeatableJobs();
       // await ownerQ.removeRepeatableByKey(jobs[0].key);
-      throw 'owner has paused playback -> deleted all parties by owner';
+      return 'owner has paused playback -> deleted all parties by owner';
     }
 
     const currentTrack = playback.item?.uri ?? '';

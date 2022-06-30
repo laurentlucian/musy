@@ -18,20 +18,21 @@ export const activityQ = Queue<{ activityId: number }>('pending_activity', async
         const jobKey = job.repeatJobKey;
         if (jobKey) {
           await activityQ.removeRepeatableByKey(jobKey);
+          console.log('activityQ -> sent; removed job');
+          return null;
         }
-        console.log('activityQ -> sent; terminating...');
+        console.log('activityQ -> couldnt remove job (missing jobKey)');
       }
     } else {
-      console.log('activityQ -> not pending, terminating... (shouldnt be possible)');
       const jobKey = job.repeatJobKey;
       if (jobKey) {
         await activityQ.removeRepeatableByKey(jobKey);
+        console.log('activityQ -> not pending, removed job (shouldnt be possible)');
+        return null;
       }
+      console.log('activityQ -> not pending, couldnt remove job (missing jobKey)');
     }
-
-    return null;
   } catch {
     console.log('activityQ -> not able to send to spotify; will try again');
-    throw 'activityQ -> caught an error!';
   }
 });

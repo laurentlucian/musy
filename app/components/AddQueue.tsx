@@ -55,14 +55,14 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
           </Tooltip>
         </fetcher.Form>
       ) : !isDone ? (
-        <Spinner ml="auto" />
+        <Spinner />
       ) : isError ? (
         <Tooltip label={`Failed (${fetcher.data.split(' ').slice(1).join(' ')})`} defaultIsOpen>
-          <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
+          <Icon textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
         <Tooltip label={fetcher.data} defaultIsOpen>
-          <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
+          <Icon textAlign="right" boxSize="25px" as={TickSquare} />
         </Tooltip>
       )}
     </>
