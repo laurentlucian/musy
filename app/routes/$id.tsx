@@ -10,7 +10,8 @@ import {
 } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
-import type { Party, Profile as ProfileType, Queue } from '@prisma/client';
+import type { Party, Profile as ProfileType } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -21,6 +22,12 @@ import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
 
+const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
+  include: { user: true },
+});
+
+type QueueWithProfile = Prisma.QueueGetPayload<typeof queueWithProfile>;
+
 type ProfileComponent = {
   user: ProfileType;
   playback: SpotifyApi.CurrentPlaybackResponse;
@@ -29,7 +36,7 @@ type ProfileComponent = {
   top: SpotifyApi.UsersTopTracksResponse;
   currentUser: ProfileType | null;
   party: Party[];
-  queue: Queue[];
+  queue: QueueWithProfile[];
 };
 
 const Profile = () => {
@@ -122,27 +129,32 @@ const Profile = () => {
           <Stack spacing={5}>
             {currentUser?.id !== user.id && <Search search={search} setSearch={setSearch} />}
             {search && <Outlet />}
-            {/* @todo switch on results, not on input focus */}
-            {!search && queue.length !== 0 && (
-              <Tiles>
-                {queue.map((track) => (
-                  <Tile
-                    key={track.id}
-                    uri={track.uri}
-                    image={track.image}
-                    name={track.name}
-                    artist={track.artist}
-                    explicit={track.explicit}
-                    userId={currentUser?.userId}
-                  />
-                ))}
-              </Tiles>
+
+            {queue.length !== 0 && (
+              <Stack spacing={3}>
+                <Heading fontSize={['sm', 'md']}>Activity</Heading>
+                <Tiles>
+                  {queue.map((item) => {
+                    return (
+                      <Tile
+                        key={new Date(item.createdAt).getMilliseconds()}
+                        uri={item.uri}
+                        image={item.image}
+                        name={item.name}
+                        artist={item.artist}
+                        explicit={item.explicit}
+                        user={item.user}
+                      />
+                    );
+                  })}
+                </Tiles>
+              </Stack>
             )}
           </Stack>
           {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
           {recent && recent?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['md', 'lg']}>Recently played</Heading>
+              <Heading fontSize={['sm', 'md']}>Recently played</Heading>
               <Tiles>
                 {recent?.items.map(({ track, played_at }) => {
                   return (
@@ -163,7 +175,7 @@ const Profile = () => {
           )}
           {liked && liked?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['md', 'lg']}>Recently liked</Heading>
+              <Heading fontSize={['sm', 'md']}>Recently liked</Heading>
               <Tiles>
                 {liked.items.map(({ track }) => {
                   return (
@@ -183,7 +195,7 @@ const Profile = () => {
           )}
           {top && top?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['md', 'lg']}>Top</Heading>
+              <Heading fontSize={['sm', 'md']}>Top</Heading>
               <Tiles>
                 {top.items.map((track) => {
                   return (
@@ -219,7 +231,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   if (!spotify || !user) return json('Spotify API Error', 500);
 
-  const queue = await prisma.queue.findMany({ where: { ownerId: id } });
+  const queue = await prisma.queue.findMany({ where: { ownerId: id }, include: { user: true } });
   const party = await prisma.party.findMany({ where: { ownerId: id } });
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const { body: recent } = await spotify.getMyRecentlyPlayedTracks();

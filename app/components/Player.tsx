@@ -80,12 +80,14 @@ const Player = ({
     active ? 1000 : null,
   );
 
-  // checks if user started playing every 30s
   useInterval(
     () => {
       refresh();
     },
-    active ? null : 30000,
+    // -> checks if user started playing every minute
+    // active ? null : 30000,
+    // -> refreshes every 30s regardless
+    30000,
   );
 
   return (

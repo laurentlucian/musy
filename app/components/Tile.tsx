@@ -1,5 +1,6 @@
-import { Flex, Image, Stack, Text } from '@chakra-ui/react';
-import { useParams } from '@remix-run/react';
+import { AvatarGroup, Flex, Image, Stack, Text } from '@chakra-ui/react';
+import type { Profile } from '@prisma/client';
+import { useFetcher, useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import AddQueue from './AddQueue';
 
@@ -13,11 +14,15 @@ type TileProps = {
   // @todo figure out a better way to require authentication on click;
   // after authentication redirect, add to queue isn't successful. user needs to click again
   userId?: string;
-  // user.name
+
+  // name, not Id
   sendTo?: string;
+
+  // used by Activity - (from who; created by)
+  user?: Profile | null;
 };
 
-const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: TileProps) => {
+const Tile = ({ uri, image, name, artist, explicit, userId, sendTo, user }: TileProps) => {
   const { id } = useParams();
 
   return (
@@ -36,16 +41,20 @@ const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: TileProps)
           </Flex>
         </Stack>
         <Flex justify="center">
-          <AddQueue
-            key={id}
-            uri={uri}
-            image={image}
-            name={name}
-            artist={artist}
-            explicit={explicit ?? false}
-            userId={userId}
-            sendTo={sendTo}
-          />
+          {user ? (
+            <Image borderRadius={50} boxSize={8} src={user.image} />
+          ) : (
+            <AddQueue
+              key={id}
+              uri={uri}
+              image={image}
+              name={name}
+              artist={artist}
+              explicit={explicit ?? false}
+              userId={userId}
+              sendTo={sendTo}
+            />
+          )}
         </Flex>
       </Flex>
     </Stack>

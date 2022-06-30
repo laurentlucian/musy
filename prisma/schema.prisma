@@ -20,6 +20,7 @@ model User {
 
   user  Profile?
   party Party[]
+  queue Queue[]
 }
 
 model Profile {
@@ -27,6 +28,7 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   user      User     @relation(fields: [userId], references: [id])
+  // should've been the @id
   userId    String   @unique
 
   name  String
@@ -52,9 +54,8 @@ model Party {
 }
 
 model Queue {
-  id      Int     @id @default(autoincrement())
-  owner   Profile @relation(fields: [ownerId], references: [userId])
-  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @id
 
   createdAt DateTime @default(now())
   uri       String
@@ -64,6 +65,6 @@ model Queue {
   explicit  Boolean
 
   // can be anonymous
-  userId    String?
-  userImage String?
+  user   Profile? @relation(fields: [userId], references: [userId])
+  userId String?
 }

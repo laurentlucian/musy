@@ -1,45 +1,59 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const action: ActionFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
-  const data = await request.formData();
-  const uri = data.get('uri');
-  const image = data.get('image');
-  const name = data.get('name');
-  const artist = data.get('artist');
-  const explicit = Boolean(data.get('explicit'));
+  const body = await request.formData();
+  const uri = body.get('uri');
+  const image = body.get('image');
+  const name = body.get('name');
+  const artist = body.get('artist');
+  const explicit = Boolean(body.get('explicit'));
+  const fromUserId = body.get('fromId');
 
   if (
     typeof uri !== 'string' ||
     typeof image !== 'string' ||
     typeof name !== 'string' ||
     typeof artist !== 'string' ||
-    typeof explicit !== 'boolean'
+    typeof explicit !== 'boolean' ||
+    typeof fromUserId !== 'string'
   ) {
-    return json('Form submitted incorrectly', { status: 403 });
+    return json('Form submitted incorrectly');
   }
 
-  const fields = { uri, name, image, artist, explicit, ownerId: id };
+  const fields = {
+    uri,
+    name,
+    image,
+    artist,
+    explicit,
+    ownerId: id,
+    userId: fromUserId,
+  };
 
   const { spotify } = await spotifyApi(id);
-  if (!spotify) return json('No access to spotify API', { status: 500 });
+  if (!spotify) return json('Error');
 
   try {
+    console.log('added to spotify');
     await spotify.addToQueue(uri);
-    // syncronizing with prisma only if spotify.api is successful
-    await prisma.queue.create({ data: fields });
+    // syncronizing with prisma only after spotify.api is successful
+    // @todo use scheduler to send to spotify when user starts listening
+    if (id !== fromUserId) {
+      // and only if currentUser is adding from someone's else page
+      console.log('added to prisma');
+      await prisma.queue.create({ data: fields });
+    }
+    return json(null);
   } catch {
-    // @todo handle errors gracefully
     // tell user when queue didn't work (can't queue when user isn't playing)
-    // if (res.statusCode !== 204) return json("Couldn't add to queue", { status: res.statusCode });
-    return null;
+    return json('Error');
   }
-
-  return null;
 };
 
 export const loader: LoaderFunction = () => {

@@ -41,6 +41,9 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
           <Input type="hidden" name="artist" value={artist} />
           {/* empty string is falsy */}
           <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
+          {/* sendTo: receiving song (id), sending song (userId) */}
+          {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
+          <Input type="hidden" name="fromId" value={sendTo ? userId : id} />
           <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
             <IconButton
               type="submit"
@@ -54,7 +57,7 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
       ) : !isDone ? (
         <Spinner ml="auto" />
       ) : isError ? (
-        <Tooltip label="Failed" defaultIsOpen closeDelay={500}>
+        <Tooltip label="Failed" defaultIsOpen>
           <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
