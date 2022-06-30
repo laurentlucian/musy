@@ -58,6 +58,7 @@ model Queue {
   owner     User     @relation(fields: [ownerId], references: [id])
   ownerId   String
   createdAt DateTime @default(now())
+  pending   Boolean  @default(false)
 
   uri      String
   name     String

@@ -23,7 +23,7 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
 
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
-  const isError = Boolean(fetcher.data);
+  const isError = fetcher.data?.includes('Error') ?? false;
 
   return (
     <>
@@ -57,11 +57,13 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
       ) : !isDone ? (
         <Spinner ml="auto" />
       ) : isError ? (
-        <Tooltip label="Failed (must be playing)" defaultIsOpen>
+        <Tooltip label={`Failed (${fetcher.data})`} defaultIsOpen>
           <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
-        <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
+        <Tooltip label={fetcher.data} defaultIsOpen>
+          <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
+        </Tooltip>
       )}
     </>
   );

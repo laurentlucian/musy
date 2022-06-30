@@ -82,9 +82,12 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
     if (!playback.is_playing) {
       console.log('ownerQ -> failed: owner has paused playback');
       await prisma.party.deleteMany({ where: { ownerId } });
-      const jobs = await ownerQ.getRepeatableJobs();
-      console.log('jobs', jobs);
-      await ownerQ.removeRepeatableByKey(jobs[0].key);
+      const jobKey = job.repeatJobKey;
+      if (jobKey) {
+        await ownerQ.removeRepeatableByKey(jobKey);
+      }
+      // const jobs = await ownerQ.getRepeatableJobs();
+      // await ownerQ.removeRepeatableByKey(jobs[0].key);
       throw 'owner has paused playback -> deleted all parties by owner';
     }
 
