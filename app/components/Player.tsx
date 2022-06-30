@@ -20,10 +20,12 @@ import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import explicitImage from '~/assets/explicit-solid.svg';
 import Tooltip from './Tooltip';
+import AddQueue from './AddQueue';
 
-type PlayerType = {
+type PlayerProps = {
+  uri: string;
   id: string;
-  name: string | undefined;
+  name: string;
   artist: string;
   image: string;
   device: string;
@@ -36,6 +38,7 @@ type PlayerType = {
 };
 
 const Player = ({
+  uri,
   id,
   name,
   artist,
@@ -47,7 +50,7 @@ const Player = ({
   progress,
   duration,
   explicit,
-}: PlayerType) => {
+}: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
@@ -106,22 +109,36 @@ const Player = ({
             <HStack>
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
+
               {currentUser?.userId !== id && (
-                <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
-                  <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                    <IconButton
-                      aria-label={isUserInParty ? 'Leave' : 'Join'}
-                      name="party"
-                      icon={
-                        isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />
-                      }
-                      variant="ghost"
-                      type="submit"
-                      cursor="pointer"
-                      isLoading={busy}
+                <>
+                  {!isUserInParty && (
+                    <AddQueue
+                      key={id}
+                      uri={uri}
+                      image={image}
+                      name={name}
+                      artist={artist}
+                      explicit={explicit ?? false}
+                      userId={currentUser?.userId}
                     />
-                  </Tooltip>
-                </Form>
+                  )}
+                  <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
+                    <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                      <IconButton
+                        aria-label={isUserInParty ? 'Leave' : 'Join'}
+                        name="party"
+                        icon={
+                          isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />
+                        }
+                        variant="ghost"
+                        type="submit"
+                        cursor="pointer"
+                        isLoading={busy}
+                      />
+                    </Tooltip>
+                  </Form>
+                </>
               )}
               {party.length && (
                 <AvatarGroup size="xs" spacing={-2} max={5}>

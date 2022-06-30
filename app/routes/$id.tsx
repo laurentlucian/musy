@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heading, HStack, Stack, Text, Image, Input, Textarea, Box } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
 import {
   Form,
   Outlet,
@@ -80,15 +80,16 @@ const Profile = () => {
             </HStack>
             {playback?.item ? (
               <Player
+                uri={playback.item.uri}
                 id={user.userId}
-                name={playback.item?.name}
+                name={playback.item.name}
                 artist={
-                  playback.item?.type === 'track'
-                    ? playback.item?.album?.artists[0].name
+                  playback.item.type === 'track'
+                    ? playback.item.album?.artists[0].name
                     : playback.item.show.name
                 }
                 image={
-                  playback.item?.type === 'track'
+                  playback.item.type === 'track'
                     ? playback.item.album?.images[0].url
                     : playback.item.images[0].url
                 }
@@ -98,10 +99,11 @@ const Profile = () => {
                 active={playback.is_playing}
                 progress={progress}
                 duration={duration}
-                explicit={playback.item?.explicit}
+                explicit={playback.item.explicit}
               />
             ) : (
               <Player
+                uri={recent.items[0].track.uri}
                 id={user.userId}
                 name={recent.items[0].track.name}
                 artist={recent.items[0].track.artists[0].name}
@@ -118,7 +120,7 @@ const Profile = () => {
           </Stack>
 
           <Stack spacing={5}>
-            {playback?.is_playing && <Search search={search} setSearch={setSearch} />}
+            {currentUser?.id !== user.id && <Search search={search} setSearch={setSearch} />}
             {search && <Outlet />}
             {/* @todo switch on results, not on input focus */}
             {!search && queue.length !== 0 && (
@@ -139,7 +141,7 @@ const Profile = () => {
           </Stack>
           {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
           {recent && recent?.items.length !== 0 && (
-            <Stack spacing={5}>
+            <Stack spacing={3}>
               <Heading fontSize={['md', 'lg']}>Recently played</Heading>
               <Tiles>
                 {recent?.items.map(({ track, played_at }) => {
@@ -160,7 +162,7 @@ const Profile = () => {
             </Stack>
           )}
           {liked && liked?.items.length !== 0 && (
-            <Stack spacing={5}>
+            <Stack spacing={3}>
               <Heading fontSize={['md', 'lg']}>Recently liked</Heading>
               <Tiles>
                 {liked.items.map(({ track }) => {
@@ -180,7 +182,7 @@ const Profile = () => {
             </Stack>
           )}
           {top && top?.items.length !== 0 && (
-            <Stack spacing={5}>
+            <Stack spacing={3}>
               <Heading fontSize={['md', 'lg']}>Top</Heading>
               <Tiles>
                 {top.items.map((track) => {

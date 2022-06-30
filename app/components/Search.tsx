@@ -11,12 +11,12 @@ import { Form, useSubmit, useTransition } from '@remix-run/react';
 import { CloseSquare, MusicSquareSearch } from 'iconsax-react';
 import { useSearchParams } from 'react-router-dom';
 
-type SearchComponent = {
+type SearchProps = {
   search: string;
   setSearch: (T: string) => void;
 };
 
-const Search = ({ search, setSearch }: SearchComponent) => {
+const Search = ({ search, setSearch }: SearchProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const submit = useSubmit();
   const transition = useTransition();

@@ -2,6 +2,7 @@ import { Flex, Heading, HStack, IconButton, Input, useColorMode } from '@chakra-
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Login, Logout, Moon, Sun1 } from 'iconsax-react';
 import type { UserProfile } from '~/services/auth.server';
+import Tooltip from './Tooltip';
 
 const Nav = ({ user }: { user: UserProfile }) => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -37,15 +38,17 @@ const Nav = ({ user }: { user: UserProfile }) => {
             method="post"
           >
             {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
-            <IconButton
-              aria-label={user ? 'logout' : 'login'}
-              name={user ? 'logout' : 'login'}
-              icon={user ? <Logout /> : <Login />}
-              isLoading={busy}
-              variant="ghost"
-              cursor="pointer"
-              type="submit"
-            />
+            <Tooltip label={user ? 'Logout' : 'Login'}>
+              <IconButton
+                aria-label={user ? 'logout' : 'login'}
+                name={user ? 'logout' : 'login'}
+                icon={user ? <Logout /> : <Login />}
+                isLoading={busy}
+                variant="ghost"
+                cursor="pointer"
+                type="submit"
+              />
+            </Tooltip>
           </Form>
         )}
       </HStack>

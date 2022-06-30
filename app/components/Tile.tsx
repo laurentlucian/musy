@@ -1,10 +1,9 @@
-import { Flex, Icon, IconButton, Image, Input, Spinner, Stack, Text } from '@chakra-ui/react';
-import { useFetcher, useParams } from '@remix-run/react';
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { Flex, Image, Stack, Text } from '@chakra-ui/react';
+import { useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import Tooltip from './Tooltip';
+import AddQueue from './AddQueue';
 
-type Type = {
+type TileProps = {
   uri: string;
   image: string;
   name: string;
@@ -18,13 +17,8 @@ type Type = {
   sendTo?: string;
 };
 
-const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: Type) => {
+const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: TileProps) => {
   const { id } = useParams();
-  const fetcher = useFetcher();
-
-  const isAdding = fetcher.submission?.formData.get('uri') === uri;
-  const isDone = fetcher.type === 'done';
-  const isError = Boolean(fetcher.data);
 
   return (
     <Stack flex="0 0 200px">
@@ -42,39 +36,16 @@ const Tile = ({ uri, image, name, artist, explicit, userId, sendTo }: Type) => {
           </Flex>
         </Stack>
         <Flex justify="center">
-          {!isAdding && !isDone ? (
-            <fetcher.Form
-              replace
-              method="post"
-              action={
-                sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?returnTo=/' + id
-              }
-            >
-              <Input type="hidden" name="uri" value={uri} />
-              <Input type="hidden" name="image" value={image} />
-              <Input type="hidden" name="name" value={name} />
-              <Input type="hidden" name="artist" value={artist} />
-              {/* empty string is falsy */}
-              <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
-              <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
-                <IconButton
-                  type="submit"
-                  aria-label="queue"
-                  icon={sendTo ? <Send2 /> : <AddSquare />}
-                  variant="ghost"
-                  p={0}
-                />
-              </Tooltip>
-            </fetcher.Form>
-          ) : !isDone ? (
-            <Spinner ml="auto" />
-          ) : isError ? (
-            <Tooltip label="Failed" defaultIsOpen closeDelay={500}>
-              <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
-            </Tooltip>
-          ) : (
-            <Icon ml="auto" textAlign="right" boxSize="25px" as={TickSquare} />
-          )}
+          <AddQueue
+            key={id}
+            uri={uri}
+            image={image}
+            name={name}
+            artist={artist}
+            explicit={explicit ?? false}
+            userId={userId}
+            sendTo={sendTo}
+          />
         </Flex>
       </Flex>
     </Stack>
