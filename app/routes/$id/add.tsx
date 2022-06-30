@@ -1,4 +1,3 @@
-import type { Queue } from '@prisma/client';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
@@ -38,18 +37,16 @@ export const action: ActionFunction = async ({ request, params }) => {
   };
 
   const { spotify } = await spotifyApi(id);
-  if (!spotify) return json('API Error');
+  if (!spotify) return json('Error: no access to API');
 
   try {
     await spotify.addToQueue(uri);
     if (id !== fromUserId) {
-      // only if currentUser is adding from someone's else page
       await prisma.queue.create({ data: fields });
     }
     return json('Queued');
   } catch (error) {
-    // @ts-ignore
-    console.log('add -> error', error?.reason);
+    console.log('add -> error', error);
     if (id !== fromUserId) {
       const activity = await prisma.queue.create({ data: { ...fields, pending: true } });
       const res = await activityQ.add(
@@ -64,10 +61,12 @@ export const action: ActionFunction = async ({ request, params }) => {
         },
       );
       console.log('add -> created Job on ', res.queueName);
+      // tell user when queue didn't work (can't queue when user isn't playing)
+      return json('Will queue once play resume');
+    } else {
+      // not adding to Activity when user queues song from their own page
+      return json('Error: resume play first', { status: 500 });
     }
-
-    // tell user when queue didn't work (can't queue when user isn't playing)
-    return json('Will queue once play resume');
   }
 };
 

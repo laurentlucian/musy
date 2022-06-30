@@ -23,7 +23,7 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
 
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
-  const isError = fetcher.data?.includes('Error') ?? false;
+  const isError = fetcher.data?.includes('Error') ? true : false;
 
   return (
     <>
@@ -57,7 +57,7 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
       ) : !isDone ? (
         <Spinner ml="auto" />
       ) : isError ? (
-        <Tooltip label={`Failed (${fetcher.data})`} defaultIsOpen>
+        <Tooltip label={`Failed (${fetcher.data.split(' ').slice(1).join(' ')})`} defaultIsOpen>
           <Icon ml="auto" textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
