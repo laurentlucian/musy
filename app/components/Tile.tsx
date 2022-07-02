@@ -40,9 +40,9 @@ const Tile = ({ uri, image, name, artist, explicit, userId, sendTo, user }: Tile
             </Text>
           </Flex>
         </Stack>
-        <Flex justify="center">
+        <Flex minW="35px" justify="center">
           {user ? (
-            <Image borderRadius={50} boxSize={8} src={user.image} />
+            <Image borderRadius={50} boxSize="30px" src={user.image} />
           ) : (
             <AddQueue
               key={id}
