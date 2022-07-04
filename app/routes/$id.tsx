@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, useInterval } from '@chakra-ui/react';
 import {
   Form,
   Outlet,
@@ -21,6 +21,7 @@ import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
+import { useDataRefresh } from 'remix-utils';
 
 const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
   include: { user: true },
@@ -267,11 +268,14 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export const ErrorBoundary = (error: { error: Error }) => {
-  console.log('error', error);
+  const { refresh } = useDataRefresh();
+  useInterval(refresh, 3000);
+
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>401</Heading>
       {/* error message useless (might be because of spotify stragegy) */}
+      <Text fontSize="md">oops something broke; page refreshing...</Text>
       {/* <Text fontSize="md">Trace(for debug): {JSON.stringify(error, null, 2)} </Text> */}
     </>
   );
