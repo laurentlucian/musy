@@ -1,4 +1,5 @@
-export const timeSince = (date: Date) => {
+export const timeSince = (date: Date | null) => {
+  if (!date) return '';
   const now = new Date().getTime();
   const seconds = Math.floor((now - new Date(date).getTime()) / 1000);
 

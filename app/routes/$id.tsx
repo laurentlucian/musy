@@ -145,6 +145,7 @@ const Profile = () => {
                         artist={item.artist}
                         explicit={item.explicit}
                         user={item.user}
+                        createdAt={item.createdAt}
                       />
                     );
                   })}

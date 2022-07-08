@@ -29,13 +29,12 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const party = await prisma.party.findUnique({ where: { userId } });
   if (party) {
-    if (party.ownerId !== ownerId) {
-      console.log('Party join -> leaving existing party');
-      await prisma.party.delete({ where: { userId } });
+    if (party.ownerId === ownerId) {
+      // party with both users already exists, refresh page?
+      return redirect('/' + ownerId);
     }
-
-    // party with both users already exists, refresh page?
-    return redirect('/' + ownerId);
+    console.log('Party join -> leaving existing party');
+    await prisma.party.delete({ where: { userId } });
   }
 
   const { spotify: owner_spotify } = await spotifyApi(ownerId);
