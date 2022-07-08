@@ -63,11 +63,16 @@ export const action: ActionFunction = async ({ request, params }) => {
     const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
 
     const play = async () => {
-      await listener_spotify.play({
-        uris: [currentTrack],
-        position_ms: progressMs,
-      });
-      console.log('Party join -> played song 11 seconds behind');
+      try {
+        await listener_spotify.play({
+          uris: [currentTrack],
+          position_ms: progressMs,
+        });
+        console.log('Party join -> played song 11 seconds behind');
+      } catch {
+        console.log('Party join failed -> error when attempting to play');
+        return json('Error: Premium required');
+      }
     };
 
     if (body.is_playing) {
@@ -75,20 +80,29 @@ export const action: ActionFunction = async ({ request, params }) => {
       // context queue when a playlist/album is playing and next queue which is when the user manually queue tracks;
       // doing the following prevent play api from clearing the context queue once joining party
       // in case party ends, user will continue listening to their context queue
+      console.log('Party join -> user is playing');
+      try {
+        await listener_spotify.addToQueue(currentTrack);
 
-      await listener_spotify.addToQueue(currentTrack);
-      await listener_spotify.skipToNext();
-      const { body } = await listener_spotify.getMyCurrentPlaybackState();
-      if (body.item?.uri !== currentTrack) {
-        // edge case: if user has tracks in the next queue it'll add to the end of the list
-        // if so then play the currentTrack and clear context queue anyway
-        return play();
+        console.log('Party join -> queued track');
+        await listener_spotify.skipToNext();
+        console.log('Party join -> skipped to next');
+        const { body } = await listener_spotify.getMyCurrentPlaybackState();
+        if (body.item?.uri !== currentTrack) {
+          console.log('Party join -> track not the same; played currentTrack instead');
+          // edge case: if user has tracks in the next queue it'll add to the end of the list
+          // if so then play the currentTrack and clear context queue anyway
+          play();
+        } else {
+          await listener_spotify.seek(progressMs);
+        }
+        console.log(
+          'Party join -> user is playing, queued, skipped to next and seeked to progress_ms',
+        );
+      } catch {
+        console.log('Party join failed -> error when attempting to queue');
+        return json('Error: Premium required');
       }
-
-      await listener_spotify.seek(progressMs);
-      console.log(
-        'Party join -> user is playing, queued, skipped to next and seeked to progress_ms',
-      );
     } else {
       play();
     }

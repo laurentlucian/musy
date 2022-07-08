@@ -39,35 +39,42 @@ export const action: ActionFunction = async ({ request, params }) => {
   const { spotify } = await spotifyApi(id);
   if (!spotify) return json('Error: no access to API');
 
-  try {
-    await spotify.addToQueue(uri);
-    if (id !== fromUserId) {
-      await prisma.queue.create({ data: fields });
+  const { body: playback } = await spotify.getMyCurrentPlaybackState();
+  const isPlaying = playback.is_playing;
+
+  if (isPlaying) {
+    try {
+      await spotify.addToQueue(uri);
+      if (id !== fromUserId) {
+        await prisma.queue.create({ data: fields });
+      }
+      return json('Queued');
+    } catch (error) {
+      console.log('add -> error', error);
+      return json('Error: Premium required');
     }
-    return json('Queued');
-  } catch (error) {
-    console.log('add -> error', error);
-    if (id !== fromUserId) {
-      const activity = await prisma.queue.create({ data: { ...fields, pending: true } });
-      const res = await activityQ.add(
-        'pending_activity',
-        {
-          activityId: activity.id,
+  }
+
+  if (id !== fromUserId) {
+    const activity = await prisma.queue.create({ data: { ...fields, pending: true } });
+    const res = await activityQ.add(
+      'pending_activity',
+      {
+        activityId: activity.id,
+      },
+      {
+        repeat: {
+          every: 30000,
         },
-        {
-          repeat: {
-            every: 30000,
-          },
-          jobId: String(activity.id),
-        },
-      );
-      console.log('add -> created Job on ', res.queueName);
-      // tell user when queue didn't work (can't queue when user isn't playing)
-      return json('Will queue once play resumes');
-    } else {
-      // not adding to Activity when user queues song from their own page
-      return json('Error: resume play first', { status: 500 });
-    }
+        jobId: String(activity.id),
+      },
+    );
+    console.log('add -> created Job on ', res.queueName);
+    // tell user when queue didn't work (can't queue when user isn't playing)
+    return json('Will queue once play resumes');
+  } else {
+    // not adding to Activity when user queues song from their own page
+    return json('Error: resume play first');
   }
 };
 
