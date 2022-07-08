@@ -33,7 +33,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     artist,
     explicit,
     ownerId: id,
-    userId: fromUserId,
+    userId: fromUserId !== '' ? fromUserId : null,
   };
 
   const { spotify } = await spotifyApi(id);
