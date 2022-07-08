@@ -8,7 +8,8 @@ import { spotifyApi } from '~/services/spotify.server';
 // - get currentTrack of existing owners' party
 // - adds currentTrack to queue of listeners
 
-// @todo check all active parties and create ownerQ jobs if doesn't exist
+// @todo check all active parties and create ownerQ jobs if doesn't exist (should never happen)
+// @todo implement sentry to alert when error happens
 
 // registeredQueues['queue_track']?.worker.on('completed', (job) => {
 //   console.log('listenerQ.on -> job complete', job.data);
@@ -75,8 +76,8 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
 
     const { spotify } = await spotifyApi(ownerId);
     if (!spotify) {
-      console.log('ownerQ -> no spotify API from owner');
-      return 'ownerQ -> no spotify API from owner';
+      console.log('ownerQ -> no spotify API');
+      return 'ownerQ -> no spotify API';
     }
 
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
@@ -88,8 +89,6 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
       if (jobKey) {
         await ownerQ.removeRepeatableByKey(jobKey);
       }
-      // const jobs = await ownerQ.getRepeatableJobs();
-      // await ownerQ.removeRepeatableByKey(jobs[0].key);
       return 'owner has paused playback -> deleted all parties by owner';
     }
 
@@ -102,7 +101,7 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
           currentTrack,
         },
       });
-      console.log('ownerQ -> old uri - new uri', currentTrack, parties[0].currentTrack);
+      console.log('ownerQ -> old uri - new uri', parties[0].currentTrack, currentTrack);
       console.log('ownerQ -> updated currentTrack', playback.item?.name);
 
       listenerQ.addBulk(

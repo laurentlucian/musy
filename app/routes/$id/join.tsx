@@ -45,31 +45,69 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const { body: playback } = await owner_spotify.getMyCurrentPlaybackState();
-  const currentTrack = playback.item?.uri;
-  if (!currentTrack) {
+  if (!playback.item) {
     console.log('Party join failed -> no currentTrack found');
     return redirect('/' + ownerId);
   }
 
   try {
     const { spotify: listener_spotify } = await spotifyApi(userId);
-    await listener_spotify?.play({ uris: [currentTrack] });
-    console.log('Party join -> played song');
-    if (playback?.progress_ms && playback.item?.duration_ms) {
-      await ownerQ.add(
-        'update_track',
-        {
-          ownerId,
-          userId,
-        },
-        {
-          repeat: {
-            every: 30000,
-          },
-          jobId: ownerId,
-        },
-      );
+    if (!listener_spotify) {
+      console.log('Party join failed -> no spotify API');
+      return redirect('/' + ownerId);
     }
+
+    const { body } = await listener_spotify.getMyCurrentPlaybackState();
+
+    const currentTrack = playback.item.uri;
+    // purposely putting listener 11 seconds behind to allow scheduler time to add the next song to queue
+    const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
+
+    const play = async () => {
+      await listener_spotify.play({
+        uris: [currentTrack],
+        position_ms: progressMs,
+      });
+      console.log('Party join -> played song 11 seconds behind');
+    };
+
+    if (body.is_playing) {
+      // 2 types of queue:
+      // context queue when a playlist/album is playing and next queue which is when the user manually queue tracks;
+      // doing the following prevent play api from clearing the context queue once joining party
+      // in case party ends, user will continue listening to their context queue
+
+      await listener_spotify.addToQueue(currentTrack);
+      await listener_spotify.skipToNext();
+      const { body } = await listener_spotify.getMyCurrentPlaybackState();
+      if (body.item?.uri !== currentTrack) {
+        // edge case: if user has tracks in the next queue it'll add to the end of the list
+        // if so then play the currentTrack and clear context queue anyway
+        return play();
+      }
+
+      await listener_spotify.seek(progressMs);
+      console.log(
+        'Party join -> user is playing, queued, skipped to next and seeked to progress_ms',
+      );
+    } else {
+      play();
+    }
+
+    await ownerQ.add(
+      'update_track',
+      {
+        ownerId,
+        userId,
+      },
+      {
+        repeat: {
+          every: 10000,
+        },
+        jobId: ownerId,
+      },
+    );
+
     await prisma.user.update({
       where: { id: ownerId },
       data: {
@@ -83,18 +121,13 @@ export const action: ActionFunction = async ({ request, params }) => {
         },
       },
     });
-    console.log('Party join -> add ownerQ update_track');
+    console.log('Party join -> added ownerQ update_track and created party in db');
     return redirect('/' + ownerId);
-  } catch {
-    console.log('Party join failed -> @todo handle error');
+  } catch (e) {
+    console.log('Party join failed ->', e);
     return null;
   }
 };
-
-const Join = () => {
-  return <></>;
-};
-export default Join;
 
 export const ErrorBoundary = ({ error }: any) => {
   console.log('error', error);
