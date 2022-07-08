@@ -12,7 +12,7 @@ import {
   useInterval,
 } from '@chakra-ui/react';
 import type { Party, Profile } from '@prisma/client';
-import { Form, useTransition } from '@remix-run/react';
+import { useFetcher, useTransition } from '@remix-run/react';
 import { LoginCurve, LogoutCurve } from 'iconsax-react';
 import spotify_icon_white from '~/assets/spotify-icon-white.png';
 import spotify_icon_black from '~/assets/spotify-icon-black.png';
@@ -55,6 +55,7 @@ const Player = ({
   const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
+  const fetcher = useFetcher();
 
   const { refresh } = useDataRefresh();
   const [current, setCurrent] = useState(0);
@@ -110,9 +111,8 @@ const Player = ({
           {active && (
             <HStack>
               {/* lets owner join own party for testing */}
-              {/* {currentUser && ( */}
-
-              {currentUser?.userId !== id && (
+              {/* {currentUser?.userId !== id && ( */}
+              {currentUser && (
                 <>
                   {!isUserInParty && (
                     <AddQueue
@@ -125,7 +125,10 @@ const Player = ({
                       userId={currentUser?.userId}
                     />
                   )}
-                  <Form action={isUserInParty ? `/${id}/leave` : `/${id}/join`} method="post">
+                  <fetcher.Form
+                    action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
+                    method="post"
+                  >
                     <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                       <IconButton
                         aria-label={isUserInParty ? 'Leave' : 'Join'}
@@ -139,7 +142,7 @@ const Player = ({
                         isLoading={busy}
                       />
                     </Tooltip>
-                  </Form>
+                  </fetcher.Form>
                 </>
               )}
               {party.length && (
