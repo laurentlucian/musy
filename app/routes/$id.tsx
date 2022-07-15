@@ -1,13 +1,5 @@
-import { useState } from 'react';
 import { Heading, HStack, Stack, Text, Image, Textarea, useInterval } from '@chakra-ui/react';
-import {
-  Form,
-  Outlet,
-  useCatch,
-  useLoaderData,
-  useSearchParams,
-  useSubmit,
-} from '@remix-run/react';
+import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
 import type { Party, Profile as ProfileType } from '@prisma/client';
@@ -21,7 +13,7 @@ import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
-import { useDataRefresh } from 'remix-utils';
+import type { Submission } from '@remix-run/react/dist/transition';
 
 const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
   include: { user: true },
@@ -43,10 +35,6 @@ type ProfileComponent = {
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, queue } =
     useLoaderData<ProfileComponent>();
-
-  const [searchParams] = useSearchParams();
-  const searchDefault = searchParams.get('spotify');
-  const [search, setSearch] = useState(searchDefault ?? '');
 
   const submit = useSubmit();
 
@@ -86,7 +74,7 @@ const Profile = () => {
                 )}
               </Stack>
             </HStack>
-            {playback?.item ? (
+            {playback && playback.item ? (
               <Player
                 uri={playback.item.uri}
                 id={user.userId}
@@ -126,10 +114,9 @@ const Profile = () => {
               />
             )}
           </Stack>
-
+          {!recent && !top && !liked && !queue && <Text>Spotify API limit reached</Text>}
           <Stack spacing={5}>
-            {currentUser?.id !== user.id && <Search search={search} setSearch={setSearch} />}
-            {search && <Outlet />}
+            {currentUser?.id !== user.id && <Search />}
 
             {queue.length !== 0 && (
               <Stack spacing={3}>
@@ -219,7 +206,7 @@ const Profile = () => {
       ) : (
         <>
           <Heading size="md">404</Heading>
-          <Text>User not found</Text>
+          <Text>User not found or Spotify API limit reached</Text>
         </>
       )}
     </Stack>
@@ -229,28 +216,45 @@ const Profile = () => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   const id = params.id;
   if (!id) throw redirect('/');
-  const { spotify, user } = await spotifyApi(id);
+  console.log('ran');
 
-  if (!spotify || !user) return json('Spotify API Error', 500);
-
-  const queue = await prisma.queue.findMany({
-    where: { ownerId: id },
-    include: { user: true },
-    orderBy: { createdAt: 'desc' },
-  });
-  const party = await prisma.party.findMany({ where: { ownerId: id } });
-  const { body: playback } = await spotify.getMyCurrentPlaybackState();
-  const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
-  const { body: liked } = await spotify.getMySavedTracks();
-  const currentUser = await getCurrentUser(request);
+  const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  const user = profile?.user;
 
   try {
-    const { body: top } = await spotify.getMyTopTracks();
-    return json({ user, playback, recent, party, currentUser, liked, top, queue });
+    const { spotify } = await spotifyApi(id);
+
+    if (!spotify || !user) return json('Spotify API Error', 500);
+
+    const queue = await prisma.queue.findMany({
+      where: { ownerId: id },
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    const party = await prisma.party.findMany({ where: { ownerId: id } });
+    const { body: playback } = await spotify.getMyCurrentPlaybackState();
+    const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
+    const { body: liked } = await spotify.getMySavedTracks();
+    const currentUser = await getCurrentUser(request);
+    try {
+      const { body: top } = await spotify.getMyTopTracks();
+      return json({ user, playback, recent, party, currentUser, liked, top, queue });
+    } catch {
+      // will catch error if existingUser doesn't have required scopes in spotify authorization
+      // user needs to reauthenticate
+      return json({ user, playback, recent, party, currentUser, liked, queue, top: null });
+    }
   } catch {
-    // will catch error if existingUser doesn't have required scopes in spotify authorization
-    // user needs to reauthenticate
-    return json({ user, playback, recent, party, currentUser, liked, queue, top: null });
+    return json({
+      user,
+      playback: null,
+      recent: null,
+      party: null,
+      currentUser: null,
+      liked: null,
+      queue: null,
+      top: null,
+    });
   }
 };
 
@@ -269,14 +273,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export const ErrorBoundary = (error: { error: Error }) => {
-  const { refresh } = useDataRefresh();
-  useInterval(refresh, 3000);
-
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>401</Heading>
       {/* error message useless (might be because of spotify stragegy) */}
-      <Text fontSize="md">oops something broke; page refreshing...</Text>
+      <Text fontSize="md">oops something broke;</Text>
       {/* <Text fontSize="md">Trace(for debug): {JSON.stringify(error, null, 2)} </Text> */}
     </>
   );
@@ -306,5 +307,10 @@ export const CatchBoundary = () => {
     </>
   );
 };
+
+//remix.run/docs/en/v1/api/conventions#unstable_shouldreload
+export function unstable_shouldReload({ submission }: { submission: Submission }) {
+  return !!submission && submission.method !== 'GET';
+}
 
 export default Profile;

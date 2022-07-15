@@ -111,8 +111,8 @@ const Player = ({
           {active && (
             <HStack>
               {/* lets owner join own party for testing */}
-              {/* {currentUser?.userId !== id && ( */}
-              {currentUser && (
+              {/* {currentUser && ( */}
+              {currentUser?.userId !== id && (
                 <>
                   {!isUserInParty && (
                     <AddQueue

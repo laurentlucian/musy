@@ -38,13 +38,14 @@ const Search = () => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
-  const { spotify, user } = await spotifyApi(id);
-  if (!spotify) return json('No access to spotify API', { status: 500 });
-  const url = new URL(request.url);
-  const searchURL = url.searchParams.get('spotify');
-  if (!searchURL) return json({ results: null, user: null });
 
   try {
+    const { spotify, user } = await spotifyApi(id);
+    if (!spotify) return json('No access to spotify API', { status: 500 });
+    const url = new URL(request.url);
+    const searchURL = url.searchParams.get('spotify');
+    if (!searchURL) return json({ results: null, user: null });
+
     const { body: results } = await spotify.searchTracks(searchURL);
     return json({ results, user });
   } catch {
