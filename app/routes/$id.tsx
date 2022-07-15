@@ -104,7 +104,7 @@ const Profile = () => {
                 name={recent.items[0].track.name}
                 artist={recent.items[0].track.artists[0].name}
                 image={recent.items[0].track.album.images[1].url}
-                device={timeSince(new Date(recent.items[0].played_at)) + ' ago'}
+                device={timeSince(new Date(recent.items[0].played_at))}
                 currentUser={currentUser}
                 party={party}
                 active={false}
