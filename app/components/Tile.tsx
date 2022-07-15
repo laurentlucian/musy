@@ -12,15 +12,12 @@ type TileProps = {
   artist: string;
   explicit: boolean;
 
-  // @todo figure out a better way to require authentication on click;
-  // after authentication redirect, add to queue isn't successful. user needs to click again
-  userId?: string;
-
   // name, not Id
   sendTo?: string;
 
-  // used by Activity - (from who; created by)
-  user?: Profile | null;
+  user: Profile | null;
+  // will show header (profile above tile) if createdAt is defined
+  createdBy?: Profile | null;
   createdAt?: Date;
 };
 
@@ -30,10 +27,10 @@ const Tile = ({
   name,
   artist,
   explicit,
-  userId,
   sendTo,
   user,
   createdAt,
+  createdBy,
 }: TileProps) => {
   const { id } = useParams();
 
@@ -42,12 +39,12 @@ const Tile = ({
       <Flex direction="column">
         {createdAt && (
           <HStack align="center" h="35px">
-            {user ? (
-              <Link to={`/${user.userId}`}>
+            {createdBy ? (
+              <Link to={`/${createdBy.userId}`}>
                 <HStack align="center">
-                  <Image borderRadius={50} boxSize="25px" mb={1} src={user.image} />
+                  <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
                   <Text fontWeight="semibold" fontSize="13px">
-                    {user.name.split(' ')[0]}
+                    {createdBy.name.split(' ')[0]}
                   </Text>
                 </HStack>
               </Link>
@@ -85,7 +82,7 @@ const Tile = ({
             name={name}
             artist={artist}
             explicit={explicit ?? false}
-            userId={userId}
+            userId={user?.userId}
             sendTo={sendTo}
           />
         </Flex>

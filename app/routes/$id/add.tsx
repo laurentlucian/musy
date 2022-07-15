@@ -73,6 +73,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     // tell user when queue didn't work (can't queue when user isn't playing)
     return json('Will queue once play resumes');
   } else {
+    console.log(id, fromUserId);
     // not adding to Activity when user queues song from their own page
     return json('Error: resume play first');
   }

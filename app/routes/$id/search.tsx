@@ -6,14 +6,16 @@ import type { Profile } from '@prisma/client';
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
+import { authenticator } from '~/services/auth.server';
 
 type SearchType = {
   results: SpotifyApi.TrackSearchResponse | null;
   user: Profile | null;
+  currentUser: Profile | null;
 };
 
 const Search = () => {
-  const { results, user } = useLoaderData<SearchType>();
+  const { results, user, currentUser } = useLoaderData<SearchType>();
   const tracks = results?.tracks?.items ?? [];
 
   if (tracks.length === 0) return <></>;
@@ -29,6 +31,7 @@ const Search = () => {
           artist={track.album.artists[0].name}
           explicit={track.explicit}
           sendTo={user?.name}
+          user={currentUser}
         />
       ))}
     </Tiles>
@@ -38,19 +41,21 @@ const Search = () => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session ? session.user : null;
 
   try {
     const { spotify, user } = await spotifyApi(id);
     if (!spotify) return json('No access to spotify API', { status: 500 });
     const url = new URL(request.url);
     const searchURL = url.searchParams.get('spotify');
-    if (!searchURL) return json({ results: null, user: null });
+    if (!searchURL) return json({ results: null, user: null, currentUser });
 
     const { body: results } = await spotify.searchTracks(searchURL);
-    return json({ results, user });
+    return json({ results, user, currentUser });
   } catch {
     // @todo handle if spotify search error
-    return json({ results: null, user: null });
+    return json({ results: null, user: null, currentUser });
   }
 };
 

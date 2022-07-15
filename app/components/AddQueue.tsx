@@ -23,7 +23,12 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
 
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
-  const isError = fetcher.data?.includes('Error') ? true : false;
+  const isError =
+    typeof fetcher.data === 'string'
+      ? fetcher.data.includes('Error')
+        ? fetcher.data
+        : null
+      : null;
 
   return (
     <>
@@ -61,7 +66,10 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
           <Icon textAlign="right" boxSize="25px" as={CloseSquare} />
         </Tooltip>
       ) : (
-        <Tooltip label={fetcher.data} defaultIsOpen>
+        <Tooltip
+          label={typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated'}
+          defaultIsOpen
+        >
           <Icon textAlign="right" boxSize="25px" as={TickSquare} />
         </Tooltip>
       )}

@@ -1,4 +1,4 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, useInterval } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
 import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction, ActionFunction } from '@remix-run/node';
@@ -131,7 +131,8 @@ const Profile = () => {
                         name={item.name}
                         artist={item.artist}
                         explicit={item.explicit}
-                        user={item.user}
+                        user={currentUser}
+                        createdBy={item.user}
                         createdAt={item.createdAt}
                       />
                     );
@@ -155,7 +156,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId}
+                      user={currentUser}
                     />
                   );
                 })}
@@ -175,7 +176,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId}
+                      user={currentUser}
                     />
                   );
                 })}
@@ -195,7 +196,7 @@ const Profile = () => {
                       name={track.name}
                       artist={track.album.artists[0].name}
                       explicit={track.explicit}
-                      userId={currentUser?.userId}
+                      user={currentUser}
                     />
                   );
                 })}
