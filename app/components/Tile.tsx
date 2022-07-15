@@ -63,11 +63,11 @@ const Tile = ({
           </HStack>
         )}
 
-        <Image src={image} borderRadius={5} draggable={false} />
+        <Image src={image} borderRadius={5} w="200px" draggable={false} />
       </Flex>
       <Flex justify="space-between">
         <Stack spacing={0}>
-          <Text fontSize="13px" noOfLines={3} whiteSpace="normal">
+          <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
             {name}
           </Text>
           <Flex align="center">
