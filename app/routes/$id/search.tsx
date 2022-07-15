@@ -6,7 +6,7 @@ import type { Profile } from '@prisma/client';
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
-import { authenticator } from '~/services/auth.server';
+import { getCurrentUser } from '~/services/auth.server';
 
 type SearchType = {
   results: SpotifyApi.TrackSearchResponse | null;
@@ -41,8 +41,7 @@ const Search = () => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session ? session.user : null;
+  const currentUser = await getCurrentUser(request);
 
   try {
     const { spotify, user } = await spotifyApi(id);

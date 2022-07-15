@@ -217,7 +217,6 @@ const Profile = () => {
 export const loader: LoaderFunction = async ({ request, params }) => {
   const id = params.id;
   if (!id) throw redirect('/');
-  console.log('ran');
 
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
   const user = profile?.user;

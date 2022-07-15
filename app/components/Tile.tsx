@@ -1,6 +1,6 @@
-import { AvatarGroup, Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, useFetcher, useParams } from '@remix-run/react';
+import { Link, useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { timeSince } from '~/hooks/utils';
 import AddQueue from './AddQueue';
@@ -55,7 +55,7 @@ const Tile = ({
             )}
             <Text as="span">·</Text>
             <Text fontSize="12px" opacity={0.6}>
-              {timeSince(createdAt ?? null) + ' ago'}
+              {timeSince(createdAt ?? null)}
             </Text>
           </HStack>
         )}
