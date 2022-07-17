@@ -1,7 +1,7 @@
 import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
 import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
-import type { LoaderFunction, ActionFunction } from '@remix-run/node';
+import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
 import type { Party, Profile as ProfileType } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
@@ -212,6 +212,12 @@ const Profile = () => {
       )}
     </Stack>
   );
+};
+
+export const meta: MetaFunction = (props) => {
+  return {
+    title: `Musy - ${props.data.user.name.split(' ')[0]}`,
+  };
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
