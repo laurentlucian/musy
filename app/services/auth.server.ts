@@ -30,6 +30,7 @@ const scopes = [
   'user-follow-modify', // used to (un)follow users/artists
   'playlist-modify-public', // create playlists with custom image
   'user-top-read', // get top tracks
+  'user-follow-read', // allows to check users follows
 ].join(' ');
 
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;

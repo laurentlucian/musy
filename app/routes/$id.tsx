@@ -1,4 +1,4 @@
-import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, Flex } from '@chakra-ui/react';
 import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
@@ -14,6 +14,7 @@ import Tiles from '~/components/Tiles';
 import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
 import type { Submission } from '@remix-run/react/dist/transition';
+import Following from '~/components/Following';
 
 const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
   include: { user: true },
@@ -27,19 +28,19 @@ type ProfileComponent = {
   recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
   liked: SpotifyApi.UsersSavedTracksResponse;
   top: SpotifyApi.UsersTopTracksResponse;
+  following: SpotifyApi.UserFollowsUsersOrArtistsResponse;
   currentUser: ProfileType | null;
   party: Party[];
   queue: QueueWithProfile[];
 };
 
 const Profile = () => {
-  const { user, playback, recent, currentUser, party, liked, top, queue } =
+  const { user, playback, recent, currentUser, party, liked, top, queue, following } =
     useLoaderData<ProfileComponent>();
-
   const submit = useSubmit();
-
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
+
   return (
     <Stack spacing={5} pb={5}>
       {user ? (
@@ -48,9 +49,14 @@ const Profile = () => {
             <HStack>
               <Image borderRadius={50} boxSize={93} src={user.image} />
               <Stack flex={1} maxW="calc(100% - 100px)">
-                <Heading size="md" fontWeight="bold">
-                  {user.name}
-                </Heading>
+                <Flex direction={'row'}>
+                  <Heading size="md" fontWeight="bold">
+                    {user.name}
+                    {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
+                    <Following currentUser={currentUser} user={user} following={following} />
+                  </Heading>
+                </Flex>
+
                 {user.id === currentUser?.id ? (
                   <Form method="post" replace>
                     <Textarea
@@ -222,6 +228,7 @@ export const meta: MetaFunction = (props) => {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const id = params.id;
+
   if (!id) throw redirect('/');
 
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
@@ -241,14 +248,43 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
     const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
     const { body: liked } = await spotify.getMySavedTracks();
+
     const currentUser = await getCurrentUser(request);
+    // Checks if there is a current user if not it will return the json
+    if (!currentUser) return json({ user, playback, recent, party, liked, queue });
     try {
       const { body: top } = await spotify.getMyTopTracks();
-      return json({ user, playback, recent, party, currentUser, liked, top, queue });
-    } catch {
+      // Renaming another spotify api so it doenst clash with the { spotify } one
+      const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
+      if (!cUserSpotify) return json('Spotify API Error', 500);
+      // Checks if current user is following current profile will return a boolean
+      const { body: following } = await cUserSpotify.isFollowingUsers([id]);
+
+      return json({
+        user,
+        playback,
+        recent,
+        party,
+        currentUser,
+        liked,
+        top,
+        queue,
+        following,
+      });
+    } catch (e) {
+      console.log(e, 'caught');
       // will catch error if existingUser doesn't have required scopes in spotify authorization
       // user needs to reauthenticate
-      return json({ user, playback, recent, party, currentUser, liked, queue, top: null });
+      return json({
+        user,
+        playback,
+        recent,
+        party,
+        currentUser,
+        liked,
+        queue,
+        top: null,
+      });
     }
   } catch {
     return json({
@@ -266,14 +302,29 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const id = params.id;
+
   if (!id) throw redirect('/');
   const data = await request.formData();
   const bio = data.get('bio');
+  const follow = data.get('Follow');
+  const unFollow = data.get('Unfollow');
+  const currentUser = await getCurrentUser(request);
+
+  if (unFollow != null && currentUser) {
+    const cid = currentUser?.userId;
+    const { spotify } = await spotifyApi(cid);
+    await spotify?.unfollowUsers([id]);
+  }
+
+  if (follow != null && currentUser) {
+    const cid = currentUser?.userId;
+    const { spotify } = await spotifyApi(cid);
+    await spotify?.followUsers([id]);
+  }
 
   if (typeof bio !== 'string') {
     return json('Form submitted incorrectly');
   }
-
   const user = await prisma.profile.update({ where: { userId: id }, data: { bio: bio ?? '' } });
   return user;
 };
