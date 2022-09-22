@@ -28,7 +28,7 @@ type ProfileComponent = {
   recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
   liked: SpotifyApi.UsersSavedTracksResponse;
   top: SpotifyApi.UsersTopTracksResponse;
-  following: SpotifyApi.UserFollowsUsersOrArtistsResponse;
+  following: boolean | null;
   currentUser: ProfileType | null;
   party: Party[];
   queue: QueueWithProfile[];
@@ -46,18 +46,12 @@ const Profile = () => {
       {user ? (
         <>
           <Stack spacing={3}>
-            <HStack>
+            <HStack border="1px solid #E74B2D">
               <Image borderRadius={50} boxSize={93} src={user.image} />
               <Stack flex={1} maxW="calc(100% - 100px)">
-                <Flex direction="row">
-                  <Heading size="md" fontWeight="bold">
-                    {user.name}
-                    {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-                    {currentUser && (
-                      <Following currentUser={currentUser} user={user} following={following} />
-                    )}
-                  </Heading>
-                </Flex>
+                <Heading size="md" fontWeight="bold">
+                  {user.name}
+                </Heading>
 
                 {user.id === currentUser?.id ? (
                   <Form method="post" replace>
@@ -81,6 +75,10 @@ const Profile = () => {
                   </Text>
                 )}
               </Stack>
+              {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
+              {currentUser && following !== null && (
+                <Following currentUser={currentUser} user={user} following={following} />
+              )}
             </HStack>
             {playback && playback.item ? (
               <Player
@@ -262,11 +260,18 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     if (!currentUser) return json({ user, playback, recent, party, liked, queue });
     try {
       const { body: top } = await spotify.getMyTopTracks();
-      // Renaming another spotify api so it doenst clash with the { spotify } one
-      const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
-      if (!cUserSpotify) return json('Spotify API Error', 500);
-      // Checks if current user is following current profile will return a boolean
-      const { body: following } = await cUserSpotify.isFollowingUsers([id]);
+
+      let following = null;
+      try {
+        // Renaming another spotify api so it doenst clash with the { spotify } one
+        const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
+        if (!cUserSpotify) return json('Spotify API Error', 500);
+        // Checks if current user is following current profile will return a boolean
+        const { body } = await cUserSpotify.isFollowingUsers([id]);
+        following = body[0];
+      } catch {
+        console.log('loader -> following check failed; user likely needs to reauthenticate');
+      }
 
       return json({
         user,
@@ -277,7 +282,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
         liked,
         top,
         queue,
-        following: following[0],
+        following: following,
       });
     } catch (e) {
       console.log(e, 'caught');
