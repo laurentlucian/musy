@@ -115,18 +115,20 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           )}
         </HStack>
       </Button>
-      <Progress
-        sx={{
-          backgroundColor: bg,
-          '> div': {
-            backgroundColor: color,
-          },
-        }}
-        borderBottomLeftRadius={2}
-        borderBottomRightRadius={2}
-        h="2px"
-        value={percentage}
-      />
+      {playback && (
+        <Progress
+          sx={{
+            backgroundColor: bg,
+            '> div': {
+              backgroundColor: color,
+            },
+          }}
+          borderBottomLeftRadius={2}
+          borderBottomRightRadius={2}
+          h="2px"
+          value={percentage}
+        />
+      )}
     </Stack>
   );
 };
