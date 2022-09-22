@@ -7,7 +7,7 @@ import { Prisma } from '@prisma/client';
 
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
-import { getCurrentUser } from '~/services/auth.server';
+import { getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
@@ -231,6 +231,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     const { spotify } = await spotifyApi(id);
 
     if (!spotify || !user) return json('Spotify API Error', 500);
+
+    const profile = await spotify.getMe();
+    const pfp = profile.body.images;
+    if (pfp) {
+      await updateUserImage(id, pfp[0].url);
+    }
 
     const queue = await prisma.queue.findMany({
       where: { ownerId: id },

@@ -66,6 +66,11 @@ export const updateToken = async (id: string, token: string, expiresAt: number) 
   return data.expiresAt;
 };
 
+export const updateUserImage = async (id: string, image: string) => {
+  const data = await prisma.profile.update({ where: { userId: id }, data: { image } });
+  return data;
+};
+
 export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
