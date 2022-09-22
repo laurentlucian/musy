@@ -1,38 +1,30 @@
-import { Button, Heading, HStack, Image, Input, Stack, Text } from '@chakra-ui/react';
+import { Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import { Form, Link, useCatch, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, useCatch, useLoaderData, useTransition } from '@remix-run/react';
+import MiniPlayer from '~/components/MiniPlayer';
 
 import { authenticator, getAllUsers } from '~/services/auth.server';
+import { spotifyApi } from '~/services/spotify.server';
+
+export interface Playback extends SpotifyApi.CurrentPlaybackResponse {
+  userId: string;
+}
+type IndexData = {
+  user: SpotifyApi.CurrentUsersProfileResponse;
+  users: Profile[];
+  playbacks: Playback[];
+};
 
 const Index = () => {
-  const { user, users } = useLoaderData<{
-    user: SpotifyApi.CurrentUsersProfileResponse;
-    users: Profile[];
-  }>();
+  const { user, users, playbacks } = useLoaderData<IndexData>();
   const transition = useTransition();
 
   return (
     <Stack>
       {users.map((user) => {
-        return (
-          <Button
-            as={Link}
-            to={`/${user.userId}`}
-            isLoading={
-              transition.state === 'loading' && transition.location.pathname.includes(user.userId)
-            }
-            key={user.userId}
-            variant="ghost"
-            h="auto"
-            p={2}
-          >
-            <HStack spacing={3} w="100%">
-              <Image w="50px" borderRadius={50} src={user.image} />
-              <Text fontWeight="bold">{user.name}</Text>
-            </HStack>
-          </Button>
-        );
+        const playback = playbacks.find((data) => data.userId === user.userId);
+        return <MiniPlayer key={user.userId} user={user} playback={playback} />;
       })}
       {!user && (
         <Form action="/auth/spotify" method="post">
@@ -47,10 +39,43 @@ const Index = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const users = await getAllUsers();
+  const users = (await getAllUsers()) as Profile[];
   const session = await authenticator.isAuthenticated(request);
 
-  return { users, user: session?.user };
+  if (!users) return { users, user: session?.user };
+
+  const getPlaybackState = async (id?: string) => {
+    if (!id) return null;
+    const { spotify } = await spotifyApi(id);
+    if (!spotify) return null;
+    try {
+      const res = await spotify.getMyCurrentPlaybackState();
+      const playback = res.body;
+      if (!playback.is_playing) return null;
+      return { userId: id, ...playback };
+    } catch {
+      return null;
+    }
+  };
+
+  let playbacks = [] as Playback[];
+  // runs in sequence, rather than parallel (Promise.all); parallel creates a race condition when calling spotifyApi()
+  for (const user of users) {
+    const data = await getPlaybackState(user.userId);
+    if (data) {
+      playbacks.push(data);
+    }
+  }
+  // place playingNow users at top
+  const playingNow = users.filter((user) =>
+    playbacks.some((object) => object.userId === user.userId),
+  );
+  const notPlayingNow = users.filter((user) =>
+    playbacks.some((object) => object?.userId !== user.userId),
+  );
+  const sortedUsers = [...playingNow, ...notPlayingNow];
+
+  return { users: sortedUsers, user: session?.user, playbacks };
 };
 
 export default Index;
