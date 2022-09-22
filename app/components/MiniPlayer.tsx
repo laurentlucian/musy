@@ -59,15 +59,15 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     playback ? 1000 : null,
   );
 
-  useInterval(
-    () => {
-      refresh();
-    },
-    // -> checks if user started playing every minute
-    playback ? null : 60000,
-    // -> refreshes every 30s regardless
-    // 30000,
-  );
+  // useInterval(
+  //   () => {
+  //     refresh();
+  //   },
+  //   // -> checks if user started playing every minute
+  //   playback ? null : 60000,
+  //   // -> refreshes every 30s regardless
+  //   // 30000,
+  // );
 
   const isLoading =
     transition.state === 'loading' && transition.location.pathname.includes(user.userId);
