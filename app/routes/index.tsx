@@ -56,7 +56,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default Index;
 
 export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.error(error);
+  console.log('index -> ErrorBoundary', error);
   return (
     <>
       <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>

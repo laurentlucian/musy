@@ -46,7 +46,7 @@ const Profile = () => {
       {user ? (
         <>
           <Stack spacing={3}>
-            <HStack border="1px solid #E74B2D">
+            <HStack>
               <Image borderRadius={50} boxSize={93} src={user.image} />
               <Stack flex={1} maxW="calc(100% - 100px)">
                 <Heading size="md" fontWeight="bold">
@@ -343,6 +343,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export const ErrorBoundary = (error: { error: Error }) => {
+  console.log('$id -> ErrorBoundary', error);
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>401</Heading>
