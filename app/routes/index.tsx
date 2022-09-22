@@ -66,16 +66,11 @@ export const loader: LoaderFunction = async ({ request }) => {
       playbacks.push(data);
     }
   }
+  const isPlayingIds = playbacks.map((data) => data.userId);
   // place playingNow users at top
-  const playingNow = users.filter((user) =>
-    playbacks.some((object) => object.userId === user.userId),
-  );
-  const notPlayingNow = users.filter((user) =>
-    playbacks.some((object) => object?.userId !== user.userId),
-  );
-  const sortedUsers = [...playingNow, ...notPlayingNow];
+  users.sort((a, b) => isPlayingIds.indexOf(a.userId) - isPlayingIds.indexOf(b.userId));
 
-  return { users: sortedUsers, user: session?.user, playbacks };
+  return { users, user: session?.user, playbacks };
 };
 
 export default Index;

@@ -59,15 +59,6 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     playback ? 1000 : null,
   );
 
-  // useInterval(
-  //   () => {
-  //     refresh();
-  //   },
-  //   // -> checks if user started playing every minute
-  //   playback ? null : 60000,
-  //   // -> refreshes every 30s regardless
-  //   // 30000,
-  // );
 
   const isLoading =
     transition.state === 'loading' && transition.location.pathname.includes(user.userId);
@@ -89,11 +80,22 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           {isLoading && <Spinner />}
           {playback && (
             <HStack w="100%" spacing={2} justify="end">
-              <Stack spacing={2} h="100%">
-                <Text noOfLines={[1]}>{playback.item?.name}</Text>
+              <Stack spacing={1} h="100%" justify="end">
+                <Text
+                  noOfLines={[1]}
+                  maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                  fontSize={{ base: 'smaller', md: 'sm' }}
+                >
+                  {playback.item?.name}
+                </Text>
                 <Flex>
                   {playback?.item?.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                  <Text opacity={0.8} fontSize="13px">
+                  <Text
+                    opacity={0.8}
+                    noOfLines={[1]}
+                    maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                    fontSize={{ base: 'smaller', md: 'xs' }}
+                  >
                     {artist}
                   </Text>
                 </Flex>
@@ -123,8 +125,8 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
               backgroundColor: color,
             },
           }}
-          borderBottomLeftRadius={2}
-          borderBottomRightRadius={2}
+          borderBottomLeftRadius="10px"
+          borderBottomRightRadius="10px"
           h="2px"
           value={percentage}
         />
