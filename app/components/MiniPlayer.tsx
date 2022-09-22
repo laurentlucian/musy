@@ -30,7 +30,6 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const { refresh } = useDataRefresh();
   const [current, setCurrent] = useState(0);
   const percentage = duration ? (current / duration) * 100 : 0;
-  console.log('percentage', percentage);
 
   const transition = useTransition();
 

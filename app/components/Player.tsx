@@ -86,9 +86,9 @@ const Player = ({
       refresh();
     },
     // -> checks if user started playing every minute
-    // active ? null : 30000,
+    active ? null : 60000,
     // -> refreshes every 30s regardless
-    30000,
+    // 30000,
   );
 
   return (
