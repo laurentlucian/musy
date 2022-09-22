@@ -76,7 +76,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       >
         <HStack spacing={3} w="100%">
           <Image w="50px" borderRadius={50} src={user.image} />
-          <Text fontWeight="bold">{user.name}</Text>
+          <Text fontWeight="bold">{user.name.split(' ').splice(0, 1)}</Text>
           {isLoading && <Spinner />}
           {playback && (
             <HStack w="100%" spacing={2} justify="end">
