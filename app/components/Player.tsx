@@ -16,11 +16,11 @@ import { useFetcher, useTransition } from "@remix-run/react";
 import { LoginCurve, LogoutCurve } from "iconsax-react";
 import spotify_icon_white from "~/assets/spotify-icon-white.png";
 import spotify_icon_black from "~/assets/spotify-icon-black.png";
-import { useEffect, useState } from "react";
-import { useDataRefresh } from "remix-utils";
-import explicitImage from "~/assets/explicit-solid.svg";
-import Tooltip from "./Tooltip";
-import AddQueue from "./AddQueue";
+import { useEffect, useRef, useState } from 'react';
+import { useDataRefresh } from 'remix-utils';
+import explicitImage from '~/assets/explicit-solid.svg';
+import Tooltip from './Tooltip';
+import AddQueue from './AddQueue';
 
 type PlayerProps = {
   uri: string;
@@ -51,30 +51,34 @@ const Player = ({
   duration,
   explicit,
 }: PlayerProps) => {
-  const bg = useColorModeValue("music.50", "music.900");
-  const color = useColorModeValue("music.900", "music.50");
+  const bg = useColorModeValue('music.50', 'music.900');
+  const color = useColorModeValue('music.900', 'music.50');
   const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
 
   const { refresh } = useDataRefresh();
+  const refreshed = useRef(false);
   const [current, setCurrent] = useState(0);
   const percentage = duration ? (current / duration) * 100 : 0;
 
   const transition = useTransition();
-  const busy = transition.submission?.formData.has("party") ?? false;
+  const busy = transition.submission?.formData.has('party') ?? false;
 
   // reset seek bar on new song
   useEffect(() => {
     setCurrent(progress);
+    refreshed.current = false;
   }, [progress]);
 
   // simulating a seek bar tick
   useInterval(
     () => {
       if (!duration) return null;
-      if (current > duration) {
+      // ref prevents from refreshing again before new data has hydrated; might loop otherwise
+      if (current > duration && !refreshed.current) {
         refresh();
+        refreshed.current = true;
       }
       setCurrent((prev) => prev + 1000);
     },
@@ -92,7 +96,7 @@ const Player = ({
   );
 
   return (
-    <Stack w={[363, "100%"]} bg={bg} spacing={0} borderRadius={5}>
+    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
@@ -129,9 +133,9 @@ const Player = ({
                     action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
                     method="post"
                   >
-                    <Tooltip label={isUserInParty ? "Leave session" : "Join session"}>
+                    <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                       <IconButton
-                        aria-label={isUserInParty ? "Leave" : "Join"}
+                        aria-label={isUserInParty ? 'Leave' : 'Join'}
                         name="party"
                         icon={
                           isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />
@@ -162,7 +166,7 @@ const Player = ({
       <Progress
         sx={{
           backgroundColor: bg,
-          "> div": {
+          '> div': {
             backgroundColor: color,
           },
         }}
