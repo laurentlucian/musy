@@ -67,7 +67,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
   }
   const isPlayingIds = playbacks.map((data) => data.userId);
-  // place playingNow users at top
+  // place playingNow users at top; o(n) but n is small
   users.sort((a, b) => isPlayingIds.indexOf(b.userId) - isPlayingIds.indexOf(a.userId));
 
   return { users, user: session?.user, playbacks };

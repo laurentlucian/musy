@@ -11,9 +11,8 @@ import {
   useInterval,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, useTransition } from '@remix-run/react';
-import { useEffect, useState } from 'react';
-import { useDataRefresh } from 'remix-utils';
+import { Link, useNavigate, useTransition } from '@remix-run/react';
+import { useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { Playback } from '~/routes';
 
@@ -26,9 +25,9 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const duration = playback?.item?.duration_ms ?? 0;
-  const progress = playback?.progress_ms ?? 0;
-  const { refresh } = useDataRefresh();
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
+  const refreshed = useRef(false);
   const percentage = duration ? (current / duration) * 100 : 0;
 
   const transition = useTransition();
@@ -42,23 +41,26 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       ? playback?.item.album?.images[0].url
       : playback?.item?.images[0].url;
 
-  // reset seek bar on new song
+  // reset seek bar on new song/props
   useEffect(() => {
+    const progress = playback?.progress_ms ?? 0;
     setCurrent(progress);
-  }, [progress]);
+    refreshed.current = false;
+  }, [playback?.progress_ms]);
 
   // simulating a seek bar tick
   useInterval(
     () => {
       if (!duration) return null;
-      if (current > duration) {
-        refresh();
+      // ref prevents from refreshing again before new data has hydrated; will loop otherwise
+      if (current > duration && !refreshed.current) {
+        navigate('.', { replace: true });
+        refreshed.current = true;
       }
       setCurrent((prev) => prev + 1000);
     },
     playback ? 1000 : null,
   );
-
 
   const isLoading =
     transition.state === 'loading' && transition.location.pathname.includes(user.userId);
@@ -133,5 +135,5 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       )}
     </Stack>
   );
-};
+};;;;;;;;;;;;;;;;;;;;;;;
 export default MiniPlayer;
