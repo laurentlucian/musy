@@ -5,17 +5,18 @@ import {
   HStack,
   IconButton,
   Image,
+  Link,
   Progress,
   Stack,
   Text,
   useColorModeValue,
   useInterval,
-} from "@chakra-ui/react";
-import type { Party, Profile } from "@prisma/client";
-import { useFetcher, useTransition } from "@remix-run/react";
-import { LoginCurve, LogoutCurve } from "iconsax-react";
-import spotify_icon_white from "~/assets/spotify-icon-white.png";
-import spotify_icon_black from "~/assets/spotify-icon-black.png";
+} from '@chakra-ui/react';
+import type { Party, Profile } from '@prisma/client';
+import { useFetcher, useTransition } from '@remix-run/react';
+import { LoginCurve, LogoutCurve } from 'iconsax-react';
+import spotify_icon_white from '~/assets/spotify-icon-white.png';
+import spotify_icon_black from '~/assets/spotify-icon-black.png';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -35,6 +36,7 @@ type PlayerProps = {
   progress: number;
   duration: number;
   explicit: boolean | undefined;
+  item: SpotifyApi.CurrentlyPlayingObject['item'];
 };
 
 const Player = ({
@@ -50,6 +52,7 @@ const Player = ({
   progress,
   duration,
   explicit,
+  item,
 }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
@@ -64,6 +67,11 @@ const Player = ({
 
   const transition = useTransition();
   const busy = transition.submission?.formData.has('party') ?? false;
+
+  const link = item?.uri;
+  const artistLink = item?.type === 'track'
+  ? item.album?.artists[0].uri
+  : item?.show.name;
 
   // reset seek bar on new song
   useEffect(() => {
@@ -100,12 +108,16 @@ const Player = ({
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
-            <Text noOfLines={[1]}>{name}</Text>
+            <Link href={link ?? ''} target="_blank">
+              <Text noOfLines={[1]}>{name}</Text>
+            </Link>
             <Flex>
               {explicit && <Image mr={1} src={explicitImage} w="19px" />}
-              <Text opacity={0.8} fontSize="13px">
-                {artist}
-              </Text>
+              <Link href={artistLink ?? ''} target="_blank">
+                <Text opacity={0.8} fontSize="13px">
+                  {artist}
+                </Text>
+              </Link>
             </Flex>
             <Text fontSize="14px" fontWeight="semibold">
               {device}

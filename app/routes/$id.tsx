@@ -102,6 +102,7 @@ const Profile = () => {
                 progress={progress}
                 duration={duration}
                 explicit={playback.item.explicit}
+                item={playback.item}
               />
             ) : (
               <Player
@@ -117,6 +118,7 @@ const Profile = () => {
                 progress={progress}
                 duration={duration}
                 explicit={recent.items[0].track.explicit}
+                item={recent.items[0].track}
               />
             )}
           </Stack>
@@ -174,7 +176,7 @@ const Profile = () => {
               <Heading fontSize={['sm', 'md']}>Recently liked</Heading>
               <Tiles>
                 {liked.items.map(({ track }) => {
-                  return (
+                  return (                                                                                                                                                                                                                                                                                 
                     <Tile
                       key={track.id}
                       uri={track.uri}

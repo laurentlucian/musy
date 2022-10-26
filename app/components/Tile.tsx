@@ -1,4 +1,4 @@
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link, useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -64,9 +64,11 @@ const Tile = ({
       </Flex>
       <Flex justify="space-between">
         <Stack spacing={0}>
-          <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
-            {name}
-          </Text>
+          <LinkB href={uri} target="_blank">
+            <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+              {name}
+            </Text>
+          </LinkB>
           <Flex align="center">
             {explicit && <Image src={explicitImage} mr={1} w="19px" />}
             <Text fontSize="11px" opacity={0.8}>
