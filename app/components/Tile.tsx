@@ -4,12 +4,16 @@ import { Link, useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { timeSince } from '~/hooks/utils';
 import AddQueue from './AddQueue';
+import Tooltip from './Tooltip';
 
 type TileProps = {
   uri: string;
   image: string;
+  albumUri: string | null;
+  albumName: string | null;
   name: string;
   artist: string;
+  artistUri: string | null;
   explicit: boolean;
 
   // name, not Id
@@ -24,8 +28,11 @@ type TileProps = {
 const Tile = ({
   uri,
   image,
+  albumUri,
+  albumName,
   name,
   artist,
+  artistUri,
   explicit,
   sendTo,
   user,
@@ -60,7 +67,11 @@ const Tile = ({
           </HStack>
         )}
 
-        <Image src={image} borderRadius={5} w="200px" draggable={false} />
+        <LinkB href={albumUri ?? ''} target="_blank">
+          <Tooltip label={albumName} placement="top-start">
+            <Image src={image} borderRadius={5} w="200px" draggable={false} />
+          </Tooltip>
+        </LinkB>
       </Flex>
       <Flex justify="space-between">
         <Stack spacing={0}>
@@ -71,9 +82,11 @@ const Tile = ({
           </LinkB>
           <Flex align="center">
             {explicit && <Image src={explicitImage} mr={1} w="19px" />}
-            <Text fontSize="11px" opacity={0.8}>
-              {artist}
-            </Text>
+            <LinkB href={artistUri ?? ''} target="_blank">
+              <Text fontSize="11px" opacity={0.8}>
+                {artist}
+              </Text>
+            </LinkB>
           </Flex>
         </Stack>
         <Flex minW="35px" justify="center">
@@ -81,8 +94,11 @@ const Tile = ({
             key={id}
             uri={uri}
             image={image}
+            albumName={albumName}
+            albumUri={albumUri}
             name={name}
             artist={artist}
+            artistUri={artistUri}
             explicit={explicit ?? false}
             userId={user?.userId}
             sendTo={sendTo}

@@ -10,8 +10,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   const body = await request.formData();
   const uri = body.get('uri');
   const image = body.get('image');
+  const albumUri = body.get('albumUri') as string;
+  const albumName = body.get('albumName');
   const name = body.get('name');
   const artist = body.get('artist');
+  const artistUri = body.get('artistUri') as string;
   const explicit = Boolean(body.get('explicit'));
   const fromUserId = body.get('fromId');
 
@@ -30,7 +33,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     uri,
     name,
     image,
+    albumUri,
+    albumName,
     artist,
+    artistUri,
     explicit,
     ownerId: id,
     userId: fromUserId !== '' ? fromUserId : null,

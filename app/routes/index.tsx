@@ -18,6 +18,8 @@ type IndexData = {
 
 const Index = () => {
   const { user, users, playbacks } = useLoaderData<IndexData>();
+  console.log(playbacks, 'poop');
+
   const transition = useTransition();
 
   return (

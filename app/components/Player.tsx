@@ -20,38 +20,28 @@ import spotify_icon_black from '~/assets/spotify-icon-black.png';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import explicitImage from '~/assets/explicit-solid.svg';
-import Tooltip from './Tooltip';
 import AddQueue from './AddQueue';
+import Tooltip from './Tooltip';
 
 type PlayerProps = {
-  uri: string;
   id: string;
-  name: string;
-  artist: string;
-  image: string;
   device: string;
   currentUser: Profile | null;
   party: Party[];
   active: boolean;
   progress: number;
   duration: number;
-  explicit: boolean | undefined;
-  item: SpotifyApi.CurrentlyPlayingObject['item'];
+  item: SpotifyApi.TrackObjectFull;
 };
 
 const Player = ({
-  uri,
   id,
-  name,
-  artist,
-  image,
   device,
   currentUser,
   party,
   active,
   progress,
   duration,
-  explicit,
   item,
 }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
@@ -67,11 +57,6 @@ const Player = ({
 
   const transition = useTransition();
   const busy = transition.submission?.formData.has('party') ?? false;
-
-  const link = item?.uri;
-  const artistLink = item?.type === 'track'
-  ? item.album?.artists[0].uri
-  : item?.show.name;
 
   // reset seek bar on new song
   useEffect(() => {
@@ -103,25 +88,36 @@ const Player = ({
     // 30000,
   );
 
+  if (!item) return null;
+
+  const link = item.uri;
+  const artistLink = item.album?.artists[0].uri;
+  const albumLink = item.album?.uri;
+
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
             <Link href={link ?? ''} target="_blank">
-              <Text noOfLines={[1]}>{name}</Text>
+              <Text noOfLines={[1]}>{item.name}</Text>
             </Link>
             <Flex>
-              {explicit && <Image mr={1} src={explicitImage} w="19px" />}
+              {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
               <Link href={artistLink ?? ''} target="_blank">
                 <Text opacity={0.8} fontSize="13px">
-                  {artist}
+                  {item.album?.artists[0].name}
                 </Text>
               </Link>
             </Flex>
-            <Text fontSize="14px" fontWeight="semibold">
-              {device}
-            </Text>
+            <HStack>
+              <Text fontSize="12px" fontWeight="normal">
+                Listening on:{' '}
+              </Text>
+              <Text fontSize="14px" fontWeight="semibold">
+                {device}
+              </Text>
+            </HStack>
           </Flex>
 
           {active && (
@@ -133,11 +129,14 @@ const Player = ({
                   {!isUserInParty && (
                     <AddQueue
                       key={id}
-                      uri={uri}
-                      image={image}
-                      name={name}
-                      artist={artist}
-                      explicit={explicit ?? false}
+                      uri={item.uri}
+                      image={item.album?.images[0].url}
+                      albumUri={item.album?.uri}
+                      albumName={item.album?.name}
+                      name={item.name}
+                      artist={item.album?.artists[0].name}
+                      artistUri={artistLink}
+                      explicit={item.explicit ?? false}
                       userId={currentUser?.userId}
                     />
                   )}
@@ -173,7 +172,11 @@ const Player = ({
             </HStack>
           )}
         </Stack>
-        <Image src={image} m={0} boxSize={108} borderRadius={2} />
+        <Link href={albumLink ?? ''} target="_blank">
+          <Tooltip label={item.album.name} placement="top-end" closeDelay={700}>
+            <Image src={item.album?.images[0].url} m={0} boxSize={108} borderRadius={2} />
+          </Tooltip>
+        </Link>
       </HStack>
       <Progress
         sx={{

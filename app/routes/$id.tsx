@@ -1,4 +1,4 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, Flex } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
 import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
 import { json, redirect } from '@remix-run/node';
 import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
@@ -11,10 +11,12 @@ import { getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
-import { timeSince } from '~/hooks/utils';
+// import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
 import type { Submission } from '@remix-run/react/dist/transition';
 import Following from '~/components/Following';
+import PlayerPaused from '~/components/PlayerPaused';
+import Tooltip from '~/components/Tooltip';
 
 const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
   include: { user: true },
@@ -41,13 +43,17 @@ const Profile = () => {
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
 
+  console.log(recent.items[0].track);
+
   return (
     <Stack spacing={5} pb={5}>
       {user ? (
         <>
           <Stack spacing={3}>
             <HStack>
-              <Image borderRadius={50} boxSize={93} src={user.image} />
+              <Tooltip label="<3" placement="top">
+                <Image borderRadius={50} boxSize={93} src={user.image} />
+              </Tooltip>
               <Stack flex={1} maxW="calc(100% - 100px)">
                 <Heading size="md" fontWeight="bold">
                   {user.name}
@@ -80,46 +86,19 @@ const Profile = () => {
                 <Following currentUser={currentUser} user={user} following={following} />
               )}
             </HStack>
-            {playback && playback.item ? (
+            {playback && playback.item?.type === 'track' ? (
               <Player
-                uri={playback.item.uri}
                 id={user.userId}
-                name={playback.item.name}
-                artist={
-                  playback.item.type === 'track'
-                    ? playback.item.album?.artists[0].name
-                    : playback.item.show.name
-                }
-                image={
-                  playback.item.type === 'track'
-                    ? playback.item.album?.images[0].url
-                    : playback.item.images[0].url
-                }
                 device={playback.device.name}
                 currentUser={currentUser}
                 party={party}
                 active={playback.is_playing}
                 progress={progress}
                 duration={duration}
-                explicit={playback.item.explicit}
                 item={playback.item}
               />
             ) : (
-              <Player
-                uri={recent.items[0].track.uri}
-                id={user.userId}
-                name={recent.items[0].track.name}
-                artist={recent.items[0].track.artists[0].name}
-                image={recent.items[0].track.album.images[1].url}
-                device={timeSince(new Date(recent.items[0].played_at))}
-                currentUser={currentUser}
-                party={party}
-                active={false}
-                progress={progress}
-                duration={duration}
-                explicit={recent.items[0].track.explicit}
-                item={recent.items[0].track}
-              />
+              <PlayerPaused item={recent.items[0].track} />
             )}
           </Stack>
           {!recent && !top && !liked && !queue && <Text>Spotify API limit reached</Text>}
@@ -136,8 +115,11 @@ const Profile = () => {
                         key={new Date(item.createdAt).getMilliseconds()}
                         uri={item.uri}
                         image={item.image}
+                        albumUri={item.albumUri}
+                        albumName={item.albumName}
                         name={item.name}
                         artist={item.artist}
+                        artistUri={item.artistUri}
                         explicit={item.explicit}
                         user={currentUser}
                         createdBy={item.user}
@@ -161,8 +143,11 @@ const Profile = () => {
                       key={played_at}
                       uri={track.uri}
                       image={track.album.images[1].url}
+                      albumUri={track.album.uri}
+                      albumName={track.album.name}
                       name={track.name}
                       artist={track.album.artists[0].name}
+                      artistUri={track.album.artists[0].uri}
                       explicit={track.explicit}
                       user={currentUser}
                     />
@@ -176,13 +161,16 @@ const Profile = () => {
               <Heading fontSize={['sm', 'md']}>Recently liked</Heading>
               <Tiles>
                 {liked.items.map(({ track }) => {
-                  return (                                                                                                                                                                                                                                                                                 
+                  return (
                     <Tile
                       key={track.id}
                       uri={track.uri}
                       image={track.album.images[1].url}
+                      albumUri={track.album.uri}
+                      albumName={track.album.name}
                       name={track.name}
                       artist={track.album.artists[0].name}
+                      artistUri={track.album.artists[0].uri}
                       explicit={track.explicit}
                       user={currentUser}
                     />
@@ -201,8 +189,11 @@ const Profile = () => {
                       key={track.id}
                       uri={track.uri}
                       image={track.album.images[1].url}
+                      albumUri={track.album.uri}
+                      albumName={track.album.name}
                       name={track.name}
                       artist={track.album.artists[0].name}
+                      artistUri={track.album.artists[0].uri}
                       explicit={track.explicit}
                       user={currentUser}
                     />

@@ -6,8 +6,11 @@ import Tooltip from './Tooltip';
 type AddQueueProps = {
   uri: string;
   image: string;
+  albumUri: string | null;
+  albumName: string | null;
   name: string;
   artist: string;
+  artistUri: string | null;
   explicit: boolean;
 
   // @todo figure out a better way to require authentication on click;
@@ -17,7 +20,18 @@ type AddQueueProps = {
   sendTo?: string;
 };
 
-const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQueueProps) => {
+const AddQueue = ({
+  uri,
+  image,
+  albumUri,
+  albumName,
+  name,
+  artist,
+  artistUri,
+  explicit,
+  userId,
+  sendTo,
+}: AddQueueProps) => {
   const { id } = useParams();
   const fetcher = useFetcher();
 
@@ -42,8 +56,11 @@ const AddQueue = ({ uri, image, name, artist, explicit, userId, sendTo }: AddQue
         >
           <Input type="hidden" name="uri" value={uri} />
           <Input type="hidden" name="image" value={image} />
+          <Input type="hidden" name="albumUri" value={albumUri ?? ''} />
+          <Input type="hidden" name="albumName" value={albumName ?? ''} />
           <Input type="hidden" name="name" value={name} />
           <Input type="hidden" name="artist" value={artist} />
+          <Input type="hidden" name="artistUri" value={artistUri ?? ''} />
           {/* empty string is falsy */}
           <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
           {/* sendTo: receiving song (id), sending song (userId) */}

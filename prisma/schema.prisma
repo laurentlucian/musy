@@ -50,6 +50,7 @@ model Party {
   userImage String
 
   assignedAt DateTime @default(now())
+
   @@id([ownerId, userId])
 }
 
@@ -60,11 +61,14 @@ model Queue {
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
 
-  uri      String
-  name     String
-  image    String
-  artist   String
-  explicit Boolean
+  uri       String
+  name      String
+  image     String
+  albumUri  String?
+  albumName String?
+  artist    String
+  artistUri String?
+  explicit  Boolean
 
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
