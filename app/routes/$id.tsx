@@ -42,6 +42,7 @@ const Profile = () => {
   const submit = useSubmit();
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
+  console.log(queue);
 
   console.log(recent.items[0].track);
 

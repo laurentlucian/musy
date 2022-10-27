@@ -67,11 +67,17 @@ const Tile = ({
           </HStack>
         )}
 
-        <LinkB href={albumUri ?? ''} target="_blank">
+        {albumUri ? (
+          <LinkB href={albumUri} target="_blank">
+            <Tooltip label={albumName} placement="top-start">
+              <Image src={image} borderRadius={5} w="200px" draggable={false} />
+            </Tooltip>
+          </LinkB>
+        ) : (
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} borderRadius={5} w="200px" draggable={false} />
           </Tooltip>
-        </LinkB>
+        )}
       </Flex>
       <Flex justify="space-between">
         <Stack spacing={0}>
@@ -82,11 +88,17 @@ const Tile = ({
           </LinkB>
           <Flex align="center">
             {explicit && <Image src={explicitImage} mr={1} w="19px" />}
-            <LinkB href={artistUri ?? ''} target="_blank">
+            {artistUri ? (
+              <LinkB href={artistUri} target="_blank">
+                <Text fontSize="11px" opacity={0.8}>
+                  {artist}
+                </Text>
+              </LinkB>
+            ) : (
               <Text fontSize="11px" opacity={0.8}>
                 {artist}
               </Text>
-            </LinkB>
+            )}
           </Flex>
         </Stack>
         <Flex minW="35px" justify="center">

@@ -11,7 +11,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const uri = body.get('uri');
   const image = body.get('image');
   const albumUri = body.get('albumUri') as string;
-  const albumName = body.get('albumName');
+  const albumName = body.get('albumName') as string;
   const name = body.get('name');
   const artist = body.get('artist');
   const artistUri = body.get('artistUri') as string;

@@ -27,8 +27,11 @@ const Search = () => {
           key={track.id}
           uri={track.uri}
           image={track.album.images[1].url}
+          albumUri={track.album.uri}
+          albumName={track.album.name}
           name={track.name}
           artist={track.album.artists[0].name}
+          artistUri={track.artists[0].uri}
           explicit={track.explicit}
           sendTo={user?.name}
           user={currentUser}
