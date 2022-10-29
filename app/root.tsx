@@ -1,23 +1,38 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  useCatch,
-  useLoaderData,
-} from '@remix-run/react';
-import type { MetaFunction, LinksFunction, LoaderFunction } from '@remix-run/node';
+import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
+import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import { Heading, ChakraProvider, Text } from '@chakra-ui/react';
 
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
-import type { UserProfile } from '~/services/auth.server';
 import { authenticator } from '~/services/auth.server';
 import { ScrollRestoration } from './hooks/useScrollRestoration';
 import { withEmotionCache } from '@emotion/react';
 import { useContext, useEffect } from 'react';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+
+const App = () => {
+  const data = useTypedLoaderData<typeof loader>();
+
+  return (
+    <Document>
+      <ChakraProvider theme={theme}>
+        <Layout user={data}>
+          <Outlet />
+        </Layout>
+      </ChakraProvider>
+    </Document>
+  );
+};
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  if (session) {
+    return typedjson(session.user);
+  } else {
+    return typedjson(null);
+  }
+};
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -44,24 +59,6 @@ export let links: LinksFunction = () => {
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
     },
   ];
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return authenticator.isAuthenticated(request);
-};
-
-const App = () => {
-  const data = useLoaderData<UserProfile>();
-
-  return (
-    <Document>
-      <ChakraProvider theme={theme}>
-        <Layout user={data}>
-          <Outlet />
-        </Layout>
-      </ChakraProvider>
-    </Document>
-  );
 };
 
 type DocumentProps = {

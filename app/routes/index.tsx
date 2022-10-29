@@ -1,24 +1,14 @@
 import { Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
-import type { LoaderFunction } from '@remix-run/node';
-import { Form, useCatch, useLoaderData, useTransition } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/node';
+import { Form, useCatch, useTransition } from '@remix-run/react';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import MiniPlayer from '~/components/MiniPlayer';
 
 import { authenticator, getAllUsers } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-export interface Playback extends SpotifyApi.CurrentPlaybackResponse {
-  userId: string;
-}
-type IndexData = {
-  user: SpotifyApi.CurrentUsersProfileResponse;
-  users: Profile[];
-  playbacks: Playback[];
-};
-
 const Index = () => {
-  const { user, users, playbacks } = useLoaderData<IndexData>();
-  console.log(playbacks, 'poop');
+  const { user, users, playbacks } = useTypedLoaderData<typeof loader>();
 
   const transition = useTransition();
 
@@ -40,11 +30,16 @@ const Index = () => {
   );
 };
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const users = (await getAllUsers()) as Profile[];
-  const session = await authenticator.isAuthenticated(request);
+export interface Playback extends SpotifyApi.CurrentPlaybackResponse {
+  userId: string;
+}
 
-  if (!users) return { users, user: session?.user };
+export const loader = async ({ request }: LoaderArgs) => {
+  const users = await getAllUsers();
+  const session = await authenticator.isAuthenticated(request);
+  const user = session?.user ?? null;
+
+  if (!users.length) return typedjson({ users, user, playbacks: [] });
 
   const getPlaybackState = async (id?: string) => {
     if (!id) return null;
@@ -72,7 +67,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   // place playingNow users at top; o(n) but n is small
   users.sort((a, b) => isPlayingIds.indexOf(b.userId) - isPlayingIds.indexOf(a.userId));
 
-  return { users, user: session?.user, playbacks };
+  return typedjson({ users, user, playbacks });
 };
 
 export default Index;

@@ -1,11 +1,10 @@
 import type { PropsWithChildren } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
-
 import Nav from './Nav';
-import type { UserProfile } from '~/services/auth.server';
+import type { User } from 'remix-auth-spotify';
 
 type LayoutProps = {
-  user: UserProfile;
+  user: User | null;
 };
 
 const Layout = ({ user, children }: PropsWithChildren<LayoutProps>) => {

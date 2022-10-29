@@ -1,11 +1,10 @@
 import { Flex, IconButton, Input, InputGroup, InputRightElement, Spinner } from '@chakra-ui/react';
-import { Form, useSubmit, useTransition } from '@remix-run/react';
+import { Form, Outlet, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
 import { CloseSquare } from 'iconsax-react';
 import type { ChangeEvent } from 'react';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Outlet, useSearchParams } from 'react-router-dom';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,7 +28,6 @@ const Search = () => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
-      console.log(e.currentTarget.value);
     } else {
       setSearch('');
       searchParams.delete('spotify');

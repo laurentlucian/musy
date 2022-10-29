@@ -1,10 +1,10 @@
 import { Flex, Heading, HStack, IconButton, Input, useColorMode } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Login, Logout, Moon, Sun1 } from 'iconsax-react';
-import type { UserProfile } from '~/services/auth.server';
+import type { User } from 'remix-auth-spotify';
 import Tooltip from './Tooltip';
 
-const Nav = ({ user }: { user: UserProfile }) => {
+const Nav = ({ user }: { user: User | null }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
   const location = useLocation();

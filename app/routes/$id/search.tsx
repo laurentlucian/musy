@@ -1,21 +1,14 @@
-import { json, redirect } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import type { LoaderFunction } from '@remix-run/node';
-import type { Profile } from '@prisma/client';
+import type { LoaderArgs } from '@remix-run/node';
 
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import { getCurrentUser } from '~/services/auth.server';
-
-type SearchType = {
-  results: SpotifyApi.TrackSearchResponse | null;
-  user: Profile | null;
-  currentUser: Profile | null;
-};
+import invariant from 'tiny-invariant';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 const Search = () => {
-  const { results, user, currentUser } = useLoaderData<SearchType>();
+  const { results, user, currentUser } = useTypedLoaderData<typeof loader>();
   const tracks = results?.tracks?.items ?? [];
 
   if (tracks.length === 0) return <></>;
@@ -41,24 +34,19 @@ const Search = () => {
   );
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
   const { id } = params;
-  if (!id) throw redirect('/');
+  invariant(id, 'Missing param Id');
   const currentUser = await getCurrentUser(request);
 
-  try {
-    const { spotify, user } = await spotifyApi(id);
-    if (!spotify) return json('No access to spotify API', { status: 500 });
-    const url = new URL(request.url);
-    const searchURL = url.searchParams.get('spotify');
-    if (!searchURL) return json({ results: null, user: null, currentUser });
+  const { spotify, user } = await spotifyApi(id);
+  invariant(spotify, 'No access to spotify API');
+  const url = new URL(request.url);
+  const searchURL = url.searchParams.get('spotify');
+  if (!searchURL) return typedjson({ results: null, user: null, currentUser });
 
-    const { body: results } = await spotify.searchTracks(searchURL);
-    return json({ results, user, currentUser });
-  } catch {
-    // @todo handle if spotify search error
-    return json({ results: null, user: null, currentUser });
-  }
+  const { body: results } = await spotify.searchTracks(searchURL);
+  return typedjson({ results, user, currentUser });
 };
 
 export default Search;

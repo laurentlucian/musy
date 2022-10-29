@@ -1,9 +1,6 @@
 import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
-import { Form, useCatch, useLoaderData, useSubmit } from '@remix-run/react';
-import { json, redirect } from '@remix-run/node';
-import type { LoaderFunction, ActionFunction, MetaFunction } from '@remix-run/node';
-import type { Party, Profile as ProfileType } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import { Form, useCatch, useSubmit } from '@remix-run/react';
+import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -17,34 +14,15 @@ import type { Submission } from '@remix-run/react/dist/transition';
 import Following from '~/components/Following';
 import PlayerPaused from '~/components/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
-
-const queueWithProfile = Prisma.validator<Prisma.QueueArgs>()({
-  include: { user: true },
-});
-
-type QueueWithProfile = Prisma.QueueGetPayload<typeof queueWithProfile>;
-
-type ProfileComponent = {
-  user: ProfileType;
-  playback: SpotifyApi.CurrentPlaybackResponse;
-  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
-  liked: SpotifyApi.UsersSavedTracksResponse;
-  top: SpotifyApi.UsersTopTracksResponse;
-  following: boolean | null;
-  currentUser: ProfileType | null;
-  party: Party[];
-  queue: QueueWithProfile[];
-};
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, queue, following } =
-    useLoaderData<ProfileComponent>();
+    useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
-  console.log(queue);
-
-  console.log(recent.items[0].track);
 
   return (
     <Stack spacing={5} pb={5}>
@@ -220,97 +198,76 @@ export const meta: MetaFunction = (props) => {
   };
 };
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader = async ({ request, params }: LoaderArgs) => {
   const id = params.id;
-
-  if (!id) throw redirect('/');
+  invariant(id, 'Missing params Id');
 
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
   const user = profile?.user;
 
-  try {
-    const { spotify } = await spotifyApi(id);
+  const { spotify } = await spotifyApi(id);
+  if (!spotify || !user) throw new Response('API Error', { status: 500 });
 
-    if (!spotify || !user) return json('Spotify API Error', 500);
+  const spotifyProfile = await spotify.getMe();
+  const pfp = spotifyProfile.body.images;
+  if (pfp) {
+    await updateUserImage(id, pfp[0].url);
+  }
 
-    const profile = await spotify.getMe();
-    const pfp = profile.body.images;
-    if (pfp) {
-      await updateUserImage(id, pfp[0].url);
-    }
+  const [queue, party, { body: playback }, { body: recent }, { body: liked }, { body: top }] =
+    await Promise.all([
+      prisma.queue.findMany({
+        where: { ownerId: id },
+        include: { user: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.party.findMany({ where: { ownerId: id } }),
+      spotify.getMyCurrentPlaybackState(),
+      spotify.getMyRecentlyPlayedTracks(),
+      spotify.getMySavedTracks(),
+      spotify.getMyTopTracks().catch(() => ({
+        body: null,
+      })),
+    ]);
 
-    const queue = await prisma.queue.findMany({
-      where: { ownerId: id },
-      include: { user: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    const party = await prisma.party.findMany({ where: { ownerId: id } });
-    const { body: playback } = await spotify.getMyCurrentPlaybackState();
-    const { body: recent } = await spotify.getMyRecentlyPlayedTracks();
-    const { body: liked } = await spotify.getMySavedTracks();
-
-    const currentUser = await getCurrentUser(request);
-    // Checks if there is a current user if not it will return the json
-    if (!currentUser) return json({ user, playback, recent, party, liked, queue });
-    try {
-      const { body: top } = await spotify.getMyTopTracks();
-
-      let following = null;
-      try {
-        // Renaming another spotify api so it doenst clash with the { spotify } one
-        const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
-        if (!cUserSpotify) return json('Spotify API Error', 500);
-        // Checks if current user is following current profile will return a boolean
-        const { body } = await cUserSpotify.isFollowingUsers([id]);
-        following = body[0];
-      } catch {
-        console.log('loader -> following check failed; user likely needs to reauthenticate');
-      }
-
-      return json({
+  const currentUser = await getCurrentUser(request);
+  if (currentUser) {
+    const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
+    if (cUserSpotify) {
+      const {
+        body: [following],
+      } = await cUserSpotify.isFollowingUsers([id]);
+      return typedjson({
         user,
+        queue,
+        party,
         playback,
         recent,
-        party,
-        currentUser,
         liked,
         top,
-        queue,
-        following: following,
-      });
-    } catch (e) {
-      console.log(e, 'caught');
-      // will catch error if existingUser doesn't have required scopes in spotify authorization
-      // user needs to reauthenticate
-      return json({
-        user,
-        playback,
-        recent,
-        party,
         currentUser,
-        liked,
-        queue,
-        top: null,
+        following,
       });
     }
-  } catch {
-    return json({
-      user,
-      playback: null,
-      recent: null,
-      party: null,
-      currentUser: null,
-      liked: null,
-      queue: null,
-      top: null,
-    });
   }
+
+  return typedjson({
+    user,
+    queue,
+    party,
+    playback,
+    recent,
+    liked,
+    top,
+    currentUser,
+    following: null,
+  });
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
+  invariant(id, 'Missing params Id');
 
-  if (!id) throw redirect('/');
   const data = await request.formData();
   const bio = data.get('bio');
   const follow = data.get('Follow');
@@ -330,7 +287,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (typeof bio !== 'string') {
-    return json('Form submitted incorrectly');
+    return typedjson('Form submitted incorrectly');
   }
   const user = await prisma.profile.update({ where: { userId: id }, data: { bio: bio ?? '' } });
   return user;

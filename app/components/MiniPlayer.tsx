@@ -135,5 +135,5 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       )}
     </Stack>
   );
-};;;;;;;;;;;;;;;;;;;;;;;
+};
 export default MiniPlayer;

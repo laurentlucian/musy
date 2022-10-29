@@ -1,7 +1,6 @@
 // github.com/remix-run/remix/issues/186
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
-import { useBeforeUnload, useTransition } from '@remix-run/react';
+import { useBeforeUnload, useLocation, useTransition } from '@remix-run/react';
 
 let STORAGE_KEY = 'positions';
 
