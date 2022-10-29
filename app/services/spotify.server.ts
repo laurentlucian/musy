@@ -40,3 +40,16 @@ export const spotifyApi = async (id: string) => {
 
   return { spotify: spotifyClient, user: data.user };
 };
+
+export const getUserQueue = async (id: string) => {
+  const { spotify } = await spotifyApi(id);
+  if (!spotify) return [];
+
+  const response = await fetch('https://api.spotify.com/v1/me/player/queue', {
+    headers: { Authorization: `Bearer ${spotify.getAccessToken()}` },
+  });
+  const data = await response.json();
+  if (data) {
+    return data.queue as SpotifyApi.TrackObjectFull[];
+  } else return [];
+};

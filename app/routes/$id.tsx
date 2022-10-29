@@ -3,7 +3,7 @@ import { Form, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 
 import { prisma } from '~/services/db.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 import { getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tile from '~/components/Tile';
@@ -16,9 +16,10 @@ import PlayerPaused from '~/components/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+import MiniTile from '~/components/MiniTile';
 
 const Profile = () => {
-  const { user, playback, recent, currentUser, party, liked, top, queue, following } =
+  const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const duration = playback?.item?.duration_ms ?? 0;
@@ -80,17 +81,38 @@ const Profile = () => {
               <PlayerPaused item={recent.items[0].track} />
             )}
           </Stack>
-          {!recent && !top && !liked && !queue && <Text>Spotify API limit reached</Text>}
+          {queue.length !== 0 && (
+            <Stack>
+              {currentUser?.id !== user.id && <Search />}
+              <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
+              <Tiles>
+                {queue.map((track, index) => {
+                  return (
+                    <MiniTile
+                      key={index}
+                      uri={track.uri}
+                      image={track.album.images[1].url}
+                      albumUri={track.album.uri}
+                      albumName={track.album.name}
+                      name={track.name}
+                      artist={track.album.artists[0].name}
+                      artistUri={track.album.artists[0].uri}
+                      explicit={track.explicit}
+                      user={currentUser}
+                    />
+                  );
+                })}
+              </Tiles>
+            </Stack>
+          )}
           <Stack spacing={5}>
-            {currentUser?.id !== user.id && <Search />}
-
-            {queue.length !== 0 && (
-              <Stack spacing={3}>
-                <Heading fontSize={['sm', 'md']}>Activity</Heading>
+            {activity.length !== 0 && (
+              <Stack>
+                <Heading fontSize={['xs', 'sm']}>Activity</Heading>
                 <Tiles>
-                  {queue.map((item) => {
+                  {activity.map((item) => {
                     return (
-                      <Tile
+                      <MiniTile
                         key={new Date(item.createdAt).getMilliseconds()}
                         uri={item.uri}
                         image={item.image}
@@ -113,7 +135,7 @@ const Profile = () => {
           {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
           {recent && recent?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['sm', 'md']}>Recently played</Heading>
+              <Heading fontSize={['xs', 'sm']}>Recently played</Heading>
               <Tiles>
                 {recent?.items.map(({ track, played_at }) => {
                   return (
@@ -137,7 +159,7 @@ const Profile = () => {
           )}
           {liked && liked?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['sm', 'md']}>Recently liked</Heading>
+              <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
               <Tiles>
                 {liked.items.map(({ track }) => {
                   return (
@@ -160,7 +182,7 @@ const Profile = () => {
           )}
           {top && top?.items.length !== 0 && (
             <Stack spacing={3}>
-              <Heading fontSize={['sm', 'md']}>Top</Heading>
+              <Heading fontSize={['xs', 'sm']}>Top</Heading>
               <Tiles>
                 {top.items.map((track) => {
                   return (
@@ -214,21 +236,29 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     await updateUserImage(id, pfp[0].url);
   }
 
-  const [queue, party, { body: playback }, { body: recent }, { body: liked }, { body: top }] =
-    await Promise.all([
-      prisma.queue.findMany({
-        where: { ownerId: id },
-        include: { user: true },
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.party.findMany({ where: { ownerId: id } }),
-      spotify.getMyCurrentPlaybackState(),
-      spotify.getMyRecentlyPlayedTracks(),
-      spotify.getMySavedTracks(),
-      spotify.getMyTopTracks().catch(() => ({
-        body: null,
-      })),
-    ]);
+  const [
+    activity,
+    party,
+    { body: playback },
+    { body: recent },
+    { body: liked },
+    { body: top },
+    queue,
+  ] = await Promise.all([
+    prisma.queue.findMany({
+      where: { ownerId: id },
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.party.findMany({ where: { ownerId: id } }),
+    spotify.getMyCurrentPlaybackState(),
+    spotify.getMyRecentlyPlayedTracks(),
+    spotify.getMySavedTracks(),
+    spotify.getMyTopTracks().catch(() => ({
+      body: null,
+    })),
+    getUserQueue(id),
+  ]);
 
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
@@ -239,7 +269,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       } = await cUserSpotify.isFollowingUsers([id]);
       return typedjson({
         user,
-        queue,
+        activity,
         party,
         playback,
         recent,
@@ -247,13 +277,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         top,
         currentUser,
         following,
+        queue,
       });
     }
   }
 
   return typedjson({
     user,
-    queue,
+    activity,
     party,
     playback,
     recent,
@@ -261,6 +292,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     top,
     currentUser,
     following: null,
+    queue,
   });
 };
 

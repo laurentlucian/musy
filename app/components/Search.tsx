@@ -41,7 +41,7 @@ const Search = () => {
   return (
     <>
       <Form ref={ref} method="get" action="search">
-        <Flex flex={1} align="center">
+        <Flex flex={1} mb={3} align="center">
           <InputGroup>
             <Input
               name="spotify"
