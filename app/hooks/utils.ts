@@ -10,7 +10,7 @@ export const timeSince = (date: Date | null) => {
   }
   interval = seconds / 2592000;
   if (interval > 1) {
-    return Math.floor(interval) + 'm ago';
+    return Math.floor(interval) + 'mo ago';
   }
   interval = seconds / 86400;
   if (interval > 1) {
