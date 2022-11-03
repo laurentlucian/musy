@@ -1,5 +1,5 @@
-import { Heading, HStack, Stack, Text, Image, Textarea } from '@chakra-ui/react';
-import { Form, useCatch, useSubmit } from '@remix-run/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, Button } from '@chakra-ui/react';
+import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 
 import { prisma } from '~/services/db.server';
@@ -27,188 +27,179 @@ const Profile = () => {
 
   return (
     <Stack spacing={5} pb={5}>
-      {user ? (
-        <>
-          <Stack spacing={3}>
-            <HStack>
-              <Tooltip label="<3" placement="top">
-                <Image borderRadius={50} boxSize={93} src={user.image} />
-              </Tooltip>
-              <Stack flex={1} maxW="calc(100% - 100px)">
-                <Heading size="md" fontWeight="bold">
-                  {user.name}
-                </Heading>
+      <Stack spacing={3}>
+        <HStack>
+          <Tooltip label="<3" placement="top">
+            <Image borderRadius={50} boxSize={93} src={user.image} />
+          </Tooltip>
+          <Stack flex={1} maxW="calc(100% - 100px)">
+            <Heading size="md" fontWeight="bold">
+              {user.name}
+            </Heading>
 
-                {user.id === currentUser?.id ? (
-                  <Form method="post" replace>
-                    <Textarea
-                      name="bio"
-                      size="sm"
-                      variant="flushed"
-                      defaultValue={user.bio ?? ''}
-                      placeholder="write something :)"
-                      onBlur={(e) => submit(e.currentTarget.form)}
-                      resize="none"
-                      maxLength={75}
-                      rows={2}
-                      py={0}
-                      focusBorderColor="purple.500"
-                    />
-                  </Form>
-                ) : (
-                  <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
-                    {user.bio}
-                  </Text>
-                )}
-              </Stack>
-              {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-              {currentUser && following !== null && (
-                <Following currentUser={currentUser} user={user} following={following} />
-              )}
-            </HStack>
-            {playback && playback.item?.type === 'track' ? (
-              <Player
-                id={user.userId}
-                device={playback.device.name}
-                currentUser={currentUser}
-                party={party}
-                active={playback.is_playing}
-                progress={progress}
-                duration={duration}
-                item={playback.item}
-              />
+            {user.id === currentUser?.id ? (
+              <Form method="post" replace>
+                <Textarea
+                  name="bio"
+                  size="sm"
+                  variant="flushed"
+                  defaultValue={user.bio ?? ''}
+                  placeholder="write something :)"
+                  onBlur={(e) => submit(e.currentTarget.form)}
+                  resize="none"
+                  maxLength={75}
+                  rows={2}
+                  py={0}
+                  focusBorderColor="purple.500"
+                />
+              </Form>
             ) : (
-              <PlayerPaused item={recent.items[0].track} />
+              <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
+                {user.bio}
+              </Text>
             )}
           </Stack>
-          {queue.length !== 0 && (
-            <Stack>
-              {currentUser?.id !== user.id && <Search />}
-              <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
-              <Tiles>
-                {queue.map((track, index) => {
-                  return (
-                    <MiniTile
-                      key={index}
-                      uri={track.uri}
-                      image={track.album.images[1].url}
-                      albumUri={track.album.uri}
-                      albumName={track.album.name}
-                      name={track.name}
-                      artist={track.album.artists[0].name}
-                      artistUri={track.album.artists[0].uri}
-                      explicit={track.explicit}
-                      user={currentUser}
-                    />
-                  );
-                })}
-              </Tiles>
-            </Stack>
+          {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
+          {currentUser && following !== null && (
+            <Following currentUser={currentUser} user={user} following={following} />
           )}
-          <Stack spacing={5}>
-            {activity.length !== 0 && (
-              <Stack>
-                <Heading fontSize={['xs', 'sm']}>Activity</Heading>
-                <Tiles>
-                  {activity.map((item) => {
-                    return (
-                      <MiniTile
-                        key={new Date(item.createdAt).getMilliseconds()}
-                        uri={item.uri}
-                        image={item.image}
-                        albumUri={item.albumUri}
-                        albumName={item.albumName}
-                        name={item.name}
-                        artist={item.artist}
-                        artistUri={item.artistUri}
-                        explicit={item.explicit}
-                        user={currentUser}
-                        createdBy={item.user}
-                        createdAt={item.createdAt}
-                      />
-                    );
-                  })}
-                </Tiles>
-              </Stack>
-            )}
+        </HStack>
+        {playback && playback.item?.type === 'track' ? (
+          <Player
+            id={user.userId}
+            device={playback.device.name}
+            currentUser={currentUser}
+            party={party}
+            active={playback.is_playing}
+            progress={progress}
+            duration={duration}
+            item={playback.item}
+          />
+        ) : (
+          <PlayerPaused item={recent.items[0].track} />
+        )}
+      </Stack>
+      {queue.length !== 0 && (
+        <Stack>
+          {currentUser?.id !== user.id && <Search />}
+          <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
+          <Tiles>
+            {queue.map((track, index) => {
+              return (
+                <MiniTile
+                  key={index}
+                  uri={track.uri}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                  user={currentUser}
+                />
+              );
+            })}
+          </Tiles>
+        </Stack>
+      )}
+      <Stack spacing={5}>
+        {activity.length !== 0 && (
+          <Stack>
+            <Heading fontSize={['xs', 'sm']}>Activity</Heading>
+            <Tiles>
+              {activity.map((item) => {
+                return (
+                  <MiniTile
+                    key={new Date(item.createdAt).getMilliseconds()}
+                    uri={item.uri}
+                    image={item.image}
+                    albumUri={item.albumUri}
+                    albumName={item.albumName}
+                    name={item.name}
+                    artist={item.artist}
+                    artistUri={item.artistUri}
+                    explicit={item.explicit}
+                    user={currentUser}
+                    createdBy={item.user}
+                    createdAt={item.createdAt}
+                  />
+                );
+              })}
+            </Tiles>
           </Stack>
-          {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
-          {recent && recent?.items.length !== 0 && (
-            <Stack spacing={3}>
-              <Heading fontSize={['xs', 'sm']}>Recently played</Heading>
-              <Tiles>
-                {recent?.items.map(({ track, played_at }) => {
-                  return (
-                    <Tile
-                      // in case song is on repeat
-                      key={played_at}
-                      uri={track.uri}
-                      image={track.album.images[1].url}
-                      albumUri={track.album.uri}
-                      albumName={track.album.name}
-                      name={track.name}
-                      artist={track.album.artists[0].name}
-                      artistUri={track.album.artists[0].uri}
-                      explicit={track.explicit}
-                      user={currentUser}
-                    />
-                  );
-                })}
-              </Tiles>
-            </Stack>
-          )}
-          {liked && liked?.items.length !== 0 && (
-            <Stack spacing={3}>
-              <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
-              <Tiles>
-                {liked.items.map(({ track }) => {
-                  return (
-                    <Tile
-                      key={track.id}
-                      uri={track.uri}
-                      image={track.album.images[1].url}
-                      albumUri={track.album.uri}
-                      albumName={track.album.name}
-                      name={track.name}
-                      artist={track.album.artists[0].name}
-                      artistUri={track.album.artists[0].uri}
-                      explicit={track.explicit}
-                      user={currentUser}
-                    />
-                  );
-                })}
-              </Tiles>
-            </Stack>
-          )}
-          {top && top?.items.length !== 0 && (
-            <Stack spacing={3}>
-              <Heading fontSize={['xs', 'sm']}>Top</Heading>
-              <Tiles>
-                {top.items.map((track) => {
-                  return (
-                    <Tile
-                      key={track.id}
-                      uri={track.uri}
-                      image={track.album.images[1].url}
-                      albumUri={track.album.uri}
-                      albumName={track.album.name}
-                      name={track.name}
-                      artist={track.album.artists[0].name}
-                      artistUri={track.album.artists[0].uri}
-                      explicit={track.explicit}
-                      user={currentUser}
-                    />
-                  );
-                })}
-              </Tiles>
-            </Stack>
-          )}
-        </>
-      ) : (
-        <>
-          <Heading size="md">404</Heading>
-          <Text>User not found or Spotify API limit reached</Text>
-        </>
+        )}
+      </Stack>
+      {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
+      {recent && recent?.items.length !== 0 && (
+        <Stack spacing={3}>
+          <Heading fontSize={['xs', 'sm']}>Recently played</Heading>
+          <Tiles>
+            {recent?.items.map(({ track, played_at }) => {
+              return (
+                <Tile
+                  // in case song is on repeat
+                  key={played_at}
+                  uri={track.uri}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                  user={currentUser}
+                />
+              );
+            })}
+          </Tiles>
+        </Stack>
+      )}
+      {liked && liked?.items.length !== 0 && (
+        <Stack spacing={3}>
+          <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
+          <Tiles>
+            {liked.items.map(({ track }) => {
+              return (
+                <Tile
+                  key={track.id}
+                  uri={track.uri}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                  user={currentUser}
+                />
+              );
+            })}
+          </Tiles>
+        </Stack>
+      )}
+      {top && top?.items.length !== 0 && (
+        <Stack spacing={3}>
+          <Heading fontSize={['xs', 'sm']}>Top</Heading>
+          <Tiles>
+            {top.items.map((track) => {
+              return (
+                <Tile
+                  key={track.id}
+                  uri={track.uri}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                  user={currentUser}
+                />
+              );
+            })}
+          </Tiles>
+        </Stack>
       )}
     </Stack>
   );
@@ -216,19 +207,23 @@ const Profile = () => {
 
 export const meta: MetaFunction = (props) => {
   return {
-    title: `Musy - ${props.data.user.name.split(' ')[0]}`,
+    title: `Musy - ${props.data?.user?.name.split(' ')[0] ?? ''}`,
   };
 };
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const id = params.id;
+
   invariant(id, 'Missing params Id');
 
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
-  const user = profile?.user;
+  if (!profile || !profile.user) throw new Response('Not found', { status: 404 });
+  const user = profile.user;
 
-  const { spotify } = await spotifyApi(id);
-  if (!spotify || !user) throw new Response('API Error', { status: 500 });
+  const { spotify } = await spotifyApi(id).catch(() => {
+    throw new Response('User Access Revoked', { status: 401 });
+  });
+  if (!spotify) throw new Response('User Access Revoked', { status: 401 });
 
   const spotifyProfile = await spotify.getMe();
   const pfp = spotifyProfile.body.images;
@@ -327,25 +322,21 @@ export const action = async ({ request, params }: ActionArgs) => {
 
 export const ErrorBoundary = (error: { error: Error }) => {
   console.log('$id -> ErrorBoundary', error);
+
   return (
     <>
-      <Heading fontSize={['xl', 'xxl']}>401</Heading>
-      {/* error message useless (might be because of spotify stragegy) */}
+      <Heading fontSize={['xl', 'xxl']}>500</Heading>
       <Text fontSize="md">oops something broke;</Text>
-      {/* <Text fontSize="md">Trace(for debug): {JSON.stringify(error, null, 2)} </Text> */}
     </>
   );
 };
 
 export const CatchBoundary = () => {
   let caught = useCatch();
-  let message;
   switch (caught.status) {
     case 401:
-      message = <Text>Oops, you shouldn't be here (No access)</Text>;
       break;
     case 404:
-      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
       break;
 
     default:
@@ -355,9 +346,11 @@ export const CatchBoundary = () => {
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>
-        {caught.status}: {caught.statusText}
+        {caught.status} {caught.data}
       </Heading>
-      <Text fontSize="md">{message}</Text>
+      <Button mt={4} as={Link} to="/">
+        Go home
+      </Button>
     </>
   );
 };

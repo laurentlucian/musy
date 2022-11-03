@@ -43,13 +43,17 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   const getPlaybackState = async (id?: string) => {
     if (!id) return null;
-    const { spotify } = await spotifyApi(id);
-    if (!spotify) return null;
     try {
-      const res = await spotify.getMyCurrentPlaybackState();
-      const playback = res.body;
-      if (!playback.is_playing) return null;
-      return { userId: id, ...playback };
+      const { spotify } = await spotifyApi(id);
+      if (!spotify) return null;
+      try {
+        const res = await spotify.getMyCurrentPlaybackState();
+        const playback = res.body;
+        if (!playback.is_playing) return null;
+        return { userId: id, ...playback };
+      } catch {
+        return null;
+      }
     } catch {
       return null;
     }
