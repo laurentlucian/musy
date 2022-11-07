@@ -79,9 +79,9 @@ const Profile = () => {
           <PlayerPaused item={recent.items[0].track} />
         )}
       </Stack>
+      {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
         <Stack>
-          {currentUser?.id !== user.id && <Search />}
           <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
           <Tiles>
             {queue.map((track, index) => {
