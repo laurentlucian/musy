@@ -1,4 +1,5 @@
 import { Flex, HStack, Image, Link, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import Tooltip from './Tooltip';
 // import AddQueue from './AddQueue';
@@ -18,8 +19,19 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
   const image = item.album?.images[1].url;
   const explicit = item.explicit;
 
+  const [size, setSize] = useState<boolean>(false);
+  const checkStick = () => {
+    window.scrollY <= 100 ? setSize(true) : setSize(false);
+  };
+
+  useEffect(() => {
+    setSize(true);
+    window.addEventListener('scroll', checkStick);
+    return () => window.removeEventListener('scroll', checkStick);
+  }, []);
+
   return (
-    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
+    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5} pos="sticky" top={0} zIndex={10}>
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
@@ -38,7 +50,13 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
         </Stack>
         <Link href={albumLink} target="_blank">
           <Tooltip label={item.album.name} placement="top-end">
-            <Image src={image} m={0} boxSize={108} borderRadius={2} />
+            <Image
+              src={image}
+              mb={size ? [0, 133] : 0}
+              boxSize={size ? [108, 243] : 108}
+              borderRadius={2}
+              transition="width 0.2s, height 0.2s "
+            />
           </Tooltip>
         </Link>
       </HStack>

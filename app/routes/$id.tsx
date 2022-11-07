@@ -17,6 +17,7 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
+import { useEffect } from 'react';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
@@ -25,60 +26,65 @@ const Profile = () => {
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
 
+  useEffect(() => {
+    window.addEventListener('scroll', test);
+    return () => window.removeEventListener('scroll', test);
+  }, []);
+  const test = () => {
+    console.log('test', window.scrollY);
+  };
   return (
-    <Stack spacing={5} pb={5}>
-      <Stack spacing={3}>
-        <HStack>
-          <Tooltip label="<3" placement="top">
-            <Image borderRadius={50} boxSize={93} src={user.image} />
-          </Tooltip>
-          <Stack flex={1} maxW="calc(100% - 100px)">
-            <Heading size="md" fontWeight="bold">
-              {user.name}
-            </Heading>
+    <Stack spacing={5} pb={5} pt={5} h="max-content">
+      <HStack>
+        <Tooltip label="<3" placement="top">
+          <Image borderRadius={60} boxSize={120} src={user.image} />
+        </Tooltip>
+        <Stack flex={1} maxW="calc(100% - 100px)">
+          <Heading size="md" fontWeight="bold">
+            {user.name}
+          </Heading>
 
-            {user.id === currentUser?.id ? (
-              <Form method="post" replace>
-                <Textarea
-                  name="bio"
-                  size="sm"
-                  variant="flushed"
-                  defaultValue={user.bio ?? ''}
-                  placeholder="write something :)"
-                  onBlur={(e) => submit(e.currentTarget.form)}
-                  resize="none"
-                  maxLength={75}
-                  rows={2}
-                  py={0}
-                  focusBorderColor="purple.500"
-                />
-              </Form>
-            ) : (
-              <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
-                {user.bio}
-              </Text>
-            )}
-          </Stack>
-          {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-          {currentUser && following !== null && (
-            <Following currentUser={currentUser} user={user} following={following} />
+          {user.id === currentUser?.id ? (
+            <Form method="post" replace>
+              <Textarea
+                name="bio"
+                size="sm"
+                variant="flushed"
+                defaultValue={user.bio ?? ''}
+                placeholder="write something :)"
+                onBlur={(e) => submit(e.currentTarget.form)}
+                resize="none"
+                maxLength={75}
+                rows={2}
+                py={0}
+                focusBorderColor="purple.500"
+              />
+            </Form>
+          ) : (
+            <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
+              {user.bio}
+            </Text>
           )}
-        </HStack>
-        {playback && playback.item?.type === 'track' ? (
-          <Player
-            id={user.userId}
-            device={playback.device.name}
-            currentUser={currentUser}
-            party={party}
-            active={playback.is_playing}
-            progress={progress}
-            duration={duration}
-            item={playback.item}
-          />
-        ) : (
-          <PlayerPaused item={recent.items[0].track} />
+        </Stack>
+        {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
+        {currentUser && following !== null && (
+          <Following currentUser={currentUser} user={user} following={following} />
         )}
-      </Stack>
+      </HStack>
+      {playback && playback.item?.type === 'track' ? (
+        <Player
+          id={user.userId}
+          device={playback.device.name}
+          currentUser={currentUser}
+          party={party}
+          active={playback.is_playing}
+          progress={progress}
+          duration={duration}
+          item={playback.item}
+        />
+      ) : (
+        <PlayerPaused item={recent.items[0].track} />
+      )}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
         <Stack>
