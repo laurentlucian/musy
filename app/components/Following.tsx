@@ -18,10 +18,10 @@ const Following = ({ currentUser, user, following }: FollowingType) => {
   return (
     <>
       {currentUser.userId !== user.userId && (
-        <Flex as={Form} ml="auto" method="post">
+        <Flex as={Form} method="post">
           <Input type="hidden" name={value} />
           <Button
-            ml="10px"
+            mr="260px"
             borderRadius="md"
             onClick={(e) => {
               setFollowing(!isFollowing);

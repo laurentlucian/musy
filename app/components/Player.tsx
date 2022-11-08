@@ -193,8 +193,10 @@ const Player = ({
           <Tooltip label={item.album.name} placement="top-end" closeDelay={700}>
             <Image
               src={item.album?.images[0].url}
-              mb={size === 'large' ? [0, 133] : size === 'medium' ? [0, 65] : 0}
-              boxSize={size === 'large' ? [108, 243] : size === 'medium' ? [108, 180] : 108}
+              mb={size === 'large' ? [0, 47, 133] : size === 'medium' ? [0, 47, 65] : 0}
+              boxSize={
+                size === 'large' ? [108, 160, 243] : size === 'medium' ? [108, 160, 180] : 108
+              }
               borderRadius={2}
               transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
             />

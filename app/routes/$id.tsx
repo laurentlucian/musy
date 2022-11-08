@@ -17,7 +17,6 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
-import { useEffect } from 'react';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
