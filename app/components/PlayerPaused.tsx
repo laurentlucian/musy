@@ -19,14 +19,18 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
   const image = item.album?.images[1].url;
   const explicit = item.explicit;
 
-  const [size, setSize] = useState<boolean>(false);
-  const checkStick = () => {
-    window.scrollY <= 100 ? setSize(true) : setSize(false);
-  };
-
+  const [size, setSize] = useState<string>('Large');
   useEffect(() => {
-    setSize(true);
+    setSize('large');
+    const checkStick = () => {
+      window.scrollY <= 100
+        ? setSize('large')
+        : window.scrollY <= 168
+        ? setSize('medium')
+        : setSize('small');
+    };
     window.addEventListener('scroll', checkStick);
+
     return () => window.removeEventListener('scroll', checkStick);
   }, []);
 
@@ -52,10 +56,10 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
           <Tooltip label={item.album.name} placement="top-end">
             <Image
               src={image}
-              mb={size ? [0, 133] : 0}
-              boxSize={size ? [108, 243] : 108}
+              mb={size === 'large' ? [0, 133] : size === 'medium' ? [0, 65] : 0}
+              boxSize={size === 'large' ? [108, 243] : size === 'medium' ? [108, 180] : 108}
               borderRadius={2}
-              transition="width 0.2s, height 0.2s "
+              transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
             />
           </Tooltip>
         </Link>

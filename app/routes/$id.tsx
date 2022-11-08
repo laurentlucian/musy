@@ -26,13 +26,6 @@ const Profile = () => {
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
 
-  useEffect(() => {
-    window.addEventListener('scroll', test);
-    return () => window.removeEventListener('scroll', test);
-  }, []);
-  const test = () => {
-    console.log('test', window.scrollY);
-  };
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>

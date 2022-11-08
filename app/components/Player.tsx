@@ -60,12 +60,16 @@ const Player = ({
 
   // reset seek bar on new song
 
-  const [size, setSize] = useState<boolean>(false);
+  const [size, setSize] = useState<string>('large');
 
   useEffect(() => {
-    setSize(true);
+    setSize('large');
     const checkStick = () => {
-      window.scrollY <= 100 ? setSize(true) : setSize(false);
+      window.scrollY <= 100
+        ? setSize('large')
+        : window.scrollY <= 168
+        ? setSize('medium')
+        : setSize('small');
     };
     window.addEventListener('scroll', checkStick);
 
@@ -181,7 +185,7 @@ const Player = ({
                 </AvatarGroup>
               )}
 
-              <Image boxSize="22px" src={spotify_icon} />
+              <Image boxSize="24px" src={spotify_icon} />
             </HStack>
           )}
         </Stack>
@@ -189,10 +193,10 @@ const Player = ({
           <Tooltip label={item.album.name} placement="top-end" closeDelay={700}>
             <Image
               src={item.album?.images[0].url}
-              mb={size ? [0, 133] : 0}
-              boxSize={size ? [108, 243] : 108}
+              mb={size === 'large' ? [0, 133] : size === 'medium' ? [0, 65] : 0}
+              boxSize={size === 'large' ? [108, 243] : size === 'medium' ? [108, 180] : 108}
               borderRadius={2}
-              transition="width 0.2s, height 0.2s "
+              transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
             />
           </Tooltip>
         </Link>
