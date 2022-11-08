@@ -1,7 +1,9 @@
-import { Button, Flex, Input } from '@chakra-ui/react';
+import { Flex, IconButton, Input } from '@chakra-ui/react';
 import type { Profile as ProfileType } from '@prisma/client';
 import { Form, useSubmit } from '@remix-run/react';
 import { useState } from 'react';
+import { Add, Minus } from 'iconsax-react';
+import Tooltip from './Tooltip';
 
 type FollowingType = {
   user: ProfileType;
@@ -18,10 +20,9 @@ const Following = ({ currentUser, user, following }: FollowingType) => {
   return (
     <>
       {currentUser.userId !== user.userId && (
-        <Flex as={Form} method="post">
+        <Flex as={Form} ml="auto" method="post">
           <Input type="hidden" name={value} />
-          <Button
-            mr="260px"
+          {/* <Button
             borderRadius="md"
             onClick={(e) => {
               setFollowing(!isFollowing);
@@ -29,7 +30,21 @@ const Following = ({ currentUser, user, following }: FollowingType) => {
             }}
           >
             {value}
-          </Button>
+          </Button> */}
+          <Tooltip label={isFollowing ? 'Unfollow' : 'Follow'}>
+            <IconButton
+              aria-label={isFollowing ? 'unfollow' : 'follow'}
+              name={isFollowing ? 'unfollow' : 'follow'}
+              icon={isFollowing ? <Minus /> : <Add />}
+              variant="ghost"
+              cursor="pointer"
+              type="submit"
+              onClick={(e) => {
+                setFollowing(!isFollowing);
+                submit(e.currentTarget.form);
+              }}
+            />
+          </Tooltip>
         </Flex>
       )}
     </>

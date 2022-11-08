@@ -56,9 +56,9 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
           <Tooltip label={item.album.name} placement="top-end">
             <Image
               src={image}
-              mb={size === 'large' ? [0, 47, 133] : size === 'medium' ? [0, 47, 65] : 0}
+              mb={size === 'large' ? [0, 47, 219] : size === 'medium' ? [0, 47, 108] : 0}
               boxSize={
-                size === 'large' ? [108, 160, 243] : size === 'medium' ? [108, 160, 180] : 108
+                size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
               }
               borderRadius={2}
               transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
