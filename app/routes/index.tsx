@@ -1,7 +1,9 @@
-import { Button, Heading, Input, Stack, Text } from '@chakra-ui/react';
-import type { LoaderArgs } from '@remix-run/node';
+import { Button, Heading, Image, Input, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
+import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { Form, useCatch, useTransition } from '@remix-run/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import type { LoaderArgs } from '@remix-run/node';
 import MiniPlayer from '~/components/MiniPlayer';
 
 import { authenticator, getAllUsers } from '~/services/auth.server';
@@ -12,20 +14,24 @@ const Index = () => {
 
   const transition = useTransition();
 
+  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+
   return (
     <Stack>
       {users.map((user) => {
         const playback = playbacks.find((data) => data.userId === user.userId);
         return <MiniPlayer key={user.userId} user={user} playback={playback} />;
       })}
-      {!user && (
-        <Form action="/auth/spotify" method="post">
-          <Input type="hidden" value="/" name="redirectTo" />
-          <Button isLoading={transition.state === 'submitting'} type="submit">
-            Join
-          </Button>
-        </Form>
-      )}
+      <VStack>
+        {!user && (
+          <Form action="/auth/spotify" method="post">
+            <Input type="hidden" value="/" name="redirectTo" />
+            <Button isLoading={transition.state === 'submitting'} type="submit" h="39px" borderRadius="7px">
+              Log in with &nbsp; <Image height="30px" width="98px" src={spotify_logo} />
+            </Button>
+          </Form>
+        )}
+      </VStack>
     </Stack>
   );
 };

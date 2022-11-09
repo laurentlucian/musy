@@ -16,7 +16,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher, useTransition } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { LoginCurve, LogoutCurve, Smallcaps } from 'iconsax-react';
+import { LoginCurve, LogoutCurve } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
