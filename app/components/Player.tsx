@@ -12,14 +12,14 @@ import {
   useColorModeValue,
   useInterval,
 } from '@chakra-ui/react';
-import type { Party, Profile } from '@prisma/client';
+import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
+import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher, useTransition } from '@remix-run/react';
-import { LoginCurve, LogoutCurve } from 'iconsax-react';
-import spotify_icon_white from '~/assets/spotify-icon-white.png';
-import spotify_icon_black from '~/assets/spotify-icon-black.png';
+import explicitImage from '~/assets/explicit-solid.svg';
+import { LoginCurve, LogoutCurve, Smallcaps } from 'iconsax-react';
+import type { Party, Profile } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
-import explicitImage from '~/assets/explicit-solid.svg';
 import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
 
@@ -46,7 +46,7 @@ const Player = ({
 }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
-  const spotify_icon = useColorModeValue(spotify_icon_black, spotify_icon_white);
+  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
 
@@ -112,7 +112,16 @@ const Player = ({
   const albumLink = item.album?.uri;
 
   return (
-    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5} pos="sticky" top={0} zIndex={10}>
+    <Stack
+      w={[363, '100%']}
+      bg={bg}
+      backdropFilter="blur(27px)"
+      spacing={0}
+      borderRadius={size === 'small' ? 0 : 5}
+      pos="sticky"
+      top={0}
+      zIndex={10}
+    >
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
           <Flex direction="column">
@@ -137,10 +146,11 @@ const Player = ({
             </HStack>
           </Flex>
 
-          {active && (
+          {active ? (
             <HStack>
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
+              <Image height="30px" width="98px" src={spotify_logo} />
               {currentUser?.userId !== id && (
                 <>
                   {!isUserInParty && (
@@ -184,9 +194,9 @@ const Player = ({
                   })}
                 </AvatarGroup>
               )}
-
-              <Image boxSize="24px" src={spotify_icon} />
             </HStack>
+          ) : (
+            <Image height="30px" width="98px" src={spotify_logo} />
           )}
         </Stack>
         <Link href={albumLink ?? ''} target="_blank">
@@ -197,7 +207,7 @@ const Player = ({
               boxSize={
                 size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
               }
-              borderRadius={2}
+              borderRadius={size === 'small' ? 0 : 2}
               transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
             />
           </Tooltip>

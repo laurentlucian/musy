@@ -29,18 +29,16 @@ const Profile = () => {
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
         <Tooltip label="<3" placement="top">
-          <Image borderRadius={100} boxSize={[130, 140, 200]} src={user.image} />
-        </Tooltip>{' '}
+          <Image borderRadius={100} boxSize={[150, 150, 200]} src={user.image} />
+        </Tooltip>
         {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-        <Stack flex={1} maxW="calc(100% - 100px)">
-          <HStack>
-            <Heading size="xl" fontWeight="bold">
-              {user.name}
-            </Heading>
-            {currentUser && following !== null && (
-              <Following currentUser={currentUser} user={user} following={following} />
-            )}
-          </HStack>
+        <Stack flex={1} maxW="calc(100% - 100px)" pl="23px">
+          <Heading size="xl" fontWeight="bold">
+            {user.name}
+          </Heading>
+          {currentUser && following !== null && (
+            <Following currentUser={currentUser} user={user} following={following} />
+          )}
           {user.id === currentUser?.id ? (
             <Form method="post" replace>
               <Textarea
