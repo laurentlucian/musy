@@ -4,12 +4,12 @@ import {
   HStack,
   Image,
   Progress,
-  Spinner,
   Stack,
   Text,
   useColorModeValue,
   useInterval,
 } from '@chakra-ui/react';
+import { css } from '@emotion/react';
 import type { Profile } from '@prisma/client';
 import { Link, Links, useNavigate, useTransition } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
@@ -22,6 +22,8 @@ type PlayerProps = {
 };
 
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
+  const [hover, setHover] = useState<boolean>(false);
+
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const duration = playback?.item?.duration_ms ?? 0;
@@ -73,8 +75,10 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         flexDirection="column"
         to={`/${user.userId}`}
         variant="ghost"
-        h="65px"
+        h={hover ? '205px' : '65px'}
         pr={0}
+        transition="width 0.8s, height 0.8s"
+        onMouseLeave={() => setHover(false)}
       >
         <HStack spacing={3} w="100%">
           <Image w="50px" h="50px" borderRadius="100%" src={user.image} />
@@ -127,7 +131,14 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                 </HStack>
               )} */}
               </Stack>
-              <Image src={image} m={0} boxSize="60px" borderRadius={2} />
+              <Image
+                src={image}
+                m={0}
+                boxSize={hover ? '200px' : '60px'}
+                borderRadius={2}
+                onMouseEnter={() => setHover(true)}
+                transition="width 0.8s, height 0.8s"
+              />
             </HStack>
           )}
         </HStack>

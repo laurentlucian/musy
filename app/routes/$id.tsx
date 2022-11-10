@@ -31,7 +31,11 @@ const Profile = () => {
           <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
         {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-        <Stack flex={1} maxW="calc(100% - 100px)" pl={user.name.length > 10 ? '15px' : user.name.length > 16 ? '0px' : '23px'}>
+        <Stack
+          flex={1}
+          maxW="calc(100% - 100px)"
+          pl={user.name.length > 10 ? '15px' : user.name.length > 16 ? '0px' : '23px'}
+        >
           <HStack>
             <Heading
               size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
@@ -58,10 +62,11 @@ const Profile = () => {
                 rows={2}
                 py={0}
                 focusBorderColor="purple.500"
+                zIndex={-2}
               />
             </Form>
           ) : (
-            <Text fontSize="14px" noOfLines={3} whiteSpace="normal">
+            <Text fontSize="14px" noOfLines={3} whiteSpace="normal" zIndex={-2}>
               {user.bio}
             </Text>
           )}

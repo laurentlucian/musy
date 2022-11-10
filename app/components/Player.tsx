@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarGroup,
+  Box,
   Flex,
   HStack,
   IconButton,
@@ -120,7 +121,6 @@ const Player = ({
       borderRadius={size === 'small' ? 0 : 5}
       pos="sticky"
       top={0}
-      zIndex={10}
     >
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
@@ -200,10 +200,10 @@ const Player = ({
           )}
         </Stack>
         <Link href={albumLink ?? ''} target="_blank">
-          <Tooltip label={item.album.name} placement="top-end" closeDelay={700}>
+          <Tooltip label={item.album.name} placement="bottom-end" closeDelay={700}>
             <Image
               src={item.album?.images[0].url}
-              mb={size === 'large' ? [0, 47, 219] : size === 'medium' ? [0, 47, 108] : 0}
+              mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
               boxSize={
                 size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
               }
