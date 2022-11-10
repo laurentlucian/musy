@@ -50,7 +50,7 @@ const Search = () => {
               value={search}
               placeholder="Send a song"
               autoComplete="off"
-              borderRadius={3}
+              borderRadius={0}
               onChange={onChange}
               fontSize="15px"
             />

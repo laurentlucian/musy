@@ -62,7 +62,6 @@ const Profile = () => {
                 rows={2}
                 py={0}
                 focusBorderColor="purple.500"
-                zIndex={-2}
               />
             </Form>
           ) : (

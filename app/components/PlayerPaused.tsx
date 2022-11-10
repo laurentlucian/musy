@@ -61,14 +61,16 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
                 </Text>
               </Link>
             </Flex>
-            <Image height="30px" width="98px" src={spotify_logo} mt="30px" />
+            <Link href="open.spotify.com" target='_blanl'>
+              <Image height="30px" width="98px" src={spotify_logo} mt="30px" />
+            </Link>
           </Flex>
         </Stack>
         <Link href={albumLink} target="_blank">
-          <Tooltip label={item.album.name} placement="top-end">
+          <Tooltip label={item.album.name} placement="bottom-end">
             <Image
               src={image}
-              mb={size === 'large' ? [0, 47, 219] : size === 'medium' ? [0, 47, 108] : 0}
+              mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
               boxSize={
                 size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
               }

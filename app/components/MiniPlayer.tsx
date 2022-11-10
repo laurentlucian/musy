@@ -9,7 +9,6 @@ import {
   useColorModeValue,
   useInterval,
 } from '@chakra-ui/react';
-import { css } from '@emotion/react';
 import type { Profile } from '@prisma/client';
 import { Link, Links, useNavigate, useTransition } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
@@ -77,11 +76,11 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         variant="ghost"
         h={hover ? '205px' : '65px'}
         pr={0}
-        transition="width 0.8s, height 0.8s"
+        transition="width 0.5s, height 0.5s"
         onMouseLeave={() => setHover(false)}
       >
         <HStack spacing={3} w="100%">
-          <Image w="50px" h="50px" borderRadius="100%" src={user.image} />
+          <Image boxSize="50px" borderRadius="100%" src={user.image} />
           <Text fontWeight="bold" fontSize={['15px', '20px']}>
             {user.name.split(' ').splice(0, 1)}
           </Text>
@@ -137,7 +136,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                 boxSize={hover ? '200px' : '60px'}
                 borderRadius={2}
                 onMouseEnter={() => setHover(true)}
-                transition="width 0.8s, height 0.8s"
+                transition="width 0.5s, height 0.5s"
               />
             </HStack>
           )}
