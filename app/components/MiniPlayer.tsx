@@ -11,7 +11,7 @@ import {
   useInterval,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, useNavigate, useTransition } from '@remix-run/react';
+import { Link, Links, useNavigate, useTransition } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { Playback } from '~/routes';
@@ -78,8 +78,21 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       >
         <HStack spacing={3} w="100%">
           <Image w="50px" borderRadius={50} src={user.image} />
-          <Text fontWeight="bold" fontSize={['15px','20px']}>{user.name.split(' ').splice(0, 1)}</Text>
-          {isLoading && <Spinner />}
+          <Text fontWeight="bold" fontSize={['15px', '20px']}>
+            {user.name.split(' ').splice(0, 1)}
+          </Text>
+          {isLoading && (
+            <>
+              <div className="la-line-scale-pulse-out la-dark">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <Links />
+            </>
+          )}
           {playback && (
             <HStack w="100%" spacing={2} justify="end">
               <Stack spacing={1} h="100%" justify="end">

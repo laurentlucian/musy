@@ -41,6 +41,7 @@ export const meta: MetaFunction = () => ({
 
 export let links: LinksFunction = () => {
   return [
+    { rel: 'stylesheet', href: 'https://unpkg.com/okayhihehexd@1.0.0/index.css' },
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstaticom' },
     {
