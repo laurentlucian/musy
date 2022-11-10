@@ -24,21 +24,26 @@ const Profile = () => {
   const submit = useSubmit();
   const duration = playback?.item?.duration_ms ?? 0;
   const progress = playback?.progress_ms ?? 0;
-
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
         <Tooltip label="<3" placement="top">
-          <Image borderRadius={100} boxSize={[150, 150, 200]} src={user.image} />
+          <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
         {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
-        <Stack flex={1} maxW="calc(100% - 100px)" pl="23px">
-          <Heading size="xl" fontWeight="bold">
-            {user.name}
-          </Heading>
-          {currentUser && following !== null && (
-            <Following currentUser={currentUser} user={user} following={following} />
-          )}
+        <Stack flex={1} maxW="calc(100% - 100px)" pl={user.name.length > 10 ? '15px' : user.name.length > 16 ? '0px' : '23px'}>
+          <HStack>
+            <Heading
+              size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
+              fontWeight="bold"
+            >
+              {user.name}
+            </Heading>
+            {currentUser && following !== null && (
+              <Following currentUser={currentUser} user={user} following={following} />
+            )}
+          </HStack>
+
           {user.id === currentUser?.id ? (
             <Form method="post" replace>
               <Textarea

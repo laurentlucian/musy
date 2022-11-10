@@ -77,7 +77,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         pr={0}
       >
         <HStack spacing={3} w="100%">
-          <Image w="50px" borderRadius={50} src={user.image} />
+          <Image w="50px" h="50px" borderRadius="100%" src={user.image} />
           <Text fontWeight="bold" fontSize={['15px', '20px']}>
             {user.name.split(' ').splice(0, 1)}
           </Text>
