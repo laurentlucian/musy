@@ -121,6 +121,7 @@ const Player = ({
       borderRadius={size === 'small' ? 0 : 5}
       pos="sticky"
       top={0}
+      zIndex={10}
     >
       <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
