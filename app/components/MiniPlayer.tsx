@@ -43,7 +43,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
       ? playback?.item.album?.images[0].url
       : playback?.item?.images[0].url;
 
-  const handleLink = (e) => {
+  const handleLink = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.stopPropagation();
   };
 
