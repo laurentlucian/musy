@@ -150,7 +150,7 @@ const Player = ({
             <HStack>
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
-              <Link href="open.spotify.com" target="_blank">
+              <Link href="https://open.spotify.com" target="_blank">
                 <Image height="30px" width="98px" src={spotify_logo} />
               </Link>
               {currentUser?.userId !== id && (
@@ -198,7 +198,7 @@ const Player = ({
               )}
             </HStack>
           ) : (
-            <Link href="open.spotify.com">
+            <Link href="https://open.spotify.com">
               <Image height="30px" width="98px" src={spotify_logo} />
             </Link>
           )}

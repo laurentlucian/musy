@@ -61,7 +61,7 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
                 </Text>
               </Link>
             </Flex>
-            <Link href="open.spotify.com" target='_blanl'>
+            <Link href="https://open.spotify.com" target='_blank'>
               <Image height="30px" width="98px" src={spotify_logo} mt="30px" />
             </Link>
           </Flex>
