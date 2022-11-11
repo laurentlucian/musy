@@ -8,6 +8,7 @@ import {
   Text,
   useColorModeValue,
   useInterval,
+  Link as LinkB,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link, Links, useNavigate, useTransition } from '@remix-run/react';
@@ -21,7 +22,7 @@ type PlayerProps = {
 };
 
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
-  const [hover, setHover] = useState<boolean>(false);
+  // const [hover, setHover] = useState<boolean>(false);
 
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
@@ -41,6 +42,10 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     playback?.item?.type === 'track'
       ? playback?.item.album?.images[0].url
       : playback?.item?.images[0].url;
+
+  const handleLink = (e) => {
+    e.stopPropagation();
+  };
 
   // reset seek bar on new song/props
   useEffect(() => {
@@ -67,17 +72,19 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     transition.state === 'loading' && transition.location.pathname.includes(user.userId);
 
   return (
-    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
+    <HStack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5} justifyContent="space-between">
       <Button
         as={Link}
         display="flex"
         flexDirection="column"
         to={`/${user.userId}`}
         variant="ghost"
-        h={hover ? '205px' : '65px'}
+        // h={hover ? ['65px', '205px'] : '65px'}
+        h="65px"
+        w={[363, '100%']}
         pr={0}
         transition="width 0.5s, height 0.5s"
-        onMouseLeave={() => setHover(false)}
+        // onMouseLeave={() => setHover(false)}
       >
         <HStack spacing={3} w="100%">
           <Image boxSize="50px" borderRadius="100%" src={user.image} />
@@ -96,26 +103,37 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
               <Links />
             </>
           )}
+
           {playback && (
             <HStack w="100%" spacing={2} justify="end">
               <Stack spacing={1} h="100%" justify="end">
-                <Text
-                  noOfLines={[1]}
-                  maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                  fontSize={{ base: 'smaller', md: 'sm' }}
-                >
-                  {playback.item?.name}
-                </Text>
-                <Flex>
-                  {playback?.item?.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+                <LinkB href={playback.item?.uri} target="_blank" onClick={(e) => handleLink(e)}>
                   <Text
-                    opacity={0.8}
                     noOfLines={[1]}
                     maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                    fontSize={{ base: 'smaller', md: 'xs' }}
+                    fontSize={{ base: 'smaller', md: 'sm' }}
                   >
-                    {artist}
+                    {playback.item?.name}
                   </Text>
+                </LinkB>
+                <Flex>
+                  {playback?.item?.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+                  <LinkB
+                    href={
+                      playback?.item?.type === 'track' ? playback?.item.album?.artists[0].uri : ''
+                    }
+                    target="_blank"
+                    onClick={(e) => handleLink(e)}
+                  >
+                    <Text
+                      opacity={0.8}
+                      noOfLines={[1]}
+                      maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                      fontSize={{ base: 'smaller', md: 'xs' }}
+                    >
+                      {artist}
+                    </Text>
+                  </LinkB>
                 </Flex>
 
                 {/* {active && (
@@ -130,14 +148,23 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                 </HStack>
               )} */}
               </Stack>
-              <Image
-                src={image}
-                m={0}
-                boxSize={hover ? '200px' : '60px'}
-                borderRadius={2}
-                onMouseEnter={() => setHover(true)}
-                transition="width 0.5s, height 0.5s"
-              />
+              <LinkB
+                href={
+                  playback.item && playback.item.type === 'track' ? playback.item.album?.uri : ''
+                }
+                target="_blank"
+                onClick={(e) => handleLink(e)}
+              >
+                <Image
+                  src={image}
+                  m={0}
+                  // boxSize={hover ? ['60px', '200px'] : '60px'}
+                  boxSize="60px"
+                  borderRadius={2}
+                  // onMouseEnter={() => setHover(true)}
+                  // transition="width 0.5s, height 0.5s"
+                />
+              </LinkB>
             </HStack>
           )}
         </HStack>
@@ -156,7 +183,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           value={percentage}
         />
       )}
-    </Stack>
+    </HStack>
   );
 };
 export default MiniPlayer;

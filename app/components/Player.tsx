@@ -1,7 +1,6 @@
 import {
   Avatar,
   AvatarGroup,
-  Box,
   Flex,
   HStack,
   IconButton,
