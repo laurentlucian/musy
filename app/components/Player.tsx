@@ -212,7 +212,7 @@ const Player = ({
                 size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
               }
               borderRadius={size === 'small' ? 0 : 2}
-              transition="width 0.25s, height 0.25s, margin-bottom 0.25s"
+              transition="width 0.25s, height 0.25s, margin-top 0.25s"
             />
           </Tooltip>
         </Link>
