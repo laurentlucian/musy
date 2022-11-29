@@ -90,7 +90,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           <Stack>
             <HStack>
               <Text fontWeight="bold" fontSize={['15px', '20px']}>
-                {user.name.split(' ').slice(0, 1)}
+                {user.name.split(/[\s.]+/).slice(0, 1)}
               </Text>
               {!isSmallScreen && loaderElement}
             </HStack>
