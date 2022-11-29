@@ -9,12 +9,15 @@ import {
   useColorModeValue,
   useInterval,
   Link as LinkB,
+  useMediaQuery,
+  Tooltip,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, Links, useNavigate, useTransition } from '@remix-run/react';
+import { Link, useNavigate, useTransition } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import type { Playback } from '~/routes';
+import useTransitionElement from '~/hooks/useTransitionElement';
+import type { Playback } from '~/services/spotify.server';
 
 type PlayerProps = {
   user: Profile;
@@ -22,26 +25,26 @@ type PlayerProps = {
 };
 
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
-  // const [hover, setHover] = useState<boolean>(false);
-
   const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
-  const duration = playback?.item?.duration_ms ?? 0;
+  const duration = playback?.currently_playing?.item?.duration_ms ?? 0;
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const refreshed = useRef(false);
   const percentage = duration ? (current / duration) * 100 : 0;
-
   const transition = useTransition();
+  const loaderElement = useTransitionElement(transition.location?.pathname.includes(user.userId));
+  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
 
   const artist =
-    playback?.item?.type === 'track'
-      ? playback?.item.album?.artists[0].name
-      : playback?.item?.show.name;
+    playback?.currently_playing?.item?.type === 'track'
+      ? playback?.currently_playing?.item?.album?.artists[0].name
+      : playback?.currently_playing?.item?.show.name;
+
   const image =
-    playback?.item?.type === 'track'
-      ? playback?.item.album?.images[0].url
-      : playback?.item?.images[0].url;
+    playback?.currently_playing?.item?.type === 'track'
+      ? playback?.currently_playing?.item?.album?.images[0].url
+      : playback?.currently_playing?.item?.images[0].url;
 
   const handleLink = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.stopPropagation();
@@ -49,10 +52,12 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
 
   // reset seek bar on new song/props
   useEffect(() => {
-    const progress = playback?.progress_ms ?? 0;
-    setCurrent(progress);
-    refreshed.current = false;
-  }, [playback?.progress_ms]);
+    if (playback) {
+      const progress = playback?.currently_playing?.progress_ms ?? 0;
+      setCurrent(progress);
+      refreshed.current = false;
+    }
+  }, [playback]);
 
   // simulating a seek bar tick
   useInterval(
@@ -68,101 +73,132 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     playback ? 1000 : null,
   );
 
-  const isLoading =
-    transition.state === 'loading' && transition.location.pathname.includes(user.userId);
-
   return (
-    <HStack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5} justifyContent="space-between">
+    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <Button
         as={Link}
         display="flex"
         flexDirection="column"
         to={`/${user.userId}`}
         variant="ghost"
-        // h={hover ? ['65px', '205px'] : '65px'}
-        h="65px"
+        h={playback ? ['100px', '120px'] : '65px'}
         w={[363, '100%']}
         pr={0}
-        transition="width 0.5s, height 0.5s"
-        // onMouseLeave={() => setHover(false)}
       >
         <HStack spacing={3} w="100%">
           <Image boxSize="50px" borderRadius="100%" src={user.image} />
-          <Text fontWeight="bold" fontSize={['15px', '20px']}>
-            {user.name.split(' ').splice(0, 1)}
-          </Text>
-          {isLoading && (
-            <>
-              <div className="la-line-scale-pulse-out la-dark">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-              <Links />
-            </>
-          )}
+          <Stack>
+            <HStack>
+              <Text fontWeight="bold" fontSize={['15px', '20px']}>
+                {user.name.split(' ').slice(0, 1)}
+              </Text>
+              {!isSmallScreen && loaderElement}
+            </HStack>
+            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
+              {user.bio}
+            </Text>
+          </Stack>
 
-          {playback && (
+          {playback && playback.currently_playing && (
             <HStack w="100%" spacing={2} justify="end">
-              <Stack spacing={1} h="100%" justify="end">
-                <LinkB href={playback.item?.uri} target="_blank" onClick={(e) => handleLink(e)}>
-                  <Text
-                    noOfLines={[1]}
-                    maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                    fontSize={{ base: 'smaller', md: 'sm' }}
-                  >
-                    {playback.item?.name}
-                  </Text>
-                </LinkB>
-                <Flex>
-                  {playback?.item?.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+              {!isSmallScreen && (
+                <Stack spacing={1} h="100%" align="end">
                   <LinkB
-                    href={
-                      playback?.item?.type === 'track' ? playback?.item.album?.artists[0].uri : ''
-                    }
+                    as="span"
+                    href={playback.currently_playing.item?.uri}
                     target="_blank"
-                    onClick={(e) => handleLink(e)}
+                    onClick={handleLink}
                   >
                     <Text
-                      opacity={0.8}
                       noOfLines={[1]}
                       maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                      fontSize={{ base: 'smaller', md: 'xs' }}
+                      fontSize={{ base: 'smaller', md: 'sm' }}
                     >
-                      {artist}
+                      {playback.currently_playing?.item?.name}
                     </Text>
                   </LinkB>
-                </Flex>
+                  <Flex>
+                    {playback?.currently_playing.item?.explicit && (
+                      <Image mr={1} src={explicitImage} w="19px" />
+                    )}
+                    <LinkB
+                      as="span"
+                      href={
+                        playback.currently_playing.item?.type === 'track'
+                          ? playback.currently_playing.item.album?.artists[0].uri
+                          : ''
+                      }
+                      target="_blank"
+                      onClick={handleLink}
+                    >
+                      <Text
+                        opacity={0.8}
+                        noOfLines={[1]}
+                        maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                        fontSize={{ base: 'smaller', md: 'xs' }}
+                      >
+                        {artist}
+                      </Text>
+                    </LinkB>
+                  </Flex>
 
-                {/* {active && (
+                  <HStack>
+                    {playback.queue &&
+                      playback.queue.slice(0, 4).map((track, idx) => (
+                        <LinkB
+                          as="span"
+                          alignSelf="end"
+                          key={idx}
+                          href={track.album.uri}
+                          target="_blank"
+                        >
+                          <Tooltip label={track.album.name} placement="top-start">
+                            <Image
+                              src={track.album.images[0].url}
+                              borderRadius={5}
+                              w="50px"
+                              draggable={false}
+                            />
+                          </Tooltip>
+                        </LinkB>
+                      ))}
+                  </HStack>
+                </Stack>
+              )}
+
+              {isSmallScreen && (
                 <HStack>
-                  {party.length && (
-                    <AvatarGroup size="xs" spacing={-2} max={5}>
-                      {party.map((u) => {
-                        return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                      })}
-                    </AvatarGroup>
-                  )}
+                  {playback.queue &&
+                    playback.queue.slice(0, 1).map((track, idx) => (
+                      <LinkB as="span" alignSelf="end" key={idx} href={track.uri} target="_blank">
+                        <Tooltip label={track.name} placement="top-start">
+                          <Image
+                            src={track.album.images[0].url}
+                            borderRadius={5}
+                            w="75px"
+                            draggable={false}
+                          />
+                        </Tooltip>
+                      </LinkB>
+                    ))}
                 </HStack>
-              )} */}
-              </Stack>
+              )}
               <LinkB
+                as="span"
                 href={
-                  playback.item && playback.item.type === 'track' ? playback.item.album?.uri : ''
+                  playback.currently_playing.item &&
+                  playback.currently_playing.item.type === 'track'
+                    ? playback.currently_playing?.item.album?.uri
+                    : ''
                 }
                 target="_blank"
-                onClick={(e) => handleLink(e)}
+                onClick={handleLink}
               >
                 <Image
                   src={image}
                   m={0}
-                  // boxSize={hover ? ['60px', '200px'] : '60px'}
-                  boxSize="60px"
+                  boxSize={playback ? ['100px', '120px'] : '60px'}
                   borderRadius={2}
-                  // onMouseEnter={() => setHover(true)}
-                  // transition="width 0.5s, height 0.5s"
                 />
               </LinkB>
             </HStack>
@@ -183,7 +219,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           value={percentage}
         />
       )}
-    </HStack>
+    </Stack>
   );
 };
 export default MiniPlayer;
