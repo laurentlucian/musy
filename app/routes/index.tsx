@@ -1,20 +1,20 @@
-import { Button, Heading, Image, Input, Stack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
-import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import { Form, useCatch, useTransition } from '@remix-run/react';
+import { Heading, Stack, Text } from '@chakra-ui/react';
+
+import { useCatch } from '@remix-run/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import type { LoaderArgs } from '@remix-run/node';
 import MiniPlayer from '~/components/MiniPlayer';
-
 import { authenticator, getAllUsers } from '~/services/auth.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getUserQueue } from '~/services/spotify.server';
+import loading from '~/lib/styles/loading.css';
+import { notNull } from '~/lib/utils';
+
+export const links = () => {
+  return [{ rel: 'stylesheet', href: loading }];
+};
 
 const Index = () => {
-  const { user, users, playbacks } = useTypedLoaderData<typeof loader>();
-
-  const transition = useTransition();
-
-  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+  const { users, playbacks } = useTypedLoaderData<typeof loader>();
 
   return (
     <Stack>
@@ -22,23 +22,9 @@ const Index = () => {
         const playback = playbacks.find((data) => data.userId === user.userId);
         return <MiniPlayer key={user.userId} user={user} playback={playback} />;
       })}
-      <VStack>
-        {!user && (
-          <Form action="/auth/spotify" method="post">
-            <Input type="hidden" value="/" name="redirectTo" />
-            <Button isLoading={transition.state === 'submitting'} type="submit" h="39px" borderRadius="7px">
-              Log in with &nbsp; <Image height="30px" width="98px" src={spotify_logo} />
-            </Button>
-          </Form>
-        )}
-      </VStack>
     </Stack>
   );
 };
-
-export interface Playback extends SpotifyApi.CurrentPlaybackResponse {
-  userId: string;
-}
 
 export const loader = async ({ request }: LoaderArgs) => {
   const users = await getAllUsers();
@@ -47,37 +33,30 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   if (!users.length) return typedjson({ users, user, playbacks: [] });
 
-  const getPlaybackState = async (id?: string) => {
-    if (!id) return null;
+  const getPlaybackState = async (id: string) => {
     try {
-      const { spotify } = await spotifyApi(id);
-      if (!spotify) return null;
-      try {
-        const res = await spotify.getMyCurrentPlaybackState();
-        const playback = res.body;
-        if (!playback.is_playing) return null;
-        return { userId: id, ...playback };
-      } catch {
-        return null;
-      }
+      const data = await getUserQueue(id);
+      if (!data.currently_playing) return null;
+      return data;
     } catch {
       return null;
     }
   };
 
-  let playbacks = [] as Playback[];
-  // runs in sequence, rather than parallel (Promise.all); parallel creates a race condition when calling spotifyApi()
-  for (const user of users) {
-    const data = await getPlaybackState(user.userId);
-    if (data) {
-      playbacks.push(data);
-    }
-  }
+  const playbacks = (await Promise.all(users.map((user) => getPlaybackState(user.userId)))).filter(
+    notNull,
+  );
+
   const isPlayingIds = playbacks.map((data) => data.userId);
   // place playingNow users at top; o(n) but n is small
   users.sort((a, b) => isPlayingIds.indexOf(b.userId) - isPlayingIds.indexOf(a.userId));
 
-  return typedjson({ users, user, playbacks });
+  return typedjson(
+    { users, user, playbacks },
+    {
+      headers: { 'Cache-Control': 'public, maxage=1, s-maxage=0, stale-while-revalidate=10' },
+    },
+  );
 };
 
 export default Index;

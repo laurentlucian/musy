@@ -16,7 +16,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher, useTransition } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { LoginCurve, LogoutCurve } from 'iconsax-react';
+import { LoginCurve, LogoutCurve, People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
@@ -137,7 +137,7 @@ const Player = ({
               </Link>
             </Flex>
             <HStack>
-              <Text fontSize="12px" fontWeight="normal">
+              <Text fontSize="13px" fontWeight="normal">
                 Listening on:{' '}
               </Text>
               <Text fontSize="14px" fontWeight="semibold">
@@ -177,9 +177,8 @@ const Player = ({
                       <IconButton
                         aria-label={isUserInParty ? 'Leave' : 'Join'}
                         name="party"
-                        icon={
-                          isUserInParty ? <LogoutCurve size="24px" /> : <LoginCurve size="24px" />
-                        }
+                        icon={<People size="24px" />}
+                        color={isUserInParty ? 'purple.500' : undefined}
                         variant="ghost"
                         type="submit"
                         cursor="pointer"

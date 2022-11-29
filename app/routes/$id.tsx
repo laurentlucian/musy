@@ -8,7 +8,6 @@ import { getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
-// import { timeSince } from '~/hooks/utils';
 import Search from '~/components/Search';
 import type { Submission } from '@remix-run/react/dist/transition';
 import Following from '~/components/Following';
@@ -17,6 +16,11 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
+import loading from '~/lib/styles/loading.css';
+
+export const links = () => {
+  return [{ rel: 'stylesheet', href: loading }];
+};
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
@@ -30,7 +34,6 @@ const Profile = () => {
         <Tooltip label="<3" placement="top">
           <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
-        {/* Adding a (un)follow button that will only show up if the user != profile or if there is a current user */}
         <Stack
           flex={1}
           maxW="calc(100% - 100px)"
@@ -229,7 +232,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const { spotify } = await spotifyApi(id).catch(() => {
     throw new Response('User Access Revoked', { status: 401 });
   });
-  if (!spotify) throw new Response('User Access Revoked', { status: 401 });
+  if (!spotify) {
+    throw new Response('User Access Revoked', { status: 401 });
+  }
 
   const spotifyProfile = await spotify.getMe();
   const pfp = spotifyProfile.body.images;
@@ -244,7 +249,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     { body: recent },
     { body: liked },
     { body: top },
-    queue,
+    { queue },
   ] = await Promise.all([
     prisma.queue.findMany({
       where: { ownerId: id },
@@ -361,9 +366,9 @@ export const CatchBoundary = () => {
   );
 };
 
-//remix.run/docs/en/v1/api/conventions#unstable_shouldreload
-export function unstable_shouldReload({ submission }: { submission: Submission }) {
-  return !!submission && submission.method !== 'GET';
-}
+// remix.run/docs/en/v1/api/conventions#unstable_shouldreload
+// export function unstable_shouldReload({ submission }: { submission: Submission }) {
+//   return !!submission && submission.method !== 'GET';
+// }
 
 export default Profile;

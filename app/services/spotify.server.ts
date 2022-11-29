@@ -28,28 +28,59 @@ export const spotifyApi = async (id: string) => {
 
   const now = new Date();
   const isExpired = new Date(data.expiresAt) < now;
+  let newToken = data.accessToken;
   if (isExpired) {
     console.log('Access Token expired');
     spotifyClient.setRefreshToken(data.refreshToken);
     const { body } = await spotifyClient.refreshAccessToken();
     spotifyClient.setAccessToken(body.access_token);
+    newToken = body.access_token;
 
     const expiresAt = Date.now() + body.expires_in * 1000;
-    await updateToken(data.user.userId, body.access_token, expiresAt);
+    await updateToken(data.user.userId, body.access_token, expiresAt, body.refresh_token);
   }
 
-  return { spotify: spotifyClient, user: data.user };
+  return { spotify: spotifyClient, user: data.user, token: newToken };
 };
 
-export const getUserQueue = async (id: string) => {
-  const { spotify } = await spotifyApi(id);
-  if (!spotify) return [];
+export interface Playback {
+  userId: string;
+  currently_playing: SpotifyApi.CurrentlyPlayingResponse | null;
+  queue: SpotifyApi.TrackObjectFull[];
+}
 
-  const response = await fetch('https://api.spotify.com/v1/me/player/queue', {
-    headers: { Authorization: `Bearer ${spotify.getAccessToken()}` },
-  });
-  const data = await response.json();
+export const getUserQueue = async (id: string) => {
+  const { token } = await spotifyApi(id);
+  if (!token)
+    return {
+      currently_playing: null,
+      queue: [],
+    };
+
+  const calls = [
+    fetch('https://api.spotify.com/v1/me/player/queue', {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+    fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+  ];
+  const [call1, call2] = await Promise.all(calls);
+
+  const { queue } = await call1.json();
+  const currently_playing = call2.status === 200 ? await call2.json() : null;
+  const data = {
+    userId: id,
+    currently_playing,
+    queue,
+  };
+
   if (data) {
-    return data.queue as SpotifyApi.TrackObjectFull[];
-  } else return [];
+    return data as Playback;
+  } else
+    return {
+      userId: id,
+      currently_playing: null,
+      queue: [],
+    };
 };
