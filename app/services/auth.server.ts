@@ -61,8 +61,16 @@ export const getUser = async (id: string) => {
   return user;
 };
 
-export const updateToken = async (id: string, token: string, expiresAt: number) => {
-  const data = await prisma.user.update({ where: { id }, data: { accessToken: token, expiresAt } });
+export const updateToken = async (
+  id: string,
+  token: string,
+  expiresAt: number,
+  refreshToken?: string,
+) => {
+  const data = await prisma.user.update({
+    where: { id },
+    data: { accessToken: token, refreshToken, expiresAt },
+  });
   console.log('updateToken -> data', new Date(data.expiresAt).toLocaleTimeString('en-US'));
   return data.expiresAt;
 };
@@ -82,7 +90,10 @@ export const getCurrentUser = async (request: Request) => {
 };
 
 export const getAllUsers = async () => {
-  const data = await prisma.user.findMany({ select: { user: true } });
+  const data = await prisma.user.findMany({
+    select: { user: true },
+    orderBy: { updatedAt: 'desc' },
+  });
   const users = data.map((user) => user.user).filter((user): user is Profile => user !== null);
   return users;
 };
@@ -116,7 +127,7 @@ export const spotifyStrategy = new SpotifyStrategy(
         'spotify_callback -> session.expiresAt',
         new Date(response.expiresAt).toLocaleString('en-US'),
       );
-      await updateToken(profile.id, response.accessToken, response.expiresAt);
+      await updateToken(profile.id, accessToken, response.expiresAt, refreshToken);
       return response;
     }
 
