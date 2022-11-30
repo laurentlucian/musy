@@ -19,3 +19,6 @@ data.db
 /prisma/data.db
 /prisma/data.db-journal
 .env
+
+wireguard.conf
+fly_backup.db
