@@ -51,7 +51,7 @@ export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'typ
 
 export interface CurrentlyPlayingObjectCustom
   extends Omit<SpotifyApi.CurrentlyPlayingObject, 'context'> {
-  context: ContextObjectCustom;
+  context: ContextObjectCustom | null;
 }
 
 export interface Playback {
@@ -92,7 +92,7 @@ export const getUserQueue = async (id: string) => {
   //     : null;
   // currently_playing.device = device;
 
-  if (currently_playing.context) {
+  if (currently_playing?.context) {
     switch (currently_playing.context.type) {
       case 'playlist':
         const res = await fetch(
