@@ -43,9 +43,20 @@ export const spotifyApi = async (id: string) => {
   return { spotify: spotifyClient, user: data.user, token: newToken };
 };
 
+export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'type'> {
+  name?: string;
+  image?: string;
+  type: 'collection' | SpotifyApi.ContextObject['type'];
+}
+
+export interface CurrentlyPlayingObjectCustom
+  extends Omit<SpotifyApi.CurrentlyPlayingObject, 'context'> {
+  context: ContextObjectCustom;
+}
+
 export interface Playback {
   userId: string;
-  currently_playing: SpotifyApi.CurrentlyPlayingResponse | null;
+  currently_playing: CurrentlyPlayingObjectCustom | null;
   queue: SpotifyApi.TrackObjectFull[];
 }
 
@@ -61,18 +72,55 @@ export const getUserQueue = async (id: string) => {
     fetch('https://api.spotify.com/v1/me/player/queue', {
       headers: { Authorization: `Bearer ${token}` },
     }),
-    fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    fetch('https://api.spotify.com/v1/me/player', {
       headers: { Authorization: `Bearer ${token}` },
     }),
+    // fetch('https://api.spotify.com/v1/me/player/devices', {
+    //   headers: { Authorization: `Bearer ${token}` },
+    // }),
   ];
   const [call1, call2] = await Promise.all(calls);
 
   const { queue } = await call1.json();
   const currently_playing = call2.status === 200 ? await call2.json() : null;
+  // const [device] =
+  //   call3.status === 200
+  //     ? await call3.json().then((v) => {
+  //         console.log('v', v);
+  //         return v.devices.filter((d: any) => d.is_active === true);
+  //       })
+  //     : null;
+  // currently_playing.device = device;
+
+  if (currently_playing.context) {
+    switch (currently_playing.context.type) {
+      case 'playlist':
+        const res = await fetch(
+          'https://api.spotify.com/v1/playlists/' +
+            currently_playing.context.href.match(/playlists\/(.*)/)?.[1] ?? '',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        if (!res) break;
+        const playlist = await res.json();
+
+        currently_playing.context.name = playlist.name;
+        currently_playing.context.image = playlist.images[0].url;
+        break;
+      case 'collection':
+        currently_playing.context.name = 'Liked Songs';
+        currently_playing.context.image =
+          'https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png';
+        break;
+    }
+  }
+
+  const isEpisode = currently_playing?.currently_playing_type === 'episode';
   const data = {
     userId: id,
-    currently_playing,
-    queue,
+    currently_playing: isEpisode ? null : currently_playing,
+    queue: isEpisode ? [] : queue,
   };
 
   if (data) {

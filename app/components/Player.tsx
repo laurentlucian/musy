@@ -6,61 +6,42 @@ import {
   IconButton,
   Image,
   Link,
-  Progress,
   Stack,
   Text,
   useColorModeValue,
   useInterval,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import { useFetcher, useTransition } from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { LoginCurve, LogoutCurve, People } from 'iconsax-react';
+import { People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
+import PlayerBar from './PlayerBar';
+import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 type PlayerProps = {
   id: string;
-  device: string;
   currentUser: Profile | null;
   party: Party[];
-  active: boolean;
-  progress: number;
-  duration: number;
+  playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
 };
 
-const Player = ({
-  id,
-  device,
-  currentUser,
-  party,
-  active,
-  progress,
-  duration,
-  item,
-}: PlayerProps) => {
+const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
-  const color = useColorModeValue('music.900', 'music.50');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
-
   const { refresh } = useDataRefresh();
-  const refreshed = useRef(false);
-  const [current, setCurrent] = useState(0);
-  const percentage = duration ? (current / duration) * 100 : 0;
-
-  const transition = useTransition();
-  const busy = transition.submission?.formData.has('party') ?? false;
-
-  // reset seek bar on new song
-
-  const [size, setSize] = useState<string>('large');
+  const busy = fetcher.submission?.formData.has('party') ?? false;
+  const [size, setSize] = useState('large');
+  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
     setSize('large');
@@ -76,25 +57,7 @@ const Player = ({
     return () => window.removeEventListener('scroll', checkStick);
   }, []);
 
-  useEffect(() => {
-    setCurrent(progress);
-    refreshed.current = false;
-  }, [progress]);
-
-  // simulating a seek bar tick
-  useInterval(
-    () => {
-      if (!duration) return null;
-      // ref prevents from refreshing again before new data has hydrated; might loop otherwise
-      if (current > duration && !refreshed.current) {
-        refresh();
-        refreshed.current = true;
-      }
-      setCurrent((prev) => prev + 1000);
-    },
-    active ? 1000 : null,
-  );
-
+  const active = playback.is_playing;
   useInterval(
     () => {
       refresh();
@@ -122,9 +85,9 @@ const Player = ({
       top={0}
       zIndex={10}
     >
-      <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
-        <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
-          <Flex direction="column">
+      <Flex h="112px" px="2px" py="2px" justify="space-between">
+        <Stack pl="7px" spacing={1} h="100%" flexGrow={1}>
+          <Stack direction="column" spacing={0.5}>
             <Link href={link ?? ''} target="_blank">
               <Text noOfLines={[1]}>{item.name}</Text>
             </Link>
@@ -136,15 +99,15 @@ const Player = ({
                 </Text>
               </Link>
             </Flex>
-            <HStack>
+            <HStack align="center" spacing={1}>
               <Text fontSize="13px" fontWeight="normal">
-                Listening on:{' '}
+                Listening on{' '}
               </Text>
-              <Text fontSize="14px" fontWeight="semibold">
-                {device}
+              <Text fontSize="13px" fontWeight="semibold">
+                {playback.device.name.split(' ').slice(0, 2).join(' ')}
               </Text>
             </HStack>
-          </Flex>
+          </Stack>
 
           {active ? (
             <HStack>
@@ -169,11 +132,12 @@ const Player = ({
                       userId={currentUser?.userId}
                     />
                   )}
-                  <fetcher.Form
-                    action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                    method="post"
-                  >
-                    <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                  <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                    <fetcher.Form
+                      action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
+                      method="post"
+                      replace
+                    >
                       <IconButton
                         aria-label={isUserInParty ? 'Leave' : 'Join'}
                         name="party"
@@ -184,8 +148,8 @@ const Player = ({
                         cursor="pointer"
                         isLoading={busy}
                       />
-                    </Tooltip>
-                  </fetcher.Form>
+                    </fetcher.Form>
+                  </Tooltip>
                 </>
               )}
               {party.length && (
@@ -202,32 +166,44 @@ const Player = ({
             </Link>
           )}
         </Stack>
-        <Link href={albumLink ?? ''} target="_blank">
-          <Tooltip label={item.album.name} placement="bottom-end" closeDelay={700}>
-            <Image
-              src={item.album?.images[0].url}
-              mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
-              boxSize={
-                size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
-              }
-              borderRadius={size === 'small' ? 0 : 2}
-              transition="width 0.25s, height 0.25s, margin-top 0.25s"
-            />
-          </Tooltip>
-        </Link>
-      </HStack>
-      <Progress
-        sx={{
-          backgroundColor: bg,
-          '> div': {
-            backgroundColor: color,
-          },
-        }}
-        borderBottomLeftRadius={2}
-        borderBottomRightRadius={2}
-        h="2px"
-        value={percentage}
-      />
+        <HStack spacing={1} align="end">
+          {playback.context &&
+            playback.context.name &&
+            !isSmallScreen &&
+            (playback.context.type === 'collection' ? (
+              <Tooltip label={playback.context.name} placement="bottom-end">
+                <Image
+                  src={playback.context.image}
+                  boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
+                  borderRadius={2}
+                />
+              </Tooltip>
+            ) : (
+              <Link href={playback.context?.uri} target="_blank">
+                <Tooltip label={playback.context.name} placement="bottom-end">
+                  <Image
+                    src={playback.context.image}
+                    boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
+                    borderRadius={2}
+                  />
+                </Tooltip>
+              </Link>
+            ))}
+          <Link href={albumLink ?? ''} target="_blank">
+            <Tooltip label={item.album.name} placement="bottom-end">
+              <Image
+                src={item.album?.images[0].url}
+                mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
+                boxSize={
+                  size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
+                }
+                borderRadius={size === 'small' ? 0 : 2}
+              />
+            </Tooltip>
+          </Link>
+        </HStack>
+      </Flex>
+      <PlayerBar playback={playback} />
     </Stack>
   );
 };

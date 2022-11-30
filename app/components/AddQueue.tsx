@@ -1,4 +1,4 @@
-import { Icon, IconButton, Input, Spinner } from '@chakra-ui/react';
+import { Icon, IconButton, Spinner } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import Tooltip from './Tooltip';
@@ -46,7 +46,7 @@ const AddQueue = ({
 
   return (
     <>
-      {!isAdding && !isDone ? (
+      {!isDone ? (
         <fetcher.Form
           replace
           method="post"
@@ -54,30 +54,29 @@ const AddQueue = ({
             sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?returnTo=/' + id
           }
         >
-          <Input type="hidden" name="uri" value={uri} />
-          <Input type="hidden" name="image" value={image} />
-          <Input type="hidden" name="albumUri" value={albumUri ?? ''} />
-          <Input type="hidden" name="albumName" value={albumName ?? ''} />
-          <Input type="hidden" name="name" value={name} />
-          <Input type="hidden" name="artist" value={artist} />
-          <Input type="hidden" name="artistUri" value={artistUri ?? ''} />
+          <input type="hidden" name="uri" value={uri} />
+          <input type="hidden" name="image" value={image} />
+          <input type="hidden" name="albumUri" value={albumUri ?? ''} />
+          <input type="hidden" name="albumName" value={albumName ?? ''} />
+          <input type="hidden" name="name" value={name} />
+          <input type="hidden" name="artist" value={artist} />
+          <input type="hidden" name="artistUri" value={artistUri ?? ''} />
           {/* empty string is falsy */}
-          <Input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
+          <input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
           {/* sendTo: receiving song (id), sending song (userId) */}
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
-          <Input type="hidden" name="fromId" value={sendTo ? userId : id} />
+          <input type="hidden" name="fromId" value={sendTo ? userId : id} />
           <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
             <IconButton
               type="submit"
               aria-label="queue"
               icon={sendTo ? <Send2 /> : <AddSquare />}
               variant="ghost"
+              isLoading={isAdding}
               p={0}
             />
           </Tooltip>
         </fetcher.Form>
-      ) : !isDone ? (
-        <Spinner />
       ) : isError ? (
         <Tooltip label={`Failed (${fetcher.data.split(' ').slice(1).join(' ')})`} defaultIsOpen>
           <Icon textAlign="right" boxSize="25px" as={CloseSquare} />

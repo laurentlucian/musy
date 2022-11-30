@@ -9,7 +9,6 @@ import Player from '~/components/Player';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
-import type { Submission } from '@remix-run/react/dist/transition';
 import Following from '~/components/Following';
 import PlayerPaused from '~/components/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
@@ -26,8 +25,7 @@ const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-  const duration = playback?.item?.duration_ms ?? 0;
-  const progress = playback?.progress_ms ?? 0;
+
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -77,12 +75,9 @@ const Profile = () => {
       {playback && playback.item?.type === 'track' ? (
         <Player
           id={user.userId}
-          device={playback.device.name}
           currentUser={currentUser}
           party={party}
-          active={playback.is_playing}
-          progress={progress}
-          duration={duration}
+          playback={playback}
           item={playback.item}
         />
       ) : (
@@ -120,7 +115,7 @@ const Profile = () => {
               {activity.map((item) => {
                 return (
                   <MiniTile
-                    key={new Date(item.createdAt).getMilliseconds()}
+                    key={item.id}
                     uri={item.uri}
                     image={item.image}
                     albumUri={item.albumUri}
@@ -222,7 +217,6 @@ export const meta: MetaFunction = (props) => {
 
 export const loader = async ({ request, params }: LoaderArgs) => {
   const id = params.id;
-
   invariant(id, 'Missing params Id');
 
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
@@ -245,11 +239,10 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const [
     activity,
     party,
-    { body: playback },
     { body: recent },
     { body: liked },
     { body: top },
-    { queue },
+    { currently_playing: playback, queue },
   ] = await Promise.all([
     prisma.queue.findMany({
       where: { ownerId: id },
@@ -257,7 +250,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       orderBy: { createdAt: 'desc' },
     }),
     prisma.party.findMany({ where: { ownerId: id } }),
-    spotify.getMyCurrentPlaybackState(),
     spotify.getMyRecentlyPlayedTracks(),
     spotify.getMySavedTracks(),
     spotify.getMyTopTracks().catch(() => ({
