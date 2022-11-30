@@ -17,7 +17,7 @@ const Index = () => {
   const { users, playbacks } = useTypedLoaderData<typeof loader>();
 
   return (
-    <Stack>
+    <Stack pb="50px">
       {users.map((user) => {
         const playback = playbacks.find((data) => data.userId === user.userId);
         return <MiniPlayer key={user.userId} user={user} playback={playback} />;

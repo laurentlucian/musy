@@ -1,6 +1,6 @@
 import type { Processor } from 'bullmq';
 import { Queue as BullQueue, Worker, QueueScheduler } from 'bullmq';
-
+import EventEmitter from 'events';
 import { redis } from './redis.server';
 
 type RegisteredQueue = {
@@ -12,6 +12,8 @@ type RegisteredQueue = {
 declare global {
   var __registeredQueues: Record<string, RegisteredQueue> | undefined;
 }
+
+EventEmitter.defaultMaxListeners = 20;
 
 export const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 
