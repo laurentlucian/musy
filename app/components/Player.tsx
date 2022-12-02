@@ -10,7 +10,7 @@ import {
   Text,
   useColorModeValue,
   useInterval,
-  useMediaQuery,
+  // useMediaQuery,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
@@ -41,7 +41,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const [size, setSize] = useState('large');
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  // const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
     setSize('large');
@@ -167,7 +167,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
           )}
         </Stack>
         <HStack spacing={1} align="end">
-          {playback.context &&
+          {/* {playback.context &&
             playback.context.name &&
             !isSmallScreen &&
             (playback.context.type === 'collection' ? (
@@ -176,6 +176,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                   src={playback.context.image}
                   boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
                   borderRadius={2}
+                  transition="width 0.25s, height 0.25s"
                 />
               </Tooltip>
             ) : (
@@ -185,10 +186,11 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                     src={playback.context.image}
                     boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
                     borderRadius={2}
+                    transition="width 0.25s, height 0.25s"
                   />
                 </Tooltip>
               </Link>
-            ))}
+            ))} */}
           <Link href={albumLink ?? ''} target="_blank">
             <Tooltip label={item.album.name} placement="bottom-end">
               <Image
@@ -198,6 +200,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                   size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
                 }
                 borderRadius={size === 'small' ? 0 : 2}
+                transition="width 0.25s, height 0.25s, margin-top 0.25s"
               />
             </Tooltip>
           </Link>

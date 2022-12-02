@@ -11,6 +11,7 @@ import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
 import Following from '~/components/Following';
 import PlayerPaused from '~/components/PlayerPaused';
+import PlayingFrom from '~/components/PlayingFrom';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -85,30 +86,14 @@ const Profile = () => {
       )}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
-        <Stack>
-          <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
-          <Tiles>
-            {queue.map((track, index) => {
-              return (
-                <MiniTile
-                  key={index}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  user={currentUser}
-                />
-              );
-            })}
-          </Tiles>
-        </Stack>
-      )}
-      <Stack spacing={5}>
-        {activity.length !== 0 && (
+        <HStack align='flex-start'>
+          <Stack>
+            {playback && playback.item?.type === 'track' && (
+              <PlayingFrom playback={playback} item={playback.item} />
+            )}
+          </Stack>
+          <Stack>
+          {activity.length !== 0 && (
           <Stack>
             <Heading fontSize={['xs', 'sm']}>Activity</Heading>
             <Tiles>
@@ -133,6 +118,55 @@ const Profile = () => {
             </Tiles>
           </Stack>
         )}
+            <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
+            <Tiles>
+              {queue.map((track, index) => {
+                return (
+                  <MiniTile
+                    key={index}
+                    uri={track.uri}
+                    image={track.album.images[1].url}
+                    albumUri={track.album.uri}
+                    albumName={track.album.name}
+                    name={track.name}
+                    artist={track.album.artists[0].name}
+                    artistUri={track.album.artists[0].uri}
+                    explicit={track.explicit}
+                    user={currentUser}
+                  />
+                );
+              })}
+            </Tiles>
+            
+          </Stack>
+        </HStack>
+      )}
+      <Stack spacing={5}>
+        {/* {activity.length !== 0 && (
+          <Stack>
+            <Heading fontSize={['xs', 'sm']}>Activity</Heading>
+            <Tiles>
+              {activity.map((item) => {
+                return (
+                  <MiniTile
+                    key={item.id}
+                    uri={item.uri}
+                    image={item.image}
+                    albumUri={item.albumUri}
+                    albumName={item.albumName}
+                    name={item.name}
+                    artist={item.artist}
+                    artistUri={item.artistUri}
+                    explicit={item.explicit}
+                    user={currentUser}
+                    createdBy={item.user}
+                    createdAt={item.createdAt}
+                  />
+                );
+              })}
+            </Tiles>
+          </Stack>
+        )} */}
       </Stack>
       {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
       {recent && recent?.items.length !== 0 && (
