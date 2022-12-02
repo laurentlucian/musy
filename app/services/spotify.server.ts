@@ -46,6 +46,7 @@ export const spotifyApi = async (id: string) => {
 export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'type'> {
   name?: string;
   image?: string;
+  description?: string;
   type: 'collection' | SpotifyApi.ContextObject['type'];
 }
 
@@ -105,6 +106,7 @@ export const getUserQueue = async (id: string) => {
         if (!res) break;
         const playlist = await res.json();
 
+        currently_playing.context.description = playlist.description;
         currently_playing.context.name = playlist.name;
         currently_playing.context.image = playlist.images[0].url;
         break;

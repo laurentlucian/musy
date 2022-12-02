@@ -10,6 +10,7 @@ import {
   Text,
   useColorModeValue,
   useInterval,
+
   // useMediaQuery,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
@@ -24,6 +25,7 @@ import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
+import PlayingFrom from './PlayingFrom';
 
 type PlayerProps = {
   id: string;
@@ -41,6 +43,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const [size, setSize] = useState('large');
+
   // const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
@@ -85,7 +88,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
       top={0}
       zIndex={10}
     >
-      <Flex h="112px" px="2px" py="2px" justify="space-between">
+      <Flex h="135px" px="2px" py="2px" justify="space-between">
         <Stack pl="7px" spacing={1} h="100%" flexGrow={1}>
           <Stack direction="column" spacing={0.5}>
             <Link href={link ?? ''} target="_blank">
@@ -99,6 +102,20 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 </Text>
               </Link>
             </Flex>
+            <Tooltip
+              label={
+                <>
+                  {playback && playback.item?.type === 'track' && (
+                    <PlayingFrom playback={playback} item={playback.item} />
+                  )}
+                </>
+              }
+              placement="bottom-start"
+            >
+              <Link href={playback.context?.uri} fontSize="13px" fontWeight="normal">
+                {playback.context?.name}
+              </Link>
+            </Tooltip>
             <HStack align="center" spacing={1}>
               <Text fontSize="13px" fontWeight="normal">
                 Listening on{' '}
@@ -197,7 +214,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 src={item.album?.images[0].url}
                 mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
                 boxSize={
-                  size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
+                  size === 'large' ? [130, 160, 334] : size === 'medium' ? [130, 160, 221] : 130
                 }
                 borderRadius={size === 'small' ? 0 : 2}
                 transition="width 0.25s, height 0.25s, margin-top 0.25s"

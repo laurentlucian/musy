@@ -89,9 +89,9 @@ const Profile = () => {
       {queue.length !== 0 && (
         <HStack align="flex-start">
           <Stack>
-            {playback && playback.item?.type === 'track' && (
+            {/* {playback && playback.item?.type === 'track' && (
               <PlayingFrom playback={playback} item={playback.item} />
-            )}
+            )} */}
           </Stack>
           <Stack>
             {activity.length !== 0 && (
