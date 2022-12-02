@@ -9,10 +9,13 @@ type PlayingFromType = {
 
 const PlayingFrom = ({ playback, item }: PlayingFromType) => {
   const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
-  const type = playback.context?.type?.charAt(0).toUpperCase() + playback.context?.type?.slice(1);
-  console.log(playback);
-  console.log(item.album);
-  if (item.album.album_type === 'single' && !playback.context) return null;
+  if (
+    !playback.context ||
+    (item.album.album_type === 'single' && playback.context.type === 'album')
+  )
+    return null;
+  const type = playback.context.type?.charAt(0).toUpperCase() + playback.context.type?.slice(1);
+
   return (
     <Stack w="max-content">
       <Heading fontSize={['xs', 'sm']}>Playing From {type}</Heading>

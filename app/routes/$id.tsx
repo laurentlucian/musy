@@ -26,6 +26,7 @@ const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
+  console.log(playback);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -73,7 +74,7 @@ const Profile = () => {
           )}
         </Stack>
       </HStack>
-      {playback && playback.item?.type === 'track' ? (
+      {playback && playback.context && playback.item?.type === 'track' ? (
         <Player
           id={user.userId}
           currentUser={currentUser}
@@ -86,38 +87,38 @@ const Profile = () => {
       )}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
-        <HStack align='flex-start'>
+        <HStack align="flex-start">
           <Stack>
             {playback && playback.item?.type === 'track' && (
               <PlayingFrom playback={playback} item={playback.item} />
             )}
           </Stack>
           <Stack>
-          {activity.length !== 0 && (
-          <Stack>
-            <Heading fontSize={['xs', 'sm']}>Activity</Heading>
-            <Tiles>
-              {activity.map((item) => {
-                return (
-                  <MiniTile
-                    key={item.id}
-                    uri={item.uri}
-                    image={item.image}
-                    albumUri={item.albumUri}
-                    albumName={item.albumName}
-                    name={item.name}
-                    artist={item.artist}
-                    artistUri={item.artistUri}
-                    explicit={item.explicit}
-                    user={currentUser}
-                    createdBy={item.user}
-                    createdAt={item.createdAt}
-                  />
-                );
-              })}
-            </Tiles>
-          </Stack>
-        )}
+            {activity.length !== 0 && (
+              <Stack>
+                <Heading fontSize={['xs', 'sm']}>Activity</Heading>
+                <Tiles>
+                  {activity.map((item) => {
+                    return (
+                      <MiniTile
+                        key={item.id}
+                        uri={item.uri}
+                        image={item.image}
+                        albumUri={item.albumUri}
+                        albumName={item.albumName}
+                        name={item.name}
+                        artist={item.artist}
+                        artistUri={item.artistUri}
+                        explicit={item.explicit}
+                        user={currentUser}
+                        createdBy={item.user}
+                        createdAt={item.createdAt}
+                      />
+                    );
+                  })}
+                </Tiles>
+              </Stack>
+            )}
             <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
             <Tiles>
               {queue.map((track, index) => {
@@ -137,7 +138,6 @@ const Profile = () => {
                 );
               })}
             </Tiles>
-            
           </Stack>
         </HStack>
       )}
