@@ -21,7 +21,7 @@ const PlayingFrom = ({ playback, item }: PlayingFromType) => {
           {playback.context.name}
         </Text>
         <Text fontStyle="italic" fontSize="10px">
-          {playback.context.description ? playback.context.description : 'This playlist has no bio'}
+          {playback.context.description}
         </Text>
       </Stack>
     </HStack>
