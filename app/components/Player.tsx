@@ -25,7 +25,7 @@ import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
-import PlayingFrom from './PlayingFrom';
+import PlayingFromTooltip from './PlayingFromTooltip';
 
 type PlayerProps = {
   id: string;
@@ -43,8 +43,6 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const [size, setSize] = useState('large');
-
-  // const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
     setSize('large');
@@ -102,20 +100,22 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 </Text>
               </Link>
             </Flex>
-            <Tooltip
-              label={
-                <>
-                  {playback && playback.item?.type === 'track' && (
-                    <PlayingFrom playback={playback} item={playback.item} />
-                  )}
-                </>
-              }
-              placement="bottom-start"
-            >
-              <Link href={playback.context?.uri} fontSize="13px" fontWeight="normal">
-                {playback.context?.name}
-              </Link>
-            </Tooltip>
+            {playback.context && (
+              <Tooltip
+                label={
+                  <PlayingFromTooltip
+                    name={playback.context.name}
+                    description={playback.context.description}
+                    image={playback.context.image}
+                  />
+                }
+                placement="bottom-start"
+              >
+                <Link href={playback.context.uri} fontSize="13px" fontWeight="normal">
+                  {playback.context.name}
+                </Link>
+              </Tooltip>
+            )}
             <HStack align="center" spacing={1}>
               <Text fontSize="13px" fontWeight="normal">
                 Listening on{' '}
@@ -127,7 +127,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
           </Stack>
 
           {active ? (
-            <HStack>
+            <HStack mt="auto !important" mb="5px !important">
               {/* lets owner join own party for testing */}
               {/* {currentUser && ( */}
               <Link href="https://open.spotify.com" target="_blank">
