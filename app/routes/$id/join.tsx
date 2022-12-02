@@ -8,8 +8,8 @@ import { prisma } from '~/services/db.server';
 import { ownerQ } from '~/services/scheduler/jobs/party';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const loader: LoaderFunction = () => {
-  throw json({}, { status: 404 });
+export const loader: LoaderFunction = ({ params }) => {
+  return redirect('/' + params.id);
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (!session || !session.user || !session.user.name || !session.user.image) {
     console.log('Party join failed -> no authentication');
-    return redirect('/auth/spotify?/' + ownerId);
+    return redirect('/auth/spotify?returnTo=/' + ownerId);
   }
   const userId = session.user.id;
 
@@ -60,7 +60,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
     const currentTrack = playback.item.uri;
     // purposely putting listener 11 seconds behind to allow scheduler time to add the next song to queue
-    const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
+    // const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
+    const progressMs = playback.progress_ms ?? 0;
 
     const play = async () => {
       try {
@@ -68,13 +69,12 @@ export const action: ActionFunction = async ({ request, params }) => {
           uris: [currentTrack],
           position_ms: progressMs,
         });
-        console.log('Party join -> played song 11 seconds behind');
+        console.log('Party join -> played song at same time');
       } catch {
         console.log('Party join failed -> error when attempting to play');
         return json('Error: Premium required');
       }
     };
-
     if (body.is_playing) {
       // 2 types of queue:
       // context queue when a playlist/album is playing and next queue which is when the user manually queue tracks;
