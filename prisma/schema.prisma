@@ -37,6 +37,7 @@ model Profile {
   image String
   party Party?
   queue Queue[]
+  liked LikedSongs[]
 }
 
 model Party {
@@ -73,4 +74,24 @@ model Queue {
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
   userId String?
+}
+
+model LikedSongs {
+  id      Int      @id @default(autoincrement())
+  likedAt DateTime @default(now())
+
+  trackId   String
+  uri       String
+  name      String
+  image     String
+  albumUri  String?
+  albumName String?
+  artist    String
+  artistUri String?
+  explicit  Boolean
+
+  user   Profile? @relation(fields: [userId], references: [userId])
+  userId String?
+
+  @@unique([trackId, userId])
 }
