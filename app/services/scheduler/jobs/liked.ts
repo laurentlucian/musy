@@ -1,6 +1,6 @@
 import type { LikedSongs } from '@prisma/client';
 import { prisma } from '~/services/db.server';
-import { Queue } from '~/services/scheduler/queue.server';
+import { Queue, registeredQueues } from '~/services/scheduler/queue.server';
 import type { SpotifyApiWithUser } from '~/services/spotify.server';
 import { spotifyApi } from '~/services/spotify.server';
 
@@ -70,3 +70,41 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
     );
   }
 });
+
+declare global {
+  var __didRegisterLikedQ: boolean | undefined;
+}
+
+export const addUsersToLikedQueue = async () => {
+  // To ensure this function only runs once per environment,
+  // we use a global variable to keep track if it has run
+  if (global.__didRegisterLikedQ) {
+    // and stop if it did.
+    return;
+  }
+
+  console.log('addUsersToLikedQueue -> starting...');
+  const users = await prisma.user.findMany();
+  console.log(
+    'addUsersToLikedQueue -> users..',
+    users.map((u) => u.id),
+  );
+  console.log(
+    'addUsersToLikedQueue -> queues..',
+    await registeredQueues['update_liked']?.queue.getJobCounts(),
+  );
+
+  likedQ.clean(0, 0, 'delayed');
+
+  likedQ.addBulk(
+    users.map((user) => ({
+      name: 'update_liked',
+      data: {
+        userId: user.id,
+      },
+    })),
+  );
+  console.log('startUp -> done');
+
+  global.__didRegisterLikedQ = true;
+};
