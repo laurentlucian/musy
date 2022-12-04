@@ -7,6 +7,10 @@ import { RemixServer } from '@remix-run/react';
 import { ServerStyleContext } from './lib/emotion/context';
 import { createEmotionCache } from './lib/emotion/createEmotionCache';
 
+import { addUsersToLikedQueue } from './services/scheduler/jobs/liked';
+
+addUsersToLikedQueue();
+
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,
