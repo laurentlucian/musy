@@ -1,3 +1,4 @@
+import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import { getUser, updateToken } from './auth.server';
 
@@ -19,7 +20,19 @@ export const spotifyClient = new SpotifyWebApi({
   redirectUri: process.env.SPOTIFY_CALLBACK_URL,
 });
 
-export const spotifyApi = async (id: string) => {
+export type SpotifyApiWithUser =
+  | {
+      spotify: null;
+      user: null;
+      token?: undefined;
+    }
+  | {
+      spotify: SpotifyWebApi;
+      user: Profile;
+      token: string;
+    };
+
+export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
   const data = await getUser(id);
 
   // @todo(type-fix) data.user should never be null if data exists
