@@ -10,6 +10,7 @@ import { withEmotionCache } from '@emotion/react';
 import { useContext, useEffect } from 'react';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import loading from './lib/styles/loading.css';
 
 const App = () => {
   const data = useTypedLoaderData<typeof loader>();
@@ -41,6 +42,7 @@ export const meta: MetaFunction = () => ({
 
 export let links: LinksFunction = () => {
   return [
+    { rel: 'stylesheet', href: loading },
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstaticom' },
     {

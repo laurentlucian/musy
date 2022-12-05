@@ -6,15 +6,10 @@ import type { LoaderArgs } from '@remix-run/node';
 import MiniPlayer from '~/components/MiniPlayer';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 import { getUserQueue } from '~/services/spotify.server';
-import loading from '~/lib/styles/loading.css';
 import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
 import MiniTile from '~/components/MiniTile';
-
-export const links = () => {
-  return [{ rel: 'stylesheet', href: loading }];
-};
 
 const Index = () => {
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
