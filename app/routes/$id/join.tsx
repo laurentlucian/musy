@@ -60,8 +60,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
     const currentTrack = playback.item.uri;
     // purposely putting listener 11 seconds behind to allow scheduler time to add the next song to queue
-    // const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
-    const progressMs = playback.progress_ms ?? 0;
+    const progressMs = playback.progress_ms ? playback.progress_ms - 11000 : 0;
+    // const progressMs = playback.progress_ms ?? 0;
 
     const play = async () => {
       try {

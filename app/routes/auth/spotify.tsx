@@ -4,9 +4,7 @@ import { redirect } from 'remix-typedjson';
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
 
-export const loader: LoaderFunction = ({ request }) => {
-  return redirect('/');
-};
+export const loader: LoaderFunction = ({ request }) => authenticate(request);
 
 export const action: ActionFunction = ({ request }) => authenticate(request);
 

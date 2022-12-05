@@ -155,12 +155,12 @@ const Analysis = () => {
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
+
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson(null);
   if (!session) {
-    redirect('/auth/spotify?returnTo=/analysis?spotify=' + searchURL);
-    return typedjson(null);
+    return redirect('/auth/spotify?returnTo=/analysis?spotify=' + searchURL);
   }
 
   const { user: currentUser } = session;
