@@ -1,9 +1,12 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import { redirect } from 'remix-typedjson';
 
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
 
-export const loader: LoaderFunction = ({ request }) => authenticate(request);
+export const loader: LoaderFunction = ({ request }) => {
+  return redirect('/');
+};
 
 export const action: ActionFunction = ({ request }) => authenticate(request);
 
@@ -12,7 +15,7 @@ const authenticate = async (request: Request) => {
   const returnTo = url.searchParams.get('returnTo') as string | null;
 
   try {
-    return await authenticator.authenticate('spotify', request);
+    await authenticator.authenticate('spotify', request);
   } catch (error) {
     // catches an error if it needs oauth2 authentication
     if (!returnTo) throw error;
