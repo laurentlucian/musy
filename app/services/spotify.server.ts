@@ -147,3 +147,16 @@ export const getUserQueue = async (id: string) => {
       queue: [],
     };
 };
+
+// spotifyClient library is only able to hold one instance, so in iteration it's possible to call a method (getUserLikedSongs) with another user's context (id, token)
+// this is a workaround to use the library only to retrieve a validated token, and making the fetch call directly instead of using the library methods
+export const getUserLikedSongs = async (id: string) => {
+  const { token } = await spotifyApi(id);
+  if (!token) return [];
+
+  const res = await fetch('https://api.spotify.com/v1/me/tracks', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const { items } = await res.json();
+  return items as SpotifyApi.SavedTrackObject[];
+};
