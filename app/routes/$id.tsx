@@ -11,7 +11,6 @@ import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
 import Following from '~/components/Following';
 import PlayerPaused from '~/components/PlayerPaused';
-import PlayingFrom from '~/components/PlayingFrom';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -26,7 +25,6 @@ const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-  console.log(playback);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -102,7 +100,6 @@ const Profile = () => {
                   artist={track.album.artists[0].name}
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
-                  user={currentUser}
                 />
               );
             })}
@@ -126,7 +123,6 @@ const Profile = () => {
                     artist={item.artist}
                     artistUri={item.artistUri}
                     explicit={item.explicit}
-                    user={currentUser}
                     createdBy={item.user}
                     createdAt={item.createdAt}
                   />

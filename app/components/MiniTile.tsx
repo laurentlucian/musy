@@ -19,7 +19,6 @@ type TileProps = {
   // name, not Id
   sendTo?: string;
 
-  user: Profile | null;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
   createdAt?: Date;

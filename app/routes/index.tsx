@@ -8,20 +8,47 @@ import { authenticator, getAllUsers } from '~/services/auth.server';
 import { getUserQueue } from '~/services/spotify.server';
 import loading from '~/lib/styles/loading.css';
 import { notNull } from '~/lib/utils';
+import { prisma } from '~/services/db.server';
+import Tiles from '~/components/Tiles';
+import MiniTile from '~/components/MiniTile';
 
 export const links = () => {
   return [{ rel: 'stylesheet', href: loading }];
 };
 
 const Index = () => {
-  const { users, playbacks } = useTypedLoaderData<typeof loader>();
+  const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
 
   return (
-    <Stack pb="50px">
-      {users.map((user) => {
-        const playback = playbacks.find((data) => data.userId === user.userId);
-        return <MiniPlayer key={user.userId} user={user} playback={playback} />;
-      })}
+    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
+      <Stack>
+        <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
+        <Tiles>
+          {activity.map((track) => {
+            return (
+              <MiniTile
+                key={track.id}
+                uri={track.uri}
+                image={track.image}
+                albumUri={track.albumUri}
+                albumName={track.albumName}
+                name={track.name}
+                artist={track.artist}
+                artistUri={track.artistUri}
+                explicit={track.explicit}
+                createdAt={track.likedAt}
+                createdBy={track.user}
+              />
+            );
+          })}
+        </Tiles>
+      </Stack>
+      <Stack>
+        {users.map((user) => {
+          const playback = playbacks.find((data) => data.userId === user.userId);
+          return <MiniPlayer key={user.userId} user={user} playback={playback} />;
+        })}
+      </Stack>
     </Stack>
   );
 };
@@ -31,7 +58,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const user = session?.user ?? null;
 
-  if (!users.length) return typedjson({ users, user, playbacks: [] });
+  if (!users.length) return typedjson({ users, user, playbacks: [], activity: [] });
 
   const getPlaybackState = async (id: string) => {
     try {
@@ -51,10 +78,16 @@ export const loader = async ({ request }: LoaderArgs) => {
   // place playingNow users at top; o(n) but n is small
   users.sort((a, b) => isPlayingIds.indexOf(b.userId) - isPlayingIds.indexOf(a.userId));
 
+  const activity = await prisma.likedSongs.findMany({
+    take: 20,
+    orderBy: { likedAt: 'desc' },
+    include: { user: true },
+  });
+
   return typedjson(
-    { users, user, playbacks },
+    { users, user, playbacks, activity },
     {
-      headers: { 'Cache-Control': 'public, maxage=1, s-maxage=0, stale-while-revalidate=10' },
+      headers: { 'Cache-Control': 'public, maxage=5, s-maxage=0, stale-while-revalidate=10' },
     },
   );
 };
