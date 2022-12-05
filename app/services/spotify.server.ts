@@ -20,6 +20,21 @@ export const spotifyClient = new SpotifyWebApi({
   redirectUri: process.env.SPOTIFY_CALLBACK_URL,
 });
 
+declare global {
+  var __registeredSpotifyClients: Record<string, SpotifyWebApi> | undefined;
+}
+
+const registeredSpotifyClients =
+  global.__registeredSpotifyClients || (global.__registeredSpotifyClients = {});
+
+const createSpotifyClient = () => {
+  return new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.SPOTIFY_CALLBACK_URL,
+  });
+};
+
 export type SpotifyApiWithUser =
   | {
       spotify: null;
@@ -34,6 +49,14 @@ export type SpotifyApiWithUser =
 
 export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
   const data = await getUser(id);
+
+  let spotifyClient: SpotifyWebApi;
+  if (registeredSpotifyClients[id]) {
+    spotifyClient = registeredSpotifyClients[id];
+  } else {
+    spotifyClient = createSpotifyClient();
+    registeredSpotifyClients[id] = spotifyClient;
+  }
 
   // @todo(type-fix) data.user should never be null if data exists
   if (!data || !data.user) return { spotify: null, user: null };
@@ -146,4 +169,15 @@ export const getUserQueue = async (id: string) => {
       currently_playing: null,
       queue: [],
     };
+};
+
+export const getUserLikedSongs = async (id: string) => {
+  const { spotify } = await spotifyApi(id);
+  if (!spotify) return [];
+
+  const {
+    body: { items },
+  } = await spotify.getMySavedTracks();
+
+  return items;
 };
