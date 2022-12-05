@@ -112,7 +112,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                   <HStack>
                     {playback.queue &&
                       playback.queue
-                        .slice(0, 5)
+                        .slice(0, 2)
                         .reverse()
                         .map((track, idx) => (
                           <LinkB

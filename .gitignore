@@ -21,4 +21,4 @@ data.db
 .env
 
 wireguard.conf
-fly_backup.db
+fly_backup*.db
