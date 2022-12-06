@@ -1,15 +1,16 @@
 import { Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
-import { Link, useCatch } from '@remix-run/react';
+import { Form, Link, useCatch, useTransition } from '@remix-run/react';
 import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
 import type { TypedMetaFunction } from 'remix-typedjson';
-import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import { authenticator } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 import { redis } from '~/services/scheduler/redis.server';
 
 const TrackAnalysis = () => {
-  const { track, analysis } = useTypedLoaderData<typeof loader>();
+  const { track, analysis, authorized } = useTypedLoaderData<typeof loader>();
+  const transition = useTransition();
 
   if (!track || !analysis) return null;
 
@@ -22,6 +23,14 @@ const TrackAnalysis = () => {
           <Text>{track.artists[0].name}</Text>
           <Text>{track.album.name !== track.name ? track.album.name : ''}</Text>
           <Text>{track.popularity} Popularity</Text>
+          {authorized && (
+            <Form method="get" replace>
+              <input type="hidden" name="refresh" value="1" />
+              <Button type="submit" isLoading={transition.state !== 'idle'}>
+                Refresh
+              </Button>
+            </Form>
+          )}
         </Stack>
       </HStack>
       <Stack>
@@ -36,39 +45,43 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(id, 'Missing params Id');
   const cacheKey = 'track_analysis_' + id;
   const cachedData = await redis.get(cacheKey);
+  const session = await authenticator.isAuthenticated(request);
 
-  if (cachedData) {
+  const url = new URL(request.url);
+  const shouldRefresh = url.searchParams.get('refresh') && session ? true : false;
+
+  if (cachedData && !shouldRefresh) {
     console.log('Cache hit');
-    const data = JSON.parse(cachedData) as {
+    const data = { ...JSON.parse(cachedData), authorized: !!session } as {
       track: SpotifyApi.SingleTrackResponse;
       analysis: string;
+      authorized: boolean;
     };
     return typedjson(data, { headers: { cached: 'true' } });
   }
 
-  const session = await authenticator.isAuthenticated(request);
-  if (!session) {
-    return redirect('/auth/spotify?returnTo=/analysis');
-  }
+  // if (!session) {
+  //   return redirect('/auth/spotify?returnTo=/analysis');
+  // }
 
-  const { user } = session;
-  if (!user)
-    return typedjson(
-      { track: null, analysis: null },
-      { statusText: 'Failed to load session, try again', status: 401 },
-    );
+  // const { user } = session;
+  // if (!user)
+  //   return typedjson(
+  //     { track: null, analysis: null, authorized: !!session },
+  //     { statusText: 'Failed to load session, try again', status: 401 },
+  //   );
 
-  const { spotify } = await spotifyApi(user.id);
+  const { spotify } = await spotifyApi('1295028670');
   if (!spotify)
     return typedjson(
-      { track: null, analysis: null },
+      { track: null, analysis: null, authorized: !!session },
       { statusText: 'Failed to load spotify, try again', status: 401 },
     );
 
   const { body: track } = await spotify.getTrack(id);
   if (!track) {
     return typedjson(
-      { track: null, analysis: null },
+      { track: null, analysis: null, authorized: !!session },
       { statusText: 'Track not found', status: 404 },
     );
   }
@@ -91,7 +104,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       model: 'text-davinci-003',
       max_tokens: 500,
       temperature: 0.5,
-      // top_p: 1,
+      top_p: 1,
       // frequency_penalty: 0,
       // presence_penalty: 0,
       // stop: ['\
@@ -101,7 +114,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const json = (await res.json()) as TextCompletion;
 
-  const data = { track, analysis: json.choices?.[0].text };
+  const data = { track, analysis: json.choices?.[0].text, authorized: !!session };
 
   // set Cache for 1 day
   redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24);
