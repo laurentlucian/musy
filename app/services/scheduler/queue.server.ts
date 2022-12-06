@@ -1,4 +1,4 @@
-import type { Processor } from 'bullmq';
+import type { Processor, WorkerOptions } from 'bullmq';
 import { Queue as BullQueue, Worker, QueueScheduler } from 'bullmq';
 import EventEmitter from 'events';
 import { redis } from './redis.server';
@@ -17,7 +17,11 @@ EventEmitter.defaultMaxListeners = 20;
 
 export const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 
-export const Queue = <Payload>(name: string, handler: Processor<Payload>): BullQueue<Payload> => {
+export const Queue = <Payload>(
+  name: string,
+  handler: Processor<Payload>,
+  workOpts?: WorkerOptions,
+): BullQueue<Payload> => {
   if (registeredQueues[name]) {
     return registeredQueues[name].queue;
   }
@@ -28,7 +32,7 @@ export const Queue = <Payload>(name: string, handler: Processor<Payload>): BullQ
   // workers are where the meat of our processing lives within a queue.
   // they reach out to our redis connection and pull jobs off the queue
   // in an order determined by factors such as job priority, delay, etc.
-  const worker = new Worker<Payload>(name, handler, { connection: redis });
+  const worker = new Worker<Payload>(name, handler, { connection: redis, ...workOpts });
 
   // the scheduler plays an important role in helping workers stay busy.
 

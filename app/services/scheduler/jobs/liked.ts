@@ -4,48 +4,60 @@ import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getUserLikedSongs } from '~/services/spotify.server';
 
-export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
-  const { userId } = job.data;
-  console.log('likedQ -> pending job starting...', userId);
-  const profile = await prisma.user.findUnique({ where: { id: userId }, include: { user: true } });
-
-  if (!profile || !profile.user) {
-    console.log('likedQ silently failed -> user not found');
-    return null;
-  }
-
-  const liked = await getUserLikedSongs(userId);
-
-  console.log('likedQ -> adding tracks to db', userId);
-  for (const { track, added_at } of liked) {
-    const song: Omit<LikedSongs, 'id'> = {
-      trackId: track.id,
-      likedAt: new Date(added_at),
-      userId: userId,
-      name: track.name,
-      uri: track.uri,
-      albumName: track.album.name,
-      albumUri: track.album.uri,
-      artist: track.artists[0].name,
-      artistUri: track.artists[0].uri,
-      image: track.album.images[0].url,
-      explicit: track.explicit,
-    };
-
-    await prisma.likedSongs.upsert({
-      where: {
-        trackId_userId: {
-          trackId: track.id,
-          userId: userId,
-        },
-      },
-      update: song,
-      create: song,
+export const likedQ = Queue<{ userId: string }>(
+  'update_liked',
+  async (job) => {
+    const { userId } = job.data;
+    console.log('likedQ -> pending job starting...', userId);
+    const profile = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { user: true },
     });
-  }
 
-  console.log('likedQ -> completed', userId);
-});
+    if (!profile || !profile.user) {
+      console.log('likedQ silently failed -> user not found');
+      return null;
+    }
+
+    const liked = await getUserLikedSongs(userId);
+
+    console.log('likedQ -> adding tracks to db', userId);
+    for (const { track, added_at } of liked) {
+      const song: Omit<LikedSongs, 'id'> = {
+        trackId: track.id,
+        likedAt: new Date(added_at),
+        userId: userId,
+        name: track.name,
+        uri: track.uri,
+        albumName: track.album.name,
+        albumUri: track.album.uri,
+        artist: track.artists[0].name,
+        artistUri: track.artists[0].uri,
+        image: track.album.images[0].url,
+        explicit: track.explicit,
+      };
+
+      await prisma.likedSongs.upsert({
+        where: {
+          trackId_userId: {
+            trackId: track.id,
+            userId: userId,
+          },
+        },
+        update: song,
+        create: song,
+      });
+    }
+
+    console.log('likedQ -> completed', userId);
+  },
+  {
+    limiter: {
+      max: 2,
+      duration: minutesToMs(0.5),
+    },
+  },
+);
 
 declare global {
   var __didRegisterLikedQ: boolean | undefined;
@@ -93,10 +105,10 @@ export const addUsersToLikedQueue = async () => {
       {
         // a job with duplicate id will not be added
         jobId: user.id,
-        repeat: { every: minutesToMs(10) },
+        repeat: { every: minutesToMs(60) },
         backoff: {
-          type: 'fixed',
-          delay: minutesToMs(5),
+          type: 'exponential',
+          delay: minutesToMs(1),
         },
       },
     );
