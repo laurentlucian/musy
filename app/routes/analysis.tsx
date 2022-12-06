@@ -1,5 +1,6 @@
 import {
   Flex,
+  Heading,
   IconButton,
   Image,
   Input,
@@ -9,7 +10,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { Form, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+import { Form, useCatch, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
 import { CloseSquare } from 'iconsax-react';
 import type { ChangeEvent } from 'react';
 import { useRef } from 'react';
@@ -21,7 +22,7 @@ import Tiles from '~/components/Tiles';
 import { authenticator } from '~/services/auth.server';
 import invariant from 'tiny-invariant';
 import type { TypedMetaFunction } from 'remix-typedjson';
-import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import { Link } from '@remix-run/react';
 import Tooltip from '~/components/Tooltip';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -159,26 +160,28 @@ export const loader = async ({ request }: LoaderArgs) => {
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson(null);
-  if (!session) {
-    return redirect('/auth/spotify?returnTo=/analysis?spotify=' + searchURL);
-  }
+  // if (!session) {
+  //   return redirect('/auth/spotify?returnTo=/analysis?spotify=' + searchURL);
+  // }
 
-  const { user: currentUser } = session;
-  invariant(currentUser, 'Missing user');
+  // const { user: currentUser } = session;
+  // invariant(currentUser, 'Missing user');
 
-  const { spotify } = await spotifyApi(currentUser.id);
+  const { spotify } = await spotifyApi('1295028670');
   invariant(spotify, 'No access to spotify API');
 
   const {
     body: { tracks },
-  } = await spotify.searchTracks(searchURL);
+  } = await spotify.searchTracks(searchURL).catch((err) => {
+    throw typedjson([], { status: err.statusCode });
+  });
 
   const results = tracks?.items;
   return typedjson(results);
 };
 
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
-  if (!data) {
+  if (!data || data.length === 0) {
     return {
       title: 'Musy Analysis',
       description: `Musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
@@ -188,9 +191,48 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   const track = data[0];
 
   return {
-    title: `${track.name} | Musy Analysis`,
+    title: `${track?.name} | Musy Analysis`,
     description: `Musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
   };
+};
+
+export const ErrorBoundary = ({ error }: { error: Error }) => {
+  console.log('index -> ErrorBoundary', error);
+
+  return (
+    <>
+      <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
+      <Text fontSize="sm">Trace(for debug): {error.message}</Text>
+    </>
+  );
+};
+
+export const CatchBoundary = () => {
+  let caught = useCatch();
+  let message;
+  switch (caught.status) {
+    case 401:
+      message = <Text>Oops, you shouldn't be here (No access)</Text>;
+      break;
+    case 404:
+      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      break;
+    case 429:
+      message = <Text>Oops, API suspended (too many requests)</Text>;
+      break;
+
+    default:
+      throw new Error(caught.data || caught.statusText);
+  }
+
+  return (
+    <>
+      <Heading fontSize={['sm', 'md']}>
+        {caught.status} {caught.statusText}
+      </Heading>
+      <Text fontSize="sm">{message}</Text>
+    </>
+  );
 };
 
 export default Analysis;

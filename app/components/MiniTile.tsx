@@ -1,12 +1,14 @@
-import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text, Link as LinkB, Icon } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link, useParams } from '@remix-run/react';
+import { InfoCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { timeSince } from '~/hooks/utils';
 import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
 
 type TileProps = {
+  id?: string;
   uri: string;
   image: string;
   albumUri: string | null;
@@ -24,7 +26,16 @@ type TileProps = {
   createdAt?: Date;
 };
 
-const MiniTile = ({ uri, image, albumUri, albumName, name, createdAt, createdBy }: TileProps) => {
+const MiniTile = ({
+  id,
+  uri,
+  image,
+  albumUri,
+  albumName,
+  name,
+  createdAt,
+  createdBy,
+}: TileProps) => {
   return (
     <Stack flex="0 0 100px">
       <Flex direction="column">
@@ -49,11 +60,19 @@ const MiniTile = ({ uri, image, albumUri, albumName, name, createdAt, createdBy 
           </HStack>
         )}
         {albumUri ? (
-          <LinkB href={albumUri} target="_blank">
-            <Tooltip label={albumName} placement="top-start">
+          <Link to={`/analysis/${id}`}>
+            <Tooltip
+              label={
+                <HStack p="2px">
+                  <Text>{name}</Text>
+                  <Icon boxSize="20px" as={InfoCircle} />
+                </HStack>
+              }
+              placement="top-start"
+            >
               <Image src={image} borderRadius={5} w="200px" draggable={false} />
             </Tooltip>
-          </LinkB>
+          </Link>
         ) : (
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} borderRadius={5} w="200px" draggable={false} />
