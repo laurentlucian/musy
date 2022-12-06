@@ -15,6 +15,7 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
+import { secondsToMinutes } from '~/lib/utils';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
@@ -75,9 +76,9 @@ const Profile = () => {
           playback={playback}
           item={playback.item}
         />
-      ) : (
+      ) : recent ? (
         <PlayerPaused item={recent.items[0].track} />
-      )}
+      ) : null}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
         <Stack>
@@ -87,6 +88,7 @@ const Profile = () => {
               return (
                 <MiniTile
                   key={index}
+                  id={track.id}
                   uri={track.uri}
                   image={track.album.images[1].url}
                   albumUri={track.album.uri}
@@ -223,8 +225,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     throw new Response('User Access Revoked', { status: 401 });
   }
 
-  const spotifyProfile = await spotify.getMe();
-  const pfp = spotifyProfile.body.images;
+  const spotifyProfile = await spotify.getMe().catch(() => null);
+  const pfp = spotifyProfile?.body.images;
   if (pfp) {
     await updateUserImage(id, pfp[0].url);
   }
@@ -243,35 +245,57 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       orderBy: { createdAt: 'desc' },
     }),
     prisma.party.findMany({ where: { ownerId: id } }),
-    spotify.getMyRecentlyPlayedTracks(),
-    spotify.getMySavedTracks(),
-    spotify.getMyTopTracks().catch(() => ({
-      body: null,
-    })),
-    getUserQueue(id),
+    spotify.getMyRecentlyPlayedTracks().catch((e) => {
+      const retryAfter = e?.headers['retry-after'];
+      console.log('e recent', retryAfter, secondsToMinutes(retryAfter));
+      return {
+        body: null,
+      };
+    }),
+    spotify.getMySavedTracks().catch((e) => {
+      const retryAfter = e?.headers['retry-after'];
+      // console.log('e savd', retryAfter, secondsToMinutes(retryAfter));
+      return {
+        body: null,
+      };
+    }),
+    spotify.getMyTopTracks().catch((e) => {
+      const retryAfter = e?.headers['retry-after'];
+      // console.log('e savd', retryAfter, secondsToMinutes(retryAfter));
+      return {
+        body: null,
+      };
+    }),
+    getUserQueue(id).catch((e) => {
+      console.log('e getq', e);
+      return {
+        currently_playing: null,
+        queue: [],
+      };
+    }),
   ]);
 
   const currentUser = await getCurrentUser(request);
-  if (currentUser) {
-    const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
-    if (cUserSpotify) {
-      const {
-        body: [following],
-      } = await cUserSpotify.isFollowingUsers([id]);
-      return typedjson({
-        user,
-        activity,
-        party,
-        playback,
-        recent,
-        liked,
-        top,
-        currentUser,
-        following,
-        queue,
-      });
-    }
-  }
+  // if (currentUser) {
+  //   const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
+  //   if (cUserSpotify) {
+  //     const {
+  //       body: [following],
+  //     } = await cUserSpotify.isFollowingUsers([id]);
+  //     return typedjson({
+  //       user,
+  //       activity,
+  //       party,
+  //       playback,
+  //       recent,
+  //       liked,
+  //       top,
+  //       currentUser,
+  //       following,
+  //       queue,
+  //     });
+  //   }
+  // }
 
   return typedjson({
     user,

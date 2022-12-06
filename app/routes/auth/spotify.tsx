@@ -1,6 +1,4 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import { redirect } from 'remix-typedjson';
-
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
 

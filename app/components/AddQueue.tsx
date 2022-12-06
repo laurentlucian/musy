@@ -1,4 +1,4 @@
-import { Icon, IconButton, Spinner } from '@chakra-ui/react';
+import { Icon, IconButton } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import Tooltip from './Tooltip';

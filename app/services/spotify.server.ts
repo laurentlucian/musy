@@ -139,7 +139,7 @@ export const getUserQueue = async (id: string) => {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
-        if (!res) break;
+        if (!res || res.status !== 200) break;
         const playlist = await res.json();
 
         currently_playing.context.description = playlist.description;

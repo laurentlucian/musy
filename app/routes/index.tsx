@@ -23,6 +23,7 @@ const Index = () => {
             return (
               <MiniTile
                 key={track.id}
+                id={track.trackId}
                 uri={track.uri}
                 image={track.image}
                 albumUri={track.albumUri}
@@ -108,6 +109,9 @@ export const CatchBoundary = () => {
       break;
     case 404:
       message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      break;
+    case 429:
+      message = <Text>Oops, API suspended (too many requests)</Text>;
       break;
 
     default:
