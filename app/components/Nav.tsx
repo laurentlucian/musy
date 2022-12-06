@@ -8,7 +8,6 @@ import {
   Input,
   useColorMode,
   useColorModeValue,
-  useMediaQuery,
 } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Logout, Moon, Sun1 } from 'iconsax-react';
@@ -24,7 +23,6 @@ const Nav = ({ user }: { user: User | null }) => {
   const transition = useTransition();
   const loaderElement = useTransitionElement();
   const location = useLocation();
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
   const busy =
     (transition.submission?.formData.has('logout') ||
       transition.submission?.formData.has('login')) ??
@@ -40,7 +38,7 @@ const Nav = ({ user }: { user: User | null }) => {
         <Heading as={Link} to="/" size="sm">
           Musy
         </Heading>
-        {isSmallScreen && loaderElement}
+        {loaderElement}
       </HStack>
       <HStack h="39px">
         {!user && (

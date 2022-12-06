@@ -15,11 +15,6 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
-import loading from '~/lib/styles/loading.css';
-
-export const links = () => {
-  return [{ rel: 'stylesheet', href: loading }];
-};
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
