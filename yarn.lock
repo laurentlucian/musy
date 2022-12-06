@@ -7359,6 +7359,15 @@ remix-auth-oauth2@^1.2.2:
     remix-auth "^3.2.2"
     uuid "^8.3.2"
 
+remix-auth-oauth2@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/remix-auth-oauth2/-/remix-auth-oauth2-1.5.0.tgz#63437a4b5d6f43327a7781c8c74216e7d8baba0f"
+  integrity sha512-vv/CX2bCeVf8vzACfS1Fae+i75Cw0/As3RLkp00+9n9IBEvKi07LhUxTbODNA51jRh+wInnmCRIwsHafKQDD6g==
+  dependencies:
+    debug "^4.3.4"
+    remix-auth "^3.4.0"
+    uuid "^8.3.2"
+
 remix-auth-spotify@^1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/remix-auth-spotify/-/remix-auth-spotify-1.2.6.tgz#1d422402f892378a58451e429fb24aa88a2289b4"
@@ -7371,6 +7380,13 @@ remix-auth@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/remix-auth/-/remix-auth-3.2.2.tgz#8941a6b57cd523872b7aacf200976d77c055a9f7"
   integrity sha512-VtzkfxeXbnXilupRTZkP40aik4vFSdwwRT96mbq0UBDMqHVRfQ7h9Y51HFrTufHJZEfAdkCopedMVvm0vQYKag==
+  dependencies:
+    uuid "^8.3.2"
+
+remix-auth@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/remix-auth/-/remix-auth-3.4.0.tgz#a3cd4455477f6c60f6cf1bad0ae119101a6d8ff8"
+  integrity sha512-VRliJo9VRAS4sSYgMjYbi7rYRixPWU2Tb8PFZb06OIj0nONK/1KRzHf2+Y6VGZeIacepLVgan6g2IUJjayE2rQ==
   dependencies:
     uuid "^8.3.2"
 
