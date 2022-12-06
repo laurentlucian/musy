@@ -19,7 +19,7 @@ import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import AddQueue from './AddQueue';
 import Tooltip from './Tooltip';
@@ -43,6 +43,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const [size, setSize] = useState('large');
+  const [playingFrom, setPlayingFrom] = useState(false);
 
   useEffect(() => {
     setSize('large');
@@ -58,6 +59,11 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
     return () => window.removeEventListener('scroll', checkStick);
   }, []);
 
+  // const type = playback.context.type?.charAt(0).toUpperCase() + playback.context.type?.slice(1);
+  // const from =
+  // playback.item.album.album_type === 'single' && playback.context.item.album.type === 'album'
+  //   ? 'EP'
+  //   : type;
   const active = playback.is_playing;
   useInterval(
     () => {
@@ -68,7 +74,27 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
     // -> refreshes every 30s regardless
     // 30000,
   );
+  const interval = useCallback(
+    () => setInterval(() => setPlayingFrom(!playingFrom), 6900),
+    [playingFrom],
+  );
 
+  useEffect(() => {
+    if (
+      item.album.album_type === 'single' &&
+      item.album.total_tracks === 1 &&
+      playback?.context?.type !== 'artist' &&
+      playback?.context?.type !== 'playlist'
+    ) {
+      clearInterval(interval());
+      setPlayingFrom(false);
+    } else {
+      interval();
+    }
+  }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
+
+  console.log(playback);
+  console.log(item);
   if (!item) return null;
 
   const link = item.uri;
@@ -101,29 +127,65 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
               </Link>
             </Flex>
             {playback.context && (
-              <Tooltip
-                label={
-                  <PlayingFromTooltip
-                    name={playback.context.name}
-                    description={playback.context.description}
-                    image={playback.context.image}
-                  />
-                }
-                placement="bottom-start"
-              >
-                <Link href={playback.context.uri} fontSize="13px" fontWeight="normal">
-                  {playback.context.name}
-                </Link>
-              </Tooltip>
+              <>
+                <Text
+                  fontSize="13px"
+                  transition="opacity 1.69s ease-in-out"
+                  opacity={playingFrom ? 1 : 0}
+                  zIndex={10}
+                >
+                  Playing From{' '}
+                  {item.album.album_type === 'single' &&
+                  playback.context.type === 'album' &&
+                  item.album.total_tracks !== 1
+                    ? 'EP'
+                    : playback.context.type.charAt(0).toUpperCase() +
+                      playback.context.type.slice(1)}
+                </Text>
+                <Tooltip
+                  label={
+                    <PlayingFromTooltip // tooltip does not show properly when playing from artist
+                      name={playback.context.name}
+                      description={playback.context.description}
+                      image={playback.context.image}
+                    />
+                  }
+                  placement="bottom-start"
+                >
+                  <Link
+                    href={playback.context.uri}
+                    fontSize="15px"
+                    fontWeight="bold"
+                    transition="opacity 1.69s ease-in-out"
+                    opacity={playingFrom ? 1 : 0}
+                  >
+                    {playback.context.name
+                      ? playback.context.name
+                      : playback.context.type === 'artist'
+                      ? item.artists[0].name
+                      : item.album.name}
+                  </Link>
+                </Tooltip>
+              </>
             )}
-            <HStack align="center" spacing={1}>
-              <Text fontSize="13px" fontWeight="normal">
-                Listening on{' '}
+            <Stack spacing={1} pos="fixed" pt="48px">
+              <Text
+                fontSize="13px"
+                fontWeight="normal"
+                transition="opacity 1.69s ease-in-out"
+                opacity={playingFrom ? 0 : 1}
+              >
+                Listening on
               </Text>
-              <Text fontSize="13px" fontWeight="semibold">
+              <Text
+                fontSize="15px"
+                fontWeight="bold"
+                transition="opacity 1.69s ease-in-out"
+                opacity={playingFrom ? 0 : 1}
+              >
                 {playback.device.name.split(' ').slice(0, 2).join(' ')}
               </Text>
-            </HStack>
+            </Stack>
           </Stack>
 
           {active ? (
