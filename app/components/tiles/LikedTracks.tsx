@@ -14,7 +14,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
   const ref = useRef(null);
   const isVisible = useIsVisible(ref);
   const hasFetched = useRef(false);
-  console.log(isVisible);
+
   useEffect(() => {
     if (isVisible && !hasFetched.current) {
       const newOffset = offsetRef.current + 50;

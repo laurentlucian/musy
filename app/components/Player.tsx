@@ -46,7 +46,6 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
 
   useEffect(() => {
-    setSize('large');
     const checkStick = () => {
       window.scrollY <= 100
         ? setSize('large')
@@ -272,9 +271,19 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
             <Tooltip label={item.album.name} placement="bottom-end">
               <Image
                 src={item.album?.images[0].url}
-                mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
+                mt={
+                  size === 'large'
+                    ? [0, -47, -47, -47, -219]
+                    : size === 'medium'
+                    ? [0, -47, -47, -47, -108]
+                    : 0
+                }
                 boxSize={
-                  size === 'large' ? [130, 160, 334] : size === 'medium' ? [130, 160, 221] : 130
+                  size === 'large'
+                    ? [130, 160, 160, 200, 334]
+                    : size === 'medium'
+                    ? [130, 160, 160, 200, 221]
+                    : 130
                 }
                 borderRadius={size === 'small' ? 0 : 2}
                 transition="width 0.25s, height 0.25s, margin-top 0.25s"
