@@ -1,15 +1,5 @@
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Image,
-  Textarea,
-  Button,
-  RadioGroup,
-  Radio,
-} from '@chakra-ui/react';
-import { Form, Link, useCatch, useSearchParams, useSubmit } from '@remix-run/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, Button } from '@chakra-ui/react';
+import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
@@ -24,13 +14,12 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
+import TopTracks from '~/components/tiles/TopTracks';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-  const [params] = useSearchParams();
-  const topFilter = params.get('top-filter') ?? 'medium_term';
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -187,40 +176,7 @@ const Profile = () => {
           </Tiles>
         </Stack>
       )}
-      {top && top?.items.length !== 0 && (
-        <Stack spacing={3}>
-          <HStack spacing={5}>
-            <Heading fontSize={['xs', 'sm']}>Top</Heading>
-            <Form method="get" onChange={(e) => submit(e.currentTarget)}>
-              <RadioGroup defaultValue={topFilter} name="top-filter" size="sm">
-                <HStack spacing={4}>
-                  <Radio value="short_term">30 days</Radio>
-                  <Radio value="medium_term">6 months</Radio>
-                  <Radio value="long_term">All</Radio>
-                </HStack>
-              </RadioGroup>
-            </Form>
-          </HStack>
-          <Tiles>
-            {top.items.map((track) => {
-              return (
-                <Tile
-                  key={track.id}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  user={currentUser}
-                />
-              );
-            })}
-          </Tiles>
-        </Stack>
-      )}
+      <TopTracks top={top} />
     </Stack>
   );
 };
@@ -263,7 +219,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     party,
     { body: recent },
     { body: liked },
-    { body: top },
+    {
+      body: { items: top },
+    },
     { currently_playing: playback, queue },
   ] = await Promise.all([
     prisma.queue.findMany({
@@ -282,9 +240,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         body: null,
       };
     }),
-    spotify.getMyTopTracks({ time_range: topFilter }).catch((e) => {
+    spotify.getMyTopTracks({ time_range: topFilter, limit: 50 }).catch((e) => {
       return {
-        body: null,
+        body: { items: [] },
       };
     }),
     getUserQueue(id).catch((e) => {
