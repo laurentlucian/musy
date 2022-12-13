@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 
 type scrollBehavior = 'natural' | 'reverse';
-export const useHorizontalScroll = (behavior: scrollBehavior) => {
+export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolean = true) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [clickStartX, setClickStartX] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
@@ -10,17 +10,27 @@ export const useHorizontalScroll = (behavior: scrollBehavior) => {
   useEffect(() => {
     if (scrollRef.current) {
       const el = scrollRef.current;
-      const onWheel = (e: WheelEvent) => {
-        if (e.deltaY == 0) return;
-        e.preventDefault();
-        el.scrollTo({
-          left: el.scrollLeft + e.deltaY,
-          // bugs with my mouse's scroll wheel (when too fast)
-          // behavior: 'smooth',
-        });
-      };
-      el.addEventListener('wheel', onWheel);
-      return () => el.removeEventListener('wheel', onWheel);
+
+      // Start an interval that automatically scrolls the element to the right
+      // if the autoScroll flag is set to true
+      if (autoScroll) {
+        const scrollInterval = setInterval(() => {
+          // Scroll to the right by 1 pixel
+          el.scrollTo({
+            left: el.scrollLeft + 3,
+          });
+
+          // If the element has reached the end, scroll back to the beginning
+          if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+            el.scrollTo({
+              left: 0,
+            });
+          }
+        }, 50);
+        return () => {
+          clearInterval(scrollInterval);
+        };
+      }
     }
   }, []);
 
@@ -40,7 +50,8 @@ export const useHorizontalScroll = (behavior: scrollBehavior) => {
 
         if (clickStartX !== null && scrollStartX !== null && isDragging) {
           const touchDelta = clickStartX - e.screenX;
-          scrollRef.current.scrollLeft = behavior === 'natural' ? scrollStartX - touchDelta : scrollStartX + touchDelta;
+          scrollRef.current.scrollLeft =
+            behavior === 'natural' ? scrollStartX - touchDelta : scrollStartX + touchDelta;
         }
       }
     },
