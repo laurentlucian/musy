@@ -1,15 +1,33 @@
+import { useInterval } from '@chakra-ui/react';
 import { useRef, useEffect, useCallback, useState } from 'react';
 
 type scrollBehavior = 'natural' | 'reverse';
-export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolean = false) => {
+export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [clickStartX, setClickStartX] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  useEffect(() => {
-    if (scrollRef.current) {
+  useInterval(
+    () => {
       const el = scrollRef.current;
+      if (!el) return;
+      el.scrollTo({
+        left: el.scrollLeft + 3,
+      });
+
+      if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+        el.scrollTo({
+          left: 0,
+        });
+      }
+    },
+    autoScroll ? 50 : null,
+  );
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
       const onWheel = (e: WheelEvent) => {
         if (e.deltaY == 0) return;
         e.preventDefault();
@@ -20,28 +38,7 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolea
         });
       };
       el.addEventListener('wheel', onWheel);
-
-      // Start an interval that automatically scrolls the element to the right
-      // if the autoScroll flag is set to true
-      if (autoScroll) {
-        const scrollInterval = setInterval(() => {
-          // Scroll to the right by 1 pixel
-          el.scrollTo({
-            left: el.scrollLeft + 3,
-          });
-
-          // If the element has reached the end, scroll back to the beginning
-          if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
-            el.scrollTo({
-              left: 0,
-            });
-          }
-        }, 50);
-        return () => {
-          clearInterval(scrollInterval);
-          el.removeEventListener('wheel', onWheel);
-        };
-      }
+      return () => el.removeEventListener('wheel', onWheel);
     }
   }, []);
 
