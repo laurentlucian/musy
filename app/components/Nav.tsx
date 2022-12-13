@@ -15,13 +15,12 @@ import type { User } from 'remix-auth-spotify';
 import Tooltip from './Tooltip';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import useTransitionElement from '~/hooks/useTransitionElement';
+import Waver from './Waver';
 
 const Nav = ({ user }: { user: User | null }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
-  const loaderElement = useTransitionElement();
   const location = useLocation();
   const busy =
     (transition.submission?.formData.has('logout') ||
@@ -38,7 +37,7 @@ const Nav = ({ user }: { user: User | null }) => {
         <Heading as={Link} to="/" size="sm">
           Musy
         </Heading>
-        {loaderElement}
+        {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">
         {!user && (
@@ -49,18 +48,13 @@ const Nav = ({ user }: { user: User | null }) => {
               type="submit"
               h="39px"
               borderRadius="7px"
+              w="200px"
+              spinner={<Waver />}
             >
               Login with &nbsp; <Image height="24px" width="85px" src={spotify_logo} />
             </Button>
           </Form>
         )}
-        <IconButton
-          aria-label={colorMode === 'light' ? 'Dark' : 'Light'}
-          icon={colorMode === 'light' ? <Moon /> : <Sun1 />}
-          variant="ghost"
-          onClick={toggleColorMode}
-          cursor="pointer"
-        />
 
         {user && (
           <Form action={'/logout'} method="post">
@@ -78,6 +72,13 @@ const Nav = ({ user }: { user: User | null }) => {
             </Tooltip>
           </Form>
         )}
+        <IconButton
+          aria-label={colorMode === 'light' ? 'Dark' : 'Light'}
+          icon={colorMode === 'light' ? <Moon /> : <Sun1 />}
+          variant="ghost"
+          onClick={toggleColorMode}
+          cursor="pointer"
+        />
       </HStack>
     </Flex>
   );

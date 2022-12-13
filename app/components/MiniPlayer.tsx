@@ -14,10 +14,10 @@ import type { Profile } from '@prisma/client';
 import { Link, useNavigate, useTransition } from '@remix-run/react';
 import { InfoCircle, Information } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import useTransitionElement from '~/hooks/useTransitionElement';
 import type { Playback } from '~/services/spotify.server';
 import PlayerBar from './PlayerBar';
 import Tooltip from './Tooltip';
+import Waver from './Waver';
 
 type PlayerProps = {
   user: Profile;
@@ -27,7 +27,6 @@ type PlayerProps = {
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const transition = useTransition();
-  const loaderElement = useTransitionElement(transition.location?.pathname.includes(user.userId));
   const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
   const navigate = useNavigate();
 
@@ -60,10 +59,10 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
               <Text fontWeight="bold" fontSize={['15px', '20px']}>
                 {user.name.split(/[\s.]+/).slice(0, 1)}
               </Text>
-              {!isSmallScreen && loaderElement}
+              {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
             <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
-              {user.bio}
+              {user.bio?.slice(0, 15)}
             </Text>
           </Stack>
 

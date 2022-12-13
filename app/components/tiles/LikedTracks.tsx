@@ -39,7 +39,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
 
   return (
     <Stack spacing={3}>
-      <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
+      <Heading fontSize={['xs', 'sm']}>Liked</Heading>
       <Tiles>
         {liked.map(({ track }) => {
           return (
