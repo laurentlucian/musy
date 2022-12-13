@@ -1,7 +1,8 @@
-import { Heading, HStack, Stack, RadioGroup, Radio } from '@chakra-ui/react';
+import { Heading, HStack, Stack, RadioGroup, Radio, useRadioGroup } from '@chakra-ui/react';
 import { Form, useFetcher, useParams, useSearchParams, useSubmit } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useIsVisible from '~/hooks/useIsVisible';
+import { RadioCard } from '~/lib/theme/components/Radio';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
@@ -38,20 +39,36 @@ const TopTracks = ({ top: initialTop }: { top: SpotifyApi.TrackObjectFull[] }) =
     setTop(initialTop);
   }, [initialTop]);
 
+  const options = [
+    { name: 'All', value: 'long_term' },
+    { name: '6 mo', value: 'medium_term' },
+    { name: '1 mo', value: 'short_term' },
+  ];
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: 'top-filter',
+    defaultValue: topFilter,
+  });
+
+  const group = getRootProps();
+
   if (!top) return null;
 
   return (
     <Stack spacing={3}>
-      <HStack spacing={5}>
+      <HStack spacing={5} align="flex-end">
         <Heading fontSize={['xs', 'sm']}>Top</Heading>
         <Form method="get" onChange={(e) => submit(e.currentTarget)}>
-          <RadioGroup defaultValue={topFilter} name="top-filter" size="sm">
-            <HStack spacing={4}>
-              <Radio value="short_term">30 days</Radio>
-              <Radio value="medium_term">6 months</Radio>
-              <Radio value="long_term">All</Radio>
-            </HStack>
-          </RadioGroup>
+          <HStack spacing={4} {...group} p={0} m={0}>
+            {options.map(({ value, name }) => {
+              const radio = getRadioProps({ value });
+              return (
+                <RadioCard key={value} {...radio} value={value}>
+                  {name}
+                </RadioCard>
+              );
+            })}
+          </HStack>
         </Form>
       </HStack>
       <Tiles>
