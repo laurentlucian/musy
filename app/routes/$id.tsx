@@ -1,7 +1,16 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, Button } from '@chakra-ui/react';
-import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
+import {
+  Heading,
+  HStack,
+  Stack,
+  Text,
+  Image,
+  Textarea,
+  Button,
+  RadioGroup,
+  Radio,
+} from '@chakra-ui/react';
+import { Form, Link, useCatch, useSearchParams, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
-
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 import { getCurrentUser, updateUserImage } from '~/services/auth.server';
@@ -15,12 +24,13 @@ import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
-import { secondsToMinutes } from '~/lib/utils';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
+  const [params] = useSearchParams();
+  const topFilter = params.get('top-filter') ?? 'medium_term';
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -179,7 +189,18 @@ const Profile = () => {
       )}
       {top && top?.items.length !== 0 && (
         <Stack spacing={3}>
-          <Heading fontSize={['xs', 'sm']}>Top</Heading>
+          <HStack spacing={5}>
+            <Heading fontSize={['xs', 'sm']}>Top</Heading>
+            <Form method="get" onChange={(e) => submit(e.currentTarget)}>
+              <RadioGroup defaultValue={topFilter} name="top-filter" size="sm">
+                <HStack spacing={4}>
+                  <Radio value="short_term">30 days</Radio>
+                  <Radio value="medium_term">6 months</Radio>
+                  <Radio value="long_term">All</Radio>
+                </HStack>
+              </RadioGroup>
+            </Form>
+          </HStack>
           <Tiles>
             {top.items.map((track) => {
               return (
@@ -214,6 +235,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
+  const url = new URL(request.url);
+  const topFilter = (url.searchParams.get('top-filter') ?? 'medium_term') as
+    | 'medium_term'
+    | 'long_term'
+    | 'short_term';
+
   const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
   if (!profile || !profile.user) throw new Response('Not found', { status: 404 });
   const user = profile.user;
@@ -246,22 +273,16 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     }),
     prisma.party.findMany({ where: { ownerId: id } }),
     spotify.getMyRecentlyPlayedTracks().catch((e) => {
-      const retryAfter = e?.headers['retry-after'];
-      console.log('e recent', retryAfter, secondsToMinutes(retryAfter));
       return {
         body: null,
       };
     }),
     spotify.getMySavedTracks().catch((e) => {
-      const retryAfter = e?.headers['retry-after'];
-      // console.log('e savd', retryAfter, secondsToMinutes(retryAfter));
       return {
         body: null,
       };
     }),
-    spotify.getMyTopTracks().catch((e) => {
-      const retryAfter = e?.headers['retry-after'];
-      // console.log('e savd', retryAfter, secondsToMinutes(retryAfter));
+    spotify.getMyTopTracks({ time_range: topFilter }).catch((e) => {
       return {
         body: null,
       };

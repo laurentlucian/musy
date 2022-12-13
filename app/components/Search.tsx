@@ -41,6 +41,7 @@ const Search = () => {
   return (
     <>
       <Form ref={ref} method="get" action="search">
+        <input type="hidden" name="top-filter" value={searchParams.get('top-filter') ?? ''} />
         <Flex flex={1} mb={0} align="center">
           <InputGroup>
             <Input
