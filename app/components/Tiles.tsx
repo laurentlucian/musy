@@ -2,8 +2,13 @@ import { HStack } from '@chakra-ui/react';
 import type { ReactNode } from 'react';
 import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
 
-const Tiles = ({ children }: { children: ReactNode }) => {
-  const { scrollRef, props } = useHorizontalScroll('reverse');
+type TilesProps = {
+  children: ReactNode;
+  autoScroll?: boolean;
+};
+
+const Tiles = ({ children, autoScroll }: TilesProps) => {
+  const { scrollRef, props } = useHorizontalScroll('reverse', autoScroll);
 
   return (
     <HStack

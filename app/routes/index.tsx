@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text } from '@chakra-ui/react';
 
 import { useCatch } from '@remix-run/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -10,6 +10,7 @@ import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
 import MiniTile from '~/components/MiniTile';
+import ActivitiyFeed from '~/components/ActivitiyFeed';
 
 const Index = () => {
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
@@ -17,19 +18,18 @@ const Index = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
       <Stack>
-        <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
+        <Heading fontSize={['xs', 'sm']}>Users Activity</Heading>
         <Tiles>
           {activity.map((track) => {
             return (
-              <MiniTile
+              <ActivitiyFeed
                 key={track.id}
                 id={track.trackId}
                 uri={track.uri}
                 image={track.image}
-                albumUri={track.albumUri}
-                albumName={track.albumName}
                 name={track.name}
                 artist={track.artist}
+                albumUri={track.albumUri}
                 artistUri={track.artistUri}
                 explicit={track.explicit}
                 createdAt={track.likedAt}
