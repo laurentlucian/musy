@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 
 type scrollBehavior = 'natural' | 'reverse';
-export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolean = true) => {
+export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolean = false) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [clickStartX, setClickStartX] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
@@ -10,6 +10,16 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolea
   useEffect(() => {
     if (scrollRef.current) {
       const el = scrollRef.current;
+      const onWheel = (e: WheelEvent) => {
+        if (e.deltaY == 0) return;
+        e.preventDefault();
+        el.scrollTo({
+          left: el.scrollLeft + e.deltaY,
+          // bugs with my mouse's scroll wheel (when too fast)
+          // behavior: 'smooth',
+        });
+      };
+      el.addEventListener('wheel', onWheel);
 
       // Start an interval that automatically scrolls the element to the right
       // if the autoScroll flag is set to true
@@ -29,6 +39,7 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll: boolea
         }, 50);
         return () => {
           clearInterval(scrollInterval);
+          el.removeEventListener('wheel', onWheel);
         };
       }
     }
