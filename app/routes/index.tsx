@@ -18,7 +18,6 @@ const Index = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
       <Stack>
-        <Heading fontSize={['xs', 'sm']}>Users Activity</Heading>
         <Tiles autoScroll>
           {activity.map((track) => {
             return (

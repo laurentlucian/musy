@@ -40,8 +40,8 @@ const ActivitiyFeed = ({
           </Link>
         </Tooltip>
 
-        <Image w="25px" src="heart.svg" />
-        <Text fontSize="8px" opacity={0.6} w="100%">
+        <Image w="15px" src="heart.svg" />
+        <Text fontSize={{ base: '8px', md: '10px' }} opacity={0.6} w="100%">
           {timeSince(createdAt ?? null)}
         </Text>
       </HStack>
@@ -62,7 +62,7 @@ const ActivitiyFeed = ({
             </Tooltip>
           </LinkB>
         </Stack>
-        <HStack w="80%" justify="end">
+        <HStack w="55%" justify="end">
           <LinkB href={albumUri} target="_blank">
             <Tooltip label={name} placement="top-start">
               <Image w="100%" src={image} />
