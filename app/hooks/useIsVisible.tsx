@@ -8,11 +8,14 @@ const useIsVisible = (elementRef: React.RefObject<Element>) => {
 
     if (!node) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        setIsVisible(entry.isIntersecting);
-      });
-    });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting);
+        });
+      },
+      { threshold: 0 },
+    );
     observer.observe(node);
     return () => observer.unobserve(node);
   }, [elementRef]);

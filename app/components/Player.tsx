@@ -93,8 +93,6 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
     }
   }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
 
-  console.log(playback);
-  console.log(item);
   if (!item) return null;
 
   const link = item.uri;

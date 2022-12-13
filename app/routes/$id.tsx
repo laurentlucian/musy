@@ -5,7 +5,6 @@ import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 import { getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
-import Tile from '~/components/Tile';
 import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
 import Following from '~/components/Following';
@@ -15,12 +14,13 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import MiniTile from '~/components/MiniTile';
 import TopTracks from '~/components/tiles/TopTracks';
+import RecentTracks from '~/components/tiles/RecentTracks';
+import LikedTracks from '~/components/tiles/LikedTracks';
 
 const Profile = () => {
   const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
     useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -129,53 +129,8 @@ const Profile = () => {
         )}
       </Stack>
       {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
-      {recent && recent?.items.length !== 0 && (
-        <Stack spacing={3}>
-          <Heading fontSize={['xs', 'sm']}>Recently played</Heading>
-          <Tiles>
-            {recent?.items.map(({ track, played_at }) => {
-              return (
-                <Tile
-                  // in case song is on repeat
-                  key={played_at}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  user={currentUser}
-                />
-              );
-            })}
-          </Tiles>
-        </Stack>
-      )}
-      {liked && liked?.items.length !== 0 && (
-        <Stack spacing={3}>
-          <Heading fontSize={['xs', 'sm']}>Recently liked</Heading>
-          <Tiles>
-            {liked.items.map(({ track }) => {
-              return (
-                <Tile
-                  key={track.id}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  user={currentUser}
-                />
-              );
-            })}
-          </Tiles>
-        </Stack>
-      )}
+      {recent && recent.items.length !== 0 && <RecentTracks recent={recent} />}
+      {liked && liked.length !== 0 && <LikedTracks liked={liked} />}
       <TopTracks top={top} />
     </Stack>
   );
@@ -218,7 +173,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     activity,
     party,
     { body: recent },
-    { body: liked },
+    {
+      body: { items: liked },
+    },
     {
       body: { items: top },
     },
@@ -230,14 +187,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       orderBy: { createdAt: 'desc' },
     }),
     prisma.party.findMany({ where: { ownerId: id } }),
-    spotify.getMyRecentlyPlayedTracks().catch((e) => {
+    spotify.getMyRecentlyPlayedTracks({ limit: 50 }).catch((e) => {
       return {
         body: null,
       };
     }),
-    spotify.getMySavedTracks().catch((e) => {
+    spotify.getMySavedTracks({ limit: 50 }).catch((e) => {
       return {
-        body: null,
+        body: { items: [] },
       };
     }),
     spotify.getMyTopTracks({ time_range: topFilter, limit: 50 }).catch((e) => {
