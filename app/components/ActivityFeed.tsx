@@ -1,10 +1,10 @@
-import { HStack, Image, Stack, Text, Link as LinkB, Spacer } from '@chakra-ui/react';
+import { HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
 import { timeSince } from '~/hooks/utils';
 import type { Profile } from '@prisma/client';
 
-type TileProps = {
+type ActivityProps = {
   uri: string;
   image: string;
   albumUri: string | null;
@@ -21,7 +21,7 @@ type TileProps = {
   createdAt?: Date;
 };
 
-const ActivitiyFeed = ({
+const ActivityFeed = ({
   uri,
   image,
   name,
@@ -30,7 +30,7 @@ const ActivitiyFeed = ({
   artist,
   albumUri,
   artistUri,
-}: TileProps) => {
+}: ActivityProps) => {
   return (
     <Stack pr={'6.9px'}>
       <HStack>
@@ -54,7 +54,7 @@ const ActivitiyFeed = ({
               </Text>
             </LinkB>
           </Tooltip>
-          <LinkB href={artistUri}>
+          <LinkB href={artistUri ?? ''}>
             <Tooltip label={artist} placement="top-start">
               <Text fontSize="8px" opacity={0.6}>
                 {artist}
@@ -63,7 +63,7 @@ const ActivitiyFeed = ({
           </LinkB>
         </Stack>
         <HStack w="55%" justify="end">
-          <LinkB href={albumUri} target="_blank">
+          <LinkB href={albumUri ?? ''} target="_blank">
             <Tooltip label={name} placement="top-start">
               <Image w="100%" src={image} />
             </Tooltip>
@@ -75,4 +75,4 @@ const ActivitiyFeed = ({
   );
 };
 
-export default ActivitiyFeed;
+export default ActivityFeed;

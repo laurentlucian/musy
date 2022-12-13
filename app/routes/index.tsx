@@ -9,8 +9,7 @@ import { getUserQueue } from '~/services/spotify.server';
 import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
-import MiniTile from '~/components/MiniTile';
-import ActivitiyFeed from '~/components/ActivitiyFeed';
+import ActivityFeed from '~/components/ActivityFeed';
 
 const Index = () => {
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
@@ -21,9 +20,8 @@ const Index = () => {
         <Tiles autoScroll>
           {activity.map((track) => {
             return (
-              <ActivitiyFeed
+              <ActivityFeed
                 key={track.id}
-                id={track.trackId}
                 uri={track.uri}
                 image={track.image}
                 name={track.name}
