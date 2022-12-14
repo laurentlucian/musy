@@ -55,7 +55,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
               />
             </Link>
           </Tooltip>
-          <Icon as={Send2} boxSize="20px" color="spotify.green" />
+          <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
           <Tooltip label={track.owner?.user.name} placement="top-start">
             <Link to={`/${track.owner?.user.userId}`}>
               <Image
@@ -88,7 +88,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
               />
             </Link>
           </Tooltip>
-          <Icon as={Play} boxSize="20px" color="spotify.green" />
+          <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
           {track.user && (
             <Tooltip label={track.user.name} placement="top-start">
               <Link to={`/${track.user.userId}`}>
