@@ -48,7 +48,7 @@ export type Activity = {
   explicit: boolean;
   userId: string | null;
   user: Profile | null;
-  owner?: { user: Profile; userId: string };
+  owner?: { user: Profile };
   action: string;
 };
 

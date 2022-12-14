@@ -57,7 +57,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
           </Tooltip>
           <Icon as={Send2} boxSize="20px" />
           <Tooltip label={track.owner?.user.name} placement="top-start">
-            <Link to={`/${track.owner?.userId}`}>
+            <Link to={`/${track.owner?.user.userId}`}>
               <Image
                 minW="25px"
                 maxW="25px"
@@ -77,7 +77,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
       return (
         <HStack>
           <Tooltip label={track.owner?.user.name} placement="top-start">
-            <Link to={`/${track.owner?.userId}`}>
+            <Link to={`/${track.owner?.user.userId}`}>
               <Image
                 minW="25px"
                 maxW="25px"
@@ -89,18 +89,20 @@ const ActivityAction = ({ track }: ActivityProps) => {
             </Link>
           </Tooltip>
           <Icon as={Play} boxSize="20px" />
-          <Tooltip label={track.user?.name} placement="top-start">
-            <Link to={`/${track.user?.userId}`}>
-              <Image
-                minW="25px"
-                maxW="25px"
-                minH="25px"
-                maxH="25px"
-                borderRadius="100%"
-                src={track.user?.image}
-              />
-            </Link>
-          </Tooltip>
+          {track.user && (
+            <Tooltip label={track.user.name} placement="top-start">
+              <Link to={`/${track.user.userId}`}>
+                <Image
+                  minW="25px"
+                  maxW="25px"
+                  minH="25px"
+                  maxH="25px"
+                  borderRadius="100%"
+                  src={track.user.image}
+                />
+              </Link>
+            </Tooltip>
+          )}
           <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
             {timeSince(track.createdAt)}
           </Text>

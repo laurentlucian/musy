@@ -35,6 +35,7 @@ export const likedQ = Queue<{ userId: string }>(
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        action: 'liked',
       };
 
       await prisma.likedSongs.upsert({
