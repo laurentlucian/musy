@@ -67,7 +67,13 @@ const AddQueue = ({
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
           <input type="hidden" name="fromId" value={sendTo ? userId : id} />
           <input type="hidden" name="action" value={sendTo ? 'send' : 'add'} />
-          <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
+          <Tooltip
+            label={
+              userId === undefined
+                ? 'Log in to ' + (sendTo ? 'send a song' : 'add to queue')
+                : 'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'
+            }
+          >
             <IconButton
               type="submit"
               aria-label="queue"
