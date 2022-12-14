@@ -7,22 +7,29 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
   const [clickStartX, setClickStartX] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [navigator] = useState(typeof window !== 'undefined' ? window.navigator : null);
+  // disables autoscroll for 2 seconds after user interacts with the scroll
+  const hasRecentlyDragged = useRef(false);
+  const recentlyDraggedTimeout = useRef<ReturnType<typeof setTimeout>>();
+
+  const isMobile = navigator?.userAgent.match(/iPad|iPhone|iPod/i);
 
   useInterval(
     () => {
       const el = scrollRef.current;
-      if (!el) return;
+      if (!el || hasRecentlyDragged.current) return;
+
       // Check if 'scrollBehavior' is supported
       if ('scrollBehavior' in Element.prototype) {
         // Use 'smooth' scrolling if supported
         el.scrollTo({
-          left: el.scrollLeft + (navigator.userAgent.match(/iPad|iPhone|iPod/i) ? 2 : 3),
+          left: el.scrollLeft + 1,
           behavior: 'smooth',
         });
       } else {
         // Fall back to default scrolling behavior if 'smooth' is not supported
         el.scrollTo({
-          left: el.scrollLeft + (navigator.userAgent.match(/iPad|iPhone|iPod/i) ? 2 : 3),
+          left: el.scrollLeft + 1,
         });
       }
 
@@ -39,7 +46,7 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
         }
       }
     },
-    autoScroll && !isDragging ? 50 : null,
+    autoScroll ? (isMobile ? 35 : 20) : null,
   );
 
   useEffect(() => {
@@ -53,6 +60,13 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
           // bugs with my mouse's scroll wheel (when too fast)
           // behavior: 'smooth',
         });
+
+        hasRecentlyDragged.current = true;
+        clearTimeout(recentlyDraggedTimeout.current);
+        recentlyDraggedTimeout.current = setTimeout(
+          () => (hasRecentlyDragged.current = false),
+          2000,
+        );
       };
       el.addEventListener('wheel', onWheel);
       return () => el.removeEventListener('wheel', onWheel);
@@ -64,6 +78,9 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
       setClickStartX(e.screenX);
       setScrollStartX(scrollRef.current.scrollLeft);
       setIsDragging(true);
+
+      clearTimeout(recentlyDraggedTimeout.current);
+      hasRecentlyDragged.current = true;
     }
   }, []);
 
@@ -88,14 +105,29 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
       setClickStartX(null);
       setScrollStartX(null);
       setIsDragging(false);
+
+      clearTimeout(recentlyDraggedTimeout.current);
+      recentlyDraggedTimeout.current = setTimeout(() => (hasRecentlyDragged.current = false), 2000);
     }
   }, [isDragging]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    clearTimeout(recentlyDraggedTimeout.current);
+    hasRecentlyDragged.current = true;
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    clearTimeout(recentlyDraggedTimeout.current);
+    recentlyDraggedTimeout.current = setTimeout(() => (hasRecentlyDragged.current = false), 2000);
+  }, []);
 
   const props = {
     onMouseDown: handleDragStart,
     onMouseMove: handleDragMove,
     onMouseUp: handleDragEnd,
     onMouseLeave: handleDragEnd,
+    onTouchStart: handleTouchStart,
+    onTouchEnd: handleTouchEnd,
   };
 
   return { props, scrollRef, clickStartX, scrollStartX, isDragging };
