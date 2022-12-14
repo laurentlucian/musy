@@ -74,6 +74,7 @@ model Queue {
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
   userId String?
+  action String   @default("add")
 }
 
 model LikedSongs {
@@ -92,6 +93,7 @@ model LikedSongs {
 
   user   Profile? @relation(fields: [userId], references: [userId])
   userId String?
+  action String   @default("liked")
 
   @@unique([trackId, userId])
 }

@@ -1,4 +1,4 @@
-import { Heading, HStack, Stack, Text } from '@chakra-ui/react';
+import { Heading, Stack, Text } from '@chakra-ui/react';
 
 import { useCatch } from '@remix-run/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -10,6 +10,7 @@ import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
 import ActivityFeed from '~/components/ActivityFeed';
+import type { LikedSongs, Profile, Queue } from '@prisma/client';
 
 const Index = () => {
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
@@ -17,22 +18,9 @@ const Index = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
       <Stack>
-        <Tiles autoScroll>
+        <Tiles autoScroll={false}>
           {activity.map((track) => {
-            return (
-              <ActivityFeed
-                key={track.id}
-                uri={track.uri}
-                image={track.image}
-                name={track.name}
-                artist={track.artist}
-                albumUri={track.albumUri}
-                artistUri={track.artistUri}
-                explicit={track.explicit}
-                createdAt={track.likedAt}
-                createdBy={track.user}
-              />
-            );
+            return <ActivityFeed key={track.id} track={track} />;
           })}
         </Tiles>
       </Stack>
@@ -44,6 +32,24 @@ const Index = () => {
       </Stack>
     </Stack>
   );
+};
+
+export type Activity = {
+  createdAt: Date;
+  id: number;
+  trackId?: string;
+  uri: string;
+  name: string;
+  image: string;
+  albumUri: string | null;
+  albumName: string | null;
+  artist: string;
+  artistUri: string | null;
+  explicit: boolean;
+  userId: string | null;
+  user: Profile | null;
+  owner?: { user: Profile; userId: string };
+  action: string;
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -71,11 +77,24 @@ export const loader = async ({ request }: LoaderArgs) => {
   // place playingNow users at top; o(n) but n is small
   users.sort((a, b) => isPlayingIds.indexOf(b.userId) - isPlayingIds.indexOf(a.userId));
 
-  const activity = await prisma.likedSongs.findMany({
+  const liked = (
+    await prisma.likedSongs.findMany({
+      take: 20,
+      orderBy: { likedAt: 'desc' },
+      include: { user: true },
+    })
+  ).map((data) => ({ ...data, createdAt: data.likedAt }));
+
+  const queued = await prisma.queue.findMany({
     take: 20,
-    orderBy: { likedAt: 'desc' },
-    include: { user: true },
+    orderBy: { createdAt: 'desc' },
+    include: { user: true, owner: { select: { user: true, accessToken: false } } },
   });
+
+  const activity = [...liked, ...queued].sort((a, b) => {
+    if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
+    return 0;
+  }) as Activity[];
 
   return typedjson(
     { users, user, playbacks, activity },

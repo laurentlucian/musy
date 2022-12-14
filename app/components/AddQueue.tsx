@@ -44,16 +44,16 @@ const AddQueue = ({
         : null
       : null;
 
+  const action = userId
+    ? sendTo
+      ? `/${id}/add`
+      : `/${userId}/add`
+    : '/auth/spotify?returnTo=/' + id;
+
   return (
     <>
       {!isDone ? (
-        <fetcher.Form
-          replace
-          method="post"
-          action={
-            sendTo ? `/${id}/add` : userId ? `/${userId}/add` : '/auth/spotify?returnTo=/' + id
-          }
-        >
+        <fetcher.Form replace method="post" action={action}>
           <input type="hidden" name="uri" value={uri} />
           <input type="hidden" name="image" value={image} />
           <input type="hidden" name="albumUri" value={albumUri ?? ''} />
@@ -66,6 +66,7 @@ const AddQueue = ({
           {/* sendTo: receiving song (id), sending song (userId) */}
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
           <input type="hidden" name="fromId" value={sendTo ? userId : id} />
+          <input type="hidden" name="action" value={sendTo ? 'send' : 'add'} />
           <Tooltip label={'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}>
             <IconButton
               type="submit"

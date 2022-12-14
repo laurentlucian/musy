@@ -9,6 +9,7 @@ import {
   Link as LinkB,
   useMediaQuery,
   Icon,
+  Avatar,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link, useNavigate, useTransition } from '@remix-run/react';
@@ -25,7 +26,7 @@ type PlayerProps = {
 };
 
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
-  const bg = useColorModeValue('music.50', 'music.900');
+  const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         pr={0}
       >
         <HStack spacing={3} w="100%">
-          <Image boxSize="50px" borderRadius="100%" src={user.image} />
+          <Image boxSize="50px" borderRadius="100%" minH="50px" minW="50px" src={user.image} />
           <Stack>
             <HStack>
               <Text fontWeight="bold" fontSize={['15px', '20px']}>

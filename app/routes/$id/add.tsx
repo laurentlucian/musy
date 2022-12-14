@@ -17,6 +17,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const artistUri = body.get('artistUri') as string;
   const explicit = Boolean(body.get('explicit'));
   const fromUserId = body.get('fromId');
+  const action = body.get('action') as string;
 
   if (
     typeof uri !== 'string' ||
@@ -40,6 +41,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     explicit,
     ownerId: id,
     userId: fromUserId !== '' ? fromUserId : null,
+    action,
   };
 
   const { spotify } = await spotifyApi(id);
@@ -62,7 +64,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (id !== fromUserId) {
-    const activity = await prisma.queue.create({ data: { ...fields, pending: true } });
+    const activity = await prisma.queue.create({
+      data: { ...fields, pending: true },
+    });
     const res = await activityQ.add(
       'pending_activity',
       {

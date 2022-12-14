@@ -1,14 +1,16 @@
 import { Heading, Stack } from '@chakra-ui/react';
+import type { Profile } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
 const RecentTracks = ({
   recent: initialRecent,
+  currentUser,
 }: {
-  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse;
+  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
+  currentUser: Profile | null;
 }) => {
-  const recent = initialRecent.items;
-
+  const recent = initialRecent?.items;
   if (!recent) return null;
 
   return (
@@ -27,7 +29,7 @@ const RecentTracks = ({
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
-              user={null}
+              user={currentUser}
             />
           );
         })}
