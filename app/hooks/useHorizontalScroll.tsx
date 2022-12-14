@@ -12,17 +12,34 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
     () => {
       const el = scrollRef.current;
       if (!el) return;
-      el.scrollTo({
-        left: el.scrollLeft + 3,
-      });
-
-      if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+      // Check if 'scrollBehavior' is supported
+      if ('scrollBehavior' in Element.prototype) {
+        // Use 'smooth' scrolling if supported
         el.scrollTo({
-          left: 0,
+          left: el.scrollLeft + (navigator.userAgent.match(/iPad|iPhone|iPod/i) ? 2 : 3),
+          behavior: 'smooth',
+        });
+      } else {
+        // Fall back to default scrolling behavior if 'smooth' is not supported
+        el.scrollTo({
+          left: el.scrollLeft + (navigator.userAgent.match(/iPad|iPhone|iPod/i) ? 2 : 3),
         });
       }
+
+      if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+        if ('scrollBehavior' in Element.prototype) {
+          el.scrollTo({
+            left: 0,
+            behavior: 'smooth',
+          });
+        } else {
+          el.scrollTo({
+            left: 0,
+          });
+        }
+      }
     },
-    autoScroll ? 50 : null,
+    autoScroll && !isDragging ? 50 : null,
   );
 
   useEffect(() => {
