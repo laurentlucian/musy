@@ -151,7 +151,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(id, 'Missing params Id');
 
   const url = new URL(request.url);
-  const topFilter = (url.searchParams.get('top-filter') ?? 'medium_term') as
+  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
     | 'medium_term'
     | 'long_term'
     | 'short_term';
