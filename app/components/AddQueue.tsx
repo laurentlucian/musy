@@ -34,7 +34,7 @@ const AddQueue = ({
 }: AddQueueProps) => {
   const { id } = useParams();
   const fetcher = useFetcher();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
   const isError =
@@ -48,7 +48,7 @@ const AddQueue = ({
     ? sendTo
       ? `/${id}/add`
       : `/${userId}/add`
-    : '/auth/spotify?returnTo=' + pathname;
+    : '/auth/spotify?returnTo=' + pathname + search;
 
   return (
     <>

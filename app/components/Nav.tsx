@@ -21,15 +21,11 @@ const Nav = ({ user }: { user: User | null }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const busy =
     (transition.submission?.formData.has('logout') ||
       transition.submission?.formData.has('login')) ??
     false;
-
-  // don't display login button on Index page (where there's a join button)
-  // both shows loading same if join is cliced (@todo separate loading states)
-  // const showAuth = user ? true : location.pathname === '/' ? false : true;
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
@@ -41,10 +37,9 @@ const Nav = ({ user }: { user: User | null }) => {
       </HStack>
       <HStack h="39px">
         {!user && (
-          <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
-            <Input type="hidden" value="/" name="redirectTo" />
+          <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
             <Button
-              isLoading={transition.state === 'submitting'}
+              isLoading={transition.submission?.action.includes('auth')}
               type="submit"
               h="39px"
               borderRadius="7px"
@@ -58,7 +53,7 @@ const Nav = ({ user }: { user: User | null }) => {
 
         {user && (
           <Form action={'/logout'} method="post">
-            {user && <Input type="hidden" value={pathname} name="redirectTo" />}
+            <input type="hidden" value={pathname + search} name="redirectTo" />
             <Tooltip label="Logout">
               <IconButton
                 aria-label="logout"
