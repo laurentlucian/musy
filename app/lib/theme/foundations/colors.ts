@@ -12,6 +12,10 @@ const colors = {
     800: '#111111',
     900: '#10101066',
   },
+  spotify: {
+    green: '#1DB954',
+    black: '#191414',
+  },
 };
 
 export default colors;

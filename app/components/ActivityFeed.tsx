@@ -11,7 +11,7 @@ import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
 import { timeSince } from '~/hooks/utils';
 import type { Activity } from '~/routes';
-import { Play, Send2 } from 'iconsax-react';
+import { Play, Send2, Spotify } from 'iconsax-react';
 
 type ActivityProps = {
   track: Activity;
@@ -55,7 +55,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
               />
             </Link>
           </Tooltip>
-          <Icon as={Send2} boxSize="20px" />
+          <Icon as={Send2} boxSize="20px" color="spotify.green" />
           <Tooltip label={track.owner?.user.name} placement="top-start">
             <Link to={`/${track.owner?.user.userId}`}>
               <Image
@@ -88,7 +88,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
               />
             </Link>
           </Tooltip>
-          <Icon as={Play} boxSize="20px" />
+          <Icon as={Play} boxSize="20px" color="spotify.green" />
           {track.user && (
             <Tooltip label={track.user.name} placement="top-start">
               <Link to={`/${track.user.userId}`}>
