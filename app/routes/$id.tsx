@@ -27,15 +27,13 @@ const Profile = () => {
         <Tooltip label="<3" placement="top">
           <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
-        <Stack
-          flex={1}
-          maxW="calc(100% - 100px)"
-          pl={user.name.length > 10 ? '15px' : user.name.length > 16 ? '0px' : '23px'}
-        >
+        <Stack flex={1} maxW="calc(100% - 100px)">
           <HStack>
             <Heading
               size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
               fontWeight="bold"
+              textAlign="left"
+              w="100%"
             >
               {user.name}
             </Heading>
@@ -61,7 +59,13 @@ const Profile = () => {
               />
             </Form>
           ) : (
-            <Text fontSize="14px" noOfLines={3} whiteSpace="normal" zIndex={-2}>
+            <Text
+              fontSize="14px"
+              noOfLines={3}
+              whiteSpace="normal"
+              zIndex={-2}
+              wordBreak="break-word"
+            >
               {user.bio}
             </Text>
           )}

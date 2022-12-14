@@ -155,6 +155,10 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                     fontWeight="bold"
                     transition="opacity 1.69s ease-in-out"
                     opacity={playingFrom ? 1 : 0}
+                    overflow="scroll"
+                    whiteSpace="normal"
+                    wordBreak="break-word"
+                    noOfLines={1}
                   >
                     {playback.context.name
                       ? playback.context.name
@@ -165,7 +169,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 </Tooltip>
               </>
             )}
-            <Stack spacing={1} pos="fixed" pt="48px">
+            <Stack spacing={1} pos="absolute" pt="45px">
               <Text
                 fontSize="13px"
                 fontWeight="normal"
@@ -285,8 +289,15 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                     ? [130, 160, 160, 200, 221]
                     : 130
                 }
+                minW={
+                  size === 'large'
+                    ? [130, 160, 160, 200, 334]
+                    : size === 'medium'
+                    ? [130, 160, 160, 200, 221]
+                    : 130
+                }
                 borderRadius={size === 'small' ? 0 : 2}
-                transition="width 0.25s, height 0.25s, margin-top 0.25s"
+                transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
               />
             </Tooltip>
           </Link>
