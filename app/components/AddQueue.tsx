@@ -1,5 +1,5 @@
 import { Icon, IconButton } from '@chakra-ui/react';
-import { useFetcher, useParams } from '@remix-run/react';
+import { useFetcher, useLocation, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import Tooltip from './Tooltip';
 
@@ -34,7 +34,7 @@ const AddQueue = ({
 }: AddQueueProps) => {
   const { id } = useParams();
   const fetcher = useFetcher();
-
+  const { pathname } = useLocation();
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
   const isDone = fetcher.type === 'done';
   const isError =
@@ -48,7 +48,7 @@ const AddQueue = ({
     ? sendTo
       ? `/${id}/add`
       : `/${userId}/add`
-    : '/auth/spotify?returnTo=/' + id;
+    : '/auth/spotify?returnTo=' + pathname;
 
   return (
     <>

@@ -9,7 +9,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Form, Link, useLocation, useParams, useTransition } from '@remix-run/react';
+import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Logout, Moon, Sun1 } from 'iconsax-react';
 import type { User } from 'remix-auth-spotify';
 import Tooltip from './Tooltip';
@@ -21,8 +21,7 @@ const Nav = ({ user }: { user: User | null }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
-  const location = useLocation();
-  const { id } = useParams();
+  const { pathname } = useLocation();
   const busy =
     (transition.submission?.formData.has('logout') ||
       transition.submission?.formData.has('login')) ??
@@ -42,7 +41,7 @@ const Nav = ({ user }: { user: User | null }) => {
       </HStack>
       <HStack h="39px">
         {!user && (
-          <Form action={'/auth/spotify?returnTo=/' + id} method="post">
+          <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
             <Input type="hidden" value="/" name="redirectTo" />
             <Button
               isLoading={transition.state === 'submitting'}
@@ -59,7 +58,7 @@ const Nav = ({ user }: { user: User | null }) => {
 
         {user && (
           <Form action={'/logout'} method="post">
-            {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
+            {user && <Input type="hidden" value={pathname} name="redirectTo" />}
             <Tooltip label="Logout">
               <IconButton
                 aria-label="logout"
