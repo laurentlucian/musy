@@ -9,7 +9,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Form, Link, useLocation, useParams, useTransition } from '@remix-run/react';
+import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Logout, Moon, Sun1 } from 'iconsax-react';
 import type { User } from 'remix-auth-spotify';
 import Tooltip from './Tooltip';
@@ -58,7 +58,7 @@ const Nav = ({ user }: { user: User | null }) => {
 
         {user && (
           <Form action={'/logout'} method="post">
-            {user && <Input type="hidden" value={location.pathname} name="redirectTo" />}
+            {user && <Input type="hidden" value={pathname} name="redirectTo" />}
             <Tooltip label="Logout">
               <IconButton
                 aria-label="logout"
