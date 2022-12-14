@@ -169,7 +169,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 </Tooltip>
               </>
             )}
-            <Stack spacing={1} pos="absolute" pt="45px">
+            <Stack spacing={1} pos="absolute" pt="48px" lineHeight='shorter'>
               <Text
                 fontSize="13px"
                 fontWeight="normal"
