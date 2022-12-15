@@ -55,7 +55,7 @@ const Profile = () => {
                 maxLength={75}
                 rows={2}
                 py={0}
-                focusBorderColor="purple.500"
+                focusBorderColor="spotify.green"
               />
             </Form>
           ) : (

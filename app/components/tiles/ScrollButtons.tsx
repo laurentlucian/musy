@@ -92,7 +92,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<Previous size="15px" />}
           aria-label="to start"
-          _hover={{ opacity: 1 }}
+          _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -103,7 +103,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ArrowLeft2 size="15px" />}
           aria-label="previous page"
-          _hover={{ opacity: 1 }}
+          _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -116,7 +116,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ArrowRight2 size="15px" />}
           aria-label="next page"
-          _hover={{ opacity: 1 }}
+          _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -127,7 +127,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<Next size="15px" />}
           aria-label="to end"
-          _hover={{ opacity: 1, boxShadow: 'none' }}
+          _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
