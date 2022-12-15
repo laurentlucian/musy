@@ -1,4 +1,4 @@
-import { Heading, HStack, Stack, useRadioGroup } from '@chakra-ui/react';
+import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
 import Tile from '../Tile';

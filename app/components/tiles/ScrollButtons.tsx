@@ -92,6 +92,9 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<Previous size="15px" />}
           aria-label="to start"
+          _hover={{ opacity: 1 }}
+          opacity={0.5}
+          _active={{ boxShadow: 'none' }}
         />
 
         <IconButton
@@ -100,6 +103,9 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ArrowLeft2 size="15px" />}
           aria-label="previous page"
+          _hover={{ opacity: 1 }}
+          opacity={0.5}
+          _active={{ boxShadow: 'none' }}
         />
       </HStack>
 
@@ -110,6 +116,9 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ArrowRight2 size="15px" />}
           aria-label="next page"
+          _hover={{ opacity: 1 }}
+          opacity={0.5}
+          _active={{ boxShadow: 'none' }}
         />
 
         <IconButton
@@ -118,6 +127,9 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<Next size="15px" />}
           aria-label="to end"
+          _hover={{ opacity: 1, boxShadow: 'none' }}
+          opacity={0.5}
+          _active={{ boxShadow: 'none' }}
         />
       </HStack>
     </HStack>
