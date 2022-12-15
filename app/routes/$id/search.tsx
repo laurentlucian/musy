@@ -14,7 +14,7 @@ const Search = () => {
   if (tracks.length === 0) return <></>;
 
   return (
-    <Tiles>
+    <Tiles title="">
       {tracks?.map((track) => (
         <Tile
           key={track.id}

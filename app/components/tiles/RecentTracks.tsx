@@ -15,8 +15,7 @@ const RecentTracks = ({
 
   return (
     <Stack spacing={3}>
-      <Heading fontSize={['xs', 'sm']}>Recently played</Heading>
-      <Tiles scrollButtons={true}>
+      <Tiles title="Recently played" scrollButtons={true}>
         {recent.map(({ track, played_at }) => {
           return (
             <Tile

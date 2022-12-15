@@ -84,52 +84,46 @@ const Profile = () => {
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
-        <Stack>
-          <Heading fontSize={['xs', 'sm']}>Up Next</Heading>
-          <Tiles>
-            {queue.map((track, index) => {
+        <Tiles title="Up Next">
+          {queue.map((track, index) => {
+            return (
+              <MiniTile
+                key={index}
+                id={track.id}
+                uri={track.uri}
+                image={track.album.images[1].url}
+                albumUri={track.album.uri}
+                albumName={track.album.name}
+                name={track.name}
+                artist={track.album.artists[0].name}
+                artistUri={track.album.artists[0].uri}
+                explicit={track.explicit}
+              />
+            );
+          })}
+        </Tiles>
+      )}
+      <Stack spacing={5}>
+        {activity.length !== 0 && (
+          <Tiles title="Activity">
+            {activity.map((item) => {
               return (
                 <MiniTile
-                  key={index}
-                  id={track.id}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
+                  key={item.id}
+                  uri={item.uri}
+                  image={item.image}
+                  albumUri={item.albumUri}
+                  albumName={item.albumName}
+                  name={item.name}
+                  artist={item.artist}
+                  artistUri={item.artistUri}
+                  explicit={item.explicit}
+                  createdBy={item.user}
+                  createdAt={item.createdAt}
                 />
               );
             })}
           </Tiles>
-        </Stack>
-      )}
-      <Stack spacing={5}>
-        {activity.length !== 0 && (
-          <Stack>
-            <Heading fontSize={['xs', 'sm']}>Activity</Heading>
-            <Tiles>
-              {activity.map((item) => {
-                return (
-                  <MiniTile
-                    key={item.id}
-                    uri={item.uri}
-                    image={item.image}
-                    albumUri={item.albumUri}
-                    albumName={item.albumName}
-                    name={item.name}
-                    artist={item.artist}
-                    artistUri={item.artistUri}
-                    explicit={item.explicit}
-                    createdBy={item.user}
-                    createdAt={item.createdAt}
-                  />
-                );
-              })}
-            </Tiles>
-          </Stack>
         )}
       </Stack>
       {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}

@@ -22,24 +22,24 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
 
   const group = getRootProps();
 
+  const Filter = (
+    <Form method="get" replace onChange={(e) => submit(e.currentTarget)}>
+      <HStack spacing={4} {...group} p={0} m={0}>
+        {options.map(({ value, name }) => {
+          const radio = getRadioProps({ value });
+          return (
+            <RadioCard key={value} {...radio} value={value}>
+              {name}
+            </RadioCard>
+          );
+        })}
+      </HStack>
+    </Form>
+  );
+
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
-      <HStack spacing={5} align="flex-end">
-        <Heading fontSize={['xs', 'sm']}>Top</Heading>
-        <Form method="get" replace onChange={(e) => submit(e.currentTarget)}>
-          <HStack spacing={4} {...group} p={0} m={0}>
-            {options.map(({ value, name }) => {
-              const radio = getRadioProps({ value });
-              return (
-                <RadioCard key={value} {...radio} value={value}>
-                  {name}
-                </RadioCard>
-              );
-            })}
-          </HStack>
-        </Form>
-      </HStack>
-      <Tiles scrollButtons={true}>
+      <Tiles title="Top" scrollButtons={true} Filter={Filter}>
         {top.map((track) => {
           return (
             <Tile

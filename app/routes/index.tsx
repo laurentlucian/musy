@@ -10,7 +10,7 @@ import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
 import ActivityFeed from '~/components/ActivityFeed';
-import type { LikedSongs, Profile, Queue } from '@prisma/client';
+import type { Profile } from '@prisma/client';
 
 const Index = () => {
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
