@@ -5,7 +5,6 @@ import {
   HStack,
   IconButton,
   Image,
-  Input,
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
