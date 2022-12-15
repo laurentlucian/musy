@@ -47,7 +47,7 @@ const LikedTracks = ({
   return (
     <Stack spacing={3}>
       <Heading fontSize={['xs', 'sm']}>Liked</Heading>
-      <Tiles>
+      <Tiles scrollButtons={true}>
         {liked.map(({ track }) => {
           return (
             <Tile

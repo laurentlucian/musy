@@ -39,7 +39,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           </HStack>
         </Form>
       </HStack>
-      <Tiles>
+      <Tiles scrollButtons={true}>
         {top.map((track) => {
           return (
             <Tile
