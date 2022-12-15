@@ -16,6 +16,7 @@ export const RadioCard = (props: any) => {
         cursor="pointer"
         _checked={{
           textDecor: 'underline',
+          opacity: '1',
         }}
         fontSize={'10px'}
         color={color}
@@ -24,6 +25,7 @@ export const RadioCard = (props: any) => {
         }}
         p={0}
         m={0}
+        opacity={0.5}
       >
         {props.children}
       </Box>
