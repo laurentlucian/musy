@@ -9,11 +9,10 @@ import {
   Link as LinkB,
   useMediaQuery,
   Icon,
-  Avatar,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, useNavigate, useTransition } from '@remix-run/react';
-import { InfoCircle, Information } from 'iconsax-react';
+import { useNavigate, useTransition } from '@remix-run/react';
+import { InfoCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { Playback } from '~/services/spotify.server';
 import PlayerBar from './PlayerBar';
@@ -62,9 +61,10 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
               </Text>
               {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
-            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
+            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} pos="absolute" pt="20px">
               {user.bio?.slice(0, 15)}
             </Text>
+            <Text opacity={0}>hiiii</Text>
           </Stack>
 
           {playback && playback.currently_playing && playback.currently_playing.item ? (
