@@ -1,5 +1,5 @@
-import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
@@ -23,7 +23,12 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const group = getRootProps();
 
   const Filter = (
-    <Form method="get" replace onChange={(e) => submit(e.currentTarget)}>
+    <Form
+      method="get"
+      onChange={(e) => {
+        submit(e.currentTarget, { replace: true });
+      }}
+    >
       <HStack spacing={4} {...group} p={0} m={0}>
         {options.map(({ value, name }) => {
           const radio = getRadioProps({ value });
