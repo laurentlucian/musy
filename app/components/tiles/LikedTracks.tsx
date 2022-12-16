@@ -18,7 +18,7 @@ const LikedTracks = ({
 
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const ref = useRef(null);
+  const [ref, setRef] = useState<HTMLDivElement | null>(null);
   const isVisible = useIsVisible(ref);
   const hasFetched = useRef(false);
 
@@ -47,9 +47,14 @@ const LikedTracks = ({
   return (
     <Stack spacing={3}>
       <Tiles title="Liked" scrollButtons={true}>
-        {liked.map(({ track }) => {
+        {liked.map(({ track }, index) => {
+          const isLast = index === liked.length - 1;
+
           return (
             <Tile
+              ref={(ref) => {
+                isLast && setRef(ref);
+              }}
               key={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
@@ -63,7 +68,6 @@ const LikedTracks = ({
             />
           );
         })}
-        <div ref={ref} style={{ border: '100px solid', opacity: 0 }} />
       </Tiles>
     </Stack>
   );

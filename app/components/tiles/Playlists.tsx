@@ -18,7 +18,7 @@ const Playlists = ({
 
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const ref = useRef(null);
+  const [ref, setRef] = useState<HTMLDivElement | null>(null);
   const isVisible = useIsVisible(ref);
   const hasFetched = useRef(false);
 
@@ -47,11 +47,16 @@ const Playlists = ({
   return (
     <Stack spacing={3}>
       <Tiles title="Playlists" scrollButtons>
-        {playlists.map((list, played_at) => {
+        {playlists.map((list, index) => {
+          const isLast = index === playlists.length - 1;
+
           return (
             <Tile
+              ref={(ref) => {
+                isLast && setRef(ref);
+              }}
               playlist
-              key={played_at}
+              key={list.id}
               uri={list.uri}
               image={list.images[0]?.url}
               albumUri={list.uri}
@@ -64,7 +69,6 @@ const Playlists = ({
             />
           );
         })}
-        <div ref={ref} style={{ border: '100px solid', opacity: 0 }} />
       </Tiles>
     </Stack>
   );

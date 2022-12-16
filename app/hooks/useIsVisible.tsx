@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 
-const useIsVisible = (elementRef: React.RefObject<Element>) => {
+const useIsVisible = (node: HTMLDivElement | null) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const node = elementRef?.current; // DOM Ref
-
     if (!node) return;
 
     const observer = new IntersectionObserver(
@@ -18,7 +16,7 @@ const useIsVisible = (elementRef: React.RefObject<Element>) => {
     );
     observer.observe(node);
     return () => observer.unobserve(node);
-  }, [elementRef]);
+  }, [node]);
 
   return isVisible;
 };
