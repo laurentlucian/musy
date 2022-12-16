@@ -80,6 +80,7 @@ const AddQueue = ({
               icon={sendTo ? <Send2 /> : <AddSquare />}
               variant="ghost"
               isLoading={isAdding}
+              _hover={{ color: 'spotify.green' }}
               p={0}
             />
           </Tooltip>

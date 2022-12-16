@@ -19,7 +19,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
+import { ArrowDown2, ArrowUp2, Next, People, Play, Previous } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
@@ -189,6 +189,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                     <Link href="https://open.spotify.com" target="_blank">
                       <Image height="30px" width="98px" src={spotify_logo} />
                     </Link>
+
                     {currentUser?.userId !== id && (
                       <>
                         {!isUserInParty && (
@@ -215,7 +216,8 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                               aria-label={isUserInParty ? 'Leave' : 'Join'}
                               name="party"
                               icon={<People size="24px" />}
-                              color={isUserInParty ? 'purple.500' : undefined}
+                              color={isUserInParty ? 'spotify.green' : undefined}
+                              _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
                               variant="ghost"
                               type="submit"
                               cursor="pointer"
@@ -299,6 +301,38 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                 </Link>
               </HStack>
             </Flex>
+            {/* Player button */}
+            {/* {currentUser?.userId === id && (
+              <HStack w="100%" justify={'start'}>
+                <Tooltip label="Prev Song">
+                  <IconButton
+                    aria-label="Prev"
+                    variant="ghost"
+                    icon={<Previous />}
+                    _hover={{ opacity: 1, color: 'spotify.green' }}
+                    boxShadow="none"
+                  />
+                </Tooltip>
+                <Tooltip label="Play">
+                  <IconButton
+                    aria-label="Play"
+                    variant="ghost"
+                    icon={<Play />}
+                    _hover={{ opacity: 1, color: 'spotify.green' }}
+                    boxShadow="none"
+                  />
+                </Tooltip>
+                <Tooltip label="Next Song">
+                  <IconButton
+                    aria-label="Next"
+                    variant="ghost"
+                    icon={<Next />}
+                    _hover={{ opacity: 1, color: 'spotify.green' }}
+                    boxShadow="none"
+                  />
+                </Tooltip>
+              </HStack>
+            )} */}
             <PlayerBar playback={playback} />
           </Stack>
         </Collapse>

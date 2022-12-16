@@ -5,6 +5,6 @@ export default {
     },
   },
   defaultProps: {
-    focusBorderColor: 'purple.500',
+    focusBorderColor: 'spotify.green',
   },
 };
