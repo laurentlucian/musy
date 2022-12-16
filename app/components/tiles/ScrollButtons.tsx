@@ -7,7 +7,6 @@ const ScrollButtons = ({
 }: {
   scrollRef: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
-  const buttonRef = useRef(null);
   const scrollPosRef = useRef(0);
   const buttonPressedRef = useRef(false);
   const recentlyPushedButton = useRef<ReturnType<typeof setTimeout>>();
@@ -16,7 +15,7 @@ const ScrollButtons = ({
   const offset = isSmallScreen ? 52 : -34;
 
   const scrollToEnd = () => {
-    if (scrollRef.current && buttonRef.current) {
+    if (scrollRef.current) {
       scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
         left: scrollPosRef.current,
@@ -25,7 +24,7 @@ const ScrollButtons = ({
     }
   };
   const scrollToStart = () => {
-    if (scrollRef.current && buttonRef.current) {
+    if (scrollRef.current) {
       scrollPosRef.current = -scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
         left: scrollPosRef.current,
@@ -36,7 +35,7 @@ const ScrollButtons = ({
 
   const scrollToPrevPage = () => {
     buttonPressedRef.current = true;
-    if (scrollRef.current && buttonRef.current) {
+    if (scrollRef.current) {
       if (scrollPosRef.current <= 0) scrollPosRef.current = 0;
       else scrollPosRef.current -= scrollRef.current.clientWidth + offset;
       scrollRef.current.scrollTo({
@@ -52,7 +51,7 @@ const ScrollButtons = ({
   };
   const scrollToNextPage = () => {
     buttonPressedRef.current = true;
-    if (scrollRef.current && buttonRef.current) {
+    if (scrollRef.current) {
       if (scrollPosRef.current <= 0) scrollPosRef.current = 0;
       if (scrollPosRef.current >= scrollRef.current.scrollWidth - scrollRef.current.clientWidth)
         scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
@@ -87,7 +86,6 @@ const ScrollButtons = ({
     <HStack ml="auto !important">
       <HStack>
         <IconButton
-          ref={buttonRef}
           onClick={scrollToStart}
           variant="ghost"
           icon={<Previous size="15px" />}
@@ -98,7 +96,6 @@ const ScrollButtons = ({
         />
 
         <IconButton
-          ref={buttonRef}
           onClick={scrollToPrevPage}
           variant="ghost"
           icon={<ArrowLeft2 size="15px" />}
@@ -111,7 +108,6 @@ const ScrollButtons = ({
 
       <HStack>
         <IconButton
-          ref={buttonRef}
           onClick={scrollToNextPage}
           variant="ghost"
           icon={<ArrowRight2 size="15px" />}
@@ -122,7 +118,6 @@ const ScrollButtons = ({
         />
 
         <IconButton
-          ref={buttonRef}
           onClick={scrollToEnd}
           variant="ghost"
           icon={<Next size="15px" />}

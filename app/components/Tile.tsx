@@ -1,3 +1,4 @@
+import type { ChakraProps } from '@chakra-ui/react';
 import {
   Flex,
   HStack,
@@ -38,7 +39,7 @@ type TileProps = {
   createdBy?: Profile | null;
   createdAt?: Date;
   playlist?: Boolean;
-};
+} & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
@@ -56,6 +57,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       createdAt,
       createdBy,
       playlist,
+      ...props
     },
     ref,
   ) => {
@@ -68,7 +70,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     };
 
     return (
-      <Stack ref={ref} flex="0 0 200px">
+      <Stack ref={ref} flex="0 0 200px" {...props}>
         <Flex direction="column">
           {createdAt && (
             <HStack align="center" h="35px">
