@@ -217,7 +217,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         body: { items: [] },
       };
     }),
-    spotify.getUserPlaylists(id).catch((e) => {
+    spotify.getUserPlaylists(id, { limit: 50 }).catch((e) => {
       return {
         body: { items: [] },
       };
