@@ -23,7 +23,7 @@ import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
-import AddQueue from './AddQueue';
+import AddQueue from './menu/AddQueue';
 import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';

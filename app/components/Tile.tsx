@@ -1,24 +1,11 @@
-import type { ChakraProps } from '@chakra-ui/react';
-import {
-  Flex,
-  HStack,
-  Image,
-  Stack,
-  Text,
-  Link as LinkB,
-  Menu,
-  MenuButton,
-  IconButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
-import { Link, useParams } from '@remix-run/react';
-import { forwardRef } from 'react';
-import { ElementPlus } from 'iconsax-react';
+import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
+import type { ChakraProps } from '@chakra-ui/react';
+import { Link, useParams } from '@remix-run/react';
+import type { Profile } from '@prisma/client';
+import ActionMenu from './menu/ActionMenu';
 import { timeSince } from '~/hooks/utils';
-import AddQueue from './AddQueue';
+import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
 
 type TileProps = {
@@ -145,41 +132,19 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           </Stack>
           {!playlist && (
             <Flex minW="35px" justify="center">
-              <Menu
-                direction="ltr"
-                placement="bottom-end"
-                colorScheme={'menuTheme'}
-                closeOnSelect={false}
-              >
-                <MenuButton
-                  as={IconButton}
-                  variant="ghost"
-                  aria-label="options"
-                  icon={<ElementPlus />}
-                  boxShadow="none"
-                  _active={{ boxShadow: 'none', opacity: 1 }}
-                  _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
-                  opacity={0.5}
-                />
-                <MenuList>
-                  <MenuItem closeOnSelect={false} w="100%">
-                    <AddQueue
-                      key={id}
-                      uri={uri}
-                      image={image}
-                      albumName={albumName}
-                      albumUri={albumUri}
-                      name={name}
-                      artist={artist}
-                      artistUri={artistUri}
-                      explicit={explicit ?? false}
-                      userId={user?.userId}
-                      sendTo={sendTo}
-                    />
-                  </MenuItem>
-                  <MenuItem>hi</MenuItem>
-                </MenuList>
-              </Menu>
+              <ActionMenu
+                key={id}
+                uri={uri}
+                image={image}
+                albumName={albumName}
+                albumUri={albumUri}
+                name={name}
+                artist={artist}
+                artistUri={artistUri}
+                explicit={explicit ?? false}
+                userId={user?.userId}
+                sendTo={sendTo}
+              />
             </Flex>
           )}
         </Flex>

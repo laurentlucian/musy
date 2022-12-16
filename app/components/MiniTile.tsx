@@ -4,7 +4,7 @@ import { Link, useParams } from '@remix-run/react';
 import { InfoCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { timeSince } from '~/hooks/utils';
-import AddQueue from './AddQueue';
+import AddQueue from './menu/AddQueue';
 import Tooltip from './Tooltip';
 
 type TileProps = {
