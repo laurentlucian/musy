@@ -19,7 +19,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { ArrowDown2, ArrowUp2, Next, People, Play, Previous } from 'iconsax-react';
+import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';

@@ -1,7 +1,6 @@
-import { Icon, IconButton } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
-import Tooltip from './Tooltip';
 
 type AddQueueProps = {
   uri: string;
@@ -67,35 +66,50 @@ const AddQueue = ({
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
           <input type="hidden" name="fromId" value={sendTo ? userId : id} />
           <input type="hidden" name="action" value={sendTo ? 'send' : 'add'} />
-          <Tooltip
-            label={
-              userId === undefined
-                ? 'Log in to ' + (sendTo ? 'send a song' : 'add to queue')
-                : 'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'
-            }
+          <Button
+            type="submit"
+            aria-label="queue"
+            leftIcon={sendTo ? <Send2 /> : <AddSquare />}
+            variant="ghost"
+            isLoading={isAdding}
+            _hover={{ color: 'spotify.green', boxShadow: 'none' }}
+            p="0px 0px"
+            w="200px"
+            justifyContent="flex-start"
+            boxShadow="none"
+            _active={{ boxShadow: 'none' }}
           >
-            <IconButton
-              type="submit"
-              aria-label="queue"
-              icon={sendTo ? <Send2 /> : <AddSquare />}
-              variant="ghost"
-              isLoading={isAdding}
-              _hover={{ color: 'spotify.green' }}
-              p={0}
-            />
-          </Tooltip>
+            {userId === undefined
+              ? 'Log in to ' + (sendTo ? 'send a song' : 'add to queue')
+              : 'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}
+          </Button>
         </fetcher.Form>
       ) : isError ? (
-        <Tooltip label={`Failed (${fetcher.data.split(' ').slice(1).join(' ')})`} defaultIsOpen>
-          <Icon textAlign="right" boxSize="25px" as={CloseSquare} />
-        </Tooltip>
+        <Button
+          leftIcon={<CloseSquare size="25px" />}
+          variant="ghost"
+          aria-label="failed to queue"
+          justifyContent="flex-start"
+          p="0px 0px"
+          w="200px"
+          boxShadow="none"
+          _active={{ boxShadow: 'none' }}
+          _hover={{ boxShadow: 'none' }}
+        >{`Failed (${fetcher.data.split(' ').slice(1).join(' ')})`}</Button>
       ) : (
-        <Tooltip
-          label={typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated'}
-          defaultIsOpen
+        <Button
+          leftIcon={<TickSquare size="25px" />}
+          variant="ghost"
+          aria-label="queued"
+          justifyContent="flex-start"
+          p="0px 0px"
+          w="200px"
+          boxShadow="none"
+          _active={{ boxShadow: 'none' }}
+          _hover={{ boxShadow: 'none' }}
         >
-          <Icon textAlign="right" boxSize="25px" as={TickSquare} />
-        </Tooltip>
+          {typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated'}
+        </Button>
       )}
     </>
   );
