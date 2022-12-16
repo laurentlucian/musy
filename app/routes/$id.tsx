@@ -231,27 +231,28 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   ]);
 
   const currentUser = await getCurrentUser(request);
-  // if (currentUser) {
-  //   const { spotify: cUserSpotify } = await spotifyApi(currentUser.userId);
-  //   if (cUserSpotify) {
-  //     const {
-  //       body: [following],
-  //     } = await cUserSpotify.isFollowingUsers([id]);
-  //     return typedjson({
-  //       user,
-  //       activity,
-  //       party,
-  //       playback,
-  //       recent,
-  //       liked,
-  //       top,
-  //       playlists,
-  //       currentUser,
-  //       following,
-  //       queue,
-  //     });
-  //   }
-  // }
+  if (currentUser) {
+    const { spotify } = await spotifyApi(currentUser.userId);
+    if (spotify) {
+      const {
+        body: [following],
+      } = await spotify.isFollowingUsers([id]);
+
+      return typedjson({
+        user,
+        activity,
+        party,
+        playback,
+        recent,
+        liked,
+        top,
+        playlists,
+        currentUser,
+        following,
+        queue,
+      });
+    }
+  }
 
   return typedjson({
     user,
