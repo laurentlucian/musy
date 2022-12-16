@@ -16,11 +16,24 @@ import MiniTile from '~/components/MiniTile';
 import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
+import Playlists from '~/components/tiles/Playlists';
 
 const Profile = () => {
-  const { user, playback, recent, currentUser, party, liked, top, activity, following, queue } =
-    useTypedLoaderData<typeof loader>();
+  const {
+    user,
+    playback,
+    recent,
+    currentUser,
+    party,
+    liked,
+    top,
+    activity,
+    following,
+    queue,
+    playlists,
+  } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
+  console.log(playlists, 'this is the user');
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -130,6 +143,7 @@ const Profile = () => {
       <RecentTracks recent={recent} currentUser={currentUser} />
       <LikedTracks liked={liked} currentUser={currentUser} />
       <TopTracks top={top} />
+      <Playlists playlists={playlists} />
     </Stack>
   );
 };
@@ -177,6 +191,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     {
       body: { items: top },
     },
+    {
+      body: { items: playlists },
+    },
     { currently_playing: playback, queue },
   ] = await Promise.all([
     prisma.queue.findMany({
@@ -196,6 +213,11 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       };
     }),
     spotify.getMyTopTracks({ time_range: topFilter, limit: 50 }).catch((e) => {
+      return {
+        body: { items: [] },
+      };
+    }),
+    spotify.getUserPlaylists(id).catch((e) => {
       return {
         body: { items: [] },
       };
@@ -239,6 +261,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     recent,
     liked,
     top,
+    playlists,
     currentUser,
     following: null,
     queue,
