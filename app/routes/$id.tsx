@@ -191,9 +191,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     {
       body: { items: top },
     },
-    {
-      body: { items: playlists },
-    },
+    playlists,
     { currently_playing: playback, queue },
   ] = await Promise.all([
     prisma.queue.findMany({
@@ -217,11 +215,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         body: { items: [] },
       };
     }),
-    spotify.getUserPlaylists(user.userId, { limit: 50 }).catch((e) => {
-      return {
-        body: { items: [] },
-      };
-    }),
+    spotify
+      .getUserPlaylists(user.userId, { limit: 50 })
+      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+      .catch(() => {
+        return [];
+      }),
     getUserQueue(id).catch((e) => {
       console.log('e getq', e);
       return {
@@ -246,6 +245,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   //       recent,
   //       liked,
   //       top,
+  //       playlists,
   //       currentUser,
   //       following,
   //       queue,
