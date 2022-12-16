@@ -89,7 +89,7 @@ export const updateToken = async (
 ) => {
   const data = await prisma.user.update({
     where: { id },
-    data: { accessToken: token, refreshToken, expiresAt },
+    data: { accessToken: token, refreshToken, expiresAt, revoked: false },
   });
   console.log('updateToken -> data', new Date(data.expiresAt).toLocaleTimeString('en-US'));
   return data.expiresAt;
@@ -113,6 +113,7 @@ export const getAllUsers = async () => {
   const data = await prisma.user.findMany({
     select: { user: true },
     orderBy: { updatedAt: 'desc' },
+    where: { revoked: false },
   });
   const users = data.map((user) => user.user).filter((user): user is Profile => user !== null);
   return users;

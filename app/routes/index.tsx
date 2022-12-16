@@ -64,7 +64,10 @@ export const loader = async ({ request }: LoaderArgs) => {
       const data = await getUserQueue(id);
       if (!data.currently_playing) return null;
       return data;
-    } catch {
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('revoked'))
+        await prisma.user.update({ where: { id }, data: { revoked: true } });
+
       return null;
     }
   };

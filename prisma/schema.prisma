@@ -17,6 +17,7 @@ model User {
   refreshToken String
   expiresAt    Int
   tokenType    String
+  revoked      Boolean  @default(false)
 
   user  Profile?
   party Party[]
