@@ -4,15 +4,12 @@ import Tile from '../Tile';
 import Tiles from '../Tiles';
 
 const RecentTracks = ({
-  recent: initialRecent,
+  recent,
   currentUser,
 }: {
-  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
+  recent: SpotifyApi.PlayHistoryObject[];
   currentUser: Profile | null;
 }) => {
-  const recent = initialRecent?.items;
-  if (!recent) return null;
-
   return (
     <Stack spacing={3}>
       <Tiles title="Recently played" scrollButtons={true}>
