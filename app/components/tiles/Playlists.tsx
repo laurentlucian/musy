@@ -21,7 +21,6 @@ const Playlists = ({
   const ref = useRef(null);
   const isVisible = useIsVisible(ref);
   const hasFetched = useRef(false);
-  console.log(playlists);
 
   useEffect(() => {
     if (isVisible && !hasFetched.current) {

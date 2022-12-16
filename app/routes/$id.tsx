@@ -34,7 +34,6 @@ const Profile = () => {
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
 
-  console.log(playlists, user);
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
