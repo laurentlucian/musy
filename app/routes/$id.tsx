@@ -33,7 +33,8 @@ const Profile = () => {
     playlists,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-  console.log(playlists, 'this is the user');
+
+  console.log(playlists, user);
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -217,7 +218,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
         body: { items: [] },
       };
     }),
-    spotify.getUserPlaylists(id, { limit: 50 }).catch((e) => {
+    spotify.getUserPlaylists(user.userId, { limit: 50 }).catch((e) => {
       return {
         body: { items: [] },
       };
