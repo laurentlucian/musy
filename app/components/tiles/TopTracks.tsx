@@ -3,8 +3,15 @@ import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
+import type { Profile } from '@prisma/client';
 
-const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
+const TopTracks = ({
+  top,
+  currentUser,
+}: {
+  top: SpotifyApi.TrackObjectFull[];
+  currentUser: Profile | null;
+}) => {
   const submit = useSubmit();
   const [params] = useSearchParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
@@ -57,7 +64,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
-              user={null}
+              user={currentUser}
             />
           );
         })}

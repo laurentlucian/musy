@@ -1,7 +1,6 @@
 import {
   Avatar,
   AvatarGroup,
-  Button,
   Flex,
   HStack,
   IconButton,
@@ -64,11 +63,6 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
     return () => window.removeEventListener('scroll', checkStick);
   }, []);
 
-  // const type = playback.context.type?.charAt(0).toUpperCase() + playback.context.type?.slice(1);
-  // const from =
-  // playback.item.album.album_type === 'single' && playback.context.item.album.type === 'album'
-  //   ? 'EP'
-  //   : type;
   const active = playback.is_playing;
   useInterval(
     () => {
@@ -106,11 +100,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
 
   return (
     <Stack pos="sticky" top={0} zIndex={10} spacing={0}>
-      <Stack
-        backdropFilter="blur(27px)"
-        spacing={0}
-        borderRadius={size === 'small' ? 0 : 5}
-      >
+      <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
           <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
             <Flex h="135px" px="2px" py="2px" justify="space-between">
@@ -323,7 +313,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
           icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
           variant="ghost"
           onClick={onToggle}
-          aria-label={!isOpen ? 'open player' : 'close player'}
+          aria-label={isOpen ? 'open player' : 'close player'}
           _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}

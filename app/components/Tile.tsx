@@ -1,4 +1,4 @@
-import { Flex, HStack, Image, Stack, Text, Link as LinkB, Box } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link, useParams } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -12,7 +12,7 @@ type TileProps = {
   albumUri: string | null;
   albumName: string | null;
   name: string;
-  artist: string;
+  artist: string | null;
   artistUri: string | null;
   explicit: boolean;
 
@@ -100,12 +100,12 @@ const Tile = ({
               {artistUri ? (
                 <LinkB href={artistUri} target="_blank">
                   <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                    {decodeHtmlEntity(artist)}
+                    {artist && decodeHtmlEntity(artist)}
                   </Text>
                 </LinkB>
               ) : (
                 <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                  {decodeHtmlEntity(artist)}
+                  {artist && decodeHtmlEntity(artist)}
                 </Text>
               )}
             </Flex>

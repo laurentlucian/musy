@@ -142,7 +142,7 @@ const Profile = () => {
       {/* object exists? object.item has tracks? note: !== 0 needed otherwise "0" is rendered on screen*/}
       <RecentTracks recent={recent} currentUser={currentUser} />
       <LikedTracks liked={liked} currentUser={currentUser} />
-      <TopTracks top={top} />
+      <TopTracks top={top} currentUser={currentUser} />
       <Playlists playlists={playlists} />
     </Stack>
   );

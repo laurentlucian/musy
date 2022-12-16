@@ -1,5 +1,4 @@
-import { Stack, Text } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
+import { Stack } from '@chakra-ui/react';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
@@ -10,6 +9,7 @@ const Playlists = ({
 }) => {
   const playlists = initialPlaylists;
   if (!playlists) return null;
+  console.log(playlists);
 
   return (
     <Stack spacing={3}>
@@ -24,8 +24,10 @@ const Playlists = ({
               albumName={list.name}
               name={list.name}
               artist={list.description}
+              artistUri={null}
               explicit={false}
               playlist={true}
+              user={null}
             />
             // <>
             //   <Text>hi</Text>

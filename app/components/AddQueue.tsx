@@ -9,7 +9,7 @@ type AddQueueProps = {
   albumUri: string | null;
   albumName: string | null;
   name: string;
-  artist: string;
+  artist: string | null;
   artistUri: string | null;
   explicit: boolean;
 
@@ -59,7 +59,7 @@ const AddQueue = ({
           <input type="hidden" name="albumUri" value={albumUri ?? ''} />
           <input type="hidden" name="albumName" value={albumName ?? ''} />
           <input type="hidden" name="name" value={name} />
-          <input type="hidden" name="artist" value={artist} />
+          {artist && <input type="hidden" name="artist" value={artist} />}
           <input type="hidden" name="artistUri" value={artistUri ?? ''} />
           {/* empty string is falsy */}
           <input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
