@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarGroup,
+  Button,
   Flex,
   HStack,
   IconButton,
@@ -10,14 +11,16 @@ import {
   Text,
   useColorModeValue,
   useInterval,
-
-  // useMediaQuery,
+  Collapse,
+  useDisclosure,
+  Box,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { People } from 'iconsax-react';
+import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
@@ -44,6 +47,9 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const [size, setSize] = useState('large');
   const [playingFrom, setPlayingFrom] = useState(false);
+  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+
+  const { isOpen, onToggle } = useDisclosure();
 
   useEffect(() => {
     const checkStick = () => {
@@ -99,211 +105,231 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const albumLink = item.album?.uri;
 
   return (
-    <Stack
-      w={[363, '100%']}
-      bg={bg}
-      backdropFilter="blur(27px)"
-      spacing={0}
-      borderRadius={size === 'small' ? 0 : 5}
-      pos="sticky"
-      top={0}
-      zIndex={10}
-    >
-      <Flex h="135px" px="2px" py="2px" justify="space-between">
-        <Stack pl="7px" spacing={1} h="100%" flexGrow={1}>
-          <Stack direction="column" spacing={0.5}>
-            <Link href={link ?? ''} target="_blank">
-              <Text noOfLines={[1]}>{item.name}</Text>
-            </Link>
-            <Flex>
-              {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-              <Link href={artistLink ?? ''} target="_blank">
-                <Text opacity={0.8} fontSize="13px">
-                  {item.album?.artists[0].name}
-                </Text>
-              </Link>
-            </Flex>
-            {playback.context && (
-              <>
-                <Text
-                  fontSize="13px"
-                  transition="opacity 1.69s ease-in-out"
-                  opacity={playingFrom ? 1 : 0}
-                  zIndex={10}
-                >
-                  Playing From{' '}
-                  {item.album.album_type === 'single' &&
-                  playback.context.type === 'album' &&
-                  item.album.total_tracks !== 1
-                    ? 'EP'
-                    : playback.context.type.charAt(0).toUpperCase() +
-                      playback.context.type.slice(1)}
-                </Text>
-                <Tooltip
-                  label={
-                    <PlayingFromTooltip // tooltip does not show properly when playing from artist
-                      name={playback.context.name}
-                      description={playback.context.description}
-                      image={playback.context.image}
-                    />
-                  }
-                  placement="bottom-start"
-                >
-                  <Link
-                    href={playback.context.uri}
-                    fontSize="15px"
-                    fontWeight="bold"
-                    transition="opacity 1.69s ease-in-out"
-                    opacity={playingFrom ? 1 : 0}
-                    overflow="scroll"
-                    whiteSpace="normal"
-                    wordBreak="break-word"
-                    noOfLines={1}
-                  >
-                    {playback.context.name
-                      ? playback.context.name
-                      : playback.context.type === 'artist'
-                      ? item.artists[0].name
-                      : item.album.name}
+    <Stack pos="sticky" top={0} zIndex={10} spacing={0}>
+      <Stack
+        backdropFilter="blur(27px)"
+        spacing={0}
+        borderRadius={size === 'small' ? 0 : 5}
+      >
+        <Collapse in={!isOpen} animateOpacity unmountOnExit>
+          <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
+            <Flex h="135px" px="2px" py="2px" justify="space-between">
+              <Stack pl="7px" spacing={1} flexGrow={1}>
+                <Stack direction="column" spacing={0.5}>
+                  <Link href={link ?? ''} target="_blank">
+                    <Text noOfLines={[1]}>{item.name}</Text>
                   </Link>
-                </Tooltip>
-              </>
-            )}
-            <Stack spacing={1} pos="absolute" pt="48px" lineHeight='shorter'>
-              <Text
-                fontSize="13px"
-                fontWeight="normal"
-                transition="opacity 1.69s ease-in-out"
-                opacity={playingFrom ? 0 : 1}
-              >
-                Listening on
-              </Text>
-              <Text
-                fontSize="15px"
-                fontWeight="bold"
-                transition="opacity 1.69s ease-in-out"
-                opacity={playingFrom ? 0 : 1}
-              >
-                {playback.device.name.split(' ').slice(0, 2).join(' ')}
-              </Text>
-            </Stack>
-          </Stack>
-
-          {active ? (
-            <HStack mt="auto !important" mb="5px !important">
-              {/* lets owner join own party for testing */}
-              {/* {currentUser && ( */}
-              <Link href="https://open.spotify.com" target="_blank">
-                <Image height="30px" width="98px" src={spotify_logo} />
-              </Link>
-              {currentUser?.userId !== id && (
-                <>
-                  {!isUserInParty && (
-                    <AddQueue
-                      key={id}
-                      uri={item.uri}
-                      image={item.album?.images[0].url}
-                      albumUri={item.album?.uri}
-                      albumName={item.album?.name}
-                      name={item.name}
-                      artist={item.album?.artists[0].name}
-                      artistUri={artistLink}
-                      explicit={item.explicit ?? false}
-                      userId={currentUser?.userId}
-                    />
+                  <Flex>
+                    {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+                    <Link href={artistLink ?? ''} target="_blank">
+                      <Text opacity={0.8} fontSize="13px">
+                        {item.album?.artists[0].name}
+                      </Text>
+                    </Link>
+                  </Flex>
+                  {playback.context && (
+                    <>
+                      <Text
+                        fontSize="13px"
+                        transition="opacity 1.69s ease-in-out"
+                        opacity={playingFrom ? 1 : 0}
+                        zIndex={10}
+                      >
+                        Playing From{' '}
+                        {item.album.album_type === 'single' &&
+                        playback.context.type === 'album' &&
+                        item.album.total_tracks !== 1
+                          ? 'EP'
+                          : playback.context.type.charAt(0).toUpperCase() +
+                            playback.context.type.slice(1)}
+                      </Text>
+                      <Tooltip
+                        label={
+                          <PlayingFromTooltip // tooltip does not show properly when playing from artist
+                            name={playback.context.name}
+                            description={playback.context.description}
+                            image={playback.context.image}
+                          />
+                        }
+                        placement="bottom-start"
+                      >
+                        <Link
+                          href={playback.context.uri}
+                          fontSize="15px"
+                          fontWeight="bold"
+                          transition="opacity 1.69s ease-in-out"
+                          opacity={playingFrom ? 1 : 0}
+                          overflow="scroll"
+                          whiteSpace="normal"
+                          wordBreak="break-word"
+                          noOfLines={1}
+                        >
+                          {playback.context.name
+                            ? playback.context.name
+                            : playback.context.type === 'artist'
+                            ? item.artists[0].name
+                            : item.album.name}
+                        </Link>
+                      </Tooltip>
+                    </>
                   )}
-                  <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                    <fetcher.Form
-                      action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                      method="post"
-                      replace
+                  <Stack spacing={1} pos="absolute" pt="48px" lineHeight="shorter">
+                    <Text
+                      fontSize="13px"
+                      fontWeight="normal"
+                      transition="opacity 1.69s ease-in-out"
+                      opacity={playingFrom ? 0 : 1}
                     >
-                      <IconButton
-                        aria-label={isUserInParty ? 'Leave' : 'Join'}
-                        name="party"
-                        icon={<People size="24px" />}
-                        color={isUserInParty ? 'purple.500' : undefined}
-                        variant="ghost"
-                        type="submit"
-                        cursor="pointer"
-                        isLoading={busy}
-                      />
-                    </fetcher.Form>
+                      Listening on
+                    </Text>
+                    <Text
+                      fontSize="15px"
+                      fontWeight="bold"
+                      transition="opacity 1.69s ease-in-out"
+                      opacity={playingFrom ? 0 : 1}
+                    >
+                      {playback.device.name.split(' ').slice(0, 2).join(' ')}
+                    </Text>
+                  </Stack>
+                </Stack>
+                {active ? (
+                  <HStack mt="auto !important" mb="5px !important">
+                    {/* lets owner join own party for testing */}
+                    {/* {currentUser && ( */}
+                    <Link href="https://open.spotify.com" target="_blank">
+                      <Image height="30px" width="98px" src={spotify_logo} />
+                    </Link>
+                    {currentUser?.userId !== id && (
+                      <>
+                        {!isUserInParty && (
+                          <AddQueue
+                            key={id}
+                            uri={item.uri}
+                            image={item.album?.images[0].url}
+                            albumUri={item.album?.uri}
+                            albumName={item.album?.name}
+                            name={item.name}
+                            artist={item.album?.artists[0].name}
+                            artistUri={artistLink}
+                            explicit={item.explicit ?? false}
+                            userId={currentUser?.userId}
+                          />
+                        )}
+                        <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                          <fetcher.Form
+                            action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
+                            method="post"
+                            replace
+                          >
+                            <IconButton
+                              aria-label={isUserInParty ? 'Leave' : 'Join'}
+                              name="party"
+                              icon={<People size="24px" />}
+                              color={isUserInParty ? 'purple.500' : undefined}
+                              variant="ghost"
+                              type="submit"
+                              cursor="pointer"
+                              isLoading={busy}
+                            />
+                          </fetcher.Form>
+                        </Tooltip>
+                      </>
+                    )}
+                    {party.length && (
+                      <AvatarGroup size="xs" spacing={-2} max={5}>
+                        {party.map((u) => {
+                          return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
+                        })}
+                      </AvatarGroup>
+                    )}
+                  </HStack>
+                ) : (
+                  <Link href="https://open.spotify.com">
+                    <Image height="30px" width="98px" src={spotify_logo} />
+                  </Link>
+                )}
+              </Stack>
+              <HStack spacing={1} align="end">
+                {/* {playback.context &&
+                    playback.context.name &&
+                    !isSmallScreen &&
+                    (playback.context.type === 'collection' ? (
+                      <Tooltip label={playback.context.name} placement="bottom-end">
+                        <Image
+                          src={playback.context.image}
+                          boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
+                          borderRadius={2}
+                          transition="width 0.25s, height 0.25s"
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Link href={playback.context?.uri} target="_blank">
+                        <Tooltip label={playback.context.name} placement="bottom-end">
+                          <Image
+                            src={playback.context.image}
+                            boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
+                            borderRadius={2}
+                            transition="width 0.25s, height 0.25s"
+                          />
+                        </Tooltip>
+                      </Link>
+                    ))} */}
+                <Link href={albumLink ?? ''} target="_blank">
+                  <Tooltip label={item.album.name} placement="bottom-end">
+                    <Image
+                      src={item.album?.images[0].url}
+                      mt={
+                        size === 'large'
+                          ? [0, -47, -47, -47, -191]
+                          : size === 'medium'
+                          ? [0, -47, -47, -47, '-78px']
+                          : 0
+                      }
+                      boxSize={
+                        size === 'large'
+                          ? [130, 160, 160, 200, 334]
+                          : size === 'medium'
+                          ? [130, 160, 160, 200, 221]
+                          : 130
+                      }
+                      minW={
+                        size === 'large'
+                          ? [130, 160, 160, 200, 334]
+                          : size === 'medium'
+                          ? [130, 160, 160, 200, 221]
+                          : 130
+                      }
+                      borderRadius={size === 'small' ? 0 : 2}
+                      transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
+                      pos="absolute"
+                      right={0}
+                      top={0}
+                    />
                   </Tooltip>
-                </>
-              )}
-              {party.length && (
-                <AvatarGroup size="xs" spacing={-2} max={5}>
-                  {party.map((u) => {
-                    return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                  })}
-                </AvatarGroup>
-              )}
-            </HStack>
-          ) : (
-            <Link href="https://open.spotify.com">
-              <Image height="30px" width="98px" src={spotify_logo} />
-            </Link>
-          )}
-        </Stack>
-        <HStack spacing={1} align="end">
-          {/* {playback.context &&
-            playback.context.name &&
-            !isSmallScreen &&
-            (playback.context.type === 'collection' ? (
-              <Tooltip label={playback.context.name} placement="bottom-end">
-                <Image
-                  src={playback.context.image}
-                  boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
-                  borderRadius={2}
-                  transition="width 0.25s, height 0.25s"
-                />
-              </Tooltip>
-            ) : (
-              <Link href={playback.context?.uri} target="_blank">
-                <Tooltip label={playback.context.name} placement="bottom-end">
-                  <Image
-                    src={playback.context.image}
-                    boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
-                    borderRadius={2}
-                    transition="width 0.25s, height 0.25s"
-                  />
-                </Tooltip>
-              </Link>
-            ))} */}
-          <Link href={albumLink ?? ''} target="_blank">
-            <Tooltip label={item.album.name} placement="bottom-end">
-              <Image
-                src={item.album?.images[0].url}
-                mt={
-                  size === 'large'
-                    ? [0, -47, -47, -47, -219]
-                    : size === 'medium'
-                    ? [0, -47, -47, -47, -108]
-                    : 0
-                }
-                boxSize={
-                  size === 'large'
-                    ? [130, 160, 160, 200, 334]
-                    : size === 'medium'
-                    ? [130, 160, 160, 200, 221]
-                    : 130
-                }
-                minW={
-                  size === 'large'
-                    ? [130, 160, 160, 200, 334]
-                    : size === 'medium'
-                    ? [130, 160, 160, 200, 221]
-                    : 130
-                }
-                borderRadius={size === 'small' ? 0 : 2}
-                transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
-              />
-            </Tooltip>
-          </Link>
-        </HStack>
-      </Flex>
-      <PlayerBar playback={playback} />
+                </Link>
+              </HStack>
+            </Flex>
+            <PlayerBar playback={playback} />
+          </Stack>
+        </Collapse>
+      </Stack>
+      <Box
+        w="-webkit-fit-content"
+        bg={bg}
+        backdropFilter="blur(27px)"
+        borderRadius="0px 0px 3px 3px"
+      >
+        <IconButton
+          icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
+          variant="ghost"
+          onClick={onToggle}
+          aria-label={!isOpen ? 'open player' : 'close player'}
+          _hover={{ opacity: 1, color: 'spotify.green' }}
+          opacity={0.5}
+          _active={{ boxShadow: 'none' }}
+          boxShadow="none"
+        />
+      </Box>
     </Stack>
   );
 };

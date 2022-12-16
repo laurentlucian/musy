@@ -71,7 +71,7 @@ const Profile = () => {
           )}
         </Stack>
       </HStack>
-      {playback && playback.context && playback.item?.type === 'track' ? (
+      {playback && playback.item?.type === 'track' ? (
         <Player
           id={user.userId}
           currentUser={currentUser}
