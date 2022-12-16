@@ -83,12 +83,24 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           {albumUri ? (
             <LinkB href={albumUri} target="_blank">
               <Tooltip label={albumName} placement="top-start">
-                <Image boxSize="200px" src={image} borderRadius={5} draggable={false} />
+                <Image
+                  boxSize="200px"
+                  objectFit="cover"
+                  src={image}
+                  borderRadius={5}
+                  draggable={false}
+                />
               </Tooltip>
             </LinkB>
           ) : (
             <Tooltip label={albumName} placement="top-start">
-              <Image src={image} borderRadius={5} w="200px" draggable={false} />
+              <Image
+                boxSize="200px"
+                objectFit="cover"
+                src={image}
+                borderRadius={5}
+                draggable={false}
+              />
             </Tooltip>
           )}
         </Flex>
