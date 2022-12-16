@@ -2,11 +2,11 @@ import { Stack } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
-import useIsVisible from '~/hooks/useIsVisible';
+import useOldIsVisible from '~/hooks/useOldIsVisible';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
-const LikedTracks = ({
+const OldLikedSongs = ({
   liked: initialLiked,
   currentUser,
 }: {
@@ -15,12 +15,11 @@ const LikedTracks = ({
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const { id } = useParams();
-
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const [setRef, isVisible] = useIsVisible();
+  const ref = useRef(null);
+  const isVisible = useOldIsVisible(ref);
   const hasFetched = useRef(false);
-
   useEffect(() => {
     if (isVisible && !hasFetched.current) {
       const newOffset = offsetRef.current + 50;
@@ -29,31 +28,23 @@ const LikedTracks = ({
       hasFetched.current = true;
     }
   }, [isVisible, fetcher, id]);
-
   useEffect(() => {
     if (fetcher.data) {
       setLiked((prev) => [...prev, ...fetcher.data]);
       hasFetched.current = false;
     }
   }, [fetcher.data]);
-
   useEffect(() => {
     setLiked(initialLiked);
   }, [initialLiked]);
-
   if (!liked) return null;
 
   return (
     <Stack spacing={3}>
-      <Tiles title="Liked" scrollButtons>
-        {liked.map(({ track }, index) => {
-          const isLast = index === liked.length - 1;
-
+      <Tiles title="Old Liked" scrollButtons={true}>
+        {liked.map(({ track }) => {
           return (
             <Tile
-              ref={(node) => {
-                isLast && setRef(node);
-              }}
               key={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
@@ -67,9 +58,9 @@ const LikedTracks = ({
             />
           );
         })}
+        <div ref={ref} style={{ border: '100px solid', opacity: 0 }} />
       </Tiles>
     </Stack>
   );
 };
-
-export default LikedTracks;
+export default OldLikedSongs;
