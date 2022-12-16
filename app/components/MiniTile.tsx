@@ -1,10 +1,8 @@
 import { Flex, HStack, Image, Stack, Text, Link as LinkB, Icon } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { Link, useParams } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { InfoCircle } from 'iconsax-react';
-import explicitImage from '~/assets/explicit-solid.svg';
 import { timeSince } from '~/hooks/utils';
-import AddQueue from './menu/AddQueue';
 import Tooltip from './Tooltip';
 
 type TileProps = {

@@ -83,6 +83,7 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
                     height="30px"
                     width="98px"
                     mt="30px"
+                    rel="external"
                   >
                     <Image height="30px" width="98px" src={spotify_logo} />
                   </Link>

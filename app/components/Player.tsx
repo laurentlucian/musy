@@ -23,11 +23,11 @@ import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import type { Party, Profile } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
-import AddQueue from './menu/AddQueue';
 import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import PlayingFromTooltip from './PlayingFromTooltip';
+import ActionMenu from './menu/ActionMenu';
 
 type PlayerProps = {
   id: string;
@@ -186,26 +186,24 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                   <HStack mt="auto !important" mb="5px !important">
                     {/* lets owner join own party for testing */}
                     {/* {currentUser && ( */}
-                    <Link href="https://open.spotify.com" target="_blank">
+                    <Link href="https://open.spotify.com" target="_blank" rel="external">
                       <Image height="30px" width="98px" src={spotify_logo} />
                     </Link>
 
                     {currentUser?.userId !== id && (
                       <>
-                        {!isUserInParty && (
-                          <AddQueue
-                            key={id}
-                            uri={item.uri}
-                            image={item.album?.images[0].url}
-                            albumUri={item.album?.uri}
-                            albumName={item.album?.name}
-                            name={item.name}
-                            artist={item.album?.artists[0].name}
-                            artistUri={artistLink}
-                            explicit={item.explicit ?? false}
-                            userId={currentUser?.userId}
-                          />
-                        )}
+                        <ActionMenu
+                          key={id}
+                          uri={item.uri}
+                          image={item.album?.images[0].url}
+                          albumUri={item.album?.uri}
+                          albumName={item.album?.name}
+                          name={item.name}
+                          artist={item.album?.artists[0].name}
+                          artistUri={artistLink}
+                          explicit={item.explicit ?? false}
+                          userId={currentUser?.userId}
+                        />
                         <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                           <fetcher.Form
                             action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
