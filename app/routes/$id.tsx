@@ -144,7 +144,7 @@ const Profile = () => {
       <RecentTracks recent={recent} currentUser={currentUser} />
       <LikedTracks liked={liked} currentUser={currentUser} />
       <TopTracks top={top} currentUser={currentUser} />
-      <Playlists playlists={playlists} />
+      <Playlists playlists={playlists} currentUser={currentUser} />
     </Stack>
   );
 };
