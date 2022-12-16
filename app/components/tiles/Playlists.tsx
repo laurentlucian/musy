@@ -18,8 +18,7 @@ const Playlists = ({
 
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const [ref, setRef] = useState<HTMLDivElement | null>(null);
-  const isVisible = useIsVisible(ref);
+  const [setRef, isVisible] = useIsVisible();
   const hasFetched = useRef(false);
 
   useEffect(() => {
@@ -52,8 +51,8 @@ const Playlists = ({
 
           return (
             <Tile
-              ref={(ref) => {
-                isLast && setRef(ref);
+              ref={(node) => {
+                isLast && setRef(node);
               }}
               playlist
               key={list.id}
