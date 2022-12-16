@@ -9,14 +9,14 @@ const Playlists = ({
 }) => {
   const playlists = initialPlaylists;
   if (!playlists) return null;
-  console.log(playlists);
 
   return (
     <Stack spacing={3}>
-      <Tiles title="Playlists" scrollButtons={true}>
+      <Tiles title="Playlists" scrollButtons>
         {playlists.map((list, played_at) => {
           return (
             <Tile
+              playlist
               key={played_at}
               uri={list.uri}
               image={list.images[0].url}
@@ -26,12 +26,8 @@ const Playlists = ({
               artist={list.description}
               artistUri={null}
               explicit={false}
-              playlist={true}
               user={null}
             />
-            // <>
-            //   <Text>hi</Text>
-            // </>
           );
         })}
       </Tiles>
