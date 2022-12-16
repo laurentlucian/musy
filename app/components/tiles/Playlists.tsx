@@ -19,7 +19,7 @@ const Playlists = ({
               playlist
               key={played_at}
               uri={list.uri}
-              image={list.images[0].url}
+              image={list.images[0]?.url}
               albumUri={list.uri}
               albumName={list.name}
               name={list.name}
