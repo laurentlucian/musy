@@ -1,6 +1,6 @@
 import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
-import { Heading, ChakraProvider, Text } from '@chakra-ui/react';
+import { Heading, ChakraProvider, Text, cookieStorageManagerSSR } from '@chakra-ui/react';
 
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
@@ -13,12 +13,12 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import loading from './lib/styles/loading.css';
 
 const App = () => {
-  const data = useTypedLoaderData<typeof loader>();
+  const { authorized, cookie } = useTypedLoaderData<typeof loader>();
 
   return (
     <Document>
-      <ChakraProvider theme={theme}>
-        <Layout user={data}>
+      <ChakraProvider theme={theme} colorModeManager={cookieStorageManagerSSR(cookie)}>
+        <Layout authorized={authorized}>
           <Outlet />
         </Layout>
       </ChakraProvider>
@@ -28,10 +28,12 @@ const App = () => {
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
+  const cookie = request.headers.get('cookie') ?? '';
+
   if (session) {
-    return typedjson(session.user);
+    return typedjson({ authorized: true, cookie });
   } else {
-    return typedjson(null);
+    return typedjson({ authorized: false, cookie });
   }
 };
 
@@ -115,7 +117,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <Document title="Musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout user={null}>
+        <Layout authorized={false}>
           <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
           <Text fontSize="sm">Trace(for debug): {error.message}</Text>
         </Layout>
@@ -143,7 +145,7 @@ export const CatchBoundary = () => {
   return (
     <Document title="Musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout user={null}>
+        <Layout authorized={false}>
           <Heading fontSize={['sm', 'md']}>
             {caught.status}: {caught.statusText}
           </Heading>
