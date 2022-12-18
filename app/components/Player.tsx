@@ -205,6 +205,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                           userId={currentUser?.userId}
                           sendTo={username}
                           placement="bottom-start"
+                          offset={[-118, 0]}
                         />
                         <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                           <fetcher.Form

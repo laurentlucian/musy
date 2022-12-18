@@ -66,13 +66,7 @@ const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) =>
         zIndex={2}
       >
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
-          <Stack
-            w={[363, '100%']}
-            bg={bg}
-            backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}
-            spacing={0}
-            borderRadius={size === 'small' ? 0 : 5}
-          >
+          <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={size === 'small' ? 0 : 5}>
             <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
                 <Flex direction="column">
