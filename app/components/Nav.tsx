@@ -10,13 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Logout, Moon, Sun1 } from 'iconsax-react';
-import type { User } from 'remix-auth-spotify';
 import Tooltip from './Tooltip';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import Waver from './Waver';
 
-const Nav = ({ user }: { user: User | null }) => {
+const Nav = ({ authorized }: { authorized: boolean }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
@@ -35,7 +34,7 @@ const Nav = ({ user }: { user: User | null }) => {
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">
-        {!user && (
+        {!authorized && (
           <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
             <Button
               isLoading={transition.submission?.action.includes('auth')}
@@ -50,7 +49,7 @@ const Nav = ({ user }: { user: User | null }) => {
           </Form>
         )}
 
-        {user && (
+        {authorized && (
           <Form action={'/logout'} method="post">
             <input type="hidden" value={pathname + search} name="redirectTo" />
             <Tooltip label="Logout">
