@@ -1,8 +1,8 @@
 import { Button } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import {  CloseSquare, Send2, TickSquare } from 'iconsax-react';
 
-type AddQueueProps = {
+type SendToProps = {
   uri: string;
   image: string;
   albumUri: string | null;
@@ -17,10 +17,9 @@ type AddQueueProps = {
   userId?: string;
   // user.name
   sendTo?: string;
-  isReceiver: boolean;
 };
 
-const AddQueue = ({
+const SendTo = ({
   uri,
   image,
   albumUri,
@@ -31,8 +30,7 @@ const AddQueue = ({
   explicit,
   userId,
   sendTo,
-  isReceiver,
-}: AddQueueProps) => {
+}: SendToProps) => {
   const { id } = useParams();
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
@@ -45,11 +43,7 @@ const AddQueue = ({
         : null
       : null;
 
-  const action = userId
-    ? sendTo && !isReceiver
-      ? `/${id}/add`
-      : `/${userId}/add`
-    : '/auth/spotify?returnTo=' + pathname + search;
+  const action = userId && sendTo ? `/${id}/add` : '/auth/spotify?returnTo=' + pathname + search;
 
   return (
     <>
@@ -66,12 +60,12 @@ const AddQueue = ({
           <input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
           {/* sendTo: receiving song (id), sending song (userId) */}
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
-          <input type="hidden" name="fromId" value={sendTo && !isReceiver ? userId : id} />
-          <input type="hidden" name="action" value={sendTo && !isReceiver ? 'send' : 'add'} />
+          <input type="hidden" name="fromId" value={userId } />
+          <input type="hidden" name="action" value={'send'} />
           <Button
             type="submit"
             aria-label="queue"
-            leftIcon={sendTo && !isReceiver ? <Send2 /> : <AddSquare />}
+            leftIcon={<Send2 />}
             variant="ghost"
             isLoading={isAdding}
             _hover={{ color: 'spotify.green', boxShadow: 'none' }}
@@ -82,10 +76,8 @@ const AddQueue = ({
             _active={{ boxShadow: 'none' }}
           >
             {userId === undefined
-              ? 'Log in to ' + (sendTo && !isReceiver ? 'send a song' : 'add to queue')
-              : (sendTo && !isReceiver ? 'Send to ' : 'Add to ') +
-                (sendTo && !isReceiver ? sendTo.split(' ')[0] : '') +
-                (sendTo && !isReceiver ? '' : ' queue')}
+              ? 'Log in to send a song'
+              : 'Add to ' + (sendTo ? sendTo.split(' ')[0] : '') + ' queue'}
           </Button>
         </fetcher.Form>
       ) : isError ? (
@@ -119,4 +111,4 @@ const AddQueue = ({
   );
 };
 
-export default AddQueue;
+export default SendTo;

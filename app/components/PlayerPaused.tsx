@@ -15,16 +15,21 @@ import {
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useEffect, useState } from 'react';
-import Tooltip from './Tooltip';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
+import { type Profile } from '@prisma/client';
+import { useEffect, useState } from 'react';
+import ActionMenu from './menu/ActionMenu';
+import Tooltip from './Tooltip';
 // import AddQueue from './AddQueue';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
+  username: string;
+  id: string;
+  currentUser: Profile | null;
 };
 
-const PlayerPaused = ({ item }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const link = item.uri;
@@ -54,7 +59,12 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
 
   return (
     <Stack pos="sticky" top={0} zIndex={10} spacing={0}>
-      <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
+      <Stack
+        backdropFilter="blur(27px)"
+        spacing={0}
+        borderRadius={size === 'small' ? 0 : 5}
+        zIndex={2}
+      >
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
           <Stack
             w={[363, '100%']}
@@ -77,16 +87,35 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
                       </Text>
                     </Link>
                   </Flex>
-                  <Link
-                    href="https://open.spotify.com"
-                    target="_blank"
-                    height="30px"
-                    width="98px"
-                    mt="30px"
-                    rel="external"
-                  >
-                    <Image height="30px" width="98px" src={spotify_logo} />
-                  </Link>
+                  <HStack alignItems="end">
+                    <Link
+                      href="https://open.spotify.com"
+                      target="_blank"
+                      height="30px"
+                      width="98px"
+                      mt="30px"
+                      rel="external"
+                    >
+                      <Image height="30px" width="98px" src={spotify_logo} />
+                    </Link>
+                    <Stack zIndex={90}>
+                      <ActionMenu
+                        key={id}
+                        uri={item.uri}
+                        image={item.album?.images[0].url}
+                        albumUri={item.album?.uri}
+                        albumName={item.album?.name}
+                        name={item.name}
+                        artist={item.album?.artists[0].name}
+                        artistUri={artistLink}
+                        explicit={item.explicit ?? false}
+                        userId={currentUser?.userId}
+                        sendTo={username}
+                        placement="bottom-start"
+                        offset={[-118, 0]}
+                      />
+                    </Stack>
+                  </HStack>
                 </Flex>
               </Stack>
               <Link href={albumLink} target="_blank">
@@ -121,6 +150,7 @@ const PlayerPaused = ({ item }: PlayerPausedProps) => {
         bg={bg}
         backdropFilter="blur(27px)"
         borderRadius="0px 0px 3px 3px"
+        zIndex={-1}
       >
         <IconButton
           icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}

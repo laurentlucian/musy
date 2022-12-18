@@ -7,7 +7,7 @@ type TilesProps = {
   title?: string;
   children: ReactNode;
   autoScroll?: boolean;
-  Filter?: React.ReactNode;
+  Filter?: ReactNode;
   scrollButtons?: boolean;
 };
 

@@ -6,9 +6,11 @@ import Tiles from '../Tiles';
 const RecentTracks = ({
   recent,
   currentUser,
+  sendTo,
 }: {
   recent: SpotifyApi.PlayHistoryObject[];
   currentUser: Profile | null;
+  sendTo: string;
 }) => {
   return (
     <Stack spacing={3}>
@@ -26,6 +28,7 @@ const RecentTracks = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               user={currentUser}
+              sendTo={sendTo}
             />
           );
         })}

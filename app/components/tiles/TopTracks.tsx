@@ -8,9 +8,11 @@ import type { Profile } from '@prisma/client';
 const TopTracks = ({
   top,
   currentUser,
+  sendTo,
 }: {
   top: SpotifyApi.TrackObjectFull[];
   currentUser: Profile | null;
+  sendTo: string;
 }) => {
   const submit = useSubmit();
   const [params] = useSearchParams();
@@ -65,6 +67,7 @@ const TopTracks = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               user={currentUser}
+              sendTo={sendTo} 
             />
           );
         })}

@@ -35,9 +35,10 @@ type PlayerProps = {
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
+  username: string;
 };
 
-const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
+const Player = ({ id, currentUser, party, playback, item, username }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
@@ -99,7 +100,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
   const albumLink = item.album?.uri;
 
   return (
-    <Stack pos="sticky" top={0} zIndex={10} spacing={0}>
+    <Stack pos="sticky" top={0} zIndex={0} spacing={-1}>
       <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
           <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
@@ -123,7 +124,6 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                         fontSize="13px"
                         transition="opacity 1.69s ease-in-out"
                         opacity={playingFrom ? 1 : 0}
-                        zIndex={10}
                       >
                         Playing From{' '}
                         {item.album.album_type === 'single' &&
@@ -203,6 +203,8 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
                           artistUri={artistLink}
                           explicit={item.explicit ?? false}
                           userId={currentUser?.userId}
+                          sendTo={username}
+                          placement="bottom-start"
                         />
                         <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                           <fetcher.Form
@@ -350,6 +352,7 @@ const Player = ({ id, currentUser, party, playback, item }: PlayerProps) => {
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
           boxShadow="none"
+          zIndex={1}
         />
       </Box>
     </Stack>

@@ -93,9 +93,15 @@ const Profile = () => {
           party={party}
           playback={playback}
           item={playback.item}
+          username={user.name}
         />
       ) : recent ? (
-        <PlayerPaused item={recent[0].track} />
+        <PlayerPaused
+          item={recent[0].track}
+          username={user.name}
+          id={user.userId}
+          currentUser={currentUser}
+        />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (
@@ -141,11 +147,11 @@ const Profile = () => {
           </Tiles>
         )}
       </Stack>
-      <RecentTracks recent={recent} currentUser={currentUser} />
+      <RecentTracks recent={recent} currentUser={currentUser} sendTo={user.name} />
       <LikedTracksVirtual liked={liked} currentUser={currentUser} />
-      <LikedTracks liked={liked} currentUser={currentUser} />
+      <LikedTracks liked={liked} currentUser={currentUser} sendTo={user.name} />
       <OldLikedSongs liked={liked} currentUser={currentUser} />
-      <TopTracks top={top} currentUser={currentUser} />
+      <TopTracks top={top} currentUser={currentUser} sendTo={user.name} />
       <Playlists playlists={playlists} currentUser={currentUser} />
     </Stack>
   );
@@ -290,7 +296,7 @@ export const ErrorBoundary = (error: { error: Error }) => {
   return (
     <>
       <Heading fontSize={['xl', 'xxl']}>500</Heading>
-      <Text fontSize="md">oops something broke;</Text>
+      <Text fontSize="md">oops something broke :3;</Text>
     </>
   );
 };

@@ -1,4 +1,11 @@
-import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
+import {
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  type PlacementWithLogical,
+} from '@chakra-ui/react';
 import { useParams } from '@remix-run/react';
 import { ElementPlus } from 'iconsax-react';
 import AddQueue from './AddQueue';
@@ -14,6 +21,8 @@ type ActionMenuConfig = {
   explicit: boolean;
   userId?: string;
   sendTo?: string;
+  placement: PlacementWithLogical | undefined;
+  offset?: [number, number];
 };
 const ActionMenu = ({
   uri,
@@ -26,11 +35,19 @@ const ActionMenu = ({
   explicit,
   userId,
   sendTo,
+  placement,
+  offset,
 }: ActionMenuConfig) => {
   const { id } = useParams();
 
   return (
-    <Menu direction="ltr" placement="bottom-end" colorScheme={'menuTheme'} closeOnSelect={false}>
+    <Menu
+      direction="ltr"
+      placement={placement}
+      colorScheme={'menuTheme'}
+      closeOnSelect={false}
+      offset={offset}
+    >
       <MenuButton
         as={IconButton}
         variant="ghost"
@@ -42,7 +59,7 @@ const ActionMenu = ({
         opacity={0.5}
       />
       <MenuList>
-        <MenuItem closeOnSelect={false} w="100%">
+        <MenuItem closeOnSelect={false} w="100%" as="span">
           <AddQueue
             key={id}
             uri={uri}
@@ -55,6 +72,22 @@ const ActionMenu = ({
             explicit={explicit ?? false}
             userId={userId}
             sendTo={sendTo}
+            isReceiver={false}
+          />
+        </MenuItem>
+        <MenuItem closeOnSelect={false} w="100%" as="span">
+          <AddQueue
+            key={id}
+            uri={uri}
+            image={image}
+            albumName={albumName}
+            albumUri={albumUri}
+            name={name}
+            artist={artist}
+            artistUri={artistUri}
+            explicit={explicit ?? false}
+            userId={userId}
+            isReceiver={true}
           />
         </MenuItem>
         <MenuItem>hi</MenuItem>

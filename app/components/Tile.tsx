@@ -144,6 +144,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 explicit={explicit ?? false}
                 userId={user?.userId}
                 sendTo={sendTo}
+                placement="bottom-end"
               />
             </Flex>
           )}

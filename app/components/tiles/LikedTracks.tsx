@@ -9,9 +9,11 @@ import Tiles from '../Tiles';
 const LikedTracks = ({
   liked: initialLiked,
   currentUser,
+  sendTo,
 }: {
   liked: SpotifyApi.SavedTrackObject[];
   currentUser: Profile | null;
+  sendTo: string;
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const { id } = useParams();
@@ -64,6 +66,7 @@ const LikedTracks = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               user={currentUser}
+              sendTo={sendTo}
             />
           );
         })}
