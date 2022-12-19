@@ -14,6 +14,7 @@ import {
   useDisclosure,
   Box,
   useMediaQuery,
+  Show,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
@@ -28,6 +29,7 @@ import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import PlayingFromTooltip from './PlayingFromTooltip';
 import ActionMenu from './menu/ActionMenu';
+import PlayController from './PlayController';
 
 type PlayerProps = {
   id: string;
@@ -45,9 +47,11 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
   const fetcher = useFetcher();
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
+  // const loading = fetcher.submission?.formData.has('play') ?? false;
   const [size, setSize] = useState('large');
   const [playingFrom, setPlayingFrom] = useState(false);
   const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  console.log(playback.is_playing, 'test');
 
   const { isOpen, onToggle } = useDisclosure();
 
@@ -187,8 +191,13 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                     {/* lets owner join own party for testing */}
                     {/* {currentUser && ( */}
                     <Link href="https://open.spotify.com" target="_blank" rel="external">
-                      <Image height="30px" width="98px" src={spotify_logo} />
+                      <Image height="30px" minW="108px" src={spotify_logo} />
                     </Link>
+                    <Show above="md">
+                      {currentUser?.userId === id && (
+                        <PlayController fetcher={fetcher} playback={playback} id={id} />
+                      )}
+                    </Show>
 
                     {currentUser?.userId !== id && (
                       <>
@@ -305,38 +314,13 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                 </Link>
               </HStack>
             </Flex>
-            {/* Player button */}
-            {/* {currentUser?.userId === id && (
-              <HStack w="100%" justify={'start'}>
-                <Tooltip label="Prev Song">
-                  <IconButton
-                    aria-label="Prev"
-                    variant="ghost"
-                    icon={<Previous />}
-                    _hover={{ opacity: 1, color: 'spotify.green' }}
-                    boxShadow="none"
-                  />
-                </Tooltip>
-                <Tooltip label="Play">
-                  <IconButton
-                    aria-label="Play"
-                    variant="ghost"
-                    icon={<Play />}
-                    _hover={{ opacity: 1, color: 'spotify.green' }}
-                    boxShadow="none"
-                  />
-                </Tooltip>
-                <Tooltip label="Next Song">
-                  <IconButton
-                    aria-label="Next"
-                    variant="ghost"
-                    icon={<Next />}
-                    _hover={{ opacity: 1, color: 'spotify.green' }}
-                    boxShadow="none"
-                  />
-                </Tooltip>
-              </HStack>
-            )} */}
+            <Show below="md">
+              {currentUser?.userId === id && (
+                <HStack pl={2}>
+                  <PlayController fetcher={fetcher} playback={playback} id={id} />
+                </HStack>
+              )}
+            </Show>
             <PlayerBar playback={playback} />
           </Stack>
         </Collapse>
