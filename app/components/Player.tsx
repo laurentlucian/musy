@@ -100,7 +100,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
   const albumLink = item.album?.uri;
 
   return (
-    <Stack pos="sticky" top={0} zIndex={0} spacing={-1}>
+    <Stack pos="sticky" top={0} zIndex={1} spacing={-1}>
       <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
           <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
@@ -344,8 +344,9 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
       <Box
         w="-webkit-fit-content"
         bg={bg}
-        backdropFilter="blur(27px)"
         borderRadius="0px 0px 3px 3px"
+        zIndex={-1}
+        backdropFilter="blur(27px)"
       >
         <IconButton
           icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
@@ -356,7 +357,6 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
           boxShadow="none"
-          zIndex={1}
         />
       </Box>
     </Stack>

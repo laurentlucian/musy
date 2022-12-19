@@ -17,8 +17,8 @@ import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
-import OldLikedSongs from '~/components/tiles/OldLikedTracks';
-import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
+// import OldLikedSongs from '~/components/tiles/OldLikedTracks';
+// import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
 
 const Profile = () => {
   const {
@@ -148,9 +148,9 @@ const Profile = () => {
         )}
       </Stack>
       <RecentTracks recent={recent} currentUser={currentUser} sendTo={user.name} />
-      <LikedTracksVirtual liked={liked} currentUser={currentUser} />
+      {/* <LikedTracksVirtual liked={liked} currentUser={currentUser} /> */}
       <LikedTracks liked={liked} currentUser={currentUser} sendTo={user.name} />
-      <OldLikedSongs liked={liked} currentUser={currentUser} />
+      {/* <OldLikedSongs liked={liked} currentUser={currentUser} /> */}
       <TopTracks top={top} currentUser={currentUser} sendTo={user.name} />
       <Playlists playlists={playlists} currentUser={currentUser} />
     </Stack>
