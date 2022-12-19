@@ -1,7 +1,7 @@
 import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { ChakraProps } from '@chakra-ui/react';
-import { Link, useParams } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import type { Profile } from '@prisma/client';
 import ActionMenu from './menu/ActionMenu';
 import { timeSince } from '~/hooks/utils';
@@ -10,6 +10,7 @@ import Tooltip from './Tooltip';
 
 type TileProps = {
   uri: string;
+  trackId?: string;
   image: string;
   albumUri: string | null;
   albumName: string | null;
@@ -32,6 +33,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
       uri,
+      trackId,
       image,
       albumUri,
       albumName,
@@ -48,8 +50,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     },
     ref,
   ) => {
-    const { id } = useParams();
-
     const decodeHtmlEntity = (str?: string) => {
       return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
         return String.fromCharCode(parseInt(dec, 16));
@@ -131,22 +131,22 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             )}
           </Stack>
           {!playlist && (
-            <Flex minW="35px" justify="center">
-              <ActionMenu
-                key={id}
-                uri={uri}
-                image={image}
-                albumName={albumName}
-                albumUri={albumUri}
-                name={name}
-                artist={artist}
-                artistUri={artistUri}
-                explicit={explicit ?? false}
-                userId={user?.userId}
-                sendTo={sendTo}
-                placement="bottom-end"
-              />
-            </Flex>
+            <ActionMenu
+              track={{
+                uri,
+                trackId,
+                name,
+                artist,
+                artistUri,
+                albumName,
+                albumUri,
+                explicit,
+                image,
+              }}
+              fromUserId={user?.userId}
+              sendTo={sendTo}
+              placement="bottom-end"
+            />
           )}
         </Flex>
       </Stack>

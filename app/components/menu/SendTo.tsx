@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
-import {  CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
 
 type SendToProps = {
   uri: string;
@@ -60,7 +60,7 @@ const SendTo = ({
           <input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
           {/* sendTo: receiving song (id), sending song (userId) */}
           {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
-          <input type="hidden" name="fromId" value={userId } />
+          <input type="hidden" name="fromId" value={userId} />
           <input type="hidden" name="action" value={'send'} />
           <Button
             type="submit"

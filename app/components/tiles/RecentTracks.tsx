@@ -20,6 +20,7 @@ const RecentTracks = ({
             <Tile
               key={played_at}
               uri={track.uri}
+              trackId={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}

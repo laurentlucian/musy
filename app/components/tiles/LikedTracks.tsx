@@ -57,6 +57,7 @@ const LikedTracks = ({
                 isLast && setRef(node);
               }}
               key={track.id}
+              trackId={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
               albumUri={track.album.uri}

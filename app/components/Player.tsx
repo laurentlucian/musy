@@ -194,18 +194,21 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                       <>
                         <ActionMenu
                           key={id}
-                          uri={item.uri}
-                          image={item.album?.images[0].url}
-                          albumUri={item.album?.uri}
-                          albumName={item.album?.name}
-                          name={item.name}
-                          artist={item.album?.artists[0].name}
-                          artistUri={artistLink}
-                          explicit={item.explicit ?? false}
-                          userId={currentUser?.userId}
+                          track={{
+                            uri: item.uri,
+                            trackId: item.id,
+                            name: item.name,
+                            artist: item.album?.artists[0].name,
+                            artistUri: artistLink,
+                            albumName: item.album?.name,
+                            albumUri: albumLink,
+                            explicit: item.explicit,
+                            image: item.album?.images[0].url,
+                          }}
+                          fromUserId={currentUser?.userId}
                           sendTo={username}
-                          placement="bottom-start"
-                          offset={[-118, 0]}
+                          // placement="bottom-start"
+                          // offset={[-118, 0]}
                         />
                         <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                           <fetcher.Form

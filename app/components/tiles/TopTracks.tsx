@@ -59,6 +59,7 @@ const TopTracks = ({
             <Tile
               key={track.id}
               uri={track.uri}
+              trackId={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}
@@ -67,7 +68,7 @@ const TopTracks = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               user={currentUser}
-              sendTo={sendTo} 
+              sendTo={sendTo}
             />
           );
         })}
