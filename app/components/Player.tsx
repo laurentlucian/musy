@@ -186,73 +186,78 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                     </Text>
                   </Stack>
                 </Stack>
-                {active ? (
-                  <HStack mt="auto !important" mb="5px !important">
-                    {/* lets owner join own party for testing */}
-                    {/* {currentUser && ( */}
-                    <Link href="https://open.spotify.com" target="_blank" rel="external">
-                      <Image height="30px" minW="108px" src={spotify_logo} />
-                    </Link>
-                    <Show above="md">
-                      {currentUser?.userId === id && (
-                        <PlayController fetcher={fetcher} playback={playback} id={id} />
-                      )}
-                    </Show>
+                <HStack h="100%">
+                  {active ? (
+                    <HStack mt="auto !important" mb="5px !important">
+                      {/* lets owner join own party for testing */}
+                      {/* {currentUser && ( */}
+                      <Link href="https://open.spotify.com" target="_blank" rel="external">
+                        <Image height="30px" minW="98px" src={spotify_logo} />
+                      </Link>
 
-                    {currentUser?.userId !== id && (
-                      <>
-                        <ActionMenu
-                          key={id}
-                          track={{
-                            uri: item.uri,
-                            trackId: item.id,
-                            name: item.name,
-                            artist: item.album?.artists[0].name,
-                            artistUri: artistLink,
-                            albumName: item.album?.name,
-                            albumUri: albumLink,
-                            explicit: item.explicit,
-                            image: item.album?.images[0].url,
-                          }}
-                          fromUserId={currentUser?.userId}
-                          sendTo={username}
-                          // placement="bottom-start"
-                          // offset={[-118, 0]}
-                        />
-                        <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                          <fetcher.Form
-                            action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                            method="post"
-                            replace
-                          >
-                            <IconButton
-                              aria-label={isUserInParty ? 'Leave' : 'Join'}
-                              name="party"
-                              icon={<People size="24px" />}
-                              color={isUserInParty ? 'spotify.green' : undefined}
-                              _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
-                              variant="ghost"
-                              type="submit"
-                              cursor="pointer"
-                              isLoading={busy}
-                            />
-                          </fetcher.Form>
-                        </Tooltip>
-                      </>
+                      {currentUser?.userId !== id && (
+                        <>
+                          <ActionMenu
+                            key={id}
+                            track={{
+                              uri: item.uri,
+                              trackId: item.id,
+                              name: item.name,
+                              artist: item.album?.artists[0].name,
+                              artistUri: artistLink,
+                              albumName: item.album?.name,
+                              albumUri: albumLink,
+                              explicit: item.explicit,
+                              image: item.album?.images[0].url,
+                            }}
+                            fromUserId={currentUser?.userId}
+                            sendTo={username}
+                            // placement="bottom-start"
+                            // offset={[-118, 0]}
+                          />
+                          <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                            <fetcher.Form
+                              action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
+                              method="post"
+                              replace
+                            >
+                              <IconButton
+                                aria-label={isUserInParty ? 'Leave' : 'Join'}
+                                name="party"
+                                icon={<People size="24px" />}
+                                color={isUserInParty ? 'spotify.green' : undefined}
+                                _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
+                                variant="ghost"
+                                type="submit"
+                                cursor="pointer"
+                                isLoading={busy}
+                              />
+                            </fetcher.Form>
+                          </Tooltip>
+                        </>
+                      )}
+                      {party.length && (
+                        <AvatarGroup size="xs" spacing={-2} max={5}>
+                          {party.map((u) => {
+                            return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
+                          })}
+                        </AvatarGroup>
+                      )}
+                    </HStack>
+                  ) : (
+                    <Link href="https://open.spotify.com">
+                      <Image height="30px" width="98px" src={spotify_logo} />
+                    </Link>
+                  )}
+
+                  <Show above="md">
+                    {currentUser?.userId === id && (
+                      <HStack p={1} h="100%" align="end">
+                        <PlayController fetcher={fetcher} playback={playback} id={id} />
+                      </HStack>
                     )}
-                    {party.length && (
-                      <AvatarGroup size="xs" spacing={-2} max={5}>
-                        {party.map((u) => {
-                          return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                        })}
-                      </AvatarGroup>
-                    )}
-                  </HStack>
-                ) : (
-                  <Link href="https://open.spotify.com">
-                    <Image height="30px" width="98px" src={spotify_logo} />
-                  </Link>
-                )}
+                  </Show>
+                </HStack>
               </Stack>
               <HStack spacing={1} align="end">
                 {/* {playback.context &&

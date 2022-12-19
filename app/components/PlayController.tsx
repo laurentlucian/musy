@@ -1,6 +1,5 @@
 import { HStack, IconButton, Tooltip } from '@chakra-ui/react';
 import { Next, Pause, Play, Previous } from 'iconsax-react';
-import React from 'react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import type { FetcherWithComponents } from '@remix-run/react';
 
@@ -26,17 +25,17 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
           />
         </fetcher.Form>
       </Tooltip>
-      <Tooltip label={playback?.is_playing ? 'Pause' : 'Play'}>
+      <Tooltip label={playback.is_playing ? 'Pause' : 'Play'}>
         <fetcher.Form
-          action={playback?.is_playing ? `/${id}/pause` : `/${id}/play`}
+          action={playback.is_playing ? `/${id}/pause` : `/${id}/play`}
           method="post"
           replace
         >
           <IconButton
             name="play"
-            aria-label={playback?.is_playing ? 'Pause' : 'Play'}
+            aria-label={playback.is_playing ? 'Pause' : 'Play'}
             variant="ghost"
-            icon={playback?.is_playing ? <Pause /> : <Play />}
+            icon={playback.is_playing ? <Pause /> : <Play />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
             boxShadow="none"
             type="submit"
