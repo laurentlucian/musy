@@ -11,17 +11,21 @@ type PlayControllerProps = {
 
 const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const loading = fetcher.submission?.formData.has('play') ?? false;
+  const prevSong = fetcher.submission?.formData.has('prev') ?? false;
+  const nextSong = fetcher.submission?.formData.has('next') ?? false;
   return (
     <HStack w="100%" justify="start">
       <Tooltip label="Prev Song">
         <fetcher.Form action={`/${id}/prev`} method="post" replace>
           <IconButton
+            name="prev"
             aria-label="Prev"
             variant="ghost"
             icon={<Previous />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
             boxShadow="none"
             type="submit"
+            isLoading={prevSong}
           />
         </fetcher.Form>
       </Tooltip>
@@ -46,12 +50,14 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
       <Tooltip label="Next Song">
         <fetcher.Form action={`/${id}/next`} method="post" replace>
           <IconButton
+            name="next"
             aria-label="Next"
             variant="ghost"
             icon={<Next />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
             boxShadow="none"
             type="submit"
+            isLoading={nextSong}
           />
         </fetcher.Form>
       </Tooltip>
