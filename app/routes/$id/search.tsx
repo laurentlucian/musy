@@ -26,8 +26,6 @@ const Search = () => {
           artist={track.album.artists[0].name}
           artistUri={track.artists[0].uri}
           explicit={track.explicit}
-          sendTo={user?.name}
-          user={currentUser}
         />
       ))}
     </Tiles>

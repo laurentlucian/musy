@@ -19,10 +19,6 @@ type TileProps = {
   artistUri: string | null;
   explicit: boolean;
 
-  // name, not Id
-  sendTo?: string;
-
-  user: Profile | null;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
   createdAt?: Date;
@@ -41,8 +37,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
-      sendTo,
-      user,
       createdAt,
       createdBy,
       playlist,
@@ -143,8 +137,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 explicit,
                 image,
               }}
-              fromUserId={user?.userId}
-              sendTo={sendTo}
               placement="bottom-end"
             />
           )}

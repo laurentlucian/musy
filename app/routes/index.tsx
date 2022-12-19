@@ -55,9 +55,9 @@ export type Activity = {
 export const loader = async ({ request }: LoaderArgs) => {
   const users = await getAllUsers();
   const session = await authenticator.isAuthenticated(request);
-  const user = session?.user ?? null;
+  const currentUser = session?.user ?? null;
 
-  if (!users.length) return typedjson({ users, user, playbacks: [], activity: [] });
+  if (!users.length) return typedjson({ users, currentUser, playbacks: [], activity: [] });
 
   const getPlaybackState = async (id: string) => {
     try {
@@ -100,7 +100,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   }) as Activity[];
 
   return typedjson(
-    { users, user, playbacks, activity },
+    { users, currentUser, playbacks, activity },
     {
       headers: { 'Cache-Control': 'public, maxage=5, s-maxage=0, stale-while-revalidate=10' },
     },

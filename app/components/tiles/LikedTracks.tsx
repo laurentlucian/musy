@@ -1,20 +1,11 @@
 import { Stack } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useIsVisible from '~/hooks/useIsVisible';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
-const LikedTracks = ({
-  liked: initialLiked,
-  currentUser,
-  sendTo,
-}: {
-  liked: SpotifyApi.SavedTrackObject[];
-  currentUser: Profile | null;
-  sendTo: string;
-}) => {
+const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
   const { id } = useParams();
 
@@ -66,8 +57,6 @@ const LikedTracks = ({
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
-              user={currentUser}
-              sendTo={sendTo}
             />
           );
         })}

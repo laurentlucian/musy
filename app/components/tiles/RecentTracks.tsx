@@ -3,15 +3,7 @@ import type { Profile } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from '../Tiles';
 
-const RecentTracks = ({
-  recent,
-  currentUser,
-  sendTo,
-}: {
-  recent: SpotifyApi.PlayHistoryObject[];
-  currentUser: Profile | null;
-  sendTo: string;
-}) => {
+const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   return (
     <Stack spacing={3}>
       <Tiles title="Recently played" scrollButtons={true}>
@@ -28,8 +20,6 @@ const RecentTracks = ({
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
-              user={currentUser}
-              sendTo={sendTo}
             />
           );
         })}

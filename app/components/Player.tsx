@@ -98,6 +98,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
 
   if (!item) return null;
 
+  const isOwnProfile = currentUser?.userId === id;
   const link = item.uri;
   const artistLink = item.album?.artists[0].uri;
   const albumLink = item.album?.uri;
@@ -194,7 +195,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                         <Image height="30px" minW="98px" src={spotify_logo} />
                       </Link>
 
-                      {currentUser?.userId !== id && (
+                      {!isOwnProfile && (
                         <>
                           <ActionMenu
                             key={id}
@@ -209,8 +210,6 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                               explicit: item.explicit,
                               image: item.album?.images[0].url,
                             }}
-                            fromUserId={currentUser?.userId}
-                            sendTo={username}
                             // placement="bottom-start"
                             // offset={[-118, 0]}
                           />
@@ -250,7 +249,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
                   )}
 
                   <Show above="md">
-                    {currentUser?.userId === id && (
+                    {isOwnProfile && (
                       <HStack p={1} h="100%" align="end">
                         <PlayController fetcher={fetcher} playback={playback} id={id} />
                       </HStack>

@@ -1,7 +1,8 @@
 import type { MenuProps } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { useNavigate } from '@remix-run/react';
+import { useNavigate, useParams } from '@remix-run/react';
 import { DocumentText, More } from 'iconsax-react';
+import useSessionUser from '~/hooks/useSessionUser';
 import AddQueue from './AddQueue';
 import SaveToLiked from './SaveToLiked';
 
@@ -17,17 +18,17 @@ type ActionMenuConfig = {
     artistUri: string | null;
     explicit: boolean;
   };
-  fromUserId?: string;
-  sendTo?: string;
 } & Omit<MenuProps, 'children'>;
 
 const ActionMenu = ({
   track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit },
-  fromUserId,
-  sendTo,
   ...menuProps
 }: ActionMenuConfig) => {
+  const { id } = useParams();
+  const currentUser = useSessionUser();
   const navigate = useNavigate();
+  const isOwnProfile = currentUser?.userId === id;
+
   return (
     <Menu direction="ltr" {...menuProps} isLazy>
       <MenuButton
@@ -41,30 +42,32 @@ const ActionMenu = ({
         opacity={0.5}
       />
       <MenuList rootProps={{ verticalAlign: 'left' }}>
+        {!isOwnProfile && (
+          <AddQueue
+            track={{
+              uri,
+              image,
+              albumUri,
+              albumName,
+              name,
+              artist,
+              artistUri,
+              explicit,
+            }}
+            sendTo={id}
+          />
+        )}
         <AddQueue
-          uri={uri}
-          image={image}
-          albumName={albumName}
-          albumUri={albumUri}
-          name={name}
-          artist={artist}
-          artistUri={artistUri}
-          explicit={explicit}
-          userId={fromUserId}
-          sendTo={sendTo}
-          isReceiver={false}
-        />
-        <AddQueue
-          uri={uri}
-          image={image}
-          albumName={albumName}
-          albumUri={albumUri}
-          name={name}
-          artist={artist}
-          artistUri={artistUri}
-          explicit={explicit}
-          userId={fromUserId}
-          isReceiver={true}
+          track={{
+            uri,
+            image,
+            albumUri,
+            albumName,
+            name,
+            artist,
+            artistUri,
+            explicit,
+          }}
         />
         {trackId && (
           <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>

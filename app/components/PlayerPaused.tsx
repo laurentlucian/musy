@@ -105,8 +105,6 @@ const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) =>
                           explicit: item.explicit,
                           image: item.album?.images[0].url,
                         }}
-                        fromUserId={currentUser?.userId}
-                        sendTo={username}
                         // placement="bottom-start"
                         // offset={[-118, 0]}
                       />

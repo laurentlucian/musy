@@ -96,10 +96,10 @@ const Profile = () => {
         />
       ) : recent ? (
         <PlayerPaused
+          currentUser={currentUser}
           item={recent[0].track}
           username={user.name}
           id={user.userId}
-          currentUser={currentUser}
         />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
@@ -146,12 +146,12 @@ const Profile = () => {
           </Tiles>
         )}
       </Stack>
-      <RecentTracks recent={recent} currentUser={currentUser} sendTo={user.name} />
-      {/* <LikedTracksVirtual liked={liked} currentUser={currentUser} /> */}
-      <LikedTracks liked={liked} currentUser={currentUser} sendTo={user.name} />
-      {/* <OldLikedSongs liked={liked} currentUser={currentUser} /> */}
-      <TopTracks top={top} currentUser={currentUser} sendTo={user.name} />
-      <Playlists playlists={playlists} currentUser={currentUser} />
+      <RecentTracks recent={recent} />
+      {/* <LikedTracksVirtual liked={liked}  /> */}
+      <LikedTracks liked={liked} />
+      {/* <OldLikedSongs liked={liked}  /> */}
+      <TopTracks top={top} />
+      <Playlists playlists={playlists} />
     </Stack>
   );
 };
@@ -224,25 +224,24 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
     const { spotify } = await spotifyApi(currentUser.userId);
-    if (spotify) {
-      const {
-        body: [following],
-      } = await spotify.isFollowingUsers([id]);
+    invariant(spotify, 'Spotify API Error');
+    const {
+      body: [following],
+    } = await spotify.isFollowingUsers([id]);
 
-      return typedjson({
-        user,
-        activity,
-        party,
-        playback,
-        recent,
-        liked,
-        top,
-        playlists,
-        currentUser,
-        following,
-        queue,
-      });
-    }
+    return typedjson({
+      user,
+      activity,
+      party,
+      playback,
+      recent,
+      liked,
+      top,
+      playlists,
+      currentUser,
+      following,
+      queue,
+    });
   }
 
   return typedjson({

@@ -5,15 +5,7 @@ import Tile from '../Tile';
 import Tiles from '../Tiles';
 import type { Profile } from '@prisma/client';
 
-const TopTracks = ({
-  top,
-  currentUser,
-  sendTo,
-}: {
-  top: SpotifyApi.TrackObjectFull[];
-  currentUser: Profile | null;
-  sendTo: string;
-}) => {
+const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const submit = useSubmit();
   const [params] = useSearchParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
@@ -67,8 +59,6 @@ const TopTracks = ({
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
-              user={currentUser}
-              sendTo={sendTo}
             />
           );
         })}

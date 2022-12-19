@@ -11,14 +11,15 @@ import { useContext, useEffect } from 'react';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import loading from './lib/styles/loading.css';
+import { prisma } from './services/db.server';
 
 const App = () => {
-  const { authorized, cookie } = useTypedLoaderData<typeof loader>();
+  const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
 
   return (
     <Document>
       <ChakraProvider theme={theme} colorModeManager={cookieStorageManagerSSR(cookie)}>
-        <Layout authorized={authorized}>
+        <Layout authorized={!!currentUser}>
           <Outlet />
         </Layout>
       </ChakraProvider>
@@ -30,10 +31,14 @@ export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const cookie = request.headers.get('cookie') ?? '';
 
-  if (session) {
-    return typedjson({ authorized: true, cookie });
+  if (session && session.user) {
+    const currentUser = await prisma.profile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    return typedjson({ currentUser, cookie });
   } else {
-    return typedjson({ authorized: false, cookie });
+    return typedjson({ currentUser: null, cookie });
   }
 };
 

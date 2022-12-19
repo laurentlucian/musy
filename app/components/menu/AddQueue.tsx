@@ -1,40 +1,35 @@
 import { MenuItem } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import useParamUser from '~/hooks/useParamUser';
+import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '../Waver';
 
 type AddQueueProps = {
-  uri: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string | null;
-  artistUri: string | null;
-  explicit: boolean;
+  track: {
+    uri: string;
+    name: string;
+    image: string;
 
-  // @todo figure out a better way to require authentication on click;
-  // after authentication redirect, add to queue isn't successful. user needs to click again
-  userId?: string;
-  // user.name
+    albumUri: string | null;
+    albumName: string | null;
+    artist: string | null;
+    artistUri: string | null;
+    explicit: boolean;
+  };
+
+  // @param userId: user's spotify id
   sendTo?: string;
-  isReceiver: boolean;
 };
 
 const AddQueue = ({
-  uri,
-  image,
-  albumUri,
-  albumName,
-  name,
-  artist,
-  artistUri,
-  explicit,
-  userId,
+  track: { uri, image, albumUri, albumName, name, artist, artistUri, explicit },
   sendTo,
-  isReceiver,
 }: AddQueueProps) => {
   const { id } = useParams();
+  const user = useParamUser();
+  const currentUser = useSessionUser();
+
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
@@ -46,16 +41,21 @@ const AddQueue = ({
         : null
       : null;
 
-  const isReceiving = sendTo && !isReceiver;
+  const isSending = !!sendTo;
 
   const addToQueue = () => {
-    const action = userId
-      ? isReceiving
+    const action = currentUser
+      ? isSending
         ? `/${id}/add`
-        : `/${userId}/add`
-      : '/auth/spotify?returnTo=' + pathname + search;
+        : `/${currentUser.userId}/add`
+      : // @todo figure out a better way to require authentication on click;
+        // after authentication redirect, add to queue isn't successful. user needs to click again
+        '/auth/spotify?returnTo=' + pathname + search;
 
     const form = new FormData();
+    const fromUserId = isSending ? currentUser?.userId : id;
+    const sendToUserId = isSending ? sendTo : currentUser?.userId;
+
     const data = {
       uri,
       image,
@@ -68,9 +68,9 @@ const AddQueue = ({
 
       // sendTo: receiving song (id), sending song (userId)
       // addTo: receiving song (userId), sending song indirectly (id; aka current opened profile)
-      fromId: (isReceiving ? userId : id) ?? '',
-      toId: (isReceiving ? sendTo : userId) ?? '',
-      action: isReceiving ? 'send' : 'add',
+      fromId: fromUserId ?? '',
+      toId: sendToUserId ?? '',
+      action: isSending ? 'send' : 'add',
     };
 
     for (const key in data) {
@@ -84,16 +84,13 @@ const AddQueue = ({
     <TickSquare size="25px" />
   ) : isError ? (
     <CloseSquare size="25px" />
-  ) : isReceiving ? (
+  ) : isSending ? (
     <Send2 />
   ) : (
     <AddSquare />
   );
 
-  const qText =
-    userId === undefined
-      ? 'Log in to ' + (isReceiving ? 'send a song' : 'add to queue')
-      : 'Send to ' + (isReceiving ? sendTo.split(' ')[0] : 'yourself');
+  const qText = 'Send to ' + (isSending ? user?.name.split(' ')[0] : 'yourself');
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
 

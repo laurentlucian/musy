@@ -1,5 +1,4 @@
 import { Stack } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useIsVisible from '~/hooks/useIsVisible';
@@ -8,10 +7,8 @@ import Tiles from '../Tiles';
 
 const Playlists = ({
   playlists: initialPlaylists,
-  currentUser,
 }: {
   playlists: SpotifyApi.PlaylistObjectSimplified[];
-  currentUser: Profile | null;
 }) => {
   const [playlists, setPlaylists] = useState(initialPlaylists);
   const { id } = useParams();
@@ -64,7 +61,6 @@ const Playlists = ({
               artist={list.description}
               artistUri={null}
               explicit={false}
-              user={currentUser}
             />
           );
         })}
