@@ -1,5 +1,6 @@
 import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
+import invariant from 'tiny-invariant';
 import { getUser, updateToken } from './auth.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
@@ -180,4 +181,17 @@ export const getUserLikedSongs = async (id: string) => {
   } = await spotify.getMySavedTracks();
 
   return items;
+};
+
+export const getSavedStatus = async (id: string, trackId: string) => {
+  const { token } = await spotifyApi(id);
+  invariant(token, 'missing token');
+
+  const response = await fetch('https://api.spotify.com/v1/me/tracks/contains?ids=' + trackId, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  const data = await response.json();
+
+  return data;
 };

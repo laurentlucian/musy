@@ -55,6 +55,7 @@ const OldLikedSongs = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               user={currentUser}
+              trackId={track.id}
             />
           );
         })}

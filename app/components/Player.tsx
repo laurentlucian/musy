@@ -51,7 +51,6 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
   const [size, setSize] = useState('large');
   const [playingFrom, setPlayingFrom] = useState(false);
   const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
-  console.log(playback.is_playing, 'test');
 
   const { isOpen, onToggle } = useDisclosure();
 
@@ -338,7 +337,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
         backdropFilter="blur(27px)"
       >
         <IconButton
-          icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
+          icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
           variant="ghost"
           onClick={onToggle}
           aria-label={isOpen ? 'open player' : 'close player'}

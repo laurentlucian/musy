@@ -149,7 +149,7 @@ const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) =>
         zIndex={-1}
       >
         <IconButton
-          icon={!isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
+          icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
           variant="ghost"
           onClick={onToggle}
           aria-label={!isOpen ? 'open player' : 'close player'}

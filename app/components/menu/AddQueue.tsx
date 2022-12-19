@@ -1,4 +1,4 @@
-import { Button, MenuItem } from '@chakra-ui/react';
+import { MenuItem } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import Waver from '../Waver';

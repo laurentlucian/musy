@@ -1,8 +1,9 @@
 import type { MenuProps } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useNavigate } from '@remix-run/react';
-import { DocumentText, HambergerMenu } from 'iconsax-react';
+import { DocumentText, More } from 'iconsax-react';
 import AddQueue from './AddQueue';
+import SaveToLiked from './SaveToLiked';
 
 type ActionMenuConfig = {
   track: {
@@ -27,14 +28,13 @@ const ActionMenu = ({
   ...menuProps
 }: ActionMenuConfig) => {
   const navigate = useNavigate();
-
   return (
-    <Menu direction="ltr" {...menuProps}>
+    <Menu direction="ltr" {...menuProps} isLazy>
       <MenuButton
         as={IconButton}
         variant="ghost"
         aria-label="options"
-        icon={<HambergerMenu />}
+        icon={<More />}
         boxShadow="none"
         _active={{ boxShadow: 'none', opacity: 1 }}
         _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
@@ -71,6 +71,7 @@ const ActionMenu = ({
             Analyze track
           </MenuItem>
         )}
+        {trackId && <SaveToLiked trackId={trackId} />}
       </MenuList>
     </Menu>
   );

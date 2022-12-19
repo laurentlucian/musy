@@ -35,7 +35,6 @@ const Profile = () => {
     playlists,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
-
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -278,7 +277,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   }
 
   if (follow != null && currentUser) {
-    const cid = currentUser?.userId;
+    const cid = currentUser.userId;
     const { spotify } = await spotifyApi(cid);
     await spotify?.followUsers([id]);
   }
