@@ -43,7 +43,7 @@ const ActionMenu = ({
         opacity={0.5}
       />
       <MenuList rootProps={{ verticalAlign: 'left' }}>
-        {!isOwnProfile && (
+        {!isOwnProfile && id && (
           <AddQueue
             track={{
               trackId,
