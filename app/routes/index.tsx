@@ -37,7 +37,7 @@ const Index = () => {
 export type Activity = {
   createdAt: Date;
   id: number;
-  trackId?: string;
+  trackId?: string | null;
   uri: string;
   name: string;
   image: string;
@@ -48,7 +48,7 @@ export type Activity = {
   explicit: boolean;
   userId: string | null;
   user: Profile | null;
-  owner?: { user: Profile };
+  owner?: { user: Profile | null };
   action: string;
 };
 

@@ -17,6 +17,7 @@ import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
+import ActivityFeed from '~/components/ActivityFeed';
 // import OldLikedSongs from '~/components/tiles/OldLikedTracks';
 // import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
 
@@ -91,7 +92,7 @@ const Profile = () => {
         <PlayerPaused item={recent[0].track} username={user.name} />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
-      {queue.length !== 0 && (
+      {/* {queue.length !== 0 && (
         <Tiles title="Up Next">
           {queue.map((track, index) => {
             return (
@@ -112,29 +113,12 @@ const Profile = () => {
             );
           })}
         </Tiles>
-      )}
+      )} */}
       <Stack spacing={5}>
         {activity.length !== 0 && (
-          <Tiles title="Activity">
-            {activity.map((item) => {
-              return (
-                <MiniTile
-                  key={item.id}
-                  track={{
-                    trackId: item.trackId,
-                    uri: item.uri,
-                    image: item.image,
-                    albumUri: item.albumUri,
-                    albumName: item.albumName,
-                    name: item.name,
-                    artist: item.artist,
-                    artistUri: item.artistUri,
-                    explicit: item.explicit,
-                  }}
-                  createdBy={item.user}
-                  createdAt={item.createdAt}
-                />
-              );
+          <Tiles autoScroll>
+            {activity.map((track) => {
+              return <ActivityFeed key={track.id} track={track} />;
             })}
           </Tiles>
         )}
@@ -185,8 +169,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const [activity, party, recent, liked, top, playlists, { currently_playing: playback, queue }] =
     await Promise.all([
       prisma.queue.findMany({
-        where: { ownerId: id },
-        include: { user: true },
+        where: { OR: [{ userId: id }, { ownerId: id }] },
+        include: { user: true, owner: { select: { user: true, accessToken: false } } },
         orderBy: { createdAt: 'desc' },
       }),
       prisma.party.findMany({ where: { ownerId: id } }),

@@ -55,15 +55,15 @@ const ActivityAction = ({ track }: ActivityProps) => {
               </Link>
             </Tooltip>
             <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
-            <Tooltip label={track.owner?.user.name} placement="top-start">
-              <Link to={`/${track.owner?.user.userId}`}>
+            <Tooltip label={track.owner?.user?.name} placement="top-start">
+              <Link to={`/${track.owner?.user?.userId}`}>
                 <Image
                   minW="25px"
                   maxW="25px"
                   minH="25px"
                   maxH="25px"
                   borderRadius="100%"
-                  src={track.owner?.user.image}
+                  src={track.owner?.user?.image}
                 />
               </Link>
             </Tooltip>
@@ -72,15 +72,15 @@ const ActivityAction = ({ track }: ActivityProps) => {
       case 'add':
         return (
           <>
-            <Tooltip label={track.owner?.user.name} placement="top-start">
-              <Link to={`/${track.owner?.user.userId}`}>
+            <Tooltip label={track.owner?.user?.name} placement="top-start">
+              <Link to={`/${track.owner?.user?.userId}`}>
                 <Image
                   minW="25px"
                   maxW="25px"
                   minH="25px"
                   maxH="25px"
                   borderRadius="100%"
-                  src={track.owner?.user.image}
+                  src={track.owner?.user?.image}
                 />
               </Link>
             </Tooltip>
