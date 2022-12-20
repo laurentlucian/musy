@@ -40,7 +40,13 @@ const MiniTile = ({
               <Link to={`/${createdBy.userId}`}>
                 <HStack align="center">
                   <Tooltip label={createdBy.name} placement="top-start">
-                    <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
+                    <Image
+                      borderRadius={50}
+                      boxSize="25px"
+                      minW="25px"
+                      mb={1}
+                      src={createdBy.image}
+                    />
                   </Tooltip>
                 </HStack>
               </Link>
@@ -49,7 +55,7 @@ const MiniTile = ({
                 Anon
               </Text>
             )}
-            <Text fontSize="11px" opacity={0.6}>
+            <Text fontSize={['9px', '10px']} minW="max-content" opacity={0.6}>
               {timeSince(createdAt ?? null)}
             </Text>
             {trackId && (
