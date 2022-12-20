@@ -17,17 +17,21 @@ type AddQueueProps = {
     artist: string | null;
     artistUri: string | null;
     explicit: boolean;
+
+    // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
+    userId?: string;
   };
 
-  // @param userId: user's spotify id
+  // user's spotify id, if not specified then it'll add to logged in user
   sendTo?: string;
 };
 
 const AddQueue = ({
-  track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit },
+  track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
   sendTo,
 }: AddQueueProps) => {
-  const { id } = useParams();
+  const { id: paramId } = useParams();
+  const id = paramId || userId;
   const user = useParamUser();
   const currentUser = useSessionUser();
 

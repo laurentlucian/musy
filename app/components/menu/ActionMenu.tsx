@@ -17,15 +17,19 @@ type ActionMenuConfig = {
     artist: string | null;
     artistUri: string | null;
     explicit: boolean;
+
+    // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
+    userId?: string;
   };
 } & Omit<MenuProps, 'children'> &
   ChakraProps;
 
 const ActionMenu = ({
-  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit },
+  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
   ...menuProps
 }: ActionMenuConfig) => {
-  const { id } = useParams();
+  const { id: paramId } = useParams();
+  const id = paramId || userId;
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const isOwnProfile = currentUser?.userId === id;
@@ -43,7 +47,7 @@ const ActionMenu = ({
         opacity={0.5}
       />
       <MenuList rootProps={{ verticalAlign: 'left' }}>
-        {!isOwnProfile && id && (
+        {!isOwnProfile && paramId && (
           <AddQueue
             track={{
               trackId,
@@ -70,6 +74,7 @@ const ActionMenu = ({
             artist,
             artistUri,
             explicit,
+            userId: id,
           }}
         />
         <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>

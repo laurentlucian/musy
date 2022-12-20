@@ -1,7 +1,6 @@
-import { Flex, HStack, Image, Stack, Text, Link as LinkB, Icon } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
-import { InfoCircle } from 'iconsax-react';
 import { timeSince } from '~/hooks/utils';
 import ActionMenu from './menu/ActionMenu';
 import Tooltip from './Tooltip';
@@ -18,8 +17,6 @@ type MiniTileProps = {
     artistUri: string | null;
     explicit: boolean;
   };
-  // user's spotify id, if not specified then it'll add to logged in user
-  sendTo?: string;
 
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
@@ -50,11 +47,7 @@ const MiniTile = ({
                   </Tooltip>
                 </HStack>
               </Link>
-            ) : (
-              <Text fontWeight="semibold" fontSize="13px">
-                Anon
-              </Text>
-            )}
+            ) : null}
             <Text fontSize={['9px', '10px']} minW="max-content" opacity={0.6}>
               {timeSince(createdAt ?? null)}
             </Text>

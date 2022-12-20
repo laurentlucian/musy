@@ -124,11 +124,10 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                           as="span"
                           alignSelf="end"
                           key={idx}
-                          // href={track.uri}
-                          // target="_blank"
+                          href={track.uri}
+                          target="_blank"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate('/analysis/' + track.id);
                           }}
                         >
                           <Tooltip

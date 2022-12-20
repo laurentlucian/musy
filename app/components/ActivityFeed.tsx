@@ -124,6 +124,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
             albumUri: track.albumUri,
             explicit: track.explicit,
             image: track.image,
+            userId: track.user?.userId,
           }}
           placement="bottom-end"
           ml="auto !important"
