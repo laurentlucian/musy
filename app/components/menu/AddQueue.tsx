@@ -7,6 +7,7 @@ import Waver from '../Waver';
 
 type AddQueueProps = {
   track: {
+    trackId: string;
     uri: string;
     name: string;
     image: string;
@@ -23,7 +24,7 @@ type AddQueueProps = {
 };
 
 const AddQueue = ({
-  track: { uri, image, albumUri, albumName, name, artist, artistUri, explicit },
+  track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit },
   sendTo,
 }: AddQueueProps) => {
   const { id } = useParams();
@@ -57,6 +58,7 @@ const AddQueue = ({
     const sendToUserId = isSending ? sendTo : currentUser?.userId;
 
     const data = {
+      trackId,
       uri,
       image,
       albumUri: albumUri ?? '',

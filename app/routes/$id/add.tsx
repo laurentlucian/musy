@@ -9,6 +9,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (!id) throw redirect('/');
   const body = await request.formData();
   const uri = body.get('uri');
+  const trackId = body.get('trackId');
   const image = body.get('image');
   const albumUri = body.get('albumUri') as string;
   const albumName = body.get('albumName') as string;
@@ -20,6 +21,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const action = body.get('action') as string;
 
   if (
+    typeof trackId !== 'string' ||
     typeof uri !== 'string' ||
     typeof image !== 'string' ||
     typeof name !== 'string' ||
@@ -31,6 +33,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const fields = {
+    trackId,
     uri,
     name,
     image,

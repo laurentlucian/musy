@@ -3,20 +3,22 @@ import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
 import { InfoCircle } from 'iconsax-react';
 import { timeSince } from '~/hooks/utils';
+import ActionMenu from './menu/ActionMenu';
 import Tooltip from './Tooltip';
 
-type TileProps = {
-  id?: string;
-  uri: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string;
-  artistUri: string | null;
-  explicit: boolean;
-
-  // name, not Id
+type MiniTileProps = {
+  track: {
+    trackId: string | null;
+    uri: string;
+    image: string;
+    albumUri: string | null;
+    albumName: string | null;
+    name: string;
+    artist: string;
+    artistUri: string | null;
+    explicit: boolean;
+  };
+  // user's spotify id, if not specified then it'll add to logged in user
   sendTo?: string;
 
   // will show header (profile above tile) if createdAt is defined
@@ -25,15 +27,10 @@ type TileProps = {
 };
 
 const MiniTile = ({
-  id,
-  uri,
-  image,
-  albumUri,
-  albumName,
-  name,
+  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit },
   createdAt,
   createdBy,
-}: TileProps) => {
+}: MiniTileProps) => {
   return (
     <Stack flex="0 0 100px">
       <Flex direction="column">
@@ -55,22 +52,31 @@ const MiniTile = ({
             <Text fontSize="11px" opacity={0.6}>
               {timeSince(createdAt ?? null)}
             </Text>
+            {trackId && (
+              <ActionMenu
+                track={{
+                  uri,
+                  trackId,
+                  name,
+                  artist,
+                  artistUri,
+                  albumName,
+                  albumUri,
+                  explicit,
+                  image,
+                }}
+                placement="bottom-end"
+                ml="auto !important"
+              />
+            )}
           </HStack>
         )}
         {albumUri ? (
-          <Link to={`/analysis/${id}`}>
-            <Tooltip
-              label={
-                <HStack p="2px">
-                  <Text>{name}</Text>
-                  <Icon boxSize="20px" as={InfoCircle} />
-                </HStack>
-              }
-              placement="top-start"
-            >
+          <LinkB href={albumUri} target="_blank">
+            <Tooltip label={albumName} placement="top-start">
               <Image src={image} borderRadius={5} w="200px" draggable={false} />
             </Tooltip>
-          </Link>
+          </LinkB>
         ) : (
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} borderRadius={5} w="200px" draggable={false} />

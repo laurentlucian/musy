@@ -63,6 +63,7 @@ model Queue {
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
 
+  trackId   String?
   uri       String
   name      String
   image     String

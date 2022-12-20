@@ -124,7 +124,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               </Flex>
             )}
           </Stack>
-          {!playlist && (
+          {!playlist && trackId && (
             <ActionMenu
               track={{
                 uri,

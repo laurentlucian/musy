@@ -97,15 +97,17 @@ const Profile = () => {
             return (
               <MiniTile
                 key={index}
-                id={track.id}
-                uri={track.uri}
-                image={track.album.images[1].url}
-                albumUri={track.album.uri}
-                albumName={track.album.name}
-                name={track.name}
-                artist={track.album.artists[0].name}
-                artistUri={track.album.artists[0].uri}
-                explicit={track.explicit}
+                track={{
+                  trackId: track.id,
+                  uri: track.uri,
+                  image: track.album.images[1].url,
+                  albumUri: track.album.uri,
+                  albumName: track.album.name,
+                  name: track.name,
+                  artist: track.album.artists[0].name,
+                  artistUri: track.album.artists[0].uri,
+                  explicit: track.explicit,
+                }}
               />
             );
           })}
@@ -118,14 +120,17 @@ const Profile = () => {
               return (
                 <MiniTile
                   key={item.id}
-                  uri={item.uri}
-                  image={item.image}
-                  albumUri={item.albumUri}
-                  albumName={item.albumName}
-                  name={item.name}
-                  artist={item.artist}
-                  artistUri={item.artistUri}
-                  explicit={item.explicit}
+                  track={{
+                    trackId: item.trackId,
+                    uri: item.uri,
+                    image: item.image,
+                    albumUri: item.albumUri,
+                    albumName: item.albumName,
+                    name: item.name,
+                    artist: item.artist,
+                    artistUri: item.artistUri,
+                    explicit: item.explicit,
+                  }}
                   createdBy={item.user}
                   createdAt={item.createdAt}
                 />

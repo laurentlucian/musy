@@ -46,7 +46,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   viewport: 'width=device-width,initial-scale=1',
-  description: '',
+  description: "Let's discover music together, join musy :)",
 });
 
 export let links: LinksFunction = () => {

@@ -1,4 +1,4 @@
-import type { MenuProps } from '@chakra-ui/react';
+import type { ChakraProps, MenuProps } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useNavigate, useParams } from '@remix-run/react';
 import { DocumentText, More } from 'iconsax-react';
@@ -8,7 +8,7 @@ import SaveToLiked from './SaveToLiked';
 
 type ActionMenuConfig = {
   track: {
-    trackId?: string;
+    trackId: string;
     uri: string;
     image: string;
     albumUri: string | null;
@@ -18,7 +18,8 @@ type ActionMenuConfig = {
     artistUri: string | null;
     explicit: boolean;
   };
-} & Omit<MenuProps, 'children'>;
+} & Omit<MenuProps, 'children'> &
+  ChakraProps;
 
 const ActionMenu = ({
   track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit },
@@ -45,6 +46,7 @@ const ActionMenu = ({
         {!isOwnProfile && (
           <AddQueue
             track={{
+              trackId,
               uri,
               image,
               albumUri,
@@ -59,6 +61,7 @@ const ActionMenu = ({
         )}
         <AddQueue
           track={{
+            trackId,
             uri,
             image,
             albumUri,
@@ -69,12 +72,10 @@ const ActionMenu = ({
             explicit,
           }}
         />
-        {trackId && (
-          <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>
-            Analyze track
-          </MenuItem>
-        )}
-        {trackId && <SaveToLiked trackId={trackId} />}
+        <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>
+          Analyze track
+        </MenuItem>
+        <SaveToLiked trackId={trackId} />
       </MenuList>
     </Menu>
   );
