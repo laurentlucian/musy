@@ -7,13 +7,13 @@ import {
   Text,
   useColorModeValue,
   Link as LinkB,
-  useMediaQuery,
   Icon,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useNavigate, useTransition } from '@remix-run/react';
 import { InfoCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
+import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
 import PlayerBar from './PlayerBar';
 import Tooltip from './Tooltip';
@@ -27,7 +27,7 @@ type PlayerProps = {
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  const isSmallScreen = useIsMobile();
   const navigate = useNavigate();
 
   const artist =

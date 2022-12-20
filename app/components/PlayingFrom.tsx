@@ -1,4 +1,5 @@
-import { Heading, Image, Link, Stack, Text, useMediaQuery } from '@chakra-ui/react';
+import { Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
+import useIsMobile from '~/hooks/useIsMobile';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import Tooltip from './Tooltip';
 type PlayingFromType = {
@@ -6,7 +7,7 @@ type PlayingFromType = {
   item: SpotifyApi.TrackObjectFull;
 };
 const PlayingFrom = ({ playback, item }: PlayingFromType) => {
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  const isSmallScreen = useIsMobile();
   if (
     !playback.context ||
     (item.album.album_type === 'single' && playback.context.type === 'album')

@@ -13,7 +13,6 @@ import {
   Collapse,
   useDisclosure,
   Box,
-  useMediaQuery,
   Show,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
@@ -21,7 +20,7 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
-import type { Party, Profile } from '@prisma/client';
+import type { Party } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import Tooltip from './Tooltip';
@@ -30,18 +29,19 @@ import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import PlayingFromTooltip from './PlayingFromTooltip';
 import ActionMenu from './menu/ActionMenu';
 import PlayController from './PlayController';
+import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type PlayerProps = {
   id: string;
-  currentUser: Profile | null;
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
-  username: string;
 };
 
-const Player = ({ id, currentUser, party, playback, item, username }: PlayerProps) => {
+const Player = ({ id, party, playback, item }: PlayerProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
+  const currentUser = useSessionUser();
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
@@ -50,7 +50,7 @@ const Player = ({ id, currentUser, party, playback, item, username }: PlayerProp
   // const loading = fetcher.submission?.formData.has('play') ?? false;
   const [size, setSize] = useState('large');
   const [playingFrom, setPlayingFrom] = useState(false);
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  const isSmallScreen = useIsMobile();
 
   const { isOpen, onToggle } = useDisclosure();
 

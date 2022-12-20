@@ -8,7 +8,6 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
-  useMediaQuery,
   Collapse,
   Box,
 } from '@chakra-ui/react';
@@ -16,20 +15,16 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import { type Profile } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import ActionMenu from './menu/ActionMenu';
 import Tooltip from './Tooltip';
-// import AddQueue from './AddQueue';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
   username: string;
-  id: string;
-  currentUser: Profile | null;
 };
 
-const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const link = item.uri;
@@ -41,7 +36,6 @@ const PlayerPaused = ({ item, username, id, currentUser }: PlayerPausedProps) =>
   const explicit = item.explicit;
 
   const [size, setSize] = useState<string>('Large');
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
   const { isOpen, onToggle } = useDisclosure();
   useEffect(() => {
     setSize('large');

@@ -86,21 +86,9 @@ const Profile = () => {
         </Stack>
       </HStack>
       {playback && playback.item?.type === 'track' ? (
-        <Player
-          id={user.userId}
-          currentUser={currentUser}
-          party={party}
-          playback={playback}
-          item={playback.item}
-          username={user.name}
-        />
+        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       ) : recent ? (
-        <PlayerPaused
-          currentUser={currentUser}
-          item={recent[0].track}
-          username={user.name}
-          id={user.userId}
-        />
+        <PlayerPaused item={recent[0].track} username={user.name} />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       {queue.length !== 0 && (

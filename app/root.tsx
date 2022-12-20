@@ -30,21 +30,23 @@ const App = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const cookie = request.headers.get('cookie') ?? '';
+  const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
 
   if (session && session.user) {
     const currentUser = await prisma.profile.findUnique({
       where: { userId: session.user.id },
     });
 
-    return typedjson({ currentUser, cookie });
+    return typedjson({ currentUser, cookie, isMobile });
   } else {
-    return typedjson({ currentUser: null, cookie });
+    return typedjson({ currentUser: null, cookie, isMobile });
   }
 };
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   viewport: 'width=device-width,initial-scale=1',
+  description: '',
 });
 
 export let links: LinksFunction = () => {

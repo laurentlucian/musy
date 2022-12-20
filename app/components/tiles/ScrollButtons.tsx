@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { IconButton, HStack, useMediaQuery } from '@chakra-ui/react';
+import { IconButton, HStack } from '@chakra-ui/react';
 import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
+import useIsMobile from '~/hooks/useIsMobile';
 
 const ScrollButtons = ({
   scrollRef,
@@ -10,7 +11,7 @@ const ScrollButtons = ({
   const scrollPosRef = useRef(0);
   const buttonPressedRef = useRef(false);
   const recentlyPushedButton = useRef<ReturnType<typeof setTimeout>>();
-  const [isSmallScreen] = useMediaQuery('(max-width: 600px)');
+  const isSmallScreen = useIsMobile();
 
   const offset = isSmallScreen ? 52 : -34;
 
