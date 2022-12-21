@@ -18,6 +18,7 @@ const Search = () => {
       {tracks?.map((track) => (
         <Tile
           key={track.id}
+          trackId={track.id}
           uri={track.uri}
           image={track.album.images[1].url}
           albumUri={track.album.uri}
