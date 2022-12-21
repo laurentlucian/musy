@@ -18,7 +18,7 @@ const Index = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
       <Stack>
-        <Tiles autoScroll>
+        <Tiles spacing="15px" autoScroll>
           {activity.map((track) => {
             return <ActivityFeed key={track.id} track={track} />;
           })}

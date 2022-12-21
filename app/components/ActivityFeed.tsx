@@ -138,7 +138,7 @@ const ActivityFeed = ({ track }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   return (
-    <Stack pr={'6.9px'}>
+    <Stack w="220px">
       <ActivityAction track={track} />
       <HStack borderRadius={5} bgColor={bg} w="100%" pl={2}>
         <Stack spacing={0} px={2} w="200px">
@@ -162,13 +162,11 @@ const ActivityFeed = ({ track }: ActivityProps) => {
             </Tooltip>
           </LinkB>
         </Stack>
-        <HStack w="55%" justify="end">
-          <LinkB href={track.albumUri ?? ''} target="_blank">
-            <Tooltip label={track.name} placement="top-start">
-              <Image boxSize="70px" src={track.image} />
-            </Tooltip>
-          </LinkB>
-        </HStack>
+        <LinkB href={track.albumUri ?? ''} target="_blank">
+          <Tooltip label={track.name} placement="top-start">
+            <Image minW="70px" maxW="70px" src={track.image} />
+          </Tooltip>
+        </LinkB>
       </HStack>
     </Stack>
   );

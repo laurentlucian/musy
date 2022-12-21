@@ -104,9 +104,9 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const albumLink = item.album?.uri;
 
   return (
-    <Stack pos="sticky" top={0} zIndex={1} spacing={-1}>
-      <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
-        <Collapse in={!isOpen} animateOpacity unmountOnExit>
+    <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflow="visible">
+      <Collapse in={!isOpen} animateOpacity unmountOnExit>
+        <Stack backdropFilter="blur(27px)" spacing={0} borderRadius={size === 'small' ? 0 : 5}>
           <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
@@ -189,30 +189,18 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                 <HStack h="100%">
                   {active ? (
                     <HStack mt="auto !important" mb="5px !important">
-                      {/* lets owner join own party for testing */}
-                      {/* {currentUser && ( */}
                       <Link href="https://open.spotify.com" target="_blank" rel="external">
                         <Image height="30px" minW="98px" src={spotify_logo} />
                       </Link>
-
+                      {party.length && (
+                        <AvatarGroup size="xs" spacing={-2} max={5}>
+                          {party.map((u) => {
+                            return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
+                          })}
+                        </AvatarGroup>
+                      )}
                       {!isOwnProfile && (
                         <>
-                          <ActionMenu
-                            key={id}
-                            track={{
-                              uri: item.uri,
-                              trackId: item.id,
-                              name: item.name,
-                              artist: item.album?.artists[0].name,
-                              artistUri: artistLink,
-                              albumName: item.album?.name,
-                              albumUri: albumLink,
-                              explicit: item.explicit,
-                              image: item.album?.images[0].url,
-                            }}
-                            // placement="bottom-start"
-                            // offset={[-118, 0]}
-                          />
                           <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
                             <fetcher.Form
                               action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
@@ -232,14 +220,23 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                               />
                             </fetcher.Form>
                           </Tooltip>
+                          <ActionMenu
+                            key={id}
+                            track={{
+                              uri: item.uri,
+                              trackId: item.id,
+                              name: item.name,
+                              artist: item.album?.artists[0].name,
+                              artistUri: artistLink,
+                              albumName: item.album?.name,
+                              albumUri: albumLink,
+                              explicit: item.explicit,
+                              image: item.album?.images[0].url,
+                            }}
+                            // placement="bottom-start"
+                            // offset={[-118, 0]}
+                          />
                         </>
-                      )}
-                      {party.length && (
-                        <AvatarGroup size="xs" spacing={-2} max={5}>
-                          {party.map((u) => {
-                            return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                          })}
-                        </AvatarGroup>
                       )}
                     </HStack>
                   ) : (
@@ -248,13 +245,11 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                     </Link>
                   )}
 
-                  <Show above="md">
-                    {isOwnProfile && (
-                      <HStack p={1} h="100%" align="end">
-                        <PlayController fetcher={fetcher} playback={playback} id={id} />
-                      </HStack>
-                    )}
-                  </Show>
+                  {isOwnProfile && !isSmallScreen && (
+                    <HStack p={1} h="100%" align="end">
+                      <PlayController fetcher={fetcher} playback={playback} id={id} />
+                    </HStack>
+                  )}
                 </HStack>
               </Stack>
               <HStack spacing={1} align="end">
@@ -317,17 +312,15 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                 </Link>
               </HStack>
             </Flex>
-            <Show below="md">
-              {currentUser?.userId === id && (
-                <HStack pl={2}>
-                  <PlayController fetcher={fetcher} playback={playback} id={id} />
-                </HStack>
-              )}
-            </Show>
+            {currentUser?.userId === id && isSmallScreen && (
+              <HStack pl={2}>
+                <PlayController fetcher={fetcher} playback={playback} id={id} />
+              </HStack>
+            )}
             <PlayerBar playback={playback} />
           </Stack>
-        </Collapse>
-      </Stack>
+        </Stack>
+      </Collapse>
       <Box
         w="-webkit-fit-content"
         bg={bg}

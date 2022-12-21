@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { ChakraProps, StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
 import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
 import ScrollButtons from './tiles/ScrollButtons';
@@ -9,9 +10,16 @@ type TilesProps = {
   autoScroll?: boolean;
   Filter?: ReactNode;
   scrollButtons?: boolean;
-};
+} & StackProps;
 
-const Tiles = ({ title, children, autoScroll, Filter = null, scrollButtons }: TilesProps) => {
+const Tiles = ({
+  title,
+  children,
+  autoScroll,
+  Filter = null,
+  scrollButtons,
+  ...chakraProps
+}: TilesProps) => {
   const { scrollRef, props } = useHorizontalScroll('reverse', autoScroll);
 
   return (
@@ -30,6 +38,7 @@ const Tiles = ({ title, children, autoScroll, Filter = null, scrollButtons }: Ti
         align="flex-start"
         pb={2}
         {...props}
+        {...chakraProps}
       >
         {children}
       </HStack>
