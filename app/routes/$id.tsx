@@ -12,7 +12,7 @@ import PlayerPaused from '~/components/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
-import MiniTile from '~/components/MiniTile';
+// import MiniTile from '~/components/MiniTile';
 import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
@@ -32,7 +32,7 @@ const Profile = () => {
     top,
     activity,
     following,
-    queue,
+    // queue,
     playlists,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();

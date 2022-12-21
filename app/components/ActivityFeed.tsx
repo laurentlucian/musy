@@ -165,7 +165,7 @@ const ActivityFeed = ({ track }: ActivityProps) => {
         <HStack w="55%" justify="end">
           <LinkB href={track.albumUri ?? ''} target="_blank">
             <Tooltip label={track.name} placement="top-start">
-              <Image w="100%" src={track.image} />
+              <Image boxSize="70px" src={track.image} />
             </Tooltip>
           </LinkB>
         </HStack>
