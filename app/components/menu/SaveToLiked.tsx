@@ -1,7 +1,8 @@
-import { Image, MenuItem, Text } from '@chakra-ui/react';
-import { useFetcher, useLocation, useParams } from '@remix-run/react';
+import { Image, MenuItem } from '@chakra-ui/react';
+import { useLocation, useParams } from '@remix-run/react';
 import Waver from '../Waver';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useTypedFetcher } from 'remix-typedjson';
 
 type SaveToLikedProps = {
   trackId: string;
@@ -10,7 +11,7 @@ type SaveToLikedProps = {
 const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const { id } = useParams();
-  const fetcher = useFetcher();
+  const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
 
   const saveSong = () => {
