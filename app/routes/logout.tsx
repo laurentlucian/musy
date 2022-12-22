@@ -4,10 +4,8 @@ import { json, redirect } from '@remix-run/node';
 import { destroySession, getSession } from '~/services/session.server';
 
 export const action: ActionFunction = async ({ request }) => {
-  const body = await request.formData();
-  const redirectTo = (body.get('redirectTo') as string) ?? '/';
-
-  return redirect(redirectTo, {
+  // now redirect to homepage when logging out instead of previous page
+  return redirect('/', {
     headers: {
       'Set-Cookie': await destroySession(await getSession(request.headers.get('cookie'))),
     },

@@ -18,7 +18,7 @@ const Tiles = ({
   autoScroll,
   Filter = null,
   scrollButtons,
-  ...chakraProps
+  ...ChakraProps
 }: TilesProps) => {
   const { scrollRef, props } = useHorizontalScroll('reverse', autoScroll);
 
@@ -38,7 +38,7 @@ const Tiles = ({
         align="flex-start"
         pb={2}
         {...props}
-        {...chakraProps}
+        {...ChakraProps}
       >
         {children}
       </HStack>

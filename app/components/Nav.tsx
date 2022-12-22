@@ -1,29 +1,18 @@
-import {
-  Button,
-  Flex,
-  Heading,
-  HStack,
-  IconButton,
-  Image,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
-import { Logout, Moon, Sun1 } from 'iconsax-react';
-import Tooltip from './Tooltip';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import Waver from './Waver';
+import Settings from './Settings';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
-  const { colorMode, toggleColorMode } = useColorMode();
   const transition = useTransition();
   const { pathname, search } = useLocation();
-  const busy =
-    (transition.submission?.formData.has('logout') ||
-      transition.submission?.formData.has('login')) ??
-    false;
+
+  // settings not available unless you are logged in
+  // can now only sign out through settings
+  // can now only change color mode in settings
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
@@ -34,7 +23,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">
-        {!authorized && (
+        {!authorized ? (
           <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
             <Button
               isLoading={transition.submission?.action.includes('auth')}
@@ -47,31 +36,9 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
               Login with &nbsp; <Image height="24px" width="85px" src={spotify_logo} />
             </Button>
           </Form>
+        ) : (
+          <Settings />
         )}
-
-        {authorized && (
-          <Form action={'/logout'} method="post">
-            <input type="hidden" value={pathname + search} name="redirectTo" />
-            <Tooltip label="Logout">
-              <IconButton
-                aria-label="logout"
-                name="logout"
-                icon={<Logout />}
-                isLoading={busy}
-                variant="ghost"
-                cursor="pointer"
-                type="submit"
-              />
-            </Tooltip>
-          </Form>
-        )}
-        <IconButton
-          aria-label={colorMode === 'light' ? 'Dark' : 'Light'}
-          icon={colorMode === 'light' ? <Moon /> : <Sun1 />}
-          variant="ghost"
-          onClick={toggleColorMode}
-          cursor="pointer"
-        />
       </HStack>
     </Flex>
   );

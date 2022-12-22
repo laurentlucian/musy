@@ -1,6 +1,12 @@
 import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
-import { Heading, ChakraProvider, Text, cookieStorageManagerSSR } from '@chakra-ui/react';
+import {
+  Heading,
+  ChakraProvider,
+  Text,
+  cookieStorageManagerSSR,
+  localStorageManager,
+} from '@chakra-ui/react';
 
 import { theme } from '~/lib/theme';
 import Layout from '~/components/Layout';
@@ -15,10 +21,12 @@ import { prisma } from './services/db.server';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
+  const colorModeManager =
+    typeof cookie === 'string' ? cookieStorageManagerSSR(cookie) : localStorageManager;
 
   return (
     <Document>
-      <ChakraProvider theme={theme} colorModeManager={cookieStorageManagerSSR(cookie)}>
+      <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
         <Layout authorized={!!currentUser}>
           <Outlet />
         </Layout>
