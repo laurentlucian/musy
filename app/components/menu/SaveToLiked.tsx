@@ -60,7 +60,7 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
       closeOnSelect={false}
       mr={isSaved ? '0px' : '9.54px'}
     >
-      {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save Track'}
+      {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save track'}
     </MenuItem>
   );
 };
