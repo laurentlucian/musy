@@ -13,7 +13,6 @@ import {
   Collapse,
   useDisclosure,
   Box,
-  Show,
 } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
@@ -108,7 +107,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
       <Stack backdropFilter="blur(27px)">
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
           <Stack spacing={0} borderRadius={size === 'small' ? 0 : 5}>
-            <Stack bg={bg} backdropFilter={isSmallScreen ? 'blur(27px)' : '0'}>
+            <Stack bg={bg}>
               <Flex h="135px" px="2px" py="2px" justify="space-between">
                 <Stack pl="7px" spacing={1} flexGrow={1}>
                   <Stack direction="column" spacing={0.5}>
@@ -236,6 +235,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                               }}
                               // placement="bottom-start"
                               // offset={[-118, 0]}
+                              zIndex={2}
                             />
                           </>
                         )}
@@ -254,29 +254,29 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                 </Stack>
                 <HStack spacing={1} align="end">
                   {/* {playback.context &&
-                      playback.context.name &&
-                      !isSmallScreen &&
-                      (playback.context.type === 'collection' ? (
-                        <Tooltip label={playback.context.name} placement="bottom-end">
-                          <Image
-                            src={playback.context.image}
-                            boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
-                            borderRadius={2}
-                            transition="width 0.25s, height 0.25s"
-                          />
-                        </Tooltip>
-                      ) : (
-                        <Link href={playback.context?.uri} target="_blank">
-                          <Tooltip label={playback.context.name} placement="bottom-end">
-                            <Image
-                              src={playback.context.image}
-                              boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
-                              borderRadius={2}
-                              transition="width 0.25s, height 0.25s"
-                            />
-                          </Tooltip>
-                        </Link>
-                      ))} */}
+                          playback.context.name &&
+                          !isSmallScreen &&
+                          (playback.context.type === 'collection' ? (
+                            <Tooltip label={playback.context.name} placement="bottom-end">
+                              <Image
+                                src={playback.context.image}
+                                boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
+                                borderRadius={2}
+                                transition="width 0.25s, height 0.25s"
+                              />
+                            </Tooltip>
+                          ) : (
+                            <Link href={playback.context?.uri} target="_blank">
+                              <Tooltip label={playback.context.name} placement="bottom-end">
+                                <Image
+                                  src={playback.context.image}
+                                  boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
+                                  borderRadius={2}
+                                  transition="width 0.25s, height 0.25s"
+                                />
+                              </Tooltip>
+                            </Link>
+                          ))} */}
                   <Link href={albumLink ?? ''} target="_blank">
                     <Tooltip label={item.album.name} placement="bottom-end">
                       <Image
