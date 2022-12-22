@@ -8,35 +8,23 @@ type SaveToLikedProps = {
 };
 
 const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
-  const [isSaved, setIsSaved] = useState(true);
+  const [isSaved, setIsSaved] = useState(false);
   const { id } = useParams();
   const fetcher = useFetcher();
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-  const isDone = fetcher.type === 'done';
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
+  const { pathname, search } = useLocation();
+
   const saveSong = () => {
-    // const action = id ? `/${id}/save` : '/auth/spotify?returnTo=' + pathname + search;
+    setIsSaved(!isSaved);
+    const action = id ? `/${id}/save` : '/auth/spotify?returnTo=' + pathname + search;
 
-    // const form = new FormData();
+    const form = new FormData();
 
-    // form.append('trackId', trackId);
+    form.append('trackId', trackId);
     // form.append('isRemovable', isSaved ? 'hi' : '');
 
-    // fetcher.submit(form, { replace: true, method: 'post', action });
-    setIsSaved(!isSaved);
+    fetcher.submit(form, { replace: true, method: 'post', action });
   };
-  const text =
-    id === undefined
-      ? 'Log in to save a song'
-      : isSaved
-      ? 'Saved to Liked Songs'
-      : 'Save to Liked Songs';
-  const icon = isSaved ? <Image w="23px" src="heart.svg" /> : <Image w="23px" src="like.svg" />;
+
   // useEffect(() => {
   //   fetcher.load(`/${id}/save?trackId=${trackId}`);
   // }, []);
@@ -45,6 +33,24 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   //     setIsSaved(fetcher.data);
   //   }
   // }, []);
+
+  // const text =
+  //   id === undefined
+  //     ? 'Log in to save a song'
+  //     : isSaved
+  //     ? 'Saved to Liked Songs'
+  //     : 'Save to Liked Songs';
+  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
+  const isDone = fetcher.type === 'done';
+  const isError =
+    typeof fetcher.data === 'string'
+      ? fetcher.data.includes('Error')
+        ? fetcher.data
+        : null
+      : null;
+
+  const icon = isSaved ? <Image w="23px" src="heart.svg" /> : <Image w="23px" src="like.svg" />;
+
   return (
     <MenuItem
       onClick={saveSong}
@@ -53,7 +59,7 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
       closeOnSelect={false}
       mr={isSaved ? '0px' : '9.54px'}
     >
-      {isAdding ? <Waver /> : text}
+      {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save Track'}
     </MenuItem>
   );
 };

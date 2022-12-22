@@ -27,32 +27,41 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const data = await request.formData();
   const trackId = data.get('trackId');
-  const isRemovable = Boolean(data.get('isRemovable'));
   const currentUser = await getCurrentUser(request);
 
-  if (typeof trackId !== 'string' || typeof isRemovable !== 'boolean') {
+  if (typeof trackId !== 'string' || !currentUser) {
     return json('Request Error');
   }
 
   const { spotify } = await spotifyApi(id);
   if (!spotify) return json('Error: no access to API');
 
-  if (currentUser) {
-    if (isRemovable === true)
-      try {
-        await spotify.removeFromMySavedTracks([trackId]);
-      } catch (error) {
-        console.log('add -> error', error);
-        return json('Error: Premium required');
-      }
-    else {
-      try {
-        await spotify.addToMySavedTracks([trackId]);
-        return json('Saved');
-      } catch (error) {
-        console.log('add -> error', error);
-        return json('Error: Premium required');
-      }
-    }
+  const [isSaved] = await getSavedStatus(id, trackId);
+  if (isSaved) return json('Already saved');
+
+  try {
+    await spotify.addToMySavedTracks([trackId]);
+    return json('Saved');
+  } catch (error) {
+    return json('error: Reauthenticate');
   }
+
+  // @todo implement getSavedStatus before calling this action
+
+  // if (isRemovable === true)
+  //   try {
+  //     await spotify.removeFromMySavedTracks([trackId]);
+  //   } catch (error) {
+  //     console.log('add -> error', error);
+  //     return json('Error: Premium required');
+  //   }
+  // else {
+  //   try {
+  //     await spotify.addToMySavedTracks([trackId]);
+  //     return json('Saved');
+  //   } catch (error) {
+  //     console.log('add -> error', error);
+  //     return json('Error: Premium required');
+  //   }
+  // }
 };
