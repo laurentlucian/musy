@@ -1,7 +1,8 @@
-import { HStack, IconButton, Tooltip } from '@chakra-ui/react';
+import { HStack, IconButton } from '@chakra-ui/react';
 import { Next, Pause, Play, Previous } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import type { FetcherWithComponents } from '@remix-run/react';
+import Tooltip from './Tooltip';
 
 type PlayControllerProps = {
   id: string;
