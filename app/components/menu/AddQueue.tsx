@@ -1,6 +1,6 @@
 import { MenuItem } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { useFetcher, useLocation, useParams } from '@remix-run/react';
+import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
 import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '../Waver';
@@ -31,6 +31,7 @@ const AddQueue = ({
 }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
+  const submit = useSubmit();
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
@@ -46,18 +47,18 @@ const AddQueue = ({
   const isSending = !!user;
   const id = userId || user?.userId || paramId;
 
-  if (!isSending) {
-    console.log(id, 'id');
-  }
-
   const addToQueue = () => {
-    const action = currentUser
-      ? isSending
-        ? `/${id}/add`
-        : `/${currentUser.userId}/add`
-      : // @todo figure out a better way to require authentication on click;
-        // after authentication redirect, add to queue isn't successful. user needs to click again
-        '/auth/spotify?returnTo=' + pathname + search;
+    if (!currentUser) {
+      // @todo figure out a better way to require authentication on click;
+      // after authentication redirect, add to queue isn't successful. user needs to click again
+      return submit(null, {
+        replace: true,
+        method: 'post',
+        action: '/auth/spotify?returnTo=' + pathname + search,
+      });
+    }
+
+    const action = isSending ? `/${id}/add` : `/${currentUser.userId}/add`;
 
     const fromUserId = isSending ? currentUser?.userId : id;
     const sendToUserId = isSending ? id : currentUser?.userId;
