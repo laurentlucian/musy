@@ -18,6 +18,7 @@ import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import { useEffect, useState } from 'react';
 import ActionMenu from './menu/ActionMenu';
 import Tooltip from './Tooltip';
+import useIsMobile from '~/hooks/useIsMobile';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
@@ -26,6 +27,7 @@ type PlayerPausedProps = {
 
 const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const bg = useColorModeValue('music.50', 'music.900');
+  const bgMobile = useColorModeValue('music.100', 'music.800');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const link = item.uri;
   const artistLink = item.album?.artists[0].uri;
@@ -37,6 +39,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
 
   const [size, setSize] = useState<string>('Large');
   const { isOpen, onToggle } = useDisclosure();
+  const isSmallScreen = useIsMobile();
   useEffect(() => {
     setSize('large');
     const checkStick = () => {
@@ -60,7 +63,12 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
         zIndex={2}
       >
         <Collapse in={!isOpen} animateOpacity unmountOnExit>
-          <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={size === 'small' ? 0 : 5}>
+          <Stack
+            w={[363, '100%']}
+            bg={isSmallScreen ? bgMobile : bg}
+            spacing={0}
+            borderRadius={size === 'small' ? 0 : 5}
+          >
             <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
                 <Flex direction="column">
