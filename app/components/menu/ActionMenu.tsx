@@ -37,11 +37,9 @@ const ActionMenu = ({
   const [isSending, setIsSending] = useState(false);
   const { id } = useParams();
   const user = useParamUser();
-
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const isOwnProfile = currentUser?.userId === id;
-
   const users = allUsers.filter((user) => user.userId !== currentUser?.userId);
 
   const SendTo = () => (
@@ -125,7 +123,7 @@ const ActionMenu = ({
         opacity={0.5}
       />
       <Portal>
-        <MenuList rootProps={{ verticalAlign: 'left' }}>
+        <MenuList overflowY="auto" overflowX="hidden" maxH="400px">
           {isSending ? <SendToList /> : <SendTo />}
           {!isSending && (
             <>
