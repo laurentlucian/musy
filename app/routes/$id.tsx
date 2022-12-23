@@ -116,7 +116,7 @@ const Profile = () => {
       )} */}
       <Stack spacing={5}>
         {activity.length !== 0 && (
-          <Tiles spacing="15px" autoScroll>
+          <Tiles spacing="15px">
             {activity.map((track) => {
               return <ActivityFeed key={track.id} track={track} />;
             })}
