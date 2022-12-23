@@ -1,8 +1,13 @@
 import type { ChakraProps, MenuProps } from '@chakra-ui/react';
+import { Portal } from '@chakra-ui/react';
+import { Icon } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useNavigate, useParams } from '@remix-run/react';
-import { DocumentText, More } from 'iconsax-react';
+import { ArrowLeft2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
+import { useState } from 'react';
+import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
 import SaveToLiked from './SaveToLiked';
 
@@ -28,41 +33,50 @@ const ActionMenu = ({
   track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
   ...menuProps
 }: ActionMenuConfig) => {
-  const { id: paramId } = useParams();
-  const id = paramId || userId;
+  const allUsers = useUsers();
+  const [isSending, setIsSending] = useState(false);
+  const { id } = useParams();
+  const user = useParamUser();
+
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const isOwnProfile = currentUser?.userId === id;
 
-  return (
-    <Menu direction="ltr" {...menuProps} isLazy>
-      <MenuButton
-        as={IconButton}
-        variant="ghost"
-        aria-label="options"
-        icon={<More />}
-        boxShadow="none"
-        _active={{ boxShadow: 'none', opacity: 1 }}
-        _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
-        opacity={0.5}
+  const users = allUsers.filter((user) => user.userId !== currentUser?.userId);
+
+  const SendTo = () => (
+    <MenuItem
+      icon={<Send2 />}
+      onClick={() => setIsSending(true)}
+      closeOnSelect={false}
+      pos="relative"
+    >
+      Send to:
+      <Icon as={ArrowRight2} boxSize="25px" ml="auto !important" pos="absolute" right="10px" />
+    </MenuItem>
+  );
+
+  const SendToList = () => (
+    <>
+      <MenuItem icon={<ArrowLeft2 />} onClick={() => setIsSending(false)} closeOnSelect={false}>
+        Send to:
+      </MenuItem>
+      <AddQueue
+        track={{
+          trackId,
+          uri,
+          image,
+          albumUri,
+          albumName,
+          name,
+          artist,
+          artistUri,
+          explicit,
+          userId,
+        }}
+        user={null}
       />
-      <MenuList rootProps={{ verticalAlign: 'left' }}>
-        {!isOwnProfile && paramId && (
-          <AddQueue
-            track={{
-              trackId,
-              uri,
-              image,
-              albumUri,
-              albumName,
-              name,
-              artist,
-              artistUri,
-              explicit,
-            }}
-            sendTo={id}
-          />
-        )}
+      {!isOwnProfile && id && (
         <AddQueue
           track={{
             trackId,
@@ -74,14 +88,55 @@ const ActionMenu = ({
             artist,
             artistUri,
             explicit,
-            userId: id,
           }}
+          user={user}
         />
-        <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>
-          Analyze track
-        </MenuItem>
-        <SaveToLiked trackId={trackId} />
-      </MenuList>
+      )}
+      {users.map((user) => (
+        <AddQueue
+          key={user.userId}
+          track={{
+            trackId,
+            uri,
+            image,
+            albumUri,
+            albumName,
+            name,
+            artist,
+            artistUri,
+            explicit,
+          }}
+          user={user}
+        />
+      ))}
+    </>
+  );
+
+  return (
+    <Menu direction="ltr" isLazy {...menuProps}>
+      <MenuButton
+        as={IconButton}
+        variant="ghost"
+        aria-label="options"
+        icon={<More />}
+        boxShadow="none"
+        _active={{ boxShadow: 'none', opacity: 1 }}
+        _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
+        opacity={0.5}
+      />
+      <Portal>
+        <MenuList rootProps={{ verticalAlign: 'left' }}>
+          {isSending ? <SendToList /> : <SendTo />}
+          {!isSending && (
+            <>
+              <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>
+                Analyze
+              </MenuItem>
+              <SaveToLiked trackId={trackId} />
+            </>
+          )}
+        </MenuList>
+      </Portal>
     </Menu>
   );
 };
