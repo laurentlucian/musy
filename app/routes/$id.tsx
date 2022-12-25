@@ -3,7 +3,7 @@ import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
-import { getCurrentUser, updateUserImage } from '~/services/auth.server';
+import { getAllUsers, getCurrentUser, updateUserImage } from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
@@ -116,7 +116,7 @@ const Profile = () => {
       )} */}
       <Stack spacing={5}>
         {activity.length !== 0 && (
-          <Tiles spacing="15px" autoScroll>
+          <Tiles spacing="15px">
             {activity.map((track) => {
               return <ActivityFeed key={track.id} track={track} />;
             })}
@@ -166,37 +166,46 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     await updateUserImage(id, pfp[0].url);
   }
 
-  const [activity, party, recent, liked, top, playlists, { currently_playing: playback, queue }] =
-    await Promise.all([
-      prisma.queue.findMany({
-        where: { OR: [{ userId: id }, { ownerId: id }] },
-        include: { user: true, owner: { select: { user: true, accessToken: false } } },
-        orderBy: { createdAt: 'desc' },
-      }),
-      prisma.party.findMany({ where: { ownerId: id } }),
-      spotify
-        .getMyRecentlyPlayedTracks({ limit: 50 })
-        .then((data) => data.body.items)
-        .catch(() => []),
-      spotify
-        .getMySavedTracks({ limit: 50 })
-        .then((data) => data.body.items)
-        .catch(() => []),
-      spotify
-        .getMyTopTracks({ time_range: topFilter, limit: 50 })
-        .then((data) => data.body.items)
-        .catch(() => []),
-      spotify
-        .getUserPlaylists(user.userId, { limit: 50 })
-        .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
-        .catch(() => []),
-      getUserQueue(id).catch(() => {
-        return {
-          currently_playing: null,
-          queue: [],
-        };
-      }),
-    ]);
+  const [
+    activity,
+    party,
+    recent,
+    liked,
+    top,
+    playlists,
+    { currently_playing: playback, queue },
+    users,
+  ] = await Promise.all([
+    prisma.queue.findMany({
+      where: { OR: [{ userId: id }, { ownerId: id }] },
+      include: { user: true, owner: { select: { user: true, accessToken: false } } },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.party.findMany({ where: { ownerId: id } }),
+    spotify
+      .getMyRecentlyPlayedTracks({ limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getMySavedTracks({ limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getMyTopTracks({ time_range: topFilter, limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getUserPlaylists(user.userId, { limit: 50 })
+      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+      .catch(() => []),
+    getUserQueue(id).catch(() => {
+      return {
+        currently_playing: null,
+        queue: [],
+      };
+    }),
+    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
+  ]);
 
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
@@ -218,6 +227,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       currentUser,
       following,
       queue,
+      users,
     });
   }
 
@@ -233,6 +243,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     currentUser,
     following: null,
     queue,
+    users,
   });
 };
 

@@ -1,7 +1,7 @@
 import { MenuItem } from '@chakra-ui/react';
-import { useFetcher, useLocation, useParams } from '@remix-run/react';
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
-import useParamUser from '~/hooks/useParamUser';
+import type { Profile } from '@prisma/client';
+import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
+import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '../Waver';
 
@@ -22,22 +22,20 @@ type AddQueueProps = {
     userId?: string;
   };
 
-  // user's spotify id, if not specified then it'll add to logged in user
-  sendTo?: string;
+  user: Profile | null;
 };
 
 const AddQueue = ({
   track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
-  sendTo,
+  user,
 }: AddQueueProps) => {
   const { id: paramId } = useParams();
-  const id = paramId || userId;
-  const user = useParamUser();
   const currentUser = useSessionUser();
-
+  const submit = useSubmit();
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
   const isAdding = fetcher.submission?.formData.get('uri') === uri;
+
   const isDone = fetcher.type === 'done';
   const isError =
     typeof fetcher.data === 'string'
@@ -46,20 +44,24 @@ const AddQueue = ({
         : null
       : null;
 
-  const isSending = !!sendTo;
+  const isSending = !!user;
+  const id = userId || user?.userId || paramId;
 
   const addToQueue = () => {
-    const action = currentUser
-      ? isSending
-        ? `/${id}/add`
-        : `/${currentUser.userId}/add`
-      : // @todo figure out a better way to require authentication on click;
-        // after authentication redirect, add to queue isn't successful. user needs to click again
-        '/auth/spotify?returnTo=' + pathname + search;
+    if (!currentUser) {
+      // @todo figure out a better way to require authentication on click;
+      // after authentication redirect, add to queue isn't successful. user needs to click again
+      return submit(null, {
+        replace: true,
+        method: 'post',
+        action: '/auth/spotify?returnTo=' + pathname + search,
+      });
+    }
 
-    const form = new FormData();
+    const action = isSending ? `/${id}/add` : `/${currentUser.userId}/add`;
+
     const fromUserId = isSending ? currentUser?.userId : id;
-    const sendToUserId = isSending ? sendTo : currentUser?.userId;
+    const sendToUserId = isSending ? id : currentUser?.userId;
 
     const data = {
       trackId,
@@ -72,31 +74,23 @@ const AddQueue = ({
       artistUri: artistUri ?? '',
       explicit: explicit ? 'true' : '',
 
-      // sendTo: receiving song (id), sending song (userId)
-      // addTo: receiving song (userId), sending song indirectly (id; aka current opened profile)
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',
       action: isSending ? 'send' : 'add',
     };
 
-    for (const key in data) {
-      form.append(key, data[key as keyof typeof data]);
-    }
-
-    fetcher.submit(form, { replace: true, method: 'post', action });
+    fetcher.submit(data, { replace: true, method: 'post', action });
   };
 
   const icon = isDone ? (
     <TickSquare size="25px" />
   ) : isError ? (
     <CloseSquare size="25px" />
-  ) : isSending ? (
-    <Send2 />
   ) : (
-    <AddSquare />
+    <Send2 />
   );
 
-  const qText = 'Send to ' + (isSending ? user?.name.split(' ')[0] : 'yourself');
+  const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Yourself';
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
 
@@ -105,7 +99,9 @@ const AddQueue = ({
       onClick={addToQueue}
       icon={icon}
       isDisabled={!!isDone || !!isError || !!isAdding}
-      closeOnSelect={false}
+      // bug: fetcher isn't updating its state to loading
+      // so close menu when adding to queue for now
+      closeOnSelect={true}
     >
       {isAdding ? <Waver /> : text}
     </MenuItem>
