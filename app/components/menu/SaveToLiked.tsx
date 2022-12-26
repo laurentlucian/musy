@@ -50,7 +50,11 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
         : null
       : null;
 
-  const icon = isSaved ? <Image w="23px" src="heart.svg" /> : <Image w="23px" src="like.svg" />;
+  const icon = isSaved ? (
+    <Image boxSize="24px" src="heart.svg" />
+  ) : (
+    <Image boxSize="24px" src="like.svg" />
+  );
 
   return (
     <MenuItem
