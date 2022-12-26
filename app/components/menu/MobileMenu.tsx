@@ -4,17 +4,18 @@ import {
   DrawerBody,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
+  // DrawerCloseButton,
   Button,
   useDisclosure,
   IconButton,
   Icon,
   Stack,
   DrawerFooter,
-  Collapse,
   Image,
+  Text,
+  Portal,
 } from '@chakra-ui/react';
-import { ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
+import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
 import { useNavigate } from '@remix-run/react';
 import { type Profile } from '@prisma/client';
 import SaveToLiked from './SaveToLiked';
@@ -40,7 +41,7 @@ interface MobileMenuConfig {
     userId?: string;
   };
 }
-
+// save heart Icon isn't aligned with the rest zzz
 const MobileMenu = ({
   isOwnProfile,
   user,
@@ -57,7 +58,13 @@ const MobileMenu = ({
   const SendTo = () => (
     <Button leftIcon={<Send2 />} onClick={sendMenu.onToggle} pos="relative" variant="drawer">
       Add to Friends Queue
-      <Icon as={ArrowRight2} boxSize="25px" ml="auto !important" pos="absolute" right="10px" />
+      <Icon
+        as={sendMenu.isOpen ? ArrowDown2 : ArrowRight2}
+        boxSize="25px"
+        ml="auto !important"
+        pos="absolute"
+        right="10px"
+      />
     </Button>
   );
   const SendToList = () => (
@@ -128,43 +135,56 @@ const MobileMenu = ({
       />
     </>
   );
-  const SendMenu = () => (
-    <Collapse in={sendMenu.isOpen} animateOpacity={false}>
-      <SendToList />
-    </Collapse>
-  );
+  const SendMenu = () => <SendToList />;
   const CloseMenu = () => (
-    <Button variant="drawer" onClick={menu.onClose} justifyContent="center">
+    <Button
+      variant="drawer"
+      onClick={() => {
+        menu.onClose();
+        sendMenu.onClose();
+      }}
+      justifyContent="center"
+    >
       close
     </Button>
   );
-
   const Menu = () => {
     return (
-      <Drawer isOpen={menu.isOpen} onClose={menu.onClose} size="xl" placement="bottom">
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-          <DrawerHeader>{name}</DrawerHeader>
-
-          <DrawerBody>
-            <Stack align="center">
-              <SendTo />
-              <SendMenu />
-              <Analyze />
-              <AddToYourQueue />
-              <SaveToLiked trackId={trackId} isSmallScreen={isSmallScreen} />
-            </Stack>
-          </DrawerBody>
-          <DrawerFooter>
-            <CloseMenu />
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <Portal>
+        <Drawer
+          isOpen={menu.isOpen}
+          onClose={menu.onClose}
+          size="xl"
+          placement="bottom"
+          lockFocusAcrossFrames
+          preserveScrollBarGap
+        >
+          <DrawerOverlay />
+          <DrawerContent>
+            {/* <DrawerCloseButton /> */}
+            <DrawerHeader>
+              <Stack align="center">
+                <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+                <Text>{name}</Text>
+              </Stack>
+            </DrawerHeader>
+            <DrawerBody>
+              <Stack align="center" h="300px">
+                <SaveToLiked trackId={trackId} isSmallScreen={isSmallScreen} />
+                <Analyze />
+                <AddToYourQueue />
+                <SendTo />
+                {sendMenu.isOpen && <SendMenu />}
+              </Stack>
+            </DrawerBody>
+            <DrawerFooter>
+              <CloseMenu />
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </Portal>
     );
   };
-
   return (
     <>
       <IconButton
