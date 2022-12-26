@@ -14,6 +14,7 @@ import {
   Image,
   Text,
   Portal,
+  Collapse,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
 import { useNavigate } from '@remix-run/react';
@@ -135,56 +136,118 @@ const MobileMenu = ({
       />
     </>
   );
-  const SendMenu = () => <SendToList />;
-  const CloseMenu = () => (
-    <Button
-      variant="drawer"
-      onClick={() => {
-        menu.onClose();
-        sendMenu.onClose();
-      }}
-      justifyContent="center"
-    >
-      close
-    </Button>
+  // const SendMenu = () => (
+  //   <Portal>
+  //     <Drawer
+  //       isOpen={sendMenu.isOpen}
+  //       onClose={sendMenu.onClose}
+  //       size="xl"
+  //       placement="bottom"
+  //       lockFocusAcrossFrames
+  //       preserveScrollBarGap
+  //       initialFocusRef={btnRef}
+  //     >
+  //       <DrawerOverlay />
+  //       <DrawerContent>
+  //         <DrawerHeader>
+  //           <Stack align="center"></Stack>
+  //         </DrawerHeader>
+  //         <DrawerBody>
+  //           <Stack align="center">
+  //             <SendToList />
+  //           </Stack>
+  //         </DrawerBody>
+  //         <DrawerFooter>
+  //           <CloseMenu />
+  //         </DrawerFooter>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   </Portal>
+  // );
+  // const SendMenu = () => (
+  //   <Collapse in={sendMenu.isOpen}>
+  //     <Stack align="center">
+  //       <SendToList />
+  //     </Stack>
+  //   </Collapse>
+  // );
+
+  const SendMenu = () => (
+    <Portal>
+      <Drawer
+        isOpen={sendMenu.isOpen}
+        onClose={sendMenu.onClose}
+        size="xl"
+        placement="bottom"
+        lockFocusAcrossFrames
+        preserveScrollBarGap
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader>
+            <Stack align="center"></Stack>
+          </DrawerHeader>
+          <DrawerBody>
+            <Stack align="center">
+              <SendToList />
+            </Stack>
+          </DrawerBody>
+          <DrawerFooter>
+            <CloseMenu />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </Portal>
   );
-  const Menu = () => {
+  const CloseMenu = () => {
+    const handleClick = () => {
+      menu.isOpen && !sendMenu.isOpen ? menu.onClose() : sendMenu.onClose();
+    };
+    const text = menu.isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
-      <Portal>
-        <Drawer
-          isOpen={menu.isOpen}
-          onClose={menu.onClose}
-          size="xl"
-          placement="bottom"
-          lockFocusAcrossFrames
-          preserveScrollBarGap
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            {/* <DrawerCloseButton /> */}
-            <DrawerHeader>
-              <Stack align="center">
-                <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-                <Text>{name}</Text>
-              </Stack>
-            </DrawerHeader>
-            <DrawerBody>
-              <Stack align="center" h="300px">
-                <SaveToLiked trackId={trackId} isSmallScreen={isSmallScreen} />
-                <Analyze />
-                <AddToYourQueue />
-                <SendTo />
-                {sendMenu.isOpen && <SendMenu />}
-              </Stack>
-            </DrawerBody>
-            <DrawerFooter>
-              <CloseMenu />
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-      </Portal>
+      <Button variant="drawer" onClick={handleClick} justifyContent="center">
+        {text}
+      </Button>
     );
   };
+  const Menu = () => {
+    return (
+      <Drawer
+        isOpen={menu.isOpen}
+        placement="bottom"
+        onClose={menu.onClose}
+        finalFocusRef={btnRef}
+        lockFocusAcrossFrames
+        preserveScrollBarGap
+      >
+        <DrawerOverlay />
+        {/* <DrawerCloseButton /> */}
+        <DrawerContent>
+          <DrawerHeader>
+            <Stack align="center">
+              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+              <Text>{name}</Text>
+            </Stack>
+          </DrawerHeader>
+
+          <DrawerBody>
+            <Stack align="center" h="300px">
+              <Analyze />
+              <AddToYourQueue />
+              <SendTo />
+              <SendMenu />
+            </Stack>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <CloseMenu />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  };
+
   return (
     <>
       <IconButton
@@ -197,7 +260,40 @@ const MobileMenu = ({
         _hover={{ boxShadow: 'none', color: 'spotify.green' }}
         onClick={menu.onOpen}
       />
-      <Menu />
+      {/* <Menu /> */}
+      <Drawer
+        isOpen={menu.isOpen}
+        placement="bottom"
+        onClose={menu.onClose}
+        finalFocusRef={btnRef}
+        lockFocusAcrossFrames
+        preserveScrollBarGap
+      >
+        <DrawerOverlay />
+        {/* <DrawerCloseButton /> */}
+        <DrawerContent>
+          <DrawerHeader>
+            <Stack align="center">
+              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+              <Text>{name}</Text>
+            </Stack>
+          </DrawerHeader>
+
+          <DrawerBody>
+            <Stack align="center" h="300px">
+              <SaveToLiked trackId={trackId} isSmallScreen={isSmallScreen} />
+              <Analyze />
+              <AddToYourQueue />
+              <SendTo />
+              <SendMenu />
+            </Stack>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <CloseMenu />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };
