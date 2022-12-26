@@ -3,7 +3,12 @@ import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
-import { getAllUsers, getCurrentUser, updateUserImage } from '~/services/auth.server';
+import {
+  getAllUsers,
+  getCurrentUser,
+  updateUserImage,
+  updateUserName,
+} from '~/services/auth.server';
 import Player from '~/components/Player';
 import Tiles from '~/components/Tiles';
 import Search from '~/components/Search';
@@ -36,6 +41,7 @@ const Profile = () => {
     playlists,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
+  console.log(user, 'this is the user');
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -164,6 +170,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const pfp = spotifyProfile?.body.images;
   if (pfp) {
     await updateUserImage(id, pfp[0].url);
+  }
+
+  const spotifyProfileName = await spotify.getMe().catch(() => null);
+  const name = spotifyProfileName?.body.display_name;
+  if (name) {
+    await updateUserName(id, name);
   }
 
   const [

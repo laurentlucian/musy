@@ -101,6 +101,11 @@ export const updateUserImage = async (id: string, image: string) => {
   return data;
 };
 
+export const updateUserName = async (id: string, name: string) => {
+  const data = await prisma.profile.update({ where: { userId: id }, data: { name } });
+  return data;
+};
+
 export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
