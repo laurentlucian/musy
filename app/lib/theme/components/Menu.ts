@@ -37,4 +37,4 @@ const baseStyle = definePartsStyle((props) => ({
   },
 }));
 
-export const menuTheme = defineMultiStyleConfig({ baseStyle });
+export const Menu = defineMultiStyleConfig({ baseStyle });

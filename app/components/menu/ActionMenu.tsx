@@ -1,14 +1,16 @@
-import type { ChakraProps, MenuProps } from '@chakra-ui/react';
+import { type ChakraProps, type MenuProps } from '@chakra-ui/react';
 import { Portal } from '@chakra-ui/react';
 import { Icon } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useNavigate, useParams } from '@remix-run/react';
 import { ArrowLeft2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
 import { useState } from 'react';
+import useIsMobile from '~/hooks/useIsMobile';
 import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
+import MobileMenu from './MobileMenu';
 import SaveToLiked from './SaveToLiked';
 
 type ActionMenuConfig = {
@@ -35,12 +37,14 @@ const ActionMenu = ({
 }: ActionMenuConfig) => {
   const allUsers = useUsers();
   const [isSending, setIsSending] = useState(false);
+
   const { id } = useParams();
   const user = useParamUser();
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const isOwnProfile = currentUser?.userId === id;
   const users = allUsers.filter((user) => user.userId !== currentUser?.userId);
+  const isSmallScreen = useIsMobile();
 
   const SendTo = () => (
     <MenuItem
@@ -111,31 +115,57 @@ const ActionMenu = ({
   );
 
   return (
-    <Menu direction="ltr" isLazy {...menuProps}>
-      <MenuButton
-        as={IconButton}
-        variant="ghost"
-        aria-label="options"
-        icon={<More />}
-        boxShadow="none"
-        _active={{ boxShadow: 'none', opacity: 1 }}
-        _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
-        opacity={0.5}
-      />
-      <Portal>
-        <MenuList overflowY="auto" overflowX="hidden" maxH="400px">
-          {isSending ? <SendToList /> : <SendTo />}
-          {!isSending && (
-            <>
-              <MenuItem icon={<DocumentText />} onClick={() => navigate(`/analysis/${trackId}`)}>
-                Analyze
-              </MenuItem>
-              <SaveToLiked trackId={trackId} />
-            </>
-          )}
-        </MenuList>
-      </Portal>
-    </Menu>
+    <>
+      {!isSmallScreen ? (
+        <Menu direction="ltr" isLazy {...menuProps}>
+          <MenuButton
+            as={IconButton}
+            variant="ghost"
+            aria-label="options"
+            icon={<More />}
+            boxShadow="none"
+            _active={{ boxShadow: 'none', opacity: 1 }}
+            _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
+            opacity={0.5}
+          />
+          <Portal>
+            <MenuList overflowY="auto" overflowX="hidden" maxH="400px">
+              {isSending ? <SendToList /> : <SendTo />}
+              {!isSending && (
+                <>
+                  <MenuItem
+                    icon={<DocumentText />}
+                    onClick={() => navigate(`/analysis/${trackId}`)}
+                  >
+                    Analyze
+                  </MenuItem>
+                  <SaveToLiked trackId={trackId} />
+                </>
+              )}
+            </MenuList>
+          </Portal>
+        </Menu>
+      ) : (
+        <MobileMenu
+          isOwnProfile={isOwnProfile}
+          user={user}
+          users={users}
+          id={id}
+          track={{
+            trackId,
+            uri,
+            image,
+            albumUri,
+            albumName,
+            name,
+            artist,
+            artistUri,
+            explicit,
+          }}
+          isSmallScreen={isSmallScreen}
+        />
+      )}
+    </>
   );
 };
 export default ActionMenu;

@@ -1,7 +1,7 @@
-import { MenuItem } from '@chakra-ui/react';
+import { Button, Image, MenuItem } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
-import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { Add, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '../Waver';
 
@@ -21,13 +21,14 @@ type AddQueueProps = {
     // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
     userId?: string;
   };
-
   user: Profile | null;
+  isSmallScreen?: boolean;
 };
 
 const AddQueue = ({
   track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
   user,
+  isSmallScreen,
 }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
@@ -86,25 +87,59 @@ const AddQueue = ({
     <TickSquare size="25px" />
   ) : isError ? (
     <CloseSquare size="25px" />
-  ) : (
+  ) : user ? (
     <Send2 />
+  ) : (
+    <Add />
   );
 
-  const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Yourself';
+  const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Add to Your Queue';
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
 
   return (
-    <MenuItem
-      onClick={addToQueue}
-      icon={icon}
-      isDisabled={!!isDone || !!isError || !!isAdding}
-      // bug: fetcher isn't updating its state to loading
-      // so close menu when adding to queue for now
-      closeOnSelect={true}
-    >
-      {isAdding ? <Waver /> : text}
-    </MenuItem>
+    <>
+      {!isSmallScreen ? (
+        <MenuItem
+          onClick={addToQueue}
+          icon={icon}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          // bug: fetcher isn't updating its state to loading
+          // so close menu when adding to queue for now
+          closeOnSelect={true}
+        >
+          {isAdding ? <Waver /> : text}
+        </MenuItem>
+      ) : user ? (
+        <Button
+          onClick={addToQueue}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          variant="drawer"
+          fontSize="18px"
+          py="30px"
+        >
+          <Image
+            src={user?.image}
+            borderRadius="full"
+            boxSize="50px"
+            minW="50px"
+            mb={1}
+            mr="10px"
+          />
+          {isAdding ? <Waver /> : text}
+        </Button>
+      ) : (
+        <Button
+          onClick={addToQueue}
+          leftIcon={icon}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          variant="drawer"
+          fontSize="14px"
+        >
+          {isAdding ? <Waver /> : text}
+        </Button>
+      )}
+    </>
   );
 };
 

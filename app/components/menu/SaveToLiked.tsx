@@ -1,4 +1,4 @@
-import { Image, MenuItem } from '@chakra-ui/react';
+import { Image, MenuItem, Button } from '@chakra-ui/react';
 import { useLocation, useParams } from '@remix-run/react';
 import Waver from '../Waver';
 import { useState } from 'react';
@@ -6,9 +6,10 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 type SaveToLikedProps = {
   trackId: string;
+  isSmallScreen?: boolean;
 };
 
-const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
+const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const { id } = useParams();
   const fetcher = useTypedFetcher<string>();
@@ -57,15 +58,29 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   );
 
   return (
-    <MenuItem
-      onClick={saveSong}
-      icon={icon}
-      isDisabled={!!isDone || !!isError || !!isAdding}
-      closeOnSelect={false}
-      mr={isSaved ? '0px' : '9.54px'}
-    >
-      {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-    </MenuItem>
+    <>
+      {!isSmallScreen ? (
+        <MenuItem
+          onClick={saveSong}
+          icon={icon}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          closeOnSelect={false}
+          mr={isSaved ? '0px' : '9.54px'}
+        >
+          {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
+        </MenuItem>
+      ) : (
+        <Button
+          onClick={saveSong}
+          leftIcon={icon}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          mr={isSaved ? '0px' : '9.54px'}
+          variant="drawer"
+        >
+          {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
+        </Button>
+      )}
+    </>
   );
 };
 

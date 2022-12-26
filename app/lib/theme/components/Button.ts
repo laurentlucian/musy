@@ -1,5 +1,6 @@
 import { mode } from '@chakra-ui/theme-tools';
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
+import { defineStyle } from '@chakra-ui/styled-system';
 
 type AccessibleColor = {
   bg?: string;
@@ -49,6 +50,17 @@ const variantMusic: SystemStyleFunction = (props) => {
   };
 };
 
+const drawer = defineStyle({
+  justifyContent: 'flex-start',
+  bg: '#00',
+  w: '100vw',
+  _active: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
+  _focus: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
+  _hover: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
+  boxShadow: 'none',
+  outline: 'none',
+});
+
 export default {
   baseStyle: {
     borderRadius: 'sm',
@@ -60,5 +72,6 @@ export default {
   },
   variants: {
     music: variantMusic,
+    drawer,
   },
 };
