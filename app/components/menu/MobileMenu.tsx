@@ -13,8 +13,8 @@ import {
   DrawerFooter,
   Image,
   Text,
-  Portal,
-  Collapse,
+  // Portal,
+  // Collapse,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
 import { useNavigate } from '@remix-run/react';
@@ -172,81 +172,81 @@ const MobileMenu = ({
   //   </Collapse>
   // );
 
-  const SendMenu = () => (
-    <Portal>
-      <Drawer
-        isOpen={sendMenu.isOpen}
-        onClose={sendMenu.onClose}
-        size="xl"
-        placement="bottom"
-        lockFocusAcrossFrames
-        preserveScrollBarGap
-        finalFocusRef={btnRef}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader>
-            <Stack align="center"></Stack>
-          </DrawerHeader>
-          <DrawerBody>
-            <Stack align="center">
-              <SendToList />
-            </Stack>
-          </DrawerBody>
-          <DrawerFooter>
-            <CloseMenu />
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </Portal>
-  );
+  // const SendMenu = () => (
+  //   <Drawer
+  //     isOpen={sendMenu.isOpen}
+  //     onClose={sendMenu.onClose}
+  //     size="xl"
+  //     placement="bottom"
+  //     lockFocusAcrossFrames
+  //     preserveScrollBarGap
+  //     finalFocusRef={btnRef}
+  //   >
+  //     <DrawerOverlay />
+  //     <DrawerContent>
+  //       <DrawerHeader>
+  //         <Stack align="center"></Stack>
+  //       </DrawerHeader>
+
+  //       <DrawerBody>
+  //         <Stack align="center">
+  //           <SendToList />
+  //         </Stack>
+  //       </DrawerBody>
+
+  //       <DrawerFooter>
+  //         <CloseMenu />
+  //       </DrawerFooter>
+  //     </DrawerContent>
+  //   </Drawer>
+  // );
   const CloseMenu = () => {
     const handleClick = () => {
       menu.isOpen && !sendMenu.isOpen ? menu.onClose() : sendMenu.onClose();
     };
     const text = menu.isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
-      <Button variant="drawer" onClick={handleClick} justifyContent="center">
+      <Button variant="drawer" onClick={handleClick} justifyContent="center" h="6.9px" w="100vw">
         {text}
       </Button>
     );
   };
-  const Menu = () => {
-    return (
-      <Drawer
-        isOpen={menu.isOpen}
-        placement="bottom"
-        onClose={menu.onClose}
-        finalFocusRef={btnRef}
-        lockFocusAcrossFrames
-        preserveScrollBarGap
-      >
-        <DrawerOverlay />
-        {/* <DrawerCloseButton /> */}
-        <DrawerContent>
-          <DrawerHeader>
-            <Stack align="center">
-              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-              <Text>{name}</Text>
-            </Stack>
-          </DrawerHeader>
+  // const Menu = () => {
+  //   return (
+  //     <Drawer
+  //       isOpen={menu.isOpen}
+  //       placement="bottom"
+  //       onClose={menu.onClose}
+  //       finalFocusRef={btnRef}
+  //       lockFocusAcrossFrames
+  //       preserveScrollBarGap
+  //     >
+  //       <DrawerOverlay />
+  //       {/* <DrawerCloseButton /> */}
+  //       <DrawerContent>
+  //         <DrawerHeader>
+  //           <Stack align="center">
+  //             <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+  //             <Text>{name}</Text>
+  //           </Stack>
+  //         </DrawerHeader>
 
-          <DrawerBody>
-            <Stack align="center" h="300px">
-              <Analyze />
-              <AddToYourQueue />
-              <SendTo />
-              <SendMenu />
-            </Stack>
-          </DrawerBody>
+  //         <DrawerBody>
+  //           <Stack align="center" h="300px">
+  //             <Analyze />
+  //             <AddToYourQueue />
+  //             <SendTo />
+  //             <SendMenu />
+  //           </Stack>
+  //         </DrawerBody>
 
-          <DrawerFooter>
-            <CloseMenu />
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    );
-  };
+  //         <DrawerFooter>
+  //           <CloseMenu />
+  //         </DrawerFooter>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   );
+  // };
 
   return (
     <>
@@ -256,8 +256,13 @@ const MobileMenu = ({
         icon={<More />}
         variant="ghost"
         boxShadow="none"
-        _active={{ boxShadow: 'none' }}
-        _hover={{ boxShadow: 'none', color: 'spotify.green' }}
+        _active={{ boxShadow: 'none !important', outline: 'none !important' }}
+        _hover={{
+          boxShadow: 'none !important',
+          outline: 'none !important',
+          color: 'spotify.green',
+        }}
+        outline="none !important"
         onClick={menu.onOpen}
       />
       {/* <Menu /> */}
@@ -285,7 +290,34 @@ const MobileMenu = ({
               <Analyze />
               <AddToYourQueue />
               <SendTo />
-              <SendMenu />
+              <Drawer
+                isOpen={sendMenu.isOpen}
+                onClose={sendMenu.onClose}
+                size="xl"
+                placement="bottom"
+                lockFocusAcrossFrames
+                preserveScrollBarGap
+                finalFocusRef={btnRef}
+              >
+                <DrawerOverlay />
+                <DrawerContent>
+                  <DrawerHeader>
+                    <Stack>
+                      <Text>To:</Text>
+                    </Stack>
+                  </DrawerHeader>
+
+                  <DrawerBody>
+                    <Stack align="center">
+                      <SendToList />
+                    </Stack>
+                  </DrawerBody>
+
+                  <DrawerFooter>
+                    <CloseMenu />
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
             </Stack>
           </DrawerBody>
 

@@ -54,11 +54,11 @@ const drawer = defineStyle({
   justifyContent: 'flex-start',
   bg: '#00',
   w: '100vw',
-  _active: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
-  _focus: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
-  _hover: { boxShadow: 'none', outline: 'none', opacity: '0.69' },
-  boxShadow: 'none',
-  outline: 'none',
+  _active: { boxShadow: 'none !important', outline: 'none !important', opacity: '0.69' },
+  _focus: { boxShadow: 'none !important', outline: 'none !important', opacity: '0.69' },
+  _hover: { boxShadow: 'none !important', outline: 'none !important', opacity: '0.69' },
+  boxShadow: 'none !important',
+  outline: 'none !important',
 });
 
 export default {
