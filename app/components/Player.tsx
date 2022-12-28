@@ -107,13 +107,13 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflow="visible">
       <Stack
         backdropFilter={isSmallScreen ? 'none' : 'blur(27px)'}
-        borderRadius={size === 'small' ? 0 : 5}
+        // borderRadius={size === 'small' ? 0 : 5}
       >
         <Collapse in={!isOpen} animateOpacity>
           <Stack
             spacing={0}
             bg={isSmallScreen ? bgMobile : bg}
-            borderRadius={size === 'small' ? 0 : 5}
+            // borderRadius={size === 'small' ? 0 : 5}
             // backdropFilter={isSmallScreen ? 'blur(27px)' : 'none'}
           >
             <Flex h="135px" px="2px" py="2px" justify="space-between">
