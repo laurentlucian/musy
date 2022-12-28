@@ -4,7 +4,6 @@ import {
   DrawerBody,
   DrawerOverlay,
   DrawerContent,
-  // DrawerCloseButton,
   Button,
   useDisclosure,
   IconButton,
@@ -13,8 +12,6 @@ import {
   DrawerFooter,
   Image,
   Text,
-  // Portal,
-  // Collapse,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
 import { useNavigate } from '@remix-run/react';
@@ -28,17 +25,8 @@ interface MobileMenuConfig {
   user: Profile | null;
   users: Profile[];
   id: string | undefined;
-  isSmallScreen: boolean;
   track: {
     trackId: string;
-    uri: string;
-    image: string;
-    albumUri: string | null;
-    albumName: string | null;
-    name: string;
-    artist: string | null;
-    artistUri: string | null;
-    explicit: boolean;
     userId?: string;
   };
 }
@@ -48,8 +36,7 @@ const MobileMenu = ({
   user,
   users,
   id,
-  isSmallScreen,
-  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
+  track: { trackId, userId },
 }: MobileMenuConfig) => {
   const menu = useDisclosure();
   const sendMenu = useDisclosure();
@@ -74,17 +61,8 @@ const MobileMenu = ({
         <AddQueue
           track={{
             trackId,
-            uri,
-            image,
-            albumUri,
-            albumName,
-            name,
-            artist,
-            artistUri,
-            explicit,
           }}
           user={user}
-          isSmallScreen={isSmallScreen}
         />
       )}
       {users.map((user) => (
@@ -92,17 +70,8 @@ const MobileMenu = ({
           key={user.userId}
           track={{
             trackId,
-            uri,
-            image,
-            albumUri,
-            albumName,
-            name,
-            artist,
-            artistUri,
-            explicit,
           }}
           user={user}
-          isSmallScreen={isSmallScreen}
         />
       ))}
     </>
@@ -121,18 +90,9 @@ const MobileMenu = ({
       <AddQueue
         track={{
           trackId,
-          uri,
-          image,
-          albumUri,
-          albumName,
-          name,
-          artist,
-          artistUri,
-          explicit,
           userId,
         }}
         user={null}
-        isSmallScreen={isSmallScreen}
       />
     </>
   );
@@ -279,14 +239,14 @@ const MobileMenu = ({
         <DrawerContent>
           <DrawerHeader>
             <Stack align="center">
-              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-              <Text>{name}</Text>
+              {/* <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+              <Text>{name}</Text> */}
             </Stack>
           </DrawerHeader>
 
           <DrawerBody>
             <Stack align="center" h="300px">
-              <SaveToLiked trackId={trackId} isSmallScreen={isSmallScreen} />
+              <SaveToLiked trackId={trackId} />
               <Analyze />
               <AddToYourQueue />
               <SendTo />

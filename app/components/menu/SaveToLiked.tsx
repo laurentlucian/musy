@@ -5,29 +5,25 @@ import { useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
 import useSessionUser from '~/hooks/useSessionUser';
+import useIsMobile from '~/hooks/useIsMobile';
 
 type SaveToLikedProps = {
   trackId: string;
-  isSmallScreen?: boolean;
 };
 
-const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
+const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const currentUser = useSessionUser();
   const userId = currentUser?.userId;
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
+  const isSmallScreen = useIsMobile();
 
   const saveSong = () => {
     setIsSaved(!isSaved);
     const action = userId ? `/${userId}/save` : '/auth/spotify?returnTo=' + pathname + search;
 
-    const form = new FormData();
-
-    form.append('trackId', trackId);
-    // form.append('isRemovable', isSaved ? 'hi' : '');
-
-    fetcher.submit(form, { replace: true, method: 'post', action });
+    fetcher.submit({ trackId }, { replace: true, method: 'post', action });
   };
 
   // useEffect(() => {

@@ -66,14 +66,6 @@ const ActionMenu = ({
       <AddQueue
         track={{
           trackId,
-          uri,
-          image,
-          albumUri,
-          albumName,
-          name,
-          artist,
-          artistUri,
-          explicit,
           userId,
         }}
         user={null}
@@ -82,14 +74,6 @@ const ActionMenu = ({
         <AddQueue
           track={{
             trackId,
-            uri,
-            image,
-            albumUri,
-            albumName,
-            name,
-            artist,
-            artistUri,
-            explicit,
           }}
           user={user}
         />
@@ -99,14 +83,6 @@ const ActionMenu = ({
           key={user.userId}
           track={{
             trackId,
-            uri,
-            image,
-            albumUri,
-            albumName,
-            name,
-            artist,
-            artistUri,
-            explicit,
           }}
           user={user}
         />
@@ -153,16 +129,7 @@ const ActionMenu = ({
           id={id}
           track={{
             trackId,
-            uri,
-            image,
-            albumUri,
-            albumName,
-            name,
-            artist,
-            artistUri,
-            explicit,
           }}
-          isSmallScreen={isSmallScreen}
         />
       )}
     </>

@@ -8,15 +8,6 @@ import Waver from '../Waver';
 type AddQueueProps = {
   track: {
     trackId: string;
-    uri: string;
-    name: string;
-    image: string;
-
-    albumUri: string | null;
-    albumName: string | null;
-    artist: string | null;
-    artistUri: string | null;
-    explicit: boolean;
 
     // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
     userId?: string;
@@ -25,17 +16,13 @@ type AddQueueProps = {
   isSmallScreen?: boolean;
 };
 
-const AddQueue = ({
-  track: { uri, trackId, image, albumUri, albumName, name, artist, artistUri, explicit, userId },
-  user,
-  isSmallScreen,
-}: AddQueueProps) => {
+const AddQueue = ({ track: { trackId, userId }, user, isSmallScreen }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
-  const isAdding = fetcher.submission?.formData.get('uri') === uri;
+  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
 
   const isDone = fetcher.type === 'done';
   const isError =
@@ -66,14 +53,6 @@ const AddQueue = ({
 
     const data = {
       trackId,
-      uri,
-      image,
-      albumUri: albumUri ?? '',
-      albumName: albumName ?? '',
-      name,
-      artist: artist ?? '',
-      artistUri: artistUri ?? '',
-      explicit: explicit ? 'true' : '',
 
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',

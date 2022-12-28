@@ -7,11 +7,9 @@ import {
   Text,
   useColorModeValue,
   Link as LinkB,
-  Icon,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useNavigate, useTransition } from '@remix-run/react';
-import { InfoCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
@@ -133,14 +131,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                             e.stopPropagation();
                           }}
                         >
-                          <Tooltip
-                            label={
-                              <HStack p="2px">
-                                <Text>{track.name}</Text>
-                                <Icon boxSize="20px" as={InfoCircle} />
-                              </HStack>
-                            }
-                          >
+                          <Tooltip label={<Text>{track.name}</Text>}>
                             <Image
                               src={track.album.images[0].url}
                               borderRadius={5}
@@ -177,14 +168,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                     />
                   </Tooltip>
                 )} */}
-              <Tooltip
-                label={
-                  <HStack p="2px">
-                    <Text>{playback.currently_playing.item?.name}</Text>
-                    <Icon boxSize="20px" as={InfoCircle} />
-                  </HStack>
-                }
-              >
+              <Tooltip label={<Text>{playback.currently_playing.item?.name}</Text>}>
                 <LinkB
                   as="span"
                   // href={

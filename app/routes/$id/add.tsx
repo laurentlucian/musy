@@ -8,29 +8,29 @@ export const action: ActionFunction = async ({ request, params }) => {
   const { id } = params;
   if (!id) throw redirect('/');
   const body = await request.formData();
-  const uri = body.get('uri');
   const trackId = body.get('trackId');
-  const image = body.get('image');
-  const albumUri = body.get('albumUri') as string;
-  const albumName = body.get('albumName') as string;
-  const name = body.get('name');
-  const artist = body.get('artist');
-  const artistUri = body.get('artistUri') as string;
-  const explicit = Boolean(body.get('explicit'));
   const fromUserId = body.get('fromId');
   const action = body.get('action') as string;
 
-  if (
-    typeof trackId !== 'string' ||
-    typeof uri !== 'string' ||
-    typeof image !== 'string' ||
-    typeof name !== 'string' ||
-    typeof artist !== 'string' ||
-    typeof explicit !== 'boolean' ||
-    typeof fromUserId !== 'string'
-  ) {
+  if (typeof trackId !== 'string' || typeof fromUserId !== 'string') {
     return json('Request Error');
   }
+  const { spotify } = await spotifyApi(id);
+  if (!spotify) return json('Error: no access to API');
+
+  const {
+    body: {
+      uri,
+      name,
+      album: {
+        images: [{ url: image }],
+        name: albumName,
+        uri: albumUri,
+      },
+      artists: [{ uri: artistUri, name: artist }],
+      explicit,
+    },
+  } = await spotify.getTrack(trackId);
 
   const fields = {
     trackId,
@@ -46,9 +46,6 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId: fromUserId !== '' ? fromUserId : null,
     action,
   };
-
-  const { spotify } = await spotifyApi(id);
-  if (!spotify) return json('Error: no access to API');
 
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
   const isPlaying = playback.is_playing;
