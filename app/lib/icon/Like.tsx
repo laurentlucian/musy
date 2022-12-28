@@ -6,9 +6,9 @@ const LikeIcon = (props: IconProps) => {
 
   return (
     <Icon
-      viewBox="0 0 200 200"
-      width="10"
-      height="10"
+      viewBox="0 0 150 150"
+      width="6"
+      height="6"
       color={ariaChecked ? 'spotify.green' : '#535353'}
       {...props}
     >

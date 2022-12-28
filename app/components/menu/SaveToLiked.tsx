@@ -1,4 +1,4 @@
-import { Image, MenuItem, Button, Icon } from '@chakra-ui/react';
+import { MenuItem, Button } from '@chakra-ui/react';
 import { useLocation, useParams } from '@remix-run/react';
 import Waver from '../Waver';
 import { useState } from 'react';
@@ -67,9 +67,9 @@ const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
       ) : (
         <Button
           onClick={saveSong}
-          leftIcon={<LikeIcon aria-checked={false} />}
+          leftIcon={<LikeIcon aria-checked={isSaved} />}
           isDisabled={!!isDone || !!isError || !!isAdding}
-          mr={isSaved ? '0px' : '9.54px'}
+          mr="0px"
           variant="drawer"
         >
           {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
