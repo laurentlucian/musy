@@ -26,10 +26,10 @@ import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import PlayingFromTooltip from './PlayingFromTooltip';
-import ActionMenu from './menu/ActionMenu';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import ActionDrawer from './menu/ActionDrawer';
 
 type PlayerProps = {
   id: string;
@@ -228,22 +228,16 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                               />
                             </fetcher.Form>
                           </Tooltip>
-                          <ActionMenu
+                          <ActionDrawer
                             key={id}
                             track={{
-                              uri: item.uri,
                               trackId: item.id,
                               name: item.name,
-                              artist: item.album?.artists[0].name,
-                              artistUri: artistLink,
-                              albumName: item.album?.name,
-                              albumUri: albumLink,
-                              explicit: item.explicit,
-                              image: item.album?.images[0].url,
+                              image: item.album.images[0].url,
                             }}
                             // placement="bottom-start"
                             // offset={[-118, 0]}
-                            zIndex="2 !important"
+                            // zIndex="2 !important"
                           />
                         </>
                       )}

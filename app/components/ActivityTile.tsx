@@ -12,7 +12,7 @@ import Tooltip from './Tooltip';
 import { timeSince } from '~/hooks/utils';
 import type { Activity } from '~/routes';
 import { Play, Send2 } from 'iconsax-react';
-import ActionMenu from './menu/ActionMenu';
+import ActionDrawer from './menu/ActionDrawer';
 
 type ActivityProps = {
   track: Activity;
@@ -113,28 +113,23 @@ const ActivityAction = ({ track }: ActivityProps) => {
         {timeSince(track.createdAt)}
       </Text>
       {track.trackId && (
-        <ActionMenu
+        <ActionDrawer
           track={{
-            uri: track.uri,
             trackId: track.trackId,
-            name: track.name,
-            artist: track.artist,
-            artistUri: track.artistUri,
-            albumName: track.albumName,
-            albumUri: track.albumUri,
-            explicit: track.explicit,
             image: track.image,
+            name: track.name,
+
             userId: track.user?.userId,
           }}
-          placement="bottom-end"
-          ml="auto !important"
+          // placement="bottom-end"
+          // ml="auto !important"
         />
       )}
     </HStack>
   );
 };
 
-const ActivityFeed = ({ track }: ActivityProps) => {
+const ActivityTile = ({ track }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   return (
@@ -172,4 +167,4 @@ const ActivityFeed = ({ track }: ActivityProps) => {
   );
 };
 
-export default ActivityFeed;
+export default ActivityTile;

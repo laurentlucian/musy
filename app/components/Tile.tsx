@@ -3,10 +3,10 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import type { ChakraProps } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import type { Profile } from '@prisma/client';
-import ActionMenu from './menu/ActionMenu';
 import { timeSince } from '~/hooks/utils';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
+import ActionDrawer from './menu/ActionDrawer';
 
 type TileProps = {
   uri: string;
@@ -125,19 +125,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             )}
           </Stack>
           {!playlist && trackId && (
-            <ActionMenu
+            <ActionDrawer
               track={{
-                uri,
                 trackId,
                 name,
-                artist,
-                artistUri,
-                albumName,
-                albumUri,
-                explicit,
                 image,
               }}
-              placement="bottom-end"
+              // placement="bottom-end"
             />
           )}
         </Flex>

@@ -13,10 +13,9 @@ type AddQueueProps = {
     userId?: string;
   };
   user: Profile | null;
-  isSmallScreen?: boolean;
 };
 
-const AddQueue = ({ track: { trackId, userId }, user, isSmallScreen }: AddQueueProps) => {
+const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
@@ -78,18 +77,17 @@ const AddQueue = ({ track: { trackId, userId }, user, isSmallScreen }: AddQueueP
 
   return (
     <>
-      {!isSmallScreen ? (
-        <MenuItem
-          onClick={addToQueue}
-          icon={icon}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          // bug: fetcher isn't updating its state to loading
-          // so close menu when adding to queue for now
-          closeOnSelect={true}
-        >
-          {isAdding ? <Waver /> : text}
-        </MenuItem>
-      ) : user ? (
+      {/* // <MenuItem
+        //   onClick={addToQueue}
+        //   icon={icon}
+        //   isDisabled={!!isDone || !!isError || !!isAdding}
+        //   // bug: fetcher isn't updating its state to loading
+        //   // so close menu when adding to queue for now
+        //   closeOnSelect={true}
+        // >
+        //   {isAdding ? <Waver /> : text}
+        // </MenuItem> */}
+      {user ? (
         <Button
           onClick={addToQueue}
           isDisabled={!!isDone || !!isError || !!isAdding}

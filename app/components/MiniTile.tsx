@@ -2,7 +2,7 @@ import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/reac
 import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
 import { timeSince } from '~/hooks/utils';
-import ActionMenu from './menu/ActionMenu';
+import ActionDrawer from './menu/ActionDrawer';
 import Tooltip from './Tooltip';
 
 type MiniTileProps = {
@@ -52,20 +52,14 @@ const MiniTile = ({
               {timeSince(createdAt ?? null)}
             </Text>
             {trackId && (
-              <ActionMenu
+              <ActionDrawer
                 track={{
-                  uri,
                   trackId,
-                  name,
-                  artist,
-                  artistUri,
-                  albumName,
-                  albumUri,
-                  explicit,
                   image,
+                  name,
                 }}
-                placement="bottom-end"
-                ml="auto !important"
+                // placement="bottom-end"
+                // ml="auto !important"
               />
             )}
           </HStack>

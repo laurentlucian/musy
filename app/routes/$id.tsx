@@ -23,7 +23,7 @@ import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
-import ActivityFeed from '~/components/ActivityFeed';
+import ActivityFeed from '~/components/ActivityTile';
 // import OldLikedSongs from '~/components/tiles/OldLikedTracks';
 // import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
 

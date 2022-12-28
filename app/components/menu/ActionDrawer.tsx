@@ -1,3 +1,5 @@
+import type { ChakraProps } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/react';
 import {
   Drawer,
   DrawerHeader,
@@ -10,38 +12,39 @@ import {
   Icon,
   Stack,
   DrawerFooter,
-  Image,
   Text,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
-import { useNavigate } from '@remix-run/react';
-import { type Profile } from '@prisma/client';
+import { useNavigate, useParams } from '@remix-run/react';
 import SaveToLiked from './SaveToLiked';
 import AddQueue from './AddQueue';
 import { useRef } from 'react';
+import useUsers from '~/hooks/useUsers';
+import useParamUser from '~/hooks/useParamUser';
+import useSessionUser from '~/hooks/useSessionUser';
 
-interface MobileMenuConfig {
-  isOwnProfile: boolean;
-  user: Profile | null;
-  users: Profile[];
-  id: string | undefined;
+type ActionDrawerConfig = {
   track: {
     trackId: string;
+    name: string;
+    image: string;
+    // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
     userId?: string;
   };
-}
-// save heart Icon isn't aligned with the rest zzz
-const MobileMenu = ({
-  isOwnProfile,
-  user,
-  users,
-  id,
-  track: { trackId, userId },
-}: MobileMenuConfig) => {
-  const menu = useDisclosure();
+} & ChakraProps;
+
+const ActionDrawer = ({ track: { trackId, name, image, userId } }: ActionDrawerConfig) => {
+  const currentUser = useSessionUser();
   const sendMenu = useDisclosure();
-  const btnRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
+  const menu = useDisclosure();
+  const allUsers = useUsers();
+  const user = useParamUser();
+  const { id } = useParams();
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  const isOwnProfile = currentUser?.userId === id;
+  const users = allUsers.filter((user) => user.userId !== currentUser?.userId);
 
   const SendTo = () => (
     <Button leftIcon={<Send2 />} onClick={sendMenu.onToggle} pos="relative" variant="drawer">
@@ -55,6 +58,7 @@ const MobileMenu = ({
       />
     </Button>
   );
+
   const SendToList = () => (
     <>
       {!isOwnProfile && id && (
@@ -86,80 +90,14 @@ const MobileMenu = ({
     </Button>
   );
   const AddToYourQueue = () => (
-    <>
-      <AddQueue
-        track={{
-          trackId,
-          userId,
-        }}
-        user={null}
-      />
-    </>
+    <AddQueue
+      track={{
+        trackId,
+        userId,
+      }}
+      user={null}
+    />
   );
-  // const SendMenu = () => (
-  //   <Portal>
-  //     <Drawer
-  //       isOpen={sendMenu.isOpen}
-  //       onClose={sendMenu.onClose}
-  //       size="xl"
-  //       placement="bottom"
-  //       lockFocusAcrossFrames
-  //       preserveScrollBarGap
-  //       initialFocusRef={btnRef}
-  //     >
-  //       <DrawerOverlay />
-  //       <DrawerContent>
-  //         <DrawerHeader>
-  //           <Stack align="center"></Stack>
-  //         </DrawerHeader>
-  //         <DrawerBody>
-  //           <Stack align="center">
-  //             <SendToList />
-  //           </Stack>
-  //         </DrawerBody>
-  //         <DrawerFooter>
-  //           <CloseMenu />
-  //         </DrawerFooter>
-  //       </DrawerContent>
-  //     </Drawer>
-  //   </Portal>
-  // );
-  // const SendMenu = () => (
-  //   <Collapse in={sendMenu.isOpen}>
-  //     <Stack align="center">
-  //       <SendToList />
-  //     </Stack>
-  //   </Collapse>
-  // );
-
-  // const SendMenu = () => (
-  //   <Drawer
-  //     isOpen={sendMenu.isOpen}
-  //     onClose={sendMenu.onClose}
-  //     size="xl"
-  //     placement="bottom"
-  //     lockFocusAcrossFrames
-  //     preserveScrollBarGap
-  //     finalFocusRef={btnRef}
-  //   >
-  //     <DrawerOverlay />
-  //     <DrawerContent>
-  //       <DrawerHeader>
-  //         <Stack align="center"></Stack>
-  //       </DrawerHeader>
-
-  //       <DrawerBody>
-  //         <Stack align="center">
-  //           <SendToList />
-  //         </Stack>
-  //       </DrawerBody>
-
-  //       <DrawerFooter>
-  //         <CloseMenu />
-  //       </DrawerFooter>
-  //     </DrawerContent>
-  //   </Drawer>
-  // );
   const CloseMenu = () => {
     const handleClick = () => {
       menu.isOpen && !sendMenu.isOpen ? menu.onClose() : sendMenu.onClose();
@@ -171,42 +109,6 @@ const MobileMenu = ({
       </Button>
     );
   };
-  // const Menu = () => {
-  //   return (
-  //     <Drawer
-  //       isOpen={menu.isOpen}
-  //       placement="bottom"
-  //       onClose={menu.onClose}
-  //       finalFocusRef={btnRef}
-  //       lockFocusAcrossFrames
-  //       preserveScrollBarGap
-  //     >
-  //       <DrawerOverlay />
-  //       {/* <DrawerCloseButton /> */}
-  //       <DrawerContent>
-  //         <DrawerHeader>
-  //           <Stack align="center">
-  //             <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-  //             <Text>{name}</Text>
-  //           </Stack>
-  //         </DrawerHeader>
-
-  //         <DrawerBody>
-  //           <Stack align="center" h="300px">
-  //             <Analyze />
-  //             <AddToYourQueue />
-  //             <SendTo />
-  //             <SendMenu />
-  //           </Stack>
-  //         </DrawerBody>
-
-  //         <DrawerFooter>
-  //           <CloseMenu />
-  //         </DrawerFooter>
-  //       </DrawerContent>
-  //     </Drawer>
-  //   );
-  // };
 
   return (
     <>
@@ -225,8 +127,8 @@ const MobileMenu = ({
         outline="none !important"
         onClick={menu.onOpen}
       />
-      {/* <Menu /> */}
       <Drawer
+        // isOpen={name === 'Enigma' ? true : menu.isOpen}
         isOpen={menu.isOpen}
         placement="bottom"
         onClose={menu.onClose}
@@ -235,17 +137,16 @@ const MobileMenu = ({
         preserveScrollBarGap
       >
         <DrawerOverlay />
-        {/* <DrawerCloseButton /> */}
         <DrawerContent>
           <DrawerHeader>
             <Stack align="center">
-              {/* <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-              <Text>{name}</Text> */}
+              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
+              <Text>{name}</Text>
             </Stack>
           </DrawerHeader>
-
+          {/* w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }} px={13} */}
           <DrawerBody>
-            <Stack align="center" h="300px">
+            <Stack align="center">
               <SaveToLiked trackId={trackId} />
               <Analyze />
               <AddToYourQueue />
@@ -253,7 +154,7 @@ const MobileMenu = ({
               <Drawer
                 isOpen={sendMenu.isOpen}
                 onClose={sendMenu.onClose}
-                size="xl"
+                size="full"
                 placement="bottom"
                 lockFocusAcrossFrames
                 preserveScrollBarGap
@@ -280,7 +181,6 @@ const MobileMenu = ({
               </Drawer>
             </Stack>
           </DrawerBody>
-
           <DrawerFooter>
             <CloseMenu />
           </DrawerFooter>
@@ -289,4 +189,4 @@ const MobileMenu = ({
     </>
   );
 };
-export default MobileMenu;
+export default ActionDrawer;

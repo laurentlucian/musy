@@ -8,7 +8,7 @@ import { getUserQueue } from '~/services/spotify.server';
 import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
-import ActivityFeed from '~/components/ActivityFeed';
+import ActivityFeed from '~/components/ActivityTile';
 import type { Profile } from '@prisma/client';
 import useSessionUser from '~/hooks/useSessionUser';
 

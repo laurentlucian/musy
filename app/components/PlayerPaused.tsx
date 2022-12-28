@@ -16,9 +16,9 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import { useEffect, useState } from 'react';
-import ActionMenu from './menu/ActionMenu';
 import Tooltip from './Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
+import ActionDrawer from './menu/ActionDrawer';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
@@ -103,17 +103,11 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                   >
                     <Image height="30px" width="98px" src={spotify_logo} />
                   </Link>
-                  <ActionMenu
+                  <ActionDrawer
                     track={{
                       trackId: item.id,
-                      uri: item.uri,
-                      name: item.name,
-                      artist: item.album?.artists[0].name,
-                      artistUri: artistLink,
-                      albumName: item.album?.name,
-                      albumUri: albumLink,
-                      explicit: item.explicit,
                       image: item.album?.images[0].url,
+                      name: item.name,
                     }}
                     // placement="bottom-start"
                     // offset={[-118, 0]}

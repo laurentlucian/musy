@@ -1,11 +1,10 @@
-import { MenuItem, Button } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
 import Waver from '../Waver';
 import { useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
 import useSessionUser from '~/hooks/useSessionUser';
-import useIsMobile from '~/hooks/useIsMobile';
 
 type SaveToLikedProps = {
   trackId: string;
@@ -17,7 +16,6 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   const userId = currentUser?.userId;
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
-  const isSmallScreen = useIsMobile();
 
   const saveSong = () => {
     setIsSaved(!isSaved);
@@ -52,8 +50,7 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
 
   return (
     <>
-      {!isSmallScreen ? (
-        <MenuItem
+      {/* <MenuItem
           onClick={saveSong}
           icon={<LikeIcon aria-checked={isSaved} />}
           isDisabled={!!isDone || !!isError || !!isAdding}
@@ -61,18 +58,16 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
           mr={isSaved ? '0px' : '9.54px'}
         >
           {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-        </MenuItem>
-      ) : (
-        <Button
-          onClick={saveSong}
-          leftIcon={<LikeIcon aria-checked={isSaved} />}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          mr="0px"
-          variant="drawer"
-        >
-          {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-        </Button>
-      )}
+        </MenuItem> */}
+      <Button
+        onClick={saveSong}
+        leftIcon={<LikeIcon aria-checked={isSaved} />}
+        isDisabled={!!isDone || !!isError || !!isAdding}
+        mr="0px"
+        variant="drawer"
+      >
+        {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
+      </Button>
     </>
   );
 };
