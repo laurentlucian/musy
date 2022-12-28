@@ -55,6 +55,9 @@ export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   viewport: 'width=device-width,initial-scale=1',
   description: "Let's discover music together, join musy :)",
+  'apple-mobile-web-app-capable': 'yes',
+  'apple-mobile-web-app-status-bar-style': 'black-translucent',
+  'user-scalable': 'no',
 });
 
 export let links: LinksFunction = () => {
