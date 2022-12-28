@@ -1,8 +1,9 @@
-import { Image, MenuItem, Button } from '@chakra-ui/react';
+import { Image, MenuItem, Button, Icon } from '@chakra-ui/react';
 import { useLocation, useParams } from '@remix-run/react';
 import Waver from '../Waver';
 import { useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
+import LikeIcon from '~/lib/icon/Like';
 
 type SaveToLikedProps = {
   trackId: string;
@@ -51,18 +52,12 @@ const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
         : null
       : null;
 
-  const icon = isSaved ? (
-    <Image boxSize="24px" src="heart.svg" />
-  ) : (
-    <Image boxSize="24px" src="like.svg" />
-  );
-
   return (
     <>
       {!isSmallScreen ? (
         <MenuItem
           onClick={saveSong}
-          icon={icon}
+          icon={<LikeIcon aria-checked={isSaved} />}
           isDisabled={!!isDone || !!isError || !!isAdding}
           closeOnSelect={false}
           mr={isSaved ? '0px' : '9.54px'}
@@ -72,7 +67,7 @@ const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
       ) : (
         <Button
           onClick={saveSong}
-          leftIcon={icon}
+          leftIcon={<LikeIcon aria-checked={false} />}
           isDisabled={!!isDone || !!isError || !!isAdding}
           mr={isSaved ? '0px' : '9.54px'}
           variant="drawer"
