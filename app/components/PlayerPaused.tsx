@@ -68,10 +68,18 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
             bg={isSmallScreen ? bgMobile : bg}
             spacing={0}
             borderRadius={size === 'small' ? 0 : 5}
+            minH={138}
           >
-            <HStack h="112px" spacing={2} px="2px" py="2px" justify="space-between">
-              <Stack pl="7px" spacing={2} h="100%" flexGrow={1}>
-                <Flex direction="column">
+            <HStack minH={138} spacing={2} px="2px" py="2px" justify="space-between">
+              <Stack
+                pl="7px"
+                spacing={2}
+                minH={130}
+                flexGrow={1}
+                direction="column"
+                justify="space-between"
+              >
+                <Stack>
                   <Link href={link ?? ''} target="_blank">
                     <Text noOfLines={[1]}>{name}</Text>
                   </Link>
@@ -83,54 +91,65 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                       </Text>
                     </Link>
                   </Flex>
-                  <HStack alignItems="end">
-                    <Link
-                      href="https://open.spotify.com"
-                      target="_blank"
-                      height="30px"
-                      width="98px"
-                      mt="30px"
-                      rel="external"
-                    >
-                      <Image height="30px" width="98px" src={spotify_logo} />
-                    </Link>
-                    <Stack zIndex={90}>
-                      <ActionMenu
-                        track={{
-                          trackId: item.id,
-                          uri: item.uri,
-                          name: item.name,
-                          artist: item.album?.artists[0].name,
-                          artistUri: artistLink,
-                          albumName: item.album?.name,
-                          albumUri: albumLink,
-                          explicit: item.explicit,
-                          image: item.album?.images[0].url,
-                        }}
-                        // placement="bottom-start"
-                        // offset={[-118, 0]}
-                      />
-                    </Stack>
-                  </HStack>
-                </Flex>
+                </Stack>
+                <HStack alignItems="flex-end" w="fit-content" h="35px">
+                  <Link
+                    href="https://open.spotify.com"
+                    target="_blank"
+                    height="30px"
+                    width="98px"
+                    mt="30px"
+                    rel="external"
+                  >
+                    <Image height="30px" width="98px" src={spotify_logo} />
+                  </Link>
+                  <ActionMenu
+                    track={{
+                      trackId: item.id,
+                      uri: item.uri,
+                      name: item.name,
+                      artist: item.album?.artists[0].name,
+                      artistUri: artistLink,
+                      albumName: item.album?.name,
+                      albumUri: albumLink,
+                      explicit: item.explicit,
+                      image: item.album?.images[0].url,
+                    }}
+                    // placement="bottom-start"
+                    // offset={[-118, 0]}
+                  />
+                </HStack>
               </Stack>
               <Link href={albumLink} target="_blank">
                 <Tooltip label={item.album.name} placement="bottom-end">
                   <Image
                     src={image}
-                    mt={size === 'large' ? [0, -47, -219] : size === 'medium' ? [0, -47, -108] : 0}
+                    mt={
+                      size === 'large'
+                        ? [0, -47, -47, -47, -200]
+                        : size === 'medium'
+                        ? [0, -47, -47, -47, '-86px']
+                        : 0
+                    }
                     boxSize={
                       size === 'large' ? [108, 160, 334] : size === 'medium' ? [108, 160, 221] : 108
                     }
                     minW={
                       size === 'large'
-                        ? [130, 160, 160, 200, 334]
+                        ? [135, 160, 160, 200, 334]
                         : size === 'medium'
-                        ? [130, 160, 160, 200, 221]
-                        : 130
+                        ? [135, 160, 160, 200, 221]
+                        : 135
+                    }
+                    minH={
+                      size === 'large'
+                        ? [135, 160, 160, 200, 334]
+                        : size === 'medium'
+                        ? [135, 160, 160, 200, 221]
+                        : 135
                     }
                     borderRadius={size === 'small' ? 0 : 2}
-                    transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
+                    transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s, min-height 0.25s"
                     pos="absolute"
                     right={0}
                     top={0}

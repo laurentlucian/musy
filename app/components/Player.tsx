@@ -291,24 +291,24 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       src={item.album?.images[0].url}
                       mt={
                         size === 'large'
-                          ? [0, -47, -47, -47, -191]
+                          ? [0, -47, -47, -47, -200]
                           : size === 'medium'
-                          ? [0, -47, -47, -47, '-78px']
+                          ? [0, -47, -47, -47, '-86px']
                           : 0
                       }
                       boxSize={
                         size === 'large'
-                          ? [130, 160, 160, 200, 334]
+                          ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                          ? [130, 160, 160, 200, 221]
-                          : 130
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       minW={
                         size === 'large'
-                          ? [130, 160, 160, 200, 334]
+                          ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                          ? [130, 160, 160, 200, 221]
-                          : 130
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       borderRadius={size === 'small' ? 0 : 2}
                       transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
