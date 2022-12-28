@@ -43,6 +43,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   if (session && session.user) {
     const currentUser = await prisma.profile.findUnique({
       where: { userId: session.user.id },
+      include: { settings: true },
     });
 
     return typedjson({ currentUser, cookie, isMobile });

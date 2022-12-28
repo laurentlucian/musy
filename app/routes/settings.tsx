@@ -1,59 +1,38 @@
-import { Button, Stack, Divider } from '@chakra-ui/react';
-import { Outlet, useNavigate } from '@remix-run/react';
-import { useState } from 'react';
+import { Link, Stack, Divider, Center, Flex } from '@chakra-ui/react';
+import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
 
 const Settings = () => {
-  const [setting, setSetting] = useState('');
-  const navigate = useNavigate();
-  // each button navigates to a route within settings
+  const location = useLocation();
+
   return (
-    <Stack direction="row" h="100px" p={4}>
-      <Stack alignItems="flex-start" pr="100px">
-        <Button
-          variant="unstyled"
-          onClick={() => {
-            setSetting('Account');
-            navigate(`/settings/account`);
-          }}
-          cursor="pointer"
-          _active={{ opacity: 1, textDecor: 'underline' }}
-          isActive={setting === 'Account'}
+    <Flex pt={4}>
+      <Stack>
+        <Link
+          as={RemixLink}
+          to="/settings"
+          aria-current={location.pathname === '/settings' ? 'page' : undefined}
+          _activeLink={{ opacity: 1, textDecor: 'underline' }}
         >
           Account
-        </Button>
-        <Button
-          variant="unstyled"
-          onClick={() => {
-            setSetting('Privacy');
-            navigate(`/settings/privacy`);
-          }}
-          cursor="pointer"
-          _active={{ opacity: 1, textDecor: 'underline' }}
-          isActive={setting === 'Privacy'}
-        >
-          Privacy
-        </Button>
-        <Button
-          variant="unstyled"
-          onClick={() => {
-            setSetting('Appearance');
-            navigate(`/settings/appearance`);
-          }}
-          cursor="pointer"
-          _active={{ opacity: 1, textDecor: 'underline' }}
-          isActive={setting === 'Appearance'}
+        </Link>
+        <Link
+          as={RemixLink}
+          to="/settings/appearance"
+          aria-current={location.pathname === '/settings/appearance' ? 'page' : undefined}
+          _activeLink={{ opacity: 1, textDecor: 'underline' }}
         >
           Appearance
-        </Button>
+        </Link>
       </Stack>
-      <Stack border="solid 1px gray">
+      <Center px="100px" height="200px">
         {/* divider is not properly rendering :( was working earlier but I do not know how to fix */}
-        <Divider orientation="vertical" width="fit-content" border="solid 1px blue" />
-      </Stack>
-      <Stack pl="40px">
+        {/* what is "not properly rendering"? */}
+        <Divider orientation="vertical" />
+      </Center>
+      <Stack>
         <Outlet />
       </Stack>
-    </Stack>
+    </Flex>
   );
 };
 export default Settings;

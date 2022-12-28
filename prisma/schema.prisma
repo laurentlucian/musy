@@ -39,6 +39,20 @@ model Profile {
   party Party?
   queue Queue[]
   liked LikedSongs[]
+
+  settings Settings?
+}
+
+model Settings {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user   Profile @relation(fields: [userId], references: [userId])
+  userId String  @unique
+
+  autoscroll Boolean @default(true)
+  // theme String @default("light")
 }
 
 model Party {
