@@ -1,9 +1,10 @@
 import { MenuItem, Button } from '@chakra-ui/react';
-import { useLocation, useParams } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 import Waver from '../Waver';
 import { useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type SaveToLikedProps = {
   trackId: string;
@@ -12,13 +13,14 @@ type SaveToLikedProps = {
 
 const SaveToLiked = ({ trackId, isSmallScreen }: SaveToLikedProps) => {
   const [isSaved, setIsSaved] = useState(false);
-  const { id } = useParams();
+  const currentUser = useSessionUser();
+  const userId = currentUser?.userId;
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
 
   const saveSong = () => {
     setIsSaved(!isSaved);
-    const action = id ? `/${id}/save` : '/auth/spotify?returnTo=' + pathname + search;
+    const action = userId ? `/${userId}/save` : '/auth/spotify?returnTo=' + pathname + search;
 
     const form = new FormData();
 

@@ -9,7 +9,7 @@ const LikeIcon = (props: IconProps) => {
       viewBox="0 0 150 150"
       width="6"
       height="6"
-      color={ariaChecked ? 'spotify.green' : '#535353'}
+      color={ariaChecked ? 'spotify.green' : '#fff'}
       {...props}
     >
       <path
