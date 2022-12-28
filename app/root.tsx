@@ -52,14 +52,30 @@ export const loader = async ({ request }: LoaderArgs) => {
   }
 };
 
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  viewport: 'width=device-width,initial-scale=1',
-  description: "Let's discover music together, join musy :)",
-  'apple-mobile-web-app-capable': 'yes',
-  'apple-mobile-web-app-status-bar-style': 'black-translucent',
-  'user-scalable': 'no',
-});
+export const meta: MetaFunction = () => {
+  const description = 'Music shared easy';
+
+  return {
+    charset: 'utf-8',
+    viewport: 'width=device-width,initial-scale=1,user-scalable=no',
+    description,
+    'twitter:title': 'musy',
+    'og:title': 'musy',
+    'twitter:description': description,
+    'og:description': description,
+    'og:image': 'meta-image.png',
+    'og:image:width': '1200',
+    'og:image:height': '630',
+    'og:image:type': 'image/png',
+    'og:image:alt': 'musy',
+
+    'twitter:image': 'meta-image.png',
+    'twitter:card': 'summary_large_image',
+    keywords: 'music, discover, spotify, playlist, share, friends',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black',
+  };
+};
 
 export let links: LinksFunction = () => {
   return [
@@ -89,7 +105,7 @@ type DocumentProps = {
   title?: string;
 };
 
-const Document = withEmotionCache(({ children, title = 'Musy' }: DocumentProps, emotionCache) => {
+const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, emotionCache) => {
   const serverStyleData = useContext(ServerStyleContext);
   const clientStyleData = useContext(ClientStyleContext);
 

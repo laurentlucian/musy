@@ -18,7 +18,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
       <HStack spacing={4}>
         <Heading as={Link} to="/" size="sm">
-          Musy
+          musy
         </Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
