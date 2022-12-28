@@ -10,7 +10,7 @@ const Appearance = () => {
   return (
     <>
       <Stack direction="row" alignItems="center">
-        <Text>Scheduled:</Text>
+        <Text>scheduled:</Text>
         <Button aria-label="off" onClick={() => setScheduled(false)}>
           off
         </Button>

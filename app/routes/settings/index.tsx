@@ -16,7 +16,6 @@ import { Form, useSubmit } from '@remix-run/react';
 import type { ActionArgs } from '@remix-run/server-runtime';
 import { Logout } from 'iconsax-react';
 import { useRef } from 'react';
-import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
@@ -26,15 +25,32 @@ const Account = () => {
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<HTMLButtonElement>(null); //idk how to fix these type errors
+  const cancelRef = useRef<HTMLButtonElement>(null); // idk how to fix these type errors
   if (!currentUser) return null;
 
   return (
     <>
-      <Stack spacing={10}>
+      <Stack spacing={5}>
+        <FormControl display="flex" alignItems="center">
+          <FormLabel htmlFor="private-profile" mb="0">
+            private profile
+          </FormLabel>
+          <Switch
+            colorScheme="music"
+            id="private-profile"
+            defaultChecked={currentUser.settings?.isPrivate ?? false}
+            onChange={(e) => {
+              submit(
+                { 'private-profile': `${e.target.checked}` },
+
+                { method: 'post', replace: true },
+              );
+            }}
+          />
+        </FormControl>
         <FormControl display="flex" alignItems="center">
           <FormLabel htmlFor="auto-scroll" mb="0">
-            Auto Scroll
+            auto scroll
           </FormLabel>
           <Switch
             colorScheme="music"
@@ -56,7 +72,7 @@ const Account = () => {
           _hover={{ bgColor: 'red.500' }}
           onClick={onOpen}
         >
-          Logout
+          logout
         </Button>
       </Stack>
 
@@ -97,19 +113,28 @@ export const action = async ({ request }: ActionArgs) => {
   invariant(userId, 'Unauthenticated');
 
   const data = await request.formData();
-  const autoscroll = data.get('autoscroll') === 'true';
-  console.log('autoscroll', autoscroll);
+  const autoscroll = data.get('autoscroll');
+  if (autoscroll) {
+    const isChecked = autoscroll === 'true';
 
-  if (typeof autoscroll !== 'boolean') {
-    return typedjson('Form submitted incorrectly');
+    await prisma.settings.upsert({
+      where: { userId },
+      create: { autoscroll: isChecked, userId },
+      update: { autoscroll: isChecked },
+    });
   }
 
-  const user = await prisma.settings.upsert({
-    where: { userId },
-    create: { autoscroll, userId },
-    update: { autoscroll },
-  });
-  return user;
+  const privateProfile = data.get('private-profile');
+  if (privateProfile) {
+    const isPrivate = privateProfile === 'true';
+
+    await prisma.settings.upsert({
+      where: { userId },
+      create: { isPrivate, userId },
+      update: { isPrivate },
+    });
+  }
+  return null;
 };
 
 export default Account;

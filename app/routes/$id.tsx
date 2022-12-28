@@ -4,6 +4,7 @@ import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 import {
+  authenticator,
   getAllUsers,
   getCurrentUser,
   updateUserImage,
@@ -148,6 +149,7 @@ export const meta: MetaFunction = (props) => {
 export const loader = async ({ request, params }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
+  const session = await authenticator.isAuthenticated(request);
 
   const url = new URL(request.url);
   const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
@@ -155,8 +157,13 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     | 'long_term'
     | 'short_term';
 
-  const profile = await prisma.user.findUnique({ where: { id }, include: { user: true } });
-  if (!profile || !profile.user) throw new Response('Not found', { status: 404 });
+  const profile = await prisma.user.findUnique({
+    where: { id },
+    include: { user: { include: { settings: true } } },
+  });
+
+  if (!profile || !profile.user || (!session && profile.user.settings?.isPrivate))
+    throw new Response('Not found', { status: 404 });
   const user = profile.user;
 
   const { spotify } = await spotifyApi(id).catch(async (e) => {

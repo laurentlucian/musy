@@ -1,5 +1,4 @@
 import { Heading, Stack, Text } from '@chakra-ui/react';
-
 import { useCatch } from '@remix-run/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import type { LoaderArgs } from '@remix-run/node';
@@ -55,9 +54,9 @@ export type Activity = {
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const users = await getAllUsers();
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
+  const users = await getAllUsers(!!currentUser);
 
   if (!users.length) return typedjson({ users, currentUser, playbacks: [], activity: [] });
 

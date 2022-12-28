@@ -52,6 +52,7 @@ model Settings {
   userId String  @unique
 
   autoscroll Boolean @default(true)
+  isPrivate  Boolean @default(false)
   // theme String @default("light")
 }
 

@@ -115,11 +115,15 @@ export const getCurrentUser = async (request: Request) => {
   return data.user;
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (isAuthenticated = false) => {
+  const restrict = !isAuthenticated
+    ? { user: { settings: { isNot: { isPrivate: true } } } }
+    : undefined;
+
   const data = await prisma.user.findMany({
     select: { user: true },
     orderBy: { updatedAt: 'desc' },
-    where: { revoked: false },
+    where: { revoked: false, ...restrict },
   });
   const users = data.map((user) => user.user).filter((user): user is Profile => user !== null);
   return users;
