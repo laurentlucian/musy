@@ -10,10 +10,14 @@ export default () => null;
 
 export const loader: LoaderFunction = async ({ request }) => {
   const returnTo: string = (await returnToCookie.parse(request.headers.get('Cookie'))) ?? '/';
-  const session = await authenticator.authenticate('spotify', request).catch((e) => {
-    console.log('authenticator.authenticate -> catch', e);
-    // returning 401 unauthorized as authenticator crashes on any error by spotify api without info
-    // @todo fix spotify stragegy to return proper error
+  const session = await authenticator.authenticate('spotify', request).catch(async (e) => {
+    if (e instanceof Response) {
+      const { message } = await e.json();
+      console.log('authenticator.authenticate -> catch', e.status, message);
+      // returning 401 unauthorized as authenticator crashes on any error by spotify api without info
+      // @todo fix spotify stragegy to return proper error
+      throw json({}, { status: 401, statusText: message });
+    }
     throw json({}, { status: 401 });
   });
   if (!session || !session.user) {
@@ -59,7 +63,7 @@ export const CatchBoundary = () => {
   return (
     <>
       <Heading fontSize={['sm', 'md']}>
-        {caught.status} {caught.statusText}
+        {caught.status} - {caught.statusText}
       </Heading>
       <Text fontSize="sm">{message}</Text>
     </>

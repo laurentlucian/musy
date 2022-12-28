@@ -1,5 +1,6 @@
 import type { LikedSongs } from '@prisma/client';
 import { minutesToMs } from '~/lib/utils';
+import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getUserLikedSongs } from '~/services/spotify.server';
@@ -15,7 +16,11 @@ export const likedQ = Queue<{ userId: string }>(
     });
 
     if (!profile || !profile.user) {
-      console.log('likedQ silently failed -> user not found');
+      console.log(`likedQ ${userId} removed -> user not found`);
+      const jobKey = job.repeatJobKey;
+      if (jobKey) {
+        await likedQ.removeRepeatableByKey(jobKey);
+      }
       return null;
     }
 
@@ -88,10 +93,10 @@ export const addUsersToLikedQueue = async () => {
     return;
   }
 
-  const users = await prisma.user.findMany();
+  const users = await getAllUsers();
   console.log(
     'addUsersToLikedQueue -> users..',
-    users.map((u) => u.id),
+    users.map((u) => u.userId),
     users.length,
   );
 
@@ -101,11 +106,11 @@ export const addUsersToLikedQueue = async () => {
   // bulkAll doesn't support repeateable jobs
   for (const user of users) {
     await likedQ.add(
-      user.id,
-      { userId: user.id },
+      user.userId,
+      { userId: user.userId },
       {
         // a job with duplicate id will not be added
-        jobId: user.id,
+        jobId: user.userId,
         repeat: { every: minutesToMs(60) },
         backoff: {
           type: 'exponential',
@@ -120,7 +125,7 @@ export const addUsersToLikedQueue = async () => {
     users.map((user) => ({
       name: 'update_liked',
       data: {
-        userId: user.id,
+        userId: user.userId,
       },
     })),
   );

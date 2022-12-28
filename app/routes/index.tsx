@@ -65,8 +65,11 @@ export const loader = async ({ request }: LoaderArgs) => {
       if (!data.currently_playing) return null;
       return data;
     } catch (e) {
-      if (e instanceof Error && e.message.includes('revoked'))
+      if (e instanceof Error && e.message.includes('revoked')) {
         await prisma.user.update({ where: { id }, data: { revoked: true } });
+        await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
+        await prisma.likedSongs.deleteMany({ where: { userId: id } });
+      }
 
       return null;
     }

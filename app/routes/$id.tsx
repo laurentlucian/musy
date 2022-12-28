@@ -159,11 +159,14 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (!profile || !profile.user) throw new Response('Not found', { status: 404 });
   const user = profile.user;
 
-  const { spotify } = await spotifyApi(id).catch(() => {
-    throw new Response('User Access Revoked', { status: 401 });
+  const { spotify } = await spotifyApi(id).catch(async (e) => {
+    if (e instanceof Error && e.message.includes('revoked')) {
+      throw new Response('User Access Revoked', { status: 401 });
+    }
+    throw new Response('Failed to load Spotify', { status: 500 });
   });
   if (!spotify) {
-    throw new Response('User Access Revoked', { status: 401 });
+    throw new Response('Failed to load Spotify [2]', { status: 500 });
   }
 
   const spotifyProfile = await spotify.getMe().catch(() => null);
