@@ -41,11 +41,11 @@ const PlayerBar = ({
   return (
     <Progress
       sx={{
-        backgroundColor: bg,
         '> div': {
           backgroundColor: color,
         },
       }}
+      background="transparent"
       borderBottomLeftRadius={2}
       borderBottomRightRadius={2}
       h="2px"
