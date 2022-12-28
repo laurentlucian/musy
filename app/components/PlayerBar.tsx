@@ -8,7 +8,6 @@ const PlayerBar = ({
 }: {
   playback: CurrentlyPlayingObjectCustom | SpotifyApi.CurrentlyPlayingResponse;
 }) => {
-  const bg = useColorModeValue('music.50', 'music.900');
   const color = useColorModeValue('music.900', 'music.50');
   const { refresh } = useDataRefresh();
   const refreshed = useRef(false);
@@ -46,7 +45,6 @@ const PlayerBar = ({
         },
       }}
       background="transparent"
-      borderBottomLeftRadius={2}
       borderBottomRightRadius={2}
       h="2px"
       value={percentage}
