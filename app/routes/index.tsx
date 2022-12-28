@@ -11,14 +11,16 @@ import { prisma } from '~/services/db.server';
 import Tiles from '~/components/Tiles';
 import ActivityFeed from '~/components/ActivityFeed';
 import type { Profile } from '@prisma/client';
+import useSessionUser from '~/hooks/useSessionUser';
 
 const Index = () => {
+  const currentUser = useSessionUser();
   const { users, playbacks, activity } = useTypedLoaderData<typeof loader>();
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
       <Stack>
-        <Tiles spacing="15px" autoScroll>
+        <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
           {activity.map((track) => {
             return <ActivityFeed key={track.id} track={track} />;
           })}
