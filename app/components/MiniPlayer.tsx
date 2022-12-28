@@ -30,6 +30,9 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
   const navigate = useNavigate();
 
+  const [first, second = ''] = user.name.split(/[\s.]+/);
+  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+
   const artist =
     playback?.currently_playing?.item?.type === 'track'
       ? playback?.currently_playing?.item?.album?.artists[0].name
@@ -57,7 +60,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
           <Stack>
             <HStack>
               <Text fontWeight="bold" fontSize={['15px', '20px']}>
-                {user.name.split(/[\s.]+/).slice(0, 1)}
+                {name}
               </Text>
               {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
