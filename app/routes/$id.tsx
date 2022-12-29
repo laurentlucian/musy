@@ -1,14 +1,4 @@
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Image,
-  Textarea,
-  Button,
-  IconButton,
-  Flex,
-} from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, Button, Flex } from '@chakra-ui/react';
 import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
@@ -28,7 +18,6 @@ import PlayerPaused from '~/components/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
-// import MiniTile from '~/components/MiniTile';
 import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
@@ -36,10 +25,8 @@ import Playlists from '~/components/tiles/Playlists';
 import ActivityFeed from '~/components/ActivityTile';
 import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
-import { Smileys } from 'iconsax-react';
 import MoodButton from '~/components/MoodButton';
-// import OldLikedSongs from '~/components/tiles/OldLikedTracks';
-// import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
+import { timeSince } from '~/hooks/utils';
 
 const Profile = () => {
   const {
@@ -63,21 +50,14 @@ const Profile = () => {
         <Tooltip label="<3" placement="top">
           <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
-        <Stack flex={1} maxW="calc(100% - 100px)">
-          <HStack spacing={5} alignItems="end">
-            <Heading
-              size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
-              fontWeight="bold"
-              textAlign="left"
-            >
-              {user.name}
-            </Heading>
-            <Text pb="5px">{user.ai?.mood}</Text>
-            <Flex pb="5px">
-              {currentUser && <MoodButton />}
-              {currentUser && following !== null && <Following following={following} />}
-            </Flex>
-          </HStack>
+        <Stack spacing={1} flex={1} maxW="calc(100% - 100px)">
+          <Heading
+            size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
+            fontWeight="bold"
+            textAlign="left"
+          >
+            {user.name}
+          </Heading>
 
           {user.id === currentUser?.id ? (
             <Form method="post" replace>
@@ -106,6 +86,16 @@ const Profile = () => {
               {user.bio}
             </Text>
           )}
+          <Text fontSize="14px" pb="5px">
+            {user.ai?.mood}
+            <Text as="span" ml="8px" fontSize="13px" opacity={0.5}>
+              {timeSince(user.ai?.updatedAt ?? null)}
+            </Text>
+          </Text>
+          <Flex pb="5px">
+            {currentUser && <MoodButton />}
+            {currentUser && following !== null && <Following following={following} />}
+          </Flex>
         </Stack>
       </HStack>
       {playback && playback.item?.type === 'track' ? (
