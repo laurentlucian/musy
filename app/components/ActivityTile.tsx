@@ -13,6 +13,7 @@ import { timeSince } from '~/hooks/utils';
 import type { Activity } from '~/routes';
 import { Play, Send2 } from 'iconsax-react';
 import ActionDrawer from './menu/ActionDrawer';
+import LikeIcon from '~/lib/icon/Like';
 
 type ActivityProps = {
   track: Activity;
@@ -36,7 +37,7 @@ const ActivityAction = ({ track }: ActivityProps) => {
                 />
               </Link>
             </Tooltip>
-            <Image w="15px" src="heart.svg" />
+            <LikeIcon aria-checked boxSize="18px" />
           </>
         );
       case 'send':

@@ -24,7 +24,7 @@ const Settings = () => {
           Appearance
         </Link>
       </Stack>
-      <Center px="100px" height="200px">
+      <Center px={['50px', '100px']} height="200px">
         {/* divider is not properly rendering :( was working earlier but I do not know how to fix */}
         {/* what is "not properly rendering"? */}
         <Divider orientation="vertical" />
