@@ -4,7 +4,7 @@ import { sessionStorage } from '~/services/session.server';
 import type { Prisma, Profile } from '@prisma/client';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
-import { likedQ } from './scheduler/jobs/liked';
+import { userQ } from './scheduler/jobs/user';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -56,10 +56,10 @@ export const createUser = async (data: CreateUser) => {
   const newUser = await prisma.user.create({ data, include: { user: true } });
 
   // scrape user's liked songs
-  await likedQ.add(newUser.id, { userId: newUser.id });
+  await userQ.add(newUser.id, { userId: newUser.id });
 
   // repeat the scrape every hour
-  await likedQ.add(
+  await userQ.add(
     newUser.id,
     { userId: newUser.id },
     {

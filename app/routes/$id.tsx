@@ -1,4 +1,14 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, Button } from '@chakra-ui/react';
+import {
+  Heading,
+  HStack,
+  Stack,
+  Text,
+  Image,
+  Textarea,
+  Button,
+  IconButton,
+  Flex,
+} from '@chakra-ui/react';
 import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
@@ -24,6 +34,10 @@ import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
 import ActivityFeed from '~/components/ActivityTile';
+import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
+import { askDaVinci } from '~/services/ai.server';
+import { Smileys } from 'iconsax-react';
+import MoodButton from '~/components/MoodButton';
 // import OldLikedSongs from '~/components/tiles/OldLikedTracks';
 // import LikedTracksVirtual from '~/components/tiles/LikedTracksVirtual';
 
@@ -50,18 +64,19 @@ const Profile = () => {
           <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
         </Tooltip>
         <Stack flex={1} maxW="calc(100% - 100px)">
-          <HStack>
+          <HStack spacing={5} alignItems="end">
             <Heading
               size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
               fontWeight="bold"
               textAlign="left"
-              w="100%"
             >
               {user.name}
             </Heading>
-            {currentUser && following !== null && (
-              <Following currentUser={currentUser} user={user} following={following} />
-            )}
+            <Text pb="5px">{user.ai?.mood}</Text>
+            <Flex pb="5px">
+              {currentUser && <MoodButton />}
+              {currentUser && following !== null && <Following following={following} />}
+            </Flex>
           </HStack>
 
           {user.id === currentUser?.id ? (
@@ -99,28 +114,6 @@ const Profile = () => {
         <PlayerPaused item={recent[0].track} username={user.name} />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
-      {/* {queue.length !== 0 && (
-        <Tiles title="Up Next">
-          {queue.map((track, index) => {
-            return (
-              <MiniTile
-                key={index}
-                track={{
-                  trackId: track.id,
-                  uri: track.uri,
-                  image: track.album.images[1].url,
-                  albumUri: track.album.uri,
-                  albumName: track.album.name,
-                  name: track.name,
-                  artist: track.album.artists[0].name,
-                  artistUri: track.album.artists[0].uri,
-                  explicit: track.explicit,
-                }}
-              />
-            );
-          })}
-        </Tiles>
-      )} */}
       <Stack spacing={5}>
         {activity.length !== 0 && (
           <Tiles spacing="15px">
@@ -157,14 +150,13 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     | 'long_term'
     | 'short_term';
 
-  const profile = await prisma.user.findUnique({
-    where: { id },
-    include: { user: { include: { settings: true } } },
+  const user = await prisma.profile.findUnique({
+    where: { userId: id },
+    include: { settings: true, ai: true },
   });
 
-  if (!profile || !profile.user || (!session && profile.user.settings?.isPrivate))
+  if (!user || (!session && user.settings?.isPrivate))
     throw new Response('Not found', { status: 404 });
-  const user = profile.user;
 
   const { spotify } = await spotifyApi(id).catch(async (e) => {
     if (e instanceof Error && e.message.includes('revoked')) {
@@ -229,6 +221,16 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
   ]);
 
+  // const filteredRecent = recent.filter(({ played_at }) => {
+  //   const playedAt = new Date(played_at);
+  //   return lessThanADay(playedAt);
+  //   return lessThanAWeek(playedAt);
+  // });
+
+  // const listenedTime = msToHours(
+  //   filteredRecent.map((track) => track.track.duration_ms).reduce((a, b) => a + b, 0),
+  // );
+
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
     const { spotify } = await spotifyApi(currentUser.userId);
@@ -275,27 +277,45 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   const data = await request.formData();
   const bio = data.get('bio');
-  const follow = data.get('Follow');
-  const unFollow = data.get('Unfollow');
+  const follow = data.get('follow');
+  const mood = data.get('mood');
   const currentUser = await getCurrentUser(request);
+  invariant(currentUser, 'Missing current user');
+  const { spotify } = await spotifyApi(currentUser.userId);
+  invariant(spotify, 'Spotify API Error');
 
-  if (unFollow != null && currentUser) {
-    const cid = currentUser?.userId;
-    const { spotify } = await spotifyApi(cid);
-    await spotify?.unfollowUsers([id]);
+  if (follow === 'true') {
+    await spotify.followUsers([id]);
+  } else if (follow === 'false') {
+    await spotify.unfollowUsers([id]);
   }
 
-  if (follow != null && currentUser) {
-    const cid = currentUser.userId;
-    const { spotify } = await spotifyApi(cid);
-    await spotify?.followUsers([id]);
+  if (typeof bio === 'string') {
+    const user = await prisma.profile.update({ where: { userId: id }, data: { bio } });
+    return user;
   }
 
-  if (typeof bio !== 'string') {
-    return typedjson('Form submitted incorrectly');
+  if (typeof mood === 'string') {
+    const { spotify } = await spotifyApi(id);
+    invariant(spotify, 'Spotify API Error');
+    const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+    const tracks = recent.body.items.map((item) => ({
+      song_name: item.track.name,
+      artist_name: item.track.artists[0].name,
+      album_name: item.track.album.name,
+    }));
+
+    const prompt = `Based on these songs given below, describe my current mood in one word. 
+    ${JSON.stringify(tracks)}`;
+    const response = (await askDaVinci(prompt)).split('.')[0];
+    await prisma.aI.upsert({
+      where: { userId: id },
+      create: { mood: response, userId: id },
+      update: { mood: response },
+    });
   }
-  const user = await prisma.profile.update({ where: { userId: id }, data: { bio: bio ?? '' } });
-  return user;
+
+  return null;
 };
 
 export const ErrorBoundary = (error: { error: Error }) => {
@@ -332,10 +352,5 @@ export const CatchBoundary = () => {
     </>
   );
 };
-
-// remix.run/docs/en/v1/api/conventions#unstable_shouldreload
-// export function unstable_shouldReload({ submission }: { submission: Submission }) {
-//   return !!submission && submission.method !== 'GET';
-// }
 
 export default Profile;

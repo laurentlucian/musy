@@ -7,6 +7,7 @@ import invariant from 'tiny-invariant';
 import { authenticator } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 import { redis } from '~/services/scheduler/redis.server';
+import { askDaVinci } from '~/services/ai.server';
 
 const TrackAnalysis = () => {
   const { track, analysis, authorized } = useTypedLoaderData<typeof loader>();
@@ -92,29 +93,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   } = track;
 
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
+  const response = await askDaVinci(prompt);
 
-  const res = await fetch('https://api.openai.com/v1/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      prompt,
-      model: 'text-davinci-003',
-      max_tokens: 500,
-      temperature: 0.5,
-      top_p: 1,
-      // frequency_penalty: 0,
-      // presence_penalty: 0,
-      // stop: ['\
-      // '],
-    }),
-  });
-
-  const json = (await res.json()) as TextCompletion;
-
-  const data = { track, analysis: json.choices?.[0].text, authorized: !!session };
+  const data = { track, analysis: response, authorized: !!session };
 
   // set cache for 1 month
   redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30);
@@ -143,28 +124,6 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
     'og:description': analysis,
     'twitter:card': analysis,
   };
-};
-
-type TextCompletion = {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: Choice[];
-  usage: Usage;
-};
-
-type Choice = {
-  text: string;
-  index: number;
-  logprobs: any | null;
-  finish_reason: string;
-};
-
-type Usage = {
-  prompt_tokens: number;
-  completion_tokens: number;
-  total_tokens: number;
 };
 
 export const CatchBoundary = () => {

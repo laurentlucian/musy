@@ -32,14 +32,16 @@ model Profile {
   // should've been the @id
   userId    String   @unique
 
-  name  String
-  bio   String?
-  email String
-  image String
-  party Party?
-  queue Queue[]
-  liked LikedSongs[]
+  name   String
+  bio    String?
+  email  String
+  image  String
+  party  Party?
+  queue  Queue[]
+  liked  LikedSongs[]
+  recent RecentSongs[]
 
+  ai       AI?
   settings Settings?
 }
 
@@ -54,6 +56,18 @@ model Settings {
   autoscroll Boolean @default(true)
   isPrivate  Boolean @default(false)
   // theme String @default("light")
+}
+
+model AI {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user   Profile @relation(fields: [userId], references: [userId])
+  userId String  @unique
+
+  mood String?
+  // ideas: recommended tracks
 }
 
 model Party {
@@ -113,4 +127,25 @@ model LikedSongs {
   action String   @default("liked")
 
   @@unique([trackId, userId])
+}
+
+model RecentSongs {
+  id       Int      @id @default(autoincrement())
+  playedAt DateTime @default(now())
+
+  trackId   String
+  uri       String
+  name      String
+  image     String
+  albumUri  String
+  albumName String
+  artist    String
+  artistUri String
+  explicit  Boolean
+
+  user   Profile @relation(fields: [userId], references: [userId])
+  userId String
+  action String  @default("liked")
+
+  @@unique([playedAt, userId])
 }

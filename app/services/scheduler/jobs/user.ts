@@ -1,32 +1,35 @@
-import type { LikedSongs } from '@prisma/client';
+import type { LikedSongs, RecentSongs } from '@prisma/client';
 import { minutesToMs } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
-import { getUserLikedSongs } from '~/services/spotify.server';
+import { spotifyApi } from '~/services/spotify.server';
 
-export const likedQ = Queue<{ userId: string }>(
-  'update_liked',
+export const userQ = Queue<{ userId: string }>(
+  'update_tracks',
   async (job) => {
     const { userId } = job.data;
-    console.log('likedQ -> pending job starting...', userId);
+    console.log('userQ -> pending job starting...', userId);
     const profile = await prisma.user.findUnique({
       where: { id: userId },
       include: { user: true },
     });
 
-    if (!profile || !profile.user) {
-      console.log(`likedQ ${userId} removed -> user not found`);
+    const { spotify } = await spotifyApi(userId);
+
+    if (!profile || !profile.user || !spotify) {
+      console.log(`userQ ${userId} removed -> user not found`);
       const jobKey = job.repeatJobKey;
       if (jobKey) {
-        await likedQ.removeRepeatableByKey(jobKey);
+        await userQ.removeRepeatableByKey(jobKey);
       }
       return null;
     }
 
-    const liked = await getUserLikedSongs(userId);
-
-    console.log('likedQ -> adding tracks to db', userId);
+    console.log('userQ -> adding liked tracks to db', userId);
+    const {
+      body: { items: liked },
+    } = await spotify.getMySavedTracks();
     for (const { track, added_at } of liked) {
       const song: Omit<LikedSongs, 'id'> = {
         trackId: track.id,
@@ -55,7 +58,39 @@ export const likedQ = Queue<{ userId: string }>(
       });
     }
 
-    console.log('likedQ -> completed', userId);
+    console.log('userQ -> adding recent tracks to db', userId);
+    const {
+      body: { items: recent },
+    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+    for (const { track, played_at } of recent) {
+      const song: Omit<RecentSongs, 'id'> = {
+        trackId: track.id,
+        playedAt: new Date(played_at),
+        userId: userId,
+        name: track.name,
+        uri: track.uri,
+        albumName: track.album.name,
+        albumUri: track.album.uri,
+        artist: track.artists[0].name,
+        artistUri: track.artists[0].uri,
+        image: track.album.images[0].url,
+        explicit: track.explicit,
+        action: 'played',
+      };
+
+      await prisma.recentSongs.upsert({
+        where: {
+          playedAt_userId: {
+            playedAt: song.playedAt,
+            userId: userId,
+          },
+        },
+        update: song,
+        create: song,
+      });
+    }
+
+    console.log('userQ -> completed', userId);
   },
   {
     limiter: {
@@ -69,16 +104,16 @@ declare global {
   var __didRegisterLikedQ: boolean | undefined;
 }
 
-export const addUsersToLikedQueue = async () => {
-  console.log('addUsersToLikedQueue -> starting...');
+export const addUsersToQueue = async () => {
+  console.log('addUsersToQueue -> starting...');
   // To ensure this function only runs once per environment,
   // we use a global variable to keep track if it has run
   if (global.__didRegisterLikedQ) {
     // and stop if it did.
 
     console.log(
-      'addUsersToLikedQueue -> already registered, repeating jobs:',
-      (await likedQ.getRepeatableJobs()).map((j) => [
+      'addUsersToQueue -> already registered, repeating jobs:',
+      (await userQ.getRepeatableJobs()).map((j) => [
         j.name,
 
         j.next,
@@ -95,17 +130,17 @@ export const addUsersToLikedQueue = async () => {
 
   const users = await getAllUsers();
   console.log(
-    'addUsersToLikedQueue -> users..',
+    'addUsersToQueue -> users..',
     users.map((u) => u.userId),
     users.length,
   );
 
-  await likedQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
+  await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
 
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
   for (const user of users) {
-    await likedQ.add(
+    await userQ.add(
       user.userId,
       { userId: user.userId },
       {
@@ -121,7 +156,7 @@ export const addUsersToLikedQueue = async () => {
   }
 
   // repeateableJobs are started with delay, so run these manually at startup
-  await likedQ.addBulk(
+  await userQ.addBulk(
     users.map((user) => ({
       name: 'update_liked',
       data: {
@@ -131,10 +166,10 @@ export const addUsersToLikedQueue = async () => {
   );
 
   console.log(
-    'addUsersToLikedQueue -> non repeateable jobs created (only at startup):',
-    await likedQ.getJobCounts(),
+    'addUsersToQueue -> non repeateable jobs created (only at startup):',
+    await userQ.getJobCounts(),
   );
 
-  console.log('addUsersToLikedQueue -> done');
+  console.log('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
 };
