@@ -1,12 +1,13 @@
-import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { ChakraProps } from '@chakra-ui/react';
-import { Link } from '@remix-run/react';
 import type { Profile } from '@prisma/client';
 import { timeSince } from '~/hooks/utils';
+import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
-import ActionDrawer from './menu/ActionDrawer';
+import useDrawerStore from '~/hooks/useDrawer';
+import type { Track } from '~/lib/types/types';
 
 type TileProps = {
   uri: string;
@@ -49,35 +50,46 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
-
+    const { onOpen } = useDrawerStore();
+    const track: Track = {
+      uri: uri,
+      trackId,
+      image,
+      albumUri,
+      albumName,
+      name,
+      artist,
+      artistUri,
+      explicit,
+    };
     return (
-      <Stack ref={ref} flex="0 0 200px" {...props}>
-        <Flex direction="column">
-          {createdAt && (
-            <HStack align="center" h="35px">
-              {createdBy ? (
-                <Link to={`/${createdBy.userId}`}>
-                  <HStack align="center">
-                    <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
-                    <Text fontWeight="semibold" fontSize="13px">
-                      {createdBy.name.split(' ')[0]}
-                    </Text>
-                  </HStack>
-                </Link>
-              ) : (
-                <Text fontWeight="semibold" fontSize="13px">
-                  Anon
+      <>
+        <Stack ref={ref} flex="0 0 200px" {...props} onClick={() => onOpen(track)} cursor="pointer">
+          <Flex direction="column">
+            {createdAt && (
+              <HStack align="center" h="35px">
+                {createdBy ? (
+                  <Link to={`/${createdBy.userId}`}>
+                    <HStack align="center">
+                      <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
+                      <Text fontWeight="semibold" fontSize="13px">
+                        {createdBy.name.split(' ')[0]}
+                      </Text>
+                    </HStack>
+                  </Link>
+                ) : (
+                  <Text fontWeight="semibold" fontSize="13px">
+                    Anon
+                  </Text>
+                )}
+                <Text as="span">·</Text>
+                <Text fontSize="12px" opacity={0.6}>
+                  {timeSince(createdAt ?? null)}
                 </Text>
-              )}
-              <Text as="span">·</Text>
-              <Text fontSize="12px" opacity={0.6}>
-                {timeSince(createdAt ?? null)}
-              </Text>
-            </HStack>
-          )}
-
-          {albumUri ? (
-            <LinkB href={albumUri} target="_blank">
+              </HStack>
+            )}
+            {albumUri ? (
+              //<LinkB href={albumUri} target="_blank">
               <Tooltip label={albumName} placement="top-start">
                 <Image
                   boxSize="200px"
@@ -87,55 +99,57 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   draggable={false}
                 />
               </Tooltip>
-            </LinkB>
-          ) : (
-            <Tooltip label={albumName} placement="top-start">
-              <Image
-                boxSize="200px"
-                objectFit="cover"
-                src={image}
-                borderRadius={5}
-                draggable={false}
-              />
-            </Tooltip>
-          )}
-        </Flex>
-        <Flex justify="space-between">
-          <Stack spacing={0}>
-            <LinkB href={uri} target="_blank">
+            ) : (
+              //</LinkB>
+              <Tooltip label={albumName} placement="top-start">
+                <Image
+                  boxSize="200px"
+                  objectFit="cover"
+                  src={image}
+                  borderRadius={5}
+                  draggable={false}
+                />
+              </Tooltip>
+            )}
+          </Flex>
+          <Flex justify="space-between">
+            <Stack spacing={0}>
+              {/* <LinkB href={uri} target="_blank"> */}
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>
-            </LinkB>
-            {artist && (
-              <Flex align="center">
-                {explicit && <Image src={explicitImage} mr={1} w="19px" />}
-                {artistUri ? (
-                  <LinkB href={artistUri} target="_blank">
+              {/* </LinkB> */}
+              {artist && (
+                <Flex align="center">
+                  {explicit && <Image src={explicitImage} mr={1} w="19px" />}
+                  {artistUri ? (
+                    // <LinkB href={artistUri} target="_blank">
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
                       {artist}
                     </Text>
-                  </LinkB>
-                ) : (
-                  <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                    {decodeHtmlEntity(artist)}
-                  </Text>
-                )}
-              </Flex>
-            )}
-          </Stack>
-          {!playlist && trackId && (
-            <ActionDrawer
-              track={{
-                trackId,
-                name,
-                image,
-              }}
-              // placement="bottom-end"
-            />
-          )}
-        </Flex>
-      </Stack>
+                  ) : (
+                    // </LinkB>
+                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                      {decodeHtmlEntity(artist)}
+                    </Text>
+                  )}
+                </Flex>
+              )}
+            </Stack>
+          </Flex>
+        </Stack>
+        {/* {!playlist && trackId && (
+          <ActionDrawer
+            track={{
+              trackId,
+              name,
+              image,
+            }}
+            isOpen={drawer.isOpen}
+            onClose={drawer.onClose}
+          />
+        )} */}
+      </>
     );
   },
 );

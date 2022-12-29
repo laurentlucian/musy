@@ -185,7 +185,7 @@ export const CatchBoundary = () => {
         {caught.status} {caught.data}
       </Heading>
       <Button mt={4} as={Link} to="/analysis">
-        Search new song
+        earch new song
       </Button>
     </>
   );

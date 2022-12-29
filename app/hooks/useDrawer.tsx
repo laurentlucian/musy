@@ -1,16 +1,5 @@
-import create from 'zustand/react';
-
-interface Track {
-  uri: string;
-  trackId?: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string | null;
-  artistUri: string | null;
-  explicit: boolean;
-}
+import create from 'zustand';
+import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {
   track: Track | null;
@@ -33,6 +22,7 @@ const useDrawerStore = create<DrawerStateConfig>()((set) => ({
         artist: by.artist,
         artistUri: by.artistUri,
         explicit: by.explicit,
+        userId: by.userId,
       },
     }),
 }));

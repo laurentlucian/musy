@@ -18,6 +18,7 @@ import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import loading from './lib/styles/loading.css';
 import { prisma } from './services/db.server';
+import ActionDrawer from './components/menu/ActionDrawer';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
@@ -28,6 +29,7 @@ const App = () => {
     <Document>
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
         <Layout authorized={!!currentUser}>
+          <ActionDrawer />
           <Outlet />
         </Layout>
       </ChakraProvider>

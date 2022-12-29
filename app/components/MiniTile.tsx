@@ -1,13 +1,15 @@
-import { Flex, HStack, Image, Stack, Text, Link as LinkB } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
+import useDrawerStore from '~/hooks/useDrawer';
 import { timeSince } from '~/hooks/utils';
+import type { Track } from '~/lib/types/types';
 import ActionDrawer from './menu/ActionDrawer';
 import Tooltip from './Tooltip';
 
 type MiniTileProps = {
   track: {
-    trackId: string | null;
+    trackId?: string;
     uri: string;
     image: string;
     albumUri: string | null;
@@ -28,6 +30,18 @@ const MiniTile = ({
   createdAt,
   createdBy,
 }: MiniTileProps) => {
+  const { onOpen } = useDrawerStore();
+  const item: Track = {
+    uri,
+    trackId,
+    image,
+    albumUri,
+    albumName,
+    name,
+    artist,
+    artistUri,
+    explicit,
+  };
   return (
     <Stack flex="0 0 100px">
       <Flex direction="column">
@@ -51,37 +65,32 @@ const MiniTile = ({
             <Text fontSize={['9px', '10px']} minW="max-content" opacity={0.6}>
               {timeSince(createdAt ?? null)}
             </Text>
-            {trackId && (
-              <ActionDrawer
-                track={{
-                  trackId,
-                  image,
-                  name,
-                }}
-                // placement="bottom-end"
-                // ml="auto !important"
-              />
-            )}
           </HStack>
         )}
         {albumUri ? (
-          <LinkB href={albumUri} target="_blank">
-            <Tooltip label={albumName} placement="top-start">
-              <Image src={image} borderRadius={5} w="200px" draggable={false} />
-            </Tooltip>
-          </LinkB>
+          // <LinkB href={albumUri} target="_blank">
+          <Tooltip label={albumName} placement="top-start">
+            <Image
+              src={image}
+              borderRadius={5}
+              w="200px"
+              draggable={false}
+              onClick={() => onOpen(item)}
+            />
+          </Tooltip>
         ) : (
+          // </LinkB>
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} borderRadius={5} w="200px" draggable={false} />
           </Tooltip>
         )}
       </Flex>
       <Tooltip label={name} placement="top-start">
-        <LinkB href={uri} target="_blank">
-          <Text fontSize="12px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
-            {name}
-          </Text>
-        </LinkB>
+        {/* <LinkB href={uri} target="_blank"> */}
+        <Text fontSize="12px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
+          {name}
+        </Text>
+        {/* </LinkB> */}
       </Tooltip>
     </Stack>
   );

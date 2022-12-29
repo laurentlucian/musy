@@ -1,4 +1,4 @@
-import type { ChakraProps } from '@chakra-ui/react';
+// import type { ChakraProps } from '@chakra-ui/react';
 import { Image } from '@chakra-ui/react';
 import {
   Drawer,
@@ -8,13 +8,12 @@ import {
   DrawerContent,
   Button,
   useDisclosure,
-  IconButton,
   Icon,
   Stack,
   DrawerFooter,
   Text,
 } from '@chakra-ui/react';
-import { ArrowDown2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
+import { ArrowDown2, ArrowRight2, DocumentText, Send2 } from 'iconsax-react';
 import { useNavigate, useParams } from '@remix-run/react';
 import SaveToLiked from './SaveToLiked';
 import AddQueue from './AddQueue';
@@ -22,22 +21,30 @@ import { useRef } from 'react';
 import useUsers from '~/hooks/useUsers';
 import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
+import useDrawerStore from '~/hooks/useDrawer';
 
-type ActionDrawerConfig = {
-  track: {
-    trackId: string;
-    name: string;
-    image: string;
-    // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
-    userId?: string;
-  };
-} & ChakraProps;
-
-const ActionDrawer = ({ track: { trackId, name, image, userId } }: ActionDrawerConfig) => {
+// type ActionDrawerConfig = {
+//   track: {
+//     trackId: string;
+//     name: string;
+//     image: string;
+//     // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
+//     userId?: string;
+//   };
+//   isOpen: boolean;
+//   onClose: () => void;
+// } & ChakraProps;
+// {
+//   track: { trackId, name, image, userId },
+//   isOpen,
+//   onClose,
+// }: ActionDrawerConfig
+const ActionDrawer = () => {
+  const { track, onClose } = useDrawerStore();
+  const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
   const sendMenu = useDisclosure();
   const navigate = useNavigate();
-  const menu = useDisclosure();
   const allUsers = useUsers();
   const user = useParamUser();
   const { id } = useParams();
@@ -61,48 +68,57 @@ const ActionDrawer = ({ track: { trackId, name, image, userId } }: ActionDrawerC
 
   const SendToList = () => (
     <>
-      {!isOwnProfile && id && (
+      {!isOwnProfile && id && track && (
         <AddQueue
           track={{
-            trackId,
+            trackId: track.trackId,
           }}
           user={user}
         />
       )}
-      {users.map((user) => (
-        <AddQueue
-          key={user.userId}
-          track={{
-            trackId,
-          }}
-          user={user}
-        />
-      ))}
+      {track &&
+        users.map((user) => (
+          <AddQueue
+            key={user.userId}
+            track={{
+              trackId: track.trackId,
+            }}
+            user={user}
+          />
+        ))}
     </>
   );
   const Analyze = () => (
-    <Button
-      leftIcon={<DocumentText />}
-      onClick={() => navigate(`/analysis/${trackId}`)}
-      variant="drawer"
-    >
-      Analyze
-    </Button>
+    <>
+      {track && (
+        <Button
+          leftIcon={<DocumentText />}
+          onClick={() => navigate(`/analysis/${track.trackId}`)}
+          variant="drawer"
+        >
+          Analyze
+        </Button>
+      )}
+    </>
   );
   const AddToYourQueue = () => (
-    <AddQueue
-      track={{
-        trackId,
-        userId,
-      }}
-      user={null}
-    />
+    <>
+      {track && (
+        <AddQueue
+          track={{
+            trackId: track.trackId,
+            userId: track.userId,
+          }}
+          user={null}
+        />
+      )}
+    </>
   );
   const CloseMenu = () => {
     const handleClick = () => {
-      menu.isOpen && !sendMenu.isOpen ? menu.onClose() : sendMenu.onClose();
+      isOpen && !sendMenu.isOpen ? onClose() : sendMenu.onClose();
     };
-    const text = menu.isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
+    const text = isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
       <Button variant="drawer" onClick={handleClick} justifyContent="center" h="6.9px" w="100vw">
         {text}
@@ -112,26 +128,11 @@ const ActionDrawer = ({ track: { trackId, name, image, userId } }: ActionDrawerC
 
   return (
     <>
-      <IconButton
-        ref={btnRef}
-        aria-label="options"
-        icon={<More />}
-        variant="ghost"
-        boxShadow="none"
-        _active={{ boxShadow: 'none !important', outline: 'none !important' }}
-        _hover={{
-          boxShadow: 'none !important',
-          outline: 'none !important',
-          color: 'spotify.green',
-        }}
-        outline="none !important"
-        onClick={menu.onOpen}
-      />
       <Drawer
-        // isOpen={name === 'Enigma' ? true : menu.isOpen}
-        isOpen={menu.isOpen}
+        // isOpen={name === 'Enigma' ? true : isOpen}
+        isOpen={isOpen}
         placement="bottom"
-        onClose={menu.onClose}
+        onClose={onClose}
         finalFocusRef={btnRef}
         lockFocusAcrossFrames
         preserveScrollBarGap
@@ -139,15 +140,17 @@ const ActionDrawer = ({ track: { trackId, name, image, userId } }: ActionDrawerC
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader>
-            <Stack align="center">
-              <Image boxSize="230px" objectFit="cover" src={image} alignSelf="center" />
-              <Text>{name}</Text>
-            </Stack>
+            {track && (
+              <Stack align="center">
+                <Image boxSize="230px" objectFit="cover" src={track.image} alignSelf="center" />
+                <Text>{track.name}</Text>
+              </Stack>
+            )}
           </DrawerHeader>
           {/* w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }} px={13} */}
           <DrawerBody>
             <Stack align="center">
-              <SaveToLiked trackId={trackId} />
+              {track && track.trackId && <SaveToLiked trackId={track.trackId} />}
               <Analyze />
               <AddToYourQueue />
               <SendTo />

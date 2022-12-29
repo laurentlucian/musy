@@ -1,4 +1,4 @@
-import { Button, Image, MenuItem } from '@chakra-ui/react';
+import { Button, Image } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
 import { Add, CloseSquare, Send2, TickSquare } from 'iconsax-react';
@@ -7,7 +7,7 @@ import Waver from '../Waver';
 
 type AddQueueProps = {
   track: {
-    trackId: string;
+    trackId?: string | null;
 
     // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
     userId?: string;
@@ -51,7 +51,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
     const sendToUserId = isSending ? id : currentUser?.userId;
 
     const data = {
-      trackId,
+      trackId: trackId ?? '',
 
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',

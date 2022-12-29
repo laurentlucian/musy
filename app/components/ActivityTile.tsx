@@ -1,23 +1,16 @@
-import {
-  HStack,
-  Image,
-  Stack,
-  Text,
-  Link as LinkB,
-  useColorModeValue,
-  Icon,
-} from '@chakra-ui/react';
+import { HStack, Image, Stack, Text, useColorModeValue, Icon } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
 import { timeSince } from '~/hooks/utils';
 import type { Activity } from '~/routes';
 import { Play, Send2 } from 'iconsax-react';
-import ActionDrawer from './menu/ActionDrawer';
 import LikeIcon from '~/lib/icon/Like';
+import type { Track } from '~/lib/types/types';
+import useDrawerStore from '~/hooks/useDrawer';
 
-type ActivityProps = {
+interface ActivityProps {
   track: Activity;
-};
+}
 
 const ActivityAction = ({ track }: ActivityProps) => {
   const Action = () => {
@@ -113,19 +106,6 @@ const ActivityAction = ({ track }: ActivityProps) => {
       <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
         {timeSince(track.createdAt)}
       </Text>
-      {track.trackId && (
-        <ActionDrawer
-          track={{
-            trackId: track.trackId,
-            image: track.image,
-            name: track.name,
-
-            userId: track.user?.userId,
-          }}
-          // placement="bottom-end"
-          // ml="auto !important"
-        />
-      )}
     </HStack>
   );
 };
@@ -133,13 +113,37 @@ const ActivityAction = ({ track }: ActivityProps) => {
 const ActivityTile = ({ track }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
+  const { onOpen } = useDrawerStore();
+  const item: Track = {
+    uri: track.uri,
+    trackId: track.trackId,
+    image: track.image,
+    albumUri: track.albumUri,
+    albumName: track.albumName,
+    name: track.name,
+    artist: track.artist,
+    artistUri: track.artistUri,
+    explicit: track.explicit,
+    userId: track.user?.userId,
+  };
+
   return (
-    <Stack w="220px">
-      <ActivityAction track={track} />
-      <HStack borderRadius={5} bgColor={bg} w="100%" pl={2}>
-        <Stack spacing={0} px={2} w="200px">
-          <Tooltip label={track.name} placement="top-start">
-            <LinkB href={track.uri}>
+    <>
+      <Stack w="220px">
+        <HStack>
+          <ActivityAction track={track} />
+        </HStack>
+        <HStack
+          borderRadius={5}
+          bgColor={bg}
+          w="100%"
+          pl={2}
+          onClick={() => onOpen(item)}
+          cursor="pointer"
+        >
+          <Stack spacing={0} px={2} w="200px">
+            <Tooltip label={track.name} placement="top-start">
+              {/* <LinkB href={track.uri}> */}
               <Text
                 fontSize={['12px', '13px']}
                 noOfLines={1}
@@ -148,23 +152,24 @@ const ActivityTile = ({ track }: ActivityProps) => {
               >
                 {track.name}
               </Text>
-            </LinkB>
-          </Tooltip>
-          <LinkB href={track.artistUri ?? ''}>
+              {/* </LinkB> */}
+            </Tooltip>
+            {/* <LinkB href={track.artistUri ?? ''}> */}
             <Tooltip label={track.artist} placement="top-start">
               <Text fontSize={['9px', '10px']} opacity={0.6}>
                 {track.artist}
               </Text>
             </Tooltip>
-          </LinkB>
-        </Stack>
-        <LinkB href={track.albumUri ?? ''} target="_blank">
+            {/* </LinkB> */}
+          </Stack>
+          {/* <LinkB href={track.albumUri ?? ''} target="_blank"> */}
           <Tooltip label={track.name} placement="top-start">
             <Image minW="70px" maxW="70px" src={track.image} />
           </Tooltip>
-        </LinkB>
-      </HStack>
-    </Stack>
+          {/* </LinkB> */}
+        </HStack>
+      </Stack>
+    </>
   );
 };
 
