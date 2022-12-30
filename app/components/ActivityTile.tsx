@@ -116,7 +116,7 @@ const ActivityTile = ({ track }: ActivityProps) => {
   const { onOpen } = useDrawerStore();
   const item: Track = {
     uri: track.uri,
-    trackId: track.trackId,
+    trackId: track.trackId ?? '',
     image: track.image,
     albumUri: track.albumUri,
     albumName: track.albumName,

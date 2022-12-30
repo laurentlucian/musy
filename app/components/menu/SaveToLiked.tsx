@@ -57,7 +57,7 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
         mr="0px"
         variant="ghost"
         justifyContent="left"
-        w={['100vw', '800px']}
+        w={['100vw', '550px']}
       >
         {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
       </Button>

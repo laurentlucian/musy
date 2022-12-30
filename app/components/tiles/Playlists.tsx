@@ -51,6 +51,7 @@ const Playlists = ({
               ref={(node) => {
                 isLast && setRef(node);
               }}
+              trackId=""
               playlist
               key={list.id}
               uri={list.uri}

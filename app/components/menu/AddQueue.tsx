@@ -1,4 +1,4 @@
-import { Button, Image } from '@chakra-ui/react';
+import { Button, Image, Stack } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
 import { Add, CloseSquare, Send2, TickSquare } from 'iconsax-react';
@@ -7,7 +7,7 @@ import Waver from '../Waver';
 
 type AddQueueProps = {
   track: {
-    trackId?: string | null;
+    trackId: string;
 
     // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
     userId?: string;
@@ -21,18 +21,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   const submit = useSubmit();
   const fetcher = useFetcher();
   const { pathname, search } = useLocation();
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-
-  const isDone = fetcher.type === 'done';
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
-
   const isSending = !!user;
-  const id = userId || user?.userId || paramId;
 
   const addToQueue = () => {
     if (!currentUser) {
@@ -45,6 +34,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
       });
     }
 
+    const id = userId || user?.userId || paramId;
     const action = isSending ? `/${id}/add` : `/${currentUser.userId}/add`;
 
     const fromUserId = isSending ? currentUser?.userId : id;
@@ -60,7 +50,15 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
 
     fetcher.submit(data, { replace: true, method: 'post', action });
   };
+  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
 
+  const isDone = fetcher.type === 'done';
+  const isError =
+    typeof fetcher.data === 'string'
+      ? fetcher.data.includes('Error')
+        ? fetcher.data
+        : null
+      : null;
   const icon = isDone ? (
     <TickSquare size="25px" />
   ) : isError ? (
@@ -78,37 +76,42 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   return (
     <>
       {user ? (
-        <Button
-          onClick={addToQueue}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="ghost"
-          justifyContent="left"
-          fontSize="18px"
-          py="30px"
-          w={['100vw', '1100px !important']}
-        >
-          <Image
-            src={user?.image}
-            borderRadius="full"
-            boxSize="50px"
-            minW="50px"
-            mb={1}
-            mr="10px"
-          />
-          {isAdding ? <Waver /> : text}
-        </Button>
+        <Stack direction="column">
+          <Button
+            onClick={addToQueue}
+            isDisabled={!!isDone || !!isError || !!isAdding}
+            variant="ghost"
+            justifyContent="left"
+            fontSize="18px"
+            py="30px"
+            w={['100vw', '550px']}
+          >
+            <Image
+              src={user?.image}
+              borderRadius="full"
+              boxSize="50px"
+              minW="50px"
+              mb={1}
+              mr="10px"
+            />
+            {isAdding ? <Waver /> : text}
+          </Button>
+        </Stack>
       ) : (
-        <Button
-          onClick={addToQueue}
-          leftIcon={icon}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="ghost"
-          justifyContent="left"
-          fontSize="14px"
-          w={['100vw', '800px']}
-        >
-          {isAdding ? <Waver /> : text}
-        </Button>
+        <Stack direction="column">
+          <Button
+            onClick={addToQueue}
+            leftIcon={icon}
+            isDisabled={!!isDone || !!isError || !!isAdding}
+            variant="ghost"
+            justifyContent="left"
+            fontSize="14px"
+            w={['100vw', '550px']}
+          >
+            {isAdding && <Waver />}
+            {text}
+          </Button>
+        </Stack>
       )}
     </>
   );

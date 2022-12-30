@@ -1,6 +1,6 @@
 export interface Track {
   uri: string;
-  trackId?: string | null;
+  trackId: string;
   image: string;
   albumUri: string | null;
   albumName: string | null;

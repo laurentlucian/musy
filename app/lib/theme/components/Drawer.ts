@@ -28,6 +28,13 @@ const baseStyleDialogContainer = defineStyle((props) => ({
   color: 'white',
 }));
 
+const desktop = defineStyle({
+  overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
+  dialog: { backdropFilter: 'blur(25px)', zIndex: 'modal' },
+});
+const variants = {
+  desktop,
+};
 const baseStyleDialog = defineStyle((props) => {
   const { isFullHeight } = props;
 
@@ -61,4 +68,4 @@ const baseStyle = definePartsStyle((props) => ({
   body,
 }));
 
-export const Drawer = defineMultiStyleConfig({ baseStyle });
+export const Drawer = defineMultiStyleConfig({ baseStyle, variants });

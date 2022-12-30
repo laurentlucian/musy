@@ -11,7 +11,7 @@ import type { Track } from '~/lib/types/types';
 
 type TileProps = {
   uri: string;
-  trackId?: string;
+  trackId: string;
   image: string;
   albumUri: string | null;
   albumName: string | null;

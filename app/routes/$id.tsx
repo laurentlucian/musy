@@ -23,7 +23,7 @@ import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
 import ActivityFeed from '~/components/ActivityTile';
-import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
+// import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
 import MoodButton from '~/components/MoodButton';
 import { timeSince } from '~/hooks/utils';
@@ -114,9 +114,7 @@ const Profile = () => {
         )}
       </Stack>
       <RecentTracks recent={recent} />
-      {/* <LikedTracksVirtual liked={liked}  /> */}
       <LikedTracks liked={liked} />
-      {/* <OldLikedSongs liked={liked}  /> */}
       <TopTracks top={top} />
       <Playlists playlists={playlists} />
     </Stack>

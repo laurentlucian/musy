@@ -8,7 +8,7 @@ import Tooltip from './Tooltip';
 
 type MiniTileProps = {
   track: {
-    trackId?: string;
+    trackId: string;
     uri: string;
     image: string;
     albumUri: string | null;
