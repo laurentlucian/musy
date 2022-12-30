@@ -15,6 +15,7 @@ import {
   Text,
   Box,
   SlideFade,
+  Flex,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, DocumentText, LinkCircle, Send2 } from 'iconsax-react';
 import { useNavigate, useParams } from '@remix-run/react';
@@ -166,21 +167,27 @@ const ActionDrawer = () => {
                     onMouseLeave={() => setShow(false)}
                     _focus={{ boxShadow: 'none' }}
                   >
-                    <Stack direction="row" justify="flex-start" ml={['none', '-30px !important']}>
-                      <Box opacity={show ? 1 : 0} transition="opacity .25s ease-in-out">
-                        <LinkCircle />
-                      </Box>
-                      <Text
-                        fontSize={['xl', '5xl']}
-                        fontWeight="bold"
-                        textAlign="left"
-                        w="fit-content"
-                        wordBreak="break-word"
-                        className="test"
+                    <Text
+                      fontSize={['xl', '5xl']}
+                      fontWeight="bold"
+                      textAlign="left"
+                      w="fit-content"
+                      wordBreak="break-word"
+                      pos="relative"
+                    >
+                      {track.name}
+                      <Flex
+                        alignItems="center"
+                        pos="absolute"
+                        left="-25px"
+                        top="0"
+                        bottom="0"
+                        opacity={show ? 1 : 0}
+                        transition="opacity .25s ease-in-out"
                       >
-                        {track.name}
-                      </Text>
-                    </Stack>
+                        <LinkCircle size="15px" />
+                      </Flex>
+                    </Text>
                   </Link>
                   {track.artistUri && (
                     <Link
@@ -190,13 +197,23 @@ const ActionDrawer = () => {
                       onMouseLeave={() => setShow1(false)}
                       w="fit-content"
                       _focus={{ boxShadow: 'none' }}
-                      ml={['none', '-30px !important']}
+                      pos="relative"
                     >
                       <Stack direction="row">
-                        <Box opacity={show1 ? 1 : 0} transition="opacity .25s ease-in-out">
-                          <LinkCircle size="15px" />
-                        </Box>
-                        <Text color="#BBB8B7">{track.artist}</Text>
+                        <Text color="#BBB8B7">
+                          {track.artist}
+                          <Flex
+                            alignItems="center"
+                            pos="absolute"
+                            left="-25px"
+                            top="0"
+                            bottom="0"
+                            opacity={show1 ? 1 : 0}
+                            transition="opacity .25s ease-in-out"
+                          >
+                            <LinkCircle size="15px" />
+                          </Flex>
+                        </Text>
                       </Stack>
                     </Link>
                   )}
