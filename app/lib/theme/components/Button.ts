@@ -1,6 +1,7 @@
 import { mode } from '@chakra-ui/theme-tools';
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
 import { defineStyle } from '@chakra-ui/styled-system';
+import { keyframes } from '@emotion/react';
 
 type AccessibleColor = {
   bg?: string;
@@ -60,6 +61,38 @@ const drawer = defineStyle({
   boxShadow: 'none !important',
   outline: 'none !important',
 });
+const shrink = keyframes`
+0% { width: 50px; height: 50px; }
+100% { width: 42px; height: 42px; }
+`;
+const searchCircle = defineStyle((props) => ({
+  pos: 'fixed',
+  bottom: 3,
+  right: 3,
+  borderRadius: 'full',
+  bg: mode('music.700', 'music.200')(props),
+  color: mode('music.200', 'music.700')(props),
+  boxSize: '50px',
+  fontSize: '40px',
+  fontWeight: 'hairline',
+  _active: {
+    boxShadow: 'none !important',
+    animation: `${shrink} .25s forwards`,
+    backfaceVisibility: 'none !important',
+  },
+  _focus: {
+    boxShadow: 'none !important',
+    animation: `${shrink} .25s forwards`,
+    backfaceVisibility: 'none !important',
+  },
+  _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
+  boxShadow: 'none !important',
+  userSelect: 'none !important',
+  backfaceVisibility: 'none !important',
+  perspective: 1000,
+  zIndex: 10000,
+  WebkitTapHighlightColor: '#0000 !important',
+}));
 
 export default {
   baseStyle: {
@@ -73,5 +106,6 @@ export default {
   variants: {
     music: variantMusic,
     drawer,
+    searchCircle,
   },
 };

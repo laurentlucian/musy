@@ -13,6 +13,8 @@ const global = (props: GlobalStyleProps) => ({
     color: mode('#161616', '#EEE6E2')(props),
     bg: mode('#EEE6E2', '#050404')(props),
     lineHeight: 'base',
+    WebkitTapHighlightColor: '#0000 !important',
+    userSelect: 'none !important',
   },
   '*::-webkit-scrollbar-track': {
     bg: mode('#EEE6E2', '#050404')(props),

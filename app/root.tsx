@@ -28,7 +28,7 @@ const App = () => {
   return (
     <Document>
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
-        <Layout authorized={!!currentUser}>
+        <Layout authorized={!!currentUser} >
           <ActionDrawer />
           <Outlet />
         </Layout>
