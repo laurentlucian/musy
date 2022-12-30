@@ -77,23 +77,15 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
 
   return (
     <>
-      {/* // <MenuItem
-        //   onClick={addToQueue}
-        //   icon={icon}
-        //   isDisabled={!!isDone || !!isError || !!isAdding}
-        //   // bug: fetcher isn't updating its state to loading
-        //   // so close menu when adding to queue for now
-        //   closeOnSelect={true}
-        // >
-        //   {isAdding ? <Waver /> : text}
-        // </MenuItem> */}
       {user ? (
         <Button
           onClick={addToQueue}
           isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="drawer"
+          variant="ghost"
+          justifyContent="left"
           fontSize="18px"
           py="30px"
+          w={['100vw', '1100px !important']}
         >
           <Image
             src={user?.image}
@@ -110,8 +102,10 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           onClick={addToQueue}
           leftIcon={icon}
           isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="drawer"
+          variant="ghost"
+          justifyContent="left"
           fontSize="14px"
+          w={['100vw', '800px']}
         >
           {isAdding ? <Waver /> : text}
         </Button>

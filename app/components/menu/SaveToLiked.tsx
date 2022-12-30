@@ -50,21 +50,14 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
 
   return (
     <>
-      {/* <MenuItem
-          onClick={saveSong}
-          icon={<LikeIcon aria-checked={isSaved} />}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          closeOnSelect={false}
-          mr={isSaved ? '0px' : '9.54px'}
-        >
-          {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-        </MenuItem> */}
       <Button
         onClick={saveSong}
         leftIcon={<LikeIcon aria-checked={isSaved} />}
         isDisabled={!!isDone || !!isError || !!isAdding}
         mr="0px"
-        variant="drawer"
+        variant="ghost"
+        justifyContent="left"
+        w={['100vw', '800px']}
       >
         {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
       </Button>

@@ -112,9 +112,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   if (!item) return null;
 
   const isOwnProfile = currentUser?.userId === id;
-  // const link = item.uri;
-  // const artistLink = item.album?.artists[0].uri;
-  // const albumLink = item.album?.uri;
 
   return (
     <>
@@ -132,18 +129,14 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
               <Flex h="135px" px="2px" py="2px" justify="space-between">
                 <Stack pl="7px" spacing={1} flexGrow={1}>
                   <Stack direction="column" spacing={0.5}>
-                    {/* <Link href={link ?? ''} target="_blank"> */}
                     <Text noOfLines={[1]} onClick={() => onOpen(track)} cursor="pointer">
                       {item.name}
                     </Text>
-                    {/* </Link> */}
                     <Flex onClick={() => onOpen(track)} cursor="pointer">
                       {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                      {/* <Link href={artistLink ?? ''} target="_blank"> */}
                       <Text opacity={0.8} fontSize="13px">
                         {item.album?.artists[0].name}
                       </Text>
-                      {/* </Link> */}
                     </Flex>
                     {playback.context && (
                       <>
