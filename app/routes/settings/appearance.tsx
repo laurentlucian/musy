@@ -10,23 +10,23 @@ const Appearance = () => {
   return (
     <>
       <Stack direction="row" alignItems="center">
-        <Text>scheduled:</Text>
-        <Button aria-label="off" onClick={() => setScheduled(false)}>
+        <Text fontSize={['sm', 'md']}>scheduled:</Text>
+        <Button size={['xs', 'sm']} aria-label="off" onClick={() => setScheduled(false)}>
           off
         </Button>
-        <Button aria-label="on" onClick={() => setScheduled(true)}>
+        <Button size={['xs', 'sm']} aria-label="on" onClick={() => setScheduled(true)}>
           on
         </Button>
         {scheduled && <TimeRangePicker />}
       </Stack>
       <Stack direction="row">
-        <Button aria-label="dark" onClick={() => setColorMode('dark')}>
+        <Button size={['xs', 'sm']} aria-label="dark" onClick={() => setColorMode('dark')}>
           dark
         </Button>
-        <Button aria-label="light" onClick={() => setColorMode('light')}>
+        <Button size={['xs', 'sm']} aria-label="light" onClick={() => setColorMode('light')}>
           light
         </Button>
-        <Button aria-label="system" onClick={() => setColorMode('system')}>
+        <Button size={['xs', 'sm']} aria-label="system" onClick={() => setColorMode('system')}>
           system
         </Button>
       </Stack>

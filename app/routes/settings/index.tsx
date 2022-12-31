@@ -32,7 +32,7 @@ const Account = () => {
     <>
       <Stack spacing={5}>
         <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="private-profile" mb="0">
+          <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0">
             private profile
           </FormLabel>
           <Switch
@@ -49,7 +49,7 @@ const Account = () => {
           />
         </FormControl>
         <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="auto-scroll" mb="0">
+          <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0">
             auto scroll
           </FormLabel>
           <Switch
