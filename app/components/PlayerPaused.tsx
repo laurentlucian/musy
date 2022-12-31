@@ -99,11 +99,11 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                       noOfLines={[1]}
                       onClick={() => onOpen(track)}
                       cursor="pointer"
-                      w={['220px', '68%']}
+                      w={['200px', '68%']}
                     >
                       {name}
                     </Text>
-                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['220px', '68%']}>
+                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['200px', '68%']}>
                       {explicit && <Image mr={1} src={explicitImage} w="19px" />}
                       <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {artist}

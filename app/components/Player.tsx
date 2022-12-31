@@ -132,11 +132,13 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       noOfLines={1}
                       onClick={() => onOpen(track)}
                       cursor="pointer"
-                      w={['220px', '68%']}
+                      w={['200px', '68%']}
+                      overflow="hidden"
+                      whiteSpace="nowrap"
                     >
                       {item.name}
                     </Text>
-                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['220px', '68%']}>
+                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['200px', '68%']}>
                       {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
                       <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {item.album?.artists[0].name}
@@ -148,7 +150,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                           fontSize="13px"
                           transition="opacity 1.69s ease-in-out"
                           opacity={playingFrom ? 1 : 0}
-                          w={['220px', '68%']}
+                          w={['200px', '68%']}
                           noOfLines={1}
                         >
                           Playing From{' '}
@@ -179,7 +181,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                             whiteSpace="normal"
                             wordBreak="break-word"
                             noOfLines={1}
-                            w={['220px', '68%']}
+                            w={['200px', '68%']}
                           >
                             {playback.context.name
                               ? playback.context.name
@@ -197,7 +199,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         transition="opacity 1.69s ease-in-out"
                         opacity={playingFrom ? 0 : 1}
                         noOfLines={1}
-                        w={['220px', '68%']}
+                        w={['200px', '68%']}
                       >
                         Listening on
                       </Text>
@@ -207,7 +209,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         transition="opacity 1.69s ease-in-out"
                         opacity={playingFrom ? 0 : 1}
                         noOfLines={1}
-                        w={['220px', '68%']}
+                        w={['200px', '68%']}
                       >
                         {playback.device.name.split(' ').slice(0, 2).join(' ')}
                       </Text>
