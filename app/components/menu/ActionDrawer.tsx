@@ -107,11 +107,11 @@ const ActionDrawer = () => {
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
-                        boxSize={['269px', 500]}
+                        boxSize={['369px', 500]}
                         objectFit="cover"
                         src={track.image}
                         alignSelf="center"
-                        mr="25px"
+                        mr={['0', '25px']}
                       />
                     </Link>
                   )}
