@@ -7,6 +7,7 @@ import {
   DrawerBody,
   DrawerOverlay,
   DrawerContent,
+  DrawerCloseButton,
   Button,
   useDisclosure,
   Icon,
@@ -194,7 +195,7 @@ const ActionDrawer = () => {
                     isOpen={sendMenu.isOpen}
                     onClose={sendMenu.onClose}
                     size="full"
-                    placement="bottom"
+                    placement="right"
                     lockFocusAcrossFrames
                     preserveScrollBarGap
                     finalFocusRef={btnRef}
@@ -204,6 +205,7 @@ const ActionDrawer = () => {
                       <DrawerHeader>
                         <Stack>
                           <Text>To:</Text>
+                          <DrawerCloseButton />
                         </Stack>
                       </DrawerHeader>
                       <DrawerBody>
