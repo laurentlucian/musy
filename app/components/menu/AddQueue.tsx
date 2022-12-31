@@ -1,8 +1,10 @@
 import { Button, Image, Stack } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { useFetcher, useLocation, useParams, useSubmit } from '@remix-run/react';
-import { Add, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { useFetcher, useLocation, useParams, useSubmit, useTransition } from '@remix-run/react';
+import { Add, AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { useTypedFetcher } from 'remix-typedjson';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { action } from '~/routes/$id/add';
 import Waver from '../Waver';
 
 type AddQueueProps = {
@@ -19,7 +21,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
-  const fetcher = useFetcher();
+  const fetcher = useTypedFetcher<typeof action>();
   const { pathname, search } = useLocation();
   const isSending = !!user;
 
@@ -66,7 +68,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   ) : user ? (
     <Send2 />
   ) : (
-    <Add />
+    <AddSquare />
   );
 
   const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Add to Your Queue';
@@ -76,42 +78,37 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   return (
     <>
       {user ? (
-        <Stack direction="column">
-          <Button
-            onClick={addToQueue}
-            isDisabled={!!isDone || !!isError || !!isAdding}
-            variant="ghost"
-            justifyContent="left"
-            fontSize="18px"
-            py="30px"
-            w={['100vw', '550px']}
-          >
-            <Image
-              src={user?.image}
-              borderRadius="full"
-              boxSize="50px"
-              minW="50px"
-              mb={1}
-              mr="10px"
-            />
-            {isAdding ? <Waver /> : text}
-          </Button>
-        </Stack>
+        <Button
+          onClick={addToQueue}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          variant="ghost"
+          justifyContent="left"
+          fontSize="18px"
+          py="30px"
+          w={['100vw', '550px']}
+        >
+          <Image
+            src={user?.image}
+            borderRadius="full"
+            boxSize="50px"
+            minW="50px"
+            mb={1}
+            mr="10px"
+          />
+          {isAdding ? <Waver /> : text}
+        </Button>
       ) : (
-        <Stack direction="column">
-          <Button
-            onClick={addToQueue}
-            leftIcon={icon}
-            isDisabled={!!isDone || !!isError || !!isAdding}
-            variant="ghost"
-            justifyContent="left"
-            fontSize="14px"
-            w={['100vw', '550px']}
-          >
-            {isAdding && <Waver />}
-            {text}
-          </Button>
-        </Stack>
+        <Button
+          onClick={addToQueue}
+          leftIcon={icon}
+          isDisabled={!!isDone || !!isError || !!isAdding}
+          variant="ghost"
+          justifyContent="left"
+          fontSize="14px"
+          w={['100vw', '550px']}
+        >
+          {isAdding ? <Waver /> : text}
+        </Button>
       )}
     </>
   );

@@ -17,8 +17,8 @@ import {
   SlideFade,
   Flex,
 } from '@chakra-ui/react';
-import { ArrowDown2, ArrowRight2, DocumentText, LinkCircle, Send2 } from 'iconsax-react';
-import { useNavigate, useParams } from '@remix-run/react';
+import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
+import { useParams } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
 import useDrawerStore from '~/hooks/useDrawer';
@@ -27,6 +27,7 @@ import { useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
+import AnalyzeTrack from './AnalyzeTrack';
 
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
@@ -35,7 +36,6 @@ const ActionDrawer = () => {
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
   const sendMenu = useDisclosure();
-  const navigate = useNavigate();
   const allUsers = useUsers();
   const user = useParamUser();
   const { id } = useParams();
@@ -65,66 +65,20 @@ const ActionDrawer = () => {
     </Button>
   );
 
-  const SendToList = () => (
-    <>
-      <Stack>
-        {!isOwnProfile && id && track && (
-          <AddQueue
-            track={{
-              trackId: track.trackId,
-            }}
-            user={user}
-          />
-        )}
-
-        {track &&
-          users.map((user) => (
-            <AddQueue
-              key={user.userId}
-              track={{
-                trackId: track.trackId,
-              }}
-              user={user}
-            />
-          ))}
-      </Stack>
-    </>
-  );
-  const Analyze = () => (
-    <>
-      {track && (
-        <Button
-          leftIcon={<DocumentText />}
-          onClick={() => navigate(`/analysis/${track.trackId}`)}
-          variant="ghost"
-          justifyContent="left"
-          w={['100vw', '550px']}
-        >
-          Analyze
-        </Button>
-      )}
-    </>
-  );
-  const AddToYourQueue = () => (
-    <>
-      {track && (
-        <AddQueue
-          track={{
-            trackId: track.trackId,
-            userId: track.userId,
-          }}
-          user={null}
-        />
-      )}
-    </>
-  );
   const CloseMenu = () => {
     const handleClick = () => {
       isOpen && !sendMenu.isOpen ? onClose() : sendMenu.onClose();
     };
     const text = isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
-      <Button variant="drawer" onClick={handleClick} justifyContent="center" h="20px" w="100vw">
+      <Button
+        variant="drawer"
+        onClick={handleClick}
+        justifyContent="center"
+        h="40px"
+        pt="10px"
+        w="100vw"
+      >
         {text}
       </Button>
     );
@@ -177,6 +131,7 @@ const ActionDrawer = () => {
                     >
                       {track.name}
                       <Flex
+                        as="span"
                         alignItems="center"
                         pos="absolute"
                         left="-25px"
@@ -185,7 +140,7 @@ const ActionDrawer = () => {
                         opacity={show ? 1 : 0}
                         transition="opacity .25s ease-in-out"
                       >
-                        <LinkCircle size="15px" />
+                        <LinkCircle size="20px" />
                       </Flex>
                     </Text>
                   </Link>
@@ -203,6 +158,7 @@ const ActionDrawer = () => {
                         <Text color="#BBB8B7">
                           {track.artist}
                           <Flex
+                            as="span"
                             alignItems="center"
                             pos="absolute"
                             left="-25px"
@@ -211,7 +167,7 @@ const ActionDrawer = () => {
                             opacity={show1 ? 1 : 0}
                             transition="opacity .25s ease-in-out"
                           >
-                            <LinkCircle size="15px" />
+                            <LinkCircle size="20px" />
                           </Flex>
                         </Text>
                       </Stack>
@@ -221,8 +177,17 @@ const ActionDrawer = () => {
               )}
               <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
                 {track && track.trackId && <SaveToLiked trackId={track.trackId} />}
-                <Analyze />
-                <AddToYourQueue />
+                {track && <AnalyzeTrack trackId={track.trackId} />}
+                {/* AddToYourQueue */}
+                {track && (
+                  <AddQueue
+                    track={{
+                      trackId: track.trackId,
+                      userId: track.userId,
+                    }}
+                    user={null}
+                  />
+                )}
                 <SendTo />
                 {isSmallScreen ? (
                   <Drawer
@@ -243,7 +208,28 @@ const ActionDrawer = () => {
                       </DrawerHeader>
                       <DrawerBody>
                         <Stack align="center">
-                          <SendToList />
+                          {/* SendToList */}
+                          <Stack>
+                            {!isOwnProfile && id && track && (
+                              <AddQueue
+                                track={{
+                                  trackId: track.trackId,
+                                }}
+                                user={user}
+                              />
+                            )}
+
+                            {track &&
+                              users.map((user) => (
+                                <AddQueue
+                                  key={user.userId}
+                                  track={{
+                                    trackId: track.trackId,
+                                  }}
+                                  user={user}
+                                />
+                              ))}
+                          </Stack>
                         </Stack>
                       </DrawerBody>
                       <DrawerFooter>
@@ -273,7 +259,28 @@ const ActionDrawer = () => {
                   // </Collapse>
                   <SlideFade in={sendMenu.isOpen} offsetY="-20px">
                     <Box overflowY="scroll" h="390px">
-                      <SendToList />
+                      {/* SendToList */}
+                      <Stack>
+                        {!isOwnProfile && id && track && (
+                          <AddQueue
+                            track={{
+                              trackId: track.trackId,
+                            }}
+                            user={user}
+                          />
+                        )}
+
+                        {track &&
+                          users.map((user) => (
+                            <AddQueue
+                              key={user.userId}
+                              track={{
+                                trackId: track.trackId,
+                              }}
+                              user={user}
+                            />
+                          ))}
+                      </Stack>
                     </Box>
                   </SlideFade>
                 )}

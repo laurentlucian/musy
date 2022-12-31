@@ -1,5 +1,7 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
+import { typedjson } from 'remix-typedjson';
 import { prisma } from '~/services/db.server';
 import { activityQ } from '~/services/scheduler/jobs/activity';
 import { spotifyApi } from '~/services/spotify.server';
@@ -13,10 +15,10 @@ export const action: ActionFunction = async ({ request, params }) => {
   const action = body.get('action') as string;
 
   if (typeof trackId !== 'string' || typeof fromUserId !== 'string') {
-    return json('Request Error');
+    return typedjson('Request Error');
   }
   const { spotify } = await spotifyApi(id);
-  if (!spotify) return json('Error: no access to API');
+  if (!spotify) return typedjson('Error: no access to API');
 
   const {
     body: {
@@ -56,10 +58,10 @@ export const action: ActionFunction = async ({ request, params }) => {
       if (id !== fromUserId) {
         await prisma.queue.create({ data: fields });
       }
-      return json('Queued');
+      return typedjson('Queued');
     } catch (error) {
       console.log('add -> error', error);
-      return json('Error: Premium required');
+      return typedjson('Error: Premium required');
     }
   }
 
@@ -81,11 +83,11 @@ export const action: ActionFunction = async ({ request, params }) => {
     );
     console.log('add -> created Job on ', res.queueName);
     // tell user when queue didn't work (can't queue when user isn't playing)
-    return json('Will queue once play resumes');
+    return typedjson('Queued');
   } else {
     console.log(id, fromUserId);
     // not adding to Activity when user queues song from their own page
-    return json('Error: resume play first');
+    return typedjson('Error: Play first');
   }
 };
 
