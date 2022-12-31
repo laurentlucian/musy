@@ -8,10 +8,17 @@ import { authenticator } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 import { redis } from '~/services/scheduler/redis.server';
 import { askDaVinci } from '~/services/ai.server';
+import { useEffect } from 'react';
+import useDrawerStore from '~/hooks/useDrawer';
 
 const TrackAnalysis = () => {
   const { track, analysis, authorized } = useTypedLoaderData<typeof loader>();
   const transition = useTransition();
+  const { onClose } = useDrawerStore();
+
+  useEffect(() => {
+    onClose();
+  }, [onClose]);
 
   if (!track || !analysis) return null;
 
