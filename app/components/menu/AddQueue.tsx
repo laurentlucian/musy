@@ -86,6 +86,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           fontSize="18px"
           py="30px"
           w={['100vw', '550px']}
+          mt="10px"
         >
           <Image
             src={user?.image}
