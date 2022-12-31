@@ -12,6 +12,7 @@
     "deploy": "fly deploy --remote-only"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.15",
     "@chakra-ui/react": "^2.4.3",
     "@chakra-ui/styled-system": "^2.4.0",
     "@chakra-ui/system": "^2.3.4",
