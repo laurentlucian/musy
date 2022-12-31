@@ -62,7 +62,6 @@ const drawer = defineStyle({
 });
 const searchCircle = defineStyle((props) => ({
   pos: 'fixed',
-  bottom: 3,
   right: 3,
   borderRadius: 'full',
   bg: mode('music.700', 'music.200')(props),
@@ -79,7 +78,7 @@ const searchCircle = defineStyle((props) => ({
     boxShadow: 'none !important',
     backfaceVisibility: 'none !important',
   },
-  transition: 'width 0.25s ease-out, height 0.25s ease-out',
+  transition: 'width 0.25s ease-out, height 0.25s ease-out, bottom 0.25s ease-in-out',
   _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
   boxShadow: 'none !important',
   userSelect: 'none !important',
