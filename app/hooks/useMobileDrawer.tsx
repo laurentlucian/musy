@@ -7,6 +7,11 @@ interface DrawerStateConfig {
   onSearch: (by: Track) => void;
   isOpen: boolean;
   setOpen: (by: boolean) => void;
+  bottom: number;
+  right: number;
+  setPos: (by: [number, number]) => void;
+  icon: string;
+  setIcon: (by: string) => void;
 }
 
 const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
@@ -29,6 +34,11 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
     }),
   isOpen: false,
   setOpen: (by) => set({ isOpen: by }),
+  bottom: 3,
+  right: 3,
+  setPos: (by) => set({ bottom: by[0], right: by[1] }),
+  icon: 'plus',
+  setIcon: (by) => set({ icon: by }),
 }));
 
 export default useMobileDrawerStore;

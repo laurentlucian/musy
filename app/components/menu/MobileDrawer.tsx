@@ -21,13 +21,14 @@ import Tiles from '../Tiles';
 import Tile from '../Tile';
 
 const MobileDrawer = () => {
-  const { isOpen, onClose, setOpen } = useMobileDrawerStore();
+  const { isOpen, onClose, setOpen, setPos, setIcon, icon } = useMobileDrawerStore();
   const btnRef = useRef<HTMLButtonElement>(null);
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
 
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
+  const [inputHasFocus, setInputHasFocus] = useState(false);
   const fetcher = useFetcher();
   const busy = fetcher.state === 'loading' ?? false;
 
@@ -44,11 +45,30 @@ const MobileDrawer = () => {
     }
   };
 
-  const handleCloseButton = () => {
-    setSearch('');
-    setTracks([]);
-    if (search === '') setOpen(false);
-  };
+  // const handleCloseButton = () => {
+  //   setSearch('');
+  //   setTracks([]);
+  //   if (search === '') setOpen(false);
+  // };
+
+  useEffect(() => {
+    if (inputHasFocus) {
+      setPos([305, 3]);
+      setIcon('down');
+      setSearch('');
+      setTracks([]);
+    } else if (isOpen) {
+      setPos([3, 3]);
+      setIcon('x');
+      setSearch('');
+      setTracks([]);
+    } else {
+      setPos([3, 3]);
+      setIcon('plus');
+      setSearch('');
+      setTracks([]);
+    }
+  }, [inputHasFocus, setPos, setIcon, isOpen]);
 
   useEffect(() => {
     if (fetcher.data) {
@@ -82,8 +102,8 @@ const MobileDrawer = () => {
           <DrawerHeader></DrawerHeader>
 
           <DrawerBody>
-            <Stack pos="fixed" top={1} left={1} w="100vw">
-              <InputGroup w="88%">
+            <Stack pos="fixed" top={10} left={1} w="100vw">
+              <InputGroup w="100%">
                 <Input
                   name="spotify"
                   variant="flushed"
@@ -95,6 +115,10 @@ const MobileDrawer = () => {
                   onChange={onChange}
                   fontSize="15px"
                   id="myInput"
+                  onFocus={() => setInputHasFocus(true)}
+                  onFocusCapture={() => setInputHasFocus(true)}
+                  onBlur={() => setInputHasFocus(false)}
+                  onBlurCapture={() => setInputHasFocus(false)}
                 />
                 <InputRightElement
                   h="35px"
@@ -104,9 +128,9 @@ const MobileDrawer = () => {
                   children={<>{busy && <Spinner size="xs" mr={2} />}</>}
                 />
               </InputGroup>
-              <Button variant="close" onClick={handleCloseButton}>
+              {/* <Button variant="close" onClick={handleCloseButton} top={7}>
                 x
-              </Button>
+              </Button> */}
               <Tiles title="">
                 {search &&
                   tracks.map((track) => (

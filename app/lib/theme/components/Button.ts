@@ -62,7 +62,6 @@ const drawer = defineStyle({
 });
 const searchCircle = defineStyle((props) => ({
   pos: 'fixed',
-  right: 3,
   borderRadius: 'full',
   bg: mode('music.700', 'music.200')(props),
   color: mode('music.200', 'music.700')(props),
