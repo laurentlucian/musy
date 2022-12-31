@@ -1,5 +1,5 @@
 import type { LikedSongs, RecentSongs } from '@prisma/client';
-import { minutesToMs } from '~/lib/utils';
+import { isProduction, minutesToMs } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
@@ -28,8 +28,9 @@ export const userQ = Queue<{ userId: string }>(
 
     console.log('userQ -> adding liked tracks to db', userId);
     const {
-      body: { items: liked },
+      body: { items: liked, total },
     } = await spotify.getMySavedTracks();
+
     for (const { track, added_at } of liked) {
       const song: Omit<LikedSongs, 'id'> = {
         trackId: track.id,
@@ -56,6 +57,88 @@ export const userQ = Queue<{ userId: string }>(
         update: song,
         create: song,
       });
+    }
+
+    const dbTotal = await prisma.likedSongs.count({
+      where: { userId: userId },
+    });
+
+    // we want to scrape all of user's liked songs, this is useful for showing dynamic UI to the current logged in user
+    // so, if the total from spotify is greater than the total in the db
+    // loop through the rest of the pages and add them to the db
+
+    if (total > dbTotal && isProduction) {
+      // by default, don't scrape all liked tracks in dev
+      // change above to !isProduction to scrape all liked tracks as needed
+      // make sure to uncomment lines 221&222 to only run this job for your own user id
+
+      const limit = 50;
+      const pages = Math.ceil(total / limit);
+
+      const {
+        body: { items: liked },
+      } = await spotify.getMySavedTracks({ limit, offset: pages * limit });
+      // note: if user disliked songs after we've added all to db, this would've run every time job repeats
+      // if last track exists in our db, then don't scrape all pages
+      const lastTrack = liked[liked.length - 1];
+      const exists = await prisma.likedSongs.findUnique({
+        where: {
+          trackId_userId: {
+            trackId: lastTrack.track.id,
+            userId: userId,
+          },
+        },
+      });
+      if (exists) {
+        console.log('userQ -> all liked tracks already in db', userId);
+        return;
+      }
+
+      console.log(
+        'userQ -> adding all user liked tracks to db',
+        userId,
+        'pages',
+        pages,
+        'total',
+        total,
+        'dbTotal',
+        dbTotal,
+      );
+
+      for (let i = 1; i < pages; i++) {
+        const {
+          body: { items: liked },
+        } = await spotify.getMySavedTracks({ limit, offset: i * limit });
+        console.log('userQ -> adding page', i);
+
+        for (const { track, added_at } of liked) {
+          const song: Omit<LikedSongs, 'id'> = {
+            trackId: track.id,
+            likedAt: new Date(added_at),
+            userId: userId,
+            name: track.name,
+            uri: track.uri,
+            albumName: track.album.name,
+            albumUri: track.album.uri,
+            artist: track.artists[0].name,
+            artistUri: track.artists[0].uri,
+            image: track.album.images[0].url,
+            explicit: track.explicit,
+            action: 'liked',
+          };
+
+          await prisma.likedSongs.upsert({
+            where: {
+              trackId_userId: {
+                trackId: track.id,
+                userId: userId,
+              },
+            },
+            update: song,
+            create: song,
+          });
+        }
+      }
     }
 
     console.log('userQ -> adding recent tracks to db', userId);
@@ -136,6 +219,10 @@ export const addUsersToQueue = async () => {
   );
 
   await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
+
+  // for testing
+  // await userQ.add('update_liked', { userId: '1295028670' });
+  // return;
 
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs

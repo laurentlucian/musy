@@ -1,3 +1,5 @@
+export const isProduction = process.env.NODE_ENV === 'production';
+
 export const notNull = <T>(val: T | null): val is T => {
   return val !== null;
 };
