@@ -218,6 +218,7 @@ export const addUsersToQueue = async () => {
     users.length,
   );
 
+  await userQ.pause(); // pause all jobs before obliterating
   await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
 
   // for testing
