@@ -8,7 +8,6 @@ import {
   Button,
   Input,
   Stack,
-  IconButton,
   Spinner,
   InputRightElement,
   InputGroup,
@@ -18,21 +17,19 @@ import { type ChangeEvent, useRef, useState, useEffect } from 'react';
 import useMobileDrawerStore from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { type Track } from '~/lib/types/types';
-import { CloseSquare } from 'iconsax-react';
 import Tiles from '../Tiles';
 import Tile from '../Tile';
 
 const MobileDrawer = () => {
-  const { isOpen, onClose, setOpen } = useMobileDrawerStore();
+  const { isOpen, onClose } = useMobileDrawerStore();
   const btnRef = useRef<HTMLButtonElement>(null);
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
 
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
-  const transition = useTransition();
   const fetcher = useFetcher();
-  const busy = transition.submission?.formData.has('spotify') ?? false;
+  const busy = fetcher.state === 'loading' ?? false;
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -92,32 +89,21 @@ const MobileDrawer = () => {
                   onChange={onChange}
                   fontSize="15px"
                 />
-                {search && (
-                  <InputRightElement
-                    h="35px"
-                    w="65px"
-                    pr={2}
-                    justifyContent="end"
-                    children={
-                      <>
-                        {busy && <Spinner size="xs" mr={2} />}
-                        <IconButton
-                          aria-label="close"
-                          variant="ghost"
-                          size="xs"
-                          borderRadius={8}
-                          onClick={() => {
-                            setSearch('');
-                            setTracks([]);
-                          }}
-                          icon={<CloseSquare />}
-                        />
-                      </>
-                    }
-                  />
-                )}
+                <InputRightElement
+                  h="35px"
+                  w="65px"
+                  pr={2}
+                  justifyContent="end"
+                  children={<>{busy && <Spinner size="xs" mr={2} />}</>}
+                />
               </InputGroup>
-              <Button variant="close" onClick={() => setOpen(false)}>
+              <Button
+                variant="close"
+                onClick={() => {
+                  setSearch('');
+                  setTracks([]);
+                }}
+              >
                 x
               </Button>
               <Tiles title="">
