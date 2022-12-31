@@ -14,23 +14,23 @@ import {
   useDisclosure,
   Box,
 } from '@chakra-ui/react';
+import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import { useFetcher } from '@remix-run/react';
-import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
-import type { Party } from '@prisma/client';
 import { useCallback, useEffect, useState } from 'react';
-import { useDataRefresh } from 'remix-utils';
-import Tooltip from './Tooltip';
-import PlayerBar from './PlayerBar';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
+import explicitImage from '~/assets/explicit-solid.svg';
 import PlayingFromTooltip from './PlayingFromTooltip';
-import PlayController from './PlayController';
-import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import useDrawerStore from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
+import PlayController from './PlayController';
+import useIsMobile from '~/hooks/useIsMobile';
+import { useFetcher } from '@remix-run/react';
+import { useDataRefresh } from 'remix-utils';
+import type { Party } from '@prisma/client';
+import Tooltip from './Tooltip';
+import PlayerBar from './PlayerBar';
 
 type PlayerProps = {
   id: string;
@@ -40,22 +40,22 @@ type PlayerProps = {
 };
 
 const Player = ({ id, party, playback, item }: PlayerProps) => {
+  const [playingFrom, setPlayingFrom] = useState(false);
+  const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
+  const { isOpen, onToggle } = useDisclosure();
+  const { onOpen } = useDrawerStore();
+
   const bg = useColorModeValue('music.50', 'music.900');
-  const bgMobile = useColorModeValue('music.100', 'music.800');
   const currentUser = useSessionUser();
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
-  // const loading = fetcher.submission?.formData.has('play') ?? false;
-  const [size, setSize] = useState('large');
-  const [playingFrom, setPlayingFrom] = useState(false);
+
   const isSmallScreen = useIsMobile();
 
-  const { isOpen, onToggle } = useDisclosure();
-  const { onOpen } = useDrawerStore();
   const track: Track = {
     uri: item.uri,
     trackId: item.id,
@@ -128,12 +128,17 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
               <Flex h="135px" px="2px" py="2px" justify="space-between">
                 <Stack pl="7px" spacing={1} flexGrow={1}>
                   <Stack direction="column" spacing={0.5}>
-                    <Text noOfLines={[1]} onClick={() => onOpen(track)} cursor="pointer">
+                    <Text
+                      noOfLines={1}
+                      onClick={() => onOpen(track)}
+                      cursor="pointer"
+                      w={['220px', '68%']}
+                    >
                       {item.name}
                     </Text>
-                    <Flex onClick={() => onOpen(track)} cursor="pointer">
+                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['220px', '68%']}>
                       {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                      <Text opacity={0.8} fontSize="13px">
+                      <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {item.album?.artists[0].name}
                       </Text>
                     </Flex>
@@ -143,6 +148,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                           fontSize="13px"
                           transition="opacity 1.69s ease-in-out"
                           opacity={playingFrom ? 1 : 0}
+                          w={['220px', '68%']}
+                          noOfLines={1}
                         >
                           Playing From{' '}
                           {item.album.album_type === 'single' &&
@@ -172,6 +179,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                             whiteSpace="normal"
                             wordBreak="break-word"
                             noOfLines={1}
+                            w={['220px', '68%']}
                           >
                             {playback.context.name
                               ? playback.context.name
@@ -182,12 +190,14 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         </Tooltip>
                       </>
                     )}
-                    <Stack spacing={1} pos="absolute" pt="48px" lineHeight="shorter">
+                    <Stack spacing={1} pos="absolute" pt="48px" lineHeight="shorter" w="100%">
                       <Text
                         fontSize="13px"
                         fontWeight="normal"
                         transition="opacity 1.69s ease-in-out"
                         opacity={playingFrom ? 0 : 1}
+                        noOfLines={1}
+                        w={['220px', '68%']}
                       >
                         Listening on
                       </Text>
@@ -196,6 +206,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         fontWeight="bold"
                         transition="opacity 1.69s ease-in-out"
                         opacity={playingFrom ? 0 : 1}
+                        noOfLines={1}
+                        w={['220px', '68%']}
                       >
                         {playback.device.name.split(' ').slice(0, 2).join(' ')}
                       </Text>

@@ -15,11 +15,11 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import { useEffect, useState } from 'react';
-import Tooltip from './Tooltip';
-import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import useDrawerStore from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
+import { useEffect, useState } from 'react';
+import Tooltip from './Tooltip';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
@@ -27,15 +27,19 @@ type PlayerPausedProps = {
 };
 
 const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
+  const [size, setSize] = useState<string>('Large');
+  const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
-  const bg = useColorModeValue('music.50', 'music.900');
-  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
-  const name = item.name;
-  const artist = item.artists[0].name;
-  const image = item.album?.images[1].url;
-  const explicit = item.explicit;
 
   const { onOpen } = useDrawerStore();
+
+  const bg = useColorModeValue('music.50', 'music.900');
+  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+  const image = item.album?.images[1].url;
+  const artist = item.artists[0].name;
+  const explicit = item.explicit;
+  const name = item.name;
+
   const track: Track = {
     uri: item.uri,
     trackId: item.id,
@@ -48,8 +52,6 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
     explicit: item.explicit,
   };
 
-  const [size, setSize] = useState<string>('Large');
-  const { isOpen, onToggle } = useDisclosure();
   const isSmallScreen = useIsMobile();
   useEffect(() => {
     setSize('large');
@@ -93,18 +95,19 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                   justify="space-between"
                 >
                   <Stack>
-                    {/* <Link href={link ?? ''} target="_blank"> */}
-                    <Text noOfLines={[1]} onClick={() => onOpen(track)} cursor="pointer">
+                    <Text
+                      noOfLines={[1]}
+                      onClick={() => onOpen(track)}
+                      cursor="pointer"
+                      w={['220px', '68%']}
+                    >
                       {name}
                     </Text>
-                    {/* </Link> */}
-                    <Flex onClick={() => onOpen(track)} cursor="pointer">
+                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['220px', '68%']}>
                       {explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                      {/* <Link href={artistLink ?? ''} target="_blank"> */}
-                      <Text opacity={0.8} fontSize="13px">
+                      <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {artist}
                       </Text>
-                      {/* </Link> */}
                     </Flex>
                   </Stack>
                   <HStack alignItems="flex-end" w="fit-content" h="35px">
