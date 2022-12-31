@@ -61,3 +61,10 @@ export const activityQ = Queue<{ activityId: number }>('pending_activity', async
     return null;
   }
 });
+
+const isDev = process.env.NODE_ENV !== 'production';
+
+export const clearActivityQOnDev = async () => {
+  if (!isDev) return;
+  await activityQ.obliterate();
+};

@@ -8,8 +8,10 @@ import { ServerStyleContext } from './lib/emotion/context';
 import { createEmotionCache } from './lib/emotion/createEmotionCache';
 
 import { addUsersToQueue } from './services/scheduler/jobs/user';
+import { clearActivityQOnDev } from './services/scheduler/jobs/activity';
 
 addUsersToQueue();
+clearActivityQOnDev();
 
 export default function handleRequest(
   request: Request,
