@@ -1,12 +1,22 @@
-import { IconButton } from '@chakra-ui/react';
-import { Add } from 'iconsax-react';
+import { Button } from '@chakra-ui/react';
 import useIsMobile from '~/hooks/useIsMobile';
+import useMobileDrawerStore from '~/hooks/useMobileDrawer';
 
 const MobileSearchButton = () => {
   const isMobile = useIsMobile();
+  const { setOpen, isOpen } = useMobileDrawerStore();
+  const onClick = () => {
+    setOpen(!isOpen);
+  };
 
   return (
-    <>{isMobile && <IconButton aria-label="search song" variant="searchCircle" icon={<Add />} />}</>
+    <>
+      {isMobile && (
+        <Button aria-label="search song" variant="searchCircle" onClick={onClick}>
+          +
+        </Button>
+      )}
+    </>
   );
 };
 

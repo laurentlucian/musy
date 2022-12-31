@@ -19,6 +19,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import loading from './lib/styles/loading.css';
 import { prisma } from './services/db.server';
 import ActionDrawer from './components/menu/ActionDrawer';
+import MobileDrawer from './components/menu/MobileDrawer';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
@@ -28,8 +29,9 @@ const App = () => {
   return (
     <Document>
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
-        <Layout authorized={!!currentUser} >
+        <Layout authorized={!!currentUser}>
           <ActionDrawer />
+          <MobileDrawer />
           <Outlet />
         </Layout>
       </ChakraProvider>

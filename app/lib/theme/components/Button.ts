@@ -1,7 +1,6 @@
 import { mode } from '@chakra-ui/theme-tools';
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
 import { defineStyle } from '@chakra-ui/styled-system';
-import { keyframes } from '@emotion/react';
 
 type AccessibleColor = {
   bg?: string;
@@ -61,10 +60,6 @@ const drawer = defineStyle({
   boxShadow: 'none !important',
   outline: 'none !important',
 });
-const shrink = keyframes`
-0% { width: 50px; height: 50px; }
-100% { width: 42px; height: 42px; }
-`;
 const searchCircle = defineStyle((props) => ({
   pos: 'fixed',
   bottom: 3,
@@ -77,14 +72,14 @@ const searchCircle = defineStyle((props) => ({
   fontWeight: 'hairline',
   _active: {
     boxShadow: 'none !important',
-    animation: `${shrink} .25s forwards`,
+    boxSize: '43px',
     backfaceVisibility: 'none !important',
   },
   _focus: {
     boxShadow: 'none !important',
-    animation: `${shrink} .25s forwards`,
     backfaceVisibility: 'none !important',
   },
+  transition: 'width 0.25s ease-out, height 0.25s ease-out',
   _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
   boxShadow: 'none !important',
   userSelect: 'none !important',
@@ -93,7 +88,31 @@ const searchCircle = defineStyle((props) => ({
   zIndex: 10000,
   WebkitTapHighlightColor: '#0000 !important',
 }));
-
+const close = defineStyle((props) => ({
+  pos: 'fixed',
+  top: -1,
+  right: 1,
+  color: mode('music.700', 'white')(props),
+  fontSize: '20px',
+  fontWeight: 'light',
+  _active: {
+    boxShadow: 'none !important',
+    fontSize: '18px',
+    backfaceVisibility: 'none !important',
+  },
+  _focus: {
+    boxShadow: 'none !important',
+    backfaceVisibility: 'none !important',
+  },
+  _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
+  transition: 'font-size 0.25s ease-out',
+  boxShadow: 'none !important',
+  userSelect: 'none !important',
+  backfaceVisibility: 'none !important',
+  perspective: 1000,
+  zIndex: 10000,
+  WebkitTapHighlightColor: '#0000 !important',
+}));
 export default {
   baseStyle: {
     borderRadius: 'sm',
@@ -107,5 +126,6 @@ export default {
     music: variantMusic,
     drawer,
     searchCircle,
+    close,
   },
 };
