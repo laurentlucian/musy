@@ -21,7 +21,7 @@ import Tiles from '../Tiles';
 import Tile from '../Tile';
 
 const MobileDrawer = () => {
-  const { isOpen, onClose } = useMobileDrawerStore();
+  const { isOpen, onClose, setOpen } = useMobileDrawerStore();
   const btnRef = useRef<HTMLButtonElement>(null);
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
@@ -42,6 +42,12 @@ const MobileDrawer = () => {
     } else {
       setSearch('');
     }
+  };
+
+  const handleCloseButton = () => {
+    setSearch('');
+    setTracks([]);
+    if (search === '') setOpen(false);
   };
 
   useEffect(() => {
@@ -88,6 +94,7 @@ const MobileDrawer = () => {
                   borderRadius={0}
                   onChange={onChange}
                   fontSize="15px"
+                  id="myInput"
                 />
                 <InputRightElement
                   h="35px"
@@ -97,13 +104,7 @@ const MobileDrawer = () => {
                   children={<>{busy && <Spinner size="xs" mr={2} />}</>}
                 />
               </InputGroup>
-              <Button
-                variant="close"
-                onClick={() => {
-                  setSearch('');
-                  setTracks([]);
-                }}
-              >
+              <Button variant="close" onClick={handleCloseButton}>
                 x
               </Button>
               <Tiles title="">

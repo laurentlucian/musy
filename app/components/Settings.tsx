@@ -1,14 +1,9 @@
-import { IconButton, keyframes } from '@chakra-ui/react';
-import { RotateRight, Setting2 } from 'iconsax-react';
+import { IconButton } from '@chakra-ui/react';
+import { Setting2 } from 'iconsax-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from '@remix-run/react';
 
 const Settings = () => {
-  //   const spin = keyframes`
-  //   0% { transform: rotate(0deg); }
-  //   100% { transform: rotate(359deg); }
-  // `;
-  // animation: `${spin} 4s infinite linear`
   const navigate = useNavigate();
 
   return (
