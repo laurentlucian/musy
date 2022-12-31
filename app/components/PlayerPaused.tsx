@@ -27,12 +27,9 @@ type PlayerPausedProps = {
 };
 
 const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
+  const [blur, setBlur] = useState(true);
   const bg = useColorModeValue('music.50', 'music.900');
-  const bgMobile = useColorModeValue('music.100', 'music.800');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
-  // const link = item.uri;
-  // const artistLink = item.album?.artists[0].uri;
-  // const albumLink = item.album?.uri;
   const name = item.name;
   const artist = item.artists[0].name;
   const image = item.album?.images[1].url;
@@ -80,10 +77,11 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
           <Collapse in={!isOpen} animateOpacity unmountOnExit>
             <Stack
               w={[363, '100%']}
-              bg={isSmallScreen ? bgMobile : bg}
+              bg={bg}
               spacing={0}
               borderRadius={size === 'small' ? 0 : 5}
               minH={138}
+              backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
             >
               <HStack minH={138} spacing={2} px="2px" py="2px" justify="space-between">
                 <Stack
@@ -171,17 +169,20 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
         <Box
           w="-webkit-fit-content"
           bg={bg}
-          backdropFilter="blur(27px)"
+          backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
           borderRadius="0px 0px 3px 3px"
           zIndex={-1}
         >
           <IconButton
             icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
             variant="ghost"
-            onClick={onToggle}
+            onClick={() => {
+              onToggle();
+              setBlur(true);
+            }}
             aria-label={!isOpen ? 'open player' : 'close player'}
             _hover={{ opacity: 1, color: 'spotify.green' }}
-            opacity={0.5}
+            opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
           />

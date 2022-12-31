@@ -40,6 +40,7 @@ type PlayerProps = {
 };
 
 const Player = ({ id, party, playback, item }: PlayerProps) => {
+  const [blur, setBlur] = useState(true);
   const bg = useColorModeValue('music.50', 'music.900');
   const bgMobile = useColorModeValue('music.100', 'music.800');
   const currentUser = useSessionUser();
@@ -116,15 +117,13 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   return (
     <>
       <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflow="visible">
-        <Stack
-          backdropFilter={isSmallScreen ? 'none' : 'blur(27px)'}
-          borderRadius={size === 'small' ? 0 : 5}
-        >
+        <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
           <Collapse in={!isOpen} animateOpacity>
             <Stack
               spacing={0}
-              bg={isSmallScreen ? bgMobile : bg}
+              bg={bg}
               borderRadius={size === 'small' ? 0 : 5}
+              backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
             >
               <Flex h="135px" px="2px" py="2px" justify="space-between">
                 <Stack pl="7px" spacing={1} flexGrow={1}>
@@ -327,15 +326,18 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
           bg={bg}
           borderRadius="0px 0px 3px 3px"
           zIndex={-1}
-          backdropFilter="blur(27px)"
+          backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
         >
           <IconButton
             icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
             variant="ghost"
-            onClick={onToggle}
+            onClick={() => {
+              onToggle();
+              setBlur(true);
+            }}
             aria-label={isOpen ? 'open player' : 'close player'}
             _hover={{ opacity: 1, color: 'spotify.green' }}
-            opacity={0.5}
+            opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
           />
