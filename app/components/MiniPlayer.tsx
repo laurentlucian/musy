@@ -9,8 +9,9 @@ import {
   Link as LinkB,
 } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { useNavigate, useTransition } from '@remix-run/react';
+import { Link, useTransition } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
+import useDrawerStore from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
 import PlayerBar from './PlayerBar';
@@ -26,28 +27,35 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
-  const navigate = useNavigate();
+  const { onOpen } = useDrawerStore();
 
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
-  const artist =
-    playback?.currently_playing?.item?.type === 'track'
-      ? playback?.currently_playing?.item?.album?.artists[0].name
-      : playback?.currently_playing?.item?.show.name;
+  const track =
+    playback?.currently_playing?.item?.type === 'track' ? playback?.currently_playing?.item : null;
+  const artist = track?.album.artists[0].name;
+  const image = track?.album.images[0].url;
 
-  const image =
-    playback?.currently_playing?.item?.type === 'track'
-      ? playback?.currently_playing?.item?.album?.images[0].url
-      : playback?.currently_playing?.item?.images[0].url;
+  const formattedTrack = track
+    ? {
+        uri: track.uri,
+        trackId: track.id,
+        name: track.name,
+        explicit: track.explicit,
+        image: track.album?.images[0].url,
+        albumUri: track.album.uri,
+        albumName: track.album.name,
+        artist: track.album.artists[0].name,
+        artistUri: track.album.artists[0].uri,
+      }
+    : null;
 
   return (
     <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
       <Button
-        display="flex"
-        flexDirection="column"
-        onClick={() => navigate(`/${user.userId}`)}
-        // to={`/${user.userId}`}
+        as={Link}
+        to={`/${user.userId}`}
         variant="ghost"
         h={playback ? ['100px', '120px'] : '65px'}
         w={[363, '100%']}
@@ -68,7 +76,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
             <Text opacity={0}>hiiii</Text>
           </Stack>
 
-          {playback && playback.currently_playing && playback.currently_playing.item ? (
+          {track ? (
             <HStack w="100%" spacing={2} justify="end">
               <Stack spacing={1} h="100%" align="end">
                 {!isSmallScreen && (
@@ -77,7 +85,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                       as="span"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.open(playback.currently_playing?.item?.uri);
+                        window.open(track.uri);
                       }}
                     >
                       <Text
@@ -85,22 +93,16 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                         maxW={{ base: '110px', md: '300px', xl: 'unset' }}
                         fontSize={{ base: 'smaller', md: 'sm' }}
                       >
-                        {playback.currently_playing?.item?.name}
+                        {track.name}
                       </Text>
                     </LinkB>
                     <Flex>
-                      {playback?.currently_playing.item?.explicit && (
-                        <Image mr={1} src={explicitImage} w="16px" />
-                      )}
+                      {track.explicit && <Image mr={1} src={explicitImage} w="16px" />}
                       <LinkB
                         as="span"
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open(
-                            playback.currently_playing?.item?.type === 'track'
-                              ? playback.currently_playing?.item.album?.artists[0].uri
-                              : '',
-                          );
+                          window.open(track.album.artists[0].uri);
                         }}
                       >
                         <Text
@@ -116,7 +118,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                   </>
                 )}
                 <HStack>
-                  {playback.queue &&
+                  {playback &&
                     playback.queue
                       .slice(0, isSmallScreen ? 1 : 2)
                       .reverse()
@@ -128,7 +130,18 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                           href={track.uri}
                           target="_blank"
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.preventDefault();
+                            onOpen({
+                              uri: track.uri,
+                              trackId: track.id,
+                              name: track.name,
+                              explicit: track.explicit,
+                              image: track.album.images[0].url,
+                              albumUri: track.album.uri,
+                              albumName: track.album.name,
+                              artist: track.album.artists[0].name,
+                              artistUri: track.album.artists[0].uri,
+                            });
                           }}
                         >
                           <Tooltip label={<Text>{track.name}</Text>}>
@@ -142,46 +155,14 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                         </LinkB>
                       ))}
                 </HStack>
-
-                {/* {playback.currently_playing.context && playback.currently_playing.context.name && (
-                    <Tooltip label={playback.currently_playing.context.name}>
-                      <Image
-                        src={playback.currently_playing.context.image}
-                        borderRadius={5}
-                        w={{ base: '50px', md: '65px' }}
-                        draggable={false}
-                      />
-                    </Tooltip>
-                  )} */}
               </Stack>
 
-              {/* {isSmallScreen &&
-                playback.currently_playing.context &&
-                playback.currently_playing.context.name && (
-                  <Tooltip label={playback.currently_playing.context.name}>
-                    <Image
-                      alignSelf="end"
-                      src={playback.currently_playing.context.image}
-                      borderRadius={5}
-                      w={{ base: '50px', md: '65px' }}
-                      draggable={false}
-                    />
-                  </Tooltip>
-                )} */}
-              <Tooltip label={<Text>{playback.currently_playing.item?.name}</Text>}>
+              <Tooltip label={<Text>{track.name}</Text>}>
                 <LinkB
                   as="span"
-                  // href={
-                  //   playback.currently_playing.item &&
-                  //   playback.currently_playing.item.type === 'track'
-                  //     ? playback.currently_playing?.item.album?.uri
-                  //     : ''
-                  // }
-                  // target="_blank"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    const id = playback.currently_playing?.item?.id;
-                    navigate('/analysis/' + id);
+                    e.preventDefault();
+                    formattedTrack && onOpen(formattedTrack);
                   }}
                 >
                   <Image
