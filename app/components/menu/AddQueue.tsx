@@ -1,7 +1,7 @@
-import { Button, Image, Stack } from '@chakra-ui/react';
+import { Button, Image } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { useFetcher, useLocation, useParams, useSubmit, useTransition } from '@remix-run/react';
-import { Add, AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { useLocation, useParams, useSubmit } from '@remix-run/react';
+import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
