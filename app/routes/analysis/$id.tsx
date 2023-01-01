@@ -9,12 +9,12 @@ import { spotifyApi } from '~/services/spotify.server';
 import { redis } from '~/services/scheduler/redis.server';
 import { askDaVinci } from '~/services/ai.server';
 import { useEffect } from 'react';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 
 const TrackAnalysis = () => {
   const { track, analysis, authorized } = useTypedLoaderData<typeof loader>();
   const transition = useTransition();
-  const { onClose } = useDrawerStore();
+  const { onClose } = useDrawerActions();
 
   useEffect(() => {
     onClose();

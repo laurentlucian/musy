@@ -11,7 +11,7 @@ import {
 import type { Profile } from '@prisma/client';
 import { Link, useTransition } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
 import PlayerBar from './PlayerBar';
@@ -27,7 +27,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useDrawerStore();
+  const { onOpen } = useDrawerActions();
 
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');

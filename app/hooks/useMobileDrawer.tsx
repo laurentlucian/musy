@@ -3,42 +3,55 @@ import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {
   track: Track | null;
-  onClose: () => void;
-  onSearch: (by: Track) => void;
   isOpen: boolean;
-  setOpen: (by: boolean) => void;
   bottom: number;
   right: number;
-  setPos: (by: [number, number]) => void;
-  icon: string;
-  setIcon: (by: string) => void;
+  icon: 'x' | 'down' | 'plus';
+  actions: {
+    addFocus: () => void;
+    removeFocus: () => void;
+    onClose: () => void;
+    onSearch: (by: Track) => void;
+    onOpen: () => void;
+  };
 }
 
 const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
   track: null,
-  onClose: () => set({ track: null }),
-  onSearch: (by) =>
-    set({
-      track: {
-        uri: by.uri,
-        trackId: by.trackId,
-        image: by.image,
-        albumUri: by.albumUri,
-        albumName: by.albumName,
-        name: by.name,
-        artist: by.artist,
-        artistUri: by.artistUri,
-        explicit: by.explicit,
-        userId: by.userId,
-      },
-    }),
   isOpen: false,
-  setOpen: (by) => set({ isOpen: by }),
   bottom: 3,
   right: 3,
-  setPos: (by) => set({ bottom: by[0], right: by[1] }),
   icon: 'plus',
-  setIcon: (by) => set({ icon: by }),
+  actions: {
+    addFocus: () => set({ bottom: 305, right: 3, icon: 'down' }),
+    removeFocus: () => set({ bottom: 3, right: 3, icon: 'x' }),
+    onClose: () => set({ track: null, isOpen: false, icon: 'plus', bottom: 3, right: 3 }),
+    onOpen: () => set({ isOpen: true, icon: 'down', bottom: 305, right: 3 }),
+    onSearch: (by) =>
+      set({
+        track: {
+          uri: by.uri,
+          trackId: by.trackId,
+          image: by.image,
+          albumUri: by.albumUri,
+          albumName: by.albumName,
+          name: by.name,
+          artist: by.artist,
+          artistUri: by.artistUri,
+          explicit: by.explicit,
+          userId: by.userId,
+        },
+      }),
+  },
 }));
 
-export default useMobileDrawerStore;
+export const useMobileDrawer = () =>
+  useMobileDrawerStore((state) => ({
+    track: state.track,
+    isOpen: state.isOpen,
+    bottom: state.bottom,
+    right: state.right,
+    icon: state.icon,
+  }));
+
+export const useMobileDrawerActions = () => useMobileDrawerStore((state) => state.actions);

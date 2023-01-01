@@ -22,7 +22,6 @@ import { useCallback, useEffect, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import PlayingFromTooltip from './PlayingFromTooltip';
 import useSessionUser from '~/hooks/useSessionUser';
-import useDrawerStore from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -31,6 +30,7 @@ import { useDataRefresh } from 'remix-utils';
 import type { Party } from '@prisma/client';
 import Tooltip from './Tooltip';
 import PlayerBar from './PlayerBar';
+import { useDrawerActions } from '~/hooks/useDrawer';
 
 type PlayerProps = {
   id: string;
@@ -44,7 +44,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
   const { isOpen, onToggle } = useDisclosure();
-  const { onOpen } = useDrawerStore();
+  const { onOpen } = useDrawerActions();
 
   const bg = useColorModeValue('music.50', 'music.900');
   const currentUser = useSessionUser();

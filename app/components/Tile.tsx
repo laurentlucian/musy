@@ -6,7 +6,7 @@ import { timeSince } from '~/hooks/utils';
 import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 
 type TileProps = {
@@ -50,7 +50,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
-    const { onOpen } = useDrawerStore();
+    const { onOpen } = useDrawerActions();
     const track: Track = {
       uri: uri,
       trackId,

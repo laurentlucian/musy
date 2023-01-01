@@ -11,7 +11,7 @@ import { addUsersToQueue } from './services/scheduler/jobs/user';
 import { clearActivityQOnDev } from './services/scheduler/jobs/activity';
 
 addUsersToQueue();
-clearActivityQOnDev();
+// clearActivityQOnDev();
 
 export default function handleRequest(
   request: Request,

@@ -22,18 +22,19 @@ import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
 import { useParams } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
-import useDrawerStore from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
 import AnalyzeTrack from './AnalyzeTrack';
+import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  const { track, onClose } = useDrawerStore();
+  const { onClose } = useDrawerActions();
+  const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
   const sendMenu = useDisclosure();

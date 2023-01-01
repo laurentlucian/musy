@@ -16,7 +16,7 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import type { Track } from '~/lib/types/types';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useEffect, useState } from 'react';
 import Tooltip from './Tooltip';
@@ -30,9 +30,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const [size, setSize] = useState<string>('Large');
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
-
-  const { onOpen } = useDrawerStore();
-
+  const { onOpen } = useDrawerActions();
   const bg = useColorModeValue('music.50', 'music.900');
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const image = item.album?.images[1].url;

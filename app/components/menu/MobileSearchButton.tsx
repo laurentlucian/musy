@@ -1,17 +1,19 @@
 import { Button } from '@chakra-ui/react';
 import { ArrowDown } from 'iconsax-react';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import useMobileDrawerStore from '~/hooks/useMobileDrawer';
+import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 
 const MobileSearchButton = () => {
   const isMobile = useIsMobile();
-  const { setOpen, bottom, right, icon } = useMobileDrawerStore();
-  const { track } = useDrawerStore();
+  const { bottom, right, icon } = useMobileDrawer();
+  const { onOpen, onClose, removeFocus } = useMobileDrawerActions();
+  const track = useDrawerTrack();
   const hideButton = track !== null ? true : false;
   const onClick = () => {
-    if (icon === 'plus') setOpen(true);
-    if (icon === 'x') setOpen(false);
+    if (icon === 'plus') onOpen();
+    if (icon === 'down') removeFocus();
+    if (icon === 'x') onClose();
   };
 
   return (

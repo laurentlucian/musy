@@ -1,11 +1,8 @@
 import {
   Drawer,
   DrawerBody,
-  DrawerFooter,
-  DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  Button,
   Input,
   Stack,
   Spinner,
@@ -13,7 +10,7 @@ import {
   InputGroup,
 } from '@chakra-ui/react';
 import { type ChangeEvent, useRef, useState, useEffect } from 'react';
-import useMobileDrawerStore from '~/hooks/useMobileDrawer';
+import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { type Track } from '~/lib/types/types';
 import { useFetcher } from '@remix-run/react';
@@ -21,14 +18,14 @@ import Tiles from '../Tiles';
 import Tile from '../Tile';
 
 const MobileDrawer = () => {
-  const { isOpen, onClose, setOpen, setPos, setIcon, icon } = useMobileDrawerStore();
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const { isOpen } = useMobileDrawer();
+  const { onClose, addFocus, removeFocus } = useMobileDrawerActions();
+  const inputRef = useRef<HTMLInputElement>(null);
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
 
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
-  const [inputHasFocus, setInputHasFocus] = useState(false);
   const fetcher = useFetcher();
   const busy = fetcher.state === 'loading' ?? false;
 
@@ -37,38 +34,13 @@ const MobileDrawer = () => {
       setSearch(e.currentTarget.value);
       setTimeout(() => {
         if (search.trim().length > 0) {
-          fetcher.load(`/globalSearch?spotify=${search}&id=${id}`);
+          fetcher.load(`/${id}/search?spotify=${search}`);
         }
       }, 1000);
     } else {
       setSearch('');
     }
   };
-
-  // const handleCloseButton = () => {
-  //   setSearch('');
-  //   setTracks([]);
-  //   if (search === '') setOpen(false);
-  // };
-
-  useEffect(() => {
-    if (inputHasFocus) {
-      setPos([305, 3]);
-      setIcon('down');
-      setSearch('');
-      setTracks([]);
-    } else if (isOpen) {
-      setPos([3, 3]);
-      setIcon('x');
-      setSearch('');
-      setTracks([]);
-    } else {
-      setPos([3, 3]);
-      setIcon('plus');
-      setSearch('');
-      setTracks([]);
-    }
-  }, [inputHasFocus, setPos, setIcon, isOpen]);
 
   useEffect(() => {
     if (fetcher.data) {
@@ -94,17 +66,17 @@ const MobileDrawer = () => {
         isOpen={isOpen}
         placement="right"
         onClose={onClose}
-        finalFocusRef={btnRef}
+        initialFocusRef={inputRef}
         size="full"
+        autoFocus={false}
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader></DrawerHeader>
-
           <DrawerBody>
             <Stack pos="fixed" top={10} left={1} w="100vw">
               <InputGroup w="100%">
                 <Input
+                  ref={inputRef}
                   name="spotify"
                   variant="flushed"
                   size="sm"
@@ -115,10 +87,14 @@ const MobileDrawer = () => {
                   onChange={onChange}
                   fontSize="15px"
                   id="myInput"
-                  onFocus={() => setInputHasFocus(true)}
-                  onFocusCapture={() => setInputHasFocus(true)}
-                  onBlur={() => setInputHasFocus(false)}
-                  onBlurCapture={() => setInputHasFocus(false)}
+                  onFocus={(e) => {
+                    if (e.relatedTarget?.nodeName !== 'BUTTON') {
+                      // onFocus is triggered by search btn when on desktop
+                      // with this check, we avoid collision of set states
+                      addFocus();
+                    }
+                  }}
+                  onBlur={removeFocus}
                 />
                 <InputRightElement
                   h="35px"
@@ -128,10 +104,7 @@ const MobileDrawer = () => {
                   children={<>{busy && <Spinner size="xs" mr={2} />}</>}
                 />
               </InputGroup>
-              {/* <Button variant="close" onClick={handleCloseButton} top={7}>
-                x
-              </Button> */}
-              <Tiles title="">
+              <Tiles>
                 {search &&
                   tracks.map((track) => (
                     <Tile
@@ -150,8 +123,6 @@ const MobileDrawer = () => {
               </Tiles>
             </Stack>
           </DrawerBody>
-
-          <DrawerFooter></DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>

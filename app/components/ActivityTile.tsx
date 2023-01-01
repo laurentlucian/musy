@@ -6,7 +6,7 @@ import type { Activity } from '~/routes';
 import { Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';
 import type { Track } from '~/lib/types/types';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 
 interface ActivityProps {
   track: Activity;
@@ -113,7 +113,8 @@ const ActivityAction = ({ track }: ActivityProps) => {
 const ActivityTile = ({ track }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
-  const { onOpen } = useDrawerStore();
+  const { onOpen } = useDrawerActions();
+
   const item: Track = {
     uri: track.uri,
     trackId: track.trackId ?? '',

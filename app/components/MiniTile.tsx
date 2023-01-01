@@ -1,7 +1,7 @@
 import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
-import useDrawerStore from '~/hooks/useDrawer';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import { timeSince } from '~/hooks/utils';
 import type { Track } from '~/lib/types/types';
 import Tooltip from './Tooltip';
@@ -29,7 +29,7 @@ const MiniTile = ({
   createdAt,
   createdBy,
 }: MiniTileProps) => {
-  const { onOpen } = useDrawerStore();
+  const { onOpen } = useDrawerActions();
   const item: Track = {
     uri,
     trackId,
