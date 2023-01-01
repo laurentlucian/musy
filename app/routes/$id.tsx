@@ -27,6 +27,7 @@ import ActivityFeed from '~/components/ActivityTile';
 import { askDaVinci } from '~/services/ai.server';
 import MoodButton from '~/components/MoodButton';
 import { timeSince } from '~/hooks/utils';
+import { lessThanADay, msToHours } from '~/lib/utils';
 
 const Profile = () => {
   const {
@@ -41,6 +42,7 @@ const Profile = () => {
     following,
     // queue,
     playlists,
+    listened24h,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
 
@@ -86,12 +88,24 @@ const Profile = () => {
               {user.bio}
             </Text>
           )}
-          <Text fontSize="14px" pb="5px">
-            {user.ai?.mood}
-            <Text as="span" ml="8px" fontSize="13px" opacity={0.5}>
-              {timeSince(user.ai?.updatedAt ?? null)}
-            </Text>
-          </Text>
+          <HStack spacing={5}>
+            <Flex wrap="wrap">
+              <Text fontSize="14px" mr="8px">
+                {listened24h}h listened
+              </Text>
+              <Text as="span" fontSize="13px" opacity={0.5}>
+                in 24h
+              </Text>
+            </Flex>
+            <Flex wrap="wrap">
+              <Text fontSize="14px" mr="8px">
+                {user.ai?.mood}
+              </Text>
+              <Text as="span" fontSize="13px" opacity={0.5}>
+                {timeSince(user.ai?.updatedAt ?? null)}
+              </Text>
+            </Flex>
+          </HStack>
           <Flex pb="5px">
             {currentUser && <MoodButton />}
             {currentUser && following !== null && <Following following={following} />}
@@ -209,15 +223,20 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
   ]);
 
-  // const filteredRecent = recent.filter(({ played_at }) => {
-  //   const playedAt = new Date(played_at);
-  //   return lessThanADay(playedAt);
-  //   return lessThanAWeek(playedAt);
-  // });
+  const recentDb = await prisma.recentSongs.findMany({
+    where: { userId: id },
+    orderBy: { playedAt: 'desc' },
+  });
 
-  // const listenedTime = msToHours(
-  //   filteredRecent.map((track) => track.track.duration_ms).reduce((a, b) => a + b, 0),
-  // );
+  const filteredRecent = recentDb.filter(({ playedAt }) => {
+    const d = new Date(playedAt);
+    return lessThanADay(d);
+    // return lessThanAWeek(d);
+  });
+
+  const listened24h = Math.round(
+    msToHours(filteredRecent.map((track) => track.duration).reduce((a, b) => a + b, 0)),
+  );
 
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
@@ -240,6 +259,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       following,
       queue,
       users,
+      listened24h,
     });
   }
 
@@ -256,6 +276,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     following: null,
     queue,
     users,
+    listened24h,
   });
 };
 

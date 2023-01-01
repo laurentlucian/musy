@@ -1,4 +1,5 @@
 import type { LikedSongs, RecentSongs } from '@prisma/client';
+import invariant from 'tiny-invariant';
 import { isProduction, minutesToMs } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -158,6 +159,7 @@ export const userQ = Queue<{ userId: string }>(
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        duration: track.duration_ms,
         action: 'played',
       };
 
@@ -211,6 +213,10 @@ export const addUsersToQueue = async () => {
     return;
   }
 
+  // needed this once because forgot to save duration_ms in db
+  // await addDurationToRecent();
+  // console.log('addUsersToQueue -> added all durations to recent');
+
   const users = await getAllUsers();
   console.log(
     'addUsersToQueue -> users..',
@@ -260,4 +266,43 @@ export const addUsersToQueue = async () => {
 
   console.log('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
+};
+
+const addDurationToRecent = async () => {
+  const { spotify } = await spotifyApi('1295028670');
+  invariant(spotify, 'No spotify');
+  const recent = await prisma.recentSongs.findMany();
+
+  const trackIdsDuplicates = recent.map((t) => t.trackId);
+  const trackIds = Array.from(new Set(trackIdsDuplicates));
+
+  console.log('trackIds', trackIds.length);
+
+  // create pages of 50 from trackIds and call getTracks with 50 ids and loop through pages
+  // without library
+  const pages = [];
+  for (let i = 0; i < trackIds.length; i += 50) {
+    pages.push(trackIds.slice(i, i + 50));
+  }
+
+  console.log('pages', pages.length);
+  // loop through pages and getTracks
+  for (const page of pages) {
+    const {
+      body: { tracks },
+    } = await spotify.getTracks(page);
+    console.log('a page', page.length);
+
+    for (const track of tracks) {
+      const duration = track.duration_ms;
+      await prisma.recentSongs.updateMany({
+        where: {
+          trackId: track.id,
+        },
+        data: {
+          duration,
+        },
+      });
+    }
+  }
 };

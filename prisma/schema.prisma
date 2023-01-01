@@ -142,6 +142,7 @@ model RecentSongs {
   artist    String
   artistUri String
   explicit  Boolean
+  duration  Int     @default(0)
 
   user   Profile @relation(fields: [userId], references: [userId])
   userId String
