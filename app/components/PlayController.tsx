@@ -16,7 +16,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const prevSong = fetcher.submission?.formData.has('prev') ?? false;
   const nextSong = fetcher.submission?.formData.has('next') ?? false;
   const track = playback.item?.id;
-  console.log(playback, track, 'test');
+  console.log(track, id, 'test');
   return (
     <HStack w="100%" justify="start">
       <Tooltip label="Prev Song">

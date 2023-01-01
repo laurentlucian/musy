@@ -1,7 +1,7 @@
 import { Button } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
 import Waver from '../Waver';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -12,10 +12,12 @@ type SaveToLikedProps = {
 
 const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
   const [isSaved, setIsSaved] = useState(false);
+  const [test, setTest] = useState(false);
   const currentUser = useSessionUser();
   const userId = currentUser?.userId;
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
+  console.log(isSaved, test, trackId, 'is it saved?');
 
   const saveSong = () => {
     setIsSaved(!isSaved);
@@ -24,14 +26,14 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
     fetcher.submit({ trackId }, { replace: true, method: 'post', action });
   };
 
-  // useEffect(() => {
-  //   fetcher.load(`/${id}/save?trackId=${trackId}`);
-  // }, []);
-  // useEffect(() => {
-  //   if (fetcher.data) {
-  //     setIsSaved(fetcher.data);
-  //   }
-  // }, []);
+  useEffect(() => {
+    fetcher.load(`/${userId}/save?trackId=${trackId}`);
+  }, []);
+  useEffect(() => {
+    if (fetcher.data) {
+      setTest(fetcher.data);
+    }
+  }, [fetcher.data]);
 
   // const text =
   //   id === undefined

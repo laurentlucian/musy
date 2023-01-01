@@ -187,7 +187,7 @@ export const getSavedStatus = async (id: string, trackId: string) => {
   const { token } = await spotifyApi(id);
   invariant(token, 'missing token');
 
-  const response = await fetch('https://api.spotify.com/v1/me/tracks/contains?ids=' + trackId, {
+  const response = await fetch(`https://api.spotify.com/v1/me/tracks/contains?ids=${trackId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
