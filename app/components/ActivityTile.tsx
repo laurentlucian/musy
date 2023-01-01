@@ -1,7 +1,7 @@
 import { HStack, Image, Stack, Text, useColorModeValue, Icon } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
-import { timeSince } from '~/hooks/utils';
+import { timeSince } from '~/lib/utils';
 import type { Activity } from '~/routes';
 import { Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';

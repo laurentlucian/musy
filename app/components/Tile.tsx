@@ -2,7 +2,7 @@ import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { ChakraProps } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
-import { timeSince } from '~/hooks/utils';
+import { timeSince } from '~/lib/utils';
 import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';

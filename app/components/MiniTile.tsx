@@ -2,7 +2,7 @@ import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import { Link } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
-import { timeSince } from '~/hooks/utils';
+import { timeSince } from '~/lib/utils';
 import type { Track } from '~/lib/types/types';
 import Tooltip from './Tooltip';
 

@@ -32,7 +32,7 @@ const useUserLibrary = (trackId: string) => {
 
   const isSavedFn = (trackId: string) => {
     if (!library) return false;
-    return library.get(trackId);
+    return !!library.get(trackId);
   };
 
   const isSaved = isSavedFn(trackId);

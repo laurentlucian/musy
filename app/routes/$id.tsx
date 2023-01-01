@@ -26,8 +26,8 @@ import ActivityFeed from '~/components/ActivityTile';
 // import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
 import MoodButton from '~/components/MoodButton';
-import { timeSince } from '~/hooks/utils';
-import { lessThanADay, msToHours } from '~/lib/utils';
+import { msToString, timeSince } from '~/lib/utils';
+import { lessThanADay } from '~/lib/utils';
 
 const Profile = () => {
   const {
@@ -42,7 +42,7 @@ const Profile = () => {
     following,
     // queue,
     playlists,
-    listened24h,
+    listened,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
 
@@ -89,15 +89,15 @@ const Profile = () => {
             </Text>
           )}
           <HStack spacing={5}>
-            <Flex wrap="wrap">
+            <Flex wrap="wrap" align="baseline">
               <Text fontSize="14px" mr="8px">
-                {listened24h}h listened
+                {listened} listened
               </Text>
               <Text as="span" fontSize="13px" opacity={0.5}>
                 in 24h
               </Text>
             </Flex>
-            <Flex wrap="wrap">
+            <Flex wrap="wrap" align="baseline">
               <Text fontSize="14px" mr="8px">
                 {user.ai?.mood}
               </Text>
@@ -234,8 +234,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     // return lessThanAWeek(d);
   });
 
-  const listened24h = Math.round(
-    msToHours(filteredRecent.map((track) => track.duration).reduce((a, b) => a + b, 0)),
+  const listened = msToString(
+    filteredRecent.map((track) => track.duration).reduce((a, b) => a + b, 0),
   );
 
   const currentUser = await getCurrentUser(request);
@@ -259,7 +259,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       following,
       queue,
       users,
-      listened24h,
+      listened,
     });
   }
 
@@ -276,7 +276,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     following: null,
     queue,
     users,
-    listened24h,
+    listened,
   });
 };
 
