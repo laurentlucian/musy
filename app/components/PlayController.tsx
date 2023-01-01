@@ -3,6 +3,7 @@ import { Next, Pause, Play, Previous } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import type { FetcherWithComponents } from '@remix-run/react';
 import Tooltip from './Tooltip';
+import SaveToLiked from './menu/SaveToLiked';
 
 type PlayControllerProps = {
   id: string;
@@ -14,6 +15,8 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const loading = fetcher.submission?.formData.has('play') ?? false;
   const prevSong = fetcher.submission?.formData.has('prev') ?? false;
   const nextSong = fetcher.submission?.formData.has('next') ?? false;
+  const track = playback.item?.id;
+  console.log(playback, track, 'test');
   return (
     <HStack w="100%" justify="start">
       <Tooltip label="Prev Song">
@@ -62,6 +65,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
           />
         </fetcher.Form>
       </Tooltip>
+      {playback && track && <SaveToLiked trackId={track} />}
     </HStack>
   );
 };

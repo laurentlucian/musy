@@ -205,7 +205,7 @@ const ActionDrawer = () => {
                       <DrawerHeader>
                         <Stack>
                           <Text>To:</Text>
-                          <DrawerCloseButton />
+                          <DrawerCloseButton color="spotify.green" />
                         </Stack>
                       </DrawerHeader>
                       <DrawerBody>
