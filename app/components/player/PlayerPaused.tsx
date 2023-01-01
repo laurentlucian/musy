@@ -19,7 +19,7 @@ import type { Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useEffect, useState } from 'react';
-import Tooltip from './Tooltip';
+import Tooltip from './../Tooltip';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;

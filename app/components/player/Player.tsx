@@ -20,7 +20,7 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import { useCallback, useEffect, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import PlayingFromTooltip from './PlayingFromTooltip';
+import PlayingFromTooltip from './../PlayingFromTooltip';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
@@ -28,7 +28,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import { useFetcher } from '@remix-run/react';
 import { useDataRefresh } from 'remix-utils';
 import type { Party } from '@prisma/client';
-import Tooltip from './Tooltip';
+import Tooltip from './../Tooltip';
 import PlayerBar from './PlayerBar';
 import { useDrawerActions } from '~/hooks/useDrawer';
 

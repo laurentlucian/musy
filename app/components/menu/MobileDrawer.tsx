@@ -14,7 +14,7 @@ import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer
 import useSessionUser from '~/hooks/useSessionUser';
 import { type Track } from '~/lib/types/types';
 import { useFetcher } from '@remix-run/react';
-import Tiles from '../Tiles';
+import Tiles from '../tiles/Tiles';
 import Tile from '../Tile';
 
 const MobileDrawer = () => {

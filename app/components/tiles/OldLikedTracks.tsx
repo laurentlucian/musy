@@ -4,7 +4,7 @@ import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useOldIsVisible from '~/hooks/useOldIsVisible';
 import Tile from '../Tile';
-import Tiles from '../Tiles';
+import Tiles from './Tiles';
 
 const OldLikedSongs = ({
   liked: initialLiked,

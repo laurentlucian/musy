@@ -26,14 +26,14 @@ const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
     fetcher.submit({ trackId }, { replace: true, method: 'post', action });
   };
 
-  useEffect(() => {
-    fetcher.load(`/${userId}/save?trackId=${trackId}`);
-  }, []);
-  useEffect(() => {
-    if (fetcher.data) {
-      setTest(fetcher.data);
-    }
-  }, [fetcher.data]);
+  // useEffect(() => {
+  //   fetcher.load(`/${userId}/save?trackId=${trackId}`);
+  // }, []);
+  // useEffect(() => {
+  //   if (fetcher.data) {
+  //     setTest(fetcher.data);
+  //   }
+  // }, [fetcher.data]);
 
   // const text =
   //   id === undefined

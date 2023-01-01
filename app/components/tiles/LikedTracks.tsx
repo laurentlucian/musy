@@ -3,7 +3,7 @@ import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useIsVisible from '~/hooks/useIsVisible';
 import Tile from '../Tile';
-import Tiles from '../Tiles';
+import Tiles from './Tiles';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);

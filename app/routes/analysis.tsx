@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import type { LoaderArgs } from '@remix-run/node';
 import { spotifyApi } from '~/services/spotify.server';
-import Tiles from '~/components/Tiles';
+import Tiles from '~/components/tiles/Tiles';
 import { authenticator } from '~/services/auth.server';
 import invariant from 'tiny-invariant';
 import type { TypedMetaFunction } from 'remix-typedjson';

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { ChakraProps, StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
 import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
-import ScrollButtons from './tiles/ScrollButtons';
+import ScrollButtons from './ScrollButtons';
 
 type TilesProps = {
   title?: string;

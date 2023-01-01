@@ -1,7 +1,7 @@
 import { Stack } from '@chakra-ui/react';
 import type { Profile } from '@prisma/client';
 import Tile from '../Tile';
-import Tiles from '../Tiles';
+import Tiles from './Tiles';
 
 const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   return (

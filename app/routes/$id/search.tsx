@@ -1,7 +1,7 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { spotifyApi } from '~/services/spotify.server';
 import Tile from '~/components/Tile';
-import Tiles from '~/components/Tiles';
+import Tiles from '~/components/tiles/Tiles';
 import invariant from 'tiny-invariant';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 

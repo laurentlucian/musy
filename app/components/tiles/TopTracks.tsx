@@ -2,7 +2,7 @@ import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
 import Tile from '../Tile';
-import Tiles from '../Tiles';
+import Tiles from './Tiles';
 import type { Profile } from '@prisma/client';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {

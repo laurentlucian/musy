@@ -10,11 +10,11 @@ import {
   updateUserImage,
   updateUserName,
 } from '~/services/auth.server';
-import Player from '~/components/Player';
-import Tiles from '~/components/Tiles';
+import Player from '~/components/player/Player';
+import Tiles from '~/components/tiles/Tiles';
 import Search from '~/components/Search';
 import Following from '~/components/Following';
-import PlayerPaused from '~/components/PlayerPaused';
+import PlayerPaused from '~/components/player/PlayerPaused';
 import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
