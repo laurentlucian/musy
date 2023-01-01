@@ -90,55 +90,54 @@ export const userQ = Queue<{ userId: string }>(
           },
         },
       });
-      if (exists) {
-        console.log('userQ -> all liked tracks already in db', userId);
-        return;
-      }
 
-      console.log(
-        'userQ -> adding all user liked tracks to db',
-        userId,
-        'pages',
-        pages,
-        'total',
-        total,
-        'dbTotal',
-        dbTotal,
-      );
+      if (!exists) {
+        console.log(
+          'userQ -> adding all user liked tracks to db',
+          userId,
+          'pages',
+          pages,
+          'total',
+          total,
+          'dbTotal',
+          dbTotal,
+        );
+        for (let i = 1; i < pages; i++) {
+          const {
+            body: { items: liked },
+          } = await spotify.getMySavedTracks({ limit, offset: i * limit });
+          console.log('userQ -> adding page', i);
 
-      for (let i = 1; i < pages; i++) {
-        const {
-          body: { items: liked },
-        } = await spotify.getMySavedTracks({ limit, offset: i * limit });
-        console.log('userQ -> adding page', i);
+          for (const { track, added_at } of liked) {
+            const song: Omit<LikedSongs, 'id'> = {
+              trackId: track.id,
+              likedAt: new Date(added_at),
+              userId: userId,
+              name: track.name,
+              uri: track.uri,
+              albumName: track.album.name,
+              albumUri: track.album.uri,
+              artist: track.artists[0].name,
+              artistUri: track.artists[0].uri,
+              image: track.album.images[0].url,
+              explicit: track.explicit,
+              action: 'liked',
+            };
 
-        for (const { track, added_at } of liked) {
-          const song: Omit<LikedSongs, 'id'> = {
-            trackId: track.id,
-            likedAt: new Date(added_at),
-            userId: userId,
-            name: track.name,
-            uri: track.uri,
-            albumName: track.album.name,
-            albumUri: track.album.uri,
-            artist: track.artists[0].name,
-            artistUri: track.artists[0].uri,
-            image: track.album.images[0].url,
-            explicit: track.explicit,
-            action: 'liked',
-          };
-
-          await prisma.likedSongs.upsert({
-            where: {
-              trackId_userId: {
-                trackId: track.id,
-                userId: userId,
+            await prisma.likedSongs.upsert({
+              where: {
+                trackId_userId: {
+                  trackId: track.id,
+                  userId: userId,
+                },
               },
-            },
-            update: song,
-            create: song,
-          });
+              update: song,
+              create: song,
+            });
+          }
         }
+      } else {
+        console.log('userQ -> all liked tracks already in db', userId, total, dbTotal);
       }
     }
 
@@ -179,7 +178,7 @@ export const userQ = Queue<{ userId: string }>(
   },
   {
     limiter: {
-      max: 2,
+      max: isProduction ? 4 : 2,
       duration: minutesToMs(0.5),
     },
   },
@@ -240,7 +239,7 @@ export const addUsersToQueue = async () => {
       {
         // a job with duplicate id will not be added
         jobId: user.userId,
-        repeat: { every: minutesToMs(60) },
+        repeat: { every: minutesToMs(isProduction ? 40 : 60) },
         backoff: {
           type: 'exponential',
           delay: minutesToMs(1),
