@@ -1,69 +1,64 @@
-import { Button } from '@chakra-ui/react';
+import { Button, IconButton } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
-import Waver from '../Waver';
-import { useEffect, useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
 import useSessionUser from '~/hooks/useSessionUser';
+import useUserLibrary from '~/hooks/useUserLibrary';
+import Tooltip from '../Tooltip';
+import { useState } from 'react';
 
 type SaveToLikedProps = {
   trackId: string;
+  iconOnly?: boolean;
 };
 
-const SaveToLiked = ({ trackId }: SaveToLikedProps) => {
-  const [isSaved, setIsSaved] = useState(false);
-  const [test, setTest] = useState(false);
+const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
   const currentUser = useSessionUser();
-  const userId = currentUser?.userId;
+  const { isSaved, toggleSave } = useUserLibrary(trackId);
+  const [hover, setHover] = useState(false);
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
-  console.log(isSaved, test, trackId, 'is it saved?');
+  const userId = currentUser?.userId;
 
   const saveSong = () => {
-    setIsSaved(!isSaved);
+    toggleSave(trackId);
+
     const action = userId ? `/${userId}/save` : '/auth/spotify?returnTo=' + pathname + search;
 
-    fetcher.submit({ trackId }, { replace: true, method: 'post', action });
+    fetcher.submit({ trackId, state: `${isSaved}` }, { replace: true, method: 'post', action });
   };
 
-  // useEffect(() => {
-  //   fetcher.load(`/${userId}/save?trackId=${trackId}`);
-  // }, []);
-  // useEffect(() => {
-  //   if (fetcher.data) {
-  //     setTest(fetcher.data);
-  //   }
-  // }, [fetcher.data]);
-
-  // const text =
-  //   id === undefined
-  //     ? 'Log in to save a song'
-  //     : isSaved
-  //     ? 'Saved to Liked Songs'
-  //     : 'Save to Liked Songs';
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-  const isDone = fetcher.type === 'done';
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
+  if (iconOnly)
+    return (
+      <Tooltip label={isSaved ? 'Remove' : 'Save'}>
+        <IconButton
+          aria-label={isSaved ? 'Remove' : 'Save'}
+          variant="ghost"
+          icon={
+            <LikeIcon
+              aria-checked={isSaved}
+              color={(hover && !isSaved) || (!hover && isSaved) ? 'spotify.green' : 'white'}
+            />
+          }
+          boxShadow="none"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          onClick={saveSong}
+        />
+      </Tooltip>
+    );
 
   return (
-    <>
-      <Button
-        onClick={saveSong}
-        leftIcon={<LikeIcon aria-checked={isSaved} />}
-        isDisabled={!!isDone || !!isError || !!isAdding}
-        mr="0px"
-        variant="ghost"
-        justifyContent="left"
-        w={['100vw', '550px']}
-      >
-        {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-      </Button>
-    </>
+    <Button
+      onClick={saveSong}
+      leftIcon={<LikeIcon aria-checked={isSaved} />}
+      mr="0px"
+      variant="ghost"
+      justifyContent="left"
+      w={['100vw', '550px']}
+    >
+      {isSaved ? 'Remove' : 'Save'}
+    </Button>
   );
 };
 

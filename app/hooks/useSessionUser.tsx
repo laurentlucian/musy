@@ -4,6 +4,7 @@ import { useMatches } from '@remix-run/react';
 const useSessionUser = ():
   | (Profile & {
       settings: Settings | null;
+      liked: { trackId: string }[];
     })
   | null => {
   const matches = useMatches();

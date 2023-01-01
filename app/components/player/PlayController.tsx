@@ -15,8 +15,8 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const loading = fetcher.submission?.formData.has('play') ?? false;
   const prevSong = fetcher.submission?.formData.has('prev') ?? false;
   const nextSong = fetcher.submission?.formData.has('next') ?? false;
-  const track = playback.item?.id;
-  console.log(track, id, 'test');
+  const trackId = playback.item?.id;
+
   return (
     <HStack w="100%" justify="start">
       <Tooltip label="Prev Song">
@@ -65,7 +65,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
           />
         </fetcher.Form>
       </Tooltip>
-      {playback && track && <SaveToLiked trackId={track} />}
+      {trackId && <SaveToLiked trackId={trackId} iconOnly />}
     </HStack>
   );
 };
