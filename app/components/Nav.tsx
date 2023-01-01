@@ -4,6 +4,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import Waver from './Waver';
 import Settings from './Settings';
+import UserSearch from './UserSearch';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
@@ -37,7 +38,10 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
             </Button>
           </Form>
         ) : (
-          <Settings />
+          <>
+            <UserSearch />
+            <Settings />
+          </>
         )}
       </HStack>
     </Flex>
