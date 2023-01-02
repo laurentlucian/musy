@@ -27,10 +27,43 @@ export const userQ = Queue<{ userId: string }>(
       return null;
     }
 
+    console.log('userQ -> adding recent tracks to db', userId);
+    const {
+      body: { items: recent },
+    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+    for (const { track, played_at } of recent) {
+      const song: Omit<RecentSongs, 'id'> = {
+        trackId: track.id,
+        playedAt: new Date(played_at),
+        userId: userId,
+        name: track.name,
+        uri: track.uri,
+        albumName: track.album.name,
+        albumUri: track.album.uri,
+        artist: track.artists[0].name,
+        artistUri: track.artists[0].uri,
+        image: track.album.images[0].url,
+        explicit: track.explicit,
+        duration: track.duration_ms,
+        action: 'played',
+      };
+
+      await prisma.recentSongs.upsert({
+        where: {
+          playedAt_userId: {
+            playedAt: song.playedAt,
+            userId: userId,
+          },
+        },
+        update: song,
+        create: song,
+      });
+    }
+
     console.log('userQ -> adding liked tracks to db', userId);
     const {
       body: { items: liked, total },
-    } = await spotify.getMySavedTracks();
+    } = await spotify.getMySavedTracks({ limit: 50 });
 
     for (const { track, added_at } of liked) {
       const song: Omit<LikedSongs, 'id'> = {
@@ -59,9 +92,10 @@ export const userQ = Queue<{ userId: string }>(
         create: song,
       });
     }
+    console.log('userQ -> added liked tracks', userId);
 
     const dbTotal = await prisma.likedSongs.count({
-      where: { userId: userId },
+      where: { userId },
     });
 
     // we want to scrape all of user's liked songs, this is useful for showing dynamic UI to the current logged in user
@@ -75,21 +109,23 @@ export const userQ = Queue<{ userId: string }>(
 
       const limit = 50;
       const pages = Math.ceil(total / limit);
-
+      console.log('userQ -> total > dbTotal', total, dbTotal, pages, pages * limit, userId);
       const {
         body: { items: liked },
-      } = await spotify.getMySavedTracks({ limit, offset: pages * limit });
+      } = await spotify.getMySavedTracks({ limit, offset: (pages - 1) * limit });
       // note: if user disliked songs after we've added all to db, this would've run every time job repeats
       // if last track exists in our db, then don't scrape all pages
       const lastTrack = liked[liked.length - 1];
+      console.log('userQ -> lastTrack', lastTrack.track.name);
       const exists = await prisma.likedSongs.findUnique({
         where: {
           trackId_userId: {
             trackId: lastTrack.track.id,
-            userId: userId,
+            userId,
           },
         },
       });
+      console.log('userQ -> last track exists?', exists);
 
       if (!exists) {
         console.log(
@@ -141,45 +177,12 @@ export const userQ = Queue<{ userId: string }>(
       }
     }
 
-    console.log('userQ -> adding recent tracks to db', userId);
-    const {
-      body: { items: recent },
-    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    for (const { track, played_at } of recent) {
-      const song: Omit<RecentSongs, 'id'> = {
-        trackId: track.id,
-        playedAt: new Date(played_at),
-        userId: userId,
-        name: track.name,
-        uri: track.uri,
-        albumName: track.album.name,
-        albumUri: track.album.uri,
-        artist: track.artists[0].name,
-        artistUri: track.artists[0].uri,
-        image: track.album.images[0].url,
-        explicit: track.explicit,
-        duration: track.duration_ms,
-        action: 'played',
-      };
-
-      await prisma.recentSongs.upsert({
-        where: {
-          playedAt_userId: {
-            playedAt: song.playedAt,
-            userId: userId,
-          },
-        },
-        update: song,
-        create: song,
-      });
-    }
-
     console.log('userQ -> completed', userId);
   },
   {
     limiter: {
-      max: isProduction ? 4 : 2,
-      duration: minutesToMs(0.5),
+      max: 1,
+      duration: minutesToMs(1),
     },
   },
 );
@@ -239,7 +242,7 @@ export const addUsersToQueue = async () => {
       {
         // a job with duplicate id will not be added
         jobId: user.userId,
-        repeat: { every: minutesToMs(isProduction ? 40 : 60) },
+        repeat: { every: minutesToMs(isProduction ? 30 : 60) },
         backoff: {
           type: 'exponential',
           delay: minutesToMs(1),
