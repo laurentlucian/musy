@@ -8,7 +8,7 @@ import UserSearch from './UserSearch';
 import { useState } from 'react';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const transition = useTransition();
   const { pathname, search } = useLocation();
