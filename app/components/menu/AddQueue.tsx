@@ -87,6 +87,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           py="30px"
           w={['100vw', '550px']}
           mt="10px"
+          color="music.200"
         >
           <Image
             src={user?.image}
@@ -107,6 +108,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           justifyContent="left"
           fontSize="14px"
           w={['100vw', '550px']}
+          color="music.200"
         >
           {isAdding ? <Waver /> : text}
         </Button>

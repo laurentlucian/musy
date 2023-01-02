@@ -56,6 +56,7 @@ const ActionDrawer = () => {
       mx="25px"
       w={['100vw', '550px']}
       justifyContent="left"
+      color="music.200"
     >
       Add to Friends Queue
       <Icon
