@@ -5,8 +5,10 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import Waver from './Waver';
 import Settings from './Settings';
 import UserSearch from './UserSearch';
+import { useState } from 'react';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
+  const [show, setShow] = useState(false);
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const transition = useTransition();
   const { pathname, search } = useLocation();
@@ -18,7 +20,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
       <HStack spacing={4}>
-        <Heading as={Link} to="/" size="sm">
+        <Heading as={Link} to="/" size="sm" onClick={() => setShow(true)}>
           musy
         </Heading>
         {transition.state === 'loading' && <Waver />}
@@ -40,7 +42,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <>
             <UserSearch />
-            <Settings />
+            <Settings show={show} setShow={setShow} />
           </>
         )}
       </HStack>

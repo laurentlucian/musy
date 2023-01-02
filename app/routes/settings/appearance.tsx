@@ -18,7 +18,7 @@ const Appearance = () => {
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'appearance',
-    defaultValue: 'system',
+    defaultValue: 'system', // fix default value to be stored value
     onChange: setSelection,
   });
 

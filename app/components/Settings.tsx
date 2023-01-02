@@ -1,10 +1,28 @@
+import type { Dispatch, SetStateAction } from 'react';
+import { useNavigate } from '@remix-run/react';
 import { IconButton } from '@chakra-ui/react';
 import { Setting2 } from 'iconsax-react';
 import { motion } from 'framer-motion';
-import { useNavigate } from '@remix-run/react';
+import useSessionUser from '~/hooks/useSessionUser';
 
-const Settings = () => {
+type SettingsConfig = {
+  show: boolean;
+  setShow: Dispatch<SetStateAction<boolean>>;
+};
+
+const Settings = ({ show, setShow }: SettingsConfig) => {
   const navigate = useNavigate();
+  const currentUser = useSessionUser();
+
+  const onClick = () => {
+    if (show) {
+      navigate(`/settings`);
+      setShow(false);
+    } else {
+      navigate(`/${currentUser?.userId}`);
+      setShow(true);
+    }
+  };
 
   return (
     <IconButton
@@ -12,7 +30,7 @@ const Settings = () => {
       aria-label="settings"
       icon={<Setting2 />}
       variant="ghost"
-      onClick={() => navigate(`/settings`)}
+      onClick={onClick}
       _active={{ boxShadow: 'none' }}
       _hover={{ boxShadow: 'none', opacity: 1, transform: 'rotate(180deg)' }}
       opacity="0.5"
