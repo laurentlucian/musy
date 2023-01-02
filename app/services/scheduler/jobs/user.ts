@@ -109,13 +109,14 @@ export const userQ = Queue<{ userId: string }>(
 
       const limit = 50;
       const pages = Math.ceil(total / limit);
-      console.log('userQ -> total > dbTotal', total, dbTotal, pages, pages * limit, userId);
+      console.log('userQ -> total > dbTotal', total, dbTotal, pages, userId);
       const {
-        body: { items: liked },
-      } = await spotify.getMySavedTracks({ limit, offset: (pages - 1) * limit });
+        body: {
+          items: [lastTrack],
+        },
+      } = await spotify.getMySavedTracks({ limit: 1, offset: total - 1 });
       // note: if user disliked songs after we've added all to db, this would've run every time job repeats
       // if last track exists in our db, then don't scrape all pages
-      const lastTrack = liked[liked.length - 1];
       console.log('userQ -> lastTrack', lastTrack.track.name);
       const exists = await prisma.likedSongs.findUnique({
         where: {
