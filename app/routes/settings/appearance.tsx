@@ -1,4 +1,12 @@
-import { useColorMode, Button, Stack, Text, useRadioGroup, HStack } from '@chakra-ui/react';
+import {
+  useColorMode,
+  Button,
+  Stack,
+  Text,
+  useRadioGroup,
+  HStack,
+  SimpleGrid,
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
@@ -40,7 +48,7 @@ const Appearance = () => {
         </Button>
         {scheduled && <TimeRangePicker />}
       </Stack>
-      <HStack spacing={4} {...group} p={0} m={0}>
+      <SimpleGrid columns={[1, null, 3]} gap={4} {...group} p={0} m={0}>
         {options.map(({ value, name }) => {
           const radio = getRadioProps({ value });
 
@@ -50,7 +58,7 @@ const Appearance = () => {
             </RadioButtons>
           );
         })}
-      </HStack>
+      </SimpleGrid>
     </>
   );
 };

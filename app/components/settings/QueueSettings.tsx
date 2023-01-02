@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, useRadioGroup, HStack } from '@chakra-ui/react';
+import { FormControl, FormLabel, useRadioGroup, HStack, Grid, SimpleGrid } from '@chakra-ui/react';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import { useTypedFetcher } from 'remix-typedjson';
 import type { action } from '~/routes/$id/add';
@@ -21,11 +21,16 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
   const group = getRootProps();
   return (
     <>
-      <FormControl display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+      <FormControl
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={['10px', null, '20px']}
+      >
         <FormLabel htmlFor="allow-queue" mb="0">
           allow queue
         </FormLabel>
-        <HStack spacing={4} {...group} p={0} m={0}>
+        <SimpleGrid columns={[1, null, 3]} gap={4} {...group} p={0} m={0}>
           {options.map(({ value, name }) => {
             const radio = getRadioProps({ value });
             return (
@@ -34,7 +39,7 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
               </RadioButtons>
             );
           })}
-        </HStack>
+        </SimpleGrid>
       </FormControl>
     </>
   );
