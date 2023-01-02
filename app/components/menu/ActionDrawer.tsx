@@ -1,4 +1,3 @@
-// import type { ChakraProps } from '@chakra-ui/react';
 import {
   Drawer,
   Image,
@@ -202,7 +201,7 @@ const ActionDrawer = () => {
                     finalFocusRef={btnRef}
                   >
                     <DrawerOverlay />
-                    <DrawerContent>
+                    <DrawerContent  backdropBlur="28px">
                       <DrawerHeader>
                         <Stack>
                           <Text>To:</Text>
