@@ -28,6 +28,7 @@ import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
 import AnalyzeTrack from './AnalyzeTrack';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import LikedBy from './LikedBy';
 
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
@@ -77,7 +78,7 @@ const ActionDrawer = () => {
         variant="drawer"
         onClick={handleClick}
         justifyContent="center"
-        h="40px"
+        h={['10px', '40px']}
         pt="10px"
         w="100vw"
       >
@@ -105,10 +106,11 @@ const ActionDrawer = () => {
             <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
+                  {isSmallScreen && <LikedBy />}
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
-                        boxSize={['369px', 500]}
+                        boxSize={['350px', '369px', 500]}
                         objectFit="cover"
                         src={track.image}
                         alignSelf="center"
@@ -175,6 +177,7 @@ const ActionDrawer = () => {
                       </Stack>
                     </Link>
                   )}
+                  {!isSmallScreen && <LikedBy />}
                 </Stack>
               )}
               <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
@@ -202,7 +205,7 @@ const ActionDrawer = () => {
                     finalFocusRef={btnRef}
                   >
                     <DrawerOverlay />
-                    <DrawerContent  backdropBlur="28px">
+                    <DrawerContent backdropBlur="28px">
                       <DrawerHeader>
                         <Stack>
                           <Text>To:</Text>
@@ -232,6 +235,7 @@ const ActionDrawer = () => {
                                   user={user}
                                 />
                               ))}
+                            <Box h="150px" />
                           </Stack>
                         </Stack>
                       </DrawerBody>

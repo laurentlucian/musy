@@ -1,4 +1,13 @@
-import { HStack, Image, Stack, Text, useColorModeValue, Icon } from '@chakra-ui/react';
+import {
+  HStack,
+  Image,
+  Stack,
+  Text,
+  useColorModeValue,
+  Icon,
+  AvatarGroup,
+  Avatar,
+} from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
 import { timeSince } from '~/lib/utils';
@@ -7,105 +16,137 @@ import { Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';
 import type { Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
+import { useTypedFetcher } from 'remix-typedjson';
+import { useEffect, useState } from 'react';
+import type { Profile } from '@prisma/client';
+import type { loader } from '~/routes/$id/liked-by';
 
 interface ActivityProps {
   track: Activity;
 }
 
 const ActivityAction = ({ track }: ActivityProps) => {
-  const Action = () => {
-    switch (track.action) {
-      case 'liked':
-        return (
-          <>
-            <Tooltip label={track.user?.name} placement="top-start">
-              <Link to={`/${track.user?.userId}`}>
-                <Image
-                  minW="25px"
-                  maxW="25px"
-                  minH="25px"
-                  maxH="25px"
-                  borderRadius="100%"
-                  src={track.user?.image}
-                />
-              </Link>
-            </Tooltip>
-            <LikeIcon aria-checked boxSize="18px" />
-          </>
-        );
-      case 'send':
-        return (
-          <>
-            <Tooltip label={track.user?.name} placement="top-start">
-              <Link to={`/${track.user?.userId}`}>
-                <Image
-                  minW="25px"
-                  maxW="25px"
-                  minH="25px"
-                  maxH="25px"
-                  borderRadius="100%"
-                  src={track.user?.image}
-                />
-              </Link>
-            </Tooltip>
-            <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
-            <Tooltip label={track.owner?.user?.name} placement="top-start">
-              <Link to={`/${track.owner?.user?.userId}`}>
-                <Image
-                  minW="25px"
-                  maxW="25px"
-                  minH="25px"
-                  maxH="25px"
-                  borderRadius="100%"
-                  src={track.owner?.user?.image}
-                />
-              </Link>
-            </Tooltip>
-          </>
-        );
-      case 'add':
-        return (
-          <>
-            <Tooltip label={track.owner?.user?.name} placement="top-start">
-              <Link to={`/${track.owner?.user?.userId}`}>
-                <Image
-                  minW="25px"
-                  maxW="25px"
-                  minH="25px"
-                  maxH="25px"
-                  borderRadius="100%"
-                  src={track.owner?.user?.image}
-                />
-              </Link>
-            </Tooltip>
-            <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
-            {track.user && (
-              <Tooltip label={track.user.name} placement="top-start">
-                <Link to={`/${track.user.userId}`}>
-                  <Image
-                    minW="25px"
-                    maxW="25px"
-                    minH="25px"
-                    maxH="25px"
-                    borderRadius="100%"
-                    src={track.user.image}
-                  />
-                </Link>
-              </Tooltip>
-            )}
-          </>
-        );
-      default:
-        return null;
-    }
-  };
+  const { load, data } = useTypedFetcher<typeof loader>();
+  const [users, setUsers] = useState<Profile[]>([]);
+
+  useEffect(() => {
+    if (!track || track.action !== 'liked') return;
+    load(`/${track.trackId}/liked-by`);
+  }, [track, load]);
+
+  useEffect(() => {
+    if (!data) return;
+    const filtered = data.filter((user) => user.userId !== track.user?.userId);
+    setUsers(filtered);
+  }, [data, track.user?.userId]);
 
   return (
     <HStack>
-      <Action />
-      <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
-        {timeSince(track.createdAt)}
-      </Text>
+      <>
+        {(() => {
+          switch (track.action) {
+            case 'liked':
+              return (
+                <>
+                  <AvatarGroup>
+                    {users.map((user) => (
+                      <Avatar
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        key={user.userId}
+                        name={user.name}
+                        src={user.image}
+                        size={['xs', null, 'sm']}
+                      />
+                    ))}
+                  </AvatarGroup>
+                  <Tooltip label={track.user?.name} placement="top-start">
+                    <Link to={`/${track.user?.userId}`}>
+                      <Image
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        borderRadius="100%"
+                        src={track.user?.image}
+                      />
+                    </Link>
+                  </Tooltip>
+                  <LikeIcon aria-checked boxSize="18px" />
+                </>
+              );
+            case 'send':
+              return (
+                <>
+                  <Tooltip label={track.user?.name} placement="top-start">
+                    <Link to={`/${track.user?.userId}`}>
+                      <Image
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        borderRadius="100%"
+                        src={track.user?.image}
+                      />
+                    </Link>
+                  </Tooltip>
+                  <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                  <Tooltip label={track.owner?.user?.name} placement="top-start">
+                    <Link to={`/${track.owner?.user?.userId}`}>
+                      <Image
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        borderRadius="100%"
+                        src={track.owner?.user?.image}
+                      />
+                    </Link>
+                  </Tooltip>
+                </>
+              );
+            case 'add':
+              return (
+                <>
+                  <Tooltip label={track.owner?.user?.name} placement="top-start">
+                    <Link to={`/${track.owner?.user?.userId}`}>
+                      <Image
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        borderRadius="100%"
+                        src={track.owner?.user?.image}
+                      />
+                    </Link>
+                  </Tooltip>
+                  <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                  {track.user && (
+                    <Tooltip label={track.user.name} placement="top-start">
+                      <Link to={`/${track.user.userId}`}>
+                        <Image
+                          minW="25px"
+                          maxW="25px"
+                          minH="25px"
+                          maxH="25px"
+                          borderRadius="100%"
+                          src={track.user.image}
+                        />
+                      </Link>
+                    </Tooltip>
+                  )}
+                </>
+              );
+            default:
+              return null;
+          }
+        })()}
+        <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
+          {timeSince(track.createdAt)}
+        </Text>
+      </>
     </HStack>
   );
 };
