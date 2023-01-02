@@ -1,12 +1,12 @@
 import type { LikedSongs } from '@prisma/client';
-import type { ActionFunction } from '@remix-run/node';
+import type { ActionArgs } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import { getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 

@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
@@ -6,7 +6,7 @@ import { prisma } from '~/services/db.server';
 import { activityQ } from '~/services/scheduler/jobs/activity';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
   const body = await request.formData();

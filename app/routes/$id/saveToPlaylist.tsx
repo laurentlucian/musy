@@ -1,7 +1,6 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 import { getCurrentUser } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
-import type { ActionFunction } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -18,7 +17,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   return typedjson([true]);
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
