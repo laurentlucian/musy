@@ -1,12 +1,33 @@
-import { useColorMode, Button, Stack, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useColorMode, Button, Stack, Text, useRadioGroup, HStack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
+import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
 const Appearance = () => {
   const [scheduled, setScheduled] = useState(false);
+  const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
+
+  const options = [
+    { name: 'dark', value: 'dark' },
+    { name: 'light', value: 'light' },
+    { name: 'system', value: 'system' },
+  ];
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: 'appearance',
+    defaultValue: 'system',
+    onChange: setSelection,
+  });
+
+  const group = getRootProps();
+
+  useEffect(() => {
+    if (selection) setColorMode(selection);
+  }, [selection, setColorMode]);
+
   return (
     <>
       <Stack direction="row" alignItems="center">
@@ -19,24 +40,18 @@ const Appearance = () => {
         </Button>
         {scheduled && <TimeRangePicker />}
       </Stack>
-      <Stack direction="row">
-        <Button size={['xs', 'sm']} aria-label="dark" onClick={() => setColorMode('dark')}>
-          dark
-        </Button>
-        <Button size={['xs', 'sm']} aria-label="light" onClick={() => setColorMode('light')}>
-          light
-        </Button>
-        <Button size={['xs', 'sm']} aria-label="system" onClick={() => setColorMode('system')}>
-          system
-        </Button>
-      </Stack>
+      <HStack spacing={4} {...group} p={0} m={0}>
+        {options.map(({ value, name }) => {
+          const radio = getRadioProps({ value });
+
+          return (
+            <RadioButtons key={value} {...radio} value={value}>
+              {name}
+            </RadioButtons>
+          );
+        })}
+      </HStack>
     </>
   );
 };
 export default Appearance;
-
-// {seconds.map((second) => (
-//   {/* If the second is less than 10, add a 0 prefix */}
-//   let newSecond = second < 10 ? '0' + second : second;
-//   return <option>{newSecond}</option>;
-// ))}
