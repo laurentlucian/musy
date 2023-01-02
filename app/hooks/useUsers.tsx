@@ -7,10 +7,10 @@ const useUsers = (): Profile[] => {
     const route = matches.find((match) => match.id === 'routes/$id');
     if (!route) return [];
 
-    return route.data.users;
+    return route.data?.users;
   }
 
-  return route.data.users;
+  return route.data?.users;
 };
 
 export default useUsers;

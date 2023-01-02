@@ -11,7 +11,7 @@ const useSessionUser = ():
   const route = matches.find((match) => match.id === 'root');
   if (!route) return null;
 
-  return route.data.currentUser;
+  return route.data?.currentUser;
 };
 
 export default useSessionUser;
