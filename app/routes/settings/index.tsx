@@ -17,6 +17,7 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 import { Logout } from 'iconsax-react';
 import { useRef } from 'react';
 import invariant from 'tiny-invariant';
+import QueueSettings from '~/components/settings/QueueSettings';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -25,7 +26,7 @@ const Account = () => {
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef<HTMLButtonElement>(null); // idk how to fix these type errors
+  const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
 
   return (
@@ -48,6 +49,7 @@ const Account = () => {
             }}
           />
         </FormControl>
+        <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
         <FormControl display="flex" alignItems="center">
           <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0">
             auto scroll
@@ -132,6 +134,14 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
       create: { isPrivate, userId },
       update: { isPrivate },
+    });
+  }
+
+  const queuePreference = data.get('allow-queue');
+  if (typeof queuePreference === 'string') {
+    await prisma.settings.update({
+      where: { userId },
+      data: { allowQueue: queuePreference },
     });
   }
   return null;

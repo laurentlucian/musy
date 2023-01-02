@@ -55,6 +55,7 @@ model Settings {
 
   autoscroll Boolean @default(true)
   isPrivate  Boolean @default(false)
+  allowQueue String  @default("on")
   // theme String @default("light")
 }
 
