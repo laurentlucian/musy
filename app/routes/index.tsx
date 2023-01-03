@@ -103,8 +103,17 @@ export const loader = async ({ request }: LoaderArgs) => {
     return 0;
   }) as Activity[];
 
+  const settings = await Promise.all(
+    users.map(async (user: Profile) => {
+      const settings = await prisma.settings.findUnique({
+        where: { userId: user.userId },
+      });
+      return { ...user, settings };
+    }),
+  );
+
   return typedjson(
-    { users, playbacks, activity },
+    { users, settings, playbacks, activity },
     {
       headers: { 'Cache-Control': 'public, maxage=5, s-maxage=0, stale-while-revalidate=10' },
     },

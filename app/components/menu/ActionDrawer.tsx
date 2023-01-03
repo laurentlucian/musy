@@ -18,18 +18,17 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
-import { useFetcher, useParams } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
 import AddQueue from './AddQueue';
 import AnalyzeTrack from './AnalyzeTrack';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import LikedBy from './LikedBy';
-import type { Profile } from '@prisma/client';
 
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
@@ -46,20 +45,14 @@ const ActionDrawer = () => {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const isOwnProfile = currentUser?.userId === id;
-  const users = allUsers.filter((user) => user.userId !== currentUser?.userId);
-
+  const users = allUsers.filter(
+    (user) =>
+      user.userId !== currentUser?.userId &&
+      user.settings?.allowQueue !== 'off' &&
+      user.settings?.allowQueue !== 'link',
+  );
+  console.log('users', users);
   const isSmallScreen = useIsMobile();
-  const fetcher = useFetcher();
-  // const loadUsers = () => {
-  //   fetcher.load('/queueable');
-  //   sendMenu.onToggle();
-  // };
-  // useEffect(() => {
-  //   if (!fetcher.data) return;
-  //   const queueable = fetcher.data.__obj__;
-  //   setUsers(queueable);
-  //   console.log(queueable);
-  // }, [fetcher.data]);
 
   const SendTo = () => (
     <Button
