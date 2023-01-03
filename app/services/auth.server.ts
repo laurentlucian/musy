@@ -1,10 +1,11 @@
 import { prisma } from './db.server';
 import { Authenticator } from 'remix-auth';
 import { sessionStorage } from '~/services/session.server';
-import type { Prisma, Profile } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
 import { userQ } from './scheduler/jobs/user';
+import { notNull } from '~/lib/utils';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -121,11 +122,11 @@ export const getAllUsers = async (isAuthenticated = false) => {
     : undefined;
 
   const data = await prisma.user.findMany({
-    select: { user: true },
+    select: { user: { include: { settings: true } } },
     orderBy: { updatedAt: 'desc' },
     where: { revoked: false, ...restrict },
   });
-  const users = data.map((user) => user.user).filter((user): user is Profile => user !== null);
+  const users = data.map((user) => user.user).filter(notNull);
   return users;
 };
 

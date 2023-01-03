@@ -45,12 +45,10 @@ const ActionDrawer = () => {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const isOwnProfile = currentUser?.userId === id;
-  const users = allUsers.filter(
-    (user) =>
-      user.userId !== currentUser?.userId &&
-      user.settings?.allowQueue !== 'off' &&
-      user.settings?.allowQueue !== 'link',
-  );
+  const users = allUsers.filter((user) => {
+    const isAllowed = user.settings === null || user.settings.allowQueue === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
   console.log('users', users);
   const isSmallScreen = useIsMobile();
 
