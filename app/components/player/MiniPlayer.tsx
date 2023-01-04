@@ -48,6 +48,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         albumName: track.album.name,
         artist: track.album.artists[0].name,
         artistUri: track.album.artists[0].uri,
+        userId: user.userId,
       }
     : null;
 
