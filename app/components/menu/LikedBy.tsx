@@ -12,7 +12,8 @@ const LikedBy = () => {
 
   useEffect(() => {
     if (!track) return;
-    load(`/${track.trackId}/liked-by`);
+    const timeout = setTimeout(() => load(`/${track.trackId}/liked-by`), 450);
+    return () => clearTimeout(timeout);
   }, [track, load]);
 
   useEffect(() => {
