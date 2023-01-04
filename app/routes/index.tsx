@@ -51,6 +51,7 @@ export type Activity = {
   user: Profile | null;
   owner?: { user: Profile | null };
   action: string;
+  likedBy?: Profile[];
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -102,6 +103,23 @@ export const loader = async ({ request }: LoaderArgs) => {
     if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
     return 0;
   }) as Activity[];
+
+  for (const [index, { action, trackId }] of activity.entries()) {
+    if (action !== 'liked') continue;
+    if (!trackId) continue;
+
+    const likedUsers = await prisma.profile.findMany({
+      where: {
+        liked: {
+          some: {
+            trackId,
+          },
+        },
+      },
+    });
+    // add likedUsers as a property to each activity item
+    activity[index].likedBy = likedUsers;
+  }
 
   return typedjson(
     { users, playbacks, activity },

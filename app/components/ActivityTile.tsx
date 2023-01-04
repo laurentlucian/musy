@@ -16,29 +16,13 @@ import { Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';
 import type { Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
-import { useTypedFetcher } from 'remix-typedjson';
-import { useEffect, useState } from 'react';
-import type { Profile } from '@prisma/client';
-import type { loader } from '~/routes/$id/liked-by';
 
 interface ActivityProps {
   track: Activity;
 }
 
 const ActivityAction = ({ track }: ActivityProps) => {
-  const { load, data } = useTypedFetcher<typeof loader>();
-  const [users, setUsers] = useState<Profile[]>([]);
-
-  useEffect(() => {
-    if (!track || track.action !== 'liked') return;
-    load(`/${track.trackId}/liked-by`);
-  }, [track, load]);
-
-  useEffect(() => {
-    if (!data) return;
-    const filtered = data.filter((user) => user.userId !== track.user?.userId);
-    setUsers(filtered);
-  }, [data, track.user?.userId]);
+  const users = track.likedBy?.filter((user) => user.userId !== track.user?.userId) ?? [];
 
   return (
     <HStack>
