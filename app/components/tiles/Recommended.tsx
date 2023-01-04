@@ -1,30 +1,34 @@
 import { Stack } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
+import type { RecommendedSongs } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from './Tiles';
 
-const Recommended = ({ recommended }: { recommended: SpotifyApi.PlayHistoryObject[] }) => {
+const Recommended = ({ recommended }: { recommended: RecommendedSongs[] }) => {
   return (
-    <Stack spacing={3}>
-      <Tiles title="Recommended" scrollButtons={true}>
-        {recommended.map(({ track, played_at }) => {
-          return (
-            <Tile
-              key={played_at}
-              uri={track.uri}
-              trackId={track.id}
-              image={track.album.images[1].url}
-              albumUri={track.album.uri}
-              albumName={track.album.name}
-              name={track.name}
-              artist={track.album.artists[0].name}
-              artistUri={track.album.artists[0].uri}
-              explicit={track.explicit}
-            />
-          );
-        })}
-      </Tiles>
-    </Stack>
+    <>
+      {recommended.length > 0 && (
+        <Stack spacing={3}>
+          <Tiles title="Recommended" scrollButtons={true}>
+            {recommended.map((recommended) => {
+              return (
+                <Tile
+                  key={recommended.id}
+                  uri={recommended.uri}
+                  trackId={recommended.trackId}
+                  image={recommended.image}
+                  albumUri={recommended.albumUri}
+                  albumName={recommended.albumName}
+                  name={recommended.name}
+                  artist={recommended.artist}
+                  artistUri={recommended.albumUri}
+                  explicit={recommended.explicit}
+                />
+              );
+            })}
+          </Tiles>
+        </Stack>
+      )}
+    </>
   );
 };
 

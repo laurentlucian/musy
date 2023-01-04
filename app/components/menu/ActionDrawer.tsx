@@ -104,7 +104,7 @@ const ActionDrawer = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader></DrawerHeader>
-          <DrawerBody overflowX="hidden">
+          <DrawerBody overflowX="hidden" overflowY="hidden">
             <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>

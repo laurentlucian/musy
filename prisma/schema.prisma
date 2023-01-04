@@ -166,7 +166,7 @@ model RecommendedSongs {
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
 
-  trackId   String?
+  trackId   String
   uri       String
   name      String
   image     String

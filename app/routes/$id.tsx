@@ -28,6 +28,7 @@ import { askDaVinci } from '~/services/ai.server';
 import MoodButton from '~/components/MoodButton';
 import { msToString, timeSince } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
+import Recommended from '~/components/tiles/Recommended';
 
 const Profile = () => {
   const {
@@ -41,10 +42,12 @@ const Profile = () => {
     activity,
     following,
     // queue,
+    recommended,
     playlists,
     listened,
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
+  const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -127,6 +130,7 @@ const Profile = () => {
           </Tiles>
         )}
       </Stack>
+      {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracks recent={recent} />
       <LikedTracks liked={liked} />
       <TopTracks top={top} />
@@ -223,6 +227,11 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
   ]);
 
+  const recommended = await prisma.recommendedSongs.findMany({
+    where: { userId: id },
+    orderBy: { createdAt: 'desc' },
+  });
+
   const recentDb = await prisma.recentSongs.findMany({
     where: { userId: id },
     orderBy: { playedAt: 'desc' },
@@ -258,6 +267,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       currentUser,
       following,
       queue,
+      recommended,
       users,
       listened,
     });
@@ -275,6 +285,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     currentUser,
     following: null,
     queue,
+    recommended,
     users,
     listened,
   });
