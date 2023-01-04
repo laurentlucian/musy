@@ -19,9 +19,10 @@ model User {
   tokenType    String
   revoked      Boolean  @default(false)
 
-  user  Profile?
-  party Party[]
-  queue Queue[]
+  user             Profile?
+  party            Party[]
+  queue            Queue[]
+  RecommendedSongs RecommendedSongs[]
 }
 
 model Profile {
@@ -32,14 +33,15 @@ model Profile {
   // should've been the @id
   userId    String   @unique
 
-  name   String
-  bio    String?
-  email  String
-  image  String
-  party  Party?
-  queue  Queue[]
-  liked  LikedSongs[]
-  recent RecentSongs[]
+  name        String
+  bio         String?
+  email       String
+  image       String
+  party       Party?
+  queue       Queue[]
+  liked       LikedSongs[]
+  recent      RecentSongs[]
+  recommended RecommendedSongs[]
 
   ai       AI?
   settings Settings?
@@ -150,4 +152,27 @@ model RecentSongs {
   action String  @default("liked")
 
   @@unique([playedAt, userId])
+}
+
+model RecommendedSongs {
+  id        Int      @id @default(autoincrement())
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  createdAt DateTime @default(now())
+  pending   Boolean  @default(false)
+
+  trackId   String?
+  uri       String
+  name      String
+  image     String
+  albumUri  String?
+  albumName String?
+  artist    String
+  artistUri String?
+  explicit  Boolean
+
+  // can be anonymous
+  user   Profile? @relation(fields: [userId], references: [userId])
+  userId String?
+  action String   @default("add")
 }

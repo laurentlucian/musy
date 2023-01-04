@@ -33,7 +33,6 @@ import LikedBy from './LikedBy';
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  // const [users, setUsers] = useState<Profile[]>([]);
   const { onClose } = useDrawerActions();
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
@@ -49,7 +48,6 @@ const ActionDrawer = () => {
     const isAllowed = user.settings === null || user.settings.allowQueue === 'on';
     return user.userId !== currentUser?.userId && isAllowed;
   });
-  console.log('users', users);
   const isSmallScreen = useIsMobile();
 
   const SendTo = () => (
@@ -187,7 +185,6 @@ const ActionDrawer = () => {
               <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
                 {track && track.trackId && <SaveToLiked trackId={track.trackId} />}
                 {track && <AnalyzeTrack trackId={track.trackId} />}
-                {/* AddToYourQueue */}
                 {track && (
                   <AddQueue
                     track={{
