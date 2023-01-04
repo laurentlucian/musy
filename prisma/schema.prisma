@@ -19,10 +19,14 @@ model User {
   tokenType    String
   revoked      Boolean  @default(false)
 
-  user             Profile?
-  party            Party[]
-  queue            Queue[]
-  RecommendedSongs RecommendedSongs[]
+  user  Profile?
+  party Party[]
+
+  // current schema isn't ideal, User & Profile are 1:1
+  // the relationship between users are using User model and Profile model as different
+  // sent
+  queue       Queue[]
+  recommended RecommendedSongs[]
 }
 
 model Profile {
@@ -40,6 +44,7 @@ model Profile {
   party       Party?
   queue       Queue[]
   liked       LikedSongs[]
+  // received
   recent      RecentSongs[]
   recommended RecommendedSongs[]
 
