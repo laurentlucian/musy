@@ -169,7 +169,6 @@ const ActivityTile = ({ track }: ActivityProps) => {
         >
           <Stack spacing={0} px={2} w="200px">
             <Tooltip label={track.name} placement="top-start">
-              {/* <LinkB href={track.uri}> */}
               <Text
                 fontSize={['12px', '13px']}
                 noOfLines={1}
@@ -178,21 +177,16 @@ const ActivityTile = ({ track }: ActivityProps) => {
               >
                 {track.name}
               </Text>
-              {/* </LinkB> */}
             </Tooltip>
-            {/* <LinkB href={track.artistUri ?? ''}> */}
             <Tooltip label={track.artist} placement="top-start">
               <Text fontSize={['9px', '10px']} opacity={0.6}>
                 {track.artist}
               </Text>
             </Tooltip>
-            {/* </LinkB> */}
           </Stack>
-          {/* <LinkB href={track.albumUri ?? ''} target="_blank"> */}
           <Tooltip label={track.name} placement="top-start">
             <Image minW="70px" maxW="70px" src={track.image} />
           </Tooltip>
-          {/* </LinkB> */}
         </HStack>
       </Stack>
     </>

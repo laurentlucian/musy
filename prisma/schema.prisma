@@ -179,5 +179,5 @@ model RecommendedSongs {
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
   userId String?
-  action String   @default("add")
+  action String   @default("recommend")
 }
