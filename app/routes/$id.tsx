@@ -228,7 +228,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   ]);
 
   const recommended = await prisma.recommendedSongs.findMany({
-    where: { userId: id },
+    where: { ownerId: id },
     orderBy: { createdAt: 'desc' },
   });
 
