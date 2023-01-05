@@ -132,7 +132,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 export default Index;
 
 export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.log('index -> ErrorBoundary', error);
+  console.log('index -> ErrorBoundary', error, error.message, error.stack);
   return (
     <>
       <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
