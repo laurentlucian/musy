@@ -18,9 +18,9 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
-import { useParams } from '@remix-run/react';
+// import { useParams } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
-import useParamUser from '~/hooks/useParamUser';
+// import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
@@ -40,13 +40,12 @@ const ActionDrawer = () => {
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
   const sendMenu = useDisclosure();
-  const recommendMenu = useDisclosure();
   const allUsers = useUsers();
-  const user = useParamUser();
-  const { id } = useParams();
+  // const user = useParamUser();
+  // const { id } = useParams();
   const btnRef = useRef<HTMLButtonElement>(null);
 
-  const isOwnProfile = currentUser?.userId === id;
+  // const isOwnProfile = currentUser?.userId === id;
   const queueableUsers = allUsers.filter((user) => {
     const isAllowed = user.settings === null || user.settings.allowQueue === 'on';
     return user.userId !== currentUser?.userId && isAllowed;
@@ -114,13 +113,9 @@ const ActionDrawer = () => {
 
   const CloseMenu = () => {
     const handleClick = () => {
-      isOpen && !sendMenu.isOpen
-        ? onClose()
-        : !recommendMenu.isOpen
-        ? sendMenu.onClose()
-        : recommendMenu.onClose();
+      isOpen && !sendMenu.isOpen ? onClose() : sendMenu.onClose();
     };
-    const text = isOpen && (!sendMenu.isOpen || !recommendMenu.isOpen) ? 'close' : 'cancel';
+    const text = isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
       <Button
         variant="drawer"
@@ -139,19 +134,26 @@ const ActionDrawer = () => {
     <>
       <Drawer
         isOpen={isOpen}
-        placement="bottom"
+        placement={isSmallScreen ? 'right' : 'bottom'}
         onClose={onClose}
         finalFocusRef={btnRef}
         lockFocusAcrossFrames
         preserveScrollBarGap
-        size={['', 'full']}
+        size="full"
         variant={isSmallScreen ? 'none' : 'desktop'}
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader></DrawerHeader>
           <DrawerBody>
-            <Stack direction={['column', 'row']} align="center" justify="center">
+            <Stack
+              direction={['column', 'row']}
+              align="center"
+              justify="center"
+              overflowY="scroll"
+              // maxH="-webkit-fill-available"
+              pos={['fixed', 'unset']}
+              top={[0]}
+            >
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                   {isSmallScreen && <LikedBy />}
@@ -240,8 +242,8 @@ const ActionDrawer = () => {
                     user={null}
                   />
                 )}
-                <SendTo />
-                <RecommendTo />
+                {queueableUsers.length > 0 && <SendTo />}
+                {recommendableUsers.length > 0 && <RecommendTo />}
                 {isSmallScreen ? (
                   <Drawer
                     isOpen={sendMenu.isOpen}
@@ -251,14 +253,12 @@ const ActionDrawer = () => {
                     lockFocusAcrossFrames
                     preserveScrollBarGap
                     finalFocusRef={btnRef}
+                    variant="nested"
                   >
-                    <DrawerOverlay />
-                    <DrawerContent backdropBlur="28px">
+                    <DrawerContent>
                       <DrawerHeader>
-                        <Stack>
-                          <Text>To:</Text>
-                          <DrawerCloseButton color="spotify.green" />
-                        </Stack>
+                        <Text>To:</Text>
+                        <DrawerCloseButton color="spotify.green" fontSize="20px" />
                       </DrawerHeader>
                       <DrawerBody>
                         <Stack align="center">

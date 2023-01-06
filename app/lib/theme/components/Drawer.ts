@@ -14,13 +14,12 @@ const $bg = cssVar('drawer-bg');
 const $bs = cssVar('drawer-box-shadow');
 
 const baseStyleOverlay = defineStyle((props) => ({
-  backdropFilter: 'blur(6.9px)',
+  backdropFilter: 'blur(14px)',
   transition: 'all .2s',
   zIndex: 'overlay',
 }));
 
 const baseStyleDialogContainer = defineStyle((props) => ({
-  backdropFilter: 'blur(6.9px)',
   transition: 'all .2s',
   display: 'flex',
   zIndex: 'modal',
@@ -32,8 +31,12 @@ const desktop = defineStyle({
   overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
   dialog: { backdropFilter: 'blur(25px)', zIndex: 'modal' },
 });
+const nested = defineStyle({
+  dialog: { backdropFilter: 'blur(14px)', zIndex: 'modal' },
+});
 const variants = {
   desktop,
+  nested,
 };
 const baseStyleDialog = defineStyle((props) => {
   const { isFullHeight } = props;
