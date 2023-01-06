@@ -22,7 +22,7 @@ const LikedBy = () => {
   }, [data]);
 
   return (
-    <HStack>
+    <HStack minH={['30px', '45px']} pt="5px">
       <Text fontSize={['13px', '14px']} color="#BBB8B7">
         {users.length ? 'Liked by' : ''}
       </Text>

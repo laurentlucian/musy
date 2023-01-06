@@ -67,8 +67,6 @@ const ActionDrawer = () => {
     if (sendList && sendMenu.isOpen) {
       sendMenu.onClose();
     } else sendMenu.onOpen();
-    console.log(allUsers);
-    console.log(queueableUsers);
   };
 
   const SendTo = () => (
@@ -134,7 +132,7 @@ const ActionDrawer = () => {
     <>
       <Drawer
         isOpen={isOpen}
-        placement={isSmallScreen ? 'right' : 'bottom'}
+        placement={isSmallScreen ? 'bottom' : 'bottom'}
         onClose={onClose}
         finalFocusRef={btnRef}
         lockFocusAcrossFrames
@@ -149,13 +147,12 @@ const ActionDrawer = () => {
               direction={['column', 'row']}
               align="center"
               justify="center"
-              overflowY="scroll"
-              // maxH="-webkit-fill-available"
-              pos={['fixed', 'unset']}
-              top={[0]}
+              // pos={['fixed', 'unset']}
+              // top={[0]}
             >
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
+                  <Box h="90px" w="10px" />
                   {isSmallScreen && <LikedBy />}
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
@@ -244,6 +241,7 @@ const ActionDrawer = () => {
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
                 {recommendableUsers.length > 0 && <RecommendTo />}
+                <Box h="50px" w="10px" />
                 {isSmallScreen ? (
                   <Drawer
                     isOpen={sendMenu.isOpen}
