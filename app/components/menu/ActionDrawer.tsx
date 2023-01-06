@@ -132,7 +132,7 @@ const ActionDrawer = () => {
     <>
       <Drawer
         isOpen={isOpen}
-        placement={isSmallScreen ? 'bottom' : 'bottom'}
+        placement="bottom"
         onClose={onClose}
         finalFocusRef={btnRef}
         lockFocusAcrossFrames
@@ -143,17 +143,15 @@ const ActionDrawer = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerBody>
-            <Stack
-              direction={['column', 'row']}
-              align="center"
-              justify="center"
-              // pos={['fixed', 'unset']}
-              // top={[0]}
-            >
+            <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
-                  <Box h="90px" w="10px" />
-                  {isSmallScreen && <LikedBy />}
+                  {isSmallScreen && (
+                    <>
+                      <Box h="90px" w="10px" />
+                      <LikedBy />
+                    </>
+                  )}
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
@@ -241,63 +239,65 @@ const ActionDrawer = () => {
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
                 {recommendableUsers.length > 0 && <RecommendTo />}
-                <Box h="50px" w="10px" />
-                {isSmallScreen ? (
-                  <Drawer
-                    isOpen={sendMenu.isOpen}
-                    onClose={sendMenu.onClose}
-                    size="full"
-                    placement="right"
-                    lockFocusAcrossFrames
-                    preserveScrollBarGap
-                    finalFocusRef={btnRef}
-                    variant="nested"
-                  >
-                    <DrawerContent>
-                      <DrawerHeader>
-                        <Text>To:</Text>
-                        <DrawerCloseButton color="spotify.green" fontSize="20px" />
-                      </DrawerHeader>
-                      <DrawerBody>
-                        <Stack align="center">
-                          {!sendList ? (
-                            <Stack>
-                              {/* {!isOwnProfile && id && track && (
-                                <AddQueue
-                                  track={{
-                                    trackId: track.trackId,
-                                  }}
-                                  user={user}
-                                />
-                              )} */}
 
-                              {track &&
-                                queueableUsers.map((user) => (
+                {isSmallScreen ? (
+                  <>
+                    <Box h="50px" w="10px" />
+                    <Drawer
+                      isOpen={sendMenu.isOpen}
+                      onClose={sendMenu.onClose}
+                      size="full"
+                      placement="right"
+                      lockFocusAcrossFrames
+                      preserveScrollBarGap
+                      finalFocusRef={btnRef}
+                      variant="nested"
+                    >
+                      <DrawerContent>
+                        <DrawerHeader>
+                          <Text>To:</Text>
+                          <DrawerCloseButton color="spotify.green" fontSize="20px" />
+                        </DrawerHeader>
+                        <DrawerBody>
+                          <Stack align="center">
+                            {!sendList ? (
+                              <Stack>
+                                {/* {!isOwnProfile && id && track && (
                                   <AddQueue
-                                    key={user.userId}
                                     track={{
                                       trackId: track.trackId,
                                     }}
                                     user={user}
                                   />
-                                ))}
-                              <Box h="150px" />
-                            </Stack>
-                          ) : (
-                            <Stack>
-                              {track &&
-                                recommendableUsers.map((user) => (
-                                  <Recommend key={user.userId} user={user} />
-                                ))}
-                            </Stack>
-                          )}
-                        </Stack>
-                      </DrawerBody>
-                      <DrawerFooter>
-                        <CloseMenu />
-                      </DrawerFooter>
-                    </DrawerContent>
-                  </Drawer>
+                                )} */}
+                                {track &&
+                                  queueableUsers.map((user) => (
+                                    <AddQueue
+                                      key={user.userId}
+                                      track={{
+                                        trackId: track.trackId,
+                                      }}
+                                      user={user}
+                                    />
+                                  ))}
+                                <Box h="150px" />
+                              </Stack>
+                            ) : (
+                              <Stack>
+                                {track &&
+                                  recommendableUsers.map((user) => (
+                                    <Recommend key={user.userId} user={user} />
+                                  ))}
+                              </Stack>
+                            )}
+                          </Stack>
+                        </DrawerBody>
+                        <DrawerFooter>
+                          <CloseMenu />
+                        </DrawerFooter>
+                      </DrawerContent>
+                    </Drawer>
+                  </>
                 ) : (
                   <SlideFade in={sendMenu.isOpen} offsetY="-20px">
                     <Box overflowY="scroll" h="330px">
