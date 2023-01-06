@@ -55,11 +55,15 @@ const ActionDrawer = () => {
 
   const onClickQueue = () => {
     setSendList(false);
-    sendMenu.onToggle();
+    if (!sendList && sendMenu.isOpen) {
+      sendMenu.onClose();
+    } else sendMenu.onOpen();
   };
   const onClickRecommend = () => {
     setSendList(true);
-    sendMenu.onToggle();
+    if (sendList && sendMenu.isOpen) {
+      sendMenu.onClose();
+    } else sendMenu.onOpen();
   };
 
   const SendTo = () => (
