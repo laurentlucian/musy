@@ -18,18 +18,16 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
-// import { useParams } from '@remix-run/react';
+import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
-// import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
+import AnalyzeTrack from './AnalyzeTrack';
 import { useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
-import AddQueue from './AddQueue';
-import AnalyzeTrack from './AnalyzeTrack';
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import LikedBy from './LikedBy';
 import Recommend from './Recommend';
+import AddQueue from './AddQueue';
+import LikedBy from './LikedBy';
 
 const ActionDrawer = () => {
   const [show, setShow] = useState(false);
@@ -41,21 +39,22 @@ const ActionDrawer = () => {
   const currentUser = useSessionUser();
   const sendMenu = useDisclosure();
   const allUsers = useUsers();
-  // const user = useParamUser();
-  // const { id } = useParams();
   const btnRef = useRef<HTMLButtonElement>(null);
-
-  // const isOwnProfile = currentUser?.userId === id;
   const queueableUsers = allUsers.filter((user) => {
-    const isAllowed = user.settings === null || user.settings.allowQueue === 'on';
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowQueue === null ||
+      user.settings.allowQueue === 'on';
     return user.userId !== currentUser?.userId && isAllowed;
   });
   const recommendableUsers = allUsers.filter((user) => {
-    const isAllowed = user.settings === null;
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowRecommend === null ||
+      user.settings.allowRecommend === 'on';
     return user.userId !== currentUser?.userId && isAllowed;
   });
   const isSmallScreen = useIsMobile();
-
   const onClickQueue = () => {
     setSendList(false);
     if (!sendList && sendMenu.isOpen) {
@@ -68,7 +67,6 @@ const ActionDrawer = () => {
       sendMenu.onClose();
     } else sendMenu.onOpen();
   };
-
   const SendTo = () => (
     <Button
       leftIcon={<Send2 />}
@@ -88,7 +86,6 @@ const ActionDrawer = () => {
       />
     </Button>
   );
-
   const RecommendTo = () => (
     <Button
       leftIcon={<Send2 />}
@@ -108,7 +105,6 @@ const ActionDrawer = () => {
       />
     </Button>
   );
-
   const CloseMenu = () => {
     const handleClick = () => {
       isOpen && !sendMenu.isOpen ? onClose() : sendMenu.onClose();
@@ -127,7 +123,6 @@ const ActionDrawer = () => {
       </Button>
     );
   };
-
   return (
     <>
       <Drawer

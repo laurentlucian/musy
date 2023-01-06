@@ -60,9 +60,10 @@ model Settings {
   user   Profile @relation(fields: [userId], references: [userId])
   userId String  @unique
 
-  autoscroll Boolean @default(true)
-  isPrivate  Boolean @default(false)
-  allowQueue String  @default("on")
+  autoscroll     Boolean @default(true)
+  isPrivate      Boolean @default(false)
+  allowQueue     String  @default("on")
+  allowRecommend String  @default("on")
   // theme String @default("light")
 }
 

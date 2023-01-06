@@ -3,7 +3,7 @@ import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import { useTypedFetcher } from 'remix-typedjson';
 import type { action } from '~/routes/$id/add';
 
-const QueueSettings = (allowQueue: { allowQueue: string }) => {
+const RecommendSettings = (allowRecommend: { allowRecommend: string }) => {
   const fetcher = useTypedFetcher<typeof action>();
   const onChange = (value: string) => {
     fetcher.submit({ 'allow-queue': value }, { replace: true, method: 'post' });
@@ -14,8 +14,8 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
     { name: 'link', value: 'link' },
   ];
   const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'allow-queue',
-    defaultValue: allowQueue.allowQueue,
+    name: 'allow-recommend',
+    defaultValue: allowRecommend.allowRecommend,
     onChange: (value) => onChange(value),
   });
   const group = getRootProps();
@@ -27,8 +27,8 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
         justifyContent="space-between"
         gap={['10px', null, '20px']}
       >
-        <FormLabel htmlFor="allow-queue" mb="0">
-          allow queue
+        <FormLabel htmlFor="allow-recommend" mb="0">
+          allow recommendations
         </FormLabel>
         <SimpleGrid columns={[1, null, 3]} gap={4} {...group} p={0} m={0}>
           {options.map(({ value, name }) => {
@@ -44,4 +44,4 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
     </>
   );
 };
-export default QueueSettings;
+export default RecommendSettings;

@@ -12,15 +12,16 @@ import {
   FormLabel,
   FormControl,
 } from '@chakra-ui/react';
-import { Form, useSubmit } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
-import { Logout } from 'iconsax-react';
-import { useRef } from 'react';
-import invariant from 'tiny-invariant';
+import RecommendSettings from '~/components/settings/RecommendSettings';
 import QueueSettings from '~/components/settings/QueueSettings';
-import useSessionUser from '~/hooks/useSessionUser';
+import type { ActionArgs } from '@remix-run/server-runtime';
 import { authenticator } from '~/services/auth.server';
+import useSessionUser from '~/hooks/useSessionUser';
+import { Form, useSubmit } from '@remix-run/react';
 import { prisma } from '~/services/db.server';
+import { Logout } from 'iconsax-react';
+import invariant from 'tiny-invariant';
+import { useRef } from 'react';
 
 const Account = () => {
   const currentUser = useSessionUser();
@@ -50,6 +51,7 @@ const Account = () => {
           />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
+        <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
         <FormControl display="flex" alignItems="center">
           <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0">
             auto scroll
