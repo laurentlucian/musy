@@ -1,13 +1,15 @@
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, HStack, Image, Stack, Text, Button } from '@chakra-ui/react';
+import type { action } from '~/routes/$id/removeRecommend';
 import explicitImage from '~/assets/explicit-solid.svg';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import type { ChakraProps } from '@chakra-ui/react';
+import { Link, useParams } from '@remix-run/react';
+import { useTypedFetcher } from 'remix-typedjson';
+import type { Track } from '~/lib/types/types';
 import type { Profile } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
-import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
-import { useDrawerActions } from '~/hooks/useDrawer';
-import type { Track } from '~/lib/types/types';
 
 type TileProps = {
   uri: string;
@@ -24,6 +26,7 @@ type TileProps = {
   createdBy?: Profile | null;
   createdAt?: Date;
   playlist?: Boolean;
+  recommend?: boolean;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -38,6 +41,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
+      recommend,
       createdAt,
       createdBy,
       playlist,
@@ -62,9 +66,16 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artistUri,
       explicit,
     };
+    const fetcher = useTypedFetcher<typeof action>();
+    const { id } = useParams();
+    const removeFromRecommended = () => {
+      const action = `/${id}/removeRecommend`;
+      fetcher.submit({ trackId }, { replace: true, method: 'post', action });
+    };
+
     return (
       <>
-        <Stack ref={ref} flex="0 0 200px" {...props} onClick={() => onOpen(track)} cursor="pointer">
+        <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
           <Flex direction="column">
             {createdAt && (
               <HStack align="center" h="35px">
@@ -89,7 +100,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               </HStack>
             )}
             {albumUri ? (
-              //<LinkB href={albumUri} target="_blank">
               <Tooltip label={albumName} placement="top-start">
                 <Image
                   boxSize="200px"
@@ -97,10 +107,10 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   src={image}
                   borderRadius={5}
                   draggable={false}
+                  onClick={() => onOpen(track)}
                 />
               </Tooltip>
             ) : (
-              //</LinkB>
               <Tooltip label={albumName} placement="top-start">
                 <Image
                   boxSize="200px"
@@ -108,27 +118,24 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   src={image}
                   borderRadius={5}
                   draggable={false}
+                  onClick={() => onOpen(track)}
                 />
               </Tooltip>
             )}
           </Flex>
           <Flex justify="space-between">
-            <Stack spacing={0}>
-              {/* <LinkB href={uri} target="_blank"> */}
+            <Stack spacing={0} onClick={() => onOpen(track)}>
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>
-              {/* </LinkB> */}
               {artist && (
                 <Flex align="center">
                   {explicit && <Image src={explicitImage} mr={1} w="19px" />}
                   {artistUri ? (
-                    // <LinkB href={artistUri} target="_blank">
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
                       {artist}
                     </Text>
                   ) : (
-                    // </LinkB>
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
                       {decodeHtmlEntity(artist)}
                     </Text>
@@ -136,6 +143,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
+            {recommend && <Button onClick={removeFromRecommended}>-</Button>}
           </Flex>
         </Stack>
         {/* {!playlist && trackId && (

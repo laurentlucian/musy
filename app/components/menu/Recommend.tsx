@@ -20,7 +20,7 @@ const Recommend = ({ userId, user }: RecommendProps) => {
   const { pathname, search } = useLocation();
   const track = useDrawerTrack();
 
-  const AddToRecommended = () => {
+  const addToRecommended = () => {
     if (!currentUser) {
       // @todo figure out a better way to require authentication on click;
       // after authentication redirect, add to queue isn't successful. user needs to click again
@@ -72,7 +72,7 @@ const Recommend = ({ userId, user }: RecommendProps) => {
   return (
     <>
       <Button
-        onClick={AddToRecommended}
+        onClick={addToRecommended}
         isDisabled={!!isDone || !!isError || !!isAdding}
         variant="ghost"
         justifyContent="left"

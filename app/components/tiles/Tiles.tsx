@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { ChakraProps, StackProps } from '@chakra-ui/react';
+import type { StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
 import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
 import ScrollButtons from './ScrollButtons';
