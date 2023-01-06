@@ -78,7 +78,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
   return (
     <>
       {user ? (
-        <Button
+        <Button // button to add to your friend's queue
           onClick={addToQueue}
           isDisabled={!!isDone || !!isError || !!isAdding}
           variant="ghost"
@@ -100,7 +100,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           {isAdding ? <Waver /> : text}
         </Button>
       ) : (
-        <Button
+        <Button // button to add to your own queue
           onClick={addToQueue}
           leftIcon={icon}
           isDisabled={!!isDone || !!isError || !!isAdding}

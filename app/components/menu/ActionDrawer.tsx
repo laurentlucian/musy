@@ -47,8 +47,12 @@ const ActionDrawer = () => {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const isOwnProfile = currentUser?.userId === id;
-  const users = allUsers.filter((user) => {
+  const queueableUsers = allUsers.filter((user) => {
     const isAllowed = user.settings === null || user.settings.allowQueue === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
+  const recommendableUsers = allUsers.filter((user) => {
+    const isAllowed = user.settings === null;
     return user.userId !== currentUser?.userId && isAllowed;
   });
   const isSmallScreen = useIsMobile();
@@ -64,6 +68,8 @@ const ActionDrawer = () => {
     if (sendList && sendMenu.isOpen) {
       sendMenu.onClose();
     } else sendMenu.onOpen();
+    console.log(allUsers);
+    console.log(queueableUsers);
   };
 
   const SendTo = () => (
@@ -144,7 +150,7 @@ const ActionDrawer = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader></DrawerHeader>
-          <DrawerBody overflow="hidden">
+          <DrawerBody>
             <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
@@ -258,17 +264,17 @@ const ActionDrawer = () => {
                         <Stack align="center">
                           {!sendList ? (
                             <Stack>
-                              {!isOwnProfile && id && track && (
+                              {/* {!isOwnProfile && id && track && (
                                 <AddQueue
                                   track={{
                                     trackId: track.trackId,
                                   }}
                                   user={user}
                                 />
-                              )}
+                              )} */}
 
                               {track &&
-                                users.map((user) => (
+                                queueableUsers.map((user) => (
                                   <AddQueue
                                     key={user.userId}
                                     track={{
@@ -282,7 +288,9 @@ const ActionDrawer = () => {
                           ) : (
                             <Stack>
                               {track &&
-                                users.map((user) => <Recommend key={user.userId} user={user} />)}
+                                recommendableUsers.map((user) => (
+                                  <Recommend key={user.userId} user={user} />
+                                ))}
                             </Stack>
                           )}
                         </Stack>
@@ -294,20 +302,20 @@ const ActionDrawer = () => {
                   </Drawer>
                 ) : (
                   <SlideFade in={sendMenu.isOpen} offsetY="-20px">
-                    <Box overflowY="scroll" h="390px">
+                    <Box overflowY="scroll" h="330px">
                       {!sendList ? (
                         <Stack>
-                          {!isOwnProfile && id && track && (
+                          {/* {!isOwnProfile && id && track && (
                             <AddQueue
                               track={{
                                 trackId: track.trackId,
                               }}
                               user={user}
                             />
-                          )}
+                          )} */}
 
                           {track &&
-                            users.map((user) => (
+                            queueableUsers.map((user) => (
                               <AddQueue
                                 key={user.userId}
                                 track={{
@@ -320,7 +328,9 @@ const ActionDrawer = () => {
                       ) : (
                         <Stack>
                           {track &&
-                            users.map((user) => <Recommend key={user.userId} user={user} />)}
+                            recommendableUsers.map((user) => (
+                              <Recommend key={user.userId} user={user} />
+                            ))}
                         </Stack>
                       )}
                     </Box>
