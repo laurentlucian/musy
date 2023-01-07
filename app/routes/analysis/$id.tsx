@@ -119,7 +119,7 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   const { track, analysis } = data;
   if (!track || !analysis) {
     return {
-      title: 'Musy Analysis',
+      title: 'musy Analysis',
       description: `Song not found 🥁`,
     };
   }

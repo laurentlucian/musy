@@ -1,4 +1,4 @@
-## Musy
+## musy
 Spotify hub for friends.
 
 

@@ -183,16 +183,16 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   if (!data || data.length === 0) {
     return {
-      title: 'Musy Analysis',
-      description: `Musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+      title: 'musy Analysis',
+      description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
     };
   }
 
   const track = data[0];
 
   return {
-    title: `${track?.name} | Musy Analysis`,
-    description: `Musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+    title: `${track?.name} | musy Analysis`,
+    description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
   };
 };
 
