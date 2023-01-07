@@ -39,10 +39,10 @@ const Playlists = ({
   }, [initialPlaylists]);
 
   if (!playlists) return null;
-
+  const scrollButtons = playlists.length > 5;
   return (
     <Stack spacing={3}>
-      <Tiles title="Playlists" scrollButtons>
+      <Tiles title="Playlists" scrollButtons={scrollButtons}>
         {playlists.map((list, index) => {
           const isLast = index === playlists.length - 1;
 

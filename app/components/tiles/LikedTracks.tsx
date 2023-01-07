@@ -35,10 +35,11 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
   }, [initialLiked]);
 
   if (!liked) return null;
+  const scrollButtons = liked.length > 5;
 
   return (
     <Stack spacing={3}>
-      <Tiles title="Liked" scrollButtons>
+      <Tiles title="Liked" scrollButtons={scrollButtons}>
         {liked.map(({ track }, index) => {
           const isLast = index === liked.length - 1;
 

@@ -132,16 +132,16 @@ const Profile = () => {
       </Stack>
       {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracks recent={recent} />
-      <LikedTracks liked={liked} />
+      {liked.length && <LikedTracks liked={liked} />}
       <TopTracks top={top} />
-      <Playlists playlists={playlists} />
+      {playlists.length && <Playlists playlists={playlists} />}
     </Stack>
   );
 };
 
 export const meta: MetaFunction = (props) => {
   return {
-    title: `Musy - ${props.data?.user?.name.split(' ')[0] ?? ''}`,
+    title: `musy - ${props.data?.user?.name.split(' ')[0] ?? ''}`,
   };
 };
 
