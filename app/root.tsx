@@ -20,6 +20,7 @@ import loading from './lib/styles/loading.css';
 import { prisma } from './services/db.server';
 import ActionDrawer from './components/menu/ActionDrawer';
 import MobileDrawer from './components/menu/MobileDrawer';
+import musylogo from '~/assets/musylogo.svg';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
@@ -101,6 +102,18 @@ export let links: LinksFunction = () => {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
     },
+    {
+      rel: 'icon',
+      href: musylogo,
+    },
+    {
+      rel: 'mask-icon',
+      href: musylogo,
+    },
+    {
+      rel: 'apple-touch-icon',
+      href: musylogo,
+    },
   ];
 };
 
@@ -154,7 +167,7 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
 export const ErrorBoundary = ({ error }: { error: Error }) => {
   console.error(error);
   return (
-    <Document title="Musy - Error">
+    <Document title="musy - Error">
       <ChakraProvider theme={theme}>
         <Layout authorized={false}>
           <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
@@ -182,7 +195,7 @@ export const CatchBoundary = () => {
   }
 
   return (
-    <Document title="Musy - Error">
+    <Document title="musy - Error">
       <ChakraProvider theme={theme}>
         <Layout authorized={false}>
           <Heading fontSize={['sm', 'md']}>
