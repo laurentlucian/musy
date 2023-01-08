@@ -14,15 +14,31 @@ import {
   DrawerFooter,
   Text,
   Box,
-  SlideFade,
+  // SlideFade,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
   Flex,
+  Input,
+  Collapse,
+  IconButton,
 } from '@chakra-ui/react';
-import { ArrowDown2, ArrowRight2, LinkCircle, Send2 } from 'iconsax-react';
+import {
+  ArrowDown2,
+  ArrowRight2,
+  CloseCircle,
+  LinkCircle,
+  RefreshCircle,
+  Send2,
+} from 'iconsax-react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import AnalyzeTrack from './AnalyzeTrack';
-import { useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from 'react';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
 import Recommend from './Recommend';
@@ -33,6 +49,7 @@ const ActionDrawer = () => {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [sendList, setSendList] = useState(false);
+  const [comment, setComment] = useState('');
   const { onClose } = useDrawerActions();
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
@@ -40,6 +57,11 @@ const ActionDrawer = () => {
   const sendMenu = useDisclosure();
   const allUsers = useUsers();
   const btnRef = useRef<HTMLButtonElement>(null);
+
+  const textOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setComment(event.target.value);
+  };
+
   const queueableUsers = allUsers.filter((user) => {
     const isAllowed =
       user.settings === null ||
@@ -294,40 +316,113 @@ const ActionDrawer = () => {
                     </Drawer>
                   </>
                 ) : (
-                  <SlideFade in={sendMenu.isOpen} offsetY="-20px">
-                    <Box overflowY="scroll" h="330px">
-                      {!sendList ? (
-                        <Stack>
-                          {/* {!isOwnProfile && id && track && (
-                            <AddQueue
-                              track={{
-                                trackId: track.trackId,
-                              }}
-                              user={user}
-                            />
-                          )} */}
+                  // <SlideFade in={sendMenu.isOpen} offsetY="-20px">
+                  //   <Box overflowY="scroll" h="330px">
+                  //     {!sendList ? (
+                  //       <Stack>
+                  //         {/* {!isOwnProfile && id && track && (
+                  //           <AddQueue
+                  //             track={{
+                  //               trackId: track.trackId,
+                  //             }}
+                  //             user={user}
+                  //           />
+                  //         )} */}
 
-                          {track &&
-                            queueableUsers.map((user) => (
-                              <AddQueue
-                                key={user.userId}
-                                track={{
-                                  trackId: track.trackId,
-                                }}
-                                user={user}
-                              />
-                            ))}
-                        </Stack>
-                      ) : (
-                        <Stack>
-                          {track &&
-                            recommendableUsers.map((user) => (
-                              <Recommend key={user.userId} user={user} />
-                            ))}
-                        </Stack>
-                      )}
-                    </Box>
-                  </SlideFade>
+                  //         {track &&
+                  //           queueableUsers.map((user) => (
+                  //             <AddQueue
+                  //               key={user.userId}
+                  //               track={{
+                  //                 trackId: track.trackId,
+                  //               }}
+                  //               user={user}
+                  //             />
+                  //           ))}
+                  //       </Stack>
+                  //     ) : (
+                  //       <Stack>
+                  //         {track &&
+                  //           recommendableUsers.map((user) => (
+                  //             <Recommend key={user.userId} user={user} />
+                  //           ))}
+                  //       </Stack>
+                  //     )}
+                  //   </Box>
+                  // </SlideFade>
+                  <>
+                    <Modal
+                      isCentered
+                      onClose={sendMenu.onClose}
+                      isOpen={sendMenu.isOpen}
+                      motionPreset="slideInBottom"
+                    >
+                      <ModalOverlay />
+                      <ModalContent>
+                        <ModalHeader alignSelf="center">
+                          {sendList ? 'Recommend' : 'Queue'}
+                          <IconButton
+                            aria-label={`switch to ${sendList ? 'recommend' : 'queue'}`}
+                            icon={<RefreshCircle />}
+                            onClick={() => setSendList(!sendList)}
+                            pos="absolute"
+                            right="40px"
+                          />
+                          <IconButton
+                            aria-label="close"
+                            icon={<CloseCircle />}
+                            onClick={sendMenu.onClose}
+                            pos="absolute"
+                            right="10px"
+                          />
+                        </ModalHeader>
+                        <ModalBody>
+                          <Box overflowY="scroll" h="330px">
+                            {!sendList ? (
+                              <Stack overflowX="hidden">
+                                {track &&
+                                  queueableUsers.map((user) => (
+                                    <AddQueue
+                                      key={user.userId}
+                                      track={{
+                                        trackId: track.trackId,
+                                      }}
+                                      user={user}
+                                    />
+                                  ))}
+                              </Stack>
+                            ) : (
+                              <Stack overflowX="hidden">
+                                {track &&
+                                  recommendableUsers.map((user) => (
+                                    <Recommend key={user.userId} user={user} comment={comment} />
+                                  ))}
+                              </Stack>
+                            )}
+                          </Box>
+                        </ModalBody>
+                        <ModalFooter
+                          flexDirection="column"
+                          h={sendList ? '100px' : 'auto'}
+                          justifyContent="space-between"
+                          mx="-12px"
+                        >
+                          <Collapse in={sendList} animateOpacity>
+                            <Input
+                              variant="unstyled"
+                              placeholder="add comment..."
+                              w="425px"
+                              name="comment"
+                              onChange={textOnChange}
+                            />
+                          </Collapse>
+                          <Button  w="100%" onClick={sendMenu.onClose}>
+                            send
+                          </Button>
+                        </ModalFooter>
+                      </ModalContent>
+                    </Modal>
+                  </>
                 )}
               </Stack>
             </Stack>

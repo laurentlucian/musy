@@ -166,6 +166,7 @@ model RecommendedSongs {
   ownerId   String
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
+  comment   String?
 
   trackId   String
   uri       String
@@ -177,8 +178,7 @@ model RecommendedSongs {
   artistUri String?
   explicit  Boolean
 
-  // can be anonymous
-  user   Profile? @relation(fields: [userId], references: [userId])
-  userId String?
-  action String   @default("recommend")
+  sender   Profile @relation(fields: [senderId], references: [userId])
+  senderId String
+  action   String  @default("recommend")
 }

@@ -2,8 +2,10 @@ import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 import { extendTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-import { Menu } from './components/Menu';
 import { Drawer } from './components/Drawer';
+import { Modal } from './components/Modal';
+import { Menu } from './components/Menu';
+
 import colors from './foundations/colors';
 import Button from './components/Button';
 import Input from './components/Input';
@@ -47,6 +49,7 @@ export const theme = extendTheme({
     Input,
     Menu,
     Drawer,
+    Modal,
   },
   colors,
 });

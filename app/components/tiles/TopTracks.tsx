@@ -41,10 +41,11 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       </HStack>
     </Form>
   );
+  const scrollButtons = top.length > 5;
 
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
-      <Tiles title="Top" scrollButtons={true} Filter={Filter}>
+      <Tiles title="Top" scrollButtons={scrollButtons} Filter={Filter}>
         {top.map((track) => {
           return (
             <Tile

@@ -1,18 +1,19 @@
 import { useLocation, useParams, useSubmit } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 import { useTypedFetcher } from 'remix-typedjson';
 import { Button, Image } from '@chakra-ui/react';
 import type { action } from '~/routes/$id/add';
 import type { Profile } from '@prisma/client';
 import Waver from '../Waver';
-import { useDrawerTrack } from '~/hooks/useDrawer';
 
 type RecommendProps = {
   userId?: string;
   user: Profile | null;
+  comment?: string;
 };
 
-const Recommend = ({ userId, user }: RecommendProps) => {
+const Recommend = ({ userId, user, comment }: RecommendProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
@@ -38,6 +39,7 @@ const Recommend = ({ userId, user }: RecommendProps) => {
     const sendToUserId = id;
 
     const data = {
+      comment: comment ?? ``,
       trackId: track?.trackId ?? '',
       uri: track?.uri ?? '',
       name: track?.name ?? '',
@@ -80,7 +82,6 @@ const Recommend = ({ userId, user }: RecommendProps) => {
         py="30px"
         w={['100vw', '550px']}
         mt="10px"
-        color="music.200"
       >
         <Image src={user?.image} borderRadius="full" boxSize="50px" minW="50px" mb={1} mr="10px" />
         {isAdding ? <Waver /> : text}

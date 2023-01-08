@@ -31,7 +31,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     artist,
     artistUri,
     explicit: explicit ? true : false,
-    userId: fromUserId !== '' ? fromUserId : null,
+    senderId: fromUserId,
     action,
   };
 
