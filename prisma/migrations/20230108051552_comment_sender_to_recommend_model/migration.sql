@@ -1,11 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `userId` on the `RecommendedSongs` table. All the data in the column will be lost.
-  - Added the required column `senderId` to the `RecommendedSongs` table without a default value. This is not possible if the table is not empty.
-
-*/
--- RedefineTables
 PRAGMA foreign_keys=OFF;
 CREATE TABLE "new_RecommendedSongs" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +19,7 @@ CREATE TABLE "new_RecommendedSongs" (
     CONSTRAINT "RecommendedSongs_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "RecommendedSongs_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_RecommendedSongs" ("action", "albumName", "albumUri", "artist", "artistUri", "createdAt", "explicit", "id", "image", "name", "ownerId", "pending", "trackId", "uri") SELECT "action", "albumName", "albumUri", "artist", "artistUri", "createdAt", "explicit", "id", "image", "name", "ownerId", "pending", "trackId", "uri" FROM "RecommendedSongs";
+INSERT INTO "new_RecommendedSongs" ("action", "albumName", "albumUri", "artist", "artistUri", "createdAt", "explicit", "id", "image", "name", "ownerId", "pending", "trackId", "uri", "senderId") SELECT "action", "albumName", "albumUri", "artist", "artistUri", "createdAt", "explicit", "id", "image", "name", "ownerId", "pending", "trackId", "uri", "userId" FROM "RecommendedSongs";
 DROP TABLE "RecommendedSongs";
 ALTER TABLE "new_RecommendedSongs" RENAME TO "RecommendedSongs";
 PRAGMA foreign_key_check;
