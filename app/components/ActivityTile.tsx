@@ -185,7 +185,7 @@ const ActivityTile = ({ track }: ActivityProps) => {
             </Tooltip>
           </Stack>
           <Tooltip label={track.name} placement="top-start">
-            <Image minW="70px" maxW="70px" src={track.image} />
+            <Image boxSize="70px" objectFit="cover" src={track.image} />
           </Tooltip>
         </HStack>
       </Stack>
