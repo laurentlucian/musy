@@ -1,4 +1,4 @@
-import { Progress, useColorModeValue, useInterval } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
@@ -10,46 +10,49 @@ const PlayerBar = ({
 }) => {
   const color = useColorModeValue('music.900', 'music.50');
   const { refresh } = useDataRefresh();
-  const refreshed = useRef(false);
-
-  const [current, setCurrent] = useState(0);
-
-  const active = playback.is_playing;
-  const duration = playback.item?.duration_ms ?? 0;
-  const progress = playback.progress_ms ?? 0;
-  const percentage = duration ? (current / duration) * 100 : 0;
+  const [shouldRefresh, setToRefresh] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number>();
 
   useEffect(() => {
-    setCurrent(progress);
-    refreshed.current = false;
-  }, [progress]);
+    if (shouldRefresh) {
+      refresh();
+    }
+  }, [shouldRefresh, refresh]);
 
-  // simulating a seek bar tick
-  useInterval(
-    () => {
-      if (!duration) return null;
-      // ref prevents from refreshing again before new data has hydrated; might loop otherwise
-      if (current > duration && !refreshed.current) {
-        refresh();
-        refreshed.current = true;
+  const progress = playback.progress_ms ?? 0;
+  const duration = playback.item?.duration_ms ?? 0;
+
+  useEffect(() => {
+    const step = (timestamp: number) => {
+      if (!boxRef.current) return;
+
+      const current = progress + timestamp; // add time elapsed to always get current progress
+      const percentage = (current / duration) * 100;
+
+      if (percentage <= 100) {
+        boxRef.current.style.width = `${percentage}%`;
       }
-      setCurrent((prev) => prev + 1000);
-    },
-    active ? 1000 : null,
-  );
-  return (
-    <Progress
-      sx={{
-        '> div': {
-          backgroundColor: color,
-        },
-      }}
-      background="transparent"
-      borderBottomRightRadius={2}
-      h="2px"
-      value={percentage}
-    />
-  );
+
+      if (percentage >= 101) {
+        // 100 fetches too early?
+        setToRefresh(true);
+      } else {
+        requestRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    requestRef.current && cancelAnimationFrame(requestRef.current); // reset timestamp for new track
+    requestRef.current = requestAnimationFrame(step);
+
+    return () => {
+      requestRef.current && cancelAnimationFrame(requestRef.current);
+    };
+  }, [duration, progress]);
+
+  const initial = `${(progress / duration) * 100}%`;
+
+  return <Box ref={boxRef} h="2px" background={color} width={initial} />;
 };
 
 export default PlayerBar;
