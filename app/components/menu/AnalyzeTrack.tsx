@@ -16,6 +16,7 @@ const AnalyzeTrack = ({ trackId }: { trackId: string }) => {
       justifyContent="left"
       w={['100vw', '550px']}
       color="music.200"
+      _hover={{ color: 'white' }}
     >
       {isLoading ? <Waver /> : 'Analyze'}
     </Button>

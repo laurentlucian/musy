@@ -57,6 +57,7 @@ const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
       justifyContent="left"
       w={['100vw', '550px']}
       color="music.200"
+      _hover={{ color: 'white' }}
     >
       {isSaved ? 'Remove' : 'Save'}
     </Button>

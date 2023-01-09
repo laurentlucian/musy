@@ -99,6 +99,7 @@ const ActionDrawer = () => {
       w={['100vw', '550px']}
       justifyContent="left"
       color="music.200"
+      _hover={{ color: 'white' }}
     >
       Add to Friends Queue
       <Icon
@@ -118,6 +119,7 @@ const ActionDrawer = () => {
       w={['100vw', '550px']}
       justifyContent="left"
       color="music.200"
+      _hover={{ color: 'white' }}
     >
       Recommend to Friend
       <Icon
