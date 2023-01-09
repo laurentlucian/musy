@@ -177,6 +177,7 @@ const ActionDrawer = () => {
                         src={track.image}
                         alignSelf="center"
                         mr={['0', '25px']}
+                        mt={[0, '100px']}
                       />
                     </Link>
                   )}
