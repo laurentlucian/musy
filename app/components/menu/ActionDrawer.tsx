@@ -356,6 +356,7 @@ const ActionDrawer = () => {
                       onClose={sendMenu.onClose}
                       isOpen={sendMenu.isOpen}
                       motionPreset="slideInBottom"
+                      preserveScrollBarGap
                     >
                       <ModalOverlay />
                       <ModalContent>
@@ -416,7 +417,7 @@ const ActionDrawer = () => {
                               onChange={textOnChange}
                             />
                           </Collapse>
-                          <Button  w="100%" onClick={sendMenu.onClose}>
+                          <Button w="100%" onClick={sendMenu.onClose}>
                             send
                           </Button>
                         </ModalFooter>
