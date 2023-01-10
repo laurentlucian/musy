@@ -34,10 +34,12 @@ import {
   Send2,
 } from 'iconsax-react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import useSessionUser from '~/hooks/useSessionUser';
-import useIsMobile from '~/hooks/useIsMobile';
-import AnalyzeTrack from './AnalyzeTrack';
 import { type ChangeEvent, useRef, useState } from 'react';
+import useSessionUser from '~/hooks/useSessionUser';
+import useParamUser from '~/hooks/useParamUser';
+import useIsMobile from '~/hooks/useIsMobile';
+import { useParams } from '@remix-run/react';
+import AnalyzeTrack from './AnalyzeTrack';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
 import Recommend from './Recommend';
@@ -56,6 +58,10 @@ const ActionDrawer = () => {
   const sendMenu = useDisclosure();
   const allUsers = useUsers();
   const btnRef = useRef<HTMLButtonElement>(null);
+
+  const { id } = useParams();
+  const user = useParamUser();
+  const isOwnProfile = currentUser?.userId === id;
 
   const textOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setComment(event.target.value);
@@ -281,14 +287,14 @@ const ActionDrawer = () => {
                           <Stack align="center">
                             {!sendList ? (
                               <Stack>
-                                {/* {!isOwnProfile && id && track && (
+                                {!isOwnProfile && id && track && (
                                   <AddQueue
                                     track={{
                                       trackId: track.trackId,
                                     }}
                                     user={user}
                                   />
-                                )} */}
+                                )}
                                 {track &&
                                   queueableUsers.map((user) => (
                                     <AddQueue
@@ -305,7 +311,11 @@ const ActionDrawer = () => {
                               <Stack>
                                 {track &&
                                   recommendableUsers.map((user) => (
-                                    <Recommend key={user.userId} user={user} />
+                                    <Recommend
+                                      key={user.userId}
+                                      user={user}
+                                      // users={recommendableUsers}
+                                    />
                                   ))}
                               </Stack>
                             )}
@@ -383,6 +393,14 @@ const ActionDrawer = () => {
                           <Box overflowY="scroll" h="330px">
                             {!sendList ? (
                               <Stack overflowX="hidden">
+                                {!isOwnProfile && id && track && (
+                                  <AddQueue
+                                    track={{
+                                      trackId: track.trackId,
+                                    }}
+                                    user={user}
+                                  />
+                                )}
                                 {track &&
                                   queueableUsers.map((user) => (
                                     <AddQueue
