@@ -14,7 +14,6 @@ import {
   DrawerFooter,
   Text,
   Box,
-  // SlideFade,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -421,7 +420,7 @@ const ActionDrawer = () => {
                             />
                           </Collapse>
                           <Button w="100%" onClick={sendMenu.onClose}>
-                            send
+                            {sendList ? 'send' : 'queue'}
                           </Button>
                         </ModalFooter>
                       </ModalContent>
