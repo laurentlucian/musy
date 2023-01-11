@@ -55,57 +55,48 @@ const upsertPlayback = async (
   console.log('playbackQ -> prisma & job created', userId);
 };
 
-export const playbackQ = Queue<{ userId: string }>(
-  'playback',
-  async (job) => {
-    const { userId } = job.data;
-    const removeJob = async () => {
-      const jobKey = job.repeatJobKey;
-      if (jobKey) {
-        await playbackQ.removeRepeatableByKey(jobKey);
-      }
-      await prisma.playback.delete({ where: { userId } });
-      console.log(`playbackQ ${userId} removed`);
-    };
-
-    console.log('playbackQ -> pending job starting...', userId);
-    const profile = await prisma.user.findUnique({
-      where: { id: userId },
-      include: { user: true },
-    });
-
-    const { spotify } = await spotifyApi(userId);
-
-    if (!profile || !profile.user || !spotify) {
-      console.log(`playbackQ ${userId} removed -> user not found`);
-      await removeJob();
-      return null;
+export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
+  const { userId } = job.data;
+  const removeJob = async () => {
+    const jobKey = job.repeatJobKey;
+    if (jobKey) {
+      await playbackQ.removeRepeatableByKey(jobKey);
     }
+    await prisma.playback.delete({ where: { userId } });
+    console.log(`playbackQ ${userId} removed`);
+  };
 
-    const { body: playback } = await spotify.getMyCurrentPlaybackState();
-    if (!playback) {
-      console.log('playbackQ -> not playing', userId);
-      return null;
-    }
-    const { item: track, progress_ms } = playback;
+  console.log('playbackQ -> pending job starting...', userId);
+  const profile = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { user: true },
+  });
 
-    if (!track || track.type !== 'track' || !progress_ms || !playback.is_playing) {
-      console.log('playbackQ -> playing a podcast/episode', userId);
-      await removeJob();
-      return null;
-    }
+  const { spotify } = await spotifyApi(userId);
 
-    console.log('playbackQ -> user', userId, 'track', track.name);
-    await upsertPlayback(userId, track, progress_ms, playback.timestamp);
-    console.log('playbackQ -> completed', userId);
-  },
-  {
-    limiter: {
-      max: 2,
-      duration: minutesToMs(0.5),
-    },
-  },
-);
+  if (!profile || !profile.user || !spotify) {
+    console.log(`playbackQ ${userId} removed -> user not found`);
+    await removeJob();
+    return null;
+  }
+
+  const { body: playback } = await spotify.getMyCurrentPlaybackState();
+  if (!playback) {
+    console.log('playbackQ -> not playing', userId);
+    return null;
+  }
+  const { item: track, progress_ms } = playback;
+
+  if (!track || track.type !== 'track' || !progress_ms || !playback.is_playing) {
+    console.log('playbackQ -> playing a podcast/episode', userId);
+    await removeJob();
+    return null;
+  }
+
+  console.log('playbackQ -> user', userId, 'track', track.name);
+  await upsertPlayback(userId, track, progress_ms, playback.timestamp);
+  console.log('playbackQ -> completed', userId);
+});
 
 const getPlaybackState = async (id: string) => {
   try {
