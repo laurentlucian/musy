@@ -3,6 +3,7 @@ import { extendTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
 import { Drawer } from './components/Drawer';
+import { Avatar } from './components/Avatar';
 import { Modal } from './components/Modal';
 import { Menu } from './components/Menu';
 
@@ -47,9 +48,10 @@ export const theme = extendTheme({
   components: {
     Button,
     Input,
-    Menu,
     Drawer,
+    Avatar,
     Modal,
+    Menu,
   },
   colors,
 });
