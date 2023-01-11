@@ -80,6 +80,7 @@ model AI {
 }
 
 model Party {
+  // refactor to be a self relation on the Profile model
   owner        User   @relation(fields: [ownerId], references: [id])
   ownerId      String
   currentTrack String
@@ -101,6 +102,7 @@ model Queue {
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
 
+  track     Track?  @relation(fields: [trackId], references: [id])
   trackId   String?
   uri       String
   name      String
@@ -110,6 +112,7 @@ model Queue {
   artist    String
   artistUri String?
   explicit  Boolean
+  duration  Int     @default(0)
 
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
@@ -121,6 +124,7 @@ model LikedSongs {
   id      Int      @id @default(autoincrement())
   likedAt DateTime @default(now())
 
+  track     Track?  @relation(fields: [trackId], references: [id])
   trackId   String
   uri       String
   name      String
@@ -130,6 +134,7 @@ model LikedSongs {
   artist    String
   artistUri String?
   explicit  Boolean
+  duration  Int     @default(0)
 
   user   Profile? @relation(fields: [userId], references: [userId])
   userId String?
@@ -142,20 +147,21 @@ model RecentSongs {
   id       Int      @id @default(autoincrement())
   playedAt DateTime @default(now())
 
+  track     Track?  @relation(fields: [trackId], references: [id])
   trackId   String
   uri       String
   name      String
   image     String
-  albumUri  String
-  albumName String
+  albumUri  String?
+  albumName String?
   artist    String
-  artistUri String
+  artistUri String?
   explicit  Boolean
   duration  Int     @default(0)
 
   user   Profile @relation(fields: [userId], references: [userId])
   userId String
-  action String  @default("liked")
+  action String  @default("recent")
 
   @@unique([playedAt, userId])
 }
@@ -168,6 +174,7 @@ model RecommendedSongs {
   pending   Boolean  @default(false)
   comment   String?
 
+  track     Track?  @relation(fields: [trackId], references: [id])
   trackId   String
   uri       String
   name      String
@@ -177,8 +184,27 @@ model RecommendedSongs {
   artist    String
   artistUri String?
   explicit  Boolean
+  duration  Int     @default(0)
 
   sender   Profile @relation(fields: [senderId], references: [userId])
   senderId String
   action   String  @default("recommend")
+}
+
+model Track {
+  id        String  @id @unique
+  uri       String
+  name      String
+  image     String
+  albumUri  String
+  albumName String
+  artist    String
+  artistUri String
+  explicit  Boolean
+  duration  Int
+
+  queue       Queue[]
+  liked       LikedSongs[]
+  recent      RecentSongs[]
+  recommended RecommendedSongs[]
 }

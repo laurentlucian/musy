@@ -61,3 +61,16 @@ export const msToString = (ms: number) => {
     return `${Math.floor(ms / 3600000)}h`;
   }
 };
+
+export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
+  id: track.id,
+  uri: track.uri,
+  name: track.name,
+  image: track.album.images[0].url,
+  albumName: track.album.name,
+  albumUri: track.album.uri,
+  artist: track.artists[0].name,
+  artistUri: track.artists[0].uri,
+  explicit: track.explicit,
+  duration: track.duration_ms,
+});

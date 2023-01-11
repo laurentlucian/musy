@@ -1,6 +1,6 @@
 import type { LikedSongs, RecentSongs } from '@prisma/client';
 import invariant from 'tiny-invariant';
-import { isProduction, minutesToMs } from '~/lib/utils';
+import { createTrackModel, isProduction, minutesToMs, notNull } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
@@ -32,10 +32,10 @@ export const userQ = Queue<{ userId: string }>(
       body: { items: recent },
     } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
     for (const { track, played_at } of recent) {
-      const song: Omit<RecentSongs, 'id'> = {
-        trackId: track.id,
+      const trackDb = createTrackModel(track);
+      const data = {
         playedAt: new Date(played_at),
-        userId: userId,
+
         name: track.name,
         uri: track.uri,
         albumName: track.album.name,
@@ -46,17 +46,33 @@ export const userQ = Queue<{ userId: string }>(
         explicit: track.explicit,
         duration: track.duration_ms,
         action: 'played',
+
+        user: {
+          connect: {
+            userId,
+          },
+        },
       };
 
       await prisma.recentSongs.upsert({
         where: {
           playedAt_userId: {
-            playedAt: song.playedAt,
+            playedAt: data.playedAt,
             userId: userId,
           },
         },
-        update: song,
-        create: song,
+        update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+        create: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
+          },
+        },
       });
     }
 
@@ -66,10 +82,10 @@ export const userQ = Queue<{ userId: string }>(
     } = await spotify.getMySavedTracks({ limit: 50 });
 
     for (const { track, added_at } of liked) {
-      const song: Omit<LikedSongs, 'id'> = {
-        trackId: track.id,
+      const trackDb = createTrackModel(track);
+
+      const data = {
         likedAt: new Date(added_at),
-        userId: userId,
         name: track.name,
         uri: track.uri,
         albumName: track.album.name,
@@ -78,7 +94,14 @@ export const userQ = Queue<{ userId: string }>(
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        duration: track.duration_ms,
         action: 'liked',
+
+        user: {
+          connect: {
+            userId,
+          },
+        },
       };
 
       await prisma.likedSongs.upsert({
@@ -88,8 +111,18 @@ export const userQ = Queue<{ userId: string }>(
             userId: userId,
           },
         },
-        update: song,
-        create: song,
+        update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+        create: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
+          },
+        },
       });
     }
     console.log('userQ -> added liked tracks', userId);
@@ -144,12 +177,10 @@ export const userQ = Queue<{ userId: string }>(
             body: { items: liked },
           } = await spotify.getMySavedTracks({ limit, offset: i * limit });
           console.log('userQ -> adding page', i);
-
           for (const { track, added_at } of liked) {
-            const song: Omit<LikedSongs, 'id'> = {
-              trackId: track.id,
+            const trackDb = createTrackModel(track);
+            const data = {
               likedAt: new Date(added_at),
-              userId: userId,
               name: track.name,
               uri: track.uri,
               albumName: track.album.name,
@@ -158,7 +189,14 @@ export const userQ = Queue<{ userId: string }>(
               artistUri: track.artists[0].uri,
               image: track.album.images[0].url,
               explicit: track.explicit,
+              duration: track.duration_ms,
               action: 'liked',
+
+              user: {
+                connect: {
+                  userId,
+                },
+              },
             };
 
             await prisma.likedSongs.upsert({
@@ -168,8 +206,18 @@ export const userQ = Queue<{ userId: string }>(
                   userId: userId,
                 },
               },
-              update: song,
-              create: song,
+              update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+              create: {
+                ...data,
+                track: {
+                  connectOrCreate: {
+                    create: trackDb,
+                    where: {
+                      id: track.id,
+                    },
+                  },
+                },
+              },
             });
           }
         }
@@ -276,7 +324,7 @@ const addDurationToRecent = async () => {
   invariant(spotify, 'No spotify');
   const recent = await prisma.recentSongs.findMany();
 
-  const trackIdsDuplicates = recent.map((t) => t.trackId);
+  const trackIdsDuplicates = recent.map((t) => t.trackId).filter(notNull);
   const trackIds = Array.from(new Set(trackIdsDuplicates));
 
   console.log('trackIds', trackIds.length);

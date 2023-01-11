@@ -2,11 +2,17 @@ import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
+import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
+import { spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request, params }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
+  const { spotify } = await spotifyApi(id);
+  invariant(spotify, 'No access to API');
+
   const body = await request.formData();
   const trackId = body.get('trackId') as string;
   const fromUserId = body.get('fromId') as string;
@@ -20,9 +26,10 @@ export const action = async ({ request, params }: ActionArgs) => {
   const artistUri = body.get('artistUri') as string;
   const explicit = body.get('explicit') as string;
 
+  const { body: track } = await spotify.getTrack(trackId);
+  const trackDb = createTrackModel(track);
+
   const data = {
-    ownerId: id,
-    trackId,
     uri,
     name,
     image,
@@ -31,13 +38,33 @@ export const action = async ({ request, params }: ActionArgs) => {
     artist,
     artistUri,
     explicit: explicit ? true : false,
-    senderId: fromUserId,
     action,
+
+    sender: {
+      connect: {
+        userId: fromUserId,
+      },
+    },
+
+    owner: {
+      connect: {
+        id,
+      },
+    },
+
+    track: {
+      connectOrCreate: {
+        create: trackDb,
+        where: {
+          id: track.id,
+        },
+      },
+    },
   };
 
   if (id !== fromUserId) {
     try {
-      await prisma.recommendedSongs.create({ data: data });
+      await prisma.recommendedSongs.create({ data });
     } catch (error) {
       console.log('recommend -> error', error);
       return typedjson('failed to send');

@@ -2,6 +2,7 @@ import type { LikedSongs } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+import { createTrackModel } from '~/lib/utils';
 import { getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
@@ -10,9 +11,9 @@ export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
-  const data = await request.formData();
-  const trackId = data.get('trackId');
-  const isSaved = data.get('state') === 'true';
+  const form = await request.formData();
+  const trackId = form.get('trackId');
+  const isSaved = form.get('state') === 'true';
   const currentUser = await getCurrentUser(request);
 
   if (typeof trackId !== 'string' || !currentUser) {
@@ -23,10 +24,10 @@ export const action = async ({ request, params }: ActionArgs) => {
   if (!spotify) return typedjson('Error: no access to API');
 
   const { body: track } = await spotify.getTrack(trackId);
-  const song: Omit<LikedSongs, 'id'> = {
-    trackId: track.id,
+  const trackDb = createTrackModel(track);
+  const data = {
     likedAt: new Date(),
-    userId: currentUser.userId,
+
     name: track.name,
     uri: track.uri,
     albumName: track.album.name,
@@ -35,14 +36,29 @@ export const action = async ({ request, params }: ActionArgs) => {
     artistUri: track.artists[0].uri,
     image: track.album.images[0].url,
     explicit: track.explicit,
+    duration: track.duration_ms,
     action: 'liked',
+
+    user: {
+      connect: {
+        userId: currentUser.userId,
+      },
+    },
+    track: {
+      connectOrCreate: {
+        create: trackDb,
+        where: {
+          id: track.id,
+        },
+      },
+    },
   };
 
   const [isSavedCheck] = await getSavedStatus(id, trackId);
   if (isSavedCheck !== isSaved) {
     if (isSavedCheck) {
       await prisma.likedSongs.create({
-        data: song,
+        data: data,
       });
     } else {
       await prisma.likedSongs.delete({
@@ -77,7 +93,7 @@ export const action = async ({ request, params }: ActionArgs) => {
     try {
       await spotify.addToMySavedTracks([trackId]);
       await prisma.likedSongs.create({
-        data: song,
+        data,
       });
       return typedjson('Saved');
     } catch (error) {

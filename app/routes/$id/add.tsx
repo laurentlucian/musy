@@ -2,6 +2,7 @@ import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
+import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { activityQ } from '~/services/scheduler/jobs/activity';
 import { spotifyApi } from '~/services/spotify.server';
@@ -20,33 +21,39 @@ export const action = async ({ request, params }: ActionArgs) => {
   const { spotify } = await spotifyApi(id);
   if (!spotify) return typedjson('Error: no access to API');
 
-  const {
-    body: {
-      uri,
-      name,
-      album: {
-        images: [{ url: image }],
-        name: albumName,
-        uri: albumUri,
-      },
-      artists: [{ uri: artistUri, name: artist }],
-      explicit,
-    },
-  } = await spotify.getTrack(trackId);
+  const { body: track } = await spotify.getTrack(trackId);
+  const trackDb = createTrackModel(track);
 
-  const fields = {
-    trackId,
-    uri,
-    name,
-    image,
-    albumUri,
-    albumName,
-    artist,
-    artistUri,
-    explicit,
-    ownerId: id,
-    userId: fromUserId !== '' ? fromUserId : null,
+  const data = {
+    uri: track.uri,
+    name: track.name,
+    image: track.album.images[0].url,
+    albumUri: track.album.uri,
+    albumName: track.album.name,
+    artist: track.artists[0].name,
+    artistUri: track.artists[0].uri,
+    explicit: track.explicit,
     action,
+
+    user: {
+      connect: {
+        userId: fromUserId,
+      },
+    },
+    owner: {
+      connect: {
+        id,
+      },
+
+      track: {
+        connectOrCreate: {
+          create: trackDb,
+          where: {
+            id: track.id,
+          },
+        },
+      },
+    },
   };
 
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
@@ -54,9 +61,9 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   if (isPlaying) {
     try {
-      await spotify.addToQueue(uri);
+      await spotify.addToQueue(track.uri);
       if (id !== fromUserId) {
-        await prisma.queue.create({ data: fields });
+        await prisma.queue.create({ data });
       }
       return typedjson('Queued');
     } catch (error) {
@@ -67,7 +74,7 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   if (id !== fromUserId) {
     const activity = await prisma.queue.create({
-      data: { ...fields, pending: true },
+      data: { ...data, pending: true },
     });
     const res = await activityQ.add(
       'pending_activity',
