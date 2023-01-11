@@ -1,13 +1,9 @@
 import { Box, useColorModeValue } from '@chakra-ui/react';
+import type { Playback, Track } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
-const PlayerBar = ({
-  playback,
-}: {
-  playback: CurrentlyPlayingObjectCustom | SpotifyApi.CurrentlyPlayingResponse;
-}) => {
+const PlayerBar = ({ playback }: { playback: Playback & { track: Track } }) => {
   const color = useColorModeValue('music.900', 'music.50');
   const { refresh } = useDataRefresh();
   const [shouldRefresh, setToRefresh] = useState(false);
@@ -20,8 +16,8 @@ const PlayerBar = ({
     }
   }, [shouldRefresh, refresh]);
 
-  const progress = playback.progress_ms ?? 0;
-  const duration = playback.item?.duration_ms ?? 0;
+  const progress = playback.progress ?? 0;
+  const duration = playback.track?.duration ?? 0;
 
   useEffect(() => {
     const step = (timestamp: number) => {
@@ -48,7 +44,7 @@ const PlayerBar = ({
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, [duration, progress]);
+  }, [playback, duration, progress]);
 
   const initial = `${(progress / duration) * 100}%`;
 

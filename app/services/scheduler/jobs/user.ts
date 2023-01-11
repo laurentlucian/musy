@@ -1,10 +1,10 @@
-import type { LikedSongs, RecentSongs } from '@prisma/client';
 import invariant from 'tiny-invariant';
 import { createTrackModel, isProduction, minutesToMs, notNull } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
+import { playbackCreatorQ } from './playback';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
@@ -61,7 +61,17 @@ export const userQ = Queue<{ userId: string }>(
             userId: userId,
           },
         },
-        update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+        update: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
+          },
+        },
         create: {
           ...data,
           track: {
@@ -111,7 +121,17 @@ export const userQ = Queue<{ userId: string }>(
             userId: userId,
           },
         },
-        update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+        update: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
+          },
+        },
         create: {
           ...data,
           track: {
@@ -206,7 +226,17 @@ export const userQ = Queue<{ userId: string }>(
                   userId: userId,
                 },
               },
-              update: { ...data, track: { upsert: { create: trackDb, update: trackDb } } },
+              update: {
+                ...data,
+                track: {
+                  connectOrCreate: {
+                    create: trackDb,
+                    where: {
+                      id: track.id,
+                    },
+                  },
+                },
+              },
               create: {
                 ...data,
                 track: {
@@ -277,6 +307,8 @@ export const addUsersToQueue = async () => {
 
   await userQ.pause(); // pause all jobs before obliterating
   await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
+  await playbackCreatorQ.pause(); // pause all jobs before obliterating
+  await playbackCreatorQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
 
   // for testing
   // await userQ.add('update_liked', { userId: '1295028670' });
@@ -309,6 +341,16 @@ export const addUsersToQueue = async () => {
       },
     })),
   );
+
+  // create one repeateable job to loop through all active users and create playback jobs
+  await playbackCreatorQ.add('playback_creator', null, {
+    repeat: { every: minutesToMs(0.5) },
+    backoff: {
+      type: 'exponential',
+      delay: minutesToMs(0.5),
+    },
+  });
+  await playbackCreatorQ.add('playback_creator', null);
 
   console.log(
     'addUsersToQueue -> non repeateable jobs created (only at startup):',

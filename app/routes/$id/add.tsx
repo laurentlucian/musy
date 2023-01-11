@@ -44,13 +44,13 @@ export const action = async ({ request, params }: ActionArgs) => {
       connect: {
         id,
       },
+    },
 
-      track: {
-        connectOrCreate: {
-          create: trackDb,
-          where: {
-            id: track.id,
-          },
+    track: {
+      connectOrCreate: {
+        create: trackDb,
+        where: {
+          id: track.id,
         },
       },
     },
