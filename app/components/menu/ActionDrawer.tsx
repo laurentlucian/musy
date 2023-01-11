@@ -424,7 +424,7 @@ const ActionDrawer = () => {
                         </ModalBody>
                         <ModalFooter
                           flexDirection="column"
-                          h={sendList ? '100px' : 'auto'}
+                          h={sendList ? '69px' : 'auto'}
                           justifyContent="space-between"
                           mx="-12px"
                         >
@@ -437,9 +437,9 @@ const ActionDrawer = () => {
                               onChange={textOnChange}
                             />
                           </Collapse>
-                          <Button w="100%" onClick={sendMenu.onClose}>
+                          {/* <Button w="100%" onClick={sendMenu.onClose}>
                             {sendList ? 'send' : 'queue'}
-                          </Button>
+                          </Button> */}
                         </ModalFooter>
                       </ModalContent>
                     </Modal>
