@@ -10,6 +10,7 @@ type TilesProps = {
   autoScroll?: boolean;
   Filter?: ReactNode;
   scrollButtons?: boolean;
+  setShow?: React.Dispatch<React.SetStateAction<boolean>>;
 } & StackProps;
 
 const Tiles = ({
@@ -18,14 +19,22 @@ const Tiles = ({
   autoScroll,
   Filter = null,
   scrollButtons,
+  setShow,
   ...ChakraProps
 }: TilesProps) => {
   const { scrollRef, props } = useHorizontalScroll('reverse', autoScroll);
+  const onClick = () => {
+    if (setShow) setShow(true);
+  };
 
   return (
     <>
       <HStack spacing={5} align="center">
-        {title && <Heading fontSize={['xs', 'sm']}>{title}</Heading>}
+        {title && (
+          <Heading fontSize={['xs', 'sm']} onClick={onClick} cursor="pointer">
+            {title}
+          </Heading>
+        )}
 
         {Filter}
 

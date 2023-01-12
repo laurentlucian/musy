@@ -1,15 +1,7 @@
-import {
-  useColorMode,
-  Button,
-  Stack,
-  Text,
-  useRadioGroup,
-  HStack,
-  SimpleGrid,
-} from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useColorMode, Button, Stack, Text, useRadioGroup, SimpleGrid } from '@chakra-ui/react';
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
+import { useEffect, useState } from 'react';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 

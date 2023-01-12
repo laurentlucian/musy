@@ -1,12 +1,24 @@
-import { Stack } from '@chakra-ui/react';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Stack,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
+import useIsMobile from '~/hooks/useIsMobile';
 import useIsVisible from '~/hooks/useIsVisible';
+import Card from '../Card';
 import Tile from '../Tile';
 import Tiles from './Tiles';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
+  const [show, setShow] = useState(false);
   const { id } = useParams();
 
   const fetcher = useFetcher();
@@ -34,12 +46,15 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     setLiked(initialLiked);
   }, [initialLiked]);
 
+  const isSmallScreen = useIsMobile();
+  const { onClose } = useDisclosure();
+  const btnRef = useRef<HTMLButtonElement>(null);
   if (!liked) return null;
   const scrollButtons = liked.length > 5;
 
   return (
     <Stack spacing={3}>
-      <Tiles title="Liked" scrollButtons={scrollButtons}>
+      <Tiles title="Liked" scrollButtons={scrollButtons} setShow={setShow}>
         {liked.map(({ track }, index) => {
           const isLast = index === liked.length - 1;
 
@@ -62,6 +77,47 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
           );
         })}
       </Tiles>
+      <Drawer
+        size="full"
+        isOpen={show}
+        onClose={onClose}
+        placement="bottom"
+        preserveScrollBarGap
+        lockFocusAcrossFrames
+        finalFocusRef={btnRef}
+        variant={isSmallScreen ? 'none' : 'desktop'}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader alignSelf="center">Recently played</DrawerHeader>
+
+          <DrawerBody alignSelf="center">
+            {liked.map(({ track }, index) => {
+              const isLast = index === liked.length - 1;
+              return (
+                <Card
+                  ref={(node: HTMLDivElement | null) => {
+                    isLast && setRef(node);
+                  }}
+                  key={track.id}
+                  trackId={track.id}
+                  uri={track.uri}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                />
+              );
+            })}
+          </DrawerBody>
+          <Button variant="drawer" color="white" onClick={() => setShow(false)}>
+            close
+          </Button>
+        </DrawerContent>
+      </Drawer>
     </Stack>
   );
 };

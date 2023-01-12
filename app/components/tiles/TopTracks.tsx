@@ -1,10 +1,25 @@
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  HStack,
+  Stack,
+  useDisclosure,
+  useRadioGroup,
+} from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
-import Tile from '../Tile';
+import useIsMobile from '~/hooks/useIsMobile';
+import { useRef, useState } from 'react';
 import Tiles from './Tiles';
+import Tile from '../Tile';
+import Card from '../Card';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
+  const [show, setShow] = useState(false);
   const submit = useSubmit();
   const [params] = useSearchParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
@@ -42,10 +57,13 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     </Form>
   );
   const scrollButtons = top.length > 5;
+  const isSmallScreen = useIsMobile();
+  const { onClose } = useDisclosure();
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
-      <Tiles title="Top" scrollButtons={scrollButtons} Filter={Filter}>
+      <Tiles title="Top" scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
         {top.map((track) => {
           return (
             <Tile
@@ -63,6 +81,43 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           );
         })}
       </Tiles>
+      <Drawer
+        size="full"
+        isOpen={show}
+        onClose={onClose}
+        placement="bottom"
+        preserveScrollBarGap
+        lockFocusAcrossFrames
+        finalFocusRef={btnRef}
+        variant={isSmallScreen ? 'none' : 'desktop'}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader alignSelf="center">Recently played</DrawerHeader>
+
+          <DrawerBody alignSelf="center">
+            {top.map((track) => {
+              return (
+                <Card
+                  key={track.id}
+                  uri={track.uri}
+                  trackId={track.id}
+                  image={track.album.images[1].url}
+                  albumUri={track.album.uri}
+                  albumName={track.album.name}
+                  name={track.name}
+                  artist={track.album.artists[0].name}
+                  artistUri={track.album.artists[0].uri}
+                  explicit={track.explicit}
+                />
+              );
+            })}
+          </DrawerBody>
+          <Button variant="drawer" color="white" onClick={() => setShow(false)}>
+            close
+          </Button>
+        </DrawerContent>
+      </Drawer>
     </Stack>
   );
 };
