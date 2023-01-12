@@ -110,8 +110,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
           flex="0 0 200px"
           {...props}
           cursor="pointer"
-          // align="center"
-          // justify="space-between"
           direction="row"
           w={['100vw', '450px', '750px', '1100px']}
           py="5px"

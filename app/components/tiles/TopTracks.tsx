@@ -7,6 +7,7 @@ import {
   DrawerOverlay,
   HStack,
   Stack,
+  Text,
   useDisclosure,
   useRadioGroup,
 } from '@chakra-ui/react';
@@ -93,7 +94,12 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader alignSelf="center">Top</DrawerHeader>
+          <DrawerHeader alignSelf="center">
+            <Stack direction="row" align="end" >
+              <Text>Top</Text>
+              {Filter}
+            </Stack>
+          </DrawerHeader>
 
           <DrawerBody alignSelf="center">
             {top.map((track) => {
