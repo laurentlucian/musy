@@ -51,7 +51,6 @@ const variantMusic: SystemStyleFunction = (props) => {
 };
 
 const drawer = defineStyle({
-  justifyContent: 'flex-start',
   bg: '#00',
   w: '100vw',
   _active: { boxShadow: 'none !important', outline: 'none !important', opacity: '0.69' },

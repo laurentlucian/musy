@@ -90,7 +90,6 @@ const SaveTo = () => {
               <Button
                 variant="drawer"
                 onClick={selectMenu.onClose}
-                justifyContent="center"
                 h="40px"
                 pt="10px"
                 w="100vw"
@@ -118,7 +117,6 @@ const SaveTo = () => {
               <Button
                 variant="drawer"
                 onClick={playlists.onClose}
-                justifyContent="center"
                 h="40px"
                 pt="10px"
                 w="100vw"

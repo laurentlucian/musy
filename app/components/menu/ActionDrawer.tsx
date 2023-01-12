@@ -143,7 +143,6 @@ const ActionDrawer = () => {
       <Button
         variant="drawer"
         onClick={handleClick}
-        justifyContent="center"
         h={['10px', '40px']}
         pt="10px"
         w="100vw"
