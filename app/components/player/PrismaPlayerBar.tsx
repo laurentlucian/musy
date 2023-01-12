@@ -3,7 +3,9 @@ import type { Playback, Track } from '@prisma/client';
 import { useEffect, useRef, useState } from 'react';
 import { useDataRefresh } from 'remix-utils';
 
-const PlayerBar = ({ playback }: { playback: Playback & { track: Track } }) => {
+const now = Date.now();
+
+const PrismaPlayerbar = ({ playback }: { playback: Playback & { track: Track } }) => {
   const color = useColorModeValue('music.900', 'music.50');
   const { refresh } = useDataRefresh();
   const [shouldRefresh, setToRefresh] = useState(false);
@@ -22,7 +24,8 @@ const PlayerBar = ({ playback }: { playback: Playback & { track: Track } }) => {
   useEffect(() => {
     const step = (timestamp: number) => {
       if (!boxRef.current) return;
-
+      const difference = now - playback.updatedAt;
+      const progress = playback.progress + difference ?? 0;
       const current = progress + timestamp; // add time elapsed to always get current progress
       const percentage = (current / duration) * 100;
 
@@ -30,7 +33,7 @@ const PlayerBar = ({ playback }: { playback: Playback & { track: Track } }) => {
         boxRef.current.style.width = `${percentage}%`;
       }
 
-      if (percentage >= 101) {
+      if (percentage >= 103) {
         // 100 fetches too early?
         setToRefresh(true);
       } else {
@@ -47,8 +50,7 @@ const PlayerBar = ({ playback }: { playback: Playback & { track: Track } }) => {
   }, [playback, duration, progress]);
 
   const initial = `${(progress / duration) * 100}%`;
-
   return <Box ref={boxRef} h="2px" background={color} width={initial} />;
 };
 
-export default PlayerBar;
+export default PrismaPlayerbar;

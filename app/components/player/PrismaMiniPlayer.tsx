@@ -15,6 +15,7 @@ import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
+import PrismaPlayerbar from './PrismaPlayerBar';
 
 type PlayerProps = {
   user: Profile;
@@ -135,7 +136,7 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
           ) : null}
         </HStack>
       </Button>
-      {/* {playback && <PlayerBar playback={playback} />} */}
+      {playback && <PrismaPlayerbar playback={playback} />}
     </Stack>
   );
 };
