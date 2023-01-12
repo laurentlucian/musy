@@ -4,7 +4,7 @@ import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
-import { playbackCreatorQ } from './playback';
+import { playbackCreatorQ, playbackQ } from './playback';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
@@ -277,18 +277,23 @@ export const addUsersToQueue = async () => {
   if (global.__didRegisterLikedQ) {
     // and stop if it did.
 
-    console.log(
-      'addUsersToQueue -> already registered, repeating jobs:',
-      (await userQ.getRepeatableJobs()).map((j) => [
-        j.name,
+    // console.log(
+    //   'addUsersToQueue -> already registered, repeating jobs:',
+    //   (await userQ.getRepeatableJobs()).map((j) => [
+    //     j.name,
 
-        j.next,
-        new Date(j.next).toLocaleString('en-US', {
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-        }),
-      ]),
+    //     j.next,
+    //     new Date(j.next).toLocaleString('en-US', {
+    //       hour: 'numeric',
+    //       minute: 'numeric',
+    //       second: 'numeric',
+    //     }),
+    //   ]),
+    // );
+
+    console.log(
+      'playbackQ',
+      (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
     );
 
     return;
