@@ -93,7 +93,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader alignSelf="center">Recently played</DrawerHeader>
+          <DrawerHeader alignSelf="center">Top</DrawerHeader>
 
           <DrawerBody alignSelf="center">
             {top.map((track) => {

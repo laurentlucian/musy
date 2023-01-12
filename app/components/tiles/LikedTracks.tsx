@@ -89,7 +89,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
       >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerHeader alignSelf="center">Recently played</DrawerHeader>
+          <DrawerHeader alignSelf="center">Liked Songs</DrawerHeader>
 
           <DrawerBody alignSelf="center">
             {liked.map(({ track }, index) => {
