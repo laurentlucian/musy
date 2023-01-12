@@ -89,14 +89,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       </Stack>
     );
     const AlbumName = (
-      <Text fontSize="14px" opacity={0.8}>
+      <Text fontSize="14px" opacity={0.8} w={["100%","60%"]} textAlign={["unset","center"]}>
         {albumName}
       </Text>
     );
     const TitleArtistAlbumName = (
       <Stack>
         {SongTitle}
-        <Stack direction={['column', 'row']} w={['auto', '500px']} justify="space-between">
+        <Stack direction={['column', 'row']} w={['auto', '600px']} justify="space-between" >
           {ArtistName}
           {AlbumName}
         </Stack>
