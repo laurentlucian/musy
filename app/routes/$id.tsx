@@ -29,6 +29,8 @@ import MoodButton from '~/components/MoodButton';
 import { msToString, timeSince } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import Recommended from '~/components/tiles/Recommended';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 
 const Profile = () => {
   const {
@@ -48,6 +50,20 @@ const Profile = () => {
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (
+      user.settings?.allowPreview === true &&
+      audioRef.current &&
+      playback?.item &&
+      'preview_url' in playback?.item &&
+      playback?.item.preview_url
+    ) {
+      audioRef.current.volume = 0.05;
+      audioRef.current.src = playback.item.preview_url;
+    }
+  }, [playback?.item, audioRef, user.settings?.allowPreview]);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -116,7 +132,13 @@ const Profile = () => {
         </Stack>
       </HStack>
       {playback && playback.item?.type === 'track' ? (
-        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
+        <Player
+          id={user.userId}
+          party={party}
+          playback={playback}
+          item={playback.item}
+          audioRef={audioRef}
+        />
       ) : recent ? (
         <PlayerPaused item={recent[0].track} username={user.name} />
       ) : null}

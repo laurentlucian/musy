@@ -18,9 +18,10 @@ import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
+import PlayingFromTooltip from './../PlayingFromTooltip';
 import { useCallback, useEffect, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import PlayingFromTooltip from './../PlayingFromTooltip';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
@@ -30,19 +31,20 @@ import { useDataRefresh } from 'remix-utils';
 import type { Party } from '@prisma/client';
 import Tooltip from './../Tooltip';
 import PlayerBar from './PlayerBar';
-import { useDrawerActions } from '~/hooks/useDrawer';
 
 type PlayerProps = {
   id: string;
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
+  audioRef: React.RefObject<HTMLAudioElement>;
 };
 
-const Player = ({ id, party, playback, item }: PlayerProps) => {
+const Player = ({ id, party, playback, item, audioRef }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
+
   const { isOpen, onToggle } = useDisclosure();
   const { onOpen } = useDrawerActions();
 
@@ -356,6 +358,16 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
             boxShadow="none"
           />
         </Box>
+        {item.preview_url && (
+          <audio
+            autoPlay
+            ref={audioRef}
+            src={item.preview_url}
+            onLoadedData={() => {
+              if (audioRef.current) audioRef.current.volume = 0.05;
+            }}
+          />
+        )}
       </Stack>
     </>
   );
