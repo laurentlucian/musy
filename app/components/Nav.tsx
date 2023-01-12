@@ -19,8 +19,9 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
-      <HStack spacing={4}>
-        <Heading as={Link} to="/" size="sm" onClick={() => setShow(true)}>
+      <HStack as={Link} to="/" spacing="8px">
+        <Image src="/favicon-32x32.png" />
+        <Heading size="sm" onClick={() => setShow(true)}>
           musy
         </Heading>
         {transition.state === 'loading' && <Waver />}
