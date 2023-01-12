@@ -99,29 +99,16 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Text>
               </HStack>
             )}
-            {albumUri ? (
-              <Tooltip label={albumName} placement="top-start">
-                <Image
-                  boxSize="200px"
-                  objectFit="cover"
-                  src={image}
-                  borderRadius={5}
-                  draggable={false}
-                  onClick={() => onOpen(track)}
-                />
-              </Tooltip>
-            ) : (
-              <Tooltip label={albumName} placement="top-start">
-                <Image
-                  boxSize="200px"
-                  objectFit="cover"
-                  src={image}
-                  borderRadius={5}
-                  draggable={false}
-                  onClick={() => onOpen(track)}
-                />
-              </Tooltip>
-            )}
+            <Tooltip label={albumName} placement="top-start">
+              <Image
+                boxSize="200px"
+                objectFit="cover"
+                src={image}
+                borderRadius={5}
+                draggable={false}
+                onClick={() => onOpen(track)}
+              />
+            </Tooltip>
           </Flex>
           <Flex justify="space-between">
             <Stack spacing={0} onClick={() => onOpen(track)}>
