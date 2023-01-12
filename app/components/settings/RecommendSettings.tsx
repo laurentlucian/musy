@@ -3,7 +3,7 @@ import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import { useTypedFetcher } from 'remix-typedjson';
 import type { action } from '~/routes/$id/add';
 
-const RecommendSettings = (allowRecommend: { allowRecommend: string }) => {
+const RecommendSettings = ({allowRecommend}: { allowRecommend: string }) => {
   const fetcher = useTypedFetcher<typeof action>();
   const onChange = (value: string) => {
     fetcher.submit({ 'allow-queue': value }, { replace: true, method: 'post' });
@@ -15,7 +15,7 @@ const RecommendSettings = (allowRecommend: { allowRecommend: string }) => {
   ];
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'allow-recommend',
-    defaultValue: allowRecommend.allowRecommend,
+    defaultValue: allowRecommend,
     onChange: (value) => onChange(value),
   });
   const group = getRootProps();

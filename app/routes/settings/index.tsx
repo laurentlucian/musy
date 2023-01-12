@@ -69,6 +69,23 @@ const Account = () => {
             }}
           />
         </FormControl>
+        <FormControl display="flex" alignItems="center">
+          <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0">
+            allow preview
+          </FormLabel>
+          <Switch
+            colorScheme="music"
+            id="allowPreview"
+            defaultChecked={currentUser.settings?.allowPreview ?? false}
+            onChange={(e) => {
+              submit(
+                { allowPreview: `${e.target.checked}` },
+
+                { method: 'post', replace: true },
+              );
+            }}
+          />
+        </FormControl>
         <Button
           leftIcon={<Logout />}
           bgColor="red.600"
@@ -125,6 +142,17 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
       create: { autoscroll: isChecked, userId },
       update: { autoscroll: isChecked },
+    });
+  }
+
+  const allowPreview = data.get('allowPreview');
+  if (allowPreview) {
+    const isChecked = allowPreview === 'true';
+
+    await prisma.settings.upsert({
+      where: { userId },
+      create: { allowPreview: isChecked, userId },
+      update: { allowPreview: isChecked },
     });
   }
 

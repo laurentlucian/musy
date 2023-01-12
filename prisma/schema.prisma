@@ -64,6 +64,7 @@ model Settings {
   isPrivate      Boolean @default(false)
   allowQueue     String  @default("on")
   allowRecommend String  @default("on")
+  allowPreview   Boolean @default(false)
   // theme String @default("light")
 }
 
