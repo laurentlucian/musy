@@ -21,6 +21,7 @@ const baseStyleOverlay = defineStyle((props) => ({
 
 const baseStyleDialogContainer = defineStyle((props) => ({
   transition: 'all .2s',
+  backdropFilter: 'blur(14px)',
   display: 'flex',
   zIndex: 'modal',
   justifyContent: 'center',
