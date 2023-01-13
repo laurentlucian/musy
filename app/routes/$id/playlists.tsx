@@ -14,8 +14,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(spotify, 'Missing spotify');
 
   const data = await spotify
-    .getUserPlaylists({ offset, limit: 50 })
-    .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id));
+    .getUserPlaylists('daniel.valdecantos', { offset, limit: 50 })
+    .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+    .catch(() => []);
   return typedjson(data);
   // throw typedjson({}, { status: 404 });
 };

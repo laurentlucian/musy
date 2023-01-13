@@ -26,21 +26,6 @@ const SaveToPlaylist = ({ trackId }: SaveToPlaylistProps) => {
     fetcher.submit({ trackId }, { replace: true, method: 'post', action });
   };
 
-  // useEffect(() => {
-  //   fetcher.load(`/${id}/save?trackId=${trackId}`);
-  // }, []);
-  // useEffect(() => {
-  //   if (fetcher.data) {
-  //     setIsSaved(fetcher.data);
-  //   }
-  // }, []);
-
-  // const text =
-  //   id === undefined
-  //     ? 'Log in to save a song'
-  //     : isSaved
-  //     ? 'Saved to Liked Songs'
-  //     : 'Save to Liked Songs';
   const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
   const isDone = fetcher.type === 'done';
   const isError =

@@ -4,18 +4,18 @@ import { spotifyApi } from '~/services/spotify.server';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
-  const id = params.id;
-  invariant(id, 'Missing params Id');
+// export const loader = async ({ request, params }: LoaderArgs) => {
+//   const id = params.id;
+//   invariant(id, 'Missing params Id');
 
-  const url = new URL(request.url);
-  const trackId = url.searchParams.get('trackId');
-  if (!trackId) return;
+//   const url = new URL(request.url);
+//   const trackId = url.searchParams.get('trackId');
+//   if (!trackId) return;
 
-  const { spotify } = await spotifyApi(id);
-  invariant(spotify, 'Missing spotify');
-  return typedjson([true]);
-};
+//   const { spotify } = await spotifyApi(id);
+//   invariant(spotify, 'Missing spotify');
+//   return typedjson([true]);
+// };
 
 export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
