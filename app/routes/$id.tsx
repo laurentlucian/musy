@@ -52,7 +52,8 @@ const Profile = () => {
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
   const audioRef = useRef<HTMLAudioElement>(null);
-  const preview = currentUserSettings !== null && currentUserSettings.allowPreview === true;
+  const preview =
+    currentUserSettings !== null && currentUserSettings.allowPreview === true && !isOwnProfile;
   useEffect(() => {
     if (
       preview &&
@@ -65,7 +66,7 @@ const Profile = () => {
       audioRef.current.src = playback.item.preview_url;
     }
   }, [playback?.item, audioRef, preview]);
-  
+
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
