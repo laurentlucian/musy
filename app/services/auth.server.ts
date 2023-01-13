@@ -111,9 +111,11 @@ export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
   const id = session.user.id;
-  let data = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  let data = await prisma.profile.findUnique({
+    where: { userId: id },
+  });
   if (!data) return null;
-  return data.user;
+  return data;
 };
 
 export const getAllUsers = async (isAuthenticated = false) => {

@@ -23,14 +23,11 @@ import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
 import ActivityFeed from '~/components/ActivityTile';
-// import { lessThanADay, lessThanAWeek, msToHours } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
 import MoodButton from '~/components/MoodButton';
 import { msToString, timeSince } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import Recommended from '~/components/tiles/Recommended';
-import { useRef } from 'react';
-import { useEffect } from 'react';
 
 const Profile = () => {
   const {
@@ -38,7 +35,6 @@ const Profile = () => {
     playback,
     recent,
     currentUser,
-    currentUserSettings,
     party,
     liked,
     top,
@@ -51,21 +47,6 @@ const Profile = () => {
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const preview =
-    currentUserSettings !== null && currentUserSettings.allowPreview === true && !isOwnProfile;
-  useEffect(() => {
-    if (
-      preview &&
-      audioRef.current &&
-      playback?.item &&
-      'preview_url' in playback?.item &&
-      playback?.item.preview_url
-    ) {
-      audioRef.current.volume = 0.05;
-      audioRef.current.src = playback.item.preview_url;
-    }
-  }, [playback?.item, audioRef, preview]);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -134,14 +115,7 @@ const Profile = () => {
         </Stack>
       </HStack>
       {playback && playback.item?.type === 'track' ? (
-        <Player
-          id={user.userId}
-          party={party}
-          playback={playback}
-          item={playback.item}
-          audioRef={audioRef}
-          preview={preview}
-        />
+        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       ) : recent ? (
         <PlayerPaused item={recent[0].track} username={user.name} />
       ) : null}
@@ -273,19 +247,12 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   );
 
   const currentUser = await getCurrentUser(request);
-  const currentUserSettings = await prisma.settings.findUnique({
-    where: { userId: currentUser?.userId },
-  });
   if (currentUser) {
     const { spotify } = await spotifyApi(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     const {
       body: [following],
     } = await spotify.isFollowingUsers([id]);
-
-    const currentUserSettings = await prisma.settings.findUnique({
-      where: { userId: currentUser.userId },
-    });
 
     return typedjson({
       user,
@@ -297,7 +264,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       top,
       playlists,
       currentUser,
-      currentUserSettings,
       following,
       queue,
       recommended,
@@ -316,7 +282,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     top,
     playlists,
     currentUser,
-    currentUserSettings,
     following: null,
     queue,
     recommended,

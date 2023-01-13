@@ -19,7 +19,7 @@ import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
 import PlayingFromTooltip from './../PlayingFromTooltip';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -37,11 +37,9 @@ type PlayerProps = {
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
-  audioRef: React.RefObject<HTMLAudioElement>;
-  preview: boolean;
 };
 
-const Player = ({ id, party, playback, item, audioRef, preview }: PlayerProps) => {
+const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
@@ -56,8 +54,11 @@ const Player = ({ id, party, playback, item, audioRef, preview }: PlayerProps) =
   const fetcher = useFetcher();
   const { refresh } = useDataRefresh();
   const busy = fetcher.submission?.formData.has('party') ?? false;
-
   const isSmallScreen = useIsMobile();
+  const isOwnProfile = currentUser?.userId === id;
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const preview =
+    currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
 
   const track: Track = {
     uri: item.uri,
@@ -114,8 +115,6 @@ const Player = ({ id, party, playback, item, audioRef, preview }: PlayerProps) =
   }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
 
   if (!item) return null;
-
-  const isOwnProfile = currentUser?.userId === id;
 
   return (
     <>
@@ -359,9 +358,9 @@ const Player = ({ id, party, playback, item, audioRef, preview }: PlayerProps) =
             boxShadow="none"
           />
         </Box>
-        {item.preview_url && (
+        {item.preview_url && preview && (
           <audio
-            autoPlay={preview}
+            autoPlay
             ref={audioRef}
             src={item.preview_url}
             onLoadedData={() => {
