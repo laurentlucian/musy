@@ -73,6 +73,10 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   };
 
   useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = 0.05;
+  }, []);
+
+  useEffect(() => {
     const checkStick = () => {
       window.scrollY <= 100
         ? setSize('large')
@@ -358,16 +362,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
             boxShadow="none"
           />
         </Box>
-        {item.preview_url && preview && (
-          <audio
-            autoPlay
-            ref={audioRef}
-            src={item.preview_url}
-            onLoadedData={() => {
-              if (audioRef.current) audioRef.current.volume = 0.05;
-            }}
-          />
-        )}
+        {item.preview_url && preview && <audio autoPlay ref={audioRef} src={item.preview_url} />}
       </Stack>
     </>
   );

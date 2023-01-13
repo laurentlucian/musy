@@ -6,12 +6,14 @@ import Waver from './Waver';
 import Settings from './Settings';
 import UserSearch from './UserSearch';
 import { useState } from 'react';
+import useIsMobile from '~/hooks/useIsMobile';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(true);
   const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
   const transition = useTransition();
   const { pathname, search } = useLocation();
+  const isSmallScreen = useIsMobile();
 
   // settings not available unless you are logged in
   // can now only sign out through settings
@@ -20,7 +22,11 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
       <HStack as={Link} to="/" spacing="8px">
-        <Image src="/favicon-32x32.png" />
+        {isSmallScreen ? (
+          <Image src="/musylogo1.svg" boxSize="35px" />
+        ) : (
+          <Image src="/favicon-32x32.png" />
+        )}
         <Heading size="sm" onClick={() => setShow(true)}>
           musy
         </Heading>
