@@ -38,9 +38,10 @@ type PlayerProps = {
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
   audioRef: React.RefObject<HTMLAudioElement>;
+  preview: boolean;
 };
 
-const Player = ({ id, party, playback, item, audioRef }: PlayerProps) => {
+const Player = ({ id, party, playback, item, audioRef, preview }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
@@ -360,7 +361,7 @@ const Player = ({ id, party, playback, item, audioRef }: PlayerProps) => {
         </Box>
         {item.preview_url && (
           <audio
-            autoPlay
+            autoPlay={preview}
             ref={audioRef}
             src={item.preview_url}
             onLoadedData={() => {

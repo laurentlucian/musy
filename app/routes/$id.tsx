@@ -38,6 +38,7 @@ const Profile = () => {
     playback,
     recent,
     currentUser,
+    currentUserSettings,
     party,
     liked,
     top,
@@ -51,10 +52,10 @@ const Profile = () => {
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
   const audioRef = useRef<HTMLAudioElement>(null);
-
+  const preview = currentUserSettings !== null && currentUserSettings.allowPreview === true;
   useEffect(() => {
     if (
-      user.settings?.allowPreview === true &&
+      preview &&
       audioRef.current &&
       playback?.item &&
       'preview_url' in playback?.item &&
@@ -63,8 +64,8 @@ const Profile = () => {
       audioRef.current.volume = 0.05;
       audioRef.current.src = playback.item.preview_url;
     }
-  }, [playback?.item, audioRef, user.settings?.allowPreview]);
-
+  }, [playback?.item, audioRef, preview]);
+  
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
       <HStack>
@@ -138,6 +139,7 @@ const Profile = () => {
           playback={playback}
           item={playback.item}
           audioRef={audioRef}
+          preview={preview}
         />
       ) : recent ? (
         <PlayerPaused item={recent[0].track} username={user.name} />
@@ -270,12 +272,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   );
 
   const currentUser = await getCurrentUser(request);
+  const currentUserSettings = await prisma.settings.findUnique({
+    where: { userId: currentUser?.userId },
+  });
   if (currentUser) {
     const { spotify } = await spotifyApi(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     const {
       body: [following],
     } = await spotify.isFollowingUsers([id]);
+
+    const currentUserSettings = await prisma.settings.findUnique({
+      where: { userId: currentUser.userId },
+    });
 
     return typedjson({
       user,
@@ -287,6 +296,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       top,
       playlists,
       currentUser,
+      currentUserSettings,
       following,
       queue,
       recommended,
@@ -305,6 +315,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     top,
     playlists,
     currentUser,
+    currentUserSettings,
     following: null,
     queue,
     recommended,
