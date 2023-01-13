@@ -183,6 +183,17 @@ export const getUserLikedSongs = async (id: string) => {
   return items;
 };
 
+export const getUSerPlaylistSongs = async (id: string, playlistID: string) => {
+  const { token } = await spotifyApi(id);
+  invariant(token, 'missing token');
+
+  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  return data;
+};
+
 export const getSavedStatus = async (id: string, trackId: string) => {
   const { token } = await spotifyApi(id);
   invariant(token, 'missing token');

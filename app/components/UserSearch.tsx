@@ -52,7 +52,7 @@ const UserSearch = () => {
       <InputLeftElement>
         <SearchIcon color="gray.200" />
       </InputLeftElement>
-      <Input disabled rounded="xl" type="search" placeholder="Search" />
+      <Input rounded="xl" type="search" placeholder="Search" />
     </InputGroup>
   );
 };

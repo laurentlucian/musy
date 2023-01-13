@@ -15,11 +15,8 @@ type TileProps = {
   uri: string;
   trackId: string;
   image: string;
-  albumUri: string | null;
-  albumName: string | null;
   name: string;
-  artist: string | null;
-  artistUri: string | null;
+  description: string | null;
   explicit: boolean;
 
   // will show header (profile above tile) if createdAt is defined
@@ -29,17 +26,14 @@ type TileProps = {
   recommend?: boolean;
 } & ChakraProps;
 
-const Tile = forwardRef<HTMLDivElement, TileProps>(
+const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
       uri,
       trackId,
       image,
-      albumUri,
-      albumName,
       name,
-      artist,
-      artistUri,
+      description,
       explicit,
       recommend,
       createdAt,
@@ -54,16 +48,14 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
+
     const { onOpen } = useDrawerActions();
     const track: Track = {
       uri: uri,
       trackId,
       image,
-      albumUri,
-      albumName,
       name,
-      artist,
-      artistUri,
+      description,
       explicit,
     };
     const fetcher = useTypedFetcher<typeof action>();
@@ -99,7 +91,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Text>
               </HStack>
             )}
-            <Tooltip label={albumName} placement="top-start">
+            <Tooltip label={name} placement="top-start">
               <Image
                 boxSize="200px"
                 objectFit="cover"
@@ -115,18 +107,12 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>
-              {artist && (
+              {description && (
                 <Flex align="center">
                   {explicit && <Image src={explicitImage} mr={1} w="19px" />}
-                  {artistUri ? (
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {artist}
-                    </Text>
-                  ) : (
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {decodeHtmlEntity(artist)}
-                    </Text>
-                  )}
+                  <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                    {decodeHtmlEntity(description)}
+                  </Text>
                 </Flex>
               )}
             </Stack>
@@ -138,6 +124,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
   },
 );
 
-Tile.displayName = 'Tile';
+PlaylistTile.displayName = 'Tile';
 
-export default Tile;
+export default PlaylistTile;

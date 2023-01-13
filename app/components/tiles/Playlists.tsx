@@ -13,8 +13,8 @@ import { useEffect, useRef, useState } from 'react';
 import useIsVisible from '~/hooks/useIsVisible';
 import useIsMobile from '~/hooks/useIsMobile';
 import PlaylistCard from './PlaylistCard';
+import PlaylistTile from '../PlaylistTile';
 import Tiles from './Tiles';
-import Tile from '../Tile';
 
 const Playlists = ({
   playlists: initialPlaylists,
@@ -63,7 +63,7 @@ const Playlists = ({
           const isLast = index === playlists.length - 1;
 
           return (
-            <Tile
+            <PlaylistTile
               ref={(node) => {
                 isLast && setRef(node);
               }}
@@ -72,11 +72,8 @@ const Playlists = ({
               key={list.id}
               uri={list.uri}
               image={list.images[0]?.url}
-              albumUri={list.uri}
-              albumName={list.name}
               name={list.name}
-              artist={list.description}
-              artistUri={null}
+              description={list.description}
               explicit={false}
             />
           );
