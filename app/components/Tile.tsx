@@ -27,6 +27,7 @@ type TileProps = {
   createdAt?: Date;
   playlist?: Boolean;
   recommend?: boolean;
+  recommendedBy?: Profile;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -42,6 +43,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artistUri,
       explicit,
       recommend,
+      recommendedBy,
       createdAt,
       createdBy,
       playlist,
@@ -130,7 +132,11 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
-            {recommend && <Button onClick={removeFromRecommended}>-</Button>}
+            {recommend && (
+              <>
+                {/* <Button onClick={removeFromRecommended}>-</Button> */}
+              </>
+            )}
           </Flex>
         </Stack>
       </>

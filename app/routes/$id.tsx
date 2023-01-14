@@ -28,6 +28,7 @@ import MoodButton from '~/components/MoodButton';
 import { msToString, timeSince } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import Recommended from '~/components/tiles/Recommended';
+import type { Profile as RecommendedBy } from '@prisma/client';
 
 const Profile = () => {
   const {
@@ -47,6 +48,7 @@ const Profile = () => {
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
+  console.log(recommended);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -129,7 +131,7 @@ const Profile = () => {
           </Tiles>
         )}
       </Stack>
-      {isOwnProfile && <Recommended recommended={recommended} />}
+      {isOwnProfile && <Recommended recommended={recommended}/>}
       <RecentTracks recent={recent} />
       {liked.length && <LikedTracks liked={liked} />}
       <TopTracks top={top} />
@@ -226,9 +228,22 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
   ]);
 
-  const recommended = await prisma.recommendedSongs.findMany({
+  const recommendedSongs = await prisma.recommendedSongs.findMany({
     where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
     orderBy: { createdAt: 'desc' },
+  });
+  let recommendedBy: RecommendedBy[] = [];
+  for await (const r of recommendedSongs) {
+    recommendedBy = [
+      ...recommendedBy,
+      ...(await prisma.profile.findMany({
+        where: { userId: r.senderId },
+      })),
+    ];
+  }
+  const recommended = recommendedSongs.map((r) => {
+    const senderProfile = recommendedBy.find((p) => p.userId === r.senderId);
+    return { ...r, senderProfile };
   });
 
   const recentDb = await prisma.recentSongs.findMany({
@@ -267,6 +282,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       following,
       queue,
       recommended,
+      recommendedBy,
       users,
       listened,
     });
@@ -285,6 +301,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     following: null,
     queue,
     recommended,
+    recommendedBy,
     users,
     listened,
   });
