@@ -3,7 +3,7 @@ import type { Profile, RecommendedSongs } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from './Tiles';
 import { timeSince } from '~/lib/utils';
-import RecommendActions from './RecommendActions';
+// import RecommendActions from './RecommendActions';
 
 interface RecommendedProps extends RecommendedSongs {
   senderProfile?: Profile;
