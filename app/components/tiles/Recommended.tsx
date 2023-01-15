@@ -1,4 +1,4 @@
-import { Image, Stack, Text } from '@chakra-ui/react';
+import { Image, Link, Stack, Text } from '@chakra-ui/react';
 import type { Profile, RecommendedSongs } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from './Tiles';
@@ -32,20 +32,27 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     artist={recommended.artist}
                     artistUri={recommended.albumUri}
                     explicit={recommended.explicit}
-                    recommend={show}
-                    recommendedBy={recommended.senderProfile}
                   />
 
                   <Stack direction="row">
-                    <RecommendActions recommendedBy={recommended.senderProfile} trackId={recommended.trackId}/>
-                    {/* <Image
-                      borderRadius="full"
-                      src={recommended.senderProfile?.image}
-                      boxSize="40px"
-                      mr="5px"
+                    {/* <RecommendActions
+                      recommendedBy={recommended.senderProfile}
+                      trackId={recommended.trackId}
                     /> */}
+                    <Link href={`/${recommended.senderId}`}>
+                      <Image
+                        borderRadius="full"
+                        src={recommended.senderProfile?.image}
+                        boxSize="40px"
+                        mr="5px"
+                      />
+                    </Link>
                     <Stack>
-                      <Text fontSize={['10px', '11px']}>{recommended.senderProfile?.name}</Text>
+                      <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
+                        <Text fontSize={['10px', '11px']} >
+                          {recommended.senderProfile?.name}
+                        </Text>
+                      </Link>
                       <Text fontSize={['9px', '10px']} opacity={0.6}>
                         {timeSince(recommended.createdAt)}
                       </Text>
