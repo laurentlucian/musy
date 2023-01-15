@@ -3,6 +3,7 @@ import type { Profile, RecommendedSongs } from '@prisma/client';
 import Tile from '../Tile';
 import Tiles from './Tiles';
 import { timeSince } from '~/lib/utils';
+import RecommendActions from './RecommendActions';
 // import RecommendActions from './RecommendActions';
 
 interface RecommendedProps extends RecommendedSongs {
@@ -36,13 +37,13 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                   />
 
                   <Stack direction="row">
-                    {/* <RecommendActions recommendedBy={recommended.senderProfile} /> */}
-                    <Image
+                    <RecommendActions recommendedBy={recommended.senderProfile} trackId={recommended.trackId}/>
+                    {/* <Image
                       borderRadius="full"
                       src={recommended.senderProfile?.image}
                       boxSize="40px"
                       mr="5px"
-                    />
+                    /> */}
                     <Stack>
                       <Text fontSize={['10px', '11px']}>{recommended.senderProfile?.name}</Text>
                       <Text fontSize={['9px', '10px']} opacity={0.6}>
