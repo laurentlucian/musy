@@ -175,17 +175,18 @@ model RecommendedSongs {
   pending   Boolean  @default(false)
   comment   String?
 
-  track     Track?  @relation(fields: [trackId], references: [id])
-  trackId   String
-  uri       String
-  name      String
-  image     String
-  albumUri  String?
-  albumName String?
-  artist    String
-  artistUri String?
-  explicit  Boolean
-  duration  Int     @default(0)
+  track       Track?  @relation(fields: [trackId], references: [id])
+  trackId     String
+  uri         String
+  name        String
+  image       String
+  albumUri    String?
+  albumName   String?
+  artist      String
+  artistUri   String?
+  explicit    Boolean
+  preview_url String?
+  duration    Int     @default(0)
 
   sender   Profile @relation(fields: [senderId], references: [userId])
   senderId String

@@ -19,6 +19,7 @@ type CardProps = {
   artist: string | null;
   artistUri: string | null;
   explicit: boolean;
+  preview_url: string | null;
 
   // will show header (profile above Card) if createdAt is defined
   createdBy?: Profile | null;
@@ -39,6 +40,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       artist,
       artistUri,
       explicit,
+      preview_url,
       recommend,
       createdAt,
       createdBy,
@@ -58,6 +60,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       artist,
       artistUri,
       explicit,
+      preview_url,
     };
     const fetcher = useTypedFetcher<typeof action>();
     const { id } = useParams();
@@ -89,14 +92,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       </Stack>
     );
     const AlbumName = (
-      <Text fontSize="14px" opacity={0.8} w={["100%","60%"]} textAlign={["unset","center"]}>
+      <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
         {albumName}
       </Text>
     );
     const TitleArtistAlbumName = (
       <Stack>
         {SongTitle}
-        <Stack direction={['column', 'row']} w={['auto', '600px']} justify="space-between" >
+        <Stack direction={['column', 'row']} w={['auto', '600px']} justify="space-between">
           {ArtistName}
           {AlbumName}
         </Stack>

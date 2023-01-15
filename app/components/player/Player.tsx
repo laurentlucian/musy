@@ -70,6 +70,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     artist: item.artists[0].name,
     artistUri: item.artists[0].uri,
     explicit: item.explicit,
+    preview_url: item.preview_url,
   };
 
   useEffect(() => {

@@ -19,6 +19,7 @@ type TileProps = {
   artist: string | null;
   artistUri: string | null;
   explicit: boolean;
+  preview_url: string | null;
 
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
@@ -38,6 +39,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
+      preview_url,
       createdAt,
       createdBy,
       playlist,
@@ -61,6 +63,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
+      preview_url,
     };
 
     return (

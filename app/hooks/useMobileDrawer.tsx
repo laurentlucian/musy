@@ -39,6 +39,7 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
           artist: by.artist,
           artistUri: by.artistUri,
           explicit: by.explicit,
+          preview_url: by.preview_url,
           userId: by.userId,
         },
       }),

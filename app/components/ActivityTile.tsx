@@ -151,6 +151,7 @@ const ActivityTile = ({ track }: ActivityProps) => {
     artistUri: track.artistUri,
     explicit: track.explicit,
     userId: track.user?.userId,
+    preview_url: ''
   };
 
   return (

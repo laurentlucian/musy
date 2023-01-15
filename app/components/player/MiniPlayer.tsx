@@ -49,6 +49,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         artist: track.album.artists[0].name,
         artistUri: track.album.artists[0].uri,
         userId: user.userId,
+        preview_url: track.preview_url,
       }
     : null;
 
@@ -142,6 +143,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                               albumName: track.album.name,
                               artist: track.album.artists[0].name,
                               artistUri: track.album.artists[0].uri,
+                              preview_url: track.preview_url,
                             });
                           }}
                         >

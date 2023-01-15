@@ -138,7 +138,7 @@ const LikedTracksVirtual = ({
 
             return (
               <Tile
-              trackId=''
+                trackId=""
                 pos="absolute"
                 top="0"
                 left="0"
@@ -154,6 +154,7 @@ const LikedTracksVirtual = ({
                 artist={track.album.artists[0].name}
                 artistUri={track.album.artists[0].uri}
                 explicit={track.explicit}
+                preview_url={track.preview_url}
               />
             );
           })}

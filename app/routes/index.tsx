@@ -44,6 +44,7 @@ export type Activity = {
   artist: string;
   artistUri: string | null;
   explicit: boolean;
+  // preview_url: string;
   userId: string | null;
   user: Profile | null;
   owner?: { user: Profile | null };

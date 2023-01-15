@@ -118,6 +118,7 @@ const MobileDrawer = () => {
                       artist={track.artist}
                       artistUri={track.artistUri}
                       explicit={track.explicit}
+                      preview_url={track.preview_url}
                     />
                   ))}
               </Tiles>

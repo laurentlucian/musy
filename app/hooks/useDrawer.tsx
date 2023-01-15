@@ -27,6 +27,7 @@ const useDrawerStore = create<DrawerStateConfig>()((set) => ({
           artistUri: by.artistUri,
           explicit: by.explicit,
           userId: by.userId,
+          preview_url: by.preview_url
         },
       }),
   },

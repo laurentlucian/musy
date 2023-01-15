@@ -78,6 +78,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
+              preview_url={track.preview_url}
             />
           );
         })}
@@ -115,6 +116,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   artist={track.album.artists[0].name}
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
+                  preview_url={track.preview_url}
                 />
               );
             })}

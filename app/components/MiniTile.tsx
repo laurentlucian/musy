@@ -17,6 +17,7 @@ type MiniTileProps = {
     artist: string;
     artistUri: string | null;
     explicit: boolean;
+    preview_url: string;
   };
 
   // will show header (profile above tile) if createdAt is defined
@@ -25,7 +26,7 @@ type MiniTileProps = {
 };
 
 const MiniTile = ({
-  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit },
+  track: { trackId, uri, image, albumUri, albumName, name, artist, artistUri, explicit, preview_url },
   createdAt,
   createdBy,
 }: MiniTileProps) => {
@@ -40,6 +41,7 @@ const MiniTile = ({
     artist,
     artistUri,
     explicit,
+    preview_url,
   };
   return (
     <Stack flex="0 0 100px">

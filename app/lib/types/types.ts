@@ -9,4 +9,5 @@ export interface Track {
   artistUri: string | null;
   explicit: boolean;
   userId?: string;
+  preview_url: string | null
 }

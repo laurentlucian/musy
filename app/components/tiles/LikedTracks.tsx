@@ -12,9 +12,9 @@ import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 import useIsMobile from '~/hooks/useIsMobile';
 import useIsVisible from '~/hooks/useIsVisible';
-import Card from '../Card';
-import Tile from '../Tile';
 import Tiles from './Tiles';
+import Tile from '../Tile';
+import Card from '../Card';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
@@ -73,6 +73,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               artist={track.album.artists[0].name}
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
+              preview_url={track.preview_url}
             />
           );
         })}
@@ -109,6 +110,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   artist={track.album.artists[0].name}
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
+                  preview_url={track.preview_url}
                 />
               );
             })}

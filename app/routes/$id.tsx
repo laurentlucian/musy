@@ -48,7 +48,6 @@ const Profile = () => {
   } = useTypedLoaderData<typeof loader>();
   const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
-  console.log(recommended);
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
@@ -131,7 +130,7 @@ const Profile = () => {
           </Tiles>
         )}
       </Stack>
-      {isOwnProfile && <Recommended recommended={recommended}/>}
+      {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracks recent={recent} />
       {liked.length && <LikedTracks liked={liked} />}
       <TopTracks top={top} />

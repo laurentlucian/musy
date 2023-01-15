@@ -45,6 +45,7 @@ import useUsers from '~/hooks/useUsers';
 import Recommend from './Recommend';
 import AddQueue from './AddQueue';
 import LikedBy from './LikedBy';
+import PlayPreview from './PlayPreview';
 // import SaveTo from './SaveTo';
 
 const ActionDrawer = () => {
@@ -250,6 +251,7 @@ const ActionDrawer = () => {
                 {/* {track && track.trackId && <SaveToPlaylist  trackId={track.trackId} />} */}
                 {/* <SaveTo currentUserId={currentUser?.userId}/> */} {/* WIP */}
                 {track && <AnalyzeTrack trackId={track.trackId} />}
+                {track && <PlayPreview preview_url={track.preview_url} />}
                 {track && (
                   <AddQueue
                     track={{

@@ -1,9 +1,9 @@
-import { Image, Link, Stack, Text } from '@chakra-ui/react';
 import type { Profile, RecommendedSongs } from '@prisma/client';
-import Tile from '../Tile';
-import Tiles from './Tiles';
+import { Image, Link, Stack, Text } from '@chakra-ui/react';
 import { timeSince } from '~/lib/utils';
-import RecommendActions from './RecommendActions';
+import Tiles from './Tiles';
+import Tile from '../Tile';
+
 // import RecommendActions from './RecommendActions';
 
 interface RecommendedProps extends RecommendedSongs {
@@ -32,6 +32,7 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     artist={recommended.artist}
                     artistUri={recommended.albumUri}
                     explicit={recommended.explicit}
+                    preview_url={recommended.preview_url}
                   />
 
                   <Stack direction="row">
@@ -49,9 +50,7 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     </Link>
                     <Stack>
                       <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                        <Text fontSize={['10px', '11px']} >
-                          {recommended.senderProfile?.name}
-                        </Text>
+                        <Text fontSize={['10px', '11px']}>{recommended.senderProfile?.name}</Text>
                       </Link>
                       <Text fontSize={['9px', '10px']} opacity={0.6}>
                         {timeSince(recommended.createdAt)}
