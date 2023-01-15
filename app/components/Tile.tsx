@@ -1,13 +1,11 @@
-import { Flex, HStack, Image, Stack, Text, Button } from '@chakra-ui/react';
-import type { action } from '~/routes/$id/removeRecommend';
+import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import type { ChakraProps } from '@chakra-ui/react';
-import { Link, useParams } from '@remix-run/react';
-import { useTypedFetcher } from 'remix-typedjson';
 import type { Track } from '~/lib/types/types';
 import type { Profile } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
+import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
 
@@ -26,8 +24,6 @@ type TileProps = {
   createdBy?: Profile | null;
   createdAt?: Date;
   playlist?: Boolean;
-  recommend?: boolean;
-  recommendedBy?: Profile;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -42,8 +38,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
-      recommend,
-      recommendedBy,
       createdAt,
       createdBy,
       playlist,
@@ -67,12 +61,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artist,
       artistUri,
       explicit,
-    };
-    const fetcher = useTypedFetcher<typeof action>();
-    const { id } = useParams();
-    const removeFromRecommended = () => {
-      const action = `/${id}/removeRecommend`;
-      fetcher.submit({ trackId }, { replace: true, method: 'post', action });
     };
 
     return (
@@ -104,6 +92,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             <Tooltip label={albumName} placement="top-start">
               <Image
                 boxSize="200px"
+                minW='200px'
                 objectFit="cover"
                 src={image}
                 borderRadius={5}
@@ -132,11 +121,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
-            {recommend && (
-              <>
-                {/* <Button onClick={removeFromRecommended}>-</Button> */}
-              </>
-            )}
           </Flex>
         </Stack>
       </>
