@@ -11,14 +11,15 @@ import {
   Collapse,
   Box,
 } from '@chakra-ui/react';
+import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
-import type { Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
+import { useEffect, useRef, useState } from 'react';
+import useSessionUser from '~/hooks/useSessionUser';
+import type { Track } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useEffect, useState } from 'react';
 import Tooltip from './../Tooltip';
 
 type PlayerPausedProps = {
@@ -27,7 +28,10 @@ type PlayerPausedProps = {
 };
 
 const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
+  const currentUser = useSessionUser();
+  const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
+  const [playing, setPlaying] = useState(preview);
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
@@ -37,6 +41,8 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const artist = item.artists[0].name;
   const explicit = item.explicit;
   const name = item.name;
+
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const track: Track = {
     uri: item.uri,
@@ -52,6 +58,21 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   };
 
   const isSmallScreen = useIsMobile();
+
+  const onClick = () => {
+    if (audioRef.current && !playing) {
+      audioRef.current.play();
+      setPlaying(true);
+    } else {
+      audioRef.current?.pause();
+      setPlaying(false);
+    }
+  };
+  const icon = playing ? <PauseCircle /> : <PlayCircle />;
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = 0.05;
+  }, []);
   useEffect(() => {
     setSize('large');
     const checkStick = () => {
@@ -120,6 +141,14 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                     >
                       <Image height="30px" width="98px" src={spotify_logo} />
                     </Link>
+                    <IconButton
+                      onClick={onClick}
+                      icon={icon}
+                      variant="ghost"
+                      aria-label={playing ? 'pause' : 'play'}
+                      _hover={{ color: 'spotify.green' }}
+                      _active={{ boxShadow: 'none' }}
+                    />
                   </HStack>
                 </Stack>
                 <Stack>
@@ -189,6 +218,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
             boxShadow="none"
           />
         </Box>
+        {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}
       </Stack>
     </>
   );

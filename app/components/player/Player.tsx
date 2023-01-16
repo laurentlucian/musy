@@ -276,6 +276,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                               variant="ghost"
                               aria-label={playing ? 'pause' : 'play'}
                               _hover={{ color: 'spotify.green' }}
+                              _active={{ boxShadow: 'none' }}
                             />
                           </>
                         )}
