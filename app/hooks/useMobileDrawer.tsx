@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {

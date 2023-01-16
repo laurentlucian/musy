@@ -26,8 +26,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useFetcher } from '@remix-run/react';
-import { useDataRefresh } from 'remix-utils';
+import { useFetcher, useRevalidator } from '@remix-run/react';
 import type { Party } from '@prisma/client';
 import Tooltip from './../Tooltip';
 import PlayerBar from './PlayerBar';
@@ -47,12 +46,12 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const { onOpen } = useDrawerActions();
 
-  const bg = useColorModeValue('music.50', 'music.900');
+  const bg = useColorModeValue('music.900', 'music.50');
   const currentUser = useSessionUser();
-  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
-  const { refresh } = useDataRefresh();
+  const { revalidate } = useRevalidator();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const isSmallScreen = useIsMobile();
   const isOwnProfile = currentUser?.userId === id;
@@ -93,7 +92,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const active = playback.is_playing;
   useInterval(
     () => {
-      refresh();
+      revalidate();
     },
     // -> checks if user started playing every minute
     active ? null : 60000,

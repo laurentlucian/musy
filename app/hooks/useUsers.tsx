@@ -3,13 +3,10 @@ import { useMatches } from '@remix-run/react';
 
 const useUsers = (): (Profile & { settings: Settings | null })[] => {
   const matches = useMatches();
-  const route = matches.find((match) => match.id === 'routes/index');
-  if (!route) {
-    const route = matches.find((match) => match.id === 'routes/$id');
-    if (!route) return [];
 
-    return route.data.users;
-  }
+  // find first route with users in its data
+  const route = matches.find((match) => match.data?.users);
+  if (!route) return [];
 
   return route.data.users;
 };

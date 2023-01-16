@@ -1,6 +1,5 @@
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
-import { useDataRefresh } from 'remix-utils';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 const PlayerBar = ({
@@ -8,16 +7,15 @@ const PlayerBar = ({
 }: {
   playback: CurrentlyPlayingObjectCustom | SpotifyApi.CurrentlyPlayingResponse;
 }) => {
-  const color = useColorModeValue('music.900', 'music.50');
-  const { refresh } = useDataRefresh();
+  const color = useColorModeValue('music.50', 'music.900');
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   useEffect(() => {
     if (shouldRefresh) {
-      refresh();
+      // refresh();
     }
-  }, [shouldRefresh, refresh]);
+  }, [shouldRefresh]);
   const progress = playback.progress_ms ?? 0;
   const duration = playback.item?.duration_ms ?? 0;
   useEffect(() => {

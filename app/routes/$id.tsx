@@ -1,5 +1,5 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, Button, Flex } from '@chakra-ui/react';
-import { Form, Link, useCatch, useSubmit } from '@remix-run/react';
+import { Heading, Stack, Button } from '@chakra-ui/react';
+import { Link, useCatch } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
@@ -13,9 +13,7 @@ import {
 import Player from '~/components/player/Player';
 import Tiles from '~/components/tiles/Tiles';
 import Search from '~/components/Search';
-import Following from '~/components/Following';
 import PlayerPaused from '~/components/player/PlayerPaused';
-import Tooltip from '~/components/Tooltip';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import TopTracks from '~/components/tiles/TopTracks';
@@ -24,11 +22,11 @@ import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
 import ActivityFeed from '~/components/ActivityTile';
 import { askDaVinci } from '~/services/ai.server';
-import MoodButton from '~/components/MoodButton';
-import { msToString, timeSince } from '~/lib/utils';
+import { msToString } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import Recommended from '~/components/tiles/Recommended';
 import type { Profile as RecommendedBy } from '@prisma/client';
+import ProfileHeader from '~/components/profile/ProfileHeader';
 
 const Profile = () => {
   const {
@@ -40,81 +38,14 @@ const Profile = () => {
     liked,
     top,
     activity,
-    following,
-    // queue,
     recommended,
     playlists,
-    listened,
   } = useTypedLoaderData<typeof loader>();
-  const submit = useSubmit();
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content">
-      <HStack>
-        <Tooltip label="<3" placement="top">
-          <Image borderRadius="100%" boxSize={[150, 150, 200]} src={user.image} />
-        </Tooltip>
-        <Stack spacing={1} flex={1} maxW="calc(100% - 100px)">
-          <Heading
-            size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
-            fontWeight="bold"
-            textAlign="left"
-          >
-            {user.name}
-          </Heading>
-
-          {user.id === currentUser?.id ? (
-            <Form method="post" replace>
-              <Textarea
-                name="bio"
-                size="md"
-                variant="flushed"
-                defaultValue={user.bio ?? ''}
-                placeholder="write something :)"
-                onBlur={(e) => submit(e.currentTarget.form)}
-                resize="none"
-                maxLength={75}
-                rows={2}
-                py={0}
-                focusBorderColor="spotify.green"
-              />
-            </Form>
-          ) : (
-            <Text
-              fontSize="14px"
-              noOfLines={3}
-              whiteSpace="normal"
-              zIndex={-2}
-              wordBreak="break-word"
-            >
-              {user.bio}
-            </Text>
-          )}
-          <HStack spacing={5}>
-            <Flex wrap="wrap" align="baseline">
-              <Text fontSize="14px" mr="8px">
-                {listened} listened
-              </Text>
-              <Text as="span" fontSize="13px" opacity={0.5}>
-                in 24h
-              </Text>
-            </Flex>
-            <Flex wrap="wrap" align="baseline">
-              <Text fontSize="14px" mr="8px">
-                {user.ai?.mood}
-              </Text>
-              <Text as="span" fontSize="13px" opacity={0.5}>
-                {timeSince(user.ai?.updatedAt ?? null)}
-              </Text>
-            </Flex>
-          </HStack>
-          <Flex pb="5px">
-            {currentUser && <MoodButton />}
-            {currentUser && following !== null && <Following following={following} />}
-          </Flex>
-        </Stack>
-      </HStack>
+      <ProfileHeader />
       {playback && playback.item?.type === 'track' ? (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       ) : recent ? (
@@ -122,13 +53,13 @@ const Profile = () => {
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       <Stack spacing={5}>
-        {activity.length !== 0 && (
+        {/* {activity.length !== 0 && (
           <Tiles spacing="15px">
             {activity.map((track) => {
-              return <ActivityFeed key={track.id} track={track} />;
+              return <ActivityFeed key={track.id} activity={track} />;
             })}
           </Tiles>
-        )}
+        )} */}
       </Stack>
       {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracks recent={recent} />
@@ -198,7 +129,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   ] = await Promise.all([
     prisma.queue.findMany({
       where: { OR: [{ userId: id }, { ownerId: id }] },
-      include: { user: true, owner: { select: { user: true, accessToken: false } } },
+      include: { user: true, track: true, owner: { select: { user: true, accessToken: false } } },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.party.findMany({ where: { ownerId: id } }),
@@ -353,17 +284,6 @@ export const action = async ({ request, params }: ActionArgs) => {
   return null;
 };
 
-export const ErrorBoundary = (error: { error: Error }) => {
-  console.log('$id -> ErrorBoundary', error);
-
-  return (
-    <>
-      <Heading fontSize={['xl', 'xxl']}>500</Heading>
-      <Text fontSize="md">oops something broke :3;</Text>
-    </>
-  );
-};
-
 export const CatchBoundary = () => {
   let caught = useCatch();
   switch (caught.status) {
@@ -387,5 +307,7 @@ export const CatchBoundary = () => {
     </>
   );
 };
+
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 
 export default Profile;

@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import shallow from 'zustand/shallow';
 import type { Track } from '~/lib/types/types';
 

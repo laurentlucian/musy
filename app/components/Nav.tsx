@@ -15,10 +15,6 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const { pathname, search } = useLocation();
   const isSmallScreen = useIsMobile();
 
-  // settings not available unless you are logged in
-  // can now only sign out through settings
-  // can now only change color mode in settings
-
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
       <HStack as={Link} to="/" spacing="8px">

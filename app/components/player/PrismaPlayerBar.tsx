@@ -1,22 +1,22 @@
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import type { Playback, Track } from '@prisma/client';
+import { useRevalidator } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
-import { useDataRefresh } from 'remix-utils';
 
 const now = Date.now();
 
 const PrismaPlayerbar = ({ playback }: { playback: Playback & { track: Track } }) => {
   const color = useColorModeValue('music.900', 'music.50');
-  const { refresh } = useDataRefresh();
+  const { revalidate } = useRevalidator();
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
 
   useEffect(() => {
     if (shouldRefresh) {
-      refresh();
+      revalidate();
     }
-  }, [shouldRefresh, refresh]);
+  }, [shouldRefresh, revalidate]);
 
   const progress = playback.progress ?? 0;
   const duration = playback.track?.duration ?? 0;

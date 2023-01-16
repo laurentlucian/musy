@@ -124,7 +124,22 @@ export const getAllUsers = async (isAuthenticated = false) => {
     : undefined;
 
   const data = await prisma.user.findMany({
-    select: { user: { include: { settings: true, playback: { include: { track: true } } } } },
+    select: {
+      user: {
+        include: {
+          settings: true,
+          playback: {
+            include: {
+              track: {
+                include: {
+                  liked: { select: { user: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     orderBy: { user: { playback: { updatedAt: 'desc' } } },
     where: { revoked: false, ...restrict },
   });
