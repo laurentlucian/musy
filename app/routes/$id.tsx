@@ -71,9 +71,6 @@ const Profile = () => {
       <ProfileHeader />
       {playback && playback.item?.type === 'track' ? (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />
-      ) : null}
-      {playback && playback.item?.type === 'track' ? (
-        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       ) : main[0] ? (
         <PlayerPaused item={main[0][0].track} username={user.name} />
       ) : null}
