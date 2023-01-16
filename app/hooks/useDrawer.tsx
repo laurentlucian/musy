@@ -7,13 +7,15 @@ interface DrawerStateConfig {
   actions: {
     onClose: () => void;
     onOpen: (by: Track) => void;
+    setIsPlaying: (by: boolean) => void;
   };
+  isPlaying?: boolean;
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
   track: null,
   actions: {
-    onClose: () => set({ track: null }),
+    onClose: () => set({ track: null, isPlaying: false }),
     onOpen: (by) =>
       set({
         track: {
@@ -30,12 +32,22 @@ const useDrawerStore = create<DrawerStateConfig>()((set) => ({
           preview_url: by.preview_url,
         },
       }),
+    setIsPlaying: (by) => set({ isPlaying: by }),
   },
+  isPlaying: false,
 }));
 
 export const useDrawerTrack = () =>
   useDrawerStore(
     (state) => state.track,
+    // by default, zustand checks if state changes with a strict equality check
+    // this means that if you have an object in state, it would always be considered changed
+    // a shallow comparison is used for objects
+    shallow,
+  );
+export const useDrawerIsPlaying = () =>
+  useDrawerStore(
+    (state) => state.isPlaying,
     // by default, zustand checks if state changes with a strict equality check
     // this means that if you have an object in state, it would always be considered changed
     // a shallow comparison is used for objects

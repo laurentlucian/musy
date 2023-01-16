@@ -15,7 +15,7 @@ import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import { useEffect, useRef, useState } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
@@ -35,6 +35,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
+  const isPlaying = useDrawerIsPlaying();
   const bg = useColorModeValue('music.900', 'music.50');
   const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const image = item.album?.images[1].url;
@@ -73,6 +74,28 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = 0.05;
   }, []);
+
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+      // setPlaying(false);
+    } else if (playing) {
+      audioRef.current?.play();
+      setPlaying(true);
+      console.log('hiiiiiiii');
+    }
+  }, [isPlaying, playing]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('ended', () => setPlaying(false));
+      return () => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
+      };
+    }
+  }, [audioRef]);
+
   useEffect(() => {
     setSize('large');
     const checkStick = () => {

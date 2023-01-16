@@ -21,7 +21,7 @@ import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-r
 import PlayingFromTooltip from './../PlayingFromTooltip';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
@@ -51,6 +51,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
   const { onOpen } = useDrawerActions();
+  const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue('music.900', 'music.50');
 
@@ -90,6 +91,27 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = 0.05;
   }, []);
+
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+      // setPlaying(false);
+    } else if (playing) {
+      audioRef.current?.play();
+      setPlaying(true);
+      console.log('hiiiiiiii');
+    }
+  }, [isPlaying, playing]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('ended', () => setPlaying(false));
+      return () => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
+      };
+    }
+  }, [audioRef]);
 
   useEffect(() => {
     const checkStick = () => {
