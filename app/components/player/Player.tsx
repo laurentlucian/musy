@@ -13,11 +13,12 @@ import {
   Collapse,
   useDisclosure,
   Box,
+  Button,
 } from '@chakra-ui/react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import { ArrowDown2, ArrowUp2, People } from 'iconsax-react';
+import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 import PlayingFromTooltip from './../PlayingFromTooltip';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -39,7 +40,13 @@ type PlayerProps = {
 };
 
 const Player = ({ id, party, playback, item }: PlayerProps) => {
+  const currentUser = useSessionUser();
+  const isOwnProfile = currentUser?.userId === id;
+  const preview =
+    currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
+
   const [playingFrom, setPlayingFrom] = useState(false);
+  const [playing, setPlaying] = useState(preview);
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
 
@@ -47,17 +54,15 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const { onOpen } = useDrawerActions();
 
   const bg = useColorModeValue('music.900', 'music.50');
-  const currentUser = useSessionUser();
+
   const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
   const { revalidate } = useRevalidator();
   const busy = fetcher.submission?.formData.has('party') ?? false;
   const isSmallScreen = useIsMobile();
-  const isOwnProfile = currentUser?.userId === id;
+
   const audioRef = useRef<HTMLAudioElement>(null);
-  const preview =
-    currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
 
   const track: Track = {
     uri: item.uri,
@@ -71,6 +76,17 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     explicit: item.explicit,
     preview_url: item.preview_url,
   };
+
+  const onClick = () => {
+    if (audioRef.current && !playing) {
+      audioRef.current.play();
+      setPlaying(true);
+    } else {
+      audioRef.current?.pause();
+      setPlaying(false);
+    }
+  };
+  const icon = playing ? <PauseCircle /> : <PlayCircle />;
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = 0.05;
@@ -255,6 +271,13 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                                 />
                               </fetcher.Form>
                             </Tooltip>
+                            <IconButton
+                              onClick={onClick}
+                              icon={icon}
+                              variant="ghost"
+                              aria-label={playing ? 'pause' : 'play'}
+                              _hover={{ color: 'spotify.green' }}
+                            />
                           </>
                         )}
                       </HStack>
@@ -362,7 +385,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
             boxShadow="none"
           />
         </Box>
-        {item.preview_url && preview && <audio autoPlay ref={audioRef} src={item.preview_url} />}
+        {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}
       </Stack>
     </>
   );

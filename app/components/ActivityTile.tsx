@@ -7,7 +7,6 @@ import {
   Icon,
   AvatarGroup,
   Avatar,
-  Flex,
 } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
