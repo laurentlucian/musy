@@ -138,25 +138,20 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     preview_url: '',
   };
 
-  const liked =
-    activity.track.liked?.filter(({ user }) => {
-      console.log('item', user?.userId);
-      console.log('activity', activity?.userId);
+  const liked = activity.track.liked ?? [];
 
-      return (
-        user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
-      );
-    }) ?? [];
+  // ?.filter(({ user }) => {
+  //   return (
+  //     user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
+  //   );
+  // });
 
-  const played =
-    activity.track.recent?.filter(({ user }) => {
-      console.log('item', user?.userId);
-      console.log('activity', activity?.userId);
-
-      return (
-        user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
-      );
-    }) ?? [];
+  const played = activity.track.recent ?? [];
+  //   ?.filter(({ user }) => {
+  //   return (
+  //     user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
+  //   );
+  // });
 
   return (
     <Stack>
@@ -211,13 +206,13 @@ const ActivityTile = ({ activity }: ActivityProps) => {
               <HStack>
                 <Icon as={Play} />
                 <AvatarGroup size="xs" max={5}>
-                  {played.map(({ user }) => (
+                  {played.map(({ user }, index) => (
                     <Avatar
                       minW="20px"
                       maxW="20px"
                       minH="20px"
                       maxH="20px"
-                      key={user?.userId}
+                      key={index}
                       name={user?.name}
                       src={user?.image}
                     />
