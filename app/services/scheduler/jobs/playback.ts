@@ -1,5 +1,5 @@
 import invariant from 'tiny-invariant';
-import { createTrackModel, minutesToMs, notNull } from '~/lib/utils';
+import { createTrackModel, notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -49,13 +49,13 @@ const upsertPlayback = async (
     },
   });
 
-  console.log('playbackQ -> prisma & job created', userId);
+  console.log('playbackQ -> prisma updated', userId);
 };
 
 export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   const { userId } = job.data;
 
-  console.log('playbackQ -> pending job starting...', userId);
+  console.log('playbackQ -> job starting...', userId);
   const profile = await prisma.user.findUnique({
     where: { id: userId },
     include: { user: true },
@@ -69,26 +69,23 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   }
 
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
-  if (!playback) {
+  if (!playback || !playback.is_playing) {
     console.log('playbackQ -> not playing', userId);
     return null;
   }
   const { item: track, progress_ms } = playback;
 
-  if (!track || track.type !== 'track' || !progress_ms || !playback.is_playing) {
+  if (!track || track.type !== 'track' || !progress_ms) {
     console.log('playbackQ -> not playing a track', userId);
     return null;
   }
-
   console.log('playbackQ -> user', userId, 'track', track.name);
   await upsertPlayback(userId, track, progress_ms, playback.timestamp);
-  const remaining = track.duration_ms - progress_ms;
-  await playbackQ.add(
-    'playback',
-    { userId },
-    { jobId: userId, delay: remaining, removeOnComplete: true },
-  );
+
   console.log('playbackQ -> completed', userId);
+  const remaining = track.duration_ms - progress_ms;
+  await playbackQ.add('playback', { userId }, { delay: remaining + 500, removeOnComplete: true });
+  // return playback;
 });
 
 const getPlaybackState = async (id: string) => {
@@ -111,63 +108,53 @@ const getPlaybackState = async (id: string) => {
 };
 
 const removePlaybackJob = async (userId: string) => {
-  const job = await playbackQ.getJob(userId);
-  if (job) await job.remove();
+  // setting the jobId as userId limits a lot on ways to repeat the job with a dynamic delay
+  // alternatively, it's possible to save the job id in the db
+  const allJobs = await playbackQ.getJobs(['waiting', 'delayed']);
+  const jobs = allJobs.filter((j) => j.data.userId === userId); // get generated jobId through job.data being the userId
+
+  console.log('removePlaybackJob -> jobs', jobs.length);
+  for (const job of jobs) {
+    console.log('removePlaybackJob -> removing', job.id);
+    await job.remove();
+  }
 };
 
-export const playbackCreatorQ = Queue<null>('playback_creator', async (job) => {
+export const playbackCreator = async () => {
   const users = await prisma.profile.findMany();
-  console.log(
-    'playbackCreatorQ -> users without playback record',
-    users.map((u) => u.userId).join(', '),
-  );
-
   const playbacks = await Promise.all(users.map((user) => getPlaybackState(user.userId)));
   const active = playbacks.filter((u) => notNull(u.playback));
 
   console.log(
-    'playbackCreatorQ -> users active',
+    'playbackCreator -> users active',
     active.length,
     active.map(({ id }) => id).join(', '),
   );
 
-  // const cleaned = await playbackQ.clean(0, 0, 'delayed');
-  // const cleaned1 = await playbackQ.clean(0, 0, 'active');
-  // await prisma.playback.deleteMany();
-  // console.log('playbackCreatorQ -> users cleaned', cleaned, cleaned1);
-
   for (const { id: userId, playback } of active) {
-    console.log('playbackCreatorQ -> user', userId);
     if (!playback) continue;
     const { item: track, progress_ms, timestamp } = playback;
     const current = await prisma.playback.findUnique({ where: { userId } });
     const isSameTrack = current?.trackId === track?.id;
-    if (isSameTrack) console.log('playbackCreatorQ -> same track', track?.name);
+    if (isSameTrack) console.log('playbackCreator -> same track', track?.name, userId);
     if (!track || track.type !== 'track' || !progress_ms || isSameTrack) continue;
-    console.log('playbackCreatorQ -> new track', track?.name);
+    console.log('playbackCreator -> new track', track?.name, userId);
 
     await upsertPlayback(userId, track, progress_ms, timestamp).catch((e) => console.log(e));
     const remaining = track.duration_ms - progress_ms;
-    const inQ = await playbackQ.getJob(userId);
-    if (inQ) {
-      await removePlaybackJob(userId);
-    }
-    await playbackQ.add(
-      'playback',
-      { userId },
-      { jobId: userId, delay: remaining, removeOnComplete: true },
-    );
+    await removePlaybackJob(userId);
+    await playbackQ.add('playback', { userId }, { delay: remaining, removeOnComplete: true });
   }
 
   const inactive = playbacks.filter((u) => !notNull(u.playback));
-  console.log('playbackCreatorQ -> users inactive', inactive.length);
+  console.log('playbackCreator -> users inactive', inactive.length);
 
   for (const { id: userId } of inactive) {
     const exists = await prisma.playback.findUnique({ where: { userId } });
     if (exists) {
       await removePlaybackJob(userId);
       await prisma.playback.delete({ where: { userId } });
-      console.log('playbackCreatorQ -> deleted', userId, 'playback');
+      console.log('playbackCreator -> deleted', userId, 'playback');
     }
   }
-});
+};

@@ -4,13 +4,16 @@ import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
-import { playbackCreatorQ, playbackQ } from './playback';
+import { playbackCreator, playbackQ } from './playback';
+import { libraryQ } from './scraper';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
   async (job) => {
     const { userId } = job.data;
     console.log('userQ -> pending job starting...', userId);
+
+    await playbackCreator();
     const profile = await prisma.user.findUnique({
       where: { id: userId },
       include: { user: true },
@@ -192,65 +195,10 @@ export const userQ = Queue<{ userId: string }>(
           'dbTotal',
           dbTotal,
         );
-        for (let i = 1; i < pages; i++) {
-          const {
-            body: { items: liked },
-          } = await spotify.getMySavedTracks({ limit, offset: i * limit });
-          console.log('userQ -> adding page', i);
-          for (const { track, added_at } of liked) {
-            const trackDb = createTrackModel(track);
-            const data = {
-              likedAt: new Date(added_at),
-              name: track.name,
-              uri: track.uri,
-              albumName: track.album.name,
-              albumUri: track.album.uri,
-              artist: track.artists[0].name,
-              artistUri: track.artists[0].uri,
-              image: track.album.images[0].url,
-              explicit: track.explicit,
-              duration: track.duration_ms,
-              action: 'liked',
-
-              user: {
-                connect: {
-                  userId,
-                },
-              },
-            };
-
-            await prisma.likedSongs.upsert({
-              where: {
-                trackId_userId: {
-                  trackId: track.id,
-                  userId: userId,
-                },
-              },
-              update: {
-                ...data,
-                track: {
-                  connectOrCreate: {
-                    create: trackDb,
-                    where: {
-                      id: track.id,
-                    },
-                  },
-                },
-              },
-              create: {
-                ...data,
-                track: {
-                  connectOrCreate: {
-                    create: trackDb,
-                    where: {
-                      id: track.id,
-                    },
-                  },
-                },
-              },
-            });
-          }
-        }
+        await libraryQ.add('user-library', {
+          userId,
+          pages,
+        });
       } else {
         console.log('userQ -> all liked tracks already in db', userId, total, dbTotal);
       }
@@ -299,6 +247,15 @@ export const addUsersToQueue = async () => {
     return;
   }
 
+  const cleaned = await playbackQ.clean(0, 0, 'delayed');
+  const cleaned1 = await playbackQ.clean(0, 0, 'active');
+  await prisma.playback.deleteMany();
+
+  console.log(
+    'playbackQ',
+    (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
+  );
+
   // needed this once because forgot to save duration_ms in db
   // await addDurationToRecent();
   // console.log('addUsersToQueue -> added all durations to recent');
@@ -310,10 +267,9 @@ export const addUsersToQueue = async () => {
     users.length,
   );
 
-  await userQ.pause(); // pause all jobs before obliterating
-  await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
-  await playbackCreatorQ.pause(); // pause all jobs before obliterating
-  await playbackCreatorQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
+  // await userQ.pause(); // pause all jobs before obliterating
+  // await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
+  console.log('addUsersToQueue -> obliterated userQ');
 
   // for testing
   // await userQ.add('update_liked', { userId: '1295028670' });
@@ -347,23 +303,285 @@ export const addUsersToQueue = async () => {
     })),
   );
 
-  // create one repeateable job to loop through all active users and create playback jobs
-  await playbackCreatorQ.add('playback_creator', null, {
-    repeat: { every: minutesToMs(0.5) },
-    backoff: {
-      type: 'exponential',
-      delay: minutesToMs(0.5),
-    },
-  });
-  await playbackCreatorQ.add('playback_creator', null);
-
   console.log(
     'addUsersToQueue -> non repeateable jobs created (only at startup):',
     await userQ.getJobCounts(),
   );
 
+  await addMissingTracks();
+
   console.log('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
+};
+
+// ------------------------------------------------------------- SCRIPTS
+
+const addMissingTracks = async () => {
+  const { spotify } = await spotifyApi('1295028670');
+  invariant(spotify, 'No spotify');
+  const recents = await prisma.recentSongs.findMany({ where: { track: null } });
+  console.log('recents', recents.length);
+
+  for (const recent of recents) {
+    const { albumName, albumUri, artistUri } = recent;
+
+    if (!albumName || !albumUri || !artistUri) {
+      console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
+
+      const track = await prisma.track.findUnique({ where: { id: recent.trackId } });
+
+      if (track) {
+        console.log('track found', recent.name);
+        await prisma.recentSongs.update({
+          where: {
+            id: recent.id,
+          },
+          data: {
+            track: {
+              connect: {
+                id: recent.trackId,
+              },
+            },
+          },
+        });
+        continue;
+      }
+
+      if (!track) {
+        console.log('track not found', recent.name);
+        const { body: track } = await spotify.getTrack(recent.trackId);
+        const trackDb = createTrackModel(track);
+        await prisma.recentSongs.update({
+          where: {
+            id: recent.id,
+          },
+          data: {
+            track: {
+              create: trackDb,
+            },
+          },
+        });
+      }
+
+      continue;
+    }
+
+    await prisma.recentSongs
+      .update({
+        where: {
+          id: recent.id,
+        },
+        data: {
+          track: {
+            connectOrCreate: {
+              create: {
+                id: recent.trackId,
+                name: recent.name,
+                uri: recent.uri,
+                albumName,
+                albumUri,
+                artistUri,
+                artist: recent.artist,
+                image: recent.image,
+                explicit: recent.explicit,
+                duration: recent.duration,
+              },
+              where: {
+                id: recent.trackId,
+              },
+            },
+          },
+        },
+      })
+      .then((res) => console.log('updated', res))
+      .catch((err) => console.log('err', err));
+  }
+
+  const liked = await prisma.likedSongs.findMany({ where: { track: null } });
+  console.log('liked', liked.length);
+
+  for (const like of liked) {
+    const { albumName, albumUri, artistUri } = like;
+
+    if (!albumName || !albumUri || !artistUri) {
+      console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
+
+      const track = await prisma.track.findUnique({ where: { id: like.trackId } });
+
+      if (track) {
+        console.log('track found', like.name);
+        await prisma.likedSongs.update({
+          where: {
+            id: like.id,
+          },
+          data: {
+            track: {
+              connect: {
+                id: like.trackId,
+              },
+            },
+          },
+        });
+        continue;
+      }
+
+      if (!track) {
+        console.log('track not found', like.name);
+        const { body: track } = await spotify.getTrack(like.trackId);
+        const trackDb = createTrackModel(track);
+        await prisma.likedSongs.update({
+          where: {
+            id: like.id,
+          },
+          data: {
+            track: {
+              create: trackDb,
+            },
+          },
+        });
+      }
+
+      continue;
+    }
+
+    await prisma.likedSongs
+      .update({
+        where: {
+          id: like.id,
+        },
+        data: {
+          track: {
+            connectOrCreate: {
+              create: {
+                id: like.trackId,
+                name: like.name,
+                uri: like.uri,
+                albumName,
+                albumUri,
+                artistUri,
+                artist: like.artist,
+                image: like.image,
+                explicit: like.explicit,
+                duration: like.duration,
+              },
+              where: {
+                id: like.trackId,
+              },
+            },
+          },
+        },
+      })
+      .then((res) => console.log('updated', res))
+      .catch((err) => console.log('err', err));
+  }
+
+  const queued = await prisma.queue.findMany({ where: { track: null } });
+  console.log('queued', queued.length);
+
+  for (const queue of queued) {
+    const { trackId, albumName, albumUri, artistUri } = queue;
+
+    if (!trackId) {
+      console.log('missing trackId', queue.name);
+      const {
+        body: { tracks },
+      } = await spotify.searchTracks(queue.name);
+      if (!tracks) {
+        console.log('no track found', queue.name);
+        continue;
+      }
+
+      const trackDb = createTrackModel(tracks.items[0]);
+      await prisma.queue.update({
+        where: {
+          id: queue.id,
+        },
+        data: {
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: trackDb.id,
+              },
+            },
+          },
+        },
+      });
+
+      continue;
+    }
+
+    // if (!albumName || !albumUri || !artistUri) {
+    //   console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
+
+    //   const track = await prisma.track.findUnique({ where: { id: trackId } });
+
+    //   if (track) {
+    //     console.log('track found', queue.name);
+    //     await prisma.queue.update({
+    //       where: {
+    //         id: queue.id,
+    //       },
+    //       data: {
+    //         track: {
+    //           connect: {
+    //             id: trackId,
+    //           },
+    //         },
+    //       },
+    //     });
+    //     continue;
+    //   }
+
+    //   if (!track) {
+    //     console.log('track not found', queue.name);
+    //     const { body: track } = await spotify.getTrack(trackId);
+    //     const trackDb = createTrackModel(track);
+    //     await prisma.queue.update({
+    //       where: {
+    //         id: queue.id,
+    //       },
+    //       data: {
+    //         track: {
+    //           create: trackDb,
+    //         },
+    //       },
+    //     });
+    //   }
+
+    //   continue;
+    // }
+
+    // await prisma.queue
+    //   .update({
+    //     where: {
+    //       id: queue.id,
+    //     },
+    //     data: {
+    //       track: {
+    //         connectOrCreate: {
+    //           create: {
+    //             id: trackId,
+    //             name: queue.name,
+    //             uri: queue.uri,
+    //             albumName,
+    //             albumUri,
+    //             artistUri,
+    //             artist: queue.artist,
+    //             image: queue.image,
+    //             explicit: queue.explicit,
+    //             duration: queue.duration,
+    //           },
+    //           where: {
+    //             id: trackId,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   })
+    //   .then((res) => console.log('updated', res))
+    //   .catch((err) => console.log('err', err));
+  }
 };
 
 const addDurationToRecent = async () => {
