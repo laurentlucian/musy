@@ -12,7 +12,6 @@ import {
 } from '~/services/auth.server';
 import Player from '~/components/player/Player';
 import Search from '~/components/Search';
-import PlayerPaused from '~/components/player/PlayerPaused';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import TopTracks from '~/components/tiles/TopTracks';
@@ -23,22 +22,48 @@ import { askDaVinci } from '~/services/ai.server';
 import { msToString } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import Recommended from '~/components/tiles/Recommended';
-import type { Profile as RecommendedBy } from '@prisma/client';
 import ProfileHeader from '~/components/profile/ProfileHeader';
+import PlayerPaused from '~/components/player/PlayerPaused';
+
+// const LazyMain = () => {
+//   const data = useAsyncValue();
+//   console.log('data', data);
+
+//   return null;
+//   return (
+//     <>
+//       <RecentTracks recent={recent} />
+//       {liked.length && <LikedTracks liked={liked} />}
+//       <TopTracks top={top} />
+//       {playlists.length && <Playlists playlists={playlists} />}
+//     </>
+//   );
+// };
+
+const ProfileMain = ({
+  main,
+}: {
+  main: [
+    never[] | SpotifyApi.PlayHistoryObject[],
+    never[] | SpotifyApi.SavedTrackObject[],
+    never[] | SpotifyApi.TrackObjectFull[],
+    never[] | SpotifyApi.PlaylistObjectSimplified[],
+  ];
+}) => {
+  const [recent, liked, top, playlists] = main;
+  return (
+    <>
+      <RecentTracks recent={recent} />
+      {liked.length && <LikedTracks liked={liked} />}
+      <TopTracks top={top} />
+      {playlists.length && <Playlists playlists={playlists} />}
+    </>
+  );
+};
 
 const Profile = () => {
-  const {
-    user,
-    playback,
-    recent,
-    currentUser,
-    party,
-    liked,
-    top,
-    activity,
-    recommended,
-    playlists,
-  } = useTypedLoaderData<typeof loader>();
+  const { user, playback, currentUser, party, recommended, main } =
+    useTypedLoaderData<typeof loader>();
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
@@ -46,8 +71,11 @@ const Profile = () => {
       <ProfileHeader />
       {playback && playback.item?.type === 'track' ? (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />
-      ) : recent ? (
-        <PlayerPaused item={recent[0].track} username={user.name} />
+      ) : null}
+      {playback && playback.item?.type === 'track' ? (
+        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
+      ) : main[0] ? (
+        <PlayerPaused item={main[0][0].track} username={user.name} />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       <Stack spacing={5}>
@@ -60,10 +88,12 @@ const Profile = () => {
         )} */}
       </Stack>
       {isOwnProfile && <Recommended recommended={recommended} />}
-      <RecentTracks recent={recent} />
-      {liked.length && <LikedTracks liked={liked} />}
-      <TopTracks top={top} />
-      {playlists.length && <Playlists playlists={playlists} />}
+      <ProfileMain main={main} />
+      {/* <Suspense fallback={<Waver />}>
+        <Await resolve={lazyMain}>
+          <LazyMain />
+        </Await>
+      </Suspense> */}
     </Stack>
   );
 };
@@ -115,64 +145,35 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     await updateUserName(id, name);
   }
 
-  const [
-    activity,
-    party,
-    recent,
-    liked,
-    top,
-    playlists,
-    { currently_playing: playback, queue },
-    users,
-  ] = await Promise.all([
-    prisma.queue.findMany({
-      where: { OR: [{ userId: id }, { ownerId: id }] },
-      include: { user: true, track: true, owner: { select: { user: true, accessToken: false } } },
-      orderBy: { createdAt: 'desc' },
-    }),
-    prisma.party.findMany({ where: { ownerId: id } }),
-    spotify
-      .getMyRecentlyPlayedTracks({ limit: 50 })
-      .then((data) => data.body.items)
-      .catch(() => []),
-    spotify
-      .getMySavedTracks({ limit: 50 })
-      .then((data) => data.body.items)
-      .catch(() => []),
-    spotify
-      .getMyTopTracks({ time_range: topFilter, limit: 50 })
-      .then((data) => data.body.items)
-      .catch(() => []),
-    spotify
-      .getUserPlaylists(user.userId, { limit: 50 })
-      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
-      .catch(() => []),
-    getUserQueue(id).catch(() => {
-      return {
-        currently_playing: null,
-        queue: [],
-      };
-    }),
-    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
-  ]);
-
-  const recommendedSongs = await prisma.recommendedSongs.findMany({
-    where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
-    orderBy: { createdAt: 'desc' },
-  });
-  let recommendedBy: RecommendedBy[] = [];
-  for await (const r of recommendedSongs) {
-    recommendedBy = [
-      ...recommendedBy,
-      ...(await prisma.profile.findMany({
-        where: { userId: r.senderId },
-      })),
-    ];
-  }
-  const recommended = recommendedSongs.map((r) => {
-    const senderProfile = recommendedBy.find((p) => p.userId === r.senderId);
-    return { ...r, senderProfile };
-  });
+  const [activity, party, { currently_playing: playback, queue }, users, recommended] =
+    await Promise.all([
+      prisma.queue.findMany({
+        where: { OR: [{ userId: id }, { ownerId: id }] },
+        include: { user: true, track: true, owner: { select: { user: true, accessToken: false } } },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.party.findMany({ where: { ownerId: id } }),
+      getUserQueue(id).catch(() => {
+        return {
+          currently_playing: null,
+          queue: [],
+        };
+      }),
+      getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
+      prisma.recommendedSongs.findMany({
+        where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          owner: true,
+          sender: true,
+          track: {
+            include: {
+              recommended: { include: { sender: true, owner: true } },
+            },
+          },
+        },
+      }),
+    ]);
 
   const recentDb = await prisma.recentSongs.findMany({
     where: { userId: id },
@@ -189,6 +190,26 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     filteredRecent.map((track) => track.duration).reduce((a, b) => a + b, 0),
   );
 
+  // [recent, liked, top, playlists]
+  const main = await Promise.all([
+    spotify
+      .getMyRecentlyPlayedTracks({ limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getMySavedTracks({ limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getMyTopTracks({ time_range: topFilter, limit: 50 })
+      .then((data) => data.body.items)
+      .catch(() => []),
+    spotify
+      .getUserPlaylists(user.userId, { limit: 50 })
+      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+      .catch(() => []),
+  ]);
+
   const currentUser = await getCurrentUser(request);
   if (currentUser) {
     const { spotify } = await spotifyApi(currentUser.userId);
@@ -197,41 +218,61 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       body: [following],
     } = await spotify.isFollowingUsers([id]);
 
+    // return defer({
+    //   user,
+    //   activity,
+    //   party,
+    //   playback,
+    //   currentUser,
+    //   following,
+    //   queue,
+    //   recommended,
+    //   users,
+    //   listened,
+    //   lazyMain,
+    // });
+
     return typedjson({
       user,
       activity,
       party,
       playback,
-      recent,
-      liked,
-      top,
-      playlists,
       currentUser,
       following,
       queue,
       recommended,
-      recommendedBy,
       users,
       listened,
+      main,
     });
   }
+
+  // return defer({
+  //   user,
+  //   activity,
+  //   party,
+  //   playback,
+  //   currentUser,
+  //   following: null,
+  //   queue,
+  //   recommended,
+  //   users,
+  //   listened,
+  //   lazyMain,
+  // });
 
   return typedjson({
     user,
     activity,
     party,
     playback,
-    recent,
-    liked,
-    top,
-    playlists,
     currentUser,
     following: null,
     queue,
     recommended,
-    recommendedBy,
     users,
     listened,
+    main,
   });
 };
 
