@@ -11,7 +11,6 @@ import {
   updateUserName,
 } from '~/services/auth.server';
 import Player from '~/components/player/Player';
-import Tiles from '~/components/tiles/Tiles';
 import Search from '~/components/Search';
 import PlayerPaused from '~/components/player/PlayerPaused';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -20,7 +19,6 @@ import TopTracks from '~/components/tiles/TopTracks';
 import RecentTracks from '~/components/tiles/RecentTracks';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
-import ActivityFeed from '~/components/ActivityTile';
 import { askDaVinci } from '~/services/ai.server';
 import { msToString } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
@@ -56,7 +54,7 @@ const Profile = () => {
         {/* {activity.length !== 0 && (
           <Tiles spacing="15px">
             {activity.map((track) => {
-              return <ActivityFeed key={track.id} activity={track} />;
+              return <ActivityTile key={track.id} activity={track} />;
             })}
           </Tiles>
         )} */}

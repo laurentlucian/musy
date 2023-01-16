@@ -49,7 +49,7 @@ export const timeSince = (date: Date | null) => {
   }
   // server hydration breaks when html is different from server (because this changes every second)
   // return Math.floor(seconds) + 's';
-  return 'just now';
+  return 'now';
 };
 
 export const msToString = (ms: number) => {

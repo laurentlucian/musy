@@ -7,11 +7,12 @@ import {
   Icon,
   AvatarGroup,
   Avatar,
+  Flex,
 } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
 import { timeSince } from '~/lib/utils';
-import { Play, Send2 } from 'iconsax-react';
+import { Heart, Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';
 import type { Activity, Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
@@ -21,8 +22,6 @@ interface ActivityProps {
 }
 
 const ActivityAction = ({ activity }: ActivityProps) => {
-  const users = activity.likedBy?.filter((user) => user.userId !== activity.user?.userId) ?? [];
-
   return (
     <HStack>
       <>
@@ -31,34 +30,18 @@ const ActivityAction = ({ activity }: ActivityProps) => {
             case 'liked':
               return (
                 <>
-                  <HStack align="center">
-                    <AvatarGroup>
-                      {users.map((user) => (
-                        <Avatar
-                          minW="29px"
-                          maxW="29px"
-                          minH="29px"
-                          maxH="29px"
-                          key={user.userId}
-                          name={user.name}
-                          src={user.image}
-                          size={['xs', null, 'sm']}
-                        />
-                      ))}
-                    </AvatarGroup>
-                    <Tooltip label={activity.user?.name} placement="top-start">
-                      <Link to={`/${activity.user?.userId}`}>
-                        <Image
-                          minW="25px"
-                          maxW="25px"
-                          minH="25px"
-                          maxH="25px"
-                          borderRadius="100%"
-                          src={activity.user?.image}
-                        />
-                      </Link>
-                    </Tooltip>
-                  </HStack>
+                  <Tooltip label={activity.user?.name} placement="top-start">
+                    <Link to={`/${activity.user?.userId}`}>
+                      <Image
+                        minW="25px"
+                        maxW="25px"
+                        minH="25px"
+                        maxH="25px"
+                        borderRadius="100%"
+                        src={activity.user?.image}
+                      />
+                    </Link>
+                  </Tooltip>
                   <LikeIcon aria-checked boxSize="18px" />
                 </>
               );
@@ -155,43 +138,100 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     preview_url: '',
   };
 
+  const liked =
+    activity.track.liked?.filter(({ user }) => {
+      console.log('item', user?.userId);
+      console.log('activity', activity?.userId);
+
+      return (
+        user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
+      );
+    }) ?? [];
+
+  const played =
+    activity.track.recent?.filter(({ user }) => {
+      console.log('item', user?.userId);
+      console.log('activity', activity?.userId);
+
+      return (
+        user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
+      );
+    }) ?? [];
+
   return (
-    <>
-      <Stack w="220px">
-        <HStack>
-          <ActivityAction activity={activity} />
-        </HStack>
-        <HStack
-          borderRadius={5}
-          bgColor={bg}
-          w="100%"
-          pl={2}
-          onClick={() => onOpen(item)}
-          cursor="pointer"
-        >
-          <Stack spacing={0} px={2} w="200px">
-            <Tooltip label={item.name} placement="top-start">
-              <Text
-                fontSize={['12px', '13px']}
-                noOfLines={1}
-                whiteSpace="normal"
-                wordBreak="break-word"
-              >
-                {item.name}
-              </Text>
-            </Tooltip>
-            <Tooltip label={item.artist} placement="top-start">
-              <Text fontSize={['9px', '10px']} opacity={0.6}>
-                {item.artist}
-              </Text>
-            </Tooltip>
-          </Stack>
+    <Stack>
+      <HStack>
+        <ActivityAction activity={activity} />
+      </HStack>
+      <Flex
+        justify="space-between"
+        borderRadius={5}
+        bgColor={bg}
+        w="250px"
+        onClick={() => onOpen(item)}
+        cursor="pointer"
+      >
+        <Flex direction="column" px={2} py={1}>
           <Tooltip label={item.name} placement="top-start">
-            <Image boxSize="70px" objectFit="cover" src={item.image} />
+            <Text
+              fontSize={['12px', '13px']}
+              noOfLines={1}
+              whiteSpace="normal"
+              wordBreak="break-word"
+            >
+              {item.name}
+            </Text>
           </Tooltip>
-        </HStack>
-      </Stack>
-    </>
+          <Tooltip label={item.artist} placement="top-start">
+            <Text fontSize={['9px', '10px']} opacity={0.6}>
+              {item.artist}
+            </Text>
+          </Tooltip>
+
+          <Stack spacing={1} mt="8px">
+            {liked.length ? (
+              <HStack>
+                <Icon as={Heart} />
+                <AvatarGroup size="xs" max={5}>
+                  {liked.map(({ user }) => (
+                    <Avatar
+                      minW="20px"
+                      maxW="20px"
+                      minH="20px"
+                      maxH="20px"
+                      key={user?.userId}
+                      name={user?.name}
+                      src={user?.image}
+                    />
+                  ))}
+                </AvatarGroup>
+              </HStack>
+            ) : null}
+            {played.length ? (
+              <HStack>
+                <Icon as={Play} />
+                <AvatarGroup size="xs" max={5}>
+                  {played.map(({ user }) => (
+                    <Avatar
+                      minW="20px"
+                      maxW="20px"
+                      minH="20px"
+                      maxH="20px"
+                      key={user?.userId}
+                      name={user?.name}
+                      src={user?.image}
+                    />
+                  ))}
+                </AvatarGroup>
+              </HStack>
+            ) : null}
+          </Stack>
+        </Flex>
+        <Tooltip label={item.name} placement="top-start">
+          <Image boxSize="100px" objectFit="cover" src={item.image} />
+        </Tooltip>
+      </Flex>
+    </Stack>
   );
 };
 
