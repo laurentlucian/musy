@@ -31,8 +31,8 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
-  const bg = useColorModeValue('music.50', 'music.900');
-  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+  const bg = useColorModeValue('music.900', 'music.50');
+  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const image = item.album?.images[1].url;
   const artist = item.artists[0].name;
   const explicit = item.explicit;
