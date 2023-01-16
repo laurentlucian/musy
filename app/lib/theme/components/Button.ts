@@ -39,7 +39,7 @@ const variantMusic: SystemStyleFunction = (props) => {
 
   return {
     bg: background,
-    color: mode(`gray.800`, color)(props),
+    color: mode(color, `gray.800`)(props),
     _hover: {
       bg: mode(`${c}.300`, hoverBg)(props),
       _disabled: {

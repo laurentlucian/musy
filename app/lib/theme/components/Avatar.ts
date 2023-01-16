@@ -9,16 +9,16 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const baseStyle = definePartsStyle((props) => ({
   // define the part you're going to style
   badge: {
-    bg: 'gray.500',
+    bg: 'music.900',
   },
   container: {
     borderRadius: 'full',
-    border: mode('3px solid #E7DFD966', '3px solid #10101066')(props),
-    boxShadow: mode('0 0 10px #E7DFD966', '0 0 10px #10101066')(props),
+    border: mode('3px solid music.900', '3px solid music.200')(props),
+    // boxShadow: mode('0 0 10px music.900', '0 0 10px music.200')(props),
   },
   excessLabel: {
-    bg: 'gray.800',
-    color: 'white',
+    bg: 'music.900',
+    color: 'music.900',
     borderRadius: 'full',
   },
 }));
