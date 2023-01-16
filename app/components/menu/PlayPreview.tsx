@@ -22,18 +22,20 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
   }, []);
   return (
     <>
-      <Button
-        onClick={onClick}
-        leftIcon={icon}
-        mr="0px"
-        variant="ghost"
-        justifyContent="left"
-        w={['100vw', '550px']}
-        color="music.200"
-        _hover={{ color: 'white' }}
-      >
-        {text} Preview
-      </Button>
+      {preview_url !== '' && preview_url && (
+        <Button
+          onClick={onClick}
+          leftIcon={icon}
+          mr="0px"
+          variant="ghost"
+          justifyContent="left"
+          w={['100vw', '550px']}
+          color="music.200"
+          _hover={{ color: 'white' }}
+        >
+          {text} Preview
+        </Button>
+      )}
       {preview_url && <audio ref={audioRef} src={preview_url} />}
     </>
   );

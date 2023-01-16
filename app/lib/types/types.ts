@@ -27,6 +27,7 @@ export type Activity = {
     artist: string;
     artistUri: string;
     explicit: boolean;
+    preview_url?: string | null;
     liked?: { user: Profile | null }[];
     recent?: { user: Profile | null }[];
   };
