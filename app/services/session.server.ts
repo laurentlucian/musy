@@ -13,6 +13,8 @@ export const sessionStorage = createCookieSessionStorage({
     httpOnly: true,
     secrets: [sessionSecret], // replace this with an actual secret from env variable
     secure: process.env.NODE_ENV === 'production', // enable this in prod only
+    maxAge: 31536000, // 2024
+    // maxAge: 2147483647, // 2038
   },
 });
 
