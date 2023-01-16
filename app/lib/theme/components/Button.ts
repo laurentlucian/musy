@@ -1,4 +1,4 @@
-import { mode } from '@chakra-ui/theme-tools';
+import { mode, transparentize } from '@chakra-ui/theme-tools';
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
 import { defineStyle } from '@chakra-ui/styled-system';
 
@@ -49,6 +49,34 @@ const variantMusic: SystemStyleFunction = (props) => {
     _active: { bg: mode(`${c}.400`, activeBg)(props) },
   };
 };
+
+const variantGhost = defineStyle((props) => {
+  const { colorScheme: c, theme } = props
+
+  if (c === "gray") {
+    return {
+      color: mode(`inherit`, `whiteAlpha.900`)(props),
+      _hover: {
+        bg: mode(`gray.100`, `whiteAlpha.200`)(props),
+      },
+      _active: { bg: mode(`gray.200`, `whiteAlpha.300`)(props) },
+    }
+  }
+
+  const darkHoverBg = transparentize(`${c}.200`, 0.12)(theme)
+  const darkActiveBg = transparentize(`${c}.200`, 0.24)(theme)
+
+  return {
+    color: mode(`music.200`, `music.800`)(props),
+    bg: "transparent",
+    _hover: {
+      bg: mode(`${c}.50`, darkHoverBg)(props),
+    },
+    _active: {
+      bg: mode(`${c}.100`, darkActiveBg)(props),
+    },
+  }
+})
 
 const drawer = defineStyle({
   bg: '#00',
@@ -121,6 +149,7 @@ export default {
   },
   variants: {
     music: variantMusic,
+    ghost: variantGhost,
     drawer,
     searchCircle,
     close,

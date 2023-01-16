@@ -13,7 +13,6 @@ import {
   Collapse,
   useDisclosure,
   Box,
-  Button,
 } from '@chakra-ui/react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
