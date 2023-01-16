@@ -35,39 +35,36 @@ export const loader = async ({ request }: LoaderArgs) => {
     .findMany({
       take: 20,
       orderBy: { likedAt: 'desc' },
-      include: { user: true, track: true },
+      include: {
+        user: true,
+        track: {
+          include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
+        },
+      },
     })
     .then((data) => data.map((data) => ({ ...data, createdAt: data.likedAt })));
 
   const queued = prisma.queue.findMany({
     take: 20,
     orderBy: { createdAt: 'desc' },
-    include: { user: true, track: true, owner: { select: { user: true, accessToken: false } } },
+    include: {
+      user: true,
+      track: {
+        include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
+      },
+      owner: { select: { user: true, accessToken: false } },
+    },
   });
 
   const songs = await Promise.all([liked, queued]);
 
-  const activity = songs.flat().sort((a, b) => {
-    if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
-    return 0;
-  }) as Activity[];
-
-  for (const [index, { action, trackId }] of activity.entries()) {
-    if (action !== 'liked') continue;
-    if (!trackId) continue;
-
-    const likedUsers = await prisma.profile.findMany({
-      where: {
-        liked: {
-          some: {
-            trackId,
-          },
-        },
-      },
-    });
-    // add likedUsers as a property to each activity item
-    activity[index].likedBy = likedUsers;
-  }
+  const activity = songs
+    .flat()
+    .sort((a, b) => {
+      if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
+      return 0;
+    })
+    .slice(20) as Activity[];
 
   return typedjson({ activity });
 };

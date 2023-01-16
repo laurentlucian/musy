@@ -5,6 +5,7 @@ import {
   Image,
   Stack,
   Text,
+  Icon,
   useColorModeValue,
   Link as LinkB,
   AvatarGroup,
@@ -12,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import { Link, useTransition } from '@remix-run/react';
+import { Heart } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -127,22 +129,28 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                         </Text>
                       </LinkB>
                     </Flex>
-                    <AvatarGroup>
-                      {track.liked
-                        .filter(({ user: u }) => u?.userId !== user.userId)
-                        .map(({ user }, index) => (
-                          <Avatar
-                            minW="25px"
-                            maxW="25px"
-                            minH="25px"
-                            maxH="25px"
-                            key={index}
-                            name={user?.name}
-                            src={user?.image}
-                            size={['xs', null, 'sm']}
-                          />
-                        ))}
-                    </AvatarGroup>
+
+                    {track.liked.length ? (
+                      <HStack>
+                        <Icon as={Heart} />
+                        <AvatarGroup>
+                          {track.liked
+                            // .filter(({ user: u }) => u?.userId !== user.userId)
+                            .map(({ user }, index) => (
+                              <Avatar
+                                minW="25px"
+                                maxW="25px"
+                                minH="25px"
+                                maxH="25px"
+                                key={index}
+                                name={user?.name}
+                                src={user?.image}
+                                size={['xs', null, 'sm']}
+                              />
+                            ))}
+                        </AvatarGroup>
+                      </HStack>
+                    ) : null}
                   </>
                 )}
               </Stack>
