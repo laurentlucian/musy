@@ -7,23 +7,36 @@ import {
   Text,
   useColorModeValue,
   Link as LinkB,
+  AvatarGroup,
+  Avatar,
 } from '@chakra-ui/react';
-import type { Playback, Profile, Track } from '@prisma/client';
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import { Link, useTransition } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
-import PrismaPlayerbar from './PrismaPlayerBar';
+import PlayerBarCSS from './PlayerBarCSS';
 
 type PlayerProps = {
-  user: Profile;
-  playback?: (Playback & { track: Track }) | null;
+  user: Profile & {
+    settings: Settings | null;
+    playback:
+      | (Playback & {
+          track: Track & {
+            liked: {
+              user: Profile | null;
+            }[];
+          };
+        })
+      | null;
+  };
 };
 
-const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
-  const bg = useColorModeValue('music.200', 'music.900');
+const PrismaMiniPlayer = ({ user }: PlayerProps) => {
+  const bg = useColorModeValue('music.900', 'music.200');
+  const color = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();
@@ -31,6 +44,7 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
+  const playback = user.playback;
   const track = playback?.track;
 
   const formattedTrack = track
@@ -55,6 +69,7 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
         as={Link}
         to={`/${user.userId}`}
         variant="ghost"
+        color={color}
         h={track ? ['100px', '120px'] : '65px'}
         w={[363, '100%']}
         pr={0}
@@ -68,10 +83,9 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
               </Text>
               {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
-            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} pos="absolute" pt="20px">
+            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
               {user.bio?.slice(0, 15)}
             </Text>
-            <Text opacity={0}>hiiii</Text>
           </Stack>
 
           {track ? (
@@ -113,6 +127,22 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
                         </Text>
                       </LinkB>
                     </Flex>
+                    <AvatarGroup>
+                      {track.liked
+                        .filter(({ user: u }) => u?.userId !== user.userId)
+                        .map(({ user }, index) => (
+                          <Avatar
+                            minW="25px"
+                            maxW="25px"
+                            minH="25px"
+                            maxH="25px"
+                            key={index}
+                            name={user?.name}
+                            src={user?.image}
+                            size={['xs', null, 'sm']}
+                          />
+                        ))}
+                    </AvatarGroup>
                   </>
                 )}
               </Stack>
@@ -137,7 +167,7 @@ const PrismaMiniPlayer = ({ user, playback }: PlayerProps) => {
           ) : null}
         </HStack>
       </Button>
-      {playback && <PrismaPlayerbar playback={playback} />}
+      {playback && <PlayerBarCSS playback={playback} />}
     </Stack>
   );
 };
