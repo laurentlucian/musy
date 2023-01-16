@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import useSessionUser from './useSessionUser';
 
 type UserLibraryStore = {

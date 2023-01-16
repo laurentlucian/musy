@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import shallow from 'zustand/shallow';
+import { shallow } from 'zustand/shallow';
 import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {
@@ -27,7 +27,7 @@ const useDrawerStore = create<DrawerStateConfig>()((set) => ({
           artistUri: by.artistUri,
           explicit: by.explicit,
           userId: by.userId,
-          preview_url: by.preview_url
+          preview_url: by.preview_url,
         },
       }),
   },
