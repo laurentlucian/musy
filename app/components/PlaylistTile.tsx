@@ -1,11 +1,11 @@
 import { Flex, HStack, Image, Stack, Text, Button } from '@chakra-ui/react';
 import type { action } from '~/routes/$id/removeRecommend';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
 import type { ChakraProps } from '@chakra-ui/react';
 import { Link, useParams } from '@remix-run/react';
 import { useTypedFetcher } from 'remix-typedjson';
-import type { Track } from '~/lib/types/types';
+import type { PlaylistTrack } from '~/lib/types/types';
 import type { Profile } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
 import { forwardRef } from 'react';
@@ -49,8 +49,8 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
       });
     };
 
-    const { onOpen } = useDrawerActions();
-    const track: Track = {
+    const { onOpen } = usePlaylistDrawerActions();
+    const track: PlaylistTrack = {
       uri: uri,
       trackId,
       image,

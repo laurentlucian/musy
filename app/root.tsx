@@ -21,6 +21,7 @@ import { prisma } from './services/db.server';
 import ActionDrawer from './components/menu/ActionDrawer';
 import MobileDrawer from './components/menu/MobileDrawer';
 import musylogo from '~/assets/musylogo.svg';
+import PlaylistDrawer from './components/menu/PlaylistDrawer';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
@@ -32,6 +33,7 @@ const App = () => {
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
         <Layout authorized={!!currentUser}>
           <ActionDrawer />
+          <PlaylistDrawer />
           <MobileDrawer />
           <Outlet />
         </Layout>

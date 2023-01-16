@@ -51,7 +51,7 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
       </Stack>
     );
     const TitleAndDescription = (
-      <Stack justifyContent="center" px={[0, "50px"]}>
+      <Stack justifyContent="center" px={[0, '50px']}>
         {PlaylistTitle}
         {Description}
       </Stack>
@@ -69,7 +69,7 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
           py="5px"
           pl="5px"
         >
-          <Stack direction="row" >
+          <Stack direction="row">
             {PlaylistImage}
             {TitleAndDescription}
           </Stack>
