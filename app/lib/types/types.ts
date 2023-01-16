@@ -11,7 +11,7 @@ export interface Track {
   artistUri: string | null;
   explicit: boolean;
   userId?: string;
-  preview_url: string | null
+  preview_url: string | null;
 }
 
 export type Activity = {
@@ -34,3 +34,12 @@ export type Activity = {
   action: string;
   likedBy?: Profile[];
 };
+export interface PlaylistTrack {
+  uri: string;
+  trackId: string;
+  image: string;
+  name: string;
+  description: string | null;
+  explicit: boolean;
+  userId?: string;
+}
