@@ -51,32 +51,53 @@ const variantMusic: SystemStyleFunction = (props) => {
 };
 
 const variantGhost = defineStyle((props) => {
-  const { colorScheme: c, theme } = props
+  const { colorScheme: c, theme } = props;
 
-  if (c === "gray") {
+  if (c === 'gray') {
     return {
       color: mode(`inherit`, `whiteAlpha.900`)(props),
       _hover: {
         bg: mode(`gray.100`, `whiteAlpha.200`)(props),
       },
       _active: { bg: mode(`gray.200`, `whiteAlpha.300`)(props) },
-    }
+    };
   }
 
-  const darkHoverBg = transparentize(`${c}.200`, 0.12)(theme)
-  const darkActiveBg = transparentize(`${c}.200`, 0.24)(theme)
+  const darkHoverBg = transparentize(`${c}.200`, 0.12)(theme);
+  const darkActiveBg = transparentize(`${c}.200`, 0.24)(theme);
 
   return {
     color: mode(`music.200`, `music.800`)(props),
-    bg: "transparent",
+    bg: 'transparent',
     _hover: {
       bg: mode(`${c}.50`, darkHoverBg)(props),
     },
     _active: {
       bg: mode(`${c}.100`, darkActiveBg)(props),
     },
-  }
-})
+  };
+});
+
+const login = defineStyle((props) => ({
+  h: '39px',
+  w: '200px',
+  borderRadius: '7px',
+  boxShadow: 'none !important',
+  userSelect: 'none !important',
+  backfaceVisibility: 'none !important',
+  color: mode('white', 'music.700')(props),
+  bg: mode('music.700', 'music.200')(props),
+  WebkitTapHighlightColor: '#0000 !important',
+  _active: {
+    boxShadow: 'none !important',
+    backfaceVisibility: 'none !important',
+  },
+  _focus: {
+    boxShadow: 'none !important',
+    backfaceVisibility: 'none !important',
+  },
+  _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
+}));
 
 const drawer = defineStyle({
   bg: '#00',
@@ -95,6 +116,7 @@ const searchCircle = defineStyle((props) => ({
   boxSize: '50px',
   fontSize: '40px',
   fontWeight: 'hairline',
+
   _active: {
     boxShadow: 'none !important',
     boxSize: '43px',
@@ -117,7 +139,7 @@ const close = defineStyle((props) => ({
   pos: 'fixed',
   top: -1,
   right: 1,
-  color: mode('music.700', 'white')(props),
+  color: mode('white', 'music.700')(props),
   fontSize: '20px',
   fontWeight: 'light',
   _active: {
@@ -151,6 +173,7 @@ export default {
     music: variantMusic,
     ghost: variantGhost,
     drawer,
+    login,
     searchCircle,
     close,
   },
