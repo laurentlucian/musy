@@ -7,6 +7,8 @@ import { spotifyApi } from '~/services/spotify.server';
 import { playbackCreator, playbackQ } from './playback';
 import { libraryQ } from './scraper';
 
+const RUN_ADD_MISSING_TRACKS = false;
+
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
   async (job) => {
@@ -317,8 +319,11 @@ export const addUsersToQueue = async () => {
 // ------------------------------------------------------------- SCRIPTS
 
 const addMissingTracks = async () => {
+  if (!RUN_ADD_MISSING_TRACKS) {
+    console.log('addMissingTracks -> skipping script.');
+    return;
+  }
   const { spotify } = await spotifyApi('1295028670');
-  invariant(spotify, 'No spotify');
   const recents = await prisma.recentSongs.findMany({ where: { track: null } });
   console.log('recents', recents.length);
 
