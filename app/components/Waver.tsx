@@ -1,6 +1,6 @@
 const Waver = () => {
   return (
-    <div className="la-line-scale-pulse-out la-dark">
+    <div className="la-line-scale-pulse-out">
       <div></div>
       <div></div>
       <div></div>
