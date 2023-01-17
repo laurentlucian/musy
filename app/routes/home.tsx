@@ -64,7 +64,7 @@ export const loader = async ({ request }: LoaderArgs) => {
       if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
       return 0;
     })
-    .slice(20) as Activity[];
+    .slice(0, 20) as Activity[];
 
   return typedjson({ activity });
 };
