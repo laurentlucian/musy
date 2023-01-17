@@ -12,10 +12,10 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
+import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import { useEffect, useRef, useState } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
@@ -32,6 +32,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
   const [playing, setPlaying] = useState(preview);
+  const [hasPreview, setHasPreview] = useState<boolean>();
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
@@ -69,32 +70,38 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
       setPlaying(false);
     }
   };
-  const icon = playing ? <PauseCircle /> : <PlayCircle />;
 
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = 0.05;
-  }, []);
+  const icon = playing ? <PauseCircle /> : <PlayCircle />;
 
   useEffect(() => {
     if (isPlaying) {
       audioRef.current?.pause();
-      // setPlaying(false);
     } else if (playing) {
       audioRef.current?.play();
       setPlaying(true);
-      console.log('hiiiiiiii');
     }
   }, [isPlaying, playing]);
 
   useEffect(() => {
     if (audioRef.current) {
+      audioRef.current.volume = 0.05;
+      setHasPreview(true);
       audioRef.current.addEventListener('ended', () => setPlaying(false));
       return () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
       };
+    } else {
+      setPlaying(false);
+      setHasPreview(false);
     }
   }, [audioRef]);
+
+  useEffect(() => {
+    if (audioRef.current?.paused && playing) {
+      audioRef.current.play();
+    }
+  }, [playing]);
 
   useEffect(() => {
     setSize('large');
@@ -164,14 +171,20 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                     >
                       <Image height="30px" width="98px" src={spotify_logo} />
                     </Link>
-                    <IconButton
-                      onClick={onClick}
-                      icon={icon}
-                      variant="ghost"
-                      aria-label={playing ? 'pause' : 'play'}
-                      _hover={{ color: 'spotify.green' }}
-                      _active={{ boxShadow: 'none' }}
-                    />
+                    <Tooltip
+                      label={hasPreview ? '' : 'song has no preview'}
+                      openDelay={hasPreview ? 200 : 0}
+                      // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                    >
+                      <IconButton
+                        onClick={onClick}
+                        icon={icon}
+                        variant="ghost"
+                        aria-label={playing ? 'pause' : 'play'}
+                        _hover={{ color: 'spotify.green' }}
+                        _active={{ boxShadow: 'none' }}
+                      />
+                    </Tooltip>
                   </HStack>
                 </Stack>
                 <Stack>
