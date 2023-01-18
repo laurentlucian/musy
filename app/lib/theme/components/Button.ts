@@ -35,11 +35,11 @@ const variantMusic: SystemStyleFunction = (props) => {
     activeBg = `${c}.700`,
   } = accessibleColorMap[c] ?? {};
 
-  const background = mode(`${c}.200`, bg)(props);
+  const background = mode(`${c}.100`, bg)(props);
 
   return {
     bg: background,
-    color: mode(color, `gray.800`)(props),
+    color: mode(`gray.800`, color)(props),
     _hover: {
       bg: mode(`${c}.300`, hoverBg)(props),
       _disabled: {
