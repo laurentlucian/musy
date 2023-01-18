@@ -14,6 +14,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import PlaylistCard from './PlaylistCard';
 import PlaylistTile from '../PlaylistTile';
 import Tiles from './Tiles';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 
 const Playlists = ({
   playlists: initialPlaylists,
@@ -53,26 +54,10 @@ const Playlists = ({
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const onClose = useCallback(() => {
-    setShow(true);
+    setShow(false);
   }, [setShow]);
 
-  useEffect(() => {
-    if (show) {
-      // Add a fake history event so that the back button does nothing if pressed once
-      window.history.pushState('drawer', document.title, window.location.href);
-
-      addEventListener('popstate', onClose);
-
-      // Here is the cleanup when this component unmounts
-      return () => {
-        removeEventListener('popstate', onClose);
-        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
-        if (window.history.state === 'drawer') {
-          window.history.back();
-        }
-      };
-    }
-  }, [show, onClose]);
+  useDrawerBackButton(onClose, show);
 
   if (!playlists) return null;
   const scrollButtons = playlists.length > 5;

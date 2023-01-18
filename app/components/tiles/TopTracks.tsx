@@ -17,6 +17,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [show, setShow] = useState(false);
@@ -61,26 +62,10 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const onClose = useCallback(() => {
-    setShow(true);
+    setShow(false);
   }, [setShow]);
 
-  useEffect(() => {
-    if (show) {
-      // Add a fake history event so that the back button does nothing if pressed once
-      window.history.pushState('drawer', document.title, window.location.href);
-
-      addEventListener('popstate', onClose);
-
-      // Here is the cleanup when this component unmounts
-      return () => {
-        removeEventListener('popstate', onClose);
-        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
-        if (window.history.state === 'drawer') {
-          window.history.back();
-        }
-      };
-    }
-  }, [show, onClose]);
+  useDrawerBackButton(onClose, show);
 
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
