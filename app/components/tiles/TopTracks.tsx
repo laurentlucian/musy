@@ -8,13 +8,12 @@ import {
   HStack,
   Stack,
   Text,
-  useDisclosure,
   useRadioGroup,
 } from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
@@ -59,8 +58,29 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   );
   const scrollButtons = top.length > 5;
   const isSmallScreen = useIsMobile();
-  const { onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
+
+  const onClose = useCallback(() => {
+    setShow(true);
+  }, [setShow]);
+
+  useEffect(() => {
+    if (show) {
+      // Add a fake history event so that the back button does nothing if pressed once
+      window.history.pushState('drawer', document.title, window.location.href);
+
+      addEventListener('popstate', onClose);
+
+      // Here is the cleanup when this component unmounts
+      return () => {
+        removeEventListener('popstate', onClose);
+        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
+        if (window.history.state === 'drawer') {
+          window.history.back();
+        }
+      };
+    }
+  }, [show, onClose]);
 
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
@@ -96,7 +116,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader alignSelf="center">
-            <Stack direction="row" align="end" >
+            <Stack direction="row" align="end">
               <Text>Top</Text>
               {Filter}
             </Stack>

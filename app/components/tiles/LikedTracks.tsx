@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useFetcher, useParams } from '@remix-run/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useIsMobile from '~/hooks/useIsMobile';
 import useIsVisible from '~/hooks/useIsVisible';
 import Tiles from './Tiles';
@@ -47,7 +47,29 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
   }, [initialLiked]);
 
   const isSmallScreen = useIsMobile();
-  const { onClose } = useDisclosure();
+
+  const onClose = useCallback(() => {
+    setShow(true);
+  }, [setShow]);
+
+  useEffect(() => {
+    if (show) {
+      // Add a fake history event so that the back button does nothing if pressed once
+      window.history.pushState('drawer', document.title, window.location.href);
+
+      addEventListener('popstate', onClose);
+
+      // Here is the cleanup when this component unmounts
+      return () => {
+        removeEventListener('popstate', onClose);
+        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
+        if (window.history.state === 'drawer') {
+          window.history.back();
+        }
+      };
+    }
+  }, [show, onClose]);
+
   const btnRef = useRef<HTMLButtonElement>(null);
   if (!liked) return null;
   const scrollButtons = liked.length > 5;
@@ -115,7 +137,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               );
             })}
           </DrawerBody>
-          <Button variant="drawer" color="white" onClick={() => setShow(false)}>
+          <Button variant="drawer" color="white" onClick={onClose}>
             close
           </Button>
         </DrawerContent>

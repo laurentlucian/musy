@@ -8,7 +8,7 @@ import {
   Stack,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
@@ -18,8 +18,29 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   const [show, setShow] = useState(false);
   const scrollButtons = recent.length > 5;
   const isSmallScreen = useIsMobile();
-  const { onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
+
+  const onClose = useCallback(() => {
+    setShow(false);
+  }, [setShow]);
+
+  useEffect(() => {
+    if (show) {
+      // Add a fake history event so that the back button does nothing if pressed once
+      window.history.pushState('drawer', document.title, window.location.href);
+
+      addEventListener('popstate', onClose);
+
+      // Here is the cleanup when this component unmounts
+      return () => {
+        removeEventListener('popstate', onClose);
+        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
+        if (window.history.state === 'drawer') {
+          window.history.back();
+        }
+      };
+    }
+  }, [show, onClose]);
 
   return (
     <Stack spacing={3}>
@@ -75,7 +96,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               );
             })}
           </DrawerBody>
-          <Button variant="drawer" color="white" onClick={() => setShow(false)}>
+          <Button variant="drawer" color="white" onClick={onClose}>
             close
           </Button>
         </DrawerContent>

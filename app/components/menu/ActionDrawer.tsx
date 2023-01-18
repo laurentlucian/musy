@@ -34,7 +34,7 @@ import {
   Send2,
 } from 'iconsax-react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import { type ChangeEvent, useRef, useState, useEffect } from 'react';
+import { type ChangeEvent, useRef, useState, useEffect, useCallback } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -53,7 +53,7 @@ const ActionDrawer = () => {
   const [show1, setShow1] = useState(false);
   const [sendList, setSendList] = useState(false);
   const [comment, setComment] = useState('');
-  const { onClose } = useDrawerActions();
+  const { onClose: onCloseDrawer } = useDrawerActions();
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
@@ -64,6 +64,28 @@ const ActionDrawer = () => {
   const isSmallScreen = useIsMobile();
   const { id } = useParams();
   const user = useParamUser();
+
+  const onClose = useCallback(() => {
+    onCloseDrawer();
+  }, [onCloseDrawer]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Add a fake history event so that the back button does nothing if pressed once
+      window.history.pushState('drawer', document.title, window.location.href);
+
+      addEventListener('popstate', onClose);
+
+      // Here is the cleanup when this component unmounts
+      return () => {
+        removeEventListener('popstate', onClose);
+        // If we left without using the back button, aka by using a button on the page, we need to clear out that fake history event
+        if (window.history.state === 'drawer') {
+          window.history.back();
+        }
+      };
+    }
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!isOpen && type === 'normalLoad') {
