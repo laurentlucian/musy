@@ -373,6 +373,7 @@ const ActionDrawer = () => {
                         <ModalHeader alignSelf="center">
                           {sendList ? 'Recommend' : 'Queue'}
                           <IconButton
+                            variant="ghost"
                             aria-label={`switch to ${sendList ? 'recommend' : 'queue'}`}
                             icon={<RefreshCircle />}
                             onClick={() => setSendList(!sendList)}
@@ -380,6 +381,7 @@ const ActionDrawer = () => {
                             right="40px"
                           />
                           <IconButton
+                            variant="ghost"
                             aria-label="close"
                             icon={<CloseCircle />}
                             onClick={sendMenu.onClose}

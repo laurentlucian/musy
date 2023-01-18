@@ -33,12 +33,7 @@ const baseStyleDialog = defineStyle((props) => {
     ...(isFullHeight && { height: '100vh' }),
     zIndex: 'modal',
     maxH: '100vh',
-    [$bg.variable]: mode(`#E4DBD5`, '#111111')(props),
-    // [$bs.variable]: mode(`music.100`, 'music.800')(props),
-    _dark: {
-      [$bg.variable]: mode(`#E4DBD5`, '#111111')(props),
-      // [$bs.variable]: mode(`music.100`, 'music.800')(props),
-    },
+    [$bg.variable]: mode('#111111', `#E4DBD5`)(props),
     bg: $bg.reference,
     boxShadow: 'none',
   };
