@@ -17,7 +17,8 @@ const Friends = () => {
 
   useEffect(() => {
     if (shouldRevalidate) {
-      revalidate();
+      console.log('shouldRevalidate', shouldRevalidate);
+      // revalidate();
     }
   }, [shouldRevalidate, revalidate]);
 
