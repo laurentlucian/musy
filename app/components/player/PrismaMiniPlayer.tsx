@@ -175,7 +175,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           ) : null}
         </HStack>
       </Button>
-      {playback && <PlayerBarCSS playback={playback} />}
+      {/* {playback && <PlayerBarCSS playback={playback} />} */}
     </Stack>
   );
 };

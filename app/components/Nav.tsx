@@ -10,7 +10,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(true);
-  const spotify_logo = useColorModeValue(Spotify_Logo_Black, Spotify_Logo_White);
+  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const transition = useTransition();
   const { pathname, search } = useLocation();
   const isSmallScreen = useIsMobile();
@@ -32,12 +32,10 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         {!authorized ? (
           <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
             <Button
-              isLoading={transition.submission?.action.includes('auth')}
               type="submit"
-              h="39px"
-              borderRadius="7px"
-              w="200px"
+              variant="login"
               spinner={<Waver />}
+              isLoading={transition.submission?.action.includes('auth')}
             >
               Login with &nbsp; <Image height="24px" width="85px" src={spotify_logo} />
             </Button>

@@ -1,7 +1,7 @@
 import { Box, useColorModeValue, useRadio } from '@chakra-ui/react';
 
 export const RadioCard = (props: any) => {
-  const color = useColorModeValue('music.800', 'white');
+  const color = useColorModeValue('white', 'music.800');
 
   const { getInputProps, getCheckboxProps } = useRadio(props);
 

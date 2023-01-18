@@ -14,22 +14,22 @@ import {
   useDisclosure,
   Box,
 } from '@chakra-ui/react';
+import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
+import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
+import { useFetcher, useRevalidator } from '@remix-run/react';
 import PlayingFromTooltip from './../PlayingFromTooltip';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useFetcher, useRevalidator } from '@remix-run/react';
 import type { Party } from '@prisma/client';
-import Tooltip from './../Tooltip';
 import PlayerBar from './PlayerBar';
+import Tooltip from './../Tooltip';
 
 type PlayerProps = {
   id: string;
@@ -43,8 +43,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
-
   const [playingFrom, setPlayingFrom] = useState(false);
+  const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
@@ -89,13 +89,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const icon = playing ? <PauseCircle /> : <PlayCircle />;
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = 0.05;
-  }, []);
-
-  useEffect(() => {
     if (isPlaying) {
       audioRef.current?.pause();
-      // setPlaying(false);
     } else if (playing) {
       audioRef.current?.play();
       setPlaying(true);
@@ -105,13 +100,24 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
 
   useEffect(() => {
     if (audioRef.current) {
+      audioRef.current.volume = 0.05;
+      setHasPreview(true);
       audioRef.current.addEventListener('ended', () => setPlaying(false));
       return () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
       };
+    } else {
+      setPlaying(false);
+      setHasPreview(false);
     }
   }, [audioRef]);
+
+  useEffect(() => {
+    if (audioRef.current?.paused && playing) {
+      audioRef.current.play();
+    }
+  }, [playing]);
 
   useEffect(() => {
     const checkStick = () => {
@@ -292,14 +298,20 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                                 />
                               </fetcher.Form>
                             </Tooltip>
-                            <IconButton
-                              onClick={onClick}
-                              icon={icon}
-                              variant="ghost"
-                              aria-label={playing ? 'pause' : 'play'}
-                              _hover={{ color: 'spotify.green' }}
-                              _active={{ boxShadow: 'none' }}
-                            />
+                            <Tooltip
+                              label={hasPreview ? '' : 'song has no preview'}
+                              openDelay={hasPreview ? 200 : 0}
+                              // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                            >
+                              <IconButton
+                                onClick={onClick}
+                                icon={icon}
+                                variant="ghost"
+                                aria-label={playing ? 'pause' : 'play'}
+                                _hover={{ color: 'spotify.green' }}
+                                _active={{ boxShadow: 'none' }}
+                              />
+                            </Tooltip>
                           </>
                         )}
                       </HStack>

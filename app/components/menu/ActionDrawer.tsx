@@ -34,11 +34,11 @@ import {
   Send2,
 } from 'iconsax-react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import { type ChangeEvent, useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState, useEffect } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useParams } from '@remix-run/react';
+import { useParams, useTransition } from '@remix-run/react';
 import AnalyzeTrack from './AnalyzeTrack';
 import SaveToLiked from './SaveToLiked';
 import useUsers from '~/hooks/useUsers';
@@ -60,9 +60,17 @@ const ActionDrawer = () => {
   const sendMenu = useDisclosure();
   const allUsers = useUsers();
   const btnRef = useRef<HTMLButtonElement>(null);
-
+  const { type } = useTransition();
+  const isSmallScreen = useIsMobile();
   const { id } = useParams();
   const user = useParamUser();
+
+  useEffect(() => {
+    if (!isOpen && type === 'normalLoad') {
+      onClose();
+    }
+  }, [isOpen, type, onClose]);
+
   const isOwnProfile = currentUser?.userId === id;
 
   const textOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -83,7 +91,7 @@ const ActionDrawer = () => {
       user.settings.allowRecommend === 'on';
     return user.userId !== currentUser?.userId && isAllowed;
   });
-  const isSmallScreen = useIsMobile();
+
   const onClickQueue = () => {
     setSendList(false);
     if (!sendList && sendMenu.isOpen) {
