@@ -33,6 +33,7 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     artistUri={recommended.albumUri}
                     explicit={recommended.explicit}
                     preview_url={recommended.preview_url} // old recommended tracks dont have preview url :(((
+                    link={recommended.link}
                   />
 
                   <Stack direction="row">

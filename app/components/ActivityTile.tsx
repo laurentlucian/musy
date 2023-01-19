@@ -136,6 +136,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     explicit: activity.track.explicit,
     userId: activity.user?.userId,
     preview_url: '',
+    link: activity.track.link,
   };
 
   const liked = activity.track.liked ?? [];

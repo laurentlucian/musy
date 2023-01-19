@@ -6,16 +6,15 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Stack,
-  useDisclosure,
 } from '@chakra-ui/react';
-import { useFetcher, useParams } from '@remix-run/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import useIsMobile from '~/hooks/useIsMobile';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
+import { useFetcher, useParams } from '@remix-run/react';
 import useIsVisible from '~/hooks/useIsVisible';
+import useIsMobile from '~/hooks/useIsMobile';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
@@ -81,6 +80,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               preview_url={track.preview_url}
+              link={track.external_urls.spotify}
             />
           );
         })}
@@ -118,6 +118,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
                   preview_url={track.preview_url}
+                  link={track.external_urls.spotify}
                 />
               );
             })}

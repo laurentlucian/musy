@@ -75,6 +75,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     artistUri: item.artists[0].uri,
     explicit: item.explicit,
     preview_url: item.preview_url,
+    link: item.external_urls.spotify,
   };
 
   const onClick = () => {

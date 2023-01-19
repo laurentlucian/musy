@@ -12,14 +12,14 @@ import {
   Avatar,
 } from '@chakra-ui/react';
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
-import { Link, useTransition } from '@remix-run/react';
-import { Heart } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
+import { Link, useTransition } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import { Heart } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
-import PlayerBarCSS from './PlayerBarCSS';
+// import PlayerBarCSS from './PlayerBarCSS';
 
 type PlayerProps = {
   user: Profile & {
@@ -56,6 +56,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
         name: track.name,
         explicit: track.explicit,
         preview_url: '',
+        link: track.link,
         image: track.image,
         albumUri: track.albumUri,
         albumName: track.albumName,

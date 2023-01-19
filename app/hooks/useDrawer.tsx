@@ -30,6 +30,7 @@ const useDrawerStore = create<DrawerStateConfig>()((set) => ({
           explicit: by.explicit,
           userId: by.userId,
           preview_url: by.preview_url,
+          link: by.link,
         },
       }),
     setIsPlaying: (by) => set({ isPlaying: by }),

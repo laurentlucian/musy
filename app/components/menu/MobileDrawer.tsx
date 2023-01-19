@@ -55,6 +55,8 @@ const MobileDrawer = () => {
           artist: track.album.artists[0].name,
           artistUri: track.artists[0].uri,
           explicit: track.explicit,
+          preview_url: track.preview_url,
+          link: track.external_urls.spotify,
         })),
       );
     }
@@ -119,6 +121,7 @@ const MobileDrawer = () => {
                       artistUri={track.artistUri}
                       explicit={track.explicit}
                       preview_url={track.preview_url}
+                      link={track.link}
                     />
                   ))}
               </Tiles>

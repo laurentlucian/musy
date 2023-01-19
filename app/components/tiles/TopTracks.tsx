@@ -11,13 +11,13 @@ import {
   useRadioGroup,
 } from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { RadioCard } from '~/lib/theme/components/Radio';
+import { useCallback, useRef, useState } from 'react';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [show, setShow] = useState(false);
@@ -84,6 +84,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               preview_url={track.preview_url}
+              link={track.external_urls.spotify}
             />
           );
         })}
@@ -122,6 +123,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
                   preview_url={track.preview_url}
+                  link={track.external_urls.spotify}
                 />
               );
             })}

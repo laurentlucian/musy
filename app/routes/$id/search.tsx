@@ -1,9 +1,9 @@
-import type { LoaderArgs } from '@remix-run/node';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import { spotifyApi } from '~/services/spotify.server';
-import Tile from '~/components/Tile';
+import type { LoaderArgs } from '@remix-run/node';
 import Tiles from '~/components/tiles/Tiles';
 import invariant from 'tiny-invariant';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import Tile from '~/components/Tile';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
@@ -26,6 +26,7 @@ const Search = () => {
           artistUri={track.artists[0].uri}
           explicit={track.explicit}
           preview_url={track.preview_url}
+          link={track.external_urls.spotify}
         />
       ))}
     </Tiles>

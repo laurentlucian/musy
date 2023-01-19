@@ -186,6 +186,7 @@ model RecommendedSongs {
   artistUri   String?
   explicit    Boolean
   preview_url String?
+  link        String  @default("")
   duration    Int     @default(0)
 
   sender   Profile @relation(fields: [senderId], references: [userId])
@@ -194,16 +195,18 @@ model RecommendedSongs {
 }
 
 model Track {
-  id        String  @id @unique
-  uri       String
-  name      String
-  image     String
-  albumUri  String
-  albumName String
-  artist    String
-  artistUri String
-  explicit  Boolean
-  duration  Int
+  id          String  @id @unique
+  uri         String
+  name        String
+  image       String
+  albumUri    String
+  albumName   String
+  artist      String
+  artistUri   String
+  explicit    Boolean
+  preview_url String  @default("")
+  link        String  @default("")
+  duration    Int
 
   queue       Queue[]
   liked       LikedSongs[]

@@ -35,18 +35,19 @@ import {
 } from 'iconsax-react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import { type ChangeEvent, useRef, useState, useEffect, useCallback } from 'react';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
+import { useParams, useTransition } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useParams, useTransition } from '@remix-run/react';
 import AnalyzeTrack from './AnalyzeTrack';
 import SaveToLiked from './SaveToLiked';
+import PlayPreview from './PlayPreview';
 import useUsers from '~/hooks/useUsers';
 import Recommend from './Recommend';
 import AddQueue from './AddQueue';
 import LikedBy from './LikedBy';
-import PlayPreview from './PlayPreview';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
+import CopyLink from './CopyLink';
 // import SaveTo from './SaveTo';
 
 const ActionDrawer = () => {
@@ -262,19 +263,22 @@ const ActionDrawer = () => {
                 </Stack>
               )}
               <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
-                {track && track.trackId && <SaveToLiked trackId={track.trackId} />}
-                {/* {track && track.trackId && <SaveToPlaylist  trackId={track.trackId} />} */}
-                {/* <SaveTo currentUserId={currentUser?.userId}/> */} {/* WIP */}
-                {track && <AnalyzeTrack trackId={track.trackId} />}
-                {track && <PlayPreview preview_url={track.preview_url} />}
                 {track && (
-                  <AddQueue
-                    track={{
-                      trackId: track.trackId,
-                      userId: track.userId,
-                    }}
-                    user={null}
-                  />
+                  <>
+                    <SaveToLiked trackId={track.trackId} />
+                    {/* <SaveToPlaylist  trackId={track.trackId} /> */}
+                    {/* <SaveTo currentUserId={currentUser?.userId}/> */} {/* WIP */}
+                    <AnalyzeTrack trackId={track.trackId} />
+                    {track.link !== '' && <CopyLink link={track.link} />}
+                    <PlayPreview preview_url={track.preview_url} />
+                    <AddQueue
+                      track={{
+                        trackId: track.trackId,
+                        userId: track.userId,
+                      }}
+                      user={null}
+                    />
+                  </>
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
                 {recommendableUsers.length > 0 && <RecommendTo />}

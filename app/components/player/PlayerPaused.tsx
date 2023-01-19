@@ -57,6 +57,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
     artistUri: item.artists[0].uri,
     explicit: item.explicit,
     preview_url: item.preview_url,
+    link: item.external_urls.spotify,
   };
 
   const isSmallScreen = useIsMobile();

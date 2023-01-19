@@ -6,14 +6,13 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Stack,
-  useDisclosure,
 } from '@chakra-ui/react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import useDrawerBackButton from '~/hooks/useDrawerBackButton';
+import { useState, useRef, useCallback } from 'react';
+import useIsMobile from '~/hooks/useIsMobile';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
-import useIsMobile from '~/hooks/useIsMobile';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 
 const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   const [show, setShow] = useState(false);
@@ -44,6 +43,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               preview_url={track.preview_url}
+              link={track.external_urls.spotify}
             />
           );
         })}
@@ -77,6 +77,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                   artistUri={track.album.artists[0].uri}
                   explicit={track.explicit}
                   preview_url={track.preview_url}
+                  link={track.external_urls.spotify}
                 />
               );
             })}

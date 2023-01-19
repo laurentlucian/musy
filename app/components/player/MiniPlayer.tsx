@@ -50,6 +50,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
         artistUri: track.album.artists[0].uri,
         userId: user.userId,
         preview_url: track.preview_url,
+        link: track.external_urls.spotify,
       }
     : null;
 
@@ -144,6 +145,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                               artist: track.album.artists[0].name,
                               artistUri: track.album.artists[0].uri,
                               preview_url: track.preview_url,
+                              link: track.external_urls.spotify,
                             });
                           }}
                         >

@@ -1,8 +1,8 @@
-import { Stack } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
+import useOldIsVisible from '~/hooks/useOldIsVisible';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
-import useOldIsVisible from '~/hooks/useOldIsVisible';
+import type { Profile } from '@prisma/client';
+import { Stack } from '@chakra-ui/react';
 import Tile from '../Tile';
 import Tiles from './Tiles';
 
@@ -56,6 +56,7 @@ const OldLikedSongs = ({
               artistUri={track.album.artists[0].uri}
               explicit={track.explicit}
               preview_url={track.preview_url}
+              link={track.external_urls.spotify}
             />
           );
         })}

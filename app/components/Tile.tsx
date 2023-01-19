@@ -20,6 +20,7 @@ type TileProps = {
   artistUri: string | null;
   explicit: boolean;
   preview_url: string | null;
+  link: string;
 
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
@@ -40,6 +41,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artistUri,
       explicit,
       preview_url,
+      link,
       createdAt,
       createdBy,
       playlist,
@@ -64,6 +66,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artistUri,
       explicit,
       preview_url,
+      link,
     };
 
     return (
@@ -95,7 +98,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             <Tooltip label={albumName} placement="top-start">
               <Image
                 boxSize="200px"
-                minW='200px'
+                minW="200px"
                 objectFit="cover"
                 src={image}
                 borderRadius={5}

@@ -12,6 +12,7 @@ export interface Track {
   explicit: boolean;
   userId?: string;
   preview_url: string | null;
+  link: string;
 }
 
 export type Activity = {
@@ -28,6 +29,7 @@ export type Activity = {
     artistUri: string;
     explicit: boolean;
     preview_url?: string | null;
+    link: string;
     liked?: { user: Profile | null }[];
     recent?: { user: Profile | null }[];
   };

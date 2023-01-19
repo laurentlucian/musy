@@ -1,11 +1,11 @@
 import { Box, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
-import { useFetcher, useParams } from '@remix-run/react';
-import { useEffect, useRef, useState } from 'react';
-import Tile from '../Tile';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
 import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
+import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
+import { useFetcher, useParams } from '@remix-run/react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useRef, useState } from 'react';
+import type { Profile } from '@prisma/client';
+import Tile from '../Tile';
 
 const LikedTracksVirtual = ({
   liked: initialLiked,
@@ -155,6 +155,7 @@ const LikedTracksVirtual = ({
                 artistUri={track.album.artists[0].uri}
                 explicit={track.explicit}
                 preview_url={track.preview_url}
+                link={track.external_urls.spotify}
               />
             );
           })}

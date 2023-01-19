@@ -20,6 +20,7 @@ type CardProps = {
   artistUri: string | null;
   explicit: boolean;
   preview_url: string | null;
+  link: string;
 
   // will show header (profile above Card) if createdAt is defined
   createdBy?: Profile | null;
@@ -41,6 +42,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       artistUri,
       explicit,
       preview_url,
+      link,
       recommend,
       createdAt,
       createdBy,
@@ -61,6 +63,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       artistUri,
       explicit,
       preview_url,
+      link,
     };
     const fetcher = useTypedFetcher<typeof action>();
     const { id } = useParams();
