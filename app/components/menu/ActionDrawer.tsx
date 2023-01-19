@@ -33,8 +33,8 @@ import {
   RefreshCircle,
   Send2,
 } from 'iconsax-react';
+import { type ChangeEvent, useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import { type ChangeEvent, useRef, useState, useEffect, useCallback } from 'react';
 import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { useParams, useTransition } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -85,32 +85,34 @@ const ActionDrawer = () => {
     setComment(event.target.value);
   };
 
-  const queueableUsers = allUsers.filter((user) => {
-    const isAllowed =
-      user.settings === null ||
-      user.settings.allowQueue === null ||
-      user.settings.allowQueue === 'on';
-    return user.userId !== currentUser?.userId && isAllowed;
-  });
-  const recommendableUsers = allUsers.filter((user) => {
-    const isAllowed =
-      user.settings === null ||
-      user.settings.allowRecommend === null ||
-      user.settings.allowRecommend === 'on';
-    return user.userId !== currentUser?.userId && isAllowed;
-  });
+  // Use useMemo to store the filtered list of users in a variable
+  // so that it only re-calculates when either allUsers or currentUser changes
+  const queueableUsers = useMemo(() => {
+    return allUsers.filter((user) => {
+      const isAllowed =
+        user.settings === null ||
+        user.settings.allowQueue === null ||
+        user.settings.allowQueue === 'on';
+      return user.userId !== currentUser?.userId && isAllowed;
+    });
+  }, [allUsers, currentUser]);
+  const recommendableUsers = useMemo(() => {
+    return allUsers.filter((user) => {
+      const isAllowed =
+        user.settings === null ||
+        user.settings.allowRecommend === null ||
+        user.settings.allowRecommend === 'on';
+      return user.userId !== currentUser?.userId && isAllowed;
+    });
+  }, [allUsers, currentUser]);
 
   const onClickQueue = () => {
     setSendList(false);
-    if (!sendList && sendMenu.isOpen) {
-      sendMenu.onClose();
-    } else sendMenu.onOpen();
+    !sendList && sendMenu.isOpen ? sendMenu.onClose() : sendMenu.onOpen();
   };
   const onClickRecommend = () => {
     setSendList(true);
-    if (sendList && sendMenu.isOpen) {
-      sendMenu.onClose();
-    } else sendMenu.onOpen();
+    sendList && sendMenu.isOpen ? sendMenu.onClose() : sendMenu.onOpen();
   };
   const SendTo = () => (
     <Button
@@ -345,40 +347,6 @@ const ActionDrawer = () => {
                     </Drawer>
                   </>
                 ) : (
-                  // <SlideFade in={sendMenu.isOpen} offsetY="-20px">
-                  //   <Box overflowY="scroll" h="330px">
-                  //     {!sendList ? (
-                  //       <Stack>
-                  //         {/* {!isOwnProfile && id && track && (
-                  //           <AddQueue
-                  //             track={{
-                  //               trackId: track.trackId,
-                  //             }}
-                  //             user={user}
-                  //           />
-                  //         )} */}
-
-                  //         {track &&
-                  //           queueableUsers.map((user) => (
-                  //             <AddQueue
-                  //               key={user.userId}
-                  //               track={{
-                  //                 trackId: track.trackId,
-                  //               }}
-                  //               user={user}
-                  //             />
-                  //           ))}
-                  //       </Stack>
-                  //     ) : (
-                  //       <Stack>
-                  //         {track &&
-                  //           recommendableUsers.map((user) => (
-                  //             <Recommend key={user.userId} user={user} />
-                  //           ))}
-                  //       </Stack>
-                  //     )}
-                  //   </Box>
-                  // </SlideFade>
                   <>
                     <Modal
                       isCentered
