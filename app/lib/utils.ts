@@ -72,5 +72,7 @@ export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
   artist: track.artists[0].name,
   artistUri: track.artists[0].uri,
   explicit: track.explicit,
+  preview_url: track.preview_url,
+  link: track.external_urls.spotify,
   duration: track.duration_ms,
 });

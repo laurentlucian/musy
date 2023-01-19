@@ -47,6 +47,8 @@ export const userQ = Queue<{ userId: string }>(
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        preview_url: track.preview_url,
+        link: track.external_urls.spotify,
         duration: track.duration_ms,
         action: 'played',
 
@@ -107,6 +109,8 @@ export const userQ = Queue<{ userId: string }>(
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        preview_url: track.preview_url,
+        link: track.external_urls.spotify,
         duration: track.duration_ms,
         action: 'liked',
 
@@ -327,10 +331,50 @@ const addMissingTracks = async () => {
   console.log('recents', recents.length);
 
   for (const recent of recents) {
-    const { albumName, albumUri, artistUri } = recent;
+    const { albumName, albumUri, artistUri, preview_url, link } = recent;
 
     if (!albumName || !albumUri || !artistUri) {
       console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
+
+      const track = await prisma.track.findUnique({ where: { id: recent.trackId } });
+
+      if (track) {
+        console.log('track found', recent.name);
+        await prisma.recentSongs.update({
+          where: {
+            id: recent.id,
+          },
+          data: {
+            track: {
+              connect: {
+                id: recent.trackId,
+              },
+            },
+          },
+        });
+        continue;
+      }
+
+      if (!track) {
+        console.log('track not found', recent.name);
+        const { body: track } = await spotify.getTrack(recent.trackId);
+        const trackDb = createTrackModel(track);
+        await prisma.recentSongs.update({
+          where: {
+            id: recent.id,
+          },
+          data: {
+            track: {
+              create: trackDb,
+            },
+          },
+        });
+      }
+
+      continue;
+    }
+    if (!preview_url || !link) {
+      console.log('missing', 'preview_url', preview_url, 'link', link);
 
       const track = await prisma.track.findUnique({ where: { id: recent.trackId } });
 
@@ -388,6 +432,8 @@ const addMissingTracks = async () => {
                 artist: recent.artist,
                 image: recent.image,
                 explicit: recent.explicit,
+                preview_url: recent.preview_url,
+                link: recent.link,
                 duration: recent.duration,
               },
               where: {
@@ -405,10 +451,50 @@ const addMissingTracks = async () => {
   console.log('liked', liked.length);
 
   for (const like of liked) {
-    const { albumName, albumUri, artistUri } = like;
+    const { albumName, albumUri, artistUri, preview_url, link } = like;
 
     if (!albumName || !albumUri || !artistUri) {
       console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
+
+      const track = await prisma.track.findUnique({ where: { id: like.trackId } });
+
+      if (track) {
+        console.log('track found', like.name);
+        await prisma.likedSongs.update({
+          where: {
+            id: like.id,
+          },
+          data: {
+            track: {
+              connect: {
+                id: like.trackId,
+              },
+            },
+          },
+        });
+        continue;
+      }
+
+      if (!track) {
+        console.log('track not found', like.name);
+        const { body: track } = await spotify.getTrack(like.trackId);
+        const trackDb = createTrackModel(track);
+        await prisma.likedSongs.update({
+          where: {
+            id: like.id,
+          },
+          data: {
+            track: {
+              create: trackDb,
+            },
+          },
+        });
+      }
+
+      continue;
+    }
+    if (!preview_url || !link) {
+      console.log('missing', 'preview_url', preview_url, 'link', link);
 
       const track = await prisma.track.findUnique({ where: { id: like.trackId } });
 
@@ -466,6 +552,8 @@ const addMissingTracks = async () => {
                 artist: like.artist,
                 image: like.image,
                 explicit: like.explicit,
+                preview_url: like.preview_url,
+                link: like.link,
                 duration: like.duration,
               },
               where: {
