@@ -52,22 +52,6 @@ model Profile {
   playback Playback?
 }
 
-model Settings {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String  @unique
-
-  autoscroll     Boolean @default(true)
-  isPrivate      Boolean @default(false)
-  allowQueue     String  @default("on")
-  allowRecommend String  @default("on")
-  allowPreview   Boolean @default(false)
-  // theme String @default("light")
-}
-
 model AI {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -137,8 +121,8 @@ model LikedSongs {
   artist      String
   artistUri   String?
   explicit    Boolean
-  preview_url String? 
-  link        String  
+  preview_url String?
+  link        String
   duration    Int     @default(0)
 
   user   Profile? @relation(fields: [userId], references: [userId])
@@ -162,8 +146,8 @@ model RecentSongs {
   artist      String
   artistUri   String?
   explicit    Boolean
-  preview_url String? 
-  link        String  
+  preview_url String?
+  link        String
   duration    Int     @default(0)
 
   user   Profile @relation(fields: [userId], references: [userId])
@@ -192,12 +176,30 @@ model RecommendedSongs {
   artistUri   String?
   explicit    Boolean
   preview_url String?
-  link        String  
+  link        String
   duration    Int     @default(0)
 
   sender   Profile @relation(fields: [senderId], references: [userId])
   senderId String
   action   String  @default("recommend")
+}
+
+model Settings {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  user   Profile @relation(fields: [userId], references: [userId])
+  userId String  @unique
+
+  autoscroll     Boolean @default(true)
+  isPrivate      Boolean @default(false)
+  allowQueue     String  @default("on")
+  allowRecommend String  @default("on")
+  allowPreview   Boolean @default(false)
+  profileSong    Track?  @relation(fields: [profileSongId], references: [id])
+  profileSongId  String?
+  // theme String @default("light")
 }
 
 model Track {
@@ -210,8 +212,8 @@ model Track {
   artist      String
   artistUri   String
   explicit    Boolean
-  preview_url String? 
-  link        String  
+  preview_url String?
+  link        String
   duration    Int
 
   queue       Queue[]
@@ -219,6 +221,7 @@ model Track {
   recent      RecentSongs[]
   recommended RecommendedSongs[]
   playback    Playback[]
+  Settings    Settings[]
 }
 
 model Playback {

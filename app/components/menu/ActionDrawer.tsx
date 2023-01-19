@@ -60,7 +60,6 @@ const ActionDrawer = () => {
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
-  // const sendMenu = useDisclosure();
   const allUsers = useUsers();
   const btnRef = useRef<HTMLButtonElement>(null);
   const { type } = useTransition();
@@ -323,11 +322,7 @@ const ActionDrawer = () => {
                               <Stack>
                                 {track &&
                                   recommendableUsers.map((user) => (
-                                    <Recommend
-                                      key={user.userId}
-                                      user={user}
-                                      // users={recommendableUsers}
-                                    />
+                                    <Recommend key={user.userId} user={user} />
                                   ))}
                               </Stack>
                             )}

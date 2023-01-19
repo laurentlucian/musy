@@ -11,7 +11,6 @@ const useSendMenu = () => {
 
   const onClickQueue = useCallback(() => {
     setSendList(false);
-    console.log('clicked Queue!');
     if (!sendList && sendMenu.isOpen) {
       sendMenu.onClose();
     } else sendMenu.onOpen();
@@ -19,7 +18,6 @@ const useSendMenu = () => {
 
   const onClickRecommend = useCallback(() => {
     setSendList(true);
-    console.log('clicked Recommend!');
     if (sendList && sendMenu.isOpen) {
       sendMenu.onClose();
     } else sendMenu.onOpen();
