@@ -8,7 +8,6 @@ import {
   DrawerContent,
   DrawerCloseButton,
   Button,
-  useDisclosure,
   Icon,
   Stack,
   DrawerFooter,
@@ -39,6 +38,7 @@ import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { useParams, useTransition } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
+import useSendMenu from '~/hooks/useSendMenu';
 import useIsMobile from '~/hooks/useIsMobile';
 import AnalyzeTrack from './AnalyzeTrack';
 import SaveToLiked from './SaveToLiked';
@@ -48,18 +48,19 @@ import Recommend from './Recommend';
 import AddQueue from './AddQueue';
 import LikedBy from './LikedBy';
 import CopyLink from './CopyLink';
+
 // import SaveTo from './SaveTo';
 
 const ActionDrawer = () => {
+  const { sendList, sendMenu, onClickQueue, onClickRecommend, toggle } = useSendMenu();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  const [sendList, setSendList] = useState(false);
   const [comment, setComment] = useState('');
   const { onClose: onCloseDrawer } = useDrawerActions();
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
-  const sendMenu = useDisclosure();
+  // const sendMenu = useDisclosure();
   const allUsers = useUsers();
   const btnRef = useRef<HTMLButtonElement>(null);
   const { type } = useTransition();
@@ -106,14 +107,6 @@ const ActionDrawer = () => {
     });
   }, [allUsers, currentUser]);
 
-  const onClickQueue = () => {
-    setSendList(false);
-    !sendList && sendMenu.isOpen ? sendMenu.onClose() : sendMenu.onOpen();
-  };
-  const onClickRecommend = () => {
-    setSendList(true);
-    sendList && sendMenu.isOpen ? sendMenu.onClose() : sendMenu.onOpen();
-  };
   const SendTo = () => (
     <Button
       leftIcon={<Send2 />}
@@ -363,7 +356,7 @@ const ActionDrawer = () => {
                             variant="ghost"
                             aria-label={`switch to ${sendList ? 'recommend' : 'queue'}`}
                             icon={<RefreshCircle />}
-                            onClick={() => setSendList(!sendList)}
+                            onClick={toggle}
                             pos="absolute"
                             right="40px"
                           />
