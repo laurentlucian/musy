@@ -1,8 +1,8 @@
-import invariant from 'tiny-invariant';
-import { createTrackModel, notNull } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
+import { createTrackModel } from '~/lib/utils';
+import { prisma } from '~/services/db.server';
+import invariant from 'tiny-invariant';
 
 export const libraryQ = Queue<{ userId: string; pages: number }>('user-library', async (job) => {
   const { userId, pages } = job.data;
@@ -29,6 +29,8 @@ export const libraryQ = Queue<{ userId: string; pages: number }>('user-library',
         artistUri: track.artists[0].uri,
         image: track.album.images[0].url,
         explicit: track.explicit,
+        preview_url: track.preview_url,
+        link: track.external_urls.spotify,
         duration: track.duration_ms,
         action: 'liked',
 
