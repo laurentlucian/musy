@@ -25,6 +25,8 @@ export const action = async ({ request, params }: ActionArgs) => {
   const artist = body.get('artist') as string;
   const artistUri = body.get('artistUri') as string;
   const explicit = body.get('explicit') as string;
+  const preview_url = body.get('explicit') as string;
+  const link = body.get('explicit') as string;
 
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
@@ -38,6 +40,8 @@ export const action = async ({ request, params }: ActionArgs) => {
     artist,
     artistUri,
     explicit: explicit ? true : false,
+    preview_url,
+    link,
     action,
 
     sender: {

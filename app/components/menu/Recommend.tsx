@@ -49,6 +49,8 @@ const Recommend = ({ userId, user, comment }: RecommendProps) => {
       artist: track?.artist ?? '',
       artistUri: track?.artistUri ?? '',
       explicit: track?.explicit ? 'true' : '',
+      preview_url: track?.preview_url ?? '',
+      link: track?.link ?? '',
 
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',
