@@ -1,11 +1,11 @@
-import type { LikedSongs } from '@prisma/client';
+// import type { LikedSongs } from '@prisma/client';
+import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
+import { getCurrentUser } from '~/services/auth.server';
 import type { ActionArgs } from '@remix-run/node';
+import { createTrackModel } from '~/lib/utils';
+import { prisma } from '~/services/db.server';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
-import { createTrackModel } from '~/lib/utils';
-import { getCurrentUser } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
-import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request, params }: ActionArgs) => {
   const id = params.id;
@@ -36,6 +36,8 @@ export const action = async ({ request, params }: ActionArgs) => {
     artistUri: track.artists[0].uri,
     image: track.album.images[0].url,
     explicit: track.explicit,
+    preview_url: track.preview_url,
+    link: track.external_urls.spotify,
     duration: track.duration_ms,
     action: 'liked',
 
