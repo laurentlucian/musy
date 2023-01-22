@@ -3,6 +3,7 @@ import { spotifyApi } from '~/services/spotify.server';
 import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import invariant from 'tiny-invariant';
+import { addPreviewUrlAndLink } from './user';
 
 export const libraryQ = Queue<{ userId: string; pages: number }>('user-library', async (job) => {
   const { userId, pages } = job.data;
@@ -77,4 +78,8 @@ export const libraryQ = Queue<{ userId: string; pages: number }>('user-library',
     console.log('libraryQ -> sleeping for 5 seconds');
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
+});
+
+export const longScriptQ = Queue<null>('long-script', async (job) => {
+  await addPreviewUrlAndLink();
 });

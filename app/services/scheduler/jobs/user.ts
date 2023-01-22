@@ -5,7 +5,7 @@ import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 import { playbackCreator, playbackQ } from './playback';
-import { libraryQ } from './scraper';
+import { libraryQ, longScriptQ } from './scraper';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
@@ -312,7 +312,10 @@ export const addUsersToQueue = async () => {
     await userQ.getJobCounts(),
   );
 
-  await addMissingTracks();
+  // await addMissingTracks();
+  if ((await longScriptQ.getJobs())?.length === 0 && isProduction) {
+    longScriptQ.add('long-script', null);
+  }
 
   console.log('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
@@ -714,7 +717,7 @@ const addDurationToRecent = async () => {
     }
   }
 };
-const addPreviewUrlAndLink = async () => {
+export const addPreviewUrlAndLink = async () => {
   const trackIds = await prisma.track.findMany({ where: { link: '' }, select: { id: true } });
   if (trackIds && trackIds.length > 0) {
     const { spotify } = await spotifyApi('1295028670');
@@ -730,18 +733,21 @@ const addPreviewUrlAndLink = async () => {
       pages.push(trackIdz.slice(i, i + 50));
     }
 
-    console.log('pages', pages.length);
+    console.log('trackModelScript -> pages', pages.length);
+    // deviding pages by 30 seconds, script will be completed in:
+    console.log('trackModelScript ->  ' + (pages.length * 30) / 60 + ' minutes until completion');
+
     // loop through pages and getTracks
     for (const page of pages) {
       const {
         body: { tracks },
       } = await spotify.getTracks(page);
-      console.log('a page', page.length);
+      console.log('trackModelScript -> a page', page.length);
 
       for (const track of tracks) {
         const preview_url = track.preview_url;
         const link = track.external_urls.spotify;
-        await prisma.track.updateMany({
+        await prisma.track.update({
           where: {
             id: track.id,
           },
@@ -751,6 +757,10 @@ const addPreviewUrlAndLink = async () => {
           },
         });
       }
+
+      // sleep for 5 seconds to avoid api limit
+      console.log('trackModelScript -> sleeping for 30 seconds');
+      await new Promise((resolve) => setTimeout(resolve, 30000));
     }
   }
 };
