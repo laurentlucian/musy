@@ -720,47 +720,6 @@ const addPreviewUrlAndLink = async () => {
     const { spotify } = await spotifyApi('1295028670');
     invariant(spotify, 'No spotify');
 
-    const trackIdsDuplicates = trackIds.map((t) => t.id).filter(notNull);
-    const trackIdz = Array.from(new Set(trackIdsDuplicates));
-
-    // create pages of 50 from trackIds and call getTracks with 50 ids and loop through pages
-    // without library
-
-    const pages = [];
-    for (let i = 0; i < trackIds.length; i += 50) {
-      pages.push(trackIds.slice(i, i + 50));
-    }
-
-    console.log('pages', pages.length);
-    // loop through pages and getTracks
-    for (const page of pages) {
-      const {
-        body: { tracks },
-      } = await spotify.getTracks(page);
-      console.log('a page', page.length);
-
-      for (const track of tracks) {
-        const preview_url = track.preview_url;
-        const link = track.external_urls.spotify;
-        await prisma.track.updateMany({
-          where: {
-            id: track.id,
-          },
-          data: {
-            preview_url,
-            link,
-          },
-        });
-      }
-    }
-  }
-};
-const addPreviewUrlAndLink = async () => {
-  const trackIds = await prisma.track.findMany({ where: { link: '' }, select: { id: true } });
-  if (trackIds && trackIds.length > 0) {
-    const { spotify } = await spotifyApi('1295028670');
-    invariant(spotify, 'No spotify');
-
     const trackIdz = trackIds.map((t) => t.id);
 
     // create pages of 50 from trackIds and call getTracks with 50 ids and loop through pages
