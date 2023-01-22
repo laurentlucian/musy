@@ -266,9 +266,15 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   </Stack>
                   <HStack h="100%">
                     {active ? (
-                      <HStack mt="auto !important" mb="5px !important">
+                      <HStack mb="5px !important">
                         <Link href="https://open.spotify.com" target="_blank" rel="external">
-                          <Image height="30px" minW="98px" src={spotify_logo} />
+                          <Image
+                            mt="40px"
+                            height="30px"
+                            minW="98px"
+                            maxW="98px"
+                            src={spotify_logo}
+                          />
                         </Link>
                         {party.length && (
                           <AvatarGroup size="xs" spacing={-2} max={5}>
@@ -317,13 +323,11 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       </HStack>
                     ) : (
                       <Link href="https://open.spotify.com">
-                        <Image height="30px" width="98px" src={spotify_logo} />
+                        <Image mt="40px" height="30px" maxW="98px" minW="98px" src={spotify_logo} />
                       </Link>
                     )}
                     {isOwnProfile && !isSmallScreen && (
-                      <HStack p={1} h="100%" align="end">
-                        <PlayController fetcher={fetcher} playback={playback} id={id} />
-                      </HStack>
+                      <PlayController fetcher={fetcher} playback={playback} id={id} />
                     )}
                   </HStack>
                 </Stack>

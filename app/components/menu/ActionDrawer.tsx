@@ -48,6 +48,7 @@ import Recommend from './Recommend';
 import AddQueue from './AddQueue';
 import LikedBy from './LikedBy';
 import CopyLink from './CopyLink';
+import ProfileSong from './ProfileSong';
 
 // import SaveTo from './SaveTo';
 
@@ -265,6 +266,7 @@ const ActionDrawer = () => {
                     <AnalyzeTrack trackId={track.trackId} />
                     {track.link !== '' && <CopyLink link={track.link} />}
                     <PlayPreview preview_url={track.preview_url} />
+                    <ProfileSong user={user} />
                     <AddQueue
                       track={{
                         trackId: track.trackId,

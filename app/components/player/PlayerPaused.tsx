@@ -25,39 +25,42 @@ import Tooltip from './../Tooltip';
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
   username: string;
+  // profileSong: (Settings & { profileSong: Track | null }) | null;
+  profileSong: any;
 };
 
-const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
   const currentUser = useSessionUser();
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
   const [playing, setPlaying] = useState(preview);
   const [hasPreview, setHasPreview] = useState<boolean>();
+  const [song, setSong] = useState(item);
+  const [image, setImage] = useState(profileSong ? profileSong.image : song.album?.images[1].url);
+  const [artist, setArtist] = useState(profileSong ? profileSong.artist : song.artists[0].name);
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
   const isPlaying = useDrawerIsPlaying();
   const bg = useColorModeValue('music.900', 'music.50');
   const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
-  const image = item.album?.images[1].url;
-  const artist = item.artists[0].name;
-  const explicit = item.explicit;
-  const name = item.name;
+  const explicit = song.explicit;
+  const name = song.name;
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const track: Track = {
-    uri: item.uri,
-    trackId: item.id,
-    image: item.album?.images[0].url,
-    albumUri: item.album.uri,
-    albumName: item.album.name,
-    name: item.name,
-    artist: item.artists[0].name,
-    artistUri: item.artists[0].uri,
-    explicit: item.explicit,
-    preview_url: item.preview_url,
-    link: item.external_urls.spotify,
+    uri: song.uri,
+    trackId: song.id,
+    image,
+    albumUri: profileSong ? profileSong.albumUri : song.album.uri,
+    albumName: profileSong ? profileSong.albumName : song.album.name,
+    name,
+    artist,
+    artistUri: profileSong ? profileSong.artistUri : song.artists[0].uri,
+    explicit: song.explicit,
+    preview_url: song.preview_url,
+    link: profileSong ? profileSong.link : song.external_urls.spotify,
   };
 
   const isSmallScreen = useIsMobile();
@@ -73,6 +76,14 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
   };
 
   const icon = playing ? <PauseCircle /> : <PlayCircle />;
+
+  useEffect(() => {
+    if (profileSong) {
+      setSong(profileSong);
+      setImage(profileSong.image);
+      setArtist(profileSong.artist);
+    }
+  }, [profileSong]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -189,7 +200,10 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
                   </HStack>
                 </Stack>
                 <Stack>
-                  <Tooltip label={item.album.name} placement="bottom-end">
+                  <Tooltip
+                    label={profileSong ? profileSong.albumName : song.album.name}
+                    placement="bottom-end"
+                  >
                     <Image
                       src={image}
                       mt={
@@ -255,7 +269,7 @@ const PlayerPaused = ({ item, username }: PlayerPausedProps) => {
             boxShadow="none"
           />
         </Box>
-        {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}
+        {song.preview_url && <audio autoPlay={preview} ref={audioRef} src={song.preview_url} />}
       </Stack>
     </>
   );
