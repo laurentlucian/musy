@@ -141,7 +141,6 @@ const ActivityTile = ({ activity }: ActivityProps) => {
   };
 
   const liked = activity.track.liked ?? [];
-  console.log('liked', liked);
 
   // ?.filter(({ user }) => {
   //   return (

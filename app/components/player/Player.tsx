@@ -95,7 +95,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     } else if (playing) {
       audioRef.current?.play();
       setPlaying(true);
-      console.log('hiiiiiiii');
     }
   }, [isPlaying, playing]);
 
