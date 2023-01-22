@@ -1,9 +1,9 @@
 import { Image, Stack, Text, Button } from '@chakra-ui/react';
 import type { action } from '~/routes/$id/removeRecommend';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
 import type { ChakraProps } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
+import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 import type { Profile } from '@prisma/client';
 import { useParams } from '@remix-run/react';
@@ -51,7 +51,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     },
     ref,
   ) => {
-    const { onOpen } = useDrawerActions();
+    const { onMouseDown, onMouseMove, onClick } = useClickDrag();
     const track: Track = {
       uri: uri,
       trackId,
@@ -83,7 +83,9 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         src={image}
         borderRadius={5}
         draggable={false}
-        onClick={() => onOpen(track)}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onClick={() => onClick(track)}
       />
     );
     const ArtistName = (
