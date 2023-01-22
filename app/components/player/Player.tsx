@@ -274,10 +274,9 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   </Stack>
                   <HStack h="100%">
                     {active ? (
-                      <HStack mb="5px !important">
+                      <HStack mb="5px !important" mt={['40px', 0]}>
                         <Link href="https://open.spotify.com" target="_blank" rel="external">
                           <Image
-                            mt="40px"
                             height="30px"
                             minW="98px"
                             maxW="98px"
