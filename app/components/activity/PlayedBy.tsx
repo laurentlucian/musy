@@ -27,25 +27,27 @@ const PlayedBy = ({
                 }
                 return acc;
               }, {}),
-            ).map(({ user, count }, index) => {
-              const [first, second = ''] = user.name.split(/[\s.]+/);
-              const name =
-                second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
-              return (
-                <HStack key={index}>
-                  <Avatar
-                    minW="20px"
-                    maxW="20px"
-                    minH="20px"
-                    maxH="20px"
-                    name={user?.name}
-                    src={user?.image}
-                  />
-                  <Text>{name}</Text>
-                  {count > 1 && <Text>{count}x</Text>}
-                </HStack>
-              );
-            })}
+            )
+              .sort((a, b) => b.count - a.count)
+              .map(({ user, count }, index) => {
+                const [first, second = ''] = user.name.split(/[\s.]+/);
+                const name =
+                  second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+                return (
+                  <HStack key={index}>
+                    <Avatar
+                      minW="20px"
+                      maxW="20px"
+                      minH="20px"
+                      maxH="20px"
+                      name={user?.name}
+                      src={user?.image}
+                    />
+                    <Text>{name}</Text>
+                    {count > 1 && <Text>{count}x</Text>}
+                  </HStack>
+                );
+              })}
           </Stack>
         }
       >
