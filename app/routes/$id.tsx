@@ -62,7 +62,7 @@ const ProfileMain = ({
 };
 
 const Profile = () => {
-  const { user, playback, currentUser, party, recommended, main } =
+  const { user, playback, currentUser, party, recommended, profileSong, main } =
     useTypedLoaderData<typeof loader>();
   const isOwnProfile = currentUser?.userId === user.userId;
 
@@ -72,7 +72,7 @@ const Profile = () => {
       {playback && playback.item?.type === 'track' ? (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       ) : main[0] ? (
-        <PlayerPaused item={main[0][0].track} username={user.name} />
+        <PlayerPaused item={main[0][0].track} username={user.name} profileSong={profileSong} />
       ) : null}
       {currentUser?.id !== user.id && <Search />}
       <Stack spacing={5}>
@@ -142,7 +142,19 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     await updateUserName(id, name);
   }
 
-  const [activity, party, { currently_playing: playback, queue }, users, recommended] =
+  async function getProfileSong(id: string) {
+    const settings = await prisma.settings.findUnique({
+      where: { userId: id },
+      include: { profileSong: true },
+    });
+    if (settings) {
+      return settings.profileSong;
+    } else {
+      return null;
+    }
+  }
+
+  const [activity, party, { currently_playing: playback, queue }, users, recommended, profileSong] =
     await Promise.all([
       prisma.queue.findMany({
         where: { OR: [{ userId: id }, { ownerId: id }] },
@@ -170,6 +182,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
           },
         },
       }),
+      getProfileSong(id),
     ]);
 
   const recentDb = await prisma.recentSongs.findMany({
@@ -238,6 +251,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       following,
       queue,
       recommended,
+      profileSong,
       users,
       listened,
       main,
@@ -267,6 +281,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     following: null,
     queue,
     recommended,
+    profileSong,
     users,
     listened,
     main,

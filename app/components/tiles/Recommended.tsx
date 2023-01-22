@@ -5,10 +5,9 @@ import Tiles from './Tiles';
 import Tile from '../Tile';
 
 // import RecommendActions from './RecommendActions';
-
-interface RecommendedProps extends RecommendedSongs {
-  senderProfile?: Profile;
-}
+type RecommendedProps = RecommendedSongs & {
+  sender: Profile;
+};
 
 const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
   const scrollButtons = recommended.length > 5;
@@ -44,14 +43,14 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     <Link href={`/${recommended.senderId}`}>
                       <Image
                         borderRadius="full"
-                        src={recommended.senderProfile?.image}
+                        src={recommended.sender.image}
                         boxSize="40px"
                         mr="5px"
                       />
                     </Link>
                     <Stack>
                       <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                        <Text fontSize={['10px', '11px']}>{recommended.senderProfile?.name}</Text>
+                        <Text fontSize={['10px', '11px']}>{recommended.sender.name}</Text>
                       </Link>
                       <Text fontSize={['9px', '10px']} opacity={0.6}>
                         {timeSince(recommended.createdAt)}
