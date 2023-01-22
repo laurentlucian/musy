@@ -47,3 +47,8 @@ export default function handleRequest(
     headers: responseHeaders,
   });
 }
+
+// https://github.com/emotion-js/emotion/issues/2800
+// https://github.com/styled-components/styled-components/issues/3658
+// emotion.js doesn't support renderToPipeableStream yet
+// preventing musy from taking advantage of the new streaming/defer features in remix 1.11
