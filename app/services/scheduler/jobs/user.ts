@@ -714,3 +714,43 @@ const addDurationToRecent = async () => {
     }
   }
 };
+const addPreviewUrlAndLink = async () => {
+  const { spotify } = await spotifyApi('1295028670');
+  invariant(spotify, 'No spotify');
+  const track = await prisma.track.findMany();
+
+  const trackIdsDuplicates = track.map((t) => t.id).filter(notNull);
+  const trackIds = Array.from(new Set(trackIdsDuplicates));
+
+  console.log('trackIds', trackIds.length);
+
+  // create pages of 50 from trackIds and call getTracks with 50 ids and loop through pages
+  // without library
+  const pages = [];
+  for (let i = 0; i < trackIds.length; i += 50) {
+    pages.push(trackIds.slice(i, i + 50));
+  }
+
+  console.log('pages', pages.length);
+  // loop through pages and getTracks
+  for (const page of pages) {
+    const {
+      body: { tracks },
+    } = await spotify.getTracks(page);
+    console.log('a page', page.length);
+
+    for (const track of tracks) {
+      const preview_url = track.preview_url;
+      const link = track.external_urls.spotify;
+      await prisma.track.updateMany({
+        where: {
+          id: track.id,
+        },
+        data: {
+          preview_url,
+          link,
+        },
+      });
+    }
+  }
+};
