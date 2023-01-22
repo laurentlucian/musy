@@ -1,7 +1,7 @@
 import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
 import type { ChakraProps } from '@chakra-ui/react';
+import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 import type { Profile } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
@@ -54,7 +54,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
-    const { onOpen } = useDrawerActions();
+    const { onMouseDown, onMouseMove, onClick } = useClickDrag();
     const track: Track = {
       uri: uri,
       trackId,
@@ -103,12 +103,19 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 src={image}
                 borderRadius={5}
                 draggable={false}
-                onClick={() => onOpen(track)}
+                onMouseDown={onMouseDown}
+                onMouseMove={onMouseMove}
+                onClick={() => onClick(track)}
               />
             </Tooltip>
           </Flex>
           <Flex justify="space-between">
-            <Stack spacing={0} onClick={() => onOpen(track)}>
+            <Stack
+              spacing={0}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onClick={() => onClick(track)}
+            >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>

@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { shallow } from 'zustand/shallow';
 import type { Track } from '~/lib/types/types';
-
+import { shallow } from 'zustand/shallow';
+import { create } from 'zustand';
+import { useState } from 'react';
 interface DrawerStateConfig {
   track: Track | null;
   actions: {
@@ -56,3 +56,33 @@ export const useDrawerIsPlaying = () =>
   );
 
 export const useDrawerActions = () => useDrawerStore((state) => state.actions);
+
+export const useClickDrag = () => {
+  const { onOpen } = useDrawerActions();
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isMouseDragged, setIsMouseDragged] = useState(false);
+
+  const handleMouseDown = () => {
+    setIsMouseDown(true);
+  };
+
+  const handleMouseMove = () => {
+    if (isMouseDown) {
+      setIsMouseDragged(true);
+    }
+  };
+
+  const handleClick = (track: Track) => {
+    if (!isMouseDragged) {
+      onOpen(track);
+    }
+    setIsMouseDown(false);
+    setIsMouseDragged(false);
+  };
+
+  return {
+    onMouseDown: handleMouseDown,
+    onMouseMove: handleMouseMove,
+    onClick: handleClick,
+  };
+};

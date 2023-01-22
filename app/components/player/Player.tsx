@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
-import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
+import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
@@ -50,7 +50,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
-  const { onOpen } = useDrawerActions();
+  const { onMouseDown, onMouseMove, onClick } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue('music.900', 'music.50');
@@ -78,7 +78,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     link: item.external_urls.spotify,
   };
 
-  const onClick = () => {
+  const handleMusicControls = () => {
     if (audioRef.current && !playing) {
       audioRef.current.play();
       setPlaying(true);
@@ -179,7 +179,9 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <Stack direction="column" spacing={0.5}>
                     <Text
                       noOfLines={1}
-                      onClick={() => onOpen(track)}
+                      onMouseDown={onMouseDown}
+                      onMouseMove={onMouseMove}
+                      onClick={() => onClick(track)}
                       cursor="pointer"
                       w={['200px', '68%']}
                       overflow="hidden"
@@ -187,7 +189,13 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                     >
                       {item.name}
                     </Text>
-                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['200px', '68%']}>
+                    <Flex
+                      onMouseDown={onMouseDown}
+                      onMouseMove={onMouseMove}
+                      onClick={() => onClick(track)}
+                      cursor="pointer"
+                      w={['200px', '68%']}
+                    >
                       {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
                       <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {item.album?.artists[0].name}
@@ -310,7 +318,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                               // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
                             >
                               <IconButton
-                                onClick={onClick}
+                                onClick={handleMusicControls}
                                 icon={icon}
                                 variant="ghost"
                                 aria-label={playing ? 'pause' : 'play'}
@@ -386,7 +394,9 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       pos="absolute"
                       right={0}
                       top={0}
-                      onClick={() => onOpen(track)}
+                      onMouseDown={onMouseDown}
+                      onMouseMove={onMouseMove}
+                      onClick={() => onClick(track)}
                       cursor="pointer"
                     />
                   </Tooltip>
