@@ -25,26 +25,27 @@ const Playlists = ({
   const [show, setShow] = useState(false);
   const { id } = useParams();
 
-  const fetcher = useFetcher();
+  const { data, load } = useFetcher();
   const offsetRef = useRef(0);
   const [setRef, isVisible] = useIsVisible();
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    if (isVisible && !hasFetched.current) {
+    const isDataLessThan50 = data ? data.length < 50 : true; // true if data is undefined
+    if (isVisible && !hasFetched.current && !isDataLessThan50) {
       const newOffset = offsetRef.current + 50;
       offsetRef.current = newOffset;
-      fetcher.load(`/${id}/playlists?offset=${newOffset}`);
+      load(`/${id}/playlists?offset=${newOffset}`);
       hasFetched.current = true;
     }
-  }, [isVisible, fetcher, id]);
+  }, [isVisible, load, id, data]);
 
   useEffect(() => {
-    if (fetcher.data) {
-      setPlaylists((prev) => [...prev, ...fetcher.data]);
+    if (data) {
+      setPlaylists((prev) => [...prev, ...data]);
       hasFetched.current = false;
     }
-  }, [fetcher.data]);
+  }, [data]);
 
   useEffect(() => {
     setPlaylists(initialPlaylists);
