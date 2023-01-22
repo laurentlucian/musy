@@ -135,15 +135,15 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                 {track.liked.length ? (
                   <HStack>
                     <Icon as={Heart} />
-                    <AvatarGroup max={4}>
+                    <AvatarGroup size="xs" max={4}>
                       {track.liked
                         // .filter(({ user: u }) => u?.userId !== user.userId)
                         .map(({ user }, index) => (
                           <Avatar
-                            minW="25px"
-                            maxW="25px"
-                            minH="25px"
-                            maxH="25px"
+                            minW="20px"
+                            maxW="20px"
+                            minH="20px"
+                            maxH="20px"
                             key={index}
                             name={user?.name}
                             src={user?.image}
