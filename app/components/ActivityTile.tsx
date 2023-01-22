@@ -16,6 +16,7 @@ import { Heart, Play, Send2 } from 'iconsax-react';
 import LikeIcon from '~/lib/icon/Like';
 import type { Activity, Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
+import PlayedBy from './activity/PlayedBy';
 
 interface ActivityProps {
   activity: Activity;
@@ -140,6 +141,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
   };
 
   const liked = activity.track.liked ?? [];
+  console.log('liked', liked);
 
   // ?.filter(({ user }) => {
   //   return (
@@ -203,24 +205,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
                 </AvatarGroup>
               </HStack>
             ) : null}
-            {played.length ? (
-              <HStack>
-                <Icon as={Play} />
-                <AvatarGroup size="xs" max={5}>
-                  {played.map(({ user }, index) => (
-                    <Avatar
-                      minW="20px"
-                      maxW="20px"
-                      minH="20px"
-                      maxH="20px"
-                      key={index}
-                      name={user?.name}
-                      src={user?.image}
-                    />
-                  ))}
-                </AvatarGroup>
-              </HStack>
-            ) : null}
+            {played.length ? <PlayedBy played={played} /> : null}
           </Stack>
         </Flex>
         <Tooltip label={item.name} placement="top-start">

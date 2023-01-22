@@ -133,6 +133,7 @@ export const getAllUsers = async (isAuthenticated = false) => {
               track: {
                 include: {
                   liked: { select: { user: true } },
+                  recent: { select: { user: true } },
                 },
               },
             },

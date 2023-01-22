@@ -19,6 +19,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import { Heart } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
+import PlayedBy from '../activity/PlayedBy';
 // import PlayerBarCSS from './PlayerBarCSS';
 
 type PlayerProps = {
@@ -29,6 +30,9 @@ type PlayerProps = {
           track: Track & {
             liked: {
               user: Profile | null;
+            }[];
+            recent: {
+              user: Profile;
             }[];
           };
         })
@@ -94,66 +98,62 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           {track ? (
             <HStack w="100%" spacing={2} justify="end">
               <Stack spacing={1} h="100%" align="end">
-                {!isSmallScreen && (
-                  <>
-                    <LinkB
-                      as="span"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.open(track.uri);
-                      }}
+                <LinkB
+                  as="span"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(track.uri);
+                  }}
+                >
+                  <Text
+                    noOfLines={[1]}
+                    maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                    fontSize={{ base: 'smaller', md: 'sm' }}
+                  >
+                    {track.name}
+                  </Text>
+                </LinkB>
+                <Flex>
+                  {track.explicit && <Image mr={1} src={explicitImage} w="16px" />}
+                  <LinkB
+                    as="span"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open(track.artistUri);
+                    }}
+                  >
+                    <Text
+                      opacity={0.8}
+                      noOfLines={[1]}
+                      maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                      fontSize={{ base: 'smaller', md: 'xs' }}
                     >
-                      <Text
-                        noOfLines={[1]}
-                        maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                        fontSize={{ base: 'smaller', md: 'sm' }}
-                      >
-                        {track.name}
-                      </Text>
-                    </LinkB>
-                    <Flex>
-                      {track.explicit && <Image mr={1} src={explicitImage} w="16px" />}
-                      <LinkB
-                        as="span"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.open(track.artistUri);
-                        }}
-                      >
-                        <Text
-                          opacity={0.8}
-                          noOfLines={[1]}
-                          maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                          fontSize={{ base: 'smaller', md: 'xs' }}
-                        >
-                          {track.artist}
-                        </Text>
-                      </LinkB>
-                    </Flex>
-
-                    {track.liked.length ? (
-                      <HStack>
-                        <Icon as={Heart} />
-                        <AvatarGroup>
-                          {track.liked
-                            // .filter(({ user: u }) => u?.userId !== user.userId)
-                            .map(({ user }, index) => (
-                              <Avatar
-                                minW="25px"
-                                maxW="25px"
-                                minH="25px"
-                                maxH="25px"
-                                key={index}
-                                name={user?.name}
-                                src={user?.image}
-                                size={['xs', null, 'sm']}
-                              />
-                            ))}
-                        </AvatarGroup>
-                      </HStack>
-                    ) : null}
-                  </>
-                )}
+                      {track.artist}
+                    </Text>
+                  </LinkB>
+                </Flex>
+                {track.liked.length ? (
+                  <HStack>
+                    <Icon as={Heart} />
+                    <AvatarGroup max={4}>
+                      {track.liked
+                        // .filter(({ user: u }) => u?.userId !== user.userId)
+                        .map(({ user }, index) => (
+                          <Avatar
+                            minW="25px"
+                            maxW="25px"
+                            minH="25px"
+                            maxH="25px"
+                            key={index}
+                            name={user?.name}
+                            src={user?.image}
+                            size={['xs', null, 'sm']}
+                          />
+                        ))}
+                    </AvatarGroup>
+                  </HStack>
+                ) : null}
+                {track.recent.length ? <PlayedBy played={track.recent} /> : null}
               </Stack>
 
               <Tooltip label={<Text>{track.name}</Text>}>
