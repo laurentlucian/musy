@@ -5,9 +5,9 @@ import type { ChakraProps } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
-import type { Profile } from '@prisma/client';
 import { useParams } from '@remix-run/react';
 import { forwardRef } from 'react';
+// import type { Profile } from '@prisma/client';
 
 type CardProps = {
   uri: string;
@@ -23,34 +23,30 @@ type CardProps = {
   link: string;
 
   // will show header (profile above Card) if createdAt is defined
-  createdBy?: Profile | null;
-  createdAt?: Date;
-  playlist?: Boolean;
+  // createdBy?: Profile | null;
+  // createdAt?: Date;
+  // playlist?: Boolean;
   recommend?: boolean;
 } & ChakraProps;
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      uri,
-      trackId,
-      image,
-      albumUri,
-      albumName,
-      name,
-      artist,
-      artistUri,
-      explicit,
-      preview_url,
-      link,
-      recommend,
-      createdAt,
-      createdBy,
-      playlist,
-      ...props
-    },
-    ref,
-  ) => {
+  ({
+    uri,
+    trackId,
+    image,
+    albumUri,
+    albumName,
+    name,
+    artist,
+    artistUri,
+    explicit,
+    preview_url,
+    link,
+    recommend,
+    // createdAt,
+    // createdBy,
+    // playlist,
+  }) => {
     const { onMouseDown, onMouseMove, onClick } = useClickDrag();
     const track: Track = {
       uri: uri,
@@ -114,9 +110,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <>
         <Stack
-          ref={ref}
           flex="0 0 200px"
-          {...props}
           cursor="pointer"
           direction="row"
           w={['100vw', '450px', '750px', '1100px']}

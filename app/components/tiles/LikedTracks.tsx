@@ -1,17 +1,8 @@
-import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  Stack,
-} from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { useFetcher, useParams } from '@remix-run/react';
 import useIsVisible from '~/hooks/useIsVisible';
-import useIsMobile from '~/hooks/useIsMobile';
+import ExpandedSongs from '../ExpandedSongs';
+import { Stack } from '@chakra-ui/react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
@@ -46,21 +37,17 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     setLiked(initialLiked);
   }, [initialLiked]);
 
-  const isSmallScreen = useIsMobile();
-
   const onClose = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
-  useDrawerBackButton(onClose, show);
-
-  const btnRef = useRef<HTMLButtonElement>(null);
   if (!liked) return null;
   const scrollButtons = liked.length > 5;
+  const title = 'Liked';
 
   return (
     <Stack spacing={3}>
-      <Tiles title="Liked" scrollButtons={scrollButtons} setShow={setShow}>
+      <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {liked.map(({ track }, index) => {
           const isLast = index === liked.length - 1;
 
@@ -85,49 +72,30 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
           );
         })}
       </Tiles>
-      <Drawer
-        size="full"
-        isOpen={show}
-        onClose={onClose}
-        placement="bottom"
-        preserveScrollBarGap
-        lockFocusAcrossFrames
-        finalFocusRef={btnRef}
-        variant={isSmallScreen ? 'none' : 'desktop'}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader alignSelf="center">Liked Songs</DrawerHeader>
-
-          <DrawerBody alignSelf="center">
-            {liked.map(({ track }, index) => {
-              const isLast = index === liked.length - 1;
-              return (
-                <Card
-                  ref={(node: HTMLDivElement | null) => {
-                    isLast && setRef(node);
-                  }}
-                  key={track.id}
-                  trackId={track.id}
-                  uri={track.uri}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  preview_url={track.preview_url}
-                  link={track.external_urls.spotify}
-                />
-              );
-            })}
-          </DrawerBody>
-          <Button variant="drawer" color="white" onClick={onClose}>
-            close
-          </Button>
-        </DrawerContent>
-      </Drawer>
+      <ExpandedSongs title={title} show={show} onClose={onClose}>
+        {liked.map(({ track }, index) => {
+          const isLast = index === liked.length - 1;
+          return (
+            <Card
+              ref={(node: HTMLDivElement | null) => {
+                isLast && setRef(node);
+              }}
+              key={track.id}
+              trackId={track.id}
+              uri={track.uri}
+              image={track.album.images[1].url}
+              albumUri={track.album.uri}
+              albumName={track.album.name}
+              name={track.name}
+              artist={track.album.artists[0].name}
+              artistUri={track.album.artists[0].uri}
+              explicit={track.explicit}
+              preview_url={track.preview_url}
+              link={track.external_urls.spotify}
+            />
+          );
+        })}
+      </ExpandedSongs>
     </Stack>
   );
 };

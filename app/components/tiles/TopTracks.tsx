@@ -1,20 +1,8 @@
-import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  HStack,
-  Stack,
-  Text,
-  useRadioGroup,
-} from '@chakra-ui/react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
+import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
-import { useCallback, useRef, useState } from 'react';
-import useIsMobile from '~/hooks/useIsMobile';
+import ExpandedSongs from '../ExpandedSongs';
+import { useCallback, useState } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
 import Card from '../Card';
@@ -57,19 +45,17 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       </HStack>
     </Form>
   );
+
   const scrollButtons = top.length > 5;
-  const isSmallScreen = useIsMobile();
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const title = 'Top';
 
   const onClose = useCallback(() => {
     setShow(false);
   }, [setShow]);
 
-  useDrawerBackButton(onClose, show);
-
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
-      <Tiles title="Top" scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
+      <Tiles title={title} scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
         {top.map((track) => {
           return (
             <Tile
@@ -89,50 +75,26 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           );
         })}
       </Tiles>
-      <Drawer
-        size="full"
-        isOpen={show}
-        onClose={onClose}
-        placement="bottom"
-        preserveScrollBarGap
-        lockFocusAcrossFrames
-        finalFocusRef={btnRef}
-        variant={isSmallScreen ? 'none' : 'desktop'}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader alignSelf="center">
-            <Stack direction="row" align="end">
-              <Text>Top</Text>
-              {Filter}
-            </Stack>
-          </DrawerHeader>
-
-          <DrawerBody alignSelf="center">
-            {top.map((track) => {
-              return (
-                <Card
-                  key={track.id}
-                  uri={track.uri}
-                  trackId={track.id}
-                  image={track.album.images[1].url}
-                  albumUri={track.album.uri}
-                  albumName={track.album.name}
-                  name={track.name}
-                  artist={track.album.artists[0].name}
-                  artistUri={track.album.artists[0].uri}
-                  explicit={track.explicit}
-                  preview_url={track.preview_url}
-                  link={track.external_urls.spotify}
-                />
-              );
-            })}
-          </DrawerBody>
-          <Button variant="drawer" color="white" onClick={() => setShow(false)}>
-            close
-          </Button>
-        </DrawerContent>
-      </Drawer>
+      <ExpandedSongs title={title} show={show} onClose={onClose}>
+        {top.map((track) => {
+          return (
+            <Card
+              key={track.id}
+              uri={track.uri}
+              trackId={track.id}
+              image={track.album.images[1].url}
+              albumUri={track.album.uri}
+              albumName={track.album.name}
+              name={track.name}
+              artist={track.album.artists[0].name}
+              artistUri={track.album.artists[0].uri}
+              explicit={track.explicit}
+              preview_url={track.preview_url}
+              link={track.external_urls.spotify}
+            />
+          );
+        })}
+      </ExpandedSongs>
     </Stack>
   );
 };

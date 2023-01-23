@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
 import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
-import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
+import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +18,7 @@ const LikedTracksVirtual = ({
   const { id } = useParams();
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const { scrollRef, props } = useHorizontalScroll('reverse', false);
+  const { scrollRef, props } = useMouseScroll('reverse', false);
   const hasFetched = useRef(false);
   const { scrollToIndex, getVirtualItems, ...rowVirtualizer } = useVirtualizer({
     count: liked.length,
