@@ -2,10 +2,12 @@ import { useInterval } from '@chakra-ui/react';
 import { useRef, useEffect, useCallback, useState } from 'react';
 
 type scrollBehavior = 'natural' | 'reverse';
-export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false) => {
+export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [clickStartX, setClickStartX] = useState<number | null>(null);
+  const [clickStartY, setClickStartY] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
+  const [scrollStartY, setScrollStartY] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [navigator] = useState(typeof window !== 'undefined' ? window.navigator : null);
   // disables autoscroll for 2 seconds after user interacts with the scroll
@@ -24,12 +26,14 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
         // Use 'smooth' scrolling if supported
         el.scrollTo({
           left: el.scrollLeft + 1,
+          top: el.scrollTop + 1,
           behavior: 'smooth',
         });
       } else {
         // Fall back to default scrolling behavior if 'smooth' is not supported
         el.scrollTo({
           left: el.scrollLeft + 1,
+          top: el.scrollTop + 1,
         });
       }
 
@@ -42,6 +46,18 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
         } else {
           el.scrollTo({
             left: 0,
+          });
+        }
+      }
+      if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
+        if ('scrollBehavior' in Element.prototype) {
+          el.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        } else {
+          el.scrollTo({
+            top: 0,
           });
         }
       }
@@ -76,7 +92,9 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
   const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (scrollRef.current) {
       setClickStartX(e.screenX);
+      setClickStartY(e.screenY);
       setScrollStartX(scrollRef.current.scrollLeft);
+      setScrollStartY(scrollRef.current.scrollTop);
       setIsDragging(true);
 
       clearTimeout(recentlyDraggedTimeout.current);
@@ -95,15 +113,22 @@ export const useHorizontalScroll = (behavior: scrollBehavior, autoScroll = false
           scrollRef.current.scrollLeft =
             behavior === 'natural' ? scrollStartX - touchDelta : scrollStartX + touchDelta;
         }
+        if (clickStartY !== null && scrollStartY !== null && isDragging) {
+          const touchDelta = clickStartY - e.screenY;
+          scrollRef.current.scrollTop =
+            behavior === 'natural' ? scrollStartY - touchDelta : scrollStartY + touchDelta;
+        }
       }
     },
-    [clickStartX, isDragging, scrollStartX, behavior],
+    [clickStartX, clickStartY, isDragging, scrollStartX, scrollStartY, behavior],
   );
 
   const handleDragEnd = useCallback(() => {
     if (isDragging) {
       setClickStartX(null);
+      setClickStartY(null);
       setScrollStartX(null);
+      setScrollStartY(null);
       setIsDragging(false);
 
       clearTimeout(recentlyDraggedTimeout.current);

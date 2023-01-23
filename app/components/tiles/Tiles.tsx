@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
-import { useHorizontalScroll } from '~/hooks/useHorizontalScroll';
+import { useMouseScroll } from '~/hooks/useMouseScroll';
 import ScrollButtons from './ScrollButtons';
 
 type TilesProps = {
@@ -22,7 +22,7 @@ const Tiles = ({
   setShow,
   ...ChakraProps
 }: TilesProps) => {
-  const { scrollRef, props } = useHorizontalScroll('reverse', autoScroll);
+  const { scrollRef, props } = useMouseScroll('reverse', autoScroll);
   const onClick = () => {
     if (setShow) setShow(true);
   };
