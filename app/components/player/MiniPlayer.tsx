@@ -55,13 +55,21 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
     : null;
 
   return (
-    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
+    <Stack
+      minW={['370px', '100%']}
+      maxW={['370px', '100%']}
+      bg={bg}
+      spacing={0}
+      borderRadius={5}
+      ml="-4px"
+    >
       <Button
         as={Link}
         to={`/${user.userId}`}
         variant="ghost"
         h={playback ? ['100px', '120px'] : '65px'}
-        w={[363, '100%']}
+        minW={['370px', '100%']}
+        maxW={['370px', '100%']}
         pr={0}
       >
         <HStack spacing={3} w="100%">
@@ -73,9 +81,11 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
               </Text>
               {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
-            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} pos="absolute" pt="20px">
-              {user.bio?.slice(0, 15)}
-            </Text>
+            <Stack maxW={['40px', '100%']}>
+              <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
+                {user.bio?.slice(0, 15)}
+              </Text>
+            </Stack>
             <Text opacity={0}>hiiii</Text>
           </Stack>
 
@@ -169,12 +179,7 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                     formattedTrack && onOpen(formattedTrack);
                   }}
                 >
-                  <Image
-                    src={image}
-                    m={0}
-                    boxSize={playback ? ['100px', '120px'] : '60px'}
-                    borderRadius={2}
-                  />
+                  <Image src={image} m={0} boxSize={playback ? ['100px', '120px'] : '60px'} />
                 </LinkB>
               </Tooltip>
             </HStack>

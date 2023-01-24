@@ -16,10 +16,11 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { Link, useTransition } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import PlayedBy from '../activity/PlayedBy';
 import { Heart } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
-import PlayedBy from '../activity/PlayedBy';
+
 // import PlayerBarCSS from './PlayerBarCSS';
 
 type PlayerProps = {
@@ -71,14 +72,22 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
     : null;
 
   return (
-    <Stack w={[363, '100%']} bg={bg} spacing={0} borderRadius={5}>
+    <Stack
+      minW={['370px', '100%']}
+      maxW={['370px', '100%']}
+      bg={bg}
+      spacing={0}
+      borderRadius={5}
+      ml="-4px !important"
+    >
       <Button
         as={Link}
         to={`/${user.userId}`}
         variant="ghost"
         color={color}
         h={track ? ['100px', '120px'] : '65px'}
-        w={[363, '100%']}
+        minW={['370px', '100%']}
+        maxW={['370px', '100%']}
         pr={0}
       >
         <HStack spacing={3} w="100%">
@@ -93,9 +102,11 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
             {isSmallScreen && transition.location?.pathname.includes(user.userId) ? (
               <Waver />
             ) : (
-              <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
-                {user.bio?.slice(0, 15)}
-              </Text>
+              <Stack maxW={['40px', '100%']}>
+                <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
+                  {user.bio?.slice(0, 15)}
+                </Text>
+              </Stack>
             )}
           </Stack>
 
@@ -173,8 +184,9 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                     m={0}
                     boxSize={track ? ['100px', '120px'] : '60px'}
                     minH={track ? ['100px', '120px'] : '60px'}
+                    maxH={track ? ['100px', '120px'] : '60px'}
                     minW={track ? ['100px', '120px'] : '60px'}
-                    borderRadius={2}
+                    maxW={track ? ['100px', '120px'] : '60px'}
                   />
                 </LinkB>
               </Tooltip>
