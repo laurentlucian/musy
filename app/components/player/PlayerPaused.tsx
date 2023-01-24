@@ -3,7 +3,6 @@ import {
   HStack,
   IconButton,
   Image,
-  Link,
   Stack,
   Text,
   useColorModeValue,
@@ -13,14 +12,13 @@ import {
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
-import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
-import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useEffect, useRef, useState } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
 import AudioVisualizer from '../AudioVisualizer';
 import type { Track } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
+import SpotifyLogo from '../SpotifyLogo';
 import Tooltip from './../Tooltip';
 
 type PlayerPausedProps = {
@@ -46,7 +44,6 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
   const { onOpen } = useDrawerActions();
   const isPlaying = useDrawerIsPlaying();
   const bg = useColorModeValue('music.900', 'music.50');
-  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const explicit = song.explicit;
   const name = song.name;
 
@@ -193,16 +190,7 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
                     </Flex>
                   </Stack>
                   <HStack alignItems="flex-end" w="fit-content" h="35px">
-                    <Link
-                      href="https://open.spotify.com"
-                      target="_blank"
-                      height="30px"
-                      width="98px"
-                      mt="30px"
-                      rel="external"
-                    >
-                      <Image height="30px" width="98px" src={spotify_logo} />
-                    </Link>
+                    <SpotifyLogo mt="46px" />
                     <Tooltip
                       label={hasPreview ? '' : 'song has no preview'}
                       openDelay={hasPreview ? 200 : 0}

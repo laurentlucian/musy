@@ -1,16 +1,14 @@
-import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
-import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
-import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import Waver from './Waver';
-import Settings from './Settings';
-import UserSearch from './UserSearch';
-import { useState } from 'react';
+import { Button, Flex, Heading, HStack, Image } from '@chakra-ui/react';
 import useIsMobile from '~/hooks/useIsMobile';
+import SpotifyLogo from './SpotifyLogo';
+import UserSearch from './UserSearch';
+import Settings from './Settings';
+import { useState } from 'react';
+import Waver from './Waver';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(true);
-  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const transition = useTransition();
   const { pathname, search } = useLocation();
   const isSmallScreen = useIsMobile();
@@ -37,7 +35,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
               spinner={<Waver />}
               isLoading={transition.submission?.action.includes('auth')}
             >
-              Login with &nbsp; <Image height="24px" width="85px" src={spotify_logo} />
+              Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
             </Button>
           </Form>
         ) : (

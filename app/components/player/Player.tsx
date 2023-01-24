@@ -18,8 +18,6 @@ import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-r
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
-import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import { useFetcher, useRevalidator } from '@remix-run/react';
 import PlayingFromTooltip from './../PlayingFromTooltip';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -31,6 +29,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Party } from '@prisma/client';
 import PlayerBar from './PlayerBar';
 import Tooltip from './../Tooltip';
+import SpotifyLogo from '../SpotifyLogo';
 
 type PlayerProps = {
   id: string;
@@ -58,7 +57,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
 
   const bg = useColorModeValue('music.900', 'music.50');
 
-  const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
   const { revalidate } = useRevalidator();
@@ -296,9 +294,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <HStack>
                     {active ? (
                       <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <Link href="https://open.spotify.com" target="_blank" rel="external">
-                          <Image height="30px" minW="98px" maxW="98px" src={spotify_logo} />
-                        </Link>
+                        <SpotifyLogo />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
@@ -351,9 +347,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       </HStack>
                     ) : (
                       <HStack>
-                        <Link href="https://open.spotify.com">
-                          <Image height="30px" maxW="98px" minW="98px" src={spotify_logo} />
-                        </Link>
+                        <SpotifyLogo  />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
