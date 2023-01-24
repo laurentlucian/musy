@@ -8,10 +8,7 @@ type SpotifyLogoProps = {
   w?: string;
   mt?: string;
 };
-const SpotifyLogo = ({ link = true, h, w, mt }: SpotifyLogoProps) => {
-  const height = h ?? '30px';
-  const width = w ?? '98px';
-  const marginTop = mt ?? '0px';
+const SpotifyLogo = ({ link = true, h = '30px', w = '98px', mt = '0px' }: SpotifyLogoProps) => {
   const spotify_logo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
   return (
     <>
@@ -20,13 +17,13 @@ const SpotifyLogo = ({ link = true, h, w, mt }: SpotifyLogoProps) => {
           href="https://open.spotify.com"
           target="_blank"
           rel="external"
-          mt={marginTop}
+          mt={mt}
           _focus={{ boxShadow: 'none !important', outline: 'none !important' }}
         >
-          <Image height={height} minW={width} maxW={width} src={spotify_logo} />
+          <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify_logo} />
         </Link>
       ) : (
-        <Image height={height} minW={width} maxW={width} src={spotify_logo} />
+        <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify_logo} />
       )}
     </>
   );
