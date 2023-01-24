@@ -172,6 +172,8 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                     src={track.image}
                     m={0}
                     boxSize={track ? ['100px', '120px'] : '60px'}
+                    minH={track ? ['100px', '120px'] : '60px'}
+                    minW={track ? ['100px', '120px'] : '60px'}
                     borderRadius={2}
                   />
                 </LinkB>
