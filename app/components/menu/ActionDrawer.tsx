@@ -49,6 +49,7 @@ import AddQueue from './AddQueue';
 import LikedBy from './LikedBy';
 import CopyLink from './CopyLink';
 import ProfileSong from './ProfileSong';
+import SpotifyLogo from '../SpotifyLogo';
 
 // import SaveTo from './SaveTo';
 
@@ -177,12 +178,9 @@ const ActionDrawer = () => {
             <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
-                  {isSmallScreen && (
-                    <>
-                      <Box h="90px" w="10px" />
-                      <LikedBy />
-                    </>
-                  )}
+                  {isSmallScreen && <Box h="90px" w="10px" />}
+                  {/* <LikedBy /> */}
+                  <SpotifyLogo />
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
@@ -191,7 +189,7 @@ const ActionDrawer = () => {
                         src={track.image}
                         alignSelf="center"
                         mr={['0', '25px']}
-                        mt={[0, '100px']}
+                        // mt={[0, '100px']}
                       />
                     </Link>
                   )}
