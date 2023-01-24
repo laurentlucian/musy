@@ -24,6 +24,7 @@ import { useFetcher, useRevalidator } from '@remix-run/react';
 import PlayingFromTooltip from './../PlayingFromTooltip';
 import explicitImage from '~/assets/explicit-solid.svg';
 import useSessionUser from '~/hooks/useSessionUser';
+import AudioVisualizer from '../AudioVisualizer';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -46,6 +47,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
+  const [showPause, setShowPause] = useState(false);
+  const [hovering, setHovering] = useState<boolean>();
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
 
@@ -82,12 +85,30 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     if (audioRef.current && !playing) {
       audioRef.current.play();
       setPlaying(true);
+      setShowPause(false);
     } else {
       audioRef.current?.pause();
       setPlaying(false);
     }
   };
-  const icon = playing ? <PauseCircle /> : <PlayCircle />;
+  const icon =
+    playing && !showPause ? (
+      <AudioVisualizer />
+    ) : playing && showPause && hovering ? (
+      <PauseCircle />
+    ) : playing ? (
+      <AudioVisualizer />
+    ) : (
+      <PlayCircle />
+    );
+
+  const handleMouseLeavePreviewButton = () => {
+    setShowPause(true);
+    setHovering(false);
+  };
+  const handleMouseEnterPreviewButton = () => {
+    setHovering(true);
+  };
 
   useEffect(() => {
     if (isPlaying) {
@@ -321,6 +342,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                                 aria-label={playing ? 'pause' : 'play'}
                                 _hover={{ color: 'spotify.green' }}
                                 _active={{ boxShadow: 'none' }}
+                                onMouseLeave={handleMouseLeavePreviewButton}
+                                onMouseEnter={handleMouseEnterPreviewButton}
                               />
                             </Tooltip>
                           </>

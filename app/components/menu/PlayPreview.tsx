@@ -1,10 +1,13 @@
-import { useRef, useEffect, useState } from 'react';
 import { PauseCircle, PlayCircle } from 'iconsax-react';
-import { Button } from '@chakra-ui/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
+import { useRef, useEffect, useState } from 'react';
+import AudioVisualizer from '../AudioVisualizer';
+import { Button } from '@chakra-ui/react';
 
 const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
   const [playing, setPlaying] = useState(false);
+  const [showPause, setShowPause] = useState(false);
+  const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
   const { setIsPlaying } = useDrawerActions();
 
@@ -13,6 +16,7 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
       audioRef.current.play();
       setPlaying(true);
       setIsPlaying(true);
+      setShowPause(false);
     } else {
       audioRef.current?.pause();
       setPlaying(false);
@@ -20,8 +24,24 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
     }
   };
   const text = playing ? 'Pause' : 'Play';
-  const icon = playing ? <PauseCircle /> : <PlayCircle />;
+  const icon =
+    playing && !showPause ? (
+      <AudioVisualizer />
+    ) : playing && showPause && hovering ? (
+      <PauseCircle />
+    ) : playing ? (
+      <AudioVisualizer />
+    ) : (
+      <PlayCircle />
+    );
 
+  const onMouseLeave = () => {
+    setShowPause(true);
+    setHovering(false);
+  };
+  const onMouseEnter = () => {
+    setHovering(true);
+  };
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = 0.05;
   }, []);
@@ -48,6 +68,9 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
           w={['100vw', '550px']}
           color="music.200"
           _hover={{ color: 'white' }}
+          _active={{ boxShadow: 'blue' }}
+          onMouseLeave={onMouseLeave}
+          onMouseEnter={onMouseEnter}
         >
           {text} Preview
         </Button>
