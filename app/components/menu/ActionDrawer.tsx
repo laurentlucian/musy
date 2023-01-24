@@ -180,7 +180,7 @@ const ActionDrawer = () => {
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                   {isSmallScreen && <Box h="90px" w="10px" />}
                   {/* <LikedBy /> */}
-                  <SpotifyLogo />
+                  <SpotifyLogo mt="10px"/>
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
