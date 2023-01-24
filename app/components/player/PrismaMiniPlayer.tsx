@@ -90,9 +90,13 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
               </Text>
               {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
             </HStack>
-            <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
-              {user.bio?.slice(0, 15)}
-            </Text>
+            {isSmallScreen && transition.location?.pathname.includes(user.userId) ? (
+              <Waver />
+            ) : (
+              <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }}>
+                {user.bio?.slice(0, 15)}
+              </Text>
+            )}
           </Stack>
 
           {track ? (
