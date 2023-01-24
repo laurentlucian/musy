@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'react-feather';
 import { IconButton, HStack } from '@chakra-ui/react';
-import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
+
 import useIsMobile from '~/hooks/useIsMobile';
+import { useEffect, useRef } from 'react';
 
 const ScrollButtons = ({
   scrollRef,
@@ -89,7 +90,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToStart}
           variant="ghost"
-          icon={<Previous size="15px" />}
+          icon={<ChevronsLeft size="18px" />}
           aria-label="to start"
           _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
@@ -99,7 +100,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToPrevPage}
           variant="ghost"
-          icon={<ArrowLeft2 size="15px" />}
+          icon={<ChevronLeft size="18px" />}
           aria-label="previous page"
           _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
@@ -111,7 +112,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToNextPage}
           variant="ghost"
-          icon={<ArrowRight2 size="15px" />}
+          icon={<ChevronRight size="18px" />}
           aria-label="next page"
           _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}
@@ -121,7 +122,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToEnd}
           variant="ghost"
-          icon={<Next size="15px" />}
+          icon={<ChevronsRight size="18px" />}
           aria-label="to end"
           _hover={{ opacity: 1, color: 'spotify.green' }}
           opacity={0.5}

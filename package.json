@@ -33,6 +33,7 @@
     "ioredis": "^5.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-feather": "^2.0.10",
     "remix": "1.11.1",
     "remix-auth": "^3.4.0",
     "remix-auth-oauth2": "^1.5.0",
