@@ -1,4 +1,5 @@
 import {
+  Box,
   Avatar,
   AvatarGroup,
   Flex,
@@ -12,7 +13,6 @@ import {
   useInterval,
   Collapse,
   useDisclosure,
-  Box,
 } from '@chakra-ui/react';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
@@ -224,21 +224,21 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                     </Flex>
                     {playback.context && (
                       <>
-                        <Text
-                          fontSize="13px"
-                          transition="opacity 1.69s ease-in-out"
-                          opacity={playingFrom ? 1 : 0}
-                          w={['200px', '68%']}
-                          noOfLines={1}
-                        >
-                          Playing From{' '}
-                          {item.album.album_type === 'single' &&
-                          playback.context.type === 'album' &&
-                          item.album.total_tracks !== 1
-                            ? 'EP'
-                            : playback.context.type.charAt(0).toUpperCase() +
-                              playback.context.type.slice(1)}
-                        </Text>
+                          <Text
+                            fontSize="13px"
+                            transition="opacity 1.69s ease-in-out"
+                            opacity={playingFrom ? 1 : 0}
+                            w={['200px', '68%']}
+                            noOfLines={1}
+                          >
+                            Playing From{' '}
+                            {item.album.album_type === 'single' &&
+                            playback.context.type === 'album' &&
+                            item.album.total_tracks !== 1
+                              ? 'EP'
+                              : playback.context.type.charAt(0).toUpperCase() +
+                                playback.context.type.slice(1)}
+                          </Text>
                         <Tooltip
                           label={
                             <PlayingFromTooltip // tooltip does not show properly when playing from artist
@@ -295,7 +295,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   </Stack>
                   <HStack>
                     {active ? (
-                      <HStack mb="5px !important">
+                      <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
                         <Link href="https://open.spotify.com" target="_blank" rel="external">
                           <Image height="30px" minW="98px" maxW="98px" src={spotify_logo} />
                         </Link>
