@@ -25,7 +25,7 @@ const TrackAnalysis = () => {
   return (
     <Stack>
       <HStack align="start">
-        <Image src={track.album.images[0].url} width={200} height={200} borderRadius={5} />
+        <Image src={track.album.images[0].url} width={200} height={200} />
         <Stack>
           <Heading>{track.name}</Heading>
           <Text>{track.artists[0].name}</Text>

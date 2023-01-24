@@ -152,7 +152,6 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                           <Tooltip label={<Text>{track.name}</Text>}>
                             <Image
                               src={track.album.images[0].url}
-                              borderRadius={5}
                               w={['60px', '75px']}
                               draggable={false}
                             />

@@ -38,7 +38,6 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
         boxSize={['85px', '100px']}
         objectFit="cover"
         src={image}
-        borderRadius={5}
         draggable={false}
         // onClick={() => onOpen(track)}
       />

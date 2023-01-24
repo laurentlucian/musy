@@ -25,7 +25,6 @@ const PlayingFrom = ({ playback, item }: PlayingFromType) => {
               <Image
                 src={playback.context.image}
                 boxSize={{ base: '65px', sm: '75px', lg: '300px' }}
-                borderRadius={2}
               />
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {playback.context.name}
@@ -39,7 +38,6 @@ const PlayingFrom = ({ playback, item }: PlayingFromType) => {
                 <Image
                   src={item.album.images[0].url}
                   boxSize={{ base: '45px', sm: '75px', lg: '300px' }}
-                  borderRadius={2}
                 />
               </Tooltip>
             </Link>
@@ -58,7 +56,6 @@ const PlayingFrom = ({ playback, item }: PlayingFromType) => {
                 <Image
                   src={playback.context.image}
                   boxSize={{ base: '45px', sm: '75px', lg: '300px' }}
-                  borderRadius={2}
                 />
               </Tooltip>
             </Link>

@@ -77,7 +77,6 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         boxSize={['85px', '100px']}
         objectFit="cover"
         src={image}
-        borderRadius={5}
         draggable={false}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}

@@ -162,7 +162,6 @@ const ActivityTile = ({ activity }: ActivityProps) => {
       </HStack>
       <Flex
         justify="space-between"
-        borderRadius={5}
         bgColor={bg}
         w="250px"
         onClick={() => onOpen(item)}

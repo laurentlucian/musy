@@ -127,7 +127,6 @@ const Analysis = () => {
                 <Tooltip label={track.album.name} placement="top-start">
                   <Image
                     src={track.album.images[0].url}
-                    borderRadius={5}
                     w="200px"
                     draggable={false}
                   />

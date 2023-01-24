@@ -224,21 +224,21 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                     </Flex>
                     {playback.context && (
                       <>
-                          <Text
-                            fontSize="13px"
-                            transition="opacity 1.69s ease-in-out"
-                            opacity={playingFrom ? 1 : 0}
-                            w={['200px', '68%']}
-                            noOfLines={1}
-                          >
-                            Playing From{' '}
-                            {item.album.album_type === 'single' &&
-                            playback.context.type === 'album' &&
-                            item.album.total_tracks !== 1
-                              ? 'EP'
-                              : playback.context.type.charAt(0).toUpperCase() +
-                                playback.context.type.slice(1)}
-                          </Text>
+                        <Text
+                          fontSize="13px"
+                          transition="opacity 1.69s ease-in-out"
+                          opacity={playingFrom ? 1 : 0}
+                          w={['200px', '68%']}
+                          noOfLines={1}
+                        >
+                          Playing From{' '}
+                          {item.album.album_type === 'single' &&
+                          playback.context.type === 'album' &&
+                          item.album.total_tracks !== 1
+                            ? 'EP'
+                            : playback.context.type.charAt(0).toUpperCase() +
+                              playback.context.type.slice(1)}
+                        </Text>
                         <Tooltip
                           label={
                             <PlayingFromTooltip // tooltip does not show properly when playing from artist
@@ -370,7 +370,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                                 <Image
                                   src={playback.context.image}
                                   boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
-                                  borderRadius={2}
                                   transition="width 0.25s, height 0.25s"
                                 />
                               </Tooltip>
@@ -380,7 +379,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                                   <Image
                                     src={playback.context.image}
                                     boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
-                                    borderRadius={2}
                                     transition="width 0.25s, height 0.25s"
                                   />
                                 </Tooltip>
@@ -411,7 +409,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                           ? [135, 160, 160, 200, 221]
                           : 135
                       }
-                      borderRadius={size === 'small' ? 0 : 2}
                       transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
                       pos="absolute"
                       right={0}

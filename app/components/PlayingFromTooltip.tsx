@@ -15,7 +15,7 @@ const decodeHtmlEntity = (str?: string) => {
 const PlayingFromTooltip = ({ image, name, description }: PlayingFromType) => {
   return (
     <HStack p="0">
-      <Image src={image} boxSize="55px" borderRadius={2} />
+      <Image src={image} boxSize="55px" />
       <Stack py={2}>
         <Text fontWeight="bold" fontSize="12px">
           {name}

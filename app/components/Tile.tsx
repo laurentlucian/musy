@@ -101,7 +101,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 minW="200px"
                 objectFit="cover"
                 src={image}
-                borderRadius={5}
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}

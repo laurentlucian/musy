@@ -87,7 +87,6 @@ const MiniTile = ({
           <Tooltip label={albumName} placement="top-start">
             <Image
               src={image}
-              borderRadius={5}
               w="200px"
               draggable={false}
               onClick={() => onOpen(item)}

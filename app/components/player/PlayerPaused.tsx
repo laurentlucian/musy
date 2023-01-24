@@ -256,7 +256,6 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
                           ? [135, 160, 160, 200, 221]
                           : 135
                       }
-                      borderRadius={size === 'small' ? 0 : 2}
                       transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s, min-height 0.25s"
                       pos="absolute"
                       right={0}

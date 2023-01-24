@@ -96,7 +96,6 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
                 boxSize="200px"
                 objectFit="cover"
                 src={image}
-                borderRadius={5}
                 draggable={false}
                 onClick={() => onOpen(track)}
               />
