@@ -6,7 +6,7 @@ import { Button } from '@chakra-ui/react';
 
 const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
   const [playing, setPlaying] = useState(false);
-  const [showPause, setShowPause] = useState(false);
+  const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
   const { setIsPlaying } = useDrawerActions();

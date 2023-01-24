@@ -18,6 +18,7 @@ import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useEffect, useRef, useState } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
+import AudioVisualizer from '../AudioVisualizer';
 import type { Track } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
 import Tooltip from './../Tooltip';
@@ -34,6 +35,8 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
   const [playing, setPlaying] = useState(preview);
+  const [showPause, setShowPause] = useState(true);
+  const [hovering, setHovering] = useState<boolean>();
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [song, setSong] = useState(item);
   const [image, setImage] = useState(profileSong ? profileSong.image : song.album?.images[1].url);
@@ -75,7 +78,24 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
     }
   };
 
-  const icon = playing ? <PauseCircle /> : <PlayCircle />;
+  const icon =
+    playing && !showPause ? (
+      <AudioVisualizer />
+    ) : playing && showPause && hovering ? (
+      <PauseCircle />
+    ) : playing ? (
+      <AudioVisualizer />
+    ) : (
+      <PlayCircle />
+    );
+
+  const handleMouseLeavePreviewButton = () => {
+    setShowPause(true);
+    setHovering(false);
+  };
+  const handleMouseEnterPreviewButton = () => {
+    setHovering(true);
+  };
 
   useEffect(() => {
     if (profileSong) {
@@ -195,6 +215,8 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
                         aria-label={playing ? 'pause' : 'play'}
                         _hover={{ color: 'spotify.green' }}
                         _active={{ boxShadow: 'none' }}
+                        onMouseEnter={handleMouseEnterPreviewButton}
+                        onMouseLeave={handleMouseLeavePreviewButton}
                       />
                     </Tooltip>
                   </HStack>

@@ -47,7 +47,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [playingFrom, setPlayingFrom] = useState(false);
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
-  const [showPause, setShowPause] = useState(false);
+  const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
