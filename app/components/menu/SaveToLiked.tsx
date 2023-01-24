@@ -28,9 +28,9 @@ const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
 
   if (iconOnly)
     return (
-      <Tooltip label={isSaved ? 'Remove' : 'Save'} placement="top">
+      <Tooltip label={isSaved ? 'remove' : 'save'} placement="top">
         <IconButton
-          aria-label={isSaved ? 'Remove' : 'Save'}
+          aria-label={isSaved ? 'remove' : 'save'}
           variant="ghost"
           icon={
             <LikeIcon

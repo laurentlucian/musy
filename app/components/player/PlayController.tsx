@@ -19,7 +19,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
 
   return (
     <HStack>
-      <Tooltip label="Prev Song">
+      <Tooltip label="previous" placement="top">
         <fetcher.Form action={`/${id}/prev`} method="post" replace>
           <IconButton
             name="prev"
@@ -34,7 +34,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
           />
         </fetcher.Form>
       </Tooltip>
-      <Tooltip label={playback.is_playing ? 'Pause' : 'Play'}>
+      <Tooltip label={playback.is_playing ? 'pause' : 'play'} placement="top">
         <fetcher.Form
           action={playback.is_playing ? `/${id}/pause` : `/${id}/play`}
           method="post"
@@ -42,7 +42,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
         >
           <IconButton
             name="play"
-            aria-label={playback.is_playing ? 'Pause' : 'Play'}
+            aria-label={playback.is_playing ? 'pause' : 'play'}
             variant="ghost"
             icon={playback.is_playing ? <Pause /> : <Play />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
@@ -53,11 +53,11 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
           />
         </fetcher.Form>
       </Tooltip>
-      <Tooltip label="Next Song">
+      <Tooltip label="next" placement="top">
         <fetcher.Form action={`/${id}/next`} method="post" replace>
           <IconButton
             name="next"
-            aria-label="Next"
+            aria-label="next"
             variant="ghost"
             icon={<Next />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
