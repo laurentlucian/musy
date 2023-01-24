@@ -69,12 +69,11 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
           w={['100vw', '550px']}
           color="music.200"
           _hover={{ color: 'white' }}
-          _active={{ boxShadow: 'blue' }}
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseEnter}
         >
           {text} Preview from &nbsp;
-          <SpotifyLogo />
+          <SpotifyLogo link={false} />
         </Button>
       )}
       {preview_url && <audio ref={audioRef} src={preview_url} />}

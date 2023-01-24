@@ -73,7 +73,7 @@ const variantGhost = defineStyle((props) => {
       bg: mode(`${c}.50`, darkHoverBg)(props),
     },
     _active: {
-      bg: mode(`${c}.100`, darkActiveBg)(props),
+      bg: mode(`#302f2f`, darkActiveBg)(props),
     },
   };
 });
