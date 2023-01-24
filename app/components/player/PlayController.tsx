@@ -27,6 +27,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             variant="ghost"
             icon={<Previous />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
+            _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"
             isLoading={prevSong}
@@ -45,6 +46,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             variant="ghost"
             icon={playback.is_playing ? <Pause /> : <Play />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
+            _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"
             isLoading={loading}
@@ -59,6 +61,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             variant="ghost"
             icon={<Next />}
             _hover={{ opacity: 1, color: 'spotify.green' }}
+            _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"
             isLoading={nextSong}
