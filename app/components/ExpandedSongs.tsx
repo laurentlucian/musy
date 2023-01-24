@@ -1,4 +1,5 @@
 import {
+  Stack,
   Button,
   Drawer,
   DrawerBody,
@@ -6,6 +7,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   type StackProps,
+  Text,
 } from '@chakra-ui/react';
 import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -53,8 +55,12 @@ const ExpandedSongs = ({
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader alignSelf="center">
-            {title}
-            {Filter}
+            <Stack direction="row" align="end">
+              <Text pl={title === 'Top' ? '115px' : 0} mr={title === 'Top' ? '20px' : 0}>
+                {title}
+              </Text>
+              {Filter}
+            </Stack>
           </DrawerHeader>
 
           <DrawerBody alignSelf="center" ref={scrollRef} {...props}>

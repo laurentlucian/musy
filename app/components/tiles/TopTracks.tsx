@@ -75,7 +75,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           );
         })}
       </Tiles>
-      <ExpandedSongs title={title} show={show} onClose={onClose}>
+      <ExpandedSongs title={title} show={show} onClose={onClose} Filter={Filter}>
         {top.map((track) => {
           return (
             <Card
