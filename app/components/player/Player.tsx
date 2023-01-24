@@ -272,17 +272,15 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       </Text>
                     </Stack>
                   </Stack>
-                  <HStack h="100%">
+                  <HStack>
                     {active ? (
-                      <HStack mb="5px !important" mt={['40px', 0]}>
+                      <HStack mb="5px !important">
                         <Link href="https://open.spotify.com" target="_blank" rel="external">
-                          <Image
-                            height="30px"
-                            minW="98px"
-                            maxW="98px"
-                            src={spotify_logo}
-                          />
+                          <Image height="30px" minW="98px" maxW="98px" src={spotify_logo} />
                         </Link>
+                        {isOwnProfile && (
+                          <PlayController fetcher={fetcher} playback={playback} id={id} />
+                        )}
                         {party.length && (
                           <AvatarGroup size="xs" spacing={-2} max={5}>
                             {party.map((u) => {
@@ -329,12 +327,14 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         )}
                       </HStack>
                     ) : (
-                      <Link href="https://open.spotify.com">
-                        <Image mt="40px" height="30px" maxW="98px" minW="98px" src={spotify_logo} />
-                      </Link>
-                    )}
-                    {isOwnProfile && !isSmallScreen && (
-                      <PlayController fetcher={fetcher} playback={playback} id={id} />
+                      <HStack>
+                        <Link href="https://open.spotify.com">
+                          <Image height="30px" maxW="98px" minW="98px" src={spotify_logo} />
+                        </Link>
+                        {isOwnProfile && (
+                          <PlayController fetcher={fetcher} playback={playback} id={id} />
+                        )}
+                      </HStack>
                     )}
                   </HStack>
                 </Stack>
@@ -402,11 +402,6 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   {/* </Link> */}
                 </HStack>
               </Flex>
-              {currentUser?.userId === id && isSmallScreen && (
-                <HStack pl={2}>
-                  <PlayController fetcher={fetcher} playback={playback} id={id} />
-                </HStack>
-              )}
               <PlayerBar playback={playback} />
             </Stack>
           </Collapse>

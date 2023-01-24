@@ -18,7 +18,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const trackId = playback.item?.id;
 
   return (
-    <HStack w="100%" h="100%" justify="start" align="end" p={1}>
+    <HStack>
       <Tooltip label="Prev Song">
         <fetcher.Form action={`/${id}/prev`} method="post" replace>
           <IconButton
