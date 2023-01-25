@@ -8,6 +8,7 @@ import {
   AvatarGroup,
   Avatar,
   Flex,
+  VStack,
 } from '@chakra-ui/react';
 import { Link } from '@remix-run/react';
 import Tooltip from './Tooltip';
@@ -185,10 +186,11 @@ const ActivityTile = ({ activity }: ActivityProps) => {
             </Text>
           </Tooltip>
 
-          <Stack spacing={1} mt="8px">
+          <HStack align="end" h="50%">
             {/* Spotify Logo if needed to get accepted by Spotify hi lohan :) */}
-            {/* <SpotifyLogo /> */}
-            {liked.length ? (
+            <SpotifyLogo icon w="21px" h="21px" />
+
+            {/* {liked.length ? (
               <HStack>
                 <Icon as={Heart} />
                 <AvatarGroup size="xs" max={5}>
@@ -206,8 +208,8 @@ const ActivityTile = ({ activity }: ActivityProps) => {
                 </AvatarGroup>
               </HStack>
             ) : null}
-            {played.length ? <PlayedBy played={played} /> : null}
-          </Stack>
+            {played.length ? <PlayedBy played={played} /> : null} */}
+          </HStack>
         </Flex>
         <Tooltip label={item.name} placement="top-start">
           <Image boxSize="100px" objectFit="cover" src={item.image} />
