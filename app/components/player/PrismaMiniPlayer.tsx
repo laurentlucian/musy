@@ -20,6 +20,7 @@ import PlayedBy from '../activity/PlayedBy';
 import { Heart } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 import Waver from '../Waver';
+import SpotifyLogo from '../SpotifyLogo';
 
 // import PlayerBarCSS from './PlayerBarCSS';
 
@@ -147,7 +148,8 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                     </Text>
                   </LinkB>
                 </Flex>
-                {track.liked.length ? (
+                <SpotifyLogo />
+                {/* {track.liked.length ? (
                   <HStack>
                     <Icon as={Heart} />
                     <AvatarGroup size="xs" max={4}>
@@ -168,7 +170,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                     </AvatarGroup>
                   </HStack>
                 ) : null}
-                {track.recent.length ? <PlayedBy played={track.recent} /> : null}
+                {track.recent.length ? <PlayedBy played={track.recent} /> : null} */}
               </Stack>
 
               <Tooltip label={<Text>{track.name}</Text>}>
