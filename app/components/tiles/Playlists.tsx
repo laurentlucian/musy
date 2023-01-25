@@ -1,10 +1,11 @@
 import { default as ExpandedPlayLists } from '../ExpandedSongs';
 import { usePlaylists } from '~/hooks/usePlaylist';
-import PlaylistTile from '../PlaylistTile';
+import PlaylistTile from '../playlists/PlaylistTile';
 import PlaylistCard from './PlaylistCard';
 import { Stack } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import Tiles from './Tiles';
+import PlaylistDrawer from '../playlists/PlaylistDrawer';
 
 const Playlists = ({
   playlists: initialPlaylists,
@@ -33,9 +34,12 @@ const Playlists = ({
               }}
               key={list.id}
               uri={list.uri}
-              image={list.images[0]?.url}
+              link={list.external_urls.spotify ?? ''}
               name={list.name}
-              tracks={list.tracks.total}
+              image={list.images[0]?.url}
+              trackTotal={list.tracks.total}
+              isPublic={list.public ?? true}
+              playlistId={list.id}
               description={list.description}
             />
           );
@@ -52,15 +56,19 @@ const Playlists = ({
                 }}
                 key={list.id}
                 uri={list.uri}
-                image={list.images[0]?.url}
-                playlistUri={list.uri}
+                // link={list.external_urls.spotify ?? ''}
                 name={list.name}
+                image={list.images[0]?.url}
+                // tracks={list.tracks.total}
+                // public={list.public}
+                playlistUri={list.uri}
                 description={list.description}
               />
             );
           })}
         </ExpandedPlayLists>
       )}
+      <PlaylistDrawer />
     </Stack>
   );
 };

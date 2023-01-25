@@ -41,10 +41,13 @@ export type Activity = {
 };
 export interface PlaylistTrack {
   uri: string;
-  trackId: string;
-  image: string;
   name: string;
-  description: string | null;
-  explicit: boolean;
+  link: string;
+  image: string;
+  trackTotal: number;
+  tracks?: SpotifyApi.PlaylistObjectSimplified[];
   userId?: string;
+  isPublic: boolean;
+  playlistId: string;
+  description: string | null;
 }

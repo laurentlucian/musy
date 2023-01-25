@@ -1,9 +1,9 @@
-import {create} from 'zustand';
-import {shallow} from 'zustand/shallow';
 import type { PlaylistTrack } from '~/lib/types/types';
+import { shallow } from 'zustand/shallow';
+import { create } from 'zustand';
 
 interface DrawerStateConfig {
-  track: PlaylistTrack | null;
+  playlist: PlaylistTrack | null;
   actions: {
     onClose: () => void;
     onOpen: (by: PlaylistTrack) => void;
@@ -11,27 +11,30 @@ interface DrawerStateConfig {
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
-  track: null,
+  playlist: null,
   actions: {
-    onClose: () => set({ track: null }),
+    onClose: () => set({ playlist: null }),
     onOpen: (by) =>
       set({
-        track: {
+        playlist: {
           uri: by.uri,
-          trackId: by.trackId,
-          image: by.image,
+          link: by.link,
           name: by.name,
-          description: by.description,
-          explicit: by.explicit,
+          image: by.image,
+          trackTotal: by.trackTotal,
+          tracks: by.tracks,
           userId: by.userId,
+          isPublic: by.isPublic,
+          playlistId: by.playlistId,
+          description: by.description,
         },
       }),
   },
 }));
 
-export const usePlaylistDrawerTrack = () =>
+export const usePlaylistDrawerStore = () =>
   useDrawerStore(
-    (state) => state.track,
+    (state) => state.playlist,
     // by default, zustand checks if state changes with a strict equality check
     // this means that if you have an object in state, it would always be considered changed
     // a shallow comparison is used for objects

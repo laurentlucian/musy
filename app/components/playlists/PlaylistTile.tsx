@@ -1,36 +1,65 @@
-import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
+import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
+import { useFetcher, useParams } from '@remix-run/react';
 import type { PlaylistTrack } from '~/lib/types/types';
 import type { ChakraProps } from '@chakra-ui/react';
-import { forwardRef } from 'react';
-import Tooltip from './Tooltip';
+import { forwardRef, useEffect, useState, useMemo, useRef } from 'react';
+import Tooltip from '../Tooltip';
 
-type TileProps = {
-  uri: string;
-  image: string;
-  name: string;
-  tracks: number;
-  description: string | null;
-} & ChakraProps;
+type TileProps = PlaylistTrack & ChakraProps;
 
 const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
-  ({ uri, image, name, tracks, description, ...props }, ref) => {
+  ({ uri, image, name, link, trackTotal, isPublic, playlistId, description, ...props }, ref) => {
+    const [open, setOpen] = useState(false);
+    const [tracks, setTracks] = useState<SpotifyApi.PlaylistObjectSimplified[]>();
+    const [playlist, setPlaylist] = useState<PlaylistTrack>({
+      uri,
+      link,
+      name,
+      image,
+      tracks,
+      isPublic,
+      trackTotal,
+      playlistId,
+      description,
+    });
+    const initialFetch = useRef(false);
+    const hasFetched = useRef(false);
     const decodeHtmlEntity = (str?: string) => {
       return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
-
+    const fetcher = useFetcher();
+    const { id } = useParams();
     const { onOpen } = usePlaylistDrawerActions();
-    const track: PlaylistTrack = {
-      uri: uri,
-      trackId: '',
-      image,
-      name,
-      description,
-      explicit: false,
+
+    const onClick = () => {
+      setOpen(true);
     };
-    console.log(tracks);
+
+    const newPlaylist = useMemo(() => ({ ...playlist, tracks }), [playlist, tracks]);
+
+    useEffect(() => {
+      if (newPlaylist) setPlaylist(newPlaylist);
+    }, [newPlaylist]);
+
+    useEffect(() => {
+      if (open && !initialFetch.current) {
+        hasFetched.current = true;
+        initialFetch.current = true;
+        fetcher.load(`/${id}/playlistTracks?playlistId=${playlistId}`);
+        setTracks(fetcher.data);
+      }
+    }, [open, fetcher, id, playlistId]);
+
+    useEffect(() => {
+      if (fetcher.data && !hasFetched.current) {
+        console.log('hiiiii', playlist);
+        onOpen(playlist);
+        hasFetched.current = false;
+      }
+    }, [onOpen, playlist, fetcher.data, tracks]);
 
     return (
       <>
@@ -64,12 +93,12 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
                 objectFit="cover"
                 src={image}
                 draggable={false}
-                onClick={() => onOpen(track)}
+                onClick={onClick}
               />
             </Tooltip>
           </Flex>
           <Flex justify="space-between">
-            <Stack spacing={0} onClick={() => onOpen(track)}>
+            <Stack spacing={0} onClick={onClick}>
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>
@@ -82,7 +111,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
               ) : (
                 <Box h="13px" />
               )}
-              <Text fontSize="11px">{tracks} songs</Text>
+              <Text fontSize="11px">{trackTotal} songs</Text>
             </Stack>
           </Flex>
         </Stack>

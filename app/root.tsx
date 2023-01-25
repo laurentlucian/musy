@@ -1,5 +1,3 @@
-import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
-import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import {
   Heading,
   ChakraProvider,
@@ -7,21 +5,21 @@ import {
   cookieStorageManagerSSR,
   localStorageManager,
 } from '@chakra-ui/react';
-
-import { theme } from '~/lib/theme';
-import Layout from '~/components/Layout';
-import { authenticator } from '~/services/auth.server';
-import { ScrollRestoration } from './hooks/useScrollRestoration';
-import { withEmotionCache } from '@emotion/react';
-import { useContext, useEffect } from 'react';
+import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
+import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
+import { ScrollRestoration } from './hooks/useScrollRestoration';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import loading from './lib/styles/loading.css';
-import { prisma } from './services/db.server';
 import ActionDrawer from './components/menu/ActionDrawer';
 import MobileDrawer from './components/menu/MobileDrawer';
+import { authenticator } from '~/services/auth.server';
+import { withEmotionCache } from '@emotion/react';
+import loading from './lib/styles/loading.css';
+import { useContext, useEffect } from 'react';
+import { prisma } from './services/db.server';
 import musylogo from '~/assets/musylogo.svg';
-import PlaylistDrawer from './components/menu/PlaylistDrawer';
+import Layout from '~/components/Layout';
+import { theme } from '~/lib/theme';
 
 const App = () => {
   const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
@@ -33,7 +31,6 @@ const App = () => {
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
         <Layout authorized={!!currentUser}>
           <ActionDrawer />
-          <PlaylistDrawer />
           <MobileDrawer />
           <Outlet />
         </Layout>
