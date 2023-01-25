@@ -148,7 +148,10 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                     </Text>
                   </LinkB>
                 </Flex>
-                <SpotifyLogo />
+                <Stack pt="10px" my="30px">
+                  <SpotifyLogo h="22px" w="70px" />
+                </Stack>
+
                 {/* {track.liked.length ? (
                   <HStack>
                     <Icon as={Heart} />

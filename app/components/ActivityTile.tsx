@@ -17,6 +17,7 @@ import LikeIcon from '~/lib/icon/Like';
 import type { Activity, Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import PlayedBy from './activity/PlayedBy';
+import SpotifyLogo from './SpotifyLogo';
 
 interface ActivityProps {
   activity: Activity;
@@ -185,6 +186,8 @@ const ActivityTile = ({ activity }: ActivityProps) => {
           </Tooltip>
 
           <Stack spacing={1} mt="8px">
+            {/* Spotify Logo if needed to get accepted by Spotify hi lohan :) */}
+            {/* <SpotifyLogo /> */}
             {liked.length ? (
               <HStack>
                 <Icon as={Heart} />
