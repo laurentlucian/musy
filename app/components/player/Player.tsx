@@ -19,17 +19,17 @@ import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFetcher, useRevalidator } from '@remix-run/react';
-import PlayingFromTooltip from './../PlayingFromTooltip';
 import explicitImage from '~/assets/explicit-solid.svg';
+import AudioVisualizer from '../icons/AudioVisualizer';
+import PlayingFromTooltip from './PlayingFromTooltip';
 import useSessionUser from '~/hooks/useSessionUser';
-import AudioVisualizer from '../AudioVisualizer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Party } from '@prisma/client';
 import PlayerBar from './PlayerBar';
 import Tooltip from './../Tooltip';
-import SpotifyLogo from '../SpotifyLogo';
 
 type PlayerProps = {
   id: string;
@@ -347,7 +347,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                       </HStack>
                     ) : (
                       <HStack>
-                        <SpotifyLogo  />
+                        <SpotifyLogo />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}

@@ -5,7 +5,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 import { Button, Image } from '@chakra-ui/react';
 import type { action } from '~/routes/$id/add';
 import type { Profile } from '@prisma/client';
-import Waver from '../Waver';
+import Waver from '../icons/Waver';
 
 type RecommendProps = {
   userId?: string;

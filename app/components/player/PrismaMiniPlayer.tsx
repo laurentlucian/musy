@@ -15,12 +15,12 @@ import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { Link, useTransition } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import useIsMobile from '~/hooks/useIsMobile';
 import PlayedBy from '../activity/PlayedBy';
 import { Heart } from 'iconsax-react';
+import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
-import Waver from '../Waver';
-import SpotifyLogo from '../SpotifyLogo';
 
 // import PlayerBarCSS from './PlayerBarCSS';
 

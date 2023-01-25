@@ -8,15 +8,15 @@ import {
   useColorModeValue,
   Link as LinkB,
 } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
-import { Link, useTransition } from '@remix-run/react';
-import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
-import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
+import explicitImage from '~/assets/explicit-solid.svg';
+import { Link, useTransition } from '@remix-run/react';
+import { useDrawerActions } from '~/hooks/useDrawer';
+import type { Profile } from '@prisma/client';
+import useIsMobile from '~/hooks/useIsMobile';
 import PlayerBar from './PlayerBar';
+import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
-import Waver from '../Waver';
 
 type PlayerProps = {
   user: Profile;

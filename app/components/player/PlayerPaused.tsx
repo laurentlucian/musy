@@ -13,12 +13,12 @@ import {
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import explicitImage from '~/assets/explicit-solid.svg';
+import AudioVisualizer from '../icons/AudioVisualizer';
 import { useEffect, useRef, useState } from 'react';
 import useSessionUser from '~/hooks/useSessionUser';
-import AudioVisualizer from '../AudioVisualizer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import type { Track } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
-import SpotifyLogo from '../SpotifyLogo';
 import Tooltip from './../Tooltip';
 
 type PlayerPausedProps = {

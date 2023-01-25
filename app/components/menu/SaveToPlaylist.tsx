@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
-import Waver from '../Waver';
+import Waver from '../icons/Waver';
 import { useState } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';

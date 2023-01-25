@@ -1,11 +1,11 @@
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex } from '@chakra-ui/react';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
+import MoodButton from '~/components/profile/MoodButton';
 import { Form, useSubmit } from '@remix-run/react';
 import Following from '~/components/Following';
 import Tooltip from '~/components/Tooltip';
-import { useTypedRouteLoaderData } from 'remix-typedjson';
-import MoodButton from '~/components/MoodButton';
-import { timeSince } from '~/lib/utils';
 import type { loader } from '~/routes/$id';
+import { timeSince } from '~/lib/utils';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');

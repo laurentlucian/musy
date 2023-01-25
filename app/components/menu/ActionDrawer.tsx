@@ -38,18 +38,18 @@ import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import { useParams, useTransition } from '@remix-run/react';
 import useSessionUser from '~/hooks/useSessionUser';
 import useParamUser from '~/hooks/useParamUser';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import useSendMenu from '~/hooks/useSendMenu';
 import useIsMobile from '~/hooks/useIsMobile';
 import AnalyzeTrack from './AnalyzeTrack';
 import SaveToLiked from './SaveToLiked';
 import PlayPreview from './PlayPreview';
+import ProfileSong from './ProfileSong';
 import useUsers from '~/hooks/useUsers';
 import Recommend from './Recommend';
 import AddQueue from './AddQueue';
-import LikedBy from './LikedBy';
 import CopyLink from './CopyLink';
-import ProfileSong from './ProfileSong';
-import SpotifyLogo from '../SpotifyLogo';
+import LikedBy from './LikedBy';
 
 // import SaveTo from './SaveTo';
 
@@ -180,7 +180,7 @@ const ActionDrawer = () => {
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                   {isSmallScreen && <Box h="90px" w="10px" />}
                   {/* <LikedBy /> */}
-                  <SpotifyLogo mt="10px"/>
+                  <SpotifyLogo mt="10px" />
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image

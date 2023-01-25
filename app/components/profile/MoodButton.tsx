@@ -1,7 +1,7 @@
 import { IconButton } from '@chakra-ui/react';
 import { useSubmit, useTransition } from '@remix-run/react';
 import { Smileys } from 'iconsax-react';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 
 const MoodButton = () => {
   const submit = useSubmit();

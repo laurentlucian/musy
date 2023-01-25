@@ -1,7 +1,7 @@
 import { Heading, Image, Link, Stack, Text } from '@chakra-ui/react';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 type PlayingFromType = {
   playback: CurrentlyPlayingObjectCustom;
   item: SpotifyApi.TrackObjectFull;
