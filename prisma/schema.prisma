@@ -192,13 +192,16 @@ model Settings {
   user   Profile @relation(fields: [userId], references: [userId])
   userId String  @unique
 
-  autoscroll     Boolean @default(true)
-  isPrivate      Boolean @default(false)
-  allowQueue     String  @default("on")
-  allowRecommend String  @default("on")
-  allowPreview   Boolean @default(false)
-  profileSong    Track?  @relation(fields: [profileSongId], references: [id])
+  autoscroll     Boolean  @default(true)
+  isPrivate      Boolean  @default(false)
+  allowQueue     String   @default("on")
+  allowRecommend String   @default("on")
+  allowPreview   Boolean  @default(false)
+  profileSong    Track?   @relation(fields: [profileSongId], references: [id])
   profileSongId  String?
+  pauseQueue     Boolean  @default(false)
+  pauseRecent    Boolean  @default(false)
+  pauseRecentAt  DateTime @default(now()) @updatedAt
   // theme String @default("light")
 }
 
