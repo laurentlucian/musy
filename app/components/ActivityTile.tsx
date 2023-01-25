@@ -187,7 +187,6 @@ const ActivityTile = ({ activity }: ActivityProps) => {
           </Tooltip>
 
           <HStack align="end" h="50%">
-            {/* Spotify Logo if needed to get accepted by Spotify hi lohan :) */}
             <SpotifyLogo icon w="21px" h="21px" />
 
             {/* {liked.length ? (
