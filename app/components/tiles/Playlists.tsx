@@ -1,10 +1,9 @@
-import { useFetcher, useParams } from '@remix-run/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import useIsVisible from '~/hooks/useIsVisible';
-import ExpandedSongs from '../ExpandedSongs';
+import { default as ExpandedPlayLists } from '../ExpandedSongs';
+import { usePlaylists } from '~/hooks/usePlaylist';
 import PlaylistTile from '../PlaylistTile';
 import PlaylistCard from './PlaylistCard';
 import { Stack } from '@chakra-ui/react';
+import { useCallback } from 'react';
 import Tiles from './Tiles';
 
 const Playlists = ({
@@ -12,35 +11,7 @@ const Playlists = ({
 }: {
   playlists: SpotifyApi.PlaylistObjectSimplified[];
 }) => {
-  const [playlists, setPlaylists] = useState(initialPlaylists);
-  const [show, setShow] = useState(false);
-  const { id } = useParams();
-
-  const { data, load } = useFetcher();
-  const offsetRef = useRef(0);
-  const [setRef, isVisible] = useIsVisible();
-  const hasFetched = useRef(false);
-
-  useEffect(() => {
-    const isDataLessThan50 = data ? data.length < 50 : true; // true if data is undefined
-    if (isVisible && !hasFetched.current && !isDataLessThan50) {
-      const newOffset = offsetRef.current + 50;
-      offsetRef.current = newOffset;
-      load(`/${id}/playlists?offset=${newOffset}`);
-      hasFetched.current = true;
-    }
-  }, [isVisible, load, id, data]);
-
-  useEffect(() => {
-    if (data) {
-      setPlaylists((prev) => [...prev, ...data]);
-      hasFetched.current = false;
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setPlaylists(initialPlaylists);
-  }, [initialPlaylists]);
+  const { playlists, show, setShow, setRef } = usePlaylists(initialPlaylists);
 
   const onClose = useCallback(() => {
     setShow(false);
@@ -71,7 +42,7 @@ const Playlists = ({
         })}
       </Tiles>
       {scrollButtons && (
-        <ExpandedSongs title={title} show={show} onClose={onClose}>
+        <ExpandedPlayLists title={title} show={show} onClose={onClose}>
           {playlists.map((list, index) => {
             const isLast = index === playlists.length - 1;
             return (
@@ -88,7 +59,7 @@ const Playlists = ({
               />
             );
           })}
-        </ExpandedSongs>
+        </ExpandedPlayLists>
       )}
     </Stack>
   );
