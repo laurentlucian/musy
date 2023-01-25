@@ -1,48 +1,20 @@
-import { Flex, HStack, Image, Stack, Text, Button } from '@chakra-ui/react';
-import type { action } from '~/routes/$id/removeRecommend';
-import explicitImage from '~/assets/explicit-solid.svg';
+import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
-import type { ChakraProps } from '@chakra-ui/react';
-import { Link, useParams } from '@remix-run/react';
-import { useTypedFetcher } from 'remix-typedjson';
 import type { PlaylistTrack } from '~/lib/types/types';
-import type { Profile } from '@prisma/client';
-import { timeSince } from '~/lib/utils';
+import type { ChakraProps } from '@chakra-ui/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
 
 type TileProps = {
   uri: string;
-  trackId: string;
   image: string;
   name: string;
+  tracks: number;
   description: string | null;
-  explicit: boolean;
-
-  // will show header (profile above tile) if createdAt is defined
-  createdBy?: Profile | null;
-  createdAt?: Date;
-  playlist?: Boolean;
-  recommend?: boolean;
 } & ChakraProps;
 
 const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
-  (
-    {
-      uri,
-      trackId,
-      image,
-      name,
-      description,
-      explicit,
-      recommend,
-      createdAt,
-      createdBy,
-      playlist,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ uri, image, name, tracks, description, ...props }, ref) => {
     const decodeHtmlEntity = (str?: string) => {
       return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
         return String.fromCharCode(parseInt(dec, 16));
@@ -52,24 +24,19 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
     const { onOpen } = usePlaylistDrawerActions();
     const track: PlaylistTrack = {
       uri: uri,
-      trackId,
+      trackId: '',
       image,
       name,
       description,
-      explicit,
+      explicit: false,
     };
-    const fetcher = useTypedFetcher<typeof action>();
-    const { id } = useParams();
-    const removeFromRecommended = () => {
-      const action = `/${id}/removeRecommend`;
-      fetcher.submit({ trackId }, { replace: true, method: 'post', action });
-    };
+    console.log(tracks);
 
     return (
       <>
         <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
           <Flex direction="column">
-            {createdAt && (
+            {/* {createdAt && (
               <HStack align="center" h="35px">
                 {createdBy ? (
                   <Link to={`/${createdBy.userId}`}>
@@ -90,7 +57,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
                   {timeSince(createdAt ?? null)}
                 </Text>
               </HStack>
-            )}
+            )} */}
             <Tooltip label={name} placement="top-start">
               <Image
                 boxSize="200px"
@@ -106,16 +73,17 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
               </Text>
-              {description && (
+              {description ? (
                 <Flex align="center">
-                  {explicit && <Image src={explicitImage} mr={1} w="19px" />}
                   <Text fontSize="11px" opacity={0.8} noOfLines={2}>
                     {decodeHtmlEntity(description)}
                   </Text>
                 </Flex>
+              ) : (
+                <Box h="13px" />
               )}
+              <Text fontSize="11px">{tracks} songs</Text>
             </Stack>
-            {recommend && <Button onClick={removeFromRecommended}>-</Button>}
           </Flex>
         </Stack>
       </>

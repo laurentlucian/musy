@@ -60,14 +60,12 @@ const Playlists = ({
               ref={(node) => {
                 isLast && setRef(node);
               }}
-              trackId=""
-              playlist
               key={list.id}
               uri={list.uri}
               image={list.images[0]?.url}
               name={list.name}
+              tracks={list.tracks.total}
               description={list.description}
-              explicit={false}
             />
           );
         })}
