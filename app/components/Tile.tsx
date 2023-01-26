@@ -8,6 +8,7 @@ import { timeSince } from '~/lib/utils';
 import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
+import SpotifyLogo from './icons/SpotifyLogo';
 
 type TileProps = {
   uri: string;
@@ -133,6 +134,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
+            <SpotifyLogo icon h="25px" w="25px" px="5px" />
           </Flex>
         </Stack>
       </>

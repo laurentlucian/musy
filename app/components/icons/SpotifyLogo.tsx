@@ -1,3 +1,4 @@
+import type { ChakraProps } from '@chakra-ui/react';
 import { Image, Link, useColorModeValue } from '@chakra-ui/react';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
@@ -10,7 +11,7 @@ type SpotifyLogoProps = {
   w?: string;
   mt?: string;
   icon?: boolean;
-};
+} & ChakraProps;
 
 const SpotifyLogo = ({
   link = true,
@@ -18,6 +19,7 @@ const SpotifyLogo = ({
   w = '98px',
   mt = '0px',
   icon = false,
+  ...props
 }: SpotifyLogoProps) => {
   const spotifyIcon = useColorModeValue(spotify_icon_white, spotify_icon_black);
   const spotifyLogo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
@@ -31,11 +33,12 @@ const SpotifyLogo = ({
           rel="external"
           mt={mt}
           _focus={{ boxShadow: 'none !important', outline: 'none !important' }}
+          {...props}
         >
           <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify} />
         </Link>
       ) : (
-        <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify} />
+        <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify} {...props} />
       )}
     </>
   );
