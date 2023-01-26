@@ -80,10 +80,15 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
 
   await spotifyClient.getMe().catch(async (e) => {
     if (e.statusCode === 403) {
-      await prisma.profile.delete({ where: { userId: id } });
       await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
       await prisma.likedSongs.deleteMany({ where: { userId: id } });
       await prisma.recentSongs.deleteMany({ where: { userId: id } });
+      await prisma.recommendedSongs.deleteMany({
+        where: { OR: [{ senderId: id }, { ownerId: id }] },
+      });
+      await prisma.aI.delete({ where: { userId: id } });
+      await prisma.settings.delete({ where: { userId: id } });
+      await prisma.profile.delete({ where: { userId: id } });
       await prisma.user.delete({ where: { id } });
     }
   });

@@ -121,7 +121,6 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     throw new Response('Not found', { status: 404 });
 
   const { spotify } = await spotifyApi(id).catch(async (e) => {
-    console.log('e', e);
     if (e instanceof Error && e.message.includes('revoked')) {
       throw new Response('User Access Revoked', { status: 401 });
     }
