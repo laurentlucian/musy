@@ -2,6 +2,7 @@ import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 import { getUser, updateToken } from './auth.server';
+import { prisma } from './db.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -76,6 +77,16 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
     const expiresAt = Date.now() + body.expires_in * 1000;
     await updateToken(data.user.userId, body.access_token, expiresAt, body.refresh_token);
   }
+
+  await spotifyClient.getMe().catch(async (e) => {
+    if (e.statusCode === 403) {
+      await prisma.profile.delete({ where: { userId: id } });
+      await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
+      await prisma.likedSongs.deleteMany({ where: { userId: id } });
+      await prisma.recentSongs.deleteMany({ where: { userId: id } });
+      await prisma.user.delete({ where: { id } });
+    }
+  });
 
   return { spotify: spotifyClient, user: data.user, token: newToken };
 };
