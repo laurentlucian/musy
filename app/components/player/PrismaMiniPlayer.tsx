@@ -10,6 +10,7 @@ import {
   Link as LinkB,
   AvatarGroup,
   Avatar,
+  Box,
 } from '@chakra-ui/react';
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -130,7 +131,11 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
                   </Text>
                 </LinkB>
                 <Flex>
-                  {track.explicit && <Image mr={1} src={explicitImage} w="16px" />}
+                  {track.explicit ? (
+                    <Image mr={1} src={explicitImage} minW="16px" maxW="16px" />
+                  ) : (
+                    <Box minW="16px" maxW="16px" />
+                  )}
                   <LinkB
                     as="span"
                     onClick={(e) => {
