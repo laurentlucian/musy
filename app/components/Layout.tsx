@@ -16,7 +16,11 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
   }, [pathname]);
 
   return (
-    <Flex justify="center" bgGradient={isNya ? 'linear(to-t, #050404 80%, pink 100%)' : 'none'} bgAttachment="fixed">
+    <Flex
+      justify="center"
+      bgGradient={isNya ? 'linear(to-t, #050404 40%, pink 110%)' : 'none'}
+      bgAttachment="fixed"
+    >
       <Box w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }} px={13}>
         <Nav authorized={authorized} />
         {children}
