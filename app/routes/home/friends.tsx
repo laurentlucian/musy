@@ -23,12 +23,10 @@ const Friends = () => {
   }, [shouldRevalidate, revalidate]);
 
   return (
-    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
-      <Stack>
-        {users.map((user) => {
-          return <PrismaMiniPlayer key={user.userId} user={user} />;
-        })}
-      </Stack>
+    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }} w="100%" px={['4px', 0]}>
+      {users.map((user) => {
+        return <PrismaMiniPlayer key={user.userId} user={user} />;
+      })}
     </Stack>
   );
 };

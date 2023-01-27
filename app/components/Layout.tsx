@@ -26,7 +26,7 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
 
   return (
     <Flex justify="center" bgGradient={bgGradient} bgAttachment="fixed">
-      <Box w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }} px={13}>
+      <Box w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }}>
         <Nav authorized={authorized} />
         {children}
         {!!authorized && <MobileSearchButton />}
