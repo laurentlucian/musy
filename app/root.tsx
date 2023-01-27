@@ -5,10 +5,17 @@ import {
   cookieStorageManagerSSR,
   localStorageManager,
 } from '@chakra-ui/react';
-import { Links, LiveReload, Meta, Outlet, Scripts, useCatch } from '@remix-run/react';
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  useCatch,
+} from '@remix-run/react';
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
-import { ScrollRestoration } from './hooks/useScrollRestoration';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import ActionDrawer from './components/menu/ActionDrawer';
 import MobileDrawer from './components/menu/MobileDrawer';
@@ -157,7 +164,7 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
         {children}
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
+        {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
       </body>
     </html>
   );
