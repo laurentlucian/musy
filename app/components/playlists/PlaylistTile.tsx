@@ -1,10 +1,16 @@
 import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
 import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
-import { useFetcher, useParams } from '@remix-run/react';
+import { Link, useFetcher, useParams } from '@remix-run/react';
 import type { PlaylistTrack } from '~/lib/types/types';
 import type { ChakraProps } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState, useMemo, useRef } from 'react';
 import Tooltip from '../Tooltip';
+
+export const decodeHtmlEntity = (str?: string) => {
+  return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
+    return String.fromCharCode(parseInt(dec, 16));
+  });
+};
 
 type TileProps = PlaylistTrack & ChakraProps;
 
@@ -25,11 +31,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
     });
     const initialFetch = useRef(false);
     const hasFetched = useRef(false);
-    const decodeHtmlEntity = (str?: string) => {
-      return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
-        return String.fromCharCode(parseInt(dec, 16));
-      });
-    };
+
     const fetcher = useFetcher();
     const { id } = useParams();
     const { onOpen } = usePlaylistDrawerActions();
@@ -55,7 +57,6 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
 
     useEffect(() => {
       if (fetcher.data && !hasFetched.current) {
-        console.log('hiiiii', playlist);
         onOpen(playlist);
         hasFetched.current = false;
       }
@@ -64,8 +65,9 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
     return (
       <>
         <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
-          <Flex direction="column">
-            {/* {createdAt && (
+          <Link to={`${playlist.playlistId}`}>
+            <Flex direction="column">
+              {/* {createdAt && (
               <HStack align="center" h="35px">
                 {createdBy ? (
                   <Link to={`/${createdBy.userId}`}>
@@ -87,33 +89,34 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
                 </Text>
               </HStack>
             )} */}
-            <Tooltip label={name} placement="top-start">
-              <Image
-                boxSize="200px"
-                objectFit="cover"
-                src={image}
-                draggable={false}
-                onClick={onClick}
-              />
-            </Tooltip>
-          </Flex>
-          <Flex justify="space-between">
-            <Stack spacing={0} onClick={onClick}>
-              <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
-                {name}
-              </Text>
-              {description ? (
-                <Flex align="center">
-                  <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                    {decodeHtmlEntity(description)}
-                  </Text>
-                </Flex>
-              ) : (
-                <Box h="13px" />
-              )}
-              <Text fontSize="11px">{trackTotal} songs</Text>
-            </Stack>
-          </Flex>
+              <Tooltip label={name} placement="top-start">
+                <Image
+                  boxSize="200px"
+                  objectFit="cover"
+                  src={image}
+                  draggable={false}
+                  onClick={onClick}
+                />
+              </Tooltip>
+            </Flex>
+            <Flex justify="space-between">
+              <Stack spacing={0} onClick={onClick}>
+                <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+                  {name}
+                </Text>
+                {description ? (
+                  <Flex align="center">
+                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                      {decodeHtmlEntity(description)}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Box h="13px" />
+                )}
+                <Text fontSize="11px">{trackTotal} songs</Text>
+              </Stack>
+            </Flex>
+          </Link>
         </Stack>
       </>
     );
