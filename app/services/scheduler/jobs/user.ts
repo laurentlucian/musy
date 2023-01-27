@@ -199,10 +199,17 @@ export const userQ = Queue<{ userId: string }>(
           'dbTotal',
           dbTotal,
         );
-        await libraryQ.add('user-library', {
-          userId,
-          pages,
-        });
+        await libraryQ.add(
+          'user-library',
+          {
+            userId,
+            pages,
+          },
+          {
+            removeOnComplete: true,
+            removeOnFail: true,
+          },
+        );
       } else {
         console.log('userQ -> all liked tracks already in db', userId, total, dbTotal);
       }
@@ -293,6 +300,8 @@ export const addUsersToQueue = async () => {
           type: 'exponential',
           delay: minutesToMs(1),
         },
+        removeOnComplete: true,
+        removeOnFail: true,
       },
     );
   }
@@ -313,9 +322,9 @@ export const addUsersToQueue = async () => {
   );
 
   // await addMissingTracks();
-  if ((await longScriptQ.getJobs())?.length === 0 && isProduction) {
-    longScriptQ.add('long-script', null);
-  }
+  // if ((await longScriptQ.getJobs())?.length === 0 && isProduction) {
+  //   longScriptQ.add('long-script', null);
+  // }
 
   console.log('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
