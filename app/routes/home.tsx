@@ -38,7 +38,10 @@ export const loader = async ({ request }: LoaderArgs) => {
       include: {
         user: true,
         track: {
-          include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
+          include: {
+            liked: { select: { user: true }, orderBy: { likedAt: 'asc' } },
+            recent: { select: { user: true } },
+          },
         },
       },
     })

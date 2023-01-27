@@ -142,13 +142,11 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     link: activity.track.link,
   };
 
-  const liked = activity.track.liked ?? [];
-
-  // ?.filter(({ user }) => {
-  //   return (
-  //     user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
-  //   );
-  // });
+  const liked = (activity.track.liked ?? []).filter(({ user }) => {
+    if (activity.track.liked?.length === 1) return false;
+    return true;
+    // return user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId;
+  });
 
   const played = activity.track.recent ?? [];
   //   ?.filter(({ user }) => {
@@ -169,7 +167,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
         onClick={() => onOpen(item)}
         cursor="pointer"
       >
-        <Flex direction="column" px={2} py={1}>
+        <Flex direction="column" w="100%" px={2} py={1}>
           <Tooltip label={item.name} placement="top-start">
             <Text
               fontSize={['12px', '13px']}
@@ -186,29 +184,30 @@ const ActivityTile = ({ activity }: ActivityProps) => {
             </Text>
           </Tooltip>
 
-          <HStack align="end" h="50%">
-            <SpotifyLogo icon w="21px" h="21px" />
-
-            {/* {liked.length ? (
-              <HStack>
-                <Icon as={Heart} />
-                <AvatarGroup size="xs" max={5}>
-                  {liked.map(({ user }) => (
-                    <Avatar
-                      minW="20px"
-                      maxW="20px"
-                      minH="20px"
-                      maxH="20px"
-                      key={user?.userId}
-                      name={user?.name}
-                      src={user?.image}
-                    />
-                  ))}
-                </AvatarGroup>
-              </HStack>
-            ) : null}
-            {played.length ? <PlayedBy played={played} /> : null} */}
-          </HStack>
+          <Flex justify="space-between" mt="auto">
+            <SpotifyLogo alignSelf="end" icon w="21px" h="21px" />
+            <Stack spacing="2px">
+              {liked.length ? (
+                <HStack>
+                  <Icon as={Heart} />
+                  <AvatarGroup size="xs" max={5} spacing="-9px">
+                    {liked.map(({ user }) => (
+                      <Avatar
+                        minW="20px"
+                        maxW="20px"
+                        minH="20px"
+                        maxH="20px"
+                        key={user?.userId}
+                        name={user?.name}
+                        src={user?.image}
+                      />
+                    ))}
+                  </AvatarGroup>
+                </HStack>
+              ) : null}
+              {played.length ? <PlayedBy played={played} /> : null}
+            </Stack>
+          </Flex>
         </Flex>
         <Tooltip label={item.name} placement="top-start">
           <Image boxSize="100px" objectFit="cover" src={item.image} />

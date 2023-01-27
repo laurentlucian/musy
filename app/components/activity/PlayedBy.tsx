@@ -51,8 +51,8 @@ const PlayedBy = ({
           </Stack>
         }
       >
-        <AvatarGroup size="xs" max={5}>
-          {played.map(({ user }, index) => (
+        <AvatarGroup size="xs">
+          {played.slice(0, 5).map(({ user }, index) => (
             <Avatar
               minW="20px"
               maxW="20px"
