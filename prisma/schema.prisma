@@ -47,10 +47,11 @@ model Profile {
   recent      RecentSongs[]
   recommended RecommendedSongs[]
 
-  ai       AI?
-  settings Settings?
-  theme    Theme?
-  playback Playback?
+  ai          AI?
+  settings    Settings?
+  theme       Theme?
+  playback    Playback?
+  ColorPreset ColorPreset[]
 }
 
 model AI {
@@ -209,9 +210,9 @@ model Settings {
 }
 
 model ColorPreset {
-  id      Int   @id @default(autoincrement())
-  theme   Theme @relation(fields: [themeId], references: [id])
-  themeId Int
+  id          Int     @id @default(autoincrement())
+  createdBy   Profile @relation(fields: [createdById], references: [userId])
+  createdById String
 
   name             String @default("musy")
   backgroundLight  String @default("#EEE6E2")
@@ -223,14 +224,12 @@ model ColorPreset {
   playerColorLight String @default("#E7DFD9")
   playerColorDark  String @default("#101010")
 
-  isFavorite Boolean @default(false)
+  selectedBy Theme[]
 }
 
 model Theme {
-  id Int @id @default(autoincrement())
-
   user   Profile @relation(fields: [userId], references: [userId])
-  userId String  @unique
+  userId String  @id @unique
 
   colorPreset ColorPreset[]
 
@@ -242,7 +241,6 @@ model Theme {
   subTextLight    String  @default("#161616")
   subTextDark     String  @default("#EEE6E2")
   gradient        Boolean @default(false)
-  
 
   playerColorLight String  @default("#E7DFD9")
   playerColorDark  String  @default("#101010")
