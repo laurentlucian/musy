@@ -55,7 +55,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const { onMouseDown, onMouseMove, onClick } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
-  const bg = useColorModeValue('music.900', 'music.50');
+  const bg = useColorModeValue('#10101066', 'music.50');
 
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();

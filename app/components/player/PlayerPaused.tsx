@@ -43,7 +43,7 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
   const [blur, setBlur] = useState(true);
   const { onOpen } = useDrawerActions();
   const isPlaying = useDrawerIsPlaying();
-  const bg = useColorModeValue('music.900', 'music.50');
+  const bg = useColorModeValue('#10101066', 'music.50');
   const explicit = song.explicit;
   const name = song.name;
 
