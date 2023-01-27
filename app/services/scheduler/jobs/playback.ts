@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { createTrackModel, notNull } from '~/lib/utils';
+import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -79,6 +80,10 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
     console.log('playbackQ -> not playing a track', userId);
     return null;
   }
+
+  const current = await prisma.playback.findUnique({ where: { userId } });
+  const isSameTrack = current?.trackId === track.id;
+
   console.log('playbackQ -> user', userId, 'track', track.name);
   await upsertPlayback(userId, track, progress_ms, playback.timestamp);
 
@@ -87,7 +92,7 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   await playbackQ.add(
     'playback',
     { userId },
-    { delay: remaining + 500, removeOnComplete: true, removeOnFail: true },
+    { delay: remaining + (isSameTrack ? 2000 : 500), removeOnComplete: true, removeOnFail: true },
   );
   // return playback;
 });
@@ -105,6 +110,21 @@ const getPlaybackState = async (id: string) => {
       await prisma.user.update({ where: { id }, data: { revoked: true } });
       await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
       await prisma.likedSongs.deleteMany({ where: { userId: id } });
+    }
+
+    // @ts-expect-error e is ResponseError
+    if (e?.statusCode === 403) {
+      await prisma.user.update({ where: { id }, data: { revoked: true } });
+      // await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
+      // await prisma.likedSongs.deleteMany({ where: { userId: id } });
+      // await prisma.recentSongs.deleteMany({ where: { userId: id } });
+      // await prisma.recommendedSongs.deleteMany({
+      //   where: { OR: [{ senderId: id }, { ownerId: id }] },
+      // });
+      // await prisma.aI.delete({ where: { userId: id } });
+      // await prisma.settings.delete({ where: { userId: id } });
+      // await prisma.profile.delete({ where: { userId: id } });
+      // await prisma.user.delete({ where: { id } });
     }
 
     return { id, playback: null };
@@ -125,7 +145,7 @@ const removePlaybackJob = async (userId: string) => {
 };
 
 export const playbackCreator = async () => {
-  const users = await prisma.profile.findMany();
+  const users = await getAllUsers();
   const playbacks = await Promise.all(users.map((user) => getPlaybackState(user.userId)));
   const active = playbacks.filter((u) => notNull(u.playback));
 
