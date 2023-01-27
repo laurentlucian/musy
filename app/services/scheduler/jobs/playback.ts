@@ -84,7 +84,11 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
 
   console.log('playbackQ -> completed', userId);
   const remaining = track.duration_ms - progress_ms;
-  await playbackQ.add('playback', { userId }, { delay: remaining + 500, removeOnComplete: true });
+  await playbackQ.add(
+    'playback',
+    { userId },
+    { delay: remaining + 500, removeOnComplete: true, removeOnFail: true },
+  );
   // return playback;
 });
 

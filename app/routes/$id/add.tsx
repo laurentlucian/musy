@@ -86,6 +86,8 @@ export const action = async ({ request, params }: ActionArgs) => {
           every: 30000,
         },
         jobId: String(activity.id),
+        removeOnComplete: true,
+        removeOnFail: true,
       },
     );
     console.log('add -> created Job on ', res.queueName);

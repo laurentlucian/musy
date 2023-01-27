@@ -11,7 +11,7 @@ const authenticate = async (request: Request) => {
   const returnTo = url.searchParams.get('returnTo') as string | null;
 
   try {
-    await authenticator.authenticate('spotify', request);
+    return await authenticator.authenticate('spotify', request);
   } catch (error) {
     // catches an error if it needs oauth2 authentication
     if (!returnTo) throw error;

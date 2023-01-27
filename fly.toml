@@ -12,7 +12,7 @@ processes = []
   auto_rollback = true
 
 [mounts]
-  source = "musy_data_v1"
+  source = "musy_data_v3"
   destination = "/data"
 
 [[services]]
