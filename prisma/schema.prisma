@@ -49,6 +49,7 @@ model Profile {
 
   ai       AI?
   settings Settings?
+  theme    Theme?
   playback Playback?
 }
 
@@ -202,7 +203,53 @@ model Settings {
   pauseQueue     Boolean  @default(false)
   pauseRecent    Boolean  @default(false)
   pauseRecentAt  DateTime @default(now()) @updatedAt
+  // background     String?
+  // theme          String   @default("preset")
   // theme String @default("light")
+}
+
+model ColorPreset {
+  id      Int   @id @default(autoincrement())
+  theme   Theme @relation(fields: [themeId], references: [id])
+  themeId Int
+
+  name             String @default("musy")
+  backgroundLight  String @default("#EEE6E2")
+  backgroundDark   String @default("#090808")
+  mainTextLight    String @default("#161616")
+  mainTextDark     String @default("#EEE6E2")
+  subTextLight     String @default("#161616")
+  subTextDark      String @default("#EEE6E2")
+  playerColorLight String @default("#E7DFD9")
+  playerColorDark  String @default("#101010")
+
+  isFavorite Boolean @default(false)
+}
+
+model Theme {
+  id Int @id @default(autoincrement())
+
+  user   Profile @relation(fields: [userId], references: [userId])
+  userId String  @unique
+
+  colorPreset ColorPreset[]
+
+  isPreset        Boolean @default(true)
+  backgroundLight String  @default("#EEE6E2")
+  backgroundDark  String  @default("#090808")
+  mainTextLight   String  @default("#161616")
+  mainTextDark    String  @default("#EEE6E2")
+  subTextLight    String  @default("#161616")
+  subTextDark     String  @default("#EEE6E2")
+  gradient        Boolean @default(false)
+  
+
+  playerColorLight String  @default("#E7DFD9")
+  playerColorDark  String  @default("#101010")
+  blur             Boolean @default(true)
+  opaque           Boolean @default(false)
+
+  musyLogo String @default("musy")
 }
 
 model Track {
