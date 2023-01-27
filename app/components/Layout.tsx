@@ -1,15 +1,22 @@
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
+import MobileSearchButton from './menu/MobileSearchButton';
+import { useLocation } from '@remix-run/react';
 import { Box, Flex } from '@chakra-ui/react';
 import Nav from './Nav';
-import MobileSearchButton from './menu/MobileSearchButton';
 
 type LayoutProps = {
   authorized: boolean;
 };
 
 const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
+  const [isNya, setIsNya] = useState(false);
+  const { pathname } = useLocation();
+  useEffect(() => {
+    pathname === '/02mm0eoxnifin8xdnqwimls4y' ? setIsNya(true) : setIsNya(false);
+  }, [pathname]);
+
   return (
-    <Flex justify="center">
+    <Flex justify="center" bgGradient={isNya ? 'linear(to-t, #050404 80%, pink 100%)' : 'none'} bgAttachment="fixed">
       <Box w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }} px={13}>
         <Nav authorized={authorized} />
         {children}
