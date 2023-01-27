@@ -32,7 +32,9 @@ const Settings = () => {
         {/* :3 */}
         <Divider orientation="vertical" />
       </Center>
-      <Stack></Stack>
+      <Stack>
+        <Outlet />
+      </Stack>
     </Flex>
   );
 };
