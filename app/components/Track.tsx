@@ -2,6 +2,7 @@ import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import SpotifyLogo from './icons/SpotifyLogo';
 // import type { Profile } from '@prisma/client';
 
 const Track = (props: { track: SpotifyApi.TrackObjectFull; addedAt: string }) => {
@@ -40,11 +41,17 @@ const Track = (props: { track: SpotifyApi.TrackObjectFull; addedAt: string }) =>
     />
   );
   const ArtistName = (
-    <Stack direction="row">
-      {track.explicit && <Image src={explicitImage} mr={-1} w="19px" />}
-      <Text fontSize="14px" opacity={0.8} noOfLines={1}>
-        {track.artist}
-      </Text>
+    <Stack direction="row" justify={['space-between', 'unset']}>
+      <Stack>
+        <HStack>
+          {track.explicit && <Image src={explicitImage} mr={-1} w="19px" />}
+          <Text fontSize="14px" opacity={0.8} noOfLines={1}>
+            {track.artist}
+          </Text>
+        </HStack>
+        <SpotifyLogo w="70px" h="21px" />
+      </Stack>
+      {isSmallScreen && <SpotifyLogo icon />}
     </Stack>
   );
   const AlbumName = (
@@ -68,7 +75,7 @@ const Track = (props: { track: SpotifyApi.TrackObjectFull; addedAt: string }) =>
         <Td>
           <HStack>
             {SongImage}
-            <Stack>
+            <Stack w="100%">
               {SongTitle}
               {ArtistName}
             </Stack>
