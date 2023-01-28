@@ -5,11 +5,9 @@ import type { ChakraProps } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
-import { useParams } from '@remix-run/react';
-import { forwardRef } from 'react';
 import SpotifyLogo from './icons/SpotifyLogo';
 import useIsMobile from '~/hooks/useIsMobile';
-// import type { Profile } from '@prisma/client';
+import { useParams } from '@remix-run/react';
 
 type CardProps = {
   uri: string;
@@ -29,6 +27,7 @@ type CardProps = {
   // createdAt?: Date;
   // playlist?: Boolean;
   recommend?: boolean;
+  ref?: (node: HTMLDivElement | null) => void;
 } & ChakraProps;
 
 const Card = ({
