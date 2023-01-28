@@ -161,24 +161,24 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
     // -> refreshes every 30s regardless
     // 30000,
   );
-  const interval = useCallback(
-    () => setInterval(() => setPlayingFrom(!playingFrom), 6900),
-    [playingFrom],
-  );
+  // const interval = useCallback(
+  //   () => setInterval(() => setPlayingFrom(!playingFrom), 6900),
+  //   [playingFrom],
+  // );
 
-  useEffect(() => {
-    if (
-      item.album.album_type === 'single' &&
-      item.album.total_tracks === 1 &&
-      playback?.context?.type !== 'artist' &&
-      playback?.context?.type !== 'playlist'
-    ) {
-      clearInterval(interval());
-      setPlayingFrom(false);
-    } else {
-      interval();
-    }
-  }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
+  // useEffect(() => {
+  //   if (
+  //     item.album.album_type === 'single' &&
+  //     item.album.total_tracks === 1 &&
+  //     playback?.context?.type !== 'artist' &&
+  //     playback?.context?.type !== 'playlist'
+  //   ) {
+  //     clearInterval(interval());
+  //     setPlayingFrom(false);
+  //   } else {
+  //     interval();
+  //   }
+  // }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
 
   if (!item) return null;
 
@@ -294,7 +294,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <HStack>
                     {active ? (
                       <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo />
+                        <SpotifyLogo icon={isSmallScreen} w={isSmallScreen ? '30px' : undefined} />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
@@ -355,6 +355,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                     )}
                   </HStack>
                 </Stack>
+
                 <HStack spacing={1} align="end">
                   {/* {playback.context &&
                             playback.context.name &&
