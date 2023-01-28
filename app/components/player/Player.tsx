@@ -294,7 +294,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <HStack>
                     {active ? (
                       <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo icon={isSmallScreen} w={isSmallScreen ? '30px' : undefined} />
+                        <SpotifyLogo icon={isSmallScreen}/>
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
