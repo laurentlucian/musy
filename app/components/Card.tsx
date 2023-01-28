@@ -7,6 +7,8 @@ import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 import { useParams } from '@remix-run/react';
 import { forwardRef } from 'react';
+import SpotifyLogo from './icons/SpotifyLogo';
+import useIsMobile from '~/hooks/useIsMobile';
 // import type { Profile } from '@prisma/client';
 
 type CardProps = {
@@ -46,6 +48,7 @@ const Card = ({
 // createdBy,
 // playlist,
 CardProps) => {
+  const isSmallScreen = useIsMobile();
   const { onMouseDown, onMouseMove, onClick } = useClickDrag();
   const track: Track = {
     uri: uri,
@@ -114,12 +117,14 @@ CardProps) => {
         w={['100vw', '450px', '750px', '1100px']}
         py="5px"
         pl="5px"
+        justify="space-between"
       >
         <Stack direction="row">
           {SongImage}
           {TitleArtistAlbumName}
         </Stack>
         {recommend && <Button onClick={removeFromRecommended}>-</Button>}
+        <SpotifyLogo icon={isSmallScreen} alignSelf={['end', 'unset']} />
       </Stack>
     </>
   );
