@@ -15,10 +15,10 @@ type SpotifyLogoProps = {
 
 const SpotifyLogo = ({
   link = true,
-  h = '30px',
-  w = '98px',
-  mt = '0px',
   icon = false,
+  h = icon ? '25px' : '30px',
+  w = icon ? '25px' : '98px',
+  mt = '0px',
   ...props
 }: SpotifyLogoProps) => {
   const spotifyIcon = useColorModeValue(spotify_icon_white, spotify_icon_black);

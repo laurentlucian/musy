@@ -134,7 +134,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
-            <SpotifyLogo icon h="25px" w="25px" px="5px" />
+            <SpotifyLogo icon px="5px" />
           </Flex>
         </Stack>
       </>
