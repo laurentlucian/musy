@@ -1,10 +1,18 @@
+import {
+  Form,
+  Outlet,
+  useNavigate,
+  useParams,
+  useSearchParams,
+  useSubmit,
+  useTransition,
+} from '@remix-run/react';
 import { Flex, IconButton, Input, InputGroup, InputRightElement, Spinner } from '@chakra-ui/react';
-import { Form, Outlet, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
 import { CloseSquare } from 'iconsax-react';
 import type { ChangeEvent } from 'react';
-import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { useRef } from 'react';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,6 +22,8 @@ const Search = () => {
   const submit = useSubmit();
   const transition = useTransition();
   const busy = transition.submission?.formData.has('spotify') ?? false;
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
@@ -36,6 +46,16 @@ const Search = () => {
         state: { scroll: false },
       });
     }
+  };
+
+  const onClearSearch = () => {
+    setSearch('');
+    searchParams.delete('spotify');
+    setSearchParams(searchParams, {
+      replace: true,
+      state: { scroll: false },
+    });
+    navigate(`/${id}`);
   };
 
   return (
@@ -75,14 +95,7 @@ const Search = () => {
                       variant="ghost"
                       size="xs"
                       borderRadius={8}
-                      onClick={() => {
-                        setSearch('');
-                        searchParams.delete('spotify');
-                        setSearchParams(searchParams, {
-                          replace: true,
-                          state: { scroll: false },
-                        });
-                      }}
+                      onClick={onClearSearch}
                       icon={<CloseSquare />}
                     />
                   </>
@@ -92,7 +105,7 @@ const Search = () => {
           </InputGroup>
         </Flex>
       </Form>
-      {search && <Outlet />}
+      {search ? <Outlet /> : null}
     </>
   );
 };
