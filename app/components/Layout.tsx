@@ -19,7 +19,7 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
     pathname === '/danicadboo' ? setIsDanica(true) : setIsDanica(false);
   }, [pathname]);
   const bgGradient = isNya
-    ? 'linear(to-t, #050404 40%, #ff1dce 140%)'
+    ? 'linear(to-t, #050404 40%, #FE5BAC 130%)'
     : isDanica
     ? 'linear(to-t, #050404 40%, #563776 110%)'
     : 'none';
