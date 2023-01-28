@@ -13,16 +13,18 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
   const [isDanica, setIsDanica] = useState(false);
   const { pathname } = useLocation();
   useEffect(() => {
-    pathname === '/02mm0eoxnifin8xdnqwimls4y' ? setIsNya(true) : setIsNya(false);
+    pathname.includes('/02mm0eoxnifin8xdnqwimls4y') ? setIsNya(true) : setIsNya(false);
   }, [pathname]);
   useEffect(() => {
-    pathname === '/danicadboo' ? setIsDanica(true) : setIsDanica(false);
+    pathname.includes('/danicadboo') ? setIsDanica(true) : setIsDanica(false);
   }, [pathname]);
   const bgGradient = isNya
     ? 'linear(to-t, #050404 40%, #FE5BAC 130%)'
     : isDanica
     ? 'linear(to-t, #050404 40%, #563776 110%)'
     : 'none';
+
+  console.log(pathname);
 
   return (
     <Flex justify="center" bgGradient={bgGradient} bgAttachment="fixed">
