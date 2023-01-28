@@ -1,10 +1,13 @@
 import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
 // import type { Profile } from '@prisma/client';
 
 const Track = (props: { track: SpotifyApi.TrackObjectFull; addedAt: string }) => {
   const { onMouseDown, onMouseMove, onClick } = useClickDrag();
+
+  const isSmallScreen = useIsMobile();
 
   const track = {
     trackId: props.track.id,
@@ -61,17 +64,24 @@ const Track = (props: { track: SpotifyApi.TrackObjectFull; addedAt: string }) =>
 
   return (
     <Tr cursor="pointer" onClick={() => onClick(track)}>
-      <Td>
-        <HStack>
-          {SongImage}
-          <Stack>
-            {SongTitle}
-            {ArtistName}
-          </Stack>
-        </HStack>
-      </Td>
-      <Td>{AlbumName}</Td>
-      <Td>{AddedAt}</Td>
+      <>
+        <Td>
+          <HStack>
+            {SongImage}
+            <Stack>
+              {SongTitle}
+              {ArtistName}
+            </Stack>
+          </HStack>
+        </Td>
+        {!isSmallScreen ? (
+          <>
+            <Td>{AlbumName}</Td>
+            <Td>{AddedAt}</Td>
+          </>
+        ) : null}
+      </>
+
       {/* {recommend && <Button onClick={removeFromRecommended}>-</Button>} */}
     </Tr>
   );

@@ -2,6 +2,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Image,
   Stack,
   Table,
   TableContainer,
@@ -19,11 +20,13 @@ import invariant from 'tiny-invariant';
 import { decodeHtmlEntity } from '~/components/playlists/PlaylistTile';
 import Track from '~/components/Track';
 import { spotifyApi } from '~/services/spotify.server';
+import useIsMobile from '~/hooks/useIsMobile';
 
 const Playlist = () => {
   const { playlist } = useTypedLoaderData<typeof loader>();
   const { id } = useParams();
   const navigate = useNavigate();
+  const isSmallScreen = useIsMobile();
 
   return (
     <Stack>
@@ -34,20 +37,27 @@ const Playlist = () => {
           variant="ghost"
           onClick={() => navigate(`/${id}`)}
         />
-        <Heading size="sm">{playlist.name}</Heading>
-        {playlist.description ? (
-          <Text fontSize="12px" opacity={0.8} noOfLines={2}>
-            {decodeHtmlEntity(playlist.description)}
-          </Text>
-        ) : null}
+        <Image src={playlist.images[0]?.url} boxSize={['90px', '140px']} />
+        <Stack>
+          <Heading size="sm">{playlist.name}</Heading>
+          {playlist.description ? (
+            <Text fontSize="12px" opacity={0.8} noOfLines={2}>
+              {decodeHtmlEntity(playlist.description)}
+            </Text>
+          ) : null}
+        </Stack>
       </HStack>
       <TableContainer margin="0px" padding="0px">
         <Table variant="unstyled" margin="0px" padding="0px">
           <Thead>
             <Tr>
               <Th>Title</Th>
-              <Th>Album</Th>
-              <Th>Date added</Th>
+              {isSmallScreen ? null : (
+                <>
+                  <Th>Album</Th>
+                  <Th>Date added</Th>
+                </>
+              )}
             </Tr>
           </Thead>
           <Tbody>
