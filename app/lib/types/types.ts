@@ -54,7 +54,7 @@ export interface PlaylistTrack {
 
 export interface User extends Profile {
   settings: Settings | null;
-  liked: {
+  liked?: {
     trackId: string;
   }[];
 }
