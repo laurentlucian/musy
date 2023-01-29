@@ -150,7 +150,8 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
     });
     // reset cache to reapply global styles
     clientStyleData?.reset();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [/* "clientStyleData", "emotionCache.sheet", */]);
 
   return (
     <html lang="en">
