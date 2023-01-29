@@ -18,7 +18,6 @@ import type { User } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
-import { useState } from 'react';
 
 // import PlayerBarCSS from './PlayerBarCSS';
 interface Friends extends User {
@@ -40,7 +39,6 @@ type PlayerProps = {
 };
 
 const PrismaMiniPlayer = ({ user }: PlayerProps) => {
-  const [clicked, setClicked] = useState(false);
   const bg = useColorModeValue('music.900', 'music.200');
   const hoverBg = useColorModeValue('#5F5B59', 'music.50');
   const color = useColorModeValue('music.200', 'music.900');
@@ -50,6 +48,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
 
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+  const loading = transition.location?.pathname.includes(user.userId);
 
   const playback = user.playback;
   const track = playback?.track;
@@ -85,8 +84,14 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
 
       <HStack>
         <Stack>
-          {Username}
-          {isSmallScreen && transition.location?.pathname.includes(user.userId) && track ? (
+          {isSmallScreen && !user.bio && loading ? (
+            <Stack ml="8px">
+              <Waver />
+            </Stack>
+          ) : (
+            Username
+          )}
+          {isSmallScreen && user.bio && loading && track ? (
             <Waver />
           ) : user.bio ? (
             <Stack maxW={['40px', '100%']}>
@@ -96,7 +101,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
             </Stack>
           ) : null}
         </Stack>
-        {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
+        {!isSmallScreen && loading && <Waver />}
       </HStack>
     </Stack>
   );
@@ -191,7 +196,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           </Tooltip>
         </HStack>
       ) : (
-        isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />
+        isSmallScreen && loading && <Waver />
       )}
     </>
   );
@@ -200,7 +205,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
     <Button
       as={Link}
       to={`/${user.userId}`}
-      bg={clicked ? hoverBg : bg}
+      bg={loading ? hoverBg : bg}
       color={color}
       px={['4px', '10px']}
       my={['2px !important', '10px !important']} // <- there is something setting margin-top to 40px
@@ -209,8 +214,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
       minW="100%"
       maxW="100%"
       borderRadius={5}
-      _hover={isSmallScreen && !clicked ? { bg } : { bg: hoverBg }}
-      onClick={() => setClicked(true)}
+      _hover={isSmallScreen && !loading ? { bg } : { bg: hoverBg }}
     >
       {User}
       {Activity}
