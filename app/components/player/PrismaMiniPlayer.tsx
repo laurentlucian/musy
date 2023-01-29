@@ -86,19 +86,15 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
       <HStack>
         <Stack>
           {Username}
-          {isSmallScreen && transition.location?.pathname.includes(user.userId) ? (
+          {isSmallScreen && transition.location?.pathname.includes(user.userId) && track ? (
             <Waver />
-          ) : (
-            <>
-              {user.bio ? (
-                <Stack maxW={['40px', '100%']}>
-                  <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
-                    {user.bio.slice(0, 15)}
-                  </Text>
-                </Stack>
-              ) : null}
-            </>
-          )}
+          ) : user.bio ? (
+            <Stack maxW={['40px', '100%']}>
+              <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
+                {user.bio.slice(0, 15)}
+              </Text>
+            </Stack>
+          ) : null}
         </Stack>
         {!isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />}
       </HStack>
@@ -194,7 +190,9 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
             </LinkB>
           </Tooltip>
         </HStack>
-      ) : null}
+      ) : (
+        isSmallScreen && transition.location?.pathname.includes(user.userId) && <Waver />
+      )}
     </>
   );
 
