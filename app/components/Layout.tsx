@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 import MobileSearchButton from './menu/MobileSearchButton';
 import { useLocation } from '@remix-run/react';
 import { Box, Flex } from '@chakra-ui/react';
@@ -9,22 +9,14 @@ type LayoutProps = {
 };
 
 const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
-  const [isNya, setIsNya] = useState(false);
-  const [isDanica, setIsDanica] = useState(false);
   const { pathname } = useLocation();
-  useEffect(() => {
-    pathname.includes('/02mm0eoxnifin8xdnqwimls4y') ? setIsNya(true) : setIsNya(false);
-  }, [pathname]);
-  useEffect(() => {
-    pathname.includes('/danicadboo') ? setIsDanica(true) : setIsDanica(false);
-  }, [pathname]);
+  const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
+  const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
   const bgGradient = isNya
     ? 'linear(to-t, #050404 40%, #FE5BAC 130%)'
     : isDanica
     ? 'linear(to-t, #050404 40%, #563776 110%)'
     : 'none';
-
-  console.log(pathname);
 
   return (
     <Flex justify="center" bgGradient={bgGradient} bgAttachment="fixed">
