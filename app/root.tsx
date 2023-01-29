@@ -90,33 +90,39 @@ export const meta: MetaFunction = () => {
 
 export let links: LinksFunction = () => {
   return [
-    { rel: 'stylesheet', href: loading },
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstaticom' },
+    { as: 'style', rel: 'stylesheet', href: loading },
+    { as: 'preconnect', rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { as: 'preconnect', rel: 'preconnect', href: 'https://fonts.gstaticom' },
     {
       as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap',
+      media: 'all',
     },
     {
       as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap',
+      media: 'all',
     },
     {
       as: 'font',
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
+      media: 'all',
     },
     {
+      as: 'icon',
       rel: 'icon',
       href: musylogo,
     },
     {
+      as: 'icon',
       rel: 'mask-icon',
       href: musylogo,
     },
     {
+      as: 'icon',
       rel: 'apple-touch-icon',
       href: musylogo,
     },
