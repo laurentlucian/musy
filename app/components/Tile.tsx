@@ -1,14 +1,17 @@
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import type { ChakraProps } from '@chakra-ui/react';
 import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
-import type { Profile } from '@prisma/client';
+import type { Profile, Settings } from '@prisma/client';
+import SpotifyLogo from './icons/SpotifyLogo';
 import { timeSince } from '~/lib/utils';
-import { Link } from '@remix-run/react';
+import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
+import { Send2 } from 'iconsax-react';
 import { forwardRef } from 'react';
 import Tooltip from './Tooltip';
-import SpotifyLogo from './icons/SpotifyLogo';
+import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
+import type { DataFunctionArgs } from '@remix-run/server-runtime';
 
 type TileProps = {
   uri: string;
@@ -22,6 +25,19 @@ type TileProps = {
   explicit: boolean;
   preview_url: string | null;
   link: string;
+  currentUser?:
+    | (Profile & {
+        settings: Settings | null;
+        liked: {
+          trackId: string;
+        }[];
+      })
+    | null;
+  submit?: SubmitFunction;
+  id?: string;
+  fetcher?: TypedFetcherWithComponents<
+    ({ request, params }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
+  >;
 
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
@@ -46,10 +62,16 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       createdAt,
       createdBy,
       playlist,
+      currentUser,
+      submit,
+      id,
+      fetcher,
       ...props
     },
     ref,
   ) => {
+    const { pathname, search } = useLocation();
+    const isSearching = pathname.includes('/search');
     const decodeHtmlEntity = (str?: string) => {
       return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
         return String.fromCharCode(parseInt(dec, 16));
@@ -68,6 +90,34 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       explicit,
       preview_url,
       link,
+    };
+    const addToQueue = () => {
+      if (!currentUser && submit) {
+        // @todo figure out a better way to require authentication on click;
+        // after authentication redirect, add to queue isn't successful. user needs to click again
+        return submit(null, {
+          replace: true,
+          method: 'post',
+          action: '/auth/spotify?returnTo=' + pathname + search,
+        });
+      }
+
+      const action = `/${id}/add`;
+
+      const fromUserId = currentUser?.userId;
+      const sendToUserId = id;
+
+      const data = {
+        trackId: trackId ?? '',
+
+        fromId: fromUserId ?? '',
+        toId: sendToUserId ?? '',
+        action: 'add',
+      };
+
+      if (fetcher) {
+        fetcher.submit(data, { replace: true, method: 'post', action });
+      }
     };
 
     return (
@@ -121,11 +171,16 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               </Text>
               {artist && (
                 <Flex align="center">
-                  {explicit && <Image src={explicitImage} mr={1} w="19px" />}
                   {artistUri ? (
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {artist}
-                    </Text>
+                    <Stack>
+                      <Stack direction="row">
+                        {explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
+                        <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                          {artist}
+                        </Text>
+                      </Stack>
+                      {isSearching ? <SpotifyLogo w="70px" h="21px" /> : null}
+                    </Stack>
                   ) : (
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
                       {decodeHtmlEntity(artist)}
@@ -134,7 +189,20 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Flex>
               )}
             </Stack>
-            <SpotifyLogo icon px="5px" />
+            <Stack>
+              {!isSearching ? <SpotifyLogo icon px="5px" /> : null}
+              {isSearching ? (
+                <IconButton
+                  onClick={addToQueue}
+                  pos="relative"
+                  variant="ghost"
+                  color="music.200"
+                  icon={<Send2 />}
+                  _hover={{ color: 'white' }}
+                  aria-label={`add to ${'hi'}'s queue`}
+                />
+              ) : null}
+            </Stack>
           </Flex>
         </Stack>
       </>
