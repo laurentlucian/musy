@@ -1,17 +1,19 @@
+import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
+import type { DataFunctionArgs } from '@remix-run/server-runtime';
 import explicitImage from '~/assets/explicit-solid.svg';
+import type { Profile, Settings } from '@prisma/client';
 import type { ChakraProps } from '@chakra-ui/react';
+import { Check, AlertCircle } from 'react-feather';
 import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
-import type { Profile, Settings } from '@prisma/client';
 import SpotifyLogo from './icons/SpotifyLogo';
+import { forwardRef, useRef } from 'react';
 import { timeSince } from '~/lib/utils';
-import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
 import { Send2 } from 'iconsax-react';
-import { forwardRef } from 'react';
+import Waver from './icons/Waver';
 import Tooltip from './Tooltip';
-import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
-import type { DataFunctionArgs } from '@remix-run/server-runtime';
 
 type TileProps = {
   uri: string;
@@ -91,6 +93,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       preview_url,
       link,
     };
+    const clickedRef = useRef<string>();
     const addToQueue = () => {
       if (!currentUser && submit) {
         // @todo figure out a better way to require authentication on click;
@@ -101,7 +104,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           action: '/auth/spotify?returnTo=' + pathname + search,
         });
       }
-
+      clickedRef.current = trackId;
       const action = `/${id}/add`;
 
       const fromUserId = currentUser?.userId;
@@ -119,7 +122,17 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         fetcher.submit(data, { replace: true, method: 'post', action });
       }
     };
-
+    const isClicked = clickedRef.current === trackId;
+    const isAdding = fetcher ? fetcher.submission?.formData.get('trackId') === trackId : null;
+    const isDone = fetcher ? fetcher.type === 'done' && isClicked : null;
+    const isError = fetcher
+      ? typeof fetcher.data === 'string' && isClicked
+        ? fetcher.data.includes('Error') && isClicked
+          ? fetcher.data && isClicked
+          : null
+        : null
+      : null;
+    const icon = isAdding ? <Waver /> : isDone ? <Check /> : isError ? <AlertCircle /> : <Send2 />;
     return (
       <>
         <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
@@ -197,9 +210,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   pos="relative"
                   variant="ghost"
                   color="music.200"
-                  icon={<Send2 />}
+                  icon={icon}
                   _hover={{ color: 'white' }}
-                  aria-label={`add to ${'hi'}'s queue`}
+                  aria-label="add to this friend's queue"
                 />
               ) : null}
             </Stack>
