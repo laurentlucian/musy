@@ -18,13 +18,22 @@ import { askDaVinci } from '~/services/ai.server';
 import { msToString } from '~/lib/utils';
 import { lessThanADay } from '~/lib/utils';
 import ProfileHeader from '~/components/profile/ProfileHeader';
-import PlayerPaused from '~/components/player/PlayerPaused';
+// import PlayerPaused from '~/components/player/PlayerPaused';
+import useIsMobile from '~/hooks/useIsMobile';
 
 const Profile = () => {
-  const { user, playback, currentUser, party, profileSong } = useTypedLoaderData<typeof loader>();
-
+  const { user, playback, currentUser, party /*, profileSong*/ } =
+    useTypedLoaderData<typeof loader>();
+  const isSmallScreen = useIsMobile();
   return (
-    <Stack spacing={5} pb={5} pt={5} h="max-content">
+    <Stack
+      spacing={5}
+      pb={5}
+      pt={5}
+      h="max-content"
+      overflowX="hidden"
+      px={isSmallScreen ? '5px' : 0}
+    >
       <ProfileHeader />
       {playback && playback.item?.type === 'track' && (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />

@@ -14,7 +14,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const isSmallScreen = useIsMobile();
 
   return (
-    <Flex w="100%" as="header" py={[2, 5]} justify="space-between">
+    <Flex w="100%" as="header" py={[2, 5]} justify="space-between" px={isSmallScreen ? '5px' : 0}>
       <HStack as={Link} to="/" spacing="8px">
         {isSmallScreen ? (
           <Image src="/musylogo1.svg" boxSize="35px" />
