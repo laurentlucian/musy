@@ -3,44 +3,25 @@ import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
 import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
 import type { DataFunctionArgs } from '@remix-run/server-runtime';
 import explicitImage from '~/assets/explicit-solid.svg';
-import type { Profile, Settings } from '@prisma/client';
+import type { Track, User } from '~/lib/types/types';
 import type { ChakraProps } from '@chakra-ui/react';
 import { Check, AlertCircle } from 'react-feather';
 import { useClickDrag } from '~/hooks/useDrawer';
-import type { Track } from '~/lib/types/types';
 import SpotifyLogo from './icons/SpotifyLogo';
+import type { Profile } from '@prisma/client';
 import { forwardRef, useRef } from 'react';
 import { timeSince } from '~/lib/utils';
 import { Send2 } from 'iconsax-react';
 import Waver from './icons/Waver';
 import Tooltip from './Tooltip';
 
-type TileProps = {
-  uri: string;
-  trackId: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string | null;
-  artistUri: string | null;
-  explicit: boolean;
-  preview_url: string | null;
-  link: string;
-  currentUser?:
-    | (Profile & {
-        settings: Settings | null;
-        liked: {
-          trackId: string;
-        }[];
-      })
-    | null;
+type TileProps = Track & {
+  currentUser?: User | null;
   submit?: SubmitFunction;
   id?: string;
   fetcher?: TypedFetcherWithComponents<
     ({ request, params }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
-
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
   createdAt?: Date;

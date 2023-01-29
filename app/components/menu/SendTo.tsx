@@ -1,20 +1,11 @@
-import { Button } from '@chakra-ui/react';
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
 import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import type { Track } from '~/lib/types/types';
+import { Button } from '@chakra-ui/react';
 
-type SendToProps = {
-  uri: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string | null;
-  artistUri: string | null;
-  explicit: boolean;
-
+type SendToProps = Track & {
   // @todo figure out a better way to require authentication on click;
   // after authentication redirect, add to queue isn't successful. user needs to click again
-  userId?: string;
   // user.name
   sendTo?: string;
 };

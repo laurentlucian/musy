@@ -9,19 +9,7 @@ import SpotifyLogo from './icons/SpotifyLogo';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useParams } from '@remix-run/react';
 
-type CardProps = {
-  uri: string;
-  trackId: string;
-  image: string;
-  albumUri: string | null;
-  albumName: string | null;
-  name: string;
-  artist: string | null;
-  artistUri: string | null;
-  explicit: boolean;
-  preview_url: string | null;
-  link: string;
-
+type CardProps = Track & {
   // will show header (profile above Card) if createdAt is defined
   // createdBy?: Profile | null;
   // createdAt?: Date;

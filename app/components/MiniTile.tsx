@@ -1,45 +1,29 @@
 import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
-import { Link } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
-import { timeSince } from '~/lib/utils';
+import type { Profile } from '@prisma/client';
 import type { Track } from '~/lib/types/types';
+import { Link } from '@remix-run/react';
+import { timeSince } from '~/lib/utils';
 import Tooltip from './Tooltip';
 
-type MiniTileProps = {
-  track: {
-    trackId: string;
-    uri: string;
-    image: string;
-    albumUri: string | null;
-    albumName: string | null;
-    name: string;
-    artist: string;
-    artistUri: string | null;
-    explicit: boolean;
-    preview_url: string;
-    link: string;
-  };
-
+type MiniTileProps = Track & {
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
   createdAt?: Date;
 };
 
 const MiniTile = ({
-  track: {
-    trackId,
-    uri,
-    image,
-    albumUri,
-    albumName,
-    name,
-    artist,
-    artistUri,
-    explicit,
-    preview_url,
-    link,
-  },
+  trackId,
+  uri,
+  image,
+  albumUri,
+  albumName,
+  name,
+  artist,
+  artistUri,
+  explicit,
+  preview_url,
+  link,
   createdAt,
   createdBy,
 }: MiniTileProps) => {
@@ -85,12 +69,7 @@ const MiniTile = ({
         {albumUri ? (
           // <LinkB href={albumUri} target="_blank">
           <Tooltip label={albumName} placement="top-start">
-            <Image
-              src={image}
-              w="200px"
-              draggable={false}
-              onClick={() => onOpen(item)}
-            />
+            <Image src={image} w="200px" draggable={false} onClick={() => onOpen(item)} />
           </Tooltip>
         ) : (
           // </LinkB>

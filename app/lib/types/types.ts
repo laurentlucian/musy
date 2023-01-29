@@ -1,4 +1,4 @@
-import type { Profile } from '@prisma/client';
+import type { Profile, Settings } from '@prisma/client';
 
 export interface Track {
   uri: string;
@@ -50,4 +50,11 @@ export interface PlaylistTrack {
   isPublic: boolean;
   playlistId: string;
   description: string | null;
+}
+
+export interface User extends Profile {
+  settings: Settings | null;
+  liked: {
+    trackId: string;
+  }[];
 }
