@@ -11,6 +11,8 @@ import {
   Switch,
   FormLabel,
   FormControl,
+  useColorModeValue,
+  Text,
 } from '@chakra-ui/react';
 import RecommendSettings from '~/components/settings/RecommendSettings';
 import QueueSettings from '~/components/settings/QueueSettings';
@@ -24,6 +26,9 @@ import invariant from 'tiny-invariant';
 import { useRef } from 'react';
 
 const Account = () => {
+  const bg = useColorModeValue('music.100', 'music.800');
+  const cancelBg = useColorModeValue('white', 'music.400');
+  const color = useColorModeValue('music.800', 'white');
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,7 +39,7 @@ const Account = () => {
     <>
       <Stack spacing={5} w={['unset', '400px']}>
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0">
+          <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
             private profile
           </FormLabel>
           <Switch
@@ -49,13 +54,12 @@ const Account = () => {
               );
             }}
             size="lg"
-          
           />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
         <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0">
+          <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0" color={color}>
             auto scroll
           </FormLabel>
           <Switch
@@ -73,8 +77,8 @@ const Account = () => {
           />
         </FormControl>
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0">
-            allow preview
+          <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
+            song previews
           </FormLabel>
           <Switch
             colorScheme="music"
@@ -104,13 +108,21 @@ const Account = () => {
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+            <AlertDialogHeader fontSize="lg" fontWeight="bold" bg={bg} color={color}>
               Log Out
             </AlertDialogHeader>
-            <AlertDialogBody>Are you sure you want to logout?</AlertDialogBody>
-            <AlertDialogFooter>
+            <AlertDialogBody bg={bg} color={color}>
+              <Text pl="20px">Are you sure you want to logout?</Text>
+            </AlertDialogBody>
+            <AlertDialogFooter bg={bg} color={color}>
               <Form action={'/logout'} method="post">
-                <Button ref={cancelRef} onClick={onClose}>
+                <Button
+                  ref={cancelRef}
+                  onClick={onClose}
+                  bg={bg}
+                  color={color}
+                  _hover={{ bg: cancelBg, color: 'music.800' }}
+                >
                   Cancel
                 </Button>
                 <Button

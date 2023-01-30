@@ -1,5 +1,5 @@
-import { IconButton } from '@chakra-ui/react';
 import { useSubmit, useTransition } from '@remix-run/react';
+import { IconButton } from '@chakra-ui/react';
 import { Smileys } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 
@@ -11,6 +11,7 @@ const MoodButton = () => {
   return (
     <Tooltip label="get mood">
       <IconButton
+        color="music.400"
         aria-label="get mood"
         icon={<Smileys />}
         variant="ghost"

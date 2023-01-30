@@ -1,4 +1,4 @@
-import { HStack, IconButton } from '@chakra-ui/react';
+import { HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { Next, Pause, Play, Previous } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import type { FetcherWithComponents } from '@remix-run/react';
@@ -16,6 +16,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
   const prevSong = fetcher.submission?.formData.has('prev') ?? false;
   const nextSong = fetcher.submission?.formData.has('next') ?? false;
   const trackId = playback.item?.id;
+  const color = useColorModeValue('#161616', '#EEE6E2');
 
   return (
     <HStack>
@@ -31,6 +32,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             boxShadow="none"
             type="submit"
             isLoading={prevSong}
+            color={color}
           />
         </fetcher.Form>
       </Tooltip>
@@ -50,6 +52,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             boxShadow="none"
             type="submit"
             isLoading={loading}
+            color={color}
           />
         </fetcher.Form>
       </Tooltip>
@@ -65,6 +68,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             boxShadow="none"
             type="submit"
             isLoading={nextSong}
+            color={color}
           />
         </fetcher.Form>
       </Tooltip>

@@ -1,16 +1,20 @@
-import { Link, Stack, Center } from '@chakra-ui/react';
+import { Link, Stack, Center, useColorModeValue } from '@chakra-ui/react';
 import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
 
 const Settings = () => {
   const location = useLocation();
+  const color = useColorModeValue('#050404', '#EEE6E2');
+  const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
     <Stack
       direction={['column', 'row']}
       pt={[0, 4]}
-      justifyContent="center"
-      overflowX="hidden"
+      justifyContent={['start', 'center']}
+      overflow="hidden"
       px={['20px', 0]}
+      bg={bg}
+      h="100vh"
     >
       <Stack direction={['row', 'column']}>
         <Link
@@ -19,6 +23,7 @@ const Settings = () => {
           fontSize={['sm', 'md']}
           aria-current={location.pathname === '/settings' ? 'page' : undefined}
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
+          color={color}
         >
           Account
         </Link>
@@ -28,6 +33,7 @@ const Settings = () => {
           fontSize={['sm', 'md']}
           aria-current={location.pathname === '/settings/appearance' ? 'page' : undefined}
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
+          color={color}
         >
           Appearance
         </Link>

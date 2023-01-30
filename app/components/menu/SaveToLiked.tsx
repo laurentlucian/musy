@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@chakra-ui/react';
+import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
 import { useTypedFetcher } from 'remix-typedjson';
 import LikeIcon from '~/lib/icon/Like';
@@ -17,6 +17,7 @@ const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();
   const userId = currentUser?.userId;
+  const color = useColorModeValue('#161616', '#EEE6E2');
 
   const saveSong = () => {
     toggleSave(trackId);
@@ -35,7 +36,7 @@ const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
           icon={
             <LikeIcon
               aria-checked={isSaved}
-              color={isSaved ? 'spotify.green' : 'white'}
+              color={isSaved ? 'spotify.green' : color}
               _hover={{ color: 'spotify.green' }}
             />
           }
