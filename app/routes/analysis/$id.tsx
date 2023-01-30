@@ -108,7 +108,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const data = { analysis: response, authorized: !!session, track };
 
   // set cache for 1 month
-  redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30);
+  await redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30);
   return typedjson(data);
 };
 

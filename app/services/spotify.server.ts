@@ -3,7 +3,6 @@ import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 
 import { getUser, updateToken } from './auth.server';
-import { prisma } from './db.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -24,6 +23,7 @@ export const spotifyClient = new SpotifyWebApi({
 });
 
 declare global {
+  // eslint-disable-next-line no-var
   var __registeredSpotifyClients: Record<string, SpotifyWebApi> | undefined;
 }
 
@@ -134,7 +134,7 @@ export const getUserQueue = async (id: string) => {
 
   if (currently_playing?.context) {
     switch (currently_playing.context.type) {
-      case 'playlist':
+      case 'playlist': {
         const res = await fetch(
           'https://api.spotify.com/v1/playlists/' +
             currently_playing.context.href.match(/playlists\/(.*)/)?.[1] ?? '',
@@ -149,6 +149,7 @@ export const getUserQueue = async (id: string) => {
         currently_playing.context.name = playlist.name;
         currently_playing.context.image = playlist.images[0].url;
         break;
+      }
       case 'collection':
         currently_playing.context.name = 'Liked Songs';
         currently_playing.context.image =

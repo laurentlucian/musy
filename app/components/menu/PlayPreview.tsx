@@ -18,7 +18,7 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
 
   const onClick = () => {
     if (audioRef.current && !playing) {
-      audioRef.current.play();
+      void audioRef.current.play();
       setPlaying(true);
       setIsPlaying(true);
       setShowPause(false);

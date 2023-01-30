@@ -10,7 +10,7 @@ import { createEmotionCache } from './lib/emotion/createEmotionCache';
 import { clearActivityQOnDev } from './services/scheduler/jobs/activity';
 import { addUsersToQueue } from './services/scheduler/jobs/user';
 
-addUsersToQueue();
+void addUsersToQueue();
 // clearActivityQOnDev();
 
 export default function handleRequest(

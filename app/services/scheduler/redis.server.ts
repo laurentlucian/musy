@@ -8,6 +8,7 @@ if (!process.env.REDIS_URL) {
 let redis: RedisType;
 
 declare global {
+  // eslint-disable-next-line no-var
   var __redis: RedisType | undefined;
 }
 

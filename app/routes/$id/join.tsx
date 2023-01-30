@@ -94,7 +94,7 @@ export const action: ActionFunction = async ({ params, request }) => {
           console.log('Party join -> track not the same; played currentTrack instead');
           // edge case: if user has tracks in the next queue it'll add to the end of the list
           // if so then play the currentTrack and clear context queue anyway
-          play();
+          await play();
         } else {
           await listener_spotify.seek(progressMs);
         }
@@ -106,7 +106,7 @@ export const action: ActionFunction = async ({ params, request }) => {
         return json('Error: Premium required');
       }
     } else {
-      play();
+      await play();
     }
 
     await ownerQ.add(

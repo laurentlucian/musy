@@ -40,7 +40,7 @@ export const listenerQ = Queue<{
     }
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
     if (playback.repeat_state !== repeat) {
-      spotify.setRepeat(repeat);
+      await spotify.setRepeat(repeat);
     }
 
     if (!playback.is_playing) {
@@ -104,7 +104,7 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
       console.log('ownerQ -> old uri - new uri', parties[0].currentTrack, currentTrack);
       console.log('ownerQ -> updated currentTrack', playback.item?.name);
 
-      listenerQ.addBulk(
+      await listenerQ.addBulk(
         parties.map((party) => ({
           data: {
             currentTrack: currentTrack,
@@ -126,13 +126,14 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
   }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const startUp = async () => {
   console.log('startUp -> starting...');
   const parties = await prisma.party.findMany();
   console.log('startUp -> parties..', parties);
   console.log('startUp -> queues..', await registeredQueues.update_track?.queue.getJobCounts());
 
-  ownerQ.addBulk(
+  await ownerQ.addBulk(
     parties.map((party) => ({
       data: {
         ownerId: party.ownerId,

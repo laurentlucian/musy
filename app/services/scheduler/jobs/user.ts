@@ -7,7 +7,7 @@ import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 import { playbackCreator, playbackQ } from './playback';
-import { libraryQ, longScriptQ } from './scraper';
+import { libraryQ } from './scraper';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',
@@ -228,6 +228,7 @@ export const userQ = Queue<{ userId: string }>(
 );
 
 declare global {
+  // eslint-disable-next-line no-var
   var __didRegisterLikedQ: boolean | undefined;
 }
 
@@ -260,8 +261,6 @@ export const addUsersToQueue = async () => {
     return;
   }
 
-  const cleaned = await playbackQ.clean(0, 0, 'delayed');
-  const cleaned1 = await playbackQ.clean(0, 0, 'active');
   await prisma.playback.deleteMany();
 
   console.log(
