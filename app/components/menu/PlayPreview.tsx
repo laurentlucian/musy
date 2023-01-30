@@ -73,7 +73,7 @@ const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
           onMouseEnter={onMouseEnter}
         >
           {text} Preview from &nbsp;
-          <SpotifyLogo link={false} />
+          <SpotifyLogo link={false} white />
         </Button>
       )}
       {preview_url && <audio ref={audioRef} src={preview_url} />}

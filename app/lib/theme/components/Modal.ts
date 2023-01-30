@@ -11,12 +11,13 @@ function runIfFn<T, U>(valueOrFn: T | ((...fnArgs: U[]) => T), ...args: U[]): T 
 }
 
 const $bg = cssVar('modal-bg');
-const $bs = cssVar('modal-box-shadow');
+// const $bs = cssVar('modal-box-shadow');
 
 const baseStyleOverlay = defineStyle((props) => ({
   // backdropFilter: 'blur(14px)',
   transition: 'all .2s',
   zIndex: 'modal',
+  color: mode(`#E4DBD5`, '#111111')(props),
 }));
 
 const baseStyleDialogContainer = defineStyle((props) => ({
@@ -24,6 +25,7 @@ const baseStyleDialogContainer = defineStyle((props) => ({
   display: 'flex',
   zIndex: 'modal',
   justifyContent: 'center',
+  color: mode(`#E4DBD5`, '#111111')(props),
 }));
 
 const baseStyleDialog = defineStyle((props) => {

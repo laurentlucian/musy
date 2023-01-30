@@ -17,12 +17,12 @@ import {
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFetcher, useRevalidator } from '@remix-run/react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import AudioVisualizer from '../icons/AudioVisualizer';
 import PlayingFromTooltip from './PlayingFromTooltip';
 import useSessionUser from '~/hooks/useSessionUser';
+import { useEffect, useRef, useState } from 'react';
 import SpotifyLogo from '../icons/SpotifyLogo';
 import type { Track } from '~/lib/types/types';
 import PlayController from './PlayController';
@@ -43,7 +43,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
-  const [playingFrom, setPlayingFrom] = useState(false);
+  // const [playingFrom, setPlayingFrom] = useState(false);
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
   const [showPause, setShowPause] = useState(true);
@@ -55,7 +55,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const { onMouseDown, onMouseMove, onClick } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
-  const bg = useColorModeValue('#10101066', 'music.50');
+  const bg = useColorModeValue('music.50', '#10101066');
+  const color = useColorModeValue('#10101066', 'music.50');
 
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
@@ -184,7 +185,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
 
   return (
     <>
-      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflow="visible">
+      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflowY={['scroll', 'visible']}>
         <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
           <Collapse in={!isOpen} animateOpacity>
             <Stack
@@ -225,7 +226,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         <Text
                           fontSize="13px"
                           transition="opacity 1.69s ease-in-out"
-                          opacity={playingFrom ? 1 : 0}
+                          // opacity={playingFrom ? 1 : 0}
+                          opacity={0}
                           w={['200px', '68%']}
                           noOfLines={1}
                         >
@@ -252,7 +254,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                             fontSize="15px"
                             fontWeight="bold"
                             transition="opacity 1.69s ease-in-out"
-                            opacity={playingFrom ? 1 : 0}
+                            // opacity={playingFrom ? 1 : 0}
+                            opacity={0}
                             overflow="scroll"
                             whiteSpace="normal"
                             wordBreak="break-word"
@@ -273,7 +276,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         fontSize="13px"
                         fontWeight="normal"
                         transition="opacity 1.69s ease-in-out"
-                        opacity={playingFrom ? 0 : 1}
+                        // opacity={playingFrom ? 0 : 1}
+                        opacity={1}
                         noOfLines={1}
                         w={['200px', '68%']}
                       >
@@ -283,7 +287,8 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                         fontSize="15px"
                         fontWeight="bold"
                         transition="opacity 1.69s ease-in-out"
-                        opacity={playingFrom ? 0 : 1}
+                        // opacity={playingFrom ? 0 : 1}
+                        opacity={1}
                         noOfLines={1}
                         w={['200px', '68%']}
                       >
@@ -294,7 +299,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <HStack>
                     {active ? (
                       <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo icon={isSmallScreen}/>
+                        <SpotifyLogo icon={isSmallScreen} />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
@@ -440,6 +445,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
             opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
+            color={color}
           />
         </Box>
         {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}

@@ -1,10 +1,10 @@
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { Button, Flex, Heading, HStack, Image } from '@chakra-ui/react';
 import useIsMobile from '~/hooks/useIsMobile';
-import SpotifyLogo from './icons/SpotifyLogo';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import UserSearch from './UserSearch';
 import Settings from './Settings';
-import Waver from './icons/Waver';
+import Waver from '../icons/Waver';
 import { useState } from 'react';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {

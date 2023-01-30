@@ -11,6 +11,7 @@ type SpotifyLogoProps = {
   w?: string;
   mt?: string;
   icon?: boolean;
+  white?: boolean;
 } & ChakraProps;
 
 const SpotifyLogo = ({
@@ -19,10 +20,17 @@ const SpotifyLogo = ({
   h = icon ? '25px' : '30px',
   w = icon ? '25px' : '98px',
   mt = '0px',
+  white,
   ...props
 }: SpotifyLogoProps) => {
-  const spotifyIcon = useColorModeValue(spotify_icon_white, spotify_icon_black);
-  const spotifyLogo = useColorModeValue(Spotify_Logo_White, Spotify_Logo_Black);
+  const spotifyIcon = useColorModeValue(
+    white ? spotify_icon_white : spotify_icon_black,
+    spotify_icon_white,
+  );
+  const spotifyLogo = useColorModeValue(
+    white ? Spotify_Logo_White : Spotify_Logo_Black,
+    Spotify_Logo_White,
+  );
   const spotify = icon ? spotifyIcon : spotifyLogo;
   return (
     <>

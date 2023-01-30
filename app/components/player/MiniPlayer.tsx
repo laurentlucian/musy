@@ -24,7 +24,7 @@ type PlayerProps = {
 };
 
 const MiniPlayer = ({ user, playback }: PlayerProps) => {
-  const bg = useColorModeValue('music.900', 'music.200');
+  const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();

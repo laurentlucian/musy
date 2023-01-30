@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import ExpandedSongs from '../ExpandedSongs';
+import ExpandedSongs from '../profile/ExpandedSongs';
 import { Stack } from '@chakra-ui/react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
-import Card from '../Card';
+import Card from './Card';
 
 const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   const [show, setShow] = useState(false);

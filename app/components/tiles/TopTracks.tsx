@@ -1,11 +1,11 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
 import { RadioCard } from '~/lib/theme/components/Radio';
-import ExpandedSongs from '../ExpandedSongs';
+import ExpandedSongs from '../profile/ExpandedSongs';
 import { useCallback, useState } from 'react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
-import Card from '../Card';
+import Card from './Card';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [show, setShow] = useState(false);

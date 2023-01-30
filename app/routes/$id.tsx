@@ -11,7 +11,7 @@ import {
   updateUserName,
 } from '~/services/auth.server';
 import Player from '~/components/player/Player';
-import Search from '~/components/Search';
+import Search from '~/components/profile/Search';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import { askDaVinci } from '~/services/ai.server';
@@ -26,14 +26,7 @@ const Profile = () => {
     useTypedLoaderData<typeof loader>();
   const isSmallScreen = useIsMobile();
   return (
-    <Stack
-      spacing={5}
-      pb={5}
-      pt={5}
-      h="max-content"
-      overflowX="hidden"
-      px={isSmallScreen ? '5px' : 0}
-    >
+    <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader />
       {playback && playback.item?.type === 'track' && (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />

@@ -6,7 +6,7 @@ import { prisma } from '~/services/db.server';
 import type { Activity } from '~/lib/types/types';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
-import ActivityTile from '~/components/ActivityTile';
+import ActivityTile from '~/components/activity/ActivityTile';
 
 const Index = () => {
   const currentUser = useSessionUser();
@@ -14,7 +14,7 @@ const Index = () => {
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
-      <Stack>
+      <Stack px={['5px', 0]}>
         <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
           {activity.map((item) => {
             return <ActivityTile key={item.id} activity={item} />;

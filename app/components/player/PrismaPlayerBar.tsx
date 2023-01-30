@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 const now = Date.now();
 
 const PrismaPlayerbar = ({ playback }: { playback: Playback & { track: Track } }) => {
-  const color = useColorModeValue('music.900', 'music.50');
+  const color = useColorModeValue( 'music.50','music.900');
   const { revalidate } = useRevalidator();
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);

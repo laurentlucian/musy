@@ -1,8 +1,8 @@
 import { IconButton } from '@chakra-ui/react';
 import { useSubmit } from '@remix-run/react';
-import { useState } from 'react';
 import { Add, Minus } from 'iconsax-react';
-import Tooltip from './Tooltip';
+import { useState } from 'react';
+import Tooltip from '../Tooltip';
 
 type FollowingType = {
   following: boolean;
@@ -25,6 +25,7 @@ const Following = ({ following }: FollowingType) => {
         variant="ghost"
         cursor="pointer"
         onClick={handleClick}
+        color="music.400"
       />
     </Tooltip>
   );

@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useNavigate } from '@remix-run/react';
-import { IconButton } from '@chakra-ui/react';
+import { IconButton, useColorModeValue } from '@chakra-ui/react';
 import { Setting2 } from 'iconsax-react';
 import { motion } from 'framer-motion';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -13,6 +13,7 @@ type SettingsConfig = {
 const Settings = ({ show, setShow }: SettingsConfig) => {
   const navigate = useNavigate();
   const currentUser = useSessionUser();
+  const color = useColorModeValue('black', 'white');
 
   const onClick = () => {
     if (show) {
@@ -36,6 +37,7 @@ const Settings = ({ show, setShow }: SettingsConfig) => {
       opacity="0.5"
       transition="opacity 2s ease in out"
       cursor="pointer"
+      color={color}
     />
   );
 };

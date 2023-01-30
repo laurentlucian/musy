@@ -1,7 +1,17 @@
-import { useColorMode, Button, Stack, Text, useRadioGroup, SimpleGrid } from '@chakra-ui/react';
+import {
+  useColorMode,
+  Button,
+  Stack,
+  Text,
+  useRadioGroup,
+  SimpleGrid,
+  HStack,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import { useEffect, useState } from 'react';
+import { Check } from 'react-feather';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
@@ -9,16 +19,17 @@ const Appearance = () => {
   const [scheduled, setScheduled] = useState(false);
   const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
-
+  const color = useColorModeValue('music.800', 'white');
+  const defaultValue = color === 'music.800' ? 'light' : 'dark';
   const options = [
     { name: 'dark', value: 'dark' },
     { name: 'light', value: 'light' },
-    { name: 'system', value: 'system' },
+    // { name: 'system', value: 'system' }, //<---- will return when we can store a default value
   ];
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'appearance',
-    defaultValue: 'system', // fix default value to be stored value
+    defaultValue, // fix default value to be stored value
     onChange: setSelection,
   });
 
@@ -29,9 +40,11 @@ const Appearance = () => {
   }, [selection, setColorMode]);
 
   return (
-    <>
+    <Stack spacing={5} w={['unset', '400px']}>
       <Stack direction="row" alignItems="center">
-        <Text fontSize={['sm', 'md']}>scheduled:</Text>
+        <Text fontSize={['sm', 'md']} color={color}>
+          scheduled:
+        </Text>
         <Button size={['xs', 'sm']} aria-label="off" onClick={() => setScheduled(false)}>
           off
         </Button>
@@ -40,18 +53,27 @@ const Appearance = () => {
         </Button>
         {scheduled && <TimeRangePicker />}
       </Stack>
-      <SimpleGrid columns={[1, null, 3]} gap={4} {...group} p={0} m={0}>
+      <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
         {options.map(({ value, name }) => {
           const radio = getRadioProps({ value });
 
           return (
             <RadioButtons key={value} {...radio} value={value}>
-              {name}
+              <HStack justifyContent="space-between">
+                {radio.isChecked ? (
+                  <>
+                    {name}
+                    <Check />
+                  </>
+                ) : (
+                  <>{name}</>
+                )}
+              </HStack>
             </RadioButtons>
           );
         })}
       </SimpleGrid>
-    </>
+    </Stack>
   );
 };
 export default Appearance;

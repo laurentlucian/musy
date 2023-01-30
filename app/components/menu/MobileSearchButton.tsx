@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react';
+import { useLocation } from '@remix-run/react';
 import { ArrowDown } from 'iconsax-react';
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -9,7 +10,8 @@ const MobileSearchButton = () => {
   const { bottom, right, icon } = useMobileDrawer();
   const { onOpen, onClose, removeFocus } = useMobileDrawerActions();
   const track = useDrawerTrack();
-  const hideButton = track !== null ? true : false;
+  const { pathname } = useLocation();
+  const hideButton = track !== null || pathname.includes('/settings') ? true : false;
   const onClick = () => {
     if (icon === 'plus') onOpen();
     if (icon === 'down') removeFocus();

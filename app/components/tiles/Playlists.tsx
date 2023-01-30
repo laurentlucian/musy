@@ -1,4 +1,4 @@
-import { default as ExpandedPlayLists } from '../ExpandedSongs';
+import { default as ExpandedPlayLists } from '../profile/ExpandedSongs';
 import { usePlaylists } from '~/hooks/usePlaylist';
 import PlaylistTile from '../playlists/PlaylistTile';
 import PlaylistCard from './PlaylistCard';

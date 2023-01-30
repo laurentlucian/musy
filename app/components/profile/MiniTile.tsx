@@ -4,7 +4,7 @@ import type { Profile } from '@prisma/client';
 import type { Track } from '~/lib/types/types';
 import { Link } from '@remix-run/react';
 import { timeSince } from '~/lib/utils';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 
 type MiniTileProps = Track & {
   // will show header (profile above tile) if createdAt is defined

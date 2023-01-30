@@ -4,6 +4,7 @@ import {
   Text,
   cookieStorageManagerSSR,
   localStorageManager,
+  ColorModeProvider,
 } from '@chakra-ui/react';
 import {
   Links,
@@ -36,11 +37,13 @@ const App = () => {
   return (
     <Document>
       <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
-        <Layout authorized={!!currentUser}>
-          <ActionDrawer />
-          <MobileDrawer />
-          <Outlet />
-        </Layout>
+        <ColorModeProvider>
+          <Layout authorized={!!currentUser}>
+            <ActionDrawer />
+            <MobileDrawer />
+            <Outlet />
+          </Layout>
+        </ColorModeProvider>
       </ChakraProvider>
     </Document>
   );
@@ -139,19 +142,23 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
   const clientStyleData = useContext(ClientStyleContext);
 
   // Only executed on client
-  useEffect(() => {
-    // re-link sheet container
-    emotionCache.sheet.container = document.head;
-    // re-inject tags
-    const tags = emotionCache.sheet.tags;
-    emotionCache.sheet.flush();
-    tags.forEach((tag) => {
-      (emotionCache.sheet as any)._insertTag(tag);
-    });
-    // reset cache to reapply global styles
-    clientStyleData?.reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [/* "clientStyleData", "emotionCache.sheet", */]);
+  useEffect(
+    () => {
+      // re-link sheet container
+      emotionCache.sheet.container = document.head;
+      // re-inject tags
+      const tags = emotionCache.sheet.tags;
+      emotionCache.sheet.flush();
+      tags.forEach((tag) => {
+        (emotionCache.sheet as any)._insertTag(tag);
+      });
+      // reset cache to reapply global styles
+      clientStyleData?.reset();
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      /* "clientStyleData", "emotionCache.sheet", */
+    ],
+  );
 
   return (
     <html lang="en">
