@@ -15,15 +15,21 @@ const useUserLibraryStore = create<UserLibraryStore>((set) => ({
 
 const useUserLibrary = (trackId: string) => {
   const currentUser = useSessionUser();
-  const library = useUserLibraryStore((state) => state.library, shallow);
-  const setLibrary = useUserLibraryStore((state) => state.setLibrary);
 
-  if (!library) {
+  // set zustand state before acces state.library, otherwise first render will be null
+  if (!useUserLibraryStore.getState().library && currentUser?.liked) {
     const liked = currentUser?.liked;
     if (liked) {
-      setLibrary(new Map(liked.map(({ trackId }) => [trackId, true])));
+      // initialize library state
+      useUserLibraryStore.setState((prev) => ({
+        ...prev,
+        library: new Map(liked.map(({ trackId }) => [trackId, true])),
+      }));
     }
   }
+
+  const library = useUserLibraryStore((state) => state.library, shallow);
+  const setLibrary = useUserLibraryStore((state) => state.setLibrary);
 
   const toggleSave = (trackId: string) => {
     const newLikedMap = new Map(library);
