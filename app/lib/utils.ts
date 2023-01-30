@@ -21,61 +21,32 @@ export const lessThanADay = (date: Date) => {
   return date > aDayAgo;
 };
 
-export const timeSince = (date: Date | null) => {
+export const timeSince = (date: Date | null, type?: string) => {
   if (!date) return '';
   const now = new Date().getTime();
   const seconds = Math.floor((now - new Date(date).getTime()) / 1000);
 
   let interval = seconds / 31536000;
+  const suffix = type === 'minimal' ? '' : ' ago';
 
   if (interval > 1) {
-    return Math.floor(interval) + 'y ago';
+    return Math.floor(interval) + 'y' + suffix;
   }
   interval = seconds / 2592000;
   if (interval > 1) {
-    return Math.floor(interval) + 'mo ago';
+    return Math.floor(interval) + 'mo' + suffix;
   }
   interval = seconds / 86400;
   if (interval > 1) {
-    return Math.floor(interval) + 'd ago';
+    return Math.floor(interval) + 'd' + suffix;
   }
   interval = seconds / 3600;
   if (interval > 1) {
-    return Math.floor(interval) + 'h ago';
+    return Math.floor(interval) + 'h' + suffix;
   }
   interval = seconds / 60;
   if (interval > 1) {
-    return Math.floor(interval) + 'm ago';
-  }
-  // server hydration breaks when html is different from server (because this changes every second)
-  // return Math.floor(seconds) + 's';
-  return 'now';
-};
-export const timePassed = (date: Date | null) => {
-  if (!date) return '';
-  const now = new Date().getTime();
-  const seconds = Math.floor((now - new Date(date).getTime()) / 1000);
-
-  let interval = seconds / 31536000;
-
-  if (interval > 1) {
-    return Math.floor(interval) + 'y';
-  }
-  interval = seconds / 2592000;
-  if (interval > 1) {
-    return Math.floor(interval) + 'mo';
-  }
-  interval = seconds / 86400;
-  if (interval > 1) {
-    return Math.floor(interval) + 'd';
-  }
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return Math.floor(interval) + 'h';
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-    return Math.floor(interval) + 'm';
+    return Math.floor(interval) + 'm' + suffix;
   }
   // server hydration breaks when html is different from server (because this changes every second)
   // return Math.floor(seconds) + 's';

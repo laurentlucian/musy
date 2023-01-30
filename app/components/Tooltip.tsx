@@ -3,7 +3,7 @@ import { Tooltip as ChakraTooltip } from '@chakra-ui/react';
 import { forwardRef, useColorModeValue } from '@chakra-ui/system';
 
 const Tooltip = forwardRef<TooltipProps, 'div'>(
-  ({ children, label, openDelay, placement, ...props }, ref) => {
+  ({ children, label, openDelay, placement, hasArrow, ...props }, ref) => {
     const bg = useColorModeValue('music.800', 'music.100');
     const color = useColorModeValue('music.100', 'music.800');
 
@@ -16,6 +16,7 @@ const Tooltip = forwardRef<TooltipProps, 'div'>(
         openDelay={openDelay}
         label={label}
         placement={placement}
+        hasArrow={hasArrow}
         // {...props}
       >
         {children}
