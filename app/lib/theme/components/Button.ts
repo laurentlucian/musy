@@ -131,7 +131,7 @@ const searchCircle = defineStyle((props) => ({
     boxShadow: 'none !important',
     backfaceVisibility: 'none !important',
   },
-  transition: 'width 0.25s ease-out, height 0.25s ease-out, bottom 0.25s ease-in-out',
+  transition: 'width 0.25s ease-out, height 0.25s ease-out, bottom 0.25s ease-in-out !important',
   _hover: { boxShadow: 'none !important', backfaceVisibility: 'none !important' },
   boxShadow: 'none !important',
   userSelect: 'none !important',
