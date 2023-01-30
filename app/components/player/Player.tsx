@@ -148,8 +148,8 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
       window.scrollY <= 100
         ? setSize('large')
         : window.scrollY <= 168
-          ? setSize('medium')
-          : setSize('small');
+        ? setSize('medium')
+        : setSize('small');
     };
     window.addEventListener('scroll', checkStick);
 
@@ -237,11 +237,11 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                         >
                           Playing From{' '}
                           {item.album.album_type === 'single' &&
-                            playback.context.type === 'album' &&
-                            item.album.total_tracks !== 1
+                          playback.context.type === 'album' &&
+                          item.album.total_tracks !== 1
                             ? 'EP'
                             : playback.context.type.charAt(0).toUpperCase() +
-                            playback.context.type.slice(1)}
+                              playback.context.type.slice(1)}
                         </Text>
                         <Tooltip
                           label={
@@ -269,8 +269,8 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                             {playback.context.name
                               ? playback.context.name
                               : playback.context.type === 'artist'
-                                ? item.artists[0].name
-                                : item.album.name}
+                              ? item.artists[0].name
+                              : item.album.name}
                           </Link>
                         </Tooltip>
                       </>
@@ -338,7 +338,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                             <Tooltip
                               label={hasPreview ? '' : 'song has no preview'}
                               openDelay={hasPreview ? 200 : 0}
-                            // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                              // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
                             >
                               <IconButton
                                 onClick={handleMusicControls}
@@ -396,22 +396,22 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                         size === 'large'
                           ? [0, -47, -47, -47, -200]
                           : size === 'medium'
-                            ? [0, -47, -47, -47, '-86px']
-                            : 0
+                          ? [0, -47, -47, -47, '-86px']
+                          : 0
                       }
                       boxSize={
                         size === 'large'
                           ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                            ? [135, 160, 160, 200, 221]
-                            : 135
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       minW={
                         size === 'large'
                           ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                            ? [135, 160, 160, 200, 221]
-                            : 135
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
                       pos="absolute"

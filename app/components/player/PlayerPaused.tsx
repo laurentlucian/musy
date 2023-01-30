@@ -142,8 +142,8 @@ const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
       window.scrollY <= 100
         ? setSize('large')
         : window.scrollY <= 168
-          ? setSize('medium')
-          : setSize('small');
+        ? setSize('medium')
+        : setSize('small');
     };
     window.addEventListener('scroll', checkStick);
 
@@ -198,7 +198,7 @@ const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
                     <Tooltip
                       label={hasPreview ? '' : 'song has no preview'}
                       openDelay={hasPreview ? 200 : 0}
-                    // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                      // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
                     >
                       <IconButton
                         onClick={onClick}
@@ -224,29 +224,29 @@ const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
                         size === 'large'
                           ? [0, -47, -47, -47, -200]
                           : size === 'medium'
-                            ? [0, -47, -47, -47, '-86px']
-                            : 0
+                          ? [0, -47, -47, -47, '-86px']
+                          : 0
                       }
                       boxSize={
                         size === 'large'
                           ? [108, 160, 334]
                           : size === 'medium'
-                            ? [108, 160, 221]
-                            : 108
+                          ? [108, 160, 221]
+                          : 108
                       }
                       minW={
                         size === 'large'
                           ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                            ? [135, 160, 160, 200, 221]
-                            : 135
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       minH={
                         size === 'large'
                           ? [135, 160, 160, 200, 334]
                           : size === 'medium'
-                            ? [135, 160, 160, 200, 221]
-                            : 135
+                          ? [135, 160, 160, 200, 221]
+                          : 135
                       }
                       transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s, min-height 0.25s"
                       pos="absolute"
