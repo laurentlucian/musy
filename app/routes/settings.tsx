@@ -1,12 +1,18 @@
-import { Link, Stack, Divider, Center, Flex } from '@chakra-ui/react';
+import { Link, Stack, Center } from '@chakra-ui/react';
 import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
 
 const Settings = () => {
   const location = useLocation();
 
   return (
-    <Flex pt={4}>
-      <Stack>
+    <Stack
+      direction={['column', 'row']}
+      pt={[0, 4]}
+      justifyContent="center"
+      overflowX="hidden"
+      px={['20px', 0]}
+    >
+      <Stack direction={['row', 'column']}>
         <Link
           as={RemixLink}
           to="/settings"
@@ -26,16 +32,11 @@ const Settings = () => {
           Appearance
         </Link>
       </Stack>
-      <Center px={['40px', '100px']} height="200px">
-        {/* divider is not properly rendering :( was working earlier but I do not know how to fix */}
-        {/* what is "not properly rendering"? */}
-        {/* :3 */}
-        <Divider orientation="vertical" />
+      <Center px={['40px', '100px']} height={[0, '200px']}>
+        {/* <Divider orientation="vertical" /> */}
       </Center>
-      <Stack>
-        <Outlet />
-      </Stack>
-    </Flex>
+      <Outlet />
+    </Stack>
   );
 };
 export default Settings;

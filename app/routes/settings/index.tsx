@@ -32,8 +32,8 @@ const Account = () => {
 
   return (
     <>
-      <Stack spacing={5}>
-        <FormControl display="flex" alignItems="center">
+      <Stack spacing={5} w={['unset', '400px']}>
+        <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0">
             private profile
           </FormLabel>
@@ -48,11 +48,13 @@ const Account = () => {
                 { method: 'post', replace: true },
               );
             }}
+            size="lg"
+          
           />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
         <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
-        <FormControl display="flex" alignItems="center">
+        <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0">
             auto scroll
           </FormLabel>
@@ -67,9 +69,10 @@ const Account = () => {
                 { method: 'post', replace: true },
               );
             }}
+            size="lg"
           />
         </FormControl>
-        <FormControl display="flex" alignItems="center">
+        <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0">
             allow preview
           </FormLabel>
@@ -84,6 +87,7 @@ const Account = () => {
                 { method: 'post', replace: true },
               );
             }}
+            size="lg"
           />
         </FormControl>
         <Button
