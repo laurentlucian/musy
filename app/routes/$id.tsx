@@ -3,13 +3,10 @@ import { Link, Outlet, useCatch } from '@remix-run/react';
 
 import { Heading, Stack, Button } from '@chakra-ui/react';
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import Player from '~/components/player/Player';
 import ProfileHeader from '~/components/profile/ProfileHeader';
-import Search from '~/components/profile/Search';
-// import PlayerPaused from '~/components/player/PlayerPaused';
 import useIsMobile from '~/hooks/useIsMobile';
 import { lessThanADay } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
@@ -22,24 +19,13 @@ import {
   updateUserName,
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { getUserQueue, spotifyApi } from '~/services/spotify.server';
+import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
-  const { currentUser, party, playback, user /*, profileSong*/ } =
-    useTypedLoaderData<typeof loader>();
   const isSmallScreen = useIsMobile();
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader />
-      {playback && playback.item?.type === 'track' && (
-        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
-      )}
-      {/* {playback && playback.item?.type === 'track' ? (
-        <Player id={user.userId} party={party} playback={playback} item={playback.item} />
-      ) : main[0] ? (
-        <PlayerPaused item={main[0][0].track} username={user.name} profileSong={profileSong} />
-      ) : null} */}
-      {currentUser?.id !== user.id && <Search />}
       <Outlet />
     </Stack>
   );
@@ -106,23 +92,16 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     }
   }
 
-  const [activity, party, { currently_playing: playback, queue }, users, profileSong] =
-    await Promise.all([
-      prisma.queue.findMany({
-        include: { owner: { select: { accessToken: false, user: true } }, track: true, user: true },
-        orderBy: { createdAt: 'desc' },
-        where: { OR: [{ userId: id }, { ownerId: id }] },
-      }),
-      prisma.party.findMany({ where: { ownerId: id } }),
-      getUserQueue(id).catch(() => {
-        return {
-          currently_playing: null,
-          queue: [],
-        };
-      }),
-      getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
-      getProfileSong(id),
-    ]);
+  const [activity, users, profileSong] = await Promise.all([
+    prisma.queue.findMany({
+      include: { owner: { select: { accessToken: false, user: true } }, track: true, user: true },
+      orderBy: { createdAt: 'desc' },
+      where: { OR: [{ userId: id }, { ownerId: id }] },
+    }),
+
+    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
+    getProfileSong(id),
+  ]);
 
   const recentDb = await prisma.recentSongs.findMany({
     orderBy: { playedAt: 'desc' },
@@ -140,40 +119,39 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   );
 
   const currentUser = await getCurrentUser(request);
-  if (currentUser) {
-    const { spotify } = await spotifyApi(currentUser.userId);
-    invariant(spotify, 'Spotify API Error');
-    const {
-      body: [following],
-    } = await spotify.isFollowingUsers([id]).catch((e) => ({ body: [false] }));
+  // implement following state in prisma and stop fetching from spotify on every request
+  // if (currentUser) {
+  //   const { spotify } = await spotifyApi(currentUser.userId);
+  //   invariant(spotify, 'Spotify API Error');
+  //   const {
+  //     body: [following],
+  //   } = await spotify.isFollowingUsers([id]).catch((e) => ({ body: [false] }));
 
-    // return defer({
-    //   user,
-    //   activity,
-    //   party,
-    //   playback,
-    //   currentUser,
-    //   following,
-    //   queue,
-    //   recommended,
-    //   users,
-    //   listened,
-    //   lazyMain,
-    // });
+  //   // return defer({
+  //   //   user,
+  //   //   activity,
+  //   //   party,
+  //   //   playback,
+  //   //   currentUser,
+  //   //   following,
+  //   //   queue,
+  //   //   recommended,
+  //   //   users,
+  //   //   listened,
+  //   //   lazyMain,
+  //   // });
 
-    return typedjson({
-      activity,
-      currentUser,
-      following,
-      listened,
-      party,
-      playback,
-      profileSong,
-      queue,
-      user,
-      users,
-    });
-  }
+  //   return typedjson({
+  //     activity,
+  //     currentUser,
+  //     following,
+  //     listened,
+  //     party,
+  //     profileSong,
+  //     user,
+  //     users,
+  //   });
+  // }
 
   // return defer({
   //   user,
@@ -194,10 +172,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     currentUser,
     following: null,
     listened,
-    party,
-    playback,
     profileSong,
-    queue,
     user,
     users,
   });

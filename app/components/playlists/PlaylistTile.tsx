@@ -43,7 +43,8 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
       setOpen(true);
     };
 
-    const newPlaylist = useMemo(() => ({ ...playlist, tracks }), [playlist, tracks]);
+    // playlist in dependency array causes infinite loop
+    const newPlaylist = useMemo(() => ({ ...playlist, tracks }), [tracks]);
 
     useEffect(() => {
       if (newPlaylist) setPlaylist(newPlaylist);
@@ -68,7 +69,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
     return (
       <>
         <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
-          <Link to={`${playlist.playlistId}`}>
+          <Link to={`/${id}/${playlist.playlistId}`}>
             <Flex direction="column">
               {/* {createdAt && (
               <HStack align="center" h="35px">

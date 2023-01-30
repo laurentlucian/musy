@@ -56,6 +56,8 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     setShow(false);
   }, [setShow]);
 
+  if (!top.length) return null;
+
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
       <Tiles title={title} scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>

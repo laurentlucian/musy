@@ -24,6 +24,9 @@ const Playlists = ({
   if (!playlists) return null;
   const scrollButtons = playlists.length > 5;
   const title = 'Playlists';
+
+  if (!playlists.length) return null;
+
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
