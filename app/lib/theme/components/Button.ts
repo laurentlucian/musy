@@ -1,6 +1,6 @@
 import { mode, transparentize } from '@chakra-ui/theme-tools';
 import type { SystemStyleFunction } from '@chakra-ui/theme-tools';
-import { defineStyle } from '@chakra-ui/styled-system';
+import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system';
 
 type AccessibleColor = {
   bg?: string;
@@ -25,6 +25,11 @@ const accessibleColorMap: { [key: string]: AccessibleColor } = {
   },
 };
 
+const baseStyle = defineStyle((props) => ({
+  color: mode('music.200', 'music.800')(props),
+  borderRadius: 'sm',
+}));
+
 const variantMusic: SystemStyleFunction = (props) => {
   const { colorScheme: c } = props;
 
@@ -35,18 +40,18 @@ const variantMusic: SystemStyleFunction = (props) => {
     activeBg = `${c}.700`,
   } = accessibleColorMap[c] ?? {};
 
-  const background = mode(`${c}.100`, bg)(props);
+  const background = mode(bg, `${c}.100`)(props);
 
   return {
     bg: background,
-    color: mode(`gray.800`, color)(props),
+    color: mode(color, `gray.800`)(props),
     _hover: {
-      bg: mode(`${c}.300`, hoverBg)(props),
+      bg: mode(hoverBg, `${c}.300`)(props),
       _disabled: {
         bg: background,
       },
     },
-    _active: { bg: mode(`${c}.400`, activeBg)(props) },
+    _active: { bg: mode(activeBg, `${c}.400`)(props) },
   };
 };
 
@@ -55,11 +60,11 @@ const variantGhost = defineStyle((props) => {
 
   if (c === 'gray') {
     return {
-      color: mode(`inherit`, `whiteAlpha.900`)(props),
+      color: mode('music.200', 'music.800')(props),
       _hover: {
-        bg: mode(`gray.100`, `whiteAlpha.200`)(props),
+        bg: mode(`whiteAlpha.200`, `gray.100`)(props),
       },
-      _active: { bg: mode(`gray.200`, `whiteAlpha.300`)(props) },
+      _active: { bg: mode(`whiteAlpha.300`, `gray.200`)(props) },
     };
   }
 
@@ -70,10 +75,10 @@ const variantGhost = defineStyle((props) => {
     color: mode(`music.200`, `music.800`)(props),
     bg: 'transparent',
     _hover: {
-      bg: mode(`${c}.50`, darkHoverBg)(props),
+      bg: mode(darkHoverBg, `${c}.50`)(props),
     },
     _active: {
-      bg: mode(`#302f2f`, darkActiveBg)(props),
+      bg: mode(darkActiveBg, `#302f2f`)(props),
     },
   };
 });
@@ -85,8 +90,8 @@ const login = defineStyle((props) => ({
   boxShadow: 'none !important',
   userSelect: 'none !important',
   backfaceVisibility: 'none !important',
-  color: mode('white', 'music.700')(props),
-  bg: mode('music.700', 'music.200')(props),
+  color: mode('music.700', 'white')(props),
+  bg: mode('music.200', 'music.700')(props),
   WebkitTapHighlightColor: '#0000 !important',
   _active: {
     boxShadow: 'none !important',
@@ -111,8 +116,8 @@ const drawer = defineStyle({
 const searchCircle = defineStyle((props) => ({
   pos: 'fixed',
   borderRadius: 'full',
-  bg: mode('music.700', 'music.200')(props),
-  color: mode('music.200', 'music.700')(props),
+  bg: mode('music.200', 'music.700')(props),
+  color: mode('music.700', 'music.200')(props),
   boxSize: '50px',
   fontSize: '40px',
   fontWeight: 'hairline',
@@ -139,7 +144,7 @@ const close = defineStyle((props) => ({
   pos: 'fixed',
   top: -1,
   right: 1,
-  color: mode('white', 'music.700')(props),
+  color: mode('music.700', 'white')(props),
   fontSize: '20px',
   fontWeight: 'light',
   _active: {
@@ -160,15 +165,9 @@ const close = defineStyle((props) => ({
   zIndex: 10000,
   WebkitTapHighlightColor: '#0000 !important',
 }));
-export default {
-  baseStyle: {
-    borderRadius: 'sm',
-  },
-  defaultProps: {
-    colorScheme: 'music',
-    size: 'sm',
-    variant: 'music',
-  },
+
+export const Button = defineStyleConfig({
+  baseStyle,
   variants: {
     music: variantMusic,
     ghost: variantGhost,
@@ -177,4 +176,9 @@ export default {
     searchCircle,
     close,
   },
-};
+  defaultProps: {
+    colorScheme: 'music',
+    size: 'sm',
+    variant: 'music',
+  },
+});

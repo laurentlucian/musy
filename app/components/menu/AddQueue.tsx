@@ -107,7 +107,6 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
           justifyContent="left"
           fontSize="14px"
           w={['100vw', '550px']}
-          color="music.200"
           _hover={{ color: 'white' }}
         >
           {isAdding ? <Waver /> : text}

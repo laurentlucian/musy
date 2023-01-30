@@ -2,13 +2,13 @@ import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 import { extendTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
+import { Button } from './components/Button';
 import { Drawer } from './components/Drawer';
 import { Avatar } from './components/Avatar';
 import { Modal } from './components/Modal';
 import { Menu } from './components/Menu';
 
 import colors from './foundations/colors';
-import Button from './components/Button';
 import Input from './components/Input';
 
 const global = (props: GlobalStyleProps) => ({

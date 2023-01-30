@@ -117,7 +117,6 @@ const ActionDrawer = () => {
       mx="25px"
       w={['100vw', '550px']}
       justifyContent="left"
-      color="music.200"
       _hover={{ color: 'white' }}
     >
       Add to Friends Queue
@@ -137,7 +136,6 @@ const ActionDrawer = () => {
       mx="25px"
       w={['100vw', '550px']}
       justifyContent="left"
-      color="music.200"
       _hover={{ color: 'white' }}
     >
       Recommend to Friend
@@ -180,7 +178,7 @@ const ActionDrawer = () => {
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                   {isSmallScreen && <Box h="90px" w="10px" />}
                   {/* <LikedBy /> */}
-                  <SpotifyLogo mt="10px" />
+                  <SpotifyLogo mt="10px" white/>
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image

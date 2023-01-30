@@ -7,7 +7,7 @@ const PlayerBar = ({
 }: {
   playback: CurrentlyPlayingObjectCustom | SpotifyApi.CurrentlyPlayingResponse;
 }) => {
-  const color = useColorModeValue('music.50', 'music.900');
+  const color = useColorModeValue('music.900', 'music.50');
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();

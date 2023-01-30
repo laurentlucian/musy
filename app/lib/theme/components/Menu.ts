@@ -9,17 +9,17 @@ const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpe
 const baseStyle = definePartsStyle((props) => ({
   button: {
     // menu button; not working because it's being used as IconButton
-    bg: mode(`music.100`, 'music.800')(props),
+    bg: mode('music.800', `music.100`)(props),
     fontWeight: 'bold',
     _hover: {
-      bg: mode(`music.100`, 'music.800')(props),
-      color: mode(`music.800`, 'music.100')(props),
+      bg: mode('music.800', `music.100`)(props),
+      color: mode('music.100', `music.800`)(props),
     },
   },
   list: {
     // menu list
-    bg: mode(`music.100`, 'music.800')(props),
-    color: mode(`music.800`, 'music.100')(props),
+    bg: mode('music.800', `music.100`)(props),
+    color: mode('music.100', `music.800`)(props),
     minW: '200px',
     maxW: 'max-content',
     borderRadius: 5,
@@ -30,8 +30,8 @@ const baseStyle = definePartsStyle((props) => ({
   item: {
     // menu item
     fontSize: '14px',
-    bg: mode(`music.100`, 'music.800')(props),
-    color: mode(`music.800`, 'music.100')(props),
+    bg: mode('music.800', `music.100`)(props),
+    color: mode('music.100', `music.800`)(props),
     _hover: { color: 'spotify.green', boxShadow: 'none' },
     _active: { boxShadow: 'none' },
   },

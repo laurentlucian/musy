@@ -39,9 +39,9 @@ type PlayerProps = {
 };
 
 const PrismaMiniPlayer = ({ user }: PlayerProps) => {
-  const bg = useColorModeValue('music.900', 'music.200');
-  const hoverBg = useColorModeValue('#5F5B59', 'music.50');
-  const color = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('music.200', 'music.900');
+  const hoverBg = useColorModeValue('music.50', '#5F5B59');
+  const color = useColorModeValue('music.900', 'music.200');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();

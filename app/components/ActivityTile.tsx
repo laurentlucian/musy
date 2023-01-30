@@ -8,7 +8,6 @@ import {
   AvatarGroup,
   Avatar,
   Flex,
-  VStack,
 } from '@chakra-ui/react';
 import type { Activity, Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
@@ -123,7 +122,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
 };
 
 const ActivityTile = ({ activity }: ActivityProps) => {
-  const bg = useColorModeValue('music.900', 'music.200');
+  const bg = useColorModeValue('music.200', 'music.900');
 
   const { onOpen } = useDrawerActions();
 
