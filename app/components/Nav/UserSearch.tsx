@@ -17,7 +17,12 @@ const UserSearch = () => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div initial={{ width: 0 }} animate={{ width: 'auto' }} exit={{ width: 0 }}>
+        <motion.div
+          initial={{ width: 'auto' }}
+          animate={{ width: 'auto' }}
+          exit={{ width: 0 }}
+          transition={{ type: 'spring' }}
+        >
           <InputGroup size="xs" w="120px">
             <InputLeftElement children={<SearchIcon color="gray.200" />} />
             <Input
@@ -46,7 +51,7 @@ const UserSearch = () => {
             }, 0);
           }}
         >
-          <SearchIcon color="gray.200" />
+          <SearchIcon color="gray.200" boxSize="18px" alignSelf="center" />
         </Box>
       )}
     </AnimatePresence>
