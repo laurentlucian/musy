@@ -211,7 +211,8 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
       to={`/${user.userId}`}
       bg={loading ? hoverBg : bg}
       color={color}
-      px={['4px', '0px']}
+      px={['4px', 0]}
+      pl={[0, '10px']}
       variant="ghost"
       h={track ? ['100px', '120px'] : '65px'}
       minW="100%"
