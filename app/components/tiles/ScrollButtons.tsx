@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'react-feather';
 
-import { IconButton, HStack } from '@chakra-ui/react';
+import { IconButton, HStack, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 
@@ -14,8 +14,9 @@ const ScrollButtons = ({
   const buttonPressedRef = useRef(false);
   const recentlyPushedButton = useRef<ReturnType<typeof setTimeout>>();
   const isSmallScreen = useIsMobile();
+  const color = useColorModeValue('#161616', '#EEE6E2');
 
-  const offset = isSmallScreen ? 52 : -34;
+  const offset = isSmallScreen ? 36 : -60;
 
   const scrollToEnd = () => {
     if (scrollRef.current) {
@@ -96,6 +97,7 @@ const ScrollButtons = ({
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
+          color={color}
         />
 
         <IconButton
@@ -106,6 +108,7 @@ const ScrollButtons = ({
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
+          color={color}
         />
       </HStack>
 
@@ -118,6 +121,7 @@ const ScrollButtons = ({
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
+          color={color}
         />
 
         <IconButton
@@ -128,6 +132,7 @@ const ScrollButtons = ({
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
+          color={color}
         />
       </HStack>
     </HStack>
