@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFetcher, useParams } from '@remix-run/react';
 import useIsVisible from '~/hooks/useIsVisible';
-import ExpandedSongs from '../ExpandedSongs';
+import ExpandedSongs from '../profile/ExpandedSongs';
 import { Stack } from '@chakra-ui/react';
 import Tiles from './Tiles';
 import Tile from '../Tile';
-import Card from '../Card';
+import Card from './Card';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);

@@ -11,7 +11,7 @@ import {
   updateUserName,
 } from '~/services/auth.server';
 import Player from '~/components/player/Player';
-import Search from '~/components/Search';
+import Search from '~/components/profile/Search';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 import { askDaVinci } from '~/services/ai.server';

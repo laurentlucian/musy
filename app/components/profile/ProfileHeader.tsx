@@ -2,7 +2,7 @@ import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@ch
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 import MoodButton from '~/components/profile/MoodButton';
 import { Form, useSubmit } from '@remix-run/react';
-import Following from '~/components/Following';
+import Following from '~/components/profile/Following';
 import Tooltip from '~/components/Tooltip';
 import type { loader } from '~/routes/$id';
 import { timeSince } from '~/lib/utils';

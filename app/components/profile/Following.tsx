@@ -2,7 +2,7 @@ import { IconButton } from '@chakra-ui/react';
 import { useSubmit } from '@remix-run/react';
 import { Add, Minus } from 'iconsax-react';
 import { useState } from 'react';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 
 type FollowingType = {
   following: boolean;

@@ -12,12 +12,12 @@ import {
 import type { Activity, Track } from '~/lib/types/types';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import { Heart, Play, Send2 } from 'iconsax-react';
-import SpotifyLogo from './icons/SpotifyLogo';
-import PlayedBy from './activity/PlayedBy';
+import SpotifyLogo from '../icons/SpotifyLogo';
+import PlayedBy from './PlayedBy';
 import { Link } from '@remix-run/react';
 import { timeSince } from '~/lib/utils';
 import LikeIcon from '~/lib/icon/Like';
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 
 interface ActivityProps {
   activity: Activity;

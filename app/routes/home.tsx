@@ -6,7 +6,7 @@ import { prisma } from '~/services/db.server';
 import type { Activity } from '~/lib/types/types';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
-import ActivityTile from '~/components/ActivityTile';
+import ActivityTile from '~/components/activity/ActivityTile';
 
 const Index = () => {
   const currentUser = useSessionUser();

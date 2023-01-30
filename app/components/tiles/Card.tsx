@@ -5,7 +5,7 @@ import type { ChakraProps } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
-import SpotifyLogo from './icons/SpotifyLogo';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useParams } from '@remix-run/react';
 
