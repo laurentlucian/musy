@@ -6,8 +6,8 @@ import { SearchIcon } from '@chakra-ui/icons';
 const UserSearch = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [value, setValue] = useState('');
-  const inputRef = useRef(null);
-  const handleChange = (event) => setValue(event.target.value);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value);
   const handleBlur = () => {
     if (!value) {
       onClose();
@@ -22,7 +22,7 @@ const UserSearch = () => {
             <InputLeftElement children={<SearchIcon color="gray.200" />} />
             <Input
               value={value}
-              onChange={handleChange}
+              onChange={(event) => handleChange(event)}
               onBlur={handleBlur}
               ref={inputRef}
               rounded="xl"
@@ -39,7 +39,11 @@ const UserSearch = () => {
           animate={{ opacity: 1 }}
           onClick={() => {
             onOpen();
-            setTimeout(() => inputRef.current.focus(), 0);
+            setTimeout(() => {
+              if (inputRef.current) {
+                inputRef.current.focus();
+              }
+            }, 0);
           }}
         >
           <SearchIcon color="gray.200" />
