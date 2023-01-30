@@ -1,7 +1,7 @@
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import { useState } from 'react';
 
-import { Button, Flex, Heading, HStack, Image } from '@chakra-ui/react';
+import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 
@@ -15,6 +15,8 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const transition = useTransition();
   const { pathname, search } = useLocation();
   const isSmallScreen = useIsMobile();
+  const color = useColorModeValue('#161616', '#EEE6E2');
+  const bg = useColorModeValue('music.200', 'music.900');
 
   return (
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between" px={isSmallScreen ? '5px' : 0}>
@@ -37,6 +39,8 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
               variant="login"
               spinner={<Waver />}
               isLoading={transition.submission?.action.includes('auth')}
+              bg={bg}
+              color={color}
             >
               Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
             </Button>
