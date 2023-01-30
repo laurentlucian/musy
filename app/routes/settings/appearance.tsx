@@ -27,7 +27,7 @@ const Appearance = () => {
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'appearance',
-    defaultValue: 'system', // fix default value to be stored value
+    defaultValue: 'dark', // fix default value to be stored value
     onChange: setSelection,
   });
 
@@ -54,7 +54,7 @@ const Appearance = () => {
           const radio = getRadioProps({ value });
 
           return (
-            <RadioButtons key={value} {...radio} value={value}>
+            <RadioButtons key={value} {...radio} value={value} isDisabled>
               <HStack justifyContent="space-between">
                 {radio.isChecked ? (
                   <>
