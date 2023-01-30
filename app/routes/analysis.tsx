@@ -1,3 +1,12 @@
+import type { LoaderArgs } from '@remix-run/node';
+import { Form, useCatch, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+import { Link } from '@remix-run/react';
+import { Outlet } from '@remix-run/react';
+import type { ChangeEvent } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
+
 import {
   Flex,
   Heading,
@@ -10,23 +19,17 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { Form, useCatch, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+
 import { CloseSquare } from 'iconsax-react';
-import type { ChangeEvent } from 'react';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import type { LoaderArgs } from '@remix-run/node';
-import { spotifyApi } from '~/services/spotify.server';
-import Tiles from '~/components/tiles/Tiles';
-import { authenticator } from '~/services/auth.server';
-import invariant from 'tiny-invariant';
 import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import { Link } from '@remix-run/react';
-import Tooltip from '~/components/Tooltip';
+import invariant from 'tiny-invariant';
+
 import explicitImage from '~/assets/explicit-solid.svg';
-import { Outlet } from '@remix-run/react';
+import Tiles from '~/components/tiles/Tiles';
+import Tooltip from '~/components/Tooltip';
+import { authenticator } from '~/services/auth.server';
+import { spotifyApi } from '~/services/spotify.server';
 
 const Analysis = () => {
   const results = useTypedLoaderData<typeof loader>();
@@ -125,11 +128,7 @@ const Analysis = () => {
             >
               <Flex direction="column">
                 <Tooltip label={track.album.name} placement="top-start">
-                  <Image
-                    src={track.album.images[0].url}
-                    w="200px"
-                    draggable={false}
-                  />
+                  <Image src={track.album.images[0].url} w="200px" draggable={false} />
                 </Tooltip>
               </Flex>
               <Flex justify="space-between">
@@ -182,16 +181,16 @@ export const loader = async ({ request }: LoaderArgs) => {
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   if (!data || data.length === 0) {
     return {
-      title: 'musy Analysis',
       description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+      title: 'musy Analysis',
     };
   }
 
   const track = data[0];
 
   return {
-    title: `${track?.name} | musy Analysis`,
     description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+    title: `${track?.name} | musy Analysis`,
   };
 };
 

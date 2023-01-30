@@ -1,60 +1,60 @@
 import type { Profile, Settings } from '@prisma/client';
 
 export interface Track {
-  uri: string;
-  trackId: string;
-  image: string;
-  albumUri: string | null;
   albumName: string | null;
-  name: string;
+  albumUri: string | null;
   artist: string | null;
   artistUri: string | null;
   explicit: boolean;
-  userId?: string;
-  preview_url: string | null;
+  image: string;
   link: string;
+  name: string;
+  preview_url: string | null;
+  trackId: string;
+  uri: string;
+  userId?: string;
 }
 
 export type Activity = {
-  id: number;
+  action: string;
   createdAt: Date;
-  trackId: string | null;
+  id: number;
+  likedBy?: Profile[];
+  owner?: { user: Profile | null };
   track: {
-    uri: string;
-    name: string;
-    image: string;
-    albumUri: string;
     albumName: string;
+    albumUri: string;
     artist: string;
     artistUri: string;
     explicit: boolean;
-    preview_url?: string | null;
-    link: string;
+    image: string;
     liked?: { user: Profile | null }[];
+    link: string;
+    name: string;
+    preview_url?: string | null;
     recent?: { user: Profile | null }[];
+    uri: string;
   };
-  userId: string | null;
+  trackId: string | null;
   user: Profile | null;
-  owner?: { user: Profile | null };
-  action: string;
-  likedBy?: Profile[];
+  userId: string | null;
 };
 export interface PlaylistTrack {
-  uri: string;
-  name: string;
-  link: string;
+  description: string | null;
   image: string;
+  isPublic: boolean;
+  link: string;
+  name: string;
+  playlistId: string;
   trackTotal: number;
   tracks?: SpotifyApi.PlaylistObjectSimplified[];
+  uri: string;
   userId?: string;
-  isPublic: boolean;
-  playlistId: string;
-  description: string | null;
 }
 
 export interface User extends Profile {
-  settings: Settings | null;
   liked?: {
     trackId: string;
   }[];
+  settings: Settings | null;
 }

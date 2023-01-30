@@ -1,11 +1,12 @@
-import { Box, Heading } from '@chakra-ui/react';
 import type { MetaFunction } from '@remix-run/node';
+
+import { Box, Heading } from '@chakra-ui/react';
 
 // https://remix.run/api/conventions#meta
 export const meta: MetaFunction = () => {
   return {
-    title: 'A Page',
     description: 'Working Page',
+    title: 'A Page',
   };
 };
 

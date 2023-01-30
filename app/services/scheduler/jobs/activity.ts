@@ -48,7 +48,7 @@ export const activityQ = Queue<{ activityId: number }>('pending_activity', async
       console.log('activityQ -> sending to spotify...');
       await spotify.addToQueue(pendingTrack.uri);
       console.log('activityQ -> sent to spotify...');
-      await prisma.queue.update({ where: { id: activityId }, data: { pending: false } });
+      await prisma.queue.update({ data: { pending: false }, where: { id: activityId } });
       await removeJob();
     } catch (error) {
       console.log('activityQ -> addToQueue error; when account not premium');

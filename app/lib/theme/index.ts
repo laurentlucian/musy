@@ -1,15 +1,14 @@
-import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 import { extendTheme } from '@chakra-ui/react';
+import type { GlobalStyleProps } from '@chakra-ui/theme-tools';
 import { mode } from '@chakra-ui/theme-tools';
 
+import { Avatar } from './components/Avatar';
 import { Button } from './components/Button';
 import { Drawer } from './components/Drawer';
-import { Avatar } from './components/Avatar';
-import { Modal } from './components/Modal';
-import { Menu } from './components/Menu';
-
-import colors from './foundations/colors';
 import Input from './components/Input';
+import { Menu } from './components/Menu';
+import { Modal } from './components/Modal';
+import colors from './foundations/colors';
 
 // const isFunction = (value: any): value is Function => typeof value === 'function';
 // function runIfFn<T, U>(valueOrFn: T | ((...fnArgs: U[]) => T), ...args: U[]): T {
@@ -18,46 +17,46 @@ import Input from './components/Input';
 
 const styles = {
   global: (props: GlobalStyleProps) => ({
-    body: {
-      color: mode('#161616', '#EEE6E2')(props), // these do not swap when mode switches
-      bgColor: mode('#EEE6E2', '#050404')(props), // but all other components do
-      bg: mode('#EEE6E2', '#050404')(props), //<------------------------()
-      lineHeight: 'base',
-      WebkitTapHighlightColor: '#0000 !important',
-      userSelect: 'none !important',
-    },
-    '*::-webkit-scrollbar-track': {
-      bg: mode('#EEE6E2', '#050404')(props), // these too
+    '*::-webkit-scrollbar': {
+      bg: mode('#050404', '#f5f5f5')(props), // <---
+      h: '2px',
+      w: '3px',
     },
     '*::-webkit-scrollbar-thumb': {
       bg: mode('#050404', '#f5f5f5')(props), // <---
     },
-    '*::-webkit-scrollbar': {
-      w: '3px',
-      h: '2px',
-      bg: mode('#050404', '#f5f5f5')(props), // <---
+    '*::-webkit-scrollbar-track': {
+      bg: mode('#EEE6E2', '#050404')(props), // these too
+    },
+    body: {
+      WebkitTapHighlightColor: '#0000 !important',
+      bg: mode('#EEE6E2', '#050404')(props), //<------------------------()
+      bgColor: mode('#EEE6E2', '#050404')(props), // but all other components do
+      color: mode('#161616', '#EEE6E2')(props), // these do not swap when mode switches
+      lineHeight: 'base',
+      userSelect: 'none !important',
     },
   }),
 };
 
 export const theme = extendTheme({
-  config: {
-    useSystemColorMode: false,
-    initialColorMode: 'dark',
-    cssVarPrefix: 'musy',
+  colors,
+  components: {
+    Avatar,
+    Button,
+    Drawer,
+    Input,
+    Menu,
+    Modal,
   },
-  styles,
+  config: {
+    cssVarPrefix: 'musy',
+    initialColorMode: 'dark',
+    useSystemColorMode: false,
+  },
   fonts: {
     body: 'Montserrat, Poppins, Roboto Mono, sans-serif',
     heading: 'Montserrat, Poppins, Roboto Mono, serif',
   },
-  components: {
-    Button,
-    Input,
-    Drawer,
-    Avatar,
-    Modal,
-    Menu,
-  },
-  colors,
+  styles,
 });

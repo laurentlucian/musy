@@ -1,11 +1,14 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
-import { RadioCard } from '~/lib/theme/components/Radio';
-import ExpandedSongs from '../profile/ExpandedSongs';
 import { useCallback, useState } from 'react';
-import Tiles from './Tiles';
+
+import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
+
+import { RadioCard } from '~/lib/theme/components/Radio';
+
+import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import Card from './Card';
+import Tiles from './Tiles';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [show, setShow] = useState(false);
@@ -19,9 +22,9 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     { name: '1 mo', value: 'short_term' },
   ];
 
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'top-filter',
+  const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue: topFilter,
+    name: 'top-filter',
   });
 
   const group = getRootProps();
@@ -34,7 +37,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       }}
     >
       <HStack spacing={4} {...group} p={0} m={0}>
-        {options.map(({ value, name }) => {
+        {options.map(({ name, value }) => {
           const radio = getRadioProps({ value });
           return (
             <RadioCard key={value} {...radio} value={value}>

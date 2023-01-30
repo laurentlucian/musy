@@ -1,11 +1,15 @@
-import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
-import { useTypedRouteLoaderData } from 'remix-typedjson';
-import MoodButton from '~/components/profile/MoodButton';
 import { Form, useSubmit } from '@remix-run/react';
+
+import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
+
+import { useTypedRouteLoaderData } from 'remix-typedjson';
+
 import Following from '~/components/profile/Following';
+import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
-import type { loader } from '~/routes/$id';
 import { timeSince } from '~/lib/utils';
+import type { loader } from '~/routes/$id';
+
 import SpotifyLogo from '../icons/SpotifyLogo';
 
 const ProfileHeader = () => {
@@ -13,7 +17,7 @@ const ProfileHeader = () => {
   const submit = useSubmit();
   if (!data) return null;
 
-  const { user, currentUser, following, listened } = data;
+  const { currentUser, following, listened, user } = data;
 
   return (
     <HStack>

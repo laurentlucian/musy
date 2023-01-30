@@ -1,6 +1,7 @@
 import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
+
 import { getUser, updateToken } from './auth.server';
 import { prisma } from './db.server';
 
@@ -40,13 +41,13 @@ const createSpotifyClient = () => {
 export type SpotifyApiWithUser =
   | {
       spotify: null;
-      user: null;
       token?: undefined;
+      user: null;
     }
   | {
       spotify: SpotifyWebApi;
-      user: Profile;
       token: string;
+      user: Profile;
     };
 
 export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
@@ -78,13 +79,13 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
     await updateToken(data.user.userId, body.access_token, expiresAt, body.refresh_token);
   }
 
-  return { spotify: spotifyClient, user: data.user, token: newToken };
+  return { spotify: spotifyClient, token: newToken, user: data.user };
 };
 
 export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'type'> {
-  name?: string;
-  image?: string;
   description?: string;
+  image?: string;
+  name?: string;
   type: 'collection' | SpotifyApi.ContextObject['type'];
 }
 
@@ -94,9 +95,9 @@ export interface CurrentlyPlayingObjectCustom
 }
 
 export interface Playback {
-  userId: string;
   currently_playing: CurrentlyPlayingObjectCustom | null;
   queue: SpotifyApi.TrackObjectFull[];
+  userId: string;
 }
 
 export const getUserQueue = async (id: string) => {
@@ -158,18 +159,18 @@ export const getUserQueue = async (id: string) => {
 
   const isEpisode = currently_playing?.currently_playing_type === 'episode';
   const data = {
-    userId: id,
     currently_playing: isEpisode ? null : currently_playing,
     queue: isEpisode ? [] : queue,
+    userId: id,
   };
 
   if (data) {
     return data as Playback;
   } else
     return {
-      userId: id,
       currently_playing: null,
       queue: [],
+      userId: id,
     };
 };
 

@@ -1,6 +1,8 @@
 import { HStack, Stack, Text, Icon, AvatarGroup, Avatar } from '@chakra-ui/react';
-import { Play } from 'iconsax-react';
+
 import type { Profile } from '@prisma/client';
+import { Play } from 'iconsax-react';
+
 import Tooltip from '../Tooltip';
 
 const PlayedBy = ({
@@ -17,11 +19,11 @@ const PlayedBy = ({
         label={
           <Stack py="2px">
             {Object.values(
-              played.reduce((acc: Record<string, { user: Profile; count: number }>, curr) => {
+              played.reduce((acc: Record<string, { count: number; user: Profile }>, curr) => {
                 if (!curr.user) return acc;
                 const userId = curr.user.userId;
                 if (!acc[userId]) {
-                  acc[userId] = { user: curr.user, count: 1 };
+                  acc[userId] = { count: 1, user: curr.user };
                 } else {
                   acc[userId].count += 1;
                 }
@@ -29,7 +31,7 @@ const PlayedBy = ({
               }, {}),
             )
               .sort((a, b) => b.count - a.count)
-              .map(({ user, count }, index) => {
+              .map(({ count, user }, index) => {
                 const [first, second = ''] = user.name.split(/[\s.]+/);
                 const name =
                   second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');

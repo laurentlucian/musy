@@ -1,3 +1,7 @@
+import { Form, useSubmit } from '@remix-run/react';
+import type { ActionArgs } from '@remix-run/server-runtime';
+import { useRef } from 'react';
+
 import {
   Button,
   useDisclosure,
@@ -14,16 +18,15 @@ import {
   useColorModeValue,
   Text,
 } from '@chakra-ui/react';
-import RecommendSettings from '~/components/settings/RecommendSettings';
-import QueueSettings from '~/components/settings/QueueSettings';
-import type { ActionArgs } from '@remix-run/server-runtime';
-import { authenticator } from '~/services/auth.server';
-import useSessionUser from '~/hooks/useSessionUser';
-import { Form, useSubmit } from '@remix-run/react';
-import { prisma } from '~/services/db.server';
+
 import { Logout } from 'iconsax-react';
 import invariant from 'tiny-invariant';
-import { useRef } from 'react';
+
+import QueueSettings from '~/components/settings/QueueSettings';
+import RecommendSettings from '~/components/settings/RecommendSettings';
+import useSessionUser from '~/hooks/useSessionUser';
+import { authenticator } from '~/services/auth.server';
+import { prisma } from '~/services/db.server';
 
 const Account = () => {
   const bg = useColorModeValue('music.100', 'music.800');
@@ -31,7 +34,7 @@ const Account = () => {
   const color = useColorModeValue('music.800', 'white');
   const currentUser = useSessionUser();
   const submit = useSubmit();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
 
@@ -155,9 +158,9 @@ export const action = async ({ request }: ActionArgs) => {
     const isChecked = autoscroll === 'true';
 
     await prisma.settings.upsert({
-      where: { userId },
       create: { autoscroll: isChecked, userId },
       update: { autoscroll: isChecked },
+      where: { userId },
     });
   }
 
@@ -166,9 +169,9 @@ export const action = async ({ request }: ActionArgs) => {
     const isChecked = allowPreview === 'true';
 
     await prisma.settings.upsert({
-      where: { userId },
       create: { allowPreview: isChecked, userId },
       update: { allowPreview: isChecked },
+      where: { userId },
     });
   }
 
@@ -177,17 +180,17 @@ export const action = async ({ request }: ActionArgs) => {
     const isPrivate = privateProfile === 'true';
 
     await prisma.settings.upsert({
-      where: { userId },
       create: { isPrivate, userId },
       update: { isPrivate },
+      where: { userId },
     });
   }
 
   const queuePreference = data.get('allow-queue');
   if (typeof queuePreference === 'string') {
     await prisma.settings.update({
-      where: { userId },
       data: { allowQueue: queuePreference },
+      where: { userId },
     });
   }
   return null;

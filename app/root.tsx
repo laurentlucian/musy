@@ -1,11 +1,4 @@
-import {
-  Heading,
-  ChakraProvider,
-  Text,
-  cookieStorageManagerSSR,
-  localStorageManager,
-  ColorModeProvider,
-} from '@chakra-ui/react';
+import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -15,22 +8,33 @@ import {
   ScrollRestoration,
   useCatch,
 } from '@remix-run/react';
-import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
-import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import ActionDrawer from './components/menu/ActionDrawer';
-import MobileDrawer from './components/menu/MobileDrawer';
-import { authenticator } from '~/services/auth.server';
-import { withEmotionCache } from '@emotion/react';
-import loading from './lib/styles/loading.css';
 import { useContext, useEffect } from 'react';
-import { prisma } from './services/db.server';
+
+import {
+  Heading,
+  ChakraProvider,
+  Text,
+  cookieStorageManagerSSR,
+  localStorageManager,
+  ColorModeProvider,
+} from '@chakra-ui/react';
+
+import { withEmotionCache } from '@emotion/react';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+
 import musylogo from '~/assets/musylogo.svg';
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
+import { authenticator } from '~/services/auth.server';
+
+import ActionDrawer from './components/menu/ActionDrawer';
+import MobileDrawer from './components/menu/MobileDrawer';
+import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
+import loading from './lib/styles/loading.css';
+import { prisma } from './services/db.server';
 
 const App = () => {
-  const { currentUser, cookie } = useTypedLoaderData<typeof loader>();
+  const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
   const colorModeManager =
     typeof cookie === 'string' ? cookieStorageManagerSSR(cookie) : localStorageManager;
 
@@ -56,13 +60,13 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   if (session && session.user) {
     const currentUser = await prisma.profile.findUnique({
+      include: { liked: { select: { trackId: true } }, settings: true },
       where: { userId: session.user.id },
-      include: { settings: true, liked: { select: { trackId: true } } },
     });
 
-    return typedjson({ currentUser, cookie, isMobile });
+    return typedjson({ cookie, currentUser, isMobile });
   } else {
-    return typedjson({ currentUser: null, cookie, isMobile });
+    return typedjson({ cookie, currentUser: null, isMobile });
   }
 };
 
@@ -70,64 +74,64 @@ export const meta: MetaFunction = () => {
   const description = 'Music shared easy';
 
   return {
-    charset: 'utf-8',
-    viewport: 'width=device-width,initial-scale=1,user-scalable=no',
-    description,
-    'twitter:title': 'musy',
-    'og:title': 'musy',
-    'twitter:description': description,
-    'og:description': description,
-    'og:image': 'meta-image.png',
-    'og:image:width': '1200',
-    'og:image:height': '630',
-    'og:image:type': 'image/png',
-    'og:image:alt': 'musy',
-
-    'twitter:image': 'meta-image.png',
-    'twitter:card': 'summary_large_image',
-    keywords: 'music, discover, spotify, playlist, share, friends',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black',
+    charset: 'utf-8',
+    description,
+    keywords: 'music, discover, spotify, playlist, share, friends',
+    'og:description': description,
+    'og:image': 'meta-image.png',
+    'og:image:alt': 'musy',
+    'og:image:height': '630',
+    'og:image:type': 'image/png',
+    'og:image:width': '1200',
+    'og:title': 'musy',
+
+    'twitter:card': 'summary_large_image',
+    'twitter:description': description,
+    'twitter:image': 'meta-image.png',
+    'twitter:title': 'musy',
+    viewport: 'width=device-width,initial-scale=1,user-scalable=no',
   };
 };
 
 export let links: LinksFunction = () => {
   return [
-    { as: 'style', rel: 'stylesheet', href: loading },
-    { as: 'preconnect', rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { as: 'preconnect', rel: 'preconnect', href: 'https://fonts.gstaticom' },
+    { as: 'style', href: loading, rel: 'stylesheet' },
+    { as: 'preconnect', href: 'https://fonts.googleapis.com', rel: 'preconnect' },
+    { as: 'preconnect', href: 'https://fonts.gstaticom', rel: 'preconnect' },
     {
       as: 'font',
-      rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap',
       media: 'all',
+      rel: 'stylesheet',
     },
     {
       as: 'font',
-      rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap',
       media: 'all',
+      rel: 'stylesheet',
     },
     {
       as: 'font',
-      rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
       media: 'all',
+      rel: 'stylesheet',
     },
     {
       as: 'icon',
+      href: musylogo,
       rel: 'icon',
-      href: musylogo,
     },
     {
       as: 'icon',
+      href: musylogo,
       rel: 'mask-icon',
-      href: musylogo,
     },
     {
       as: 'icon',
-      rel: 'apple-touch-icon',
       href: musylogo,
+      rel: 'apple-touch-icon',
     },
   ];
 };
@@ -165,7 +169,7 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
       <head>
         <Meta />
         <Links />
-        {serverStyleData?.map(({ key, ids, css }) => (
+        {serverStyleData?.map(({ css, ids, key }) => (
           <style
             key={key}
             data-emotion={`${key} ${ids.join(' ')}`}

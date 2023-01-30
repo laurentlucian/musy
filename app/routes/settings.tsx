@@ -1,5 +1,6 @@
-import { Link, Stack, Center, useColorModeValue } from '@chakra-ui/react';
 import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
+
+import { Link, Stack, Center, useColorModeValue } from '@chakra-ui/react';
 
 const Settings = () => {
   const location = useLocation();

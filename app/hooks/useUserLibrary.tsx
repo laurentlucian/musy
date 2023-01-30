@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
+
 import useSessionUser from './useSessionUser';
 
 type UserLibraryStore = {
@@ -37,7 +38,7 @@ const useUserLibrary = (trackId: string) => {
 
   const isSaved = isSavedFn(trackId);
 
-  return { library, isSaved, toggleSave };
+  return { isSaved, library, toggleSave };
 };
 
 export default useUserLibrary;

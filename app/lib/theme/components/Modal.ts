@@ -1,8 +1,8 @@
-import { createMultiStyleConfigHelpers, cssVar, defineStyle } from '@chakra-ui/styled-system';
 import { modalAnatomy as parts } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers, cssVar, defineStyle } from '@chakra-ui/styled-system';
 import { mode } from '@chakra-ui/theme-tools';
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(parts.keys);
+const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(parts.keys);
 
 const isFunction = (value: any): value is Function => typeof value === 'function';
 
@@ -14,18 +14,18 @@ const $bg = cssVar('modal-bg');
 // const $bs = cssVar('modal-box-shadow');
 
 const baseStyleOverlay = defineStyle((props) => ({
+  color: mode(`#E4DBD5`, '#111111')(props),
   // backdropFilter: 'blur(14px)',
   transition: 'all .2s',
   zIndex: 'modal',
-  color: mode(`#E4DBD5`, '#111111')(props),
 }));
 
 const baseStyleDialogContainer = defineStyle((props) => ({
-  transition: 'all .2s',
-  display: 'flex',
-  zIndex: 'modal',
-  justifyContent: 'center',
   color: mode(`#E4DBD5`, '#111111')(props),
+  display: 'flex',
+  justifyContent: 'center',
+  transition: 'all .2s',
+  zIndex: 'modal',
 }));
 
 const baseStyleDialog = defineStyle((props) => {
@@ -33,25 +33,25 @@ const baseStyleDialog = defineStyle((props) => {
 
   return {
     ...(isFullHeight && { height: '100vh' }),
-    zIndex: 'modal',
-    maxH: '100vh',
-    [$bg.variable]: mode('#111111', `#E4DBD5`)(props),
     bg: $bg.reference,
     boxShadow: 'none',
+    maxH: '100vh',
+    zIndex: 'modal',
+    [$bg.variable]: mode('#111111', `#E4DBD5`)(props),
   };
 });
 
 const body = defineStyle({
-  p: '0',
   flex: '1',
   overflow: 'auto',
+  p: '0',
 });
 
 const baseStyle = definePartsStyle((props) => ({
-  overlay: runIfFn(baseStyleOverlay, props),
-  dialogContainer: runIfFn(baseStyleDialogContainer, props),
-  dialog: runIfFn(baseStyleDialog, props),
   body,
+  dialog: runIfFn(baseStyleDialog, props),
+  dialogContainer: runIfFn(baseStyleDialogContainer, props),
+  overlay: runIfFn(baseStyleOverlay, props),
 }));
 
 export const Modal = defineMultiStyleConfig({

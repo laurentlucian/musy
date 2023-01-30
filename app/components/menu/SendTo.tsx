@@ -1,7 +1,10 @@
 import { useFetcher, useLocation, useParams } from '@remix-run/react';
-import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
-import type { Track } from '~/lib/types/types';
+
 import { Button } from '@chakra-ui/react';
+
+import { CloseSquare, Send2, TickSquare } from 'iconsax-react';
+
+import type { Track } from '~/lib/types/types';
 
 type SendToProps = Track & {
   // @todo figure out a better way to require authentication on click;
@@ -11,16 +14,16 @@ type SendToProps = Track & {
 };
 
 const SendTo = ({
-  uri,
-  image,
-  albumUri,
   albumName,
-  name,
+  albumUri,
   artist,
   artistUri,
   explicit,
-  userId,
+  image,
+  name,
   sendTo,
+  uri,
+  userId,
 }: SendToProps) => {
   const { id } = useParams();
   const fetcher = useFetcher();
@@ -59,7 +62,7 @@ const SendTo = ({
             leftIcon={<Send2 />}
             variant="ghost"
             isLoading={isAdding}
-            _hover={{ color: 'spotify.green', boxShadow: 'none' }}
+            _hover={{ boxShadow: 'none', color: 'spotify.green' }}
             p="0px 0px"
             w="200px"
             justifyContent="flex-start"

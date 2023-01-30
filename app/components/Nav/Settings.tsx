@@ -1,16 +1,19 @@
-import type { Dispatch, SetStateAction } from 'react';
 import { useNavigate } from '@remix-run/react';
+import type { Dispatch, SetStateAction } from 'react';
+
 import { IconButton, useColorModeValue } from '@chakra-ui/react';
-import { Setting2 } from 'iconsax-react';
+
 import { motion } from 'framer-motion';
+import { Setting2 } from 'iconsax-react';
+
 import useSessionUser from '~/hooks/useSessionUser';
 
 type SettingsConfig = {
-  show: boolean;
   setShow: Dispatch<SetStateAction<boolean>>;
+  show: boolean;
 };
 
-const Settings = ({ show, setShow }: SettingsConfig) => {
+const Settings = ({ setShow, show }: SettingsConfig) => {
   const navigate = useNavigate();
   const currentUser = useSessionUser();
   const color = useColorModeValue('black', 'white');

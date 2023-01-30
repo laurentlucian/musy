@@ -1,9 +1,11 @@
 import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+
 import { spotifyApi } from '~/services/spotify.server';
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
@@ -14,7 +16,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   invariant(spotify, 'Missing spotify');
 
   const data = await spotify
-    .getUserPlaylists('daniel.valdecantos', { offset, limit: 50 })
+    .getUserPlaylists('daniel.valdecantos', { limit: 50, offset })
     .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
     .catch(() => []);
   return typedjson(data);

@@ -1,6 +1,8 @@
 import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+
 import { prisma } from '~/services/db.server';
 
 export const loader = async ({ params }: LoaderArgs) => {

@@ -1,3 +1,6 @@
+import { useEffect, useState } from 'react';
+import { Check } from 'react-feather';
+
 import {
   useColorMode,
   Button,
@@ -8,10 +11,9 @@ import {
   HStack,
   useColorModeValue,
 } from '@chakra-ui/react';
+
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
-import { useEffect, useState } from 'react';
-import { Check } from 'react-feather';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
@@ -27,9 +29,9 @@ const Appearance = () => {
     // { name: 'system', value: 'system' }, //<---- will return when we can store a default value
   ];
 
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'appearance',
+  const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue, // fix default value to be stored value
+    name: 'appearance',
     onChange: setSelection,
   });
 
@@ -54,7 +56,7 @@ const Appearance = () => {
         {scheduled && <TimeRangePicker />}
       </Stack>
       <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
-        {options.map(({ value, name }) => {
+        {options.map(({ name, value }) => {
           const radio = getRadioProps({ value });
 
           return (

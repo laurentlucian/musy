@@ -1,6 +1,9 @@
-import { Button } from '@chakra-ui/react';
 import { useNavigate, useTransition } from '@remix-run/react';
+
+import { Button } from '@chakra-ui/react';
+
 import { DocumentText } from 'iconsax-react';
+
 import Waver from '../icons/Waver';
 
 const AnalyzeTrack = ({ trackId }: { trackId: string }) => {

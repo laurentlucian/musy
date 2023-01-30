@@ -1,4 +1,5 @@
 import invariant from 'tiny-invariant';
+
 import { createTrackModel, notNull } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -13,25 +14,11 @@ const upsertPlayback = async (
 ) => {
   const trackDb = createTrackModel(track);
   const data = {
-    updatedAt: timestamp,
     progress,
+    updatedAt: timestamp,
   };
 
   await prisma.playback.upsert({
-    where: {
-      userId,
-    },
-    update: {
-      ...data,
-      track: {
-        connectOrCreate: {
-          create: trackDb,
-          where: {
-            id: track.id,
-          },
-        },
-      },
-    },
     create: {
       ...data,
       track: {
@@ -48,6 +35,20 @@ const upsertPlayback = async (
         },
       },
     },
+    update: {
+      ...data,
+      track: {
+        connectOrCreate: {
+          create: trackDb,
+          where: {
+            id: track.id,
+          },
+        },
+      },
+    },
+    where: {
+      userId,
+    },
   });
 
   console.log('playbackQ -> prisma updated', userId);
@@ -58,8 +59,8 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
 
   console.log('playbackQ -> job starting...', userId);
   const profile = await prisma.user.findUnique({
-    where: { id: userId },
     include: { user: true },
+    where: { id: userId },
   });
 
   const { spotify } = await spotifyApi(userId);
@@ -102,19 +103,19 @@ const getPlaybackState = async (id: string) => {
     const { spotify } = await spotifyApi(id);
     invariant(spotify, 'Spotify API not found');
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
-    const { item, is_playing } = playback;
+    const { is_playing, item } = playback;
     if (!is_playing || !item || item.type !== 'track') return { id, playback: null };
     return { id, playback };
   } catch (e) {
     if (e instanceof Error && e.message.includes('revoked')) {
-      await prisma.user.update({ where: { id }, data: { revoked: true } });
+      await prisma.user.update({ data: { revoked: true }, where: { id } });
       await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
       await prisma.likedSongs.deleteMany({ where: { userId: id } });
     }
 
     // @ts-expect-error e is ResponseError
     if (e?.statusCode === 403) {
-      await prisma.user.update({ where: { id }, data: { revoked: true } });
+      await prisma.user.update({ data: { revoked: true }, where: { id } });
       // await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
       // await prisma.likedSongs.deleteMany({ where: { userId: id } });
       // await prisma.recentSongs.deleteMany({ where: { userId: id } });

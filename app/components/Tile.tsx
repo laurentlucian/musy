@@ -1,54 +1,58 @@
-import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
-import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
 import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
 import type { DataFunctionArgs } from '@remix-run/server-runtime';
-import explicitImage from '~/assets/explicit-solid.svg';
-import type { Track, User } from '~/lib/types/types';
-import type { ChakraProps } from '@chakra-ui/react';
-import { Check, AlertCircle } from 'react-feather';
-import { useClickDrag } from '~/hooks/useDrawer';
-import SpotifyLogo from './icons/SpotifyLogo';
-import type { Profile } from '@prisma/client';
 import { forwardRef, useRef } from 'react';
-import { timeSince } from '~/lib/utils';
+import { Check, AlertCircle } from 'react-feather';
+
+import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+import type { ChakraProps } from '@chakra-ui/react';
+
+import type { Profile } from '@prisma/client';
 import { Send2 } from 'iconsax-react';
+import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
+
+import explicitImage from '~/assets/explicit-solid.svg';
+import { useClickDrag } from '~/hooks/useDrawer';
+import type { Track, User } from '~/lib/types/types';
+import { timeSince } from '~/lib/utils';
+
+import SpotifyLogo from './icons/SpotifyLogo';
 import Waver from './icons/Waver';
 import Tooltip from './Tooltip';
 
 type TileProps = Track & {
-  currentUser?: User | null;
-  submit?: SubmitFunction;
-  id?: string;
-  fetcher?: TypedFetcherWithComponents<
-    ({ request, params }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
-  >;
+  createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
-  createdAt?: Date;
+  currentUser?: User | null;
+  fetcher?: TypedFetcherWithComponents<
+    ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
+  >;
+  id?: string;
   playlist?: Boolean;
+  submit?: SubmitFunction;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
-      uri,
-      trackId,
-      image,
-      albumUri,
       albumName,
-      name,
+      albumUri,
       artist,
       artistUri,
-      explicit,
-      preview_url,
-      link,
       createdAt,
       createdBy,
-      playlist,
       currentUser,
-      submit,
-      id,
+      explicit,
       fetcher,
+      id,
+      image,
+      link,
+      name,
+      playlist,
+      preview_url,
+      submit,
+      trackId,
+      uri,
       ...props
     },
     ref,
@@ -60,19 +64,19 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         return String.fromCharCode(parseInt(dec, 16));
       });
     };
-    const { onMouseDown, onMouseMove, onClick } = useClickDrag();
+    const { onClick, onMouseDown, onMouseMove } = useClickDrag();
     const track: Track = {
-      uri: uri,
-      trackId,
-      image,
-      albumUri,
       albumName,
-      name,
+      albumUri,
       artist,
       artistUri,
       explicit,
-      preview_url,
+      image,
       link,
+      name,
+      preview_url,
+      trackId,
+      uri: uri,
     };
     const clickedRef = useRef<string>();
     const addToQueue = () => {
@@ -80,9 +84,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         // @todo figure out a better way to require authentication on click;
         // after authentication redirect, add to queue isn't successful. user needs to click again
         return submit(null, {
-          replace: true,
-          method: 'post',
           action: '/auth/spotify?returnTo=' + pathname + search,
+          method: 'post',
+          replace: true,
         });
       }
       clickedRef.current = trackId;
@@ -92,15 +96,15 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       const sendToUserId = id;
 
       const data = {
-        trackId: trackId ?? '',
+        action: 'add',
 
         fromId: fromUserId ?? '',
         toId: sendToUserId ?? '',
-        action: 'add',
+        trackId: trackId ?? '',
       };
 
       if (fetcher) {
-        fetcher.submit(data, { replace: true, method: 'post', action });
+        fetcher.submit(data, { action, method: 'post', replace: true });
       }
     };
     const isClicked = clickedRef.current === trackId;

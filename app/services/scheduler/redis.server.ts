@@ -12,8 +12,8 @@ declare global {
 }
 
 const redisOptions: RedisOptions = {
-  maxRetriesPerRequest: null,
   enableReadyCheck: false,
+  maxRetriesPerRequest: null,
 };
 
 // this is needed because in development we don't want to restart
@@ -25,12 +25,12 @@ if (process.env.NODE_ENV === 'production') {
   }
 
   const _redisOption: RedisOptions = {
-    maxRetriesPerRequest: null,
     enableReadyCheck: false,
-    port: 6379,
     family: 6,
     host: process.env.REDIS_URL,
+    maxRetriesPerRequest: null,
     password: process.env.REDIS_PASSWORD,
+    port: 6379,
   };
   redis = new Redis(process.env.REDIS_URL, _redisOption);
 } else {

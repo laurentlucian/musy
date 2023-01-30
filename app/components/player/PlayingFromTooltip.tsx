@@ -1,9 +1,9 @@
 import { HStack, Image, Stack, Text } from '@chakra-ui/react';
 
 type PlayingFromType = {
+  description?: string;
   image?: string;
   name?: string;
-  description?: string;
 };
 
 const decodeHtmlEntity = (str?: string) => {
@@ -12,7 +12,7 @@ const decodeHtmlEntity = (str?: string) => {
   });
 };
 
-const PlayingFromTooltip = ({ image, name, description }: PlayingFromType) => {
+const PlayingFromTooltip = ({ description, image, name }: PlayingFromType) => {
   return (
     <HStack p="0">
       <Image src={image} boxSize="55px" />

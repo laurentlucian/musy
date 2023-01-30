@@ -1,9 +1,11 @@
 import invariant from 'tiny-invariant';
+
 import { createTrackModel, isProduction, minutesToMs, notNull } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
+
 import { playbackCreator, playbackQ } from './playback';
 import { libraryQ, longScriptQ } from './scraper';
 
@@ -15,8 +17,8 @@ export const userQ = Queue<{ userId: string }>(
 
     await playbackCreator();
     const profile = await prisma.user.findUnique({
-      where: { id: userId },
       include: { user: true },
+      where: { id: userId },
     });
 
     const { spotify } = await spotifyApi(userId);
@@ -34,23 +36,23 @@ export const userQ = Queue<{ userId: string }>(
     const {
       body: { items: recent },
     } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    for (const { track, played_at } of recent) {
+    for (const { played_at, track } of recent) {
       const trackDb = createTrackModel(track);
       const data = {
-        playedAt: new Date(played_at),
+        action: 'played',
 
-        name: track.name,
-        uri: track.uri,
         albumName: track.album.name,
         albumUri: track.album.uri,
         artist: track.artists[0].name,
         artistUri: track.artists[0].uri,
-        image: track.album.images[0].url,
-        explicit: track.explicit,
-        preview_url: track.preview_url,
-        link: track.external_urls.spotify,
         duration: track.duration_ms,
-        action: 'played',
+        explicit: track.explicit,
+        image: track.album.images[0].url,
+        link: track.external_urls.spotify,
+        name: track.name,
+        playedAt: new Date(played_at),
+        preview_url: track.preview_url,
+        uri: track.uri,
 
         user: {
           connect: {
@@ -60,10 +62,15 @@ export const userQ = Queue<{ userId: string }>(
       };
 
       await prisma.recentSongs.upsert({
-        where: {
-          playedAt_userId: {
-            playedAt: data.playedAt,
-            userId: userId,
+        create: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
           },
         },
         update: {
@@ -77,15 +84,10 @@ export const userQ = Queue<{ userId: string }>(
             },
           },
         },
-        create: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
+        where: {
+          playedAt_userId: {
+            playedAt: data.playedAt,
+            userId: userId,
           },
         },
       });
@@ -96,23 +98,23 @@ export const userQ = Queue<{ userId: string }>(
       body: { items: liked, total },
     } = await spotify.getMySavedTracks({ limit: 50 });
 
-    for (const { track, added_at } of liked) {
+    for (const { added_at, track } of liked) {
       const trackDb = createTrackModel(track);
 
       const data = {
-        likedAt: new Date(added_at),
-        name: track.name,
-        uri: track.uri,
+        action: 'liked',
         albumName: track.album.name,
         albumUri: track.album.uri,
         artist: track.artists[0].name,
         artistUri: track.artists[0].uri,
-        image: track.album.images[0].url,
-        explicit: track.explicit,
-        preview_url: track.preview_url,
-        link: track.external_urls.spotify,
         duration: track.duration_ms,
-        action: 'liked',
+        explicit: track.explicit,
+        image: track.album.images[0].url,
+        likedAt: new Date(added_at),
+        link: track.external_urls.spotify,
+        name: track.name,
+        preview_url: track.preview_url,
+        uri: track.uri,
 
         user: {
           connect: {
@@ -122,10 +124,15 @@ export const userQ = Queue<{ userId: string }>(
       };
 
       await prisma.likedSongs.upsert({
-        where: {
-          trackId_userId: {
-            trackId: track.id,
-            userId: userId,
+        create: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
           },
         },
         update: {
@@ -139,15 +146,10 @@ export const userQ = Queue<{ userId: string }>(
             },
           },
         },
-        create: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
+        where: {
+          trackId_userId: {
+            trackId: track.id,
+            userId: userId,
           },
         },
       });
@@ -202,8 +204,8 @@ export const userQ = Queue<{ userId: string }>(
         await libraryQ.add(
           'user-library',
           {
-            userId,
             pages,
+            userId,
           },
           {
             removeOnComplete: true,
@@ -219,8 +221,8 @@ export const userQ = Queue<{ userId: string }>(
   },
   {
     limiter: {
-      max: 1,
       duration: minutesToMs(1),
+      max: 1,
     },
   },
 );
@@ -293,15 +295,15 @@ export const addUsersToQueue = async () => {
       user.userId,
       { userId: user.userId },
       {
+        backoff: {
+          delay: minutesToMs(1),
+          type: 'exponential',
+        },
         // a job with duplicate id will not be added
         jobId: user.userId,
-        repeat: { every: minutesToMs(isProduction ? 30 : 60) },
-        backoff: {
-          type: 'exponential',
-          delay: minutesToMs(1),
-        },
         removeOnComplete: true,
         removeOnFail: true,
+        repeat: { every: minutesToMs(isProduction ? 30 : 60) },
       },
     );
   }
@@ -309,10 +311,10 @@ export const addUsersToQueue = async () => {
   // repeateableJobs are started with delay, so run these manually at startup
   await userQ.addBulk(
     users.map((user) => ({
-      name: 'update_liked',
       data: {
         userId: user.userId,
       },
+      name: 'update_liked',
     })),
   );
 
@@ -343,7 +345,7 @@ const addMissingTracks = async () => {
   console.log('recents', recents.length);
 
   for (const recent of recents) {
-    const { albumName, albumUri, artistUri, preview_url, link } = recent;
+    const { albumName, albumUri, artistUri, link, preview_url } = recent;
 
     if (!albumName || !albumUri || !artistUri) {
       console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
@@ -353,15 +355,15 @@ const addMissingTracks = async () => {
       if (track) {
         console.log('track found', recent.name);
         await prisma.recentSongs.update({
-          where: {
-            id: recent.id,
-          },
           data: {
             track: {
               connect: {
                 id: recent.trackId,
               },
             },
+          },
+          where: {
+            id: recent.id,
           },
         });
         continue;
@@ -372,13 +374,13 @@ const addMissingTracks = async () => {
         const { body: track } = await spotify.getTrack(recent.trackId);
         const trackDb = createTrackModel(track);
         await prisma.recentSongs.update({
-          where: {
-            id: recent.id,
-          },
           data: {
             track: {
               create: trackDb,
             },
+          },
+          where: {
+            id: recent.id,
           },
         });
       }
@@ -393,15 +395,15 @@ const addMissingTracks = async () => {
       if (track) {
         console.log('track found', recent.name);
         await prisma.recentSongs.update({
-          where: {
-            id: recent.id,
-          },
           data: {
             track: {
               connect: {
                 id: recent.trackId,
               },
             },
+          },
+          where: {
+            id: recent.id,
           },
         });
         continue;
@@ -412,13 +414,13 @@ const addMissingTracks = async () => {
         const { body: track } = await spotify.getTrack(recent.trackId);
         const trackDb = createTrackModel(track);
         await prisma.recentSongs.update({
-          where: {
-            id: recent.id,
-          },
           data: {
             track: {
               create: trackDb,
             },
+          },
+          where: {
+            id: recent.id,
           },
         });
       }
@@ -428,31 +430,31 @@ const addMissingTracks = async () => {
 
     await prisma.recentSongs
       .update({
-        where: {
-          id: recent.id,
-        },
         data: {
           track: {
             connectOrCreate: {
               create: {
-                id: recent.trackId,
-                name: recent.name,
-                uri: recent.uri,
                 albumName,
                 albumUri,
-                artistUri,
                 artist: recent.artist,
-                image: recent.image,
-                explicit: recent.explicit,
-                preview_url: recent.preview_url,
-                link: recent.link,
+                artistUri,
                 duration: recent.duration,
+                explicit: recent.explicit,
+                id: recent.trackId,
+                image: recent.image,
+                link: recent.link,
+                name: recent.name,
+                preview_url: recent.preview_url,
+                uri: recent.uri,
               },
               where: {
                 id: recent.trackId,
               },
             },
           },
+        },
+        where: {
+          id: recent.id,
         },
       })
       .then((res) => console.log('updated', res))
@@ -463,7 +465,7 @@ const addMissingTracks = async () => {
   console.log('liked', liked.length);
 
   for (const like of liked) {
-    const { albumName, albumUri, artistUri, preview_url, link } = like;
+    const { albumName, albumUri, artistUri, link, preview_url } = like;
 
     if (!albumName || !albumUri || !artistUri) {
       console.log('missing', 'albumName', albumName, 'albumUri', albumUri, 'artistUri', artistUri);
@@ -473,15 +475,15 @@ const addMissingTracks = async () => {
       if (track) {
         console.log('track found', like.name);
         await prisma.likedSongs.update({
-          where: {
-            id: like.id,
-          },
           data: {
             track: {
               connect: {
                 id: like.trackId,
               },
             },
+          },
+          where: {
+            id: like.id,
           },
         });
         continue;
@@ -492,13 +494,13 @@ const addMissingTracks = async () => {
         const { body: track } = await spotify.getTrack(like.trackId);
         const trackDb = createTrackModel(track);
         await prisma.likedSongs.update({
-          where: {
-            id: like.id,
-          },
           data: {
             track: {
               create: trackDb,
             },
+          },
+          where: {
+            id: like.id,
           },
         });
       }
@@ -513,15 +515,15 @@ const addMissingTracks = async () => {
       if (track) {
         console.log('track found', like.name);
         await prisma.likedSongs.update({
-          where: {
-            id: like.id,
-          },
           data: {
             track: {
               connect: {
                 id: like.trackId,
               },
             },
+          },
+          where: {
+            id: like.id,
           },
         });
         continue;
@@ -532,13 +534,13 @@ const addMissingTracks = async () => {
         const { body: track } = await spotify.getTrack(like.trackId);
         const trackDb = createTrackModel(track);
         await prisma.likedSongs.update({
-          where: {
-            id: like.id,
-          },
           data: {
             track: {
               create: trackDb,
             },
+          },
+          where: {
+            id: like.id,
           },
         });
       }
@@ -548,31 +550,31 @@ const addMissingTracks = async () => {
 
     await prisma.likedSongs
       .update({
-        where: {
-          id: like.id,
-        },
         data: {
           track: {
             connectOrCreate: {
               create: {
-                id: like.trackId,
-                name: like.name,
-                uri: like.uri,
                 albumName,
                 albumUri,
-                artistUri,
                 artist: like.artist,
-                image: like.image,
-                explicit: like.explicit,
-                preview_url: like.preview_url,
-                link: like.link,
+                artistUri,
                 duration: like.duration,
+                explicit: like.explicit,
+                id: like.trackId,
+                image: like.image,
+                link: like.link,
+                name: like.name,
+                preview_url: like.preview_url,
+                uri: like.uri,
               },
               where: {
                 id: like.trackId,
               },
             },
           },
+        },
+        where: {
+          id: like.id,
         },
       })
       .then((res) => console.log('updated', res))
@@ -583,7 +585,7 @@ const addMissingTracks = async () => {
   console.log('queued', queued.length);
 
   for (const queue of queued) {
-    const { trackId, albumName, albumUri, artistUri } = queue;
+    const { albumName, albumUri, artistUri, trackId } = queue;
 
     if (!trackId) {
       console.log('missing trackId', queue.name);
@@ -597,9 +599,6 @@ const addMissingTracks = async () => {
 
       const trackDb = createTrackModel(tracks.items[0]);
       await prisma.queue.update({
-        where: {
-          id: queue.id,
-        },
         data: {
           track: {
             connectOrCreate: {
@@ -609,6 +608,9 @@ const addMissingTracks = async () => {
               },
             },
           },
+        },
+        where: {
+          id: queue.id,
         },
       });
 
@@ -716,18 +718,18 @@ const addDurationToRecent = async () => {
     for (const track of tracks) {
       const duration = track.duration_ms;
       await prisma.recentSongs.updateMany({
-        where: {
-          trackId: track.id,
-        },
         data: {
           duration,
+        },
+        where: {
+          trackId: track.id,
         },
       });
     }
   }
 };
 export const addPreviewUrlAndLink = async () => {
-  const trackIds = await prisma.track.findMany({ where: { link: '' }, select: { id: true } });
+  const trackIds = await prisma.track.findMany({ select: { id: true }, where: { link: '' } });
   if (trackIds && trackIds.length > 0) {
     const { spotify } = await spotifyApi('1295028670');
     invariant(spotify, 'No spotify');
@@ -757,12 +759,12 @@ export const addPreviewUrlAndLink = async () => {
         const preview_url = track.preview_url;
         const link = track.external_urls.spotify;
         await prisma.track.update({
+          data: {
+            link,
+            preview_url,
+          },
           where: {
             id: track.id,
-          },
-          data: {
-            preview_url,
-            link,
           },
         });
       }

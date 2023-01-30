@@ -1,12 +1,13 @@
 import type { Processor, WorkerOptions } from 'bullmq';
 import { Queue as BullQueue, Worker, QueueScheduler } from 'bullmq';
 import EventEmitter from 'events';
+
 import { redis } from './redis.server';
 
 type RegisteredQueue = {
   queue: BullQueue;
-  worker: Worker;
   scheduler: QueueScheduler;
+  worker: Worker;
 };
 
 declare global {

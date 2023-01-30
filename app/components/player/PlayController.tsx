@@ -1,17 +1,21 @@
-import { HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
-import { Next, Pause, Play, Previous } from 'iconsax-react';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 import type { FetcherWithComponents } from '@remix-run/react';
-import Tooltip from '../Tooltip';
+
+import { HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
+
+import { Next, Pause, Play, Previous } from 'iconsax-react';
+
+import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
+
 import SaveToLiked from '../menu/SaveToLiked';
+import Tooltip from '../Tooltip';
 
 type PlayControllerProps = {
+  fetcher: FetcherWithComponents<any>;
   id: string;
   playback: CurrentlyPlayingObjectCustom;
-  fetcher: FetcherWithComponents<any>;
 };
 
-const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
+const PlayController = ({ fetcher, id, playback }: PlayControllerProps) => {
   const loading = fetcher.submission?.formData.has('play') ?? false;
   const prevSong = fetcher.submission?.formData.has('prev') ?? false;
   const nextSong = fetcher.submission?.formData.has('next') ?? false;
@@ -27,7 +31,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             aria-label="Prev"
             variant="ghost"
             icon={<Previous />}
-            _hover={{ opacity: 1, color: 'spotify.green' }}
+            _hover={{ color: 'spotify.green', opacity: 1 }}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"
@@ -47,7 +51,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             aria-label={playback.is_playing ? 'pause' : 'play'}
             variant="ghost"
             icon={playback.is_playing ? <Pause /> : <Play />}
-            _hover={{ opacity: 1, color: 'spotify.green' }}
+            _hover={{ color: 'spotify.green', opacity: 1 }}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"
@@ -63,7 +67,7 @@ const PlayController = ({ fetcher, playback, id }: PlayControllerProps) => {
             aria-label="next"
             variant="ghost"
             icon={<Next />}
-            _hover={{ opacity: 1, color: 'spotify.green' }}
+            _hover={{ color: 'spotify.green', opacity: 1 }}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
             type="submit"

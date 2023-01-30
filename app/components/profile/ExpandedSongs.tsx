@@ -1,3 +1,5 @@
+import { type ReactNode, useRef } from 'react';
+
 import {
   Stack,
   Button,
@@ -9,32 +11,32 @@ import {
   type StackProps,
   Text,
 } from '@chakra-ui/react';
+
 import useDrawerBackButton from '~/hooks/useDrawerBackButton';
-import { useMouseScroll } from '~/hooks/useMouseScroll';
-import { type ReactNode, useRef } from 'react';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useMouseScroll } from '~/hooks/useMouseScroll';
 
 type TilesProps = {
-  title?: string;
-  children: ReactNode;
-  autoScroll?: boolean;
   Filter?: ReactNode;
+  autoScroll?: boolean;
+  children: ReactNode;
+  onClose: () => void;
   scrollButtons?: boolean;
   show: boolean;
-  onClose: () => void;
+  title?: string;
 } & StackProps;
 
 const ExpandedSongs = ({
-  title,
-  children,
-  autoScroll,
   Filter = null,
+  autoScroll,
+  children,
+  onClose,
   scrollButtons,
   show,
-  onClose,
+  title,
   ...ChakraProps
 }: TilesProps) => {
-  const { scrollRef, props } = useMouseScroll('reverse', autoScroll);
+  const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
 

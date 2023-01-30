@@ -1,13 +1,16 @@
-import { Avatar, AvatarGroup, HStack, Text } from '@chakra-ui/react';
-import type { Profile } from '@prisma/client';
 import { useEffect, useState } from 'react';
+
+import { Avatar, AvatarGroup, HStack, Text } from '@chakra-ui/react';
+
+import type { Profile } from '@prisma/client';
 import { useTypedFetcher } from 'remix-typedjson';
+
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import type { loader } from '~/routes/$id/liked-by';
 
 const LikedBy = () => {
   const track = useDrawerTrack();
-  const { load, data } = useTypedFetcher<typeof loader>();
+  const { data, load } = useTypedFetcher<typeof loader>();
   const [users, setUsers] = useState<Profile[]>([]);
 
   useEffect(() => {

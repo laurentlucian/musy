@@ -1,3 +1,6 @@
+import { useFetcher } from '@remix-run/react';
+import { type ChangeEvent, useRef, useState, useEffect } from 'react';
+
 import {
   Drawer,
   DrawerBody,
@@ -9,17 +12,17 @@ import {
   InputRightElement,
   InputGroup,
 } from '@chakra-ui/react';
-import { type ChangeEvent, useRef, useState, useEffect } from 'react';
+
 import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { type Track } from '~/lib/types/types';
-import { useFetcher } from '@remix-run/react';
-import Tiles from '../tiles/Tiles';
+
 import Tile from '../Tile';
+import Tiles from '../tiles/Tiles';
 
 const MobileDrawer = () => {
   const { isOpen } = useMobileDrawer();
-  const { onClose, addFocus, removeFocus } = useMobileDrawerActions();
+  const { addFocus, onClose, removeFocus } = useMobileDrawerActions();
   const inputRef = useRef<HTMLInputElement>(null);
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
@@ -46,17 +49,17 @@ const MobileDrawer = () => {
     if (fetcher.data) {
       setTracks(
         fetcher.data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
-          uri: track.uri,
-          trackId: track.id,
-          image: track.album.images[0].url,
-          albumUri: track.album.uri,
           albumName: track.album.name,
-          name: track.name,
+          albumUri: track.album.uri,
           artist: track.album.artists[0].name,
           artistUri: track.artists[0].uri,
           explicit: track.explicit,
-          preview_url: track.preview_url,
+          image: track.album.images[0].url,
           link: track.external_urls.spotify,
+          name: track.name,
+          preview_url: track.preview_url,
+          trackId: track.id,
+          uri: track.uri,
         })),
       );
     }

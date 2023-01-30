@@ -63,16 +63,16 @@ export const msToString = (ms: number) => {
 };
 
 export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
-  id: track.id,
-  uri: track.uri,
-  name: track.name,
-  image: track.album.images[0].url,
   albumName: track.album.name,
   albumUri: track.album.uri,
   artist: track.artists[0].name,
   artistUri: track.artists[0].uri,
-  explicit: track.explicit,
-  preview_url: track.preview_url,
-  link: track.external_urls.spotify,
   duration: track.duration_ms,
+  explicit: track.explicit,
+  id: track.id,
+  image: track.album.images[0].url,
+  link: track.external_urls.spotify,
+  name: track.name,
+  preview_url: track.preview_url,
+  uri: track.uri,
 });

@@ -1,14 +1,16 @@
-import type { SpotifyPlaylist } from '~/lib/types/spotify';
+import { forwardRef } from 'react';
+
 import { Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
-import { forwardRef } from 'react';
+
+import type { SpotifyPlaylist } from '~/lib/types/spotify';
 
 type PlaylistCardProps = SpotifyPlaylist & {
   // will show header (profile above PlaylistCard) if createdAt is defined
 } & ChakraProps;
 
 const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
-  ({ uri, image, playlistUri, name, description, ...props }, ref) => {
+  ({ description, image, name, playlistUri, uri, ...props }, ref) => {
     const PlaylistTitle = (
       <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
         {name}

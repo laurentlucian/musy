@@ -1,12 +1,14 @@
-import { typedjson, useTypedFetcher, useTypedLoaderData } from 'remix-typedjson';
-import { spotifyApi } from '~/services/spotify.server';
 import type { LoaderArgs } from '@remix-run/node';
-import Tiles from '~/components/tiles/Tiles';
-import invariant from 'tiny-invariant';
-import Tile from '~/components/Tile';
-import useSessionUser from '~/hooks/useSessionUser';
 import { useParams, useSubmit } from '@remix-run/react';
+
+import { typedjson, useTypedFetcher, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
+
+import Tile from '~/components/Tile';
+import Tiles from '~/components/tiles/Tiles';
+import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
+import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
@@ -44,7 +46,7 @@ const Search = () => {
   );
 };
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const { id } = params;
   invariant(id, 'Missing param Id');
 

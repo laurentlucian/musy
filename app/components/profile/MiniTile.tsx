@@ -1,45 +1,49 @@
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
-import { useDrawerActions } from '~/hooks/useDrawer';
-import type { Profile } from '@prisma/client';
-import type { Track } from '~/lib/types/types';
 import { Link } from '@remix-run/react';
+
+import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+
+import type { Profile } from '@prisma/client';
+
+import { useDrawerActions } from '~/hooks/useDrawer';
+import type { Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
+
 import Tooltip from '../Tooltip';
 
 type MiniTileProps = Track & {
+  createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
-  createdAt?: Date;
 };
 
 const MiniTile = ({
-  trackId,
-  uri,
-  image,
-  albumUri,
   albumName,
-  name,
+  albumUri,
   artist,
   artistUri,
-  explicit,
-  preview_url,
-  link,
   createdAt,
   createdBy,
+  explicit,
+  image,
+  link,
+  name,
+  preview_url,
+  trackId,
+  uri,
 }: MiniTileProps) => {
   const { onOpen } = useDrawerActions();
   const item: Track = {
-    uri,
-    trackId,
-    image,
-    albumUri,
     albumName,
-    name,
+    albumUri,
     artist,
     artistUri,
     explicit,
-    preview_url,
+    image,
     link,
+    name,
+    preview_url,
+    trackId,
+    uri,
   };
   return (
     <Stack flex="0 0 100px">

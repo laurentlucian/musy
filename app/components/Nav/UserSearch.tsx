@@ -1,3 +1,10 @@
+import { Form, Outlet, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+import type { ChangeEvent } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
+
+import { SearchIcon } from '@chakra-ui/icons';
 import {
   Flex,
   IconButton,
@@ -7,13 +14,8 @@ import {
   InputRightElement,
   Spinner,
 } from '@chakra-ui/react';
-import { Form, Outlet, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+
 import { CloseSquare } from 'iconsax-react';
-import type { ChangeEvent } from 'react';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { SearchIcon } from '@chakra-ui/icons';
 
 const UserSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();

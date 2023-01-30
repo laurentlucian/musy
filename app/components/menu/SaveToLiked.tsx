@@ -1,17 +1,21 @@
-import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { useLocation } from '@remix-run/react';
+
+import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
+
 import { useTypedFetcher } from 'remix-typedjson';
-import LikeIcon from '~/lib/icon/Like';
+
 import useSessionUser from '~/hooks/useSessionUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
+import LikeIcon from '~/lib/icon/Like';
+
 import Tooltip from '../Tooltip';
 
 type SaveToLikedProps = {
-  trackId: string;
   iconOnly?: boolean;
+  trackId: string;
 };
 
-const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
+const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
   const currentUser = useSessionUser();
   const { isSaved, toggleSave } = useUserLibrary(trackId);
   const fetcher = useTypedFetcher<string>();
@@ -24,7 +28,7 @@ const SaveToLiked = ({ trackId, iconOnly }: SaveToLikedProps) => {
 
     const action = userId ? `/${userId}/save` : '/auth/spotify?returnTo=' + pathname + search;
 
-    fetcher.submit({ trackId, state: `${isSaved}` }, { replace: true, method: 'post', action });
+    fetcher.submit({ state: `${isSaved}`, trackId }, { action, method: 'post', replace: true });
   };
 
   if (iconOnly)

@@ -1,13 +1,15 @@
 import type { ActionArgs, LoaderFunction } from '@remix-run/node';
-import { spotifyApi } from '~/services/spotify.server';
-import { createTrackModel } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
-import { typedjson } from 'remix-typedjson';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
+
+import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-export const action = async ({ request, params }: ActionArgs) => {
+import { createTrackModel } from '~/lib/utils';
+import { prisma } from '~/services/db.server';
+import { spotifyApi } from '~/services/spotify.server';
+
+export const action = async ({ params, request }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
   // const { spotify } = await spotifyApi(id);
@@ -29,8 +31,8 @@ export const action = async ({ request, params }: ActionArgs) => {
 
   try {
     await prisma.settings.update({
-      where: { userId: id },
       data,
+      where: { userId: id },
     });
   } catch (error) {
     console.error(error);

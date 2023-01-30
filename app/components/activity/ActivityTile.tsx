@@ -1,3 +1,5 @@
+import { Link } from '@remix-run/react';
+
 import {
   HStack,
   Image,
@@ -9,15 +11,17 @@ import {
   Avatar,
   Flex,
 } from '@chakra-ui/react';
-import type { Activity, Track } from '~/lib/types/types';
-import { useDrawerActions } from '~/hooks/useDrawer';
+
 import { Heart, Play, Send2 } from 'iconsax-react';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import PlayedBy from './PlayedBy';
-import { Link } from '@remix-run/react';
-import { timeSince } from '~/lib/utils';
+
+import { useDrawerActions } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
+import type { Activity, Track } from '~/lib/types/types';
+import { timeSince } from '~/lib/utils';
+
+import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from '../Tooltip';
+import PlayedBy from './PlayedBy';
 
 interface ActivityProps {
   activity: Activity;
@@ -127,18 +131,18 @@ const ActivityTile = ({ activity }: ActivityProps) => {
   const { onOpen } = useDrawerActions();
 
   const item: Track = {
-    uri: activity.track.uri,
-    trackId: activity.trackId ?? '',
-    image: activity.track.image,
-    albumUri: activity.track.albumUri,
     albumName: activity.track.albumName,
-    name: activity.track.name,
+    albumUri: activity.track.albumUri,
     artist: activity.track.artist,
     artistUri: activity.track.artistUri,
     explicit: activity.track.explicit,
-    userId: activity.user?.userId,
-    preview_url: '',
+    image: activity.track.image,
     link: activity.track.link,
+    name: activity.track.name,
+    preview_url: '',
+    trackId: activity.trackId ?? '',
+    uri: activity.track.uri,
+    userId: activity.user?.userId,
   };
 
   const liked = (activity.track.liked ?? []).filter(({ user }) => {

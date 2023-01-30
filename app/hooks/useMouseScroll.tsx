@@ -1,5 +1,6 @@
-import { useInterval } from '@chakra-ui/react';
 import { useRef, useEffect, useCallback, useState } from 'react';
+
+import { useInterval } from '@chakra-ui/react';
 
 type scrollBehavior = 'natural' | 'reverse';
 export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => {
@@ -25,9 +26,9 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       if ('scrollBehavior' in Element.prototype) {
         // Use 'smooth' scrolling if supported
         el.scrollTo({
+          behavior: 'smooth',
           left: el.scrollLeft + 1,
           top: el.scrollTop + 1,
-          behavior: 'smooth',
         });
       } else {
         // Fall back to default scrolling behavior if 'smooth' is not supported
@@ -40,8 +41,8 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
         if ('scrollBehavior' in Element.prototype) {
           el.scrollTo({
-            left: 0,
             behavior: 'smooth',
+            left: 0,
           });
         } else {
           el.scrollTo({
@@ -52,8 +53,8 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
         if ('scrollBehavior' in Element.prototype) {
           el.scrollTo({
-            top: 0,
             behavior: 'smooth',
+            top: 0,
           });
         } else {
           el.scrollTo({
@@ -148,12 +149,12 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
 
   const props = {
     onMouseDown: handleDragStart,
+    onMouseLeave: handleDragEnd,
     onMouseMove: handleDragMove,
     onMouseUp: handleDragEnd,
-    onMouseLeave: handleDragEnd,
-    onTouchStart: handleTouchStart,
     onTouchEnd: handleTouchEnd,
+    onTouchStart: handleTouchStart,
   };
 
-  return { props, scrollRef, clickStartX, scrollStartX, isDragging };
+  return { clickStartX, isDragging, props, scrollRef, scrollStartX };
 };

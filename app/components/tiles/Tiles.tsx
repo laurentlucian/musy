@@ -1,28 +1,31 @@
 import type { ReactNode } from 'react';
+
 import type { StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
+
 import { useMouseScroll } from '~/hooks/useMouseScroll';
+
 import ScrollButtons from './ScrollButtons';
 
 type TilesProps = {
-  title?: string;
-  children: ReactNode;
-  autoScroll?: boolean;
   Filter?: ReactNode;
+  autoScroll?: boolean;
+  children: ReactNode;
   scrollButtons?: boolean;
   setShow?: React.Dispatch<React.SetStateAction<boolean>>;
+  title?: string;
 } & StackProps;
 
 const Tiles = ({
-  title,
-  children,
-  autoScroll,
   Filter = null,
+  autoScroll,
+  children,
   scrollButtons,
   setShow,
+  title,
   ...ChakraProps
 }: TilesProps) => {
-  const { scrollRef, props } = useMouseScroll('reverse', autoScroll);
+  const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
   const onClick = () => {
     if (setShow) setShow(true);
   };

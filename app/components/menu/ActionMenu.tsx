@@ -1,13 +1,17 @@
+import { useNavigate, useParams } from '@remix-run/react';
+import { useState } from 'react';
+
 import { type ChakraProps, type MenuProps } from '@chakra-ui/react';
 import { Portal } from '@chakra-ui/react';
 import { Icon } from '@chakra-ui/react';
 import { IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
-import { useNavigate, useParams } from '@remix-run/react';
+
 import { ArrowLeft2, ArrowRight2, DocumentText, More, Send2 } from 'iconsax-react';
-import { useState } from 'react';
+
 import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
+
 import AddQueue from './AddQueue';
 import SaveToLiked from './SaveToLiked';
 
@@ -84,7 +88,7 @@ const ActionMenu = ({ track: { trackId, userId }, ...menuProps }: ActionMenuConf
         icon={<More />}
         boxShadow="none"
         _active={{ boxShadow: 'none', opacity: 1 }}
-        _hover={{ boxShadow: 'none', opacity: 1, color: 'spotify.green' }}
+        _hover={{ boxShadow: 'none', color: 'spotify.green', opacity: 1 }}
         opacity={0.5}
       />
       <Portal>

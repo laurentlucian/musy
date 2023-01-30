@@ -1,8 +1,9 @@
+import { useEffect, useRef } from 'react';
 import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'react-feather';
+
 import { IconButton, HStack } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import { useEffect, useRef } from 'react';
 
 const ScrollButtons = ({
   scrollRef,
@@ -20,8 +21,8 @@ const ScrollButtons = ({
     if (scrollRef.current) {
       scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
-        left: scrollPosRef.current,
         behavior: 'smooth',
+        left: scrollPosRef.current,
       });
     }
   };
@@ -29,8 +30,8 @@ const ScrollButtons = ({
     if (scrollRef.current) {
       scrollPosRef.current = -scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
-        left: scrollPosRef.current,
         behavior: 'smooth',
+        left: scrollPosRef.current,
       });
     }
   };
@@ -41,8 +42,8 @@ const ScrollButtons = ({
       if (scrollPosRef.current <= 0) scrollPosRef.current = 0;
       else scrollPosRef.current -= scrollRef.current.clientWidth + offset;
       scrollRef.current.scrollTo({
-        left: scrollPosRef.current,
         behavior: 'smooth',
+        left: scrollPosRef.current,
       });
     }
 
@@ -59,8 +60,8 @@ const ScrollButtons = ({
         scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       else scrollPosRef.current += scrollRef.current.clientWidth + offset;
       scrollRef.current.scrollTo({
-        left: scrollPosRef.current,
         behavior: 'smooth',
+        left: scrollPosRef.current,
       });
     }
 
@@ -92,7 +93,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ChevronsLeft size="18px" />}
           aria-label="to start"
-          _hover={{ opacity: 1, color: 'spotify.green' }}
+          _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -102,7 +103,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ChevronLeft size="18px" />}
           aria-label="previous page"
-          _hover={{ opacity: 1, color: 'spotify.green' }}
+          _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -114,7 +115,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ChevronRight size="18px" />}
           aria-label="next page"
-          _hover={{ opacity: 1, color: 'spotify.green' }}
+          _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />
@@ -124,7 +125,7 @@ const ScrollButtons = ({
           variant="ghost"
           icon={<ChevronsRight size="18px" />}
           aria-label="to end"
-          _hover={{ opacity: 1, color: 'spotify.green' }}
+          _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
           _active={{ boxShadow: 'none' }}
         />

@@ -1,13 +1,17 @@
-import { Image, Stack, Text, Button } from '@chakra-ui/react';
-import type { action } from '~/routes/$id/removeRecommend';
-import explicitImage from '~/assets/explicit-solid.svg';
-import type { ChakraProps } from '@chakra-ui/react';
-import { useTypedFetcher } from 'remix-typedjson';
-import { useClickDrag } from '~/hooks/useDrawer';
-import type { Track } from '~/lib/types/types';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import useIsMobile from '~/hooks/useIsMobile';
 import { useParams } from '@remix-run/react';
+
+import { Image, Stack, Text, Button } from '@chakra-ui/react';
+import type { ChakraProps } from '@chakra-ui/react';
+
+import { useTypedFetcher } from 'remix-typedjson';
+
+import explicitImage from '~/assets/explicit-solid.svg';
+import { useClickDrag } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
+import type { Track } from '~/lib/types/types';
+import type { action } from '~/routes/$id/removeRecommend';
+
+import SpotifyLogo from '../icons/SpotifyLogo';
 
 type CardProps = Track & {
   // will show header (profile above Card) if createdAt is defined
@@ -19,42 +23,42 @@ type CardProps = Track & {
 } & ChakraProps;
 
 const Card = ({
-  uri,
-  trackId,
-  image,
-  albumUri,
   albumName,
-  name,
+  albumUri,
   artist,
   artistUri,
   explicit,
-  preview_url,
+  image,
   link,
+  name,
+  preview_url,
   recommend,
+  trackId,
+  uri,
 }: // createdAt,
 // createdBy,
 // playlist,
 CardProps) => {
   const isSmallScreen = useIsMobile();
-  const { onMouseDown, onMouseMove, onClick } = useClickDrag();
+  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const track: Track = {
-    uri: uri,
-    trackId,
-    image,
-    albumUri,
     albumName,
-    name,
+    albumUri,
     artist,
     artistUri,
     explicit,
-    preview_url,
+    image,
     link,
+    name,
+    preview_url,
+    trackId,
+    uri: uri,
   };
   const fetcher = useTypedFetcher<typeof action>();
   const { id } = useParams();
   const removeFromRecommended = () => {
     const action = `/${id}/removeRecommend`;
-    fetcher.submit({ trackId }, { replace: true, method: 'post', action });
+    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
   };
   const SongTitle = (
     <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">

@@ -1,12 +1,14 @@
-import { Queue } from '~/services/scheduler/queue.server';
-import { spotifyApi } from '~/services/spotify.server';
+import invariant from 'tiny-invariant';
+
 import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
-import invariant from 'tiny-invariant';
+import { Queue } from '~/services/scheduler/queue.server';
+import { spotifyApi } from '~/services/spotify.server';
+
 import { addPreviewUrlAndLink } from './user';
 
-export const libraryQ = Queue<{ userId: string; pages: number }>('user-library', async (job) => {
-  const { userId, pages } = job.data;
+export const libraryQ = Queue<{ pages: number; userId: string }>('user-library', async (job) => {
+  const { pages, userId } = job.data;
   const limit = 50;
   const { spotify } = await spotifyApi(userId);
   invariant(spotify, 'libraryQ -> spotify api not found');
@@ -18,22 +20,22 @@ export const libraryQ = Queue<{ userId: string; pages: number }>('user-library',
       body: { items: liked },
     } = await spotify.getMySavedTracks({ limit, offset: i * limit });
     console.log('libraryQ -> adding page', i);
-    for (const { track, added_at } of liked) {
+    for (const { added_at, track } of liked) {
       const trackDb = createTrackModel(track);
       const data = {
-        likedAt: new Date(added_at),
-        name: track.name,
-        uri: track.uri,
+        action: 'liked',
         albumName: track.album.name,
         albumUri: track.album.uri,
         artist: track.artists[0].name,
         artistUri: track.artists[0].uri,
-        image: track.album.images[0].url,
-        explicit: track.explicit,
-        preview_url: track.preview_url,
-        link: track.external_urls.spotify,
         duration: track.duration_ms,
-        action: 'liked',
+        explicit: track.explicit,
+        image: track.album.images[0].url,
+        likedAt: new Date(added_at),
+        link: track.external_urls.spotify,
+        name: track.name,
+        preview_url: track.preview_url,
+        uri: track.uri,
 
         user: {
           connect: {
@@ -43,10 +45,15 @@ export const libraryQ = Queue<{ userId: string; pages: number }>('user-library',
       };
 
       await prisma.likedSongs.upsert({
-        where: {
-          trackId_userId: {
-            trackId: track.id,
-            userId: userId,
+        create: {
+          ...data,
+          track: {
+            connectOrCreate: {
+              create: trackDb,
+              where: {
+                id: track.id,
+              },
+            },
           },
         },
         update: {
@@ -60,15 +67,10 @@ export const libraryQ = Queue<{ userId: string; pages: number }>('user-library',
             },
           },
         },
-        create: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
+        where: {
+          trackId_userId: {
+            trackId: track.id,
+            userId: userId,
           },
         },
       });

@@ -1,9 +1,13 @@
-import { PauseCircle, PlayCircle } from 'iconsax-react';
-import AudioVisualizer from '../icons/AudioVisualizer';
-import { useDrawerActions } from '~/hooks/useDrawer';
 import { useRef, useEffect, useState } from 'react';
-import SpotifyLogo from '../icons/SpotifyLogo';
+
 import { Button } from '@chakra-ui/react';
+
+import { PauseCircle, PlayCircle } from 'iconsax-react';
+
+import { useDrawerActions } from '~/hooks/useDrawer';
+
+import AudioVisualizer from '../icons/AudioVisualizer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 
 const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
   const [playing, setPlaying] = useState(false);

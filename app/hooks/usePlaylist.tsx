@@ -1,5 +1,6 @@
 import { useFetcher, useParams } from '@remix-run/react';
 import { useState, useEffect, useRef } from 'react';
+
 import useIsVisible from '~/hooks/useIsVisible';
 
 export function usePlaylists(initialPlaylists: SpotifyApi.PlaylistObjectSimplified[]) {
@@ -33,5 +34,5 @@ export function usePlaylists(initialPlaylists: SpotifyApi.PlaylistObjectSimplifi
     setPlaylists(initialPlaylists);
   }, [initialPlaylists]);
 
-  return { playlists, show, setShow, setRef };
+  return { playlists, setRef, setShow, show };
 }

@@ -1,12 +1,15 @@
-import { Stack } from '@chakra-ui/react';
-import { useRevalidator } from '@remix-run/react';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import type { LoaderArgs } from '@remix-run/node';
-import { authenticator, getAllUsers } from '~/services/auth.server';
-import PrismaMiniPlayer from '~/components/player/PrismaMiniPlayer';
+import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
-import useVisibilityChange from '~/hooks/useVisibilityChange';
+
+import { Stack } from '@chakra-ui/react';
+
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+
+import PrismaMiniPlayer from '~/components/player/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
+import useVisibilityChange from '~/hooks/useVisibilityChange';
+import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Friends = () => {
   const { users } = useTypedLoaderData<typeof loader>();
@@ -37,7 +40,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const users = await getAllUsers(!!currentUser);
 
   return typedjson(
-    { users, now: Date.now() },
+    { now: Date.now(), users },
     {
       headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
     },

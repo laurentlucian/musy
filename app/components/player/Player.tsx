@@ -1,3 +1,6 @@
+import { useFetcher, useRevalidator } from '@remix-run/react';
+import { useEffect, useRef, useState } from 'react';
+
 import {
   Box,
   Avatar,
@@ -14,31 +17,32 @@ import {
   Collapse,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
-import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
-import { useFetcher, useRevalidator } from '@remix-run/react';
-import explicitImage from '~/assets/explicit-solid.svg';
-import AudioVisualizer from '../icons/AudioVisualizer';
-import PlayingFromTooltip from './PlayingFromTooltip';
-import useSessionUser from '~/hooks/useSessionUser';
-import { useEffect, useRef, useState } from 'react';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import type { Track } from '~/lib/types/types';
-import PlayController from './PlayController';
-import useIsMobile from '~/hooks/useIsMobile';
+
 import type { Party } from '@prisma/client';
-import PlayerBar from './PlayerBar';
+import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
+
+import explicitImage from '~/assets/explicit-solid.svg';
+import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
+import type { Track } from '~/lib/types/types';
+import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
+
+import AudioVisualizer from '../icons/AudioVisualizer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from './../Tooltip';
+import PlayController from './PlayController';
+import PlayerBar from './PlayerBar';
+import PlayingFromTooltip from './PlayingFromTooltip';
 
 type PlayerProps = {
   id: string;
+  item: SpotifyApi.TrackObjectFull;
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
-  item: SpotifyApi.TrackObjectFull;
 };
 
-const Player = ({ id, party, playback, item }: PlayerProps) => {
+const Player = ({ id, item, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
@@ -52,7 +56,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
-  const { onMouseDown, onMouseMove, onClick } = useClickDrag();
+  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue('music.50', '#10101066');
@@ -67,17 +71,17 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const track: Track = {
-    uri: item.uri,
-    trackId: item.id,
-    image: item.album?.images[0].url,
-    albumUri: item.album.uri,
     albumName: item.album.name,
-    name: item.name,
+    albumUri: item.album.uri,
     artist: item.artists[0].name,
     artistUri: item.artists[0].uri,
     explicit: item.explicit,
-    preview_url: item.preview_url,
+    image: item.album?.images[0].url,
     link: item.external_urls.spotify,
+    name: item.name,
+    preview_url: item.preview_url,
+    trackId: item.id,
+    uri: item.uri,
   };
 
   const handleMusicControls = () => {
@@ -441,7 +445,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
               setBlur(true);
             }}
             aria-label={isOpen ? 'open player' : 'close player'}
-            _hover={{ opacity: 1, color: 'spotify.green' }}
+            _hover={{ color: 'spotify.green', opacity: 1 }}
             opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"

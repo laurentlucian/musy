@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import {
   Flex,
   HStack,
@@ -10,25 +12,27 @@ import {
   Collapse,
   Box,
 } from '@chakra-ui/react';
+
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
-import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
+
 import explicitImage from '~/assets/explicit-solid.svg';
-import AudioVisualizer from '../icons/AudioVisualizer';
-import { useEffect, useRef, useState } from 'react';
-import useSessionUser from '~/hooks/useSessionUser';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import type { Track } from '~/lib/types/types';
+import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
+import type { Track } from '~/lib/types/types';
+
+import AudioVisualizer from '../icons/AudioVisualizer';
+import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from './../Tooltip';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
-  username: string;
   // profileSong: (Settings & { profileSong: Track | null }) | null;
   profileSong: any;
+  username: string;
 };
 
-const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
   const currentUser = useSessionUser();
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
@@ -50,17 +54,17 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const track: Track = {
-    uri: song.uri,
-    trackId: song.id,
-    image,
-    albumUri: profileSong ? profileSong.albumUri : song.album.uri,
     albumName: profileSong ? profileSong.albumName : song.album.name,
-    name,
+    albumUri: profileSong ? profileSong.albumUri : song.album.uri,
     artist,
     artistUri: profileSong ? profileSong.artistUri : song.artists[0].uri,
     explicit: song.explicit,
-    preview_url: song.preview_url,
+    image,
     link: profileSong ? profileSong.link : song.external_urls.spotify,
+    name,
+    preview_url: song.preview_url,
+    trackId: song.id,
+    uri: song.uri,
   };
 
   const isSmallScreen = useIsMobile();
@@ -272,7 +276,7 @@ const PlayerPaused = ({ item, username, profileSong }: PlayerPausedProps) => {
               setBlur(true);
             }}
             aria-label={!isOpen ? 'open player' : 'close player'}
-            _hover={{ opacity: 1, color: 'spotify.green' }}
+            _hover={{ color: 'spotify.green', opacity: 1 }}
             opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"

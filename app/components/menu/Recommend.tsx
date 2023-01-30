@@ -1,19 +1,23 @@
 import { useLocation, useParams, useSubmit } from '@remix-run/react';
-import useSessionUser from '~/hooks/useSessionUser';
-import { useDrawerTrack } from '~/hooks/useDrawer';
-import { useTypedFetcher } from 'remix-typedjson';
+
 import { Button, Image } from '@chakra-ui/react';
-import type { action } from '~/routes/$id/add';
+
 import type { Profile } from '@prisma/client';
+import { useTypedFetcher } from 'remix-typedjson';
+
+import { useDrawerTrack } from '~/hooks/useDrawer';
+import useSessionUser from '~/hooks/useSessionUser';
+import type { action } from '~/routes/$id/add';
+
 import Waver from '../icons/Waver';
 
 type RecommendProps = {
-  userId?: string;
-  user: Profile | null;
   comment?: string;
+  user: Profile | null;
+  userId?: string;
 };
 
-const Recommend = ({ userId, user, comment }: RecommendProps) => {
+const Recommend = ({ comment, user, userId }: RecommendProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
@@ -26,9 +30,9 @@ const Recommend = ({ userId, user, comment }: RecommendProps) => {
       // @todo figure out a better way to require authentication on click;
       // after authentication redirect, add to queue isn't successful. user needs to click again
       return submit(null, {
-        replace: true,
-        method: 'post',
         action: '/auth/spotify?returnTo=' + pathname + search,
+        method: 'post',
+        replace: true,
       });
     }
 
@@ -39,25 +43,25 @@ const Recommend = ({ userId, user, comment }: RecommendProps) => {
     const sendToUserId = id;
 
     const data = {
-      comment: comment ?? ``,
-      trackId: track?.trackId ?? '',
-      uri: track?.uri ?? '',
-      name: track?.name ?? '',
-      image: track?.image ?? '',
-      albumUri: track?.albumUri ?? '',
+      action: 'recommend',
       albumName: track?.albumName ?? '',
+      albumUri: track?.albumUri ?? '',
       artist: track?.artist ?? '',
       artistUri: track?.artistUri ?? '',
+      comment: comment ?? ``,
       explicit: track?.explicit ? 'true' : '',
-      preview_url: track?.preview_url ?? '',
-      link: track?.link ?? '',
-
       fromId: fromUserId ?? '',
+      image: track?.image ?? '',
+      link: track?.link ?? '',
+      name: track?.name ?? '',
+      preview_url: track?.preview_url ?? '',
+
       toId: sendToUserId ?? '',
-      action: 'recommend',
+      trackId: track?.trackId ?? '',
+      uri: track?.uri ?? '',
     };
 
-    fetcher.submit(data, { replace: true, method: 'post', action });
+    fetcher.submit(data, { action, method: 'post', replace: true });
   };
   const isAdding = fetcher.submission?.formData.get('trackId') === track?.trackId;
 

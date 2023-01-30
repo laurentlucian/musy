@@ -1,16 +1,19 @@
+import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { Stack } from '@chakra-ui/react';
-import TopTracks from '~/components/tiles/TopTracks';
-import RecentTracks from '~/components/tiles/RecentTracks';
+
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
+
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
+import RecentTracks from '~/components/tiles/RecentTracks';
 import Recommended from '~/components/tiles/Recommended';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import type { LoaderArgs } from '@remix-run/server-runtime';
-import { spotifyApi } from '~/services/spotify.server';
-import invariant from 'tiny-invariant';
+import TopTracks from '~/components/tiles/TopTracks';
 import useSessionUser from '~/hooks/useSessionUser';
-import { prisma } from '~/services/db.server';
 import { authenticator } from '~/services/auth.server';
+import { prisma } from '~/services/db.server';
+import { spotifyApi } from '~/services/spotify.server';
 
 const ProfileMain = ({
   main,
@@ -34,7 +37,7 @@ const ProfileMain = ({
 };
 
 const ProfileOutlet = () => {
-  const { main, user, recommended } = useTypedLoaderData<typeof loader>();
+  const { main, recommended, user } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === user.userId;
 
@@ -46,7 +49,7 @@ const ProfileOutlet = () => {
   );
 };
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const session = await authenticator.isAuthenticated(request);
@@ -61,8 +64,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     throw new Response('Failed to load Spotify [2]', { status: 500 });
   }
   const user = await prisma.profile.findUnique({
+    include: { ai: true, settings: true },
     where: { userId: id },
-    include: { settings: true, ai: true },
   });
 
   if (!user || (!session && user.settings?.isPrivate))
@@ -76,17 +79,17 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   const [recommended, ...main] = await Promise.all([
     prisma.recommendedSongs.findMany({
-      where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
-      orderBy: { createdAt: 'desc' },
       include: {
         owner: true,
         sender: true,
         track: {
           include: {
-            recommended: { include: { sender: true, owner: true } },
+            recommended: { include: { owner: true, sender: true } },
           },
         },
       },
+      orderBy: { createdAt: 'desc' },
+      where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
     }),
     spotify
       .getMyRecentlyPlayedTracks({ limit: 50 })
@@ -97,7 +100,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
       .then((data) => data.body.items)
       .catch(() => []),
     spotify
-      .getMyTopTracks({ time_range: topFilter, limit: 50 })
+      .getMyTopTracks({ limit: 50, time_range: topFilter })
       .then((data) => data.body.items)
       .catch(() => []),
     spotify

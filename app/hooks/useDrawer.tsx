@@ -1,41 +1,44 @@
-import type { Track } from '~/lib/types/types';
-import { shallow } from 'zustand/shallow';
-import { create } from 'zustand';
 import { useState } from 'react';
+
+import { create } from 'zustand';
+import { shallow } from 'zustand/shallow';
+
+import type { Track } from '~/lib/types/types';
+
 interface DrawerStateConfig {
-  track: Track | null;
   actions: {
     onClose: () => void;
     onOpen: (by: Track) => void;
     setIsPlaying: (by: boolean) => void;
   };
   isPlaying?: boolean;
+  track: Track | null;
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
-  track: null,
   actions: {
-    onClose: () => set({ track: null, isPlaying: false }),
+    onClose: () => set({ isPlaying: false, track: null }),
     onOpen: (by) =>
       set({
         track: {
-          uri: by.uri,
-          trackId: by.trackId,
-          image: by.image,
-          albumUri: by.albumUri,
           albumName: by.albumName,
-          name: by.name,
+          albumUri: by.albumUri,
           artist: by.artist,
           artistUri: by.artistUri,
           explicit: by.explicit,
-          userId: by.userId,
-          preview_url: by.preview_url,
+          image: by.image,
           link: by.link,
+          name: by.name,
+          preview_url: by.preview_url,
+          trackId: by.trackId,
+          uri: by.uri,
+          userId: by.userId,
         },
       }),
     setIsPlaying: (by) => set({ isPlaying: by }),
   },
   isPlaying: false,
+  track: null,
 }));
 
 export const useDrawerTrack = () =>
@@ -81,8 +84,8 @@ export const useClickDrag = () => {
   };
 
   return {
+    onClick: handleClick,
     onMouseDown: handleMouseDown,
     onMouseMove: handleMouseMove,
-    onClick: handleClick,
   };
 };

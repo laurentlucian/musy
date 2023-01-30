@@ -1,6 +1,7 @@
-import { Text, Select, useColorModeValue, useColorMode } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { useEffect, useRef, useState } from 'react';
+
+import { Text, Select, useColorModeValue, useColorMode } from '@chakra-ui/react';
 
 const TimeRangePicker = () => {
   const color = useColorModeValue('black', 'white');

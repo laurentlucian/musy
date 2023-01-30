@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
-import ExpandedSongs from '../profile/ExpandedSongs';
+
 import { Stack } from '@chakra-ui/react';
-import Tiles from './Tiles';
+
+import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import Card from './Card';
+import Tiles from './Tiles';
 
 const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   const [show, setShow] = useState(false);
@@ -17,7 +19,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {recent.map(({ track, played_at }) => {
+        {recent.map(({ played_at, track }) => {
           return (
             <Tile
               key={played_at}
@@ -37,7 +39,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
         })}
       </Tiles>
       <ExpandedSongs title={title} show={show} onClose={onClose}>
-        {recent.map(({ track, played_at }) => {
+        {recent.map(({ played_at, track }) => {
           return (
             <Card
               key={played_at}

@@ -1,8 +1,10 @@
-import { Heading, Text } from '@chakra-ui/react';
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useCatch } from '@remix-run/react';
+
+import { Heading, Text } from '@chakra-ui/react';
+
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { ownerQ } from '~/services/scheduler/jobs/party';
@@ -12,7 +14,7 @@ export const loader: LoaderFunction = ({ params }) => {
   return redirect('/' + params.id);
 };
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action: ActionFunction = async ({ params, request }) => {
   // - create party relationship
   // - play owner's currentTrack
   console.log('Joining party...');
@@ -66,8 +68,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     const play = async () => {
       try {
         await listener_spotify.play({
-          uris: [currentTrack],
           position_ms: progressMs,
+          uris: [currentTrack],
         });
         console.log('Party join -> played song at same time');
       } catch {
@@ -114,25 +116,25 @@ export const action: ActionFunction = async ({ request, params }) => {
         userId,
       },
       {
+        jobId: ownerId,
         repeat: {
           every: 10000,
         },
-        jobId: ownerId,
       },
     );
 
     await prisma.user.update({
-      where: { id: ownerId },
       data: {
         party: {
           create: {
-            userId,
-            userName: session.user.name,
-            userImage: session.user.image,
             currentTrack,
+            userId,
+            userImage: session.user.image,
+            userName: session.user.name,
           },
         },
       },
+      where: { id: ownerId },
     });
     console.log('Party join -> added ownerQ update_track and created party in db');
     return redirect('/' + ownerId);

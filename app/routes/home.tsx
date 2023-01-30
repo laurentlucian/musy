@@ -1,12 +1,15 @@
-import { Stack } from '@chakra-ui/react';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
-import { prisma } from '~/services/db.server';
-import type { Activity } from '~/lib/types/types';
+
+import { Stack } from '@chakra-ui/react';
+
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+
+import ActivityTile from '~/components/activity/ActivityTile';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
-import ActivityTile from '~/components/activity/ActivityTile';
+import type { Activity } from '~/lib/types/types';
+import { prisma } from '~/services/db.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
@@ -33,30 +36,30 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   const liked = prisma.likedSongs
     .findMany({
-      take: 20,
-      orderBy: { likedAt: 'desc' },
       include: {
-        user: true,
         track: {
           include: {
-            liked: { select: { user: true }, orderBy: { likedAt: 'asc' } },
+            liked: { orderBy: { likedAt: 'asc' }, select: { user: true } },
             recent: { select: { user: true } },
           },
         },
+        user: true,
       },
+      orderBy: { likedAt: 'desc' },
+      take: 20,
     })
     .then((data) => data.map((data) => ({ ...data, createdAt: data.likedAt })));
 
   const queued = prisma.queue.findMany({
-    take: 20,
-    orderBy: { createdAt: 'desc' },
     include: {
-      user: true,
+      owner: { select: { accessToken: false, user: true } },
       track: {
         include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
       },
-      owner: { select: { user: true, accessToken: false } },
+      user: true,
     },
+    orderBy: { createdAt: 'desc' },
+    take: 20,
   });
 
   const songs = await Promise.all([liked, queued]);

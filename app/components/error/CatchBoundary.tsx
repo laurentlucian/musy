@@ -1,5 +1,6 @@
-import { Heading, Text } from '@chakra-ui/react';
 import { useCatch } from '@remix-run/react';
+
+import { Heading, Text } from '@chakra-ui/react';
 
 export const CatchBoundary = () => {
   let caught = useCatch();

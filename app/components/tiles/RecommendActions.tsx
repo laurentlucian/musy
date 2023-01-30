@@ -1,3 +1,6 @@
+import { useParams } from '@remix-run/react';
+import { useRef } from 'react';
+
 import {
   Button,
   Drawer,
@@ -9,10 +12,10 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+
 import type { Profile } from '@prisma/client';
-import { useParams } from '@remix-run/react';
-import { useRef } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
+
 import useIsMobile from '~/hooks/useIsMobile';
 import type { action } from '~/routes/$id/removeRecommend';
 
@@ -30,7 +33,7 @@ const RecommendActions = ({
   const btnRef = useRef<any>(null);
   const removeFromRecommended = () => {
     const action = `/${id}/removeRecommend`;
-    fetcher.submit({ trackId }, { replace: true, method: 'post', action });
+    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
   };
   //
   return (

@@ -113,11 +113,11 @@ export type SpotifyPlayerTrack = {
 };
 
 export type SpotifyPlaylist = {
-  uri: string;
-  image: string;
-  playlistUri: string | null;
-  name: string;
   description: string | null;
+  image: string;
+  name: string;
+  playlistUri: string | null;
+  uri: string;
 };
 
 export type WebPlaybackArtist = {

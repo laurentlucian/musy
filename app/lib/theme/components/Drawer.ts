@@ -2,7 +2,7 @@ import { drawerAnatomy as parts } from '@chakra-ui/anatomy';
 import { createMultiStyleConfigHelpers, cssVar, defineStyle } from '@chakra-ui/styled-system';
 import { mode } from '@chakra-ui/theme-tools';
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(parts.keys);
+const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(parts.keys);
 
 const isFunction = (value: any): value is Function => typeof value === 'function';
 
@@ -20,17 +20,17 @@ const baseStyleOverlay = defineStyle((props) => ({
 }));
 
 const baseStyleDialogContainer = defineStyle((props) => ({
-  transition: 'all .2s',
   backdropFilter: 'blur(14px)',
-  display: 'flex',
-  zIndex: 'modal',
-  justifyContent: 'center',
   color: 'white',
+  display: 'flex',
+  justifyContent: 'center',
+  transition: 'all .2s',
+  zIndex: 'modal',
 }));
 
 const desktop = defineStyle({
-  overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
   dialog: { backdropFilter: 'blur(25px)', zIndex: 'modal' },
+  overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
 });
 const nested = defineStyle({
   dialog: { backdropFilter: 'blur(14px)', zIndex: 'modal' },
@@ -44,32 +44,32 @@ const baseStyleDialog = defineStyle((props) => {
 
   return {
     ...(isFullHeight && { height: '100vh' }),
-    zIndex: 'modal',
-    maxH: '100vh',
-    color: 'white',
-    [$bg.variable]: mode('music.900', `music.50`)(props),
-    [$bs.variable]: mode('music.900', `music.50`)(props),
     _dark: {
       [$bg.variable]: mode('music.900', `music.50`)(props),
       [$bs.variable]: mode('music.900', `music.50`)(props),
     },
     bg: $bg.reference,
     boxShadow: 'none',
+    color: 'white',
+    maxH: '100vh',
+    zIndex: 'modal',
+    [$bs.variable]: mode('music.900', `music.50`)(props),
+    [$bg.variable]: mode('music.900', `music.50`)(props),
   };
 });
 
 const body = defineStyle({
-  p: '0',
+  color: 'white',
   flex: '1',
   overflow: 'auto',
-  color: 'white',
+  p: '0',
 });
 
 const baseStyle = definePartsStyle((props) => ({
-  overlay: runIfFn(baseStyleOverlay, props),
-  dialogContainer: runIfFn(baseStyleDialogContainer, props),
-  dialog: runIfFn(baseStyleDialog, props),
   body,
+  dialog: runIfFn(baseStyleDialog, props),
+  dialogContainer: runIfFn(baseStyleDialogContainer, props),
+  overlay: runIfFn(baseStyleOverlay, props),
 }));
 
 export const Drawer = defineMultiStyleConfig({ baseStyle, variants });

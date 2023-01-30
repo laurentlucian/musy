@@ -1,3 +1,5 @@
+import { Link, useTransition } from '@remix-run/react';
+
 import {
   Button,
   Flex,
@@ -9,13 +11,15 @@ import {
   Link as LinkB,
   Box,
 } from '@chakra-ui/react';
+
 import type { Playback, Profile, Track } from '@prisma/client';
+
 import explicitImage from '~/assets/explicit-solid.svg';
-import { Link, useTransition } from '@remix-run/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import type { User } from '~/lib/types/types';
 import useIsMobile from '~/hooks/useIsMobile';
+import type { User } from '~/lib/types/types';
+
+import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
 
@@ -55,17 +59,17 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
 
   const formattedTrack = track
     ? {
-        uri: track.uri,
-        trackId: track.id,
-        name: track.name,
-        explicit: track.explicit,
-        preview_url: '',
-        link: track.link,
-        image: track.image,
-        albumUri: track.albumUri,
         albumName: track.albumName,
+        albumUri: track.albumUri,
         artist: track.artist,
         artistUri: track.artistUri,
+        explicit: track.explicit,
+        image: track.image,
+        link: track.link,
+        name: track.name,
+        preview_url: '',
+        trackId: track.id,
+        uri: track.uri,
         userId: user.userId,
       }
     : null;

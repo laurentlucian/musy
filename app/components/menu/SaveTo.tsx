@@ -1,3 +1,5 @@
+import { useRef, useState, useEffect } from 'react';
+
 import {
   Button,
   useDisclosure,
@@ -8,16 +10,18 @@ import {
   DrawerBody,
   Stack,
 } from '@chakra-ui/react';
+
 import { HeartAdd, ArrowDown2, ArrowRight2 } from 'iconsax-react';
-import { useRef, useState, useEffect } from 'react';
 import { useTypedFetcher } from 'remix-typedjson';
+
 // import useIsMobile from '~/hooks/useIsMobile';
 import useIsVisible from '~/hooks/useIsVisible';
 import type { loader } from '~/routes/$id/playlists';
+
 import PlaylistCard from '../tiles/PlaylistCard';
 
 const SaveTo = ({ currentUserId }: { currentUserId: string | undefined }) => {
-  const fetcher = useTypedFetcher<typeof loader>();;
+  const fetcher = useTypedFetcher<typeof loader>();
   const offsetRef = useRef(0);
   const [setRef, isVisible] = useIsVisible();
   const initialFetch = useRef(false);

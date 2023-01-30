@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import {
   Drawer,
   Image,
@@ -13,10 +15,10 @@ import {
   Text,
   Flex,
 } from '@chakra-ui/react';
-import { usePlaylistDrawerActions, usePlaylistDrawerStore } from '~/hooks/usePlaylistDrawer';
-import useIsMobile from '~/hooks/useIsMobile';
 
-import { useRef } from 'react';
+import useIsMobile from '~/hooks/useIsMobile';
+import { usePlaylistDrawerActions, usePlaylistDrawerStore } from '~/hooks/usePlaylistDrawer';
+
 import PlaylistTracks from './PlaylistTracks';
 
 const PlaylistDrawer = () => {

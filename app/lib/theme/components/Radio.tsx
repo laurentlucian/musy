@@ -1,9 +1,9 @@
 import { Box, useColorModeValue, useRadio } from '@chakra-ui/react';
 
 export const RadioCard = (props: any) => {
-  const color = useColorModeValue( 'music.800','white');
+  const color = useColorModeValue('music.800', 'white');
 
-  const { getInputProps, getCheckboxProps } = useRadio(props);
+  const { getCheckboxProps, getInputProps } = useRadio(props);
 
   const input = getInputProps();
   const checkbox = getCheckboxProps();
@@ -15,8 +15,8 @@ export const RadioCard = (props: any) => {
         {...checkbox}
         cursor="pointer"
         _checked={{
-          textDecor: 'underline',
           opacity: '1',
+          textDecor: 'underline',
         }}
         fontSize={'10px'}
         color={color}

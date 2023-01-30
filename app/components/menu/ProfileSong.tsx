@@ -1,11 +1,14 @@
 import { useLocation, useSubmit } from '@remix-run/react';
-import type { action } from '~/routes/$id/profileSong';
-import useSessionUser from '~/hooks/useSessionUser';
-import { useDrawerTrack } from '~/hooks/useDrawer';
-import { useTypedFetcher } from 'remix-typedjson';
-import type { Profile } from '@prisma/client';
+
 import { Button } from '@chakra-ui/react';
+
+import type { Profile } from '@prisma/client';
 import { Music } from 'iconsax-react';
+import { useTypedFetcher } from 'remix-typedjson';
+
+import { useDrawerTrack } from '~/hooks/useDrawer';
+import useSessionUser from '~/hooks/useSessionUser';
+import type { action } from '~/routes/$id/profileSong';
 
 const ProfileSong = ({ user }: { user: Profile | null }) => {
   const currentUser = useSessionUser();
@@ -17,9 +20,9 @@ const ProfileSong = ({ user }: { user: Profile | null }) => {
   const setAsProfileSong = () => {
     if (!currentUser) {
       return submit(null, {
-        replace: true,
-        method: 'post',
         action: '/auth/spotify?returnTo=' + pathname + search,
+        method: 'post',
+        replace: true,
       });
     }
 
@@ -29,7 +32,7 @@ const ProfileSong = ({ user }: { user: Profile | null }) => {
       trackId: track?.trackId ?? '',
     };
 
-    fetcher.submit(data, { replace: true, method: 'post', action });
+    fetcher.submit(data, { action, method: 'post', replace: true });
   };
 
   return (

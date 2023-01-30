@@ -1,8 +1,19 @@
-import { Heading, Stack, Button } from '@chakra-ui/react';
-import { Link, Outlet, useCatch } from '@remix-run/react';
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
-import { prisma } from '~/services/db.server';
-import { getUserQueue, spotifyApi } from '~/services/spotify.server';
+import { Link, Outlet, useCatch } from '@remix-run/react';
+
+import { Heading, Stack, Button } from '@chakra-ui/react';
+
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
+
+import Player from '~/components/player/Player';
+import ProfileHeader from '~/components/profile/ProfileHeader';
+import Search from '~/components/profile/Search';
+// import PlayerPaused from '~/components/player/PlayerPaused';
+import useIsMobile from '~/hooks/useIsMobile';
+import { lessThanADay } from '~/lib/utils';
+import { msToString } from '~/lib/utils';
+import { askDaVinci } from '~/services/ai.server';
 import {
   authenticator,
   getAllUsers,
@@ -10,19 +21,11 @@ import {
   updateUserImage,
   updateUserName,
 } from '~/services/auth.server';
-import Player from '~/components/player/Player';
-import Search from '~/components/profile/Search';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import invariant from 'tiny-invariant';
-import { askDaVinci } from '~/services/ai.server';
-import { msToString } from '~/lib/utils';
-import { lessThanADay } from '~/lib/utils';
-import ProfileHeader from '~/components/profile/ProfileHeader';
-// import PlayerPaused from '~/components/player/PlayerPaused';
-import useIsMobile from '~/hooks/useIsMobile';
+import { prisma } from '~/services/db.server';
+import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
-  const { user, playback, currentUser, party /*, profileSong*/ } =
+  const { currentUser, party, playback, user /*, profileSong*/ } =
     useTypedLoaderData<typeof loader>();
   const isSmallScreen = useIsMobile();
   return (
@@ -48,14 +51,14 @@ export const meta: MetaFunction = (props) => {
   };
 };
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const session = await authenticator.isAuthenticated(request);
 
   const user = await prisma.profile.findUnique({
+    include: { ai: true, settings: true },
     where: { userId: id },
-    include: { settings: true, ai: true },
   });
 
   if (!user || (!session && user.settings?.isPrivate))
@@ -93,8 +96,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
 
   async function getProfileSong(id: string) {
     const settings = await prisma.settings.findUnique({
-      where: { userId: id },
       include: { profileSong: true },
+      where: { userId: id },
     });
     if (settings) {
       return settings.profileSong;
@@ -106,9 +109,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const [activity, party, { currently_playing: playback, queue }, users, profileSong] =
     await Promise.all([
       prisma.queue.findMany({
-        where: { OR: [{ userId: id }, { ownerId: id }] },
-        include: { user: true, track: true, owner: { select: { user: true, accessToken: false } } },
+        include: { owner: { select: { accessToken: false, user: true } }, track: true, user: true },
         orderBy: { createdAt: 'desc' },
+        where: { OR: [{ userId: id }, { ownerId: id }] },
       }),
       prisma.party.findMany({ where: { ownerId: id } }),
       getUserQueue(id).catch(() => {
@@ -122,8 +125,8 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     ]);
 
   const recentDb = await prisma.recentSongs.findMany({
-    where: { userId: id },
     orderBy: { playedAt: 'desc' },
+    where: { userId: id },
   });
 
   const filteredRecent = recentDb.filter(({ playedAt }) => {
@@ -159,16 +162,16 @@ export const loader = async ({ request, params }: LoaderArgs) => {
     // });
 
     return typedjson({
-      user,
       activity,
-      party,
-      playback,
       currentUser,
       following,
-      queue,
-      profileSong,
-      users,
       listened,
+      party,
+      playback,
+      profileSong,
+      queue,
+      user,
+      users,
     });
   }
 
@@ -187,20 +190,20 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   // });
 
   return typedjson({
-    user,
     activity,
-    party,
-    playback,
     currentUser,
     following: null,
-    queue,
-    profileSong,
-    users,
     listened,
+    party,
+    playback,
+    profileSong,
+    queue,
+    user,
+    users,
   });
 };
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ params, request }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
@@ -220,7 +223,7 @@ export const action = async ({ request, params }: ActionArgs) => {
   }
 
   if (typeof bio === 'string') {
-    const user = await prisma.profile.update({ where: { userId: id }, data: { bio } });
+    const user = await prisma.profile.update({ data: { bio }, where: { userId: id } });
     return user;
   }
 
@@ -229,18 +232,18 @@ export const action = async ({ request, params }: ActionArgs) => {
     invariant(spotify, 'Spotify API Error');
     const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
     const tracks = recent.body.items.map((item) => ({
-      song_name: item.track.name,
-      artist_name: item.track.artists[0].name,
       album_name: item.track.album.name,
+      artist_name: item.track.artists[0].name,
+      song_name: item.track.name,
     }));
 
     const prompt = `Based on these songs given below, describe my current mood in one word. 
     ${JSON.stringify(tracks)}`;
     const response = (await askDaVinci(prompt)).split('.')[0];
     await prisma.aI.upsert({
-      where: { userId: id },
       create: { mood: response, userId: id },
       update: { mood: response },
+      where: { userId: id },
     });
   }
 

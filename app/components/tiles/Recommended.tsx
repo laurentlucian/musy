@@ -1,8 +1,11 @@
-import type { Profile, RecommendedSongs } from '@prisma/client';
 import { Image, Link, Stack, Text } from '@chakra-ui/react';
+
+import type { Profile, RecommendedSongs } from '@prisma/client';
+
 import { timeSince } from '~/lib/utils';
-import Tiles from './Tiles';
+
 import Tile from '../Tile';
+import Tiles from './Tiles';
 
 // import RecommendActions from './RecommendActions';
 type RecommendedProps = RecommendedSongs & {

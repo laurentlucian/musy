@@ -1,3 +1,6 @@
+import { useParams, useTransition } from '@remix-run/react';
+import { type ChangeEvent, useRef, useState, useEffect, useCallback, useMemo } from 'react';
+
 import {
   Drawer,
   Image,
@@ -24,6 +27,7 @@ import {
   Collapse,
   IconButton,
 } from '@chakra-ui/react';
+
 import {
   ArrowDown2,
   ArrowRight2,
@@ -32,29 +36,29 @@ import {
   RefreshCircle,
   Send2,
 } from 'iconsax-react';
-import { type ChangeEvent, useRef, useState, useEffect, useCallback, useMemo } from 'react';
+
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useDrawerBackButton from '~/hooks/useDrawerBackButton';
-import { useParams, useTransition } from '@remix-run/react';
-import useSessionUser from '~/hooks/useSessionUser';
-import useParamUser from '~/hooks/useParamUser';
-import SpotifyLogo from '../icons/SpotifyLogo';
-import useSendMenu from '~/hooks/useSendMenu';
 import useIsMobile from '~/hooks/useIsMobile';
-import AnalyzeTrack from './AnalyzeTrack';
-import SaveToLiked from './SaveToLiked';
-import PlayPreview from './PlayPreview';
-import ProfileSong from './ProfileSong';
+import useParamUser from '~/hooks/useParamUser';
+import useSendMenu from '~/hooks/useSendMenu';
+import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-import Recommend from './Recommend';
+
+import SpotifyLogo from '../icons/SpotifyLogo';
 import AddQueue from './AddQueue';
+import AnalyzeTrack from './AnalyzeTrack';
 import CopyLink from './CopyLink';
 import LikedBy from './LikedBy';
+import PlayPreview from './PlayPreview';
+import ProfileSong from './ProfileSong';
+import Recommend from './Recommend';
+import SaveToLiked from './SaveToLiked';
 
 // import SaveTo from './SaveTo';
 
 const ActionDrawer = () => {
-  const { sendList, sendMenu, onClickQueue, onClickRecommend, toggle } = useSendMenu();
+  const { onClickQueue, onClickRecommend, sendList, sendMenu, toggle } = useSendMenu();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [comment, setComment] = useState('');
@@ -178,7 +182,7 @@ const ActionDrawer = () => {
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                   {isSmallScreen && <Box h="90px" w="10px" />}
                   {/* <LikedBy /> */}
-                  <SpotifyLogo mt="10px" white/>
+                  <SpotifyLogo mt="10px" white />
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image

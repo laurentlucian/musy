@@ -1,5 +1,6 @@
-import { redirect } from 'remix-typedjson';
 import type { LoaderArgs } from '@remix-run/node';
+
+import { redirect } from 'remix-typedjson';
 
 const Index = () => {
   // const transition = useTransition();

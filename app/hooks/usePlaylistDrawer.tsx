@@ -1,35 +1,36 @@
-import type { PlaylistTrack } from '~/lib/types/types';
-import { shallow } from 'zustand/shallow';
 import { create } from 'zustand';
+import { shallow } from 'zustand/shallow';
+
+import type { PlaylistTrack } from '~/lib/types/types';
 
 interface DrawerStateConfig {
-  playlist: PlaylistTrack | null;
   actions: {
     onClose: () => void;
     onOpen: (by: PlaylistTrack) => void;
   };
+  playlist: PlaylistTrack | null;
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
-  playlist: null,
   actions: {
     onClose: () => set({ playlist: null }),
     onOpen: (by) =>
       set({
         playlist: {
-          uri: by.uri,
+          description: by.description,
+          image: by.image,
+          isPublic: by.isPublic,
           link: by.link,
           name: by.name,
-          image: by.image,
+          playlistId: by.playlistId,
           trackTotal: by.trackTotal,
           tracks: by.tracks,
+          uri: by.uri,
           userId: by.userId,
-          isPublic: by.isPublic,
-          playlistId: by.playlistId,
-          description: by.description,
         },
       }),
   },
+  playlist: null,
 }));
 
 export const usePlaylistDrawerStore = () =>

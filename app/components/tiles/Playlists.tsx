@@ -1,18 +1,21 @@
-import { default as ExpandedPlayLists } from '../profile/ExpandedSongs';
-import { usePlaylists } from '~/hooks/usePlaylist';
-import PlaylistTile from '../playlists/PlaylistTile';
-import PlaylistCard from './PlaylistCard';
-import { Stack } from '@chakra-ui/react';
 import { useCallback } from 'react';
-import Tiles from './Tiles';
+
+import { Stack } from '@chakra-ui/react';
+
+import { usePlaylists } from '~/hooks/usePlaylist';
+
 import PlaylistDrawer from '../playlists/PlaylistDrawer';
+import PlaylistTile from '../playlists/PlaylistTile';
+import { default as ExpandedPlayLists } from '../profile/ExpandedSongs';
+import PlaylistCard from './PlaylistCard';
+import Tiles from './Tiles';
 
 const Playlists = ({
   playlists: initialPlaylists,
 }: {
   playlists: SpotifyApi.PlaylistObjectSimplified[];
 }) => {
-  const { playlists, show, setShow, setRef } = usePlaylists(initialPlaylists);
+  const { playlists, setRef, setShow, show } = usePlaylists(initialPlaylists);
 
   const onClose = useCallback(() => {
     setShow(false);

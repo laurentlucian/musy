@@ -1,13 +1,15 @@
 // import type { LikedSongs } from '@prisma/client';
-import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
-import { getCurrentUser } from '~/services/auth.server';
 import type { ActionArgs } from '@remix-run/node';
-import { createTrackModel } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
+
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-export const action = async ({ request, params }: ActionArgs) => {
+import { createTrackModel } from '~/lib/utils';
+import { getCurrentUser } from '~/services/auth.server';
+import { prisma } from '~/services/db.server';
+import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
+
+export const action = async ({ params, request }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
@@ -26,32 +28,32 @@ export const action = async ({ request, params }: ActionArgs) => {
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
   const data = {
-    likedAt: new Date(),
+    action: 'liked',
 
-    name: track.name,
-    uri: track.uri,
     albumName: track.album.name,
     albumUri: track.album.uri,
     artist: track.artists[0].name,
     artistUri: track.artists[0].uri,
-    image: track.album.images[0].url,
-    explicit: track.explicit,
-    preview_url: track.preview_url,
-    link: track.external_urls.spotify,
     duration: track.duration_ms,
-    action: 'liked',
-
-    user: {
-      connect: {
-        userId: currentUser.userId,
-      },
-    },
+    explicit: track.explicit,
+    image: track.album.images[0].url,
+    likedAt: new Date(),
+    link: track.external_urls.spotify,
+    name: track.name,
+    preview_url: track.preview_url,
     track: {
       connectOrCreate: {
         create: trackDb,
         where: {
           id: track.id,
         },
+      },
+    },
+
+    uri: track.uri,
+    user: {
+      connect: {
+        userId: currentUser.userId,
       },
     },
   };
@@ -66,8 +68,8 @@ export const action = async ({ request, params }: ActionArgs) => {
       await prisma.likedSongs.delete({
         where: {
           trackId_userId: {
-            userId: currentUser.userId,
             trackId,
+            userId: currentUser.userId,
           },
         },
       });
@@ -82,8 +84,8 @@ export const action = async ({ request, params }: ActionArgs) => {
       await prisma.likedSongs.delete({
         where: {
           trackId_userId: {
-            userId: currentUser.userId,
             trackId,
+            userId: currentUser.userId,
           },
         },
       });

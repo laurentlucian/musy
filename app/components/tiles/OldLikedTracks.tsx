@@ -1,17 +1,21 @@
-import useOldIsVisible from '~/hooks/useOldIsVisible';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
-import type { Profile } from '@prisma/client';
+
 import { Stack } from '@chakra-ui/react';
+
+import type { Profile } from '@prisma/client';
+
+import useOldIsVisible from '~/hooks/useOldIsVisible';
+
 import Tile from '../Tile';
 import Tiles from './Tiles';
 
 const OldLikedSongs = ({
-  liked: initialLiked,
   currentUser,
+  liked: initialLiked,
 }: {
-  liked: SpotifyApi.SavedTrackObject[];
   currentUser: Profile | null;
+  liked: SpotifyApi.SavedTrackObject[];
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const { id } = useParams();

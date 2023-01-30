@@ -1,9 +1,10 @@
 import type { LoaderFunction } from '@remix-run/node';
-import { spotifyStrategy } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
 import { json, redirect } from '@remix-run/node';
 
-export const action: LoaderFunction = async ({ request, params }) => {
+import { spotifyStrategy } from '~/services/auth.server';
+import { prisma } from '~/services/db.server';
+
+export const action: LoaderFunction = async ({ params, request }) => {
   const ownerId = params.id;
   console.log('Leaving party...');
   if (!ownerId) {

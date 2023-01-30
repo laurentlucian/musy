@@ -25,12 +25,12 @@ import { spotifyApi } from '~/services/spotify.server';
 // });
 
 export const listenerQ = Queue<{
-  userId: string;
   currentTrack: string;
   repeat: 'track' | 'context' | 'off';
+  userId: string;
 }>('queue_track', async (job) => {
   console.log('listenerQ -> starting...');
-  const { userId, currentTrack, repeat } = job.data;
+  const { currentTrack, repeat, userId } = job.data;
 
   try {
     const { spotify } = await spotifyApi(userId);
@@ -96,22 +96,22 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
     // const percentage = playback.item?.duration_ms && playback?.progress_ms ? (playback.progress_ms / playback.item.duration_ms) * 100 : 0;
     if (currentTrack !== parties[0].currentTrack) {
       await prisma.party.updateMany({
-        where: { ownerId: ownerId },
         data: {
           currentTrack,
         },
+        where: { ownerId: ownerId },
       });
       console.log('ownerQ -> old uri - new uri', parties[0].currentTrack, currentTrack);
       console.log('ownerQ -> updated currentTrack', playback.item?.name);
 
       listenerQ.addBulk(
         parties.map((party) => ({
-          name: 'queue_track',
           data: {
             currentTrack: currentTrack,
-            userId: party.userId,
             repeat: playback.repeat_state,
+            userId: party.userId,
           },
+          name: 'queue_track',
         })),
       );
       console.log('ownerQ -> added all listeners jobs');
@@ -130,15 +130,15 @@ const startUp = async () => {
   console.log('startUp -> starting...');
   const parties = await prisma.party.findMany();
   console.log('startUp -> parties..', parties);
-  console.log('startUp -> queues..', await registeredQueues['update_track']?.queue.getJobCounts());
+  console.log('startUp -> queues..', await registeredQueues.update_track?.queue.getJobCounts());
 
   ownerQ.addBulk(
     parties.map((party) => ({
-      name: 'queue_track',
       data: {
         ownerId: party.ownerId,
         userId: party.userId,
       },
+      name: 'queue_track',
     })),
   );
   console.log('startUp -> done');

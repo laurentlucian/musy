@@ -1,5 +1,7 @@
-import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
+
+import { Box, useColorModeValue } from '@chakra-ui/react';
+
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 const PlayerBar = ({

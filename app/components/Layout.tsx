@@ -1,7 +1,9 @@
-import { type PropsWithChildren, useMemo } from 'react';
-import MobileSearchButton from './menu/MobileSearchButton';
 import { useLocation } from '@remix-run/react';
+import { type PropsWithChildren, useMemo } from 'react';
+
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+
+import MobileSearchButton from './menu/MobileSearchButton';
 import Nav from './Nav/Nav';
 
 type LayoutProps = {
@@ -28,7 +30,7 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
       bg={isNya || isDanica ? bgGradient : bg}
       color={color}
     >
-      <Box w={{ base: '100vw', sm: '450px', md: '750px', xl: '1100px' }}>
+      <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
         <Nav authorized={authorized} />
         {children}
         {!!authorized && <MobileSearchButton />}

@@ -1,7 +1,8 @@
-import { usePlaylistDrawerStore } from '~/hooks/usePlaylistDrawer';
 import { useFetcher, useParams } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
+
 import useIsVisible from '~/hooks/useIsVisible';
+import { usePlaylistDrawerStore } from '~/hooks/usePlaylistDrawer';
 
 const PlaylistTracks = () => {
   const playlist = usePlaylistDrawerStore();

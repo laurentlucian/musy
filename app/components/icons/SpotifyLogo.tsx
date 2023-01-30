@@ -1,16 +1,17 @@
 import type { ChakraProps } from '@chakra-ui/react';
 import { Image, Link, useColorModeValue } from '@chakra-ui/react';
+
+import spotify_icon_black from '~/assets/spotify_icon_black.png';
+import spotify_icon_white from '~/assets/spotify_icon_white.png';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
-import spotify_icon_white from '~/assets/spotify_icon_white.png';
-import spotify_icon_black from '~/assets/spotify_icon_black.png';
 
 type SpotifyLogoProps = {
-  link?: boolean;
   h?: string;
-  w?: string;
-  mt?: string;
   icon?: boolean;
+  link?: boolean;
+  mt?: string;
+  w?: string;
   white?: boolean;
 } & ChakraProps;
 

@@ -1,6 +1,8 @@
-import { Link2, Link21 } from 'iconsax-react';
-import { Button } from '@chakra-ui/react';
 import { useState } from 'react';
+
+import { Button } from '@chakra-ui/react';
+
+import { Link2, Link21 } from 'iconsax-react';
 
 const CopyLink = ({ link }: { link: string }) => {
   const [isCopied, setIsCopied] = useState(false);

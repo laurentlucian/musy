@@ -1,11 +1,13 @@
-import { prisma } from './db.server';
-import { Authenticator } from 'remix-auth';
-import { sessionStorage } from '~/services/session.server';
 import type { Prisma } from '@prisma/client';
+import { Authenticator } from 'remix-auth';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
-import { userQ } from './scheduler/jobs/user';
+
 import { notNull } from '~/lib/utils';
+import { sessionStorage } from '~/services/session.server';
+
+import { prisma } from './db.server';
+import { userQ } from './scheduler/jobs/user';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -39,16 +41,16 @@ const scopes = [
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
 
 type CreateUser = {
-  id: string;
   accessToken: string;
-  refreshToken: string;
   expiresAt: number;
+  id: string;
+  refreshToken: string;
   tokenType: string;
   user: {
     create: {
-      name: string;
       email: string;
       image: string;
+      name: string;
     };
   };
 };
@@ -64,13 +66,13 @@ export const createUser = async (data: CreateUser) => {
     newUser.id,
     { userId: newUser.id },
     {
+      backoff: {
+        delay: 1000 * 60 * 60,
+        type: 'fixed',
+      },
       // a job with an id that already exists will not be added.
       jobId: newUser.id,
       repeat: { every: 1000 * 60 * 60 },
-      backoff: {
-        type: 'fixed',
-        delay: 1000 * 60 * 60,
-      },
     },
   );
 
@@ -78,7 +80,7 @@ export const createUser = async (data: CreateUser) => {
 };
 
 export const getUser = async (id: string) => {
-  const user = await prisma.user.findUnique({ where: { id }, include: { user: true } });
+  const user = await prisma.user.findUnique({ include: { user: true }, where: { id } });
   if (!user || !user.user) return null;
   return user;
 };
@@ -90,20 +92,20 @@ export const updateToken = async (
   refreshToken?: string,
 ) => {
   const data = await prisma.user.update({
+    data: { accessToken: token, expiresAt, refreshToken, revoked: false },
     where: { id },
-    data: { accessToken: token, refreshToken, expiresAt, revoked: false },
   });
   console.log('updateToken -> data', new Date(data.expiresAt).toLocaleTimeString('en-US'));
   return data.expiresAt;
 };
 
 export const updateUserImage = async (id: string, image: string) => {
-  const data = await prisma.profile.update({ where: { userId: id }, data: { image } });
+  const data = await prisma.profile.update({ data: { image }, where: { userId: id } });
   return data;
 };
 
 export const updateUserName = async (id: string, name: string) => {
-  const data = await prisma.profile.update({ where: { userId: id }, data: { name } });
+  const data = await prisma.profile.update({ data: { name }, where: { userId: id } });
   return data;
 };
 
@@ -124,10 +126,10 @@ export const getAllUsers = async (isAuthenticated = false) => {
     : undefined;
 
   const data = await prisma.user.findMany({
+    orderBy: { user: { playback: { updatedAt: 'desc' } } },
     select: {
       user: {
         include: {
-          settings: true,
           playback: {
             include: {
               track: {
@@ -138,10 +140,10 @@ export const getAllUsers = async (isAuthenticated = false) => {
               },
             },
           },
+          settings: true,
         },
       },
     },
-    orderBy: { user: { playback: { updatedAt: 'desc' } } },
     where: { revoked: false, ...restrict },
   });
   const users = data.map((user) => user.user).filter(notNull);
@@ -150,23 +152,23 @@ export const getAllUsers = async (isAuthenticated = false) => {
 
 export const spotifyStrategy = new SpotifyStrategy(
   {
+    callbackURL: process.env.SPOTIFY_CALLBACK_URL,
     clientID: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    callbackURL: process.env.SPOTIFY_CALLBACK_URL,
-    sessionStorage,
     scope: scopes,
+    sessionStorage,
   },
-  async ({ accessToken, refreshToken, extraParams, profile }) => {
+  async ({ accessToken, extraParams, profile, refreshToken }) => {
     const response = {
       accessToken,
-      refreshToken,
       expiresAt: Date.now() + extraParams.expiresIn * 1000,
+      refreshToken,
       tokenType: extraParams.tokenType,
       user: {
-        id: profile.id,
         email: profile.emails[0].value,
-        name: profile.displayName,
+        id: profile.id,
         image: profile.__json.images?.[0].url,
+        name: profile.displayName,
       },
     };
 
@@ -182,16 +184,16 @@ export const spotifyStrategy = new SpotifyStrategy(
     }
 
     const user = {
-      id: response.user.id,
       accessToken: response.accessToken,
-      refreshToken: response.refreshToken,
       expiresAt: response.expiresAt,
+      id: response.user.id,
+      refreshToken: response.refreshToken,
       tokenType: response.tokenType,
       user: {
         create: {
           email: response.user.email,
-          name: response.user.name,
           image: response.user.image,
+          name: response.user.name,
         },
       },
     };
@@ -203,8 +205,8 @@ export const spotifyStrategy = new SpotifyStrategy(
 );
 
 export const authenticator = new Authenticator<Session>(sessionStorage, {
-  sessionKey: spotifyStrategy.sessionKey,
   sessionErrorKey: spotifyStrategy.sessionErrorKey,
+  sessionKey: spotifyStrategy.sessionKey,
 });
 
 authenticator.use(spotifyStrategy);

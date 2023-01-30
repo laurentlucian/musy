@@ -1,10 +1,14 @@
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useLocation, useParams, useSubmit } from '@remix-run/react';
-import useSessionUser from '~/hooks/useSessionUser';
-import { useTypedFetcher } from 'remix-typedjson';
+
 import { Button, Image } from '@chakra-ui/react';
-import type { action } from '~/routes/$id/add';
+
 import type { Profile } from '@prisma/client';
+import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { useTypedFetcher } from 'remix-typedjson';
+
+import useSessionUser from '~/hooks/useSessionUser';
+import type { action } from '~/routes/$id/add';
+
 import Waver from '../icons/Waver';
 
 type AddQueueProps = {
@@ -30,9 +34,9 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
       // @todo figure out a better way to require authentication on click;
       // after authentication redirect, add to queue isn't successful. user needs to click again
       return submit(null, {
-        replace: true,
-        method: 'post',
         action: '/auth/spotify?returnTo=' + pathname + search,
+        method: 'post',
+        replace: true,
       });
     }
 
@@ -43,14 +47,14 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
     const sendToUserId = isSending ? id : currentUser?.userId;
 
     const data = {
-      trackId: trackId ?? '',
+      action: isSending ? 'send' : 'add',
 
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',
-      action: isSending ? 'send' : 'add',
+      trackId: trackId ?? '',
     };
 
-    fetcher.submit(data, { replace: true, method: 'post', action });
+    fetcher.submit(data, { action, method: 'post', replace: true });
   };
   const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
 

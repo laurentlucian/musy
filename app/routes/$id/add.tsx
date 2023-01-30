@@ -1,13 +1,15 @@
 import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
+
 import { typedjson } from 'remix-typedjson';
+
 import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { activityQ } from '~/services/scheduler/jobs/activity';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ params, request }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
   const body = await request.formData();
@@ -25,21 +27,14 @@ export const action = async ({ request, params }: ActionArgs) => {
   const trackDb = createTrackModel(track);
 
   const data = {
-    uri: track.uri,
-    name: track.name,
-    image: track.album.images[0].url,
-    albumUri: track.album.uri,
+    action,
     albumName: track.album.name,
+    albumUri: track.album.uri,
     artist: track.artists[0].name,
     artistUri: track.artists[0].uri,
     explicit: track.explicit,
-    action,
-
-    user: {
-      connect: {
-        userId: fromUserId,
-      },
-    },
+    image: track.album.images[0].url,
+    name: track.name,
     owner: {
       connect: {
         id,
@@ -52,6 +47,13 @@ export const action = async ({ request, params }: ActionArgs) => {
         where: {
           id: track.id,
         },
+      },
+    },
+    uri: track.uri,
+
+    user: {
+      connect: {
+        userId: fromUserId,
       },
     },
   };
@@ -82,12 +84,12 @@ export const action = async ({ request, params }: ActionArgs) => {
         activityId: activity.id,
       },
       {
-        repeat: {
-          every: 30000,
-        },
         jobId: String(activity.id),
         removeOnComplete: true,
         removeOnFail: true,
+        repeat: {
+          every: 30000,
+        },
       },
     );
     console.log('add -> created Job on ', res.queueName);

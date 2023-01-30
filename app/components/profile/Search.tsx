@@ -7,12 +7,14 @@ import {
   useSubmit,
   useTransition,
 } from '@remix-run/react';
-import { Flex, IconButton, Input, InputGroup, InputRightElement, Spinner } from '@chakra-ui/react';
-import { CloseSquare } from 'iconsax-react';
 import type { ChangeEvent } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
+
+import { Flex, IconButton, Input, InputGroup, InputRightElement, Spinner } from '@chakra-ui/react';
+
+import { CloseSquare } from 'iconsax-react';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();

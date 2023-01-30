@@ -1,14 +1,14 @@
-import { renderToString } from 'react-dom/server';
-import { CacheProvider } from '@emotion/react';
-import createEmotionServer from '@emotion/server/create-instance';
 import type { EntryContext } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
+import { renderToString } from 'react-dom/server';
+
+import { CacheProvider } from '@emotion/react';
+import createEmotionServer from '@emotion/server/create-instance';
 
 import { ServerStyleContext } from './lib/emotion/context';
 import { createEmotionCache } from './lib/emotion/createEmotionCache';
-
-import { addUsersToQueue } from './services/scheduler/jobs/user';
 import { clearActivityQOnDev } from './services/scheduler/jobs/activity';
+import { addUsersToQueue } from './services/scheduler/jobs/user';
 
 addUsersToQueue();
 // clearActivityQOnDev();
@@ -43,8 +43,8 @@ export default function handleRequest(
   responseHeaders.set('Content-Type', 'text/html');
 
   return new Response(`<!DOCTYPE html>${markup}`, {
-    status: responseStatusCode,
     headers: responseHeaders,
+    status: responseStatusCode,
   });
 }
 

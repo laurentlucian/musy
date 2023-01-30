@@ -1,5 +1,6 @@
-import type { Profile, Settings } from '@prisma/client';
 import { useMatches } from '@remix-run/react';
+
+import type { Profile, Settings } from '@prisma/client';
 
 const useUsers = (): (Profile & { settings: Settings | null })[] => {
   const matches = useMatches();

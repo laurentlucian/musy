@@ -1,8 +1,10 @@
-import { Heading, Text } from '@chakra-ui/react';
 import type { LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useCatch } from '@remix-run/react';
+
+import { Heading, Text } from '@chakra-ui/react';
+
 import { authenticator } from '~/services/auth.server';
 import { commitSession, getSession, returnToCookie } from '~/services/session.server';
 

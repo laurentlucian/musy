@@ -1,13 +1,15 @@
 import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
+
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+
 import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const action = async ({ request, params }: ActionArgs) => {
+export const action = async ({ params, request }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
   const { spotify } = await spotifyApi(id);
@@ -32,27 +34,25 @@ export const action = async ({ request, params }: ActionArgs) => {
   const trackDb = createTrackModel(track);
 
   const data = {
-    uri,
-    name,
-    image,
-    albumUri,
+    action,
     albumName,
+    albumUri,
     artist,
     artistUri,
     explicit: explicit ? true : false,
-    preview_url,
+    image,
     link,
-    action,
+    name,
+    owner: {
+      connect: {
+        id,
+      },
+    },
+    preview_url,
 
     sender: {
       connect: {
         userId: fromUserId,
-      },
-    },
-
-    owner: {
-      connect: {
-        id,
       },
     },
 
@@ -64,6 +64,8 @@ export const action = async ({ request, params }: ActionArgs) => {
         },
       },
     },
+
+    uri,
   };
 
   if (id !== fromUserId) {

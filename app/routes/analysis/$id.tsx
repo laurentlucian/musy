@@ -1,18 +1,21 @@
-import { Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import { Form, Link, useCatch, useTransition } from '@remix-run/react';
 import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
+import { useEffect } from 'react';
+
+import { Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
+
 import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
-import { authenticator } from '~/services/auth.server';
-import { spotifyApi } from '~/services/spotify.server';
-import { redis } from '~/services/scheduler/redis.server';
-import { askDaVinci } from '~/services/ai.server';
-import { useEffect } from 'react';
+
 import { useDrawerActions } from '~/hooks/useDrawer';
+import { askDaVinci } from '~/services/ai.server';
+import { authenticator } from '~/services/auth.server';
+import { redis } from '~/services/scheduler/redis.server';
+import { spotifyApi } from '~/services/spotify.server';
 
 const TrackAnalysis = () => {
-  const { track, analysis, authorized } = useTypedLoaderData<typeof loader>();
+  const { analysis, authorized, track } = useTypedLoaderData<typeof loader>();
   const transition = useTransition();
   const { onClose } = useDrawerActions();
 
@@ -48,7 +51,7 @@ const TrackAnalysis = () => {
   );
 };
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const cacheKey = 'track_analysis_' + id;
@@ -61,9 +64,9 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   if (cachedData && !shouldRefresh) {
     console.log('Cache hit');
     const data = { ...JSON.parse(cachedData), authorized: !!session } as {
-      track: SpotifyApi.SingleTrackResponse;
       analysis: string;
       authorized: boolean;
+      track: SpotifyApi.SingleTrackResponse;
     };
     return typedjson(data, { headers: { cached: 'true' } });
   }
@@ -82,15 +85,15 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const { spotify } = await spotifyApi('1295028670');
   if (!spotify)
     return typedjson(
-      { track: null, analysis: null, authorized: !!session },
-      { statusText: 'Failed to load spotify, try again', status: 401 },
+      { analysis: null, authorized: !!session, track: null },
+      { status: 401, statusText: 'Failed to load spotify, try again' },
     );
 
   const { body: track } = await spotify.getTrack(id);
   if (!track) {
     return typedjson(
-      { track: null, analysis: null, authorized: !!session },
-      { statusText: 'Track not found', status: 404 },
+      { analysis: null, authorized: !!session, track: null },
+      { status: 404, statusText: 'Track not found' },
     );
   }
 
@@ -102,7 +105,7 @@ export const loader = async ({ request, params }: LoaderArgs) => {
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
   const response = await askDaVinci(prompt);
 
-  const data = { track, analysis: response, authorized: !!session };
+  const data = { analysis: response, authorized: !!session, track };
 
   // set cache for 1 month
   redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30);
@@ -116,19 +119,19 @@ export const headers: HeadersFunction = ({ loaderHeaders }) => {
 };
 
 export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
-  const { track, analysis } = data;
+  const { analysis, track } = data;
   if (!track || !analysis) {
     return {
-      title: 'musy Analysis',
       description: `Song not found 🥁`,
+      title: 'musy Analysis',
     };
   }
 
   return {
-    title: `${track.name} Analysis`,
     description: analysis,
-    'og:image': track.album.images[0].url,
     'og:description': analysis,
+    'og:image': track.album.images[0].url,
+    title: `${track.name} Analysis`,
     'twitter:card': analysis,
   };
 };

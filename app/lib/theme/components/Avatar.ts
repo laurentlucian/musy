@@ -1,8 +1,8 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import { avatarAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(
+const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(
   avatarAnatomy.keys,
 );
 
@@ -12,14 +12,14 @@ const baseStyle = definePartsStyle((props) => ({
     bg: 'music.900',
   },
   container: {
+    border: mode('3px solid music.200', '3px solid music.900')(props),
     borderRadius: 'full',
-    border: mode( '3px solid music.200','3px solid music.900')(props),
     // boxShadow: mode('0 0 10px music.900', '0 0 10px music.200')(props),
   },
   excessLabel: {
     bg: 'music.900',
-    color: 'music.900',
     borderRadius: 'full',
+    color: 'music.900',
   },
 }));
 

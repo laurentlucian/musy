@@ -1,3 +1,6 @@
+import { useNavigate, useParams } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import {
   Heading,
   HStack,
@@ -12,15 +15,15 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useNavigate, useParams } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { ArrowLeft2 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
+
 import { decodeHtmlEntity } from '~/components/playlists/PlaylistTile';
 import Track from '~/components/Track';
-import { spotifyApi } from '~/services/spotify.server';
 import useIsMobile from '~/hooks/useIsMobile';
+import { spotifyApi } from '~/services/spotify.server';
 
 const Playlist = () => {
   const { playlist } = useTypedLoaderData<typeof loader>();
@@ -61,7 +64,7 @@ const Playlist = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {playlist.tracks.items.map(({ track, added_at }) => {
+            {playlist.tracks.items.map(({ added_at, track }) => {
               if (!track) return null;
 
               return <Track key={track.id} track={track} addedAt={added_at} />;
@@ -73,7 +76,7 @@ const Playlist = () => {
   );
 };
 
-export const loader = async ({ request, params }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   const playlistId = params.playlist;
   invariant(id, 'Missing params id');

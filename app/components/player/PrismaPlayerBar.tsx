@@ -1,12 +1,14 @@
-import { Box, useColorModeValue } from '@chakra-ui/react';
-import type { Playback, Track } from '@prisma/client';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
+
+import { Box, useColorModeValue } from '@chakra-ui/react';
+
+import type { Playback, Track } from '@prisma/client';
 
 const now = Date.now();
 
 const PrismaPlayerbar = ({ playback }: { playback: Playback & { track: Track } }) => {
-  const color = useColorModeValue( 'music.50','music.900');
+  const color = useColorModeValue('music.50', 'music.900');
   const { revalidate } = useRevalidator();
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);

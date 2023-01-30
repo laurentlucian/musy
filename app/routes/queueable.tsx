@@ -1,4 +1,5 @@
 import { typedjson } from 'remix-typedjson';
+
 import { prisma } from '~/services/db.server';
 
 export const loader = async () => {

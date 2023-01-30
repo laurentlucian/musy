@@ -1,9 +1,12 @@
-import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
-import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { Link, useFetcher, useParams } from '@remix-run/react';
-import type { PlaylistTrack } from '~/lib/types/types';
-import type { ChakraProps } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState, useMemo, useRef } from 'react';
+
+import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
+import type { ChakraProps } from '@chakra-ui/react';
+
+import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
+import type { PlaylistTrack } from '~/lib/types/types';
+
 import Tooltip from '../Tooltip';
 
 export const decodeHtmlEntity = (str?: string) => {
@@ -15,19 +18,19 @@ export const decodeHtmlEntity = (str?: string) => {
 type TileProps = PlaylistTrack & ChakraProps;
 
 const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
-  ({ uri, image, name, link, trackTotal, isPublic, playlistId, description, ...props }, ref) => {
+  ({ description, image, isPublic, link, name, playlistId, trackTotal, uri, ...props }, ref) => {
     const [open, setOpen] = useState(false);
     const [tracks, setTracks] = useState<SpotifyApi.PlaylistObjectSimplified[]>();
     const [playlist, setPlaylist] = useState<PlaylistTrack>({
-      uri,
+      description,
+      image,
+      isPublic,
       link,
       name,
-      image,
-      tracks,
-      isPublic,
-      trackTotal,
       playlistId,
-      description,
+      trackTotal,
+      tracks,
+      uri,
     });
     const initialFetch = useRef(false);
     const hasFetched = useRef(false);

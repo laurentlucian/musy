@@ -1,3 +1,5 @@
+import { Link, useTransition } from '@remix-run/react';
+
 import {
   Button,
   Flex,
@@ -8,22 +10,24 @@ import {
   useColorModeValue,
   Link as LinkB,
 } from '@chakra-ui/react';
-import type { Playback } from '~/services/spotify.server';
-import explicitImage from '~/assets/explicit-solid.svg';
-import { Link, useTransition } from '@remix-run/react';
-import { useDrawerActions } from '~/hooks/useDrawer';
+
 import type { Profile } from '@prisma/client';
+
+import explicitImage from '~/assets/explicit-solid.svg';
+import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import PlayerBar from './PlayerBar';
+import type { Playback } from '~/services/spotify.server';
+
 import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
+import PlayerBar from './PlayerBar';
 
 type PlayerProps = {
-  user: Profile;
   playback?: Playback;
+  user: Profile;
 };
 
-const MiniPlayer = ({ user, playback }: PlayerProps) => {
+const MiniPlayer = ({ playback, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
@@ -39,18 +43,18 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
 
   const formattedTrack = track
     ? {
-        uri: track.uri,
-        trackId: track.id,
-        name: track.name,
-        explicit: track.explicit,
-        image: track.album?.images[0].url,
-        albumUri: track.album.uri,
         albumName: track.album.name,
+        albumUri: track.album.uri,
         artist: track.album.artists[0].name,
         artistUri: track.album.artists[0].uri,
-        userId: user.userId,
-        preview_url: track.preview_url,
+        explicit: track.explicit,
+        image: track.album?.images[0].url,
         link: track.external_urls.spotify,
+        name: track.name,
+        preview_url: track.preview_url,
+        trackId: track.id,
+        uri: track.uri,
+        userId: user.userId,
       }
     : null;
 
@@ -145,17 +149,17 @@ const MiniPlayer = ({ user, playback }: PlayerProps) => {
                           onClick={(e) => {
                             e.preventDefault();
                             onOpen({
-                              uri: track.uri,
-                              trackId: track.id,
-                              name: track.name,
-                              explicit: track.explicit,
-                              image: track.album.images[0].url,
-                              albumUri: track.album.uri,
                               albumName: track.album.name,
+                              albumUri: track.album.uri,
                               artist: track.album.artists[0].name,
                               artistUri: track.album.artists[0].uri,
-                              preview_url: track.preview_url,
+                              explicit: track.explicit,
+                              image: track.album.images[0].url,
                               link: track.external_urls.spotify,
+                              name: track.name,
+                              preview_url: track.preview_url,
+                              trackId: track.id,
+                              uri: track.uri,
                             });
                           }}
                         >

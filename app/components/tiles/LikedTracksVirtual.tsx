@@ -1,31 +1,35 @@
-import { Box, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
-import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
-import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { useFetcher, useParams } from '@remix-run/react';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useRef, useState } from 'react';
+
+import { Box, Flex, Heading, HStack, IconButton, Stack } from '@chakra-ui/react';
+
 import type { Profile } from '@prisma/client';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
+
+import { useMouseScroll } from '~/hooks/useMouseScroll';
+
 import Tile from '../Tile';
 
 const LikedTracksVirtual = ({
-  liked: initialLiked,
   currentUser,
+  liked: initialLiked,
 }: {
-  liked: SpotifyApi.SavedTrackObject[];
   currentUser: Profile | null;
+  liked: SpotifyApi.SavedTrackObject[];
 }) => {
   const [liked, setLiked] = useState(initialLiked);
   const { id } = useParams();
   const fetcher = useFetcher();
   const offsetRef = useRef(0);
-  const { scrollRef, props } = useMouseScroll('reverse', false);
+  const { props, scrollRef } = useMouseScroll('reverse', false);
   const hasFetched = useRef(false);
-  const { scrollToIndex, getVirtualItems, ...rowVirtualizer } = useVirtualizer({
+  const { getVirtualItems, scrollToIndex, ...rowVirtualizer } = useVirtualizer({
     count: liked.length,
-    getScrollElement: () => scrollRef.current,
     estimateSize: () => 210,
-    overscan: 5,
+    getScrollElement: () => scrollRef.current,
     horizontal: true,
+    overscan: 5,
   });
   const virtualItems = getVirtualItems();
 
@@ -66,7 +70,7 @@ const LikedTracksVirtual = ({
               variant="ghost"
               icon={<Previous size="15px" />}
               aria-label="to start"
-              _hover={{ opacity: 1, color: 'spotify.green' }}
+              _hover={{ color: 'spotify.green', opacity: 1 }}
               opacity={0.5}
               _active={{ boxShadow: 'none' }}
             />
@@ -75,12 +79,12 @@ const LikedTracksVirtual = ({
               isDisabled
               // bug -> scrollToIndex isn't scrolling to expected index, but it's still moving in the expected direction
               onClick={() =>
-                scrollToIndex(virtualItems[0].index - 8, { behavior: 'smooth', align: 'start' })
+                scrollToIndex(virtualItems[0].index - 8, { align: 'start', behavior: 'smooth' })
               }
               variant="ghost"
               icon={<ArrowLeft2 size="15px" />}
               aria-label="previous page"
-              _hover={{ opacity: 1, color: 'spotify.green' }}
+              _hover={{ color: 'spotify.green', opacity: 1 }}
               opacity={0.5}
               _active={{ boxShadow: 'none' }}
             />
@@ -92,14 +96,14 @@ const LikedTracksVirtual = ({
               onClick={() => {
                 // bug -> same as above
                 scrollToIndex(virtualItems[virtualItems.length - 1].index + 8, {
-                  behavior: 'smooth',
                   align: 'end',
+                  behavior: 'smooth',
                 });
               }}
               variant="ghost"
               icon={<ArrowRight2 size="15px" />}
               aria-label="next page"
-              _hover={{ opacity: 1, color: 'spotify.green' }}
+              _hover={{ color: 'spotify.green', opacity: 1 }}
               opacity={0.5}
               _active={{ boxShadow: 'none' }}
             />
@@ -113,7 +117,7 @@ const LikedTracksVirtual = ({
               variant="ghost"
               icon={<Next size="15px" />}
               aria-label="to end"
-              _hover={{ opacity: 1, color: 'spotify.green' }}
+              _hover={{ color: 'spotify.green', opacity: 1 }}
               opacity={0.5}
               _active={{ boxShadow: 'none' }}
             />
