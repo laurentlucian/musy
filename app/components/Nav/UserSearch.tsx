@@ -6,8 +6,8 @@ import { SearchIcon } from '@chakra-ui/icons';
 const UserSearch = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [value, setValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value);
+  const inputRef = useRef(null);
+  const handleChange = (event) => setValue(event.target.value);
   const handleBlur = () => {
     if (!value) {
       onClose();
@@ -17,12 +17,17 @@ const UserSearch = () => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div initial={{ width: 0 }} animate={{ width: 'auto' }} exit={{ width: 0 }}>
+        <motion.div
+          initial={{ width: 'auto' }}
+          animate={{ width: 'auto' }}
+          exit={{ width: 0 }}
+          transition={{ type: 'spring' }}
+        >
           <InputGroup size="xs" w="120px">
             <InputLeftElement children={<SearchIcon color="gray.200" />} />
             <Input
               value={value}
-              onChange={(event) => handleChange(event)}
+              onChange={handleChange}
               onBlur={handleBlur}
               ref={inputRef}
               rounded="xl"
@@ -39,11 +44,7 @@ const UserSearch = () => {
           animate={{ opacity: 1 }}
           onClick={() => {
             onOpen();
-            setTimeout(() => {
-              if (inputRef.current) {
-                inputRef.current.focus();
-              }
-            }, 0);
+            setTimeout(() => inputRef.current.focus(), 0);
           }}
         >
           <SearchIcon color="gray.200" />
