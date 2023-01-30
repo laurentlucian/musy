@@ -113,7 +113,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
   const Activity = (
     <>
       {track ? (
-        <HStack w="100%" spacing={2} justify="end" mr={['-4px', '-10px']}>
+        <HStack w="100%" spacing={2} justify="end">
           <Stack spacing={1} h="100%" align="end">
             <LinkB
               as="span"
@@ -212,7 +212,6 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
       bg={loading ? hoverBg : bg}
       color={color}
       px={['4px', '10px']}
-      my={['2px !important', '10px !important']} // <- there is something setting margin-top to 40px
       variant="ghost"
       h={track ? ['100px', '120px'] : '65px'}
       minW="100%"

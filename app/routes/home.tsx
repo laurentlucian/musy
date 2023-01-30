@@ -16,7 +16,7 @@ const Index = () => {
   const { activity } = useTypedLoaderData<typeof loader>();
 
   return (
-    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={{ base: 4, md: 10 }}>
+    <Stack pb="50px" pt={{ base: 4, md: 0 }}>
       <Stack px={['5px', 0]}>
         <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
           {activity.map((item) => {
