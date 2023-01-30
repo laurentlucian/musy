@@ -26,14 +26,7 @@ const Profile = () => {
     useTypedLoaderData<typeof loader>();
   const isSmallScreen = useIsMobile();
   return (
-    <Stack
-      spacing={5}
-      pb={5}
-      pt={5}
-      h="max-content"
-      overflowX="hidden"
-      px={isSmallScreen ? '5px' : 0}
-    >
+    <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader />
       {playback && playback.item?.type === 'track' && (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />

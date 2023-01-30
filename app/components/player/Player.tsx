@@ -184,7 +184,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
 
   return (
     <>
-      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflow="visible">
+      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflowY="scroll">
         <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
           <Collapse in={!isOpen} animateOpacity>
             <Stack
@@ -294,7 +294,7 @@ const Player = ({ id, party, playback, item }: PlayerProps) => {
                   <HStack>
                     {active ? (
                       <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo icon={isSmallScreen}/>
+                        <SpotifyLogo icon={isSmallScreen} />
                         {isOwnProfile && (
                           <PlayController fetcher={fetcher} playback={playback} id={id} />
                         )}
