@@ -27,7 +27,6 @@ const ProfilePrismaOutlet = () => {
   return (
     <Stack spacing={5}>
       {playback && <PlayerPrisma id={user.userId} party={party} playback={playback} />}
-      {!isOwnProfile && <Search />}
       {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracksPrisma recent={recent} />
       <LikedTracksPrisma liked={liked} />

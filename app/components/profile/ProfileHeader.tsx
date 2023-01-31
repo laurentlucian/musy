@@ -11,6 +11,7 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import useIsMobile from '~/hooks/useIsMobile';
+import Search from './Search';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -19,6 +20,7 @@ const ProfileHeader = () => {
   if (!data) return null;
 
   const { currentUser, following, listened, user } = data;
+  const isOwnProfile = currentUser?.userId === user.userId;
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image
@@ -105,7 +107,7 @@ const ProfileHeader = () => {
     ) : null;
 
   return (
-    <VStack mb="40px" alignItems="baseline" ml={['15px', '20px']}>
+    <VStack mb="40px" alignItems="baseline" ml={['15px', '20px']} w="100%">
       <HStack>
         {ProfilePic}
         <VStack align="left" pos="relative" top="20px" left="10px">
@@ -119,6 +121,7 @@ const ProfileHeader = () => {
         </VStack>
       </HStack>
       {Bio}
+      <Stack w="97%" pt="30px">{!isOwnProfile && <Search />}</Stack>
     </VStack>
   );
 };

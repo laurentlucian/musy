@@ -48,7 +48,6 @@ const ProfileOutlet = () => {
       {playback && playback.item?.type === 'track' && (
         <Player id={user.userId} party={party} playback={playback} item={playback.item} />
       )}
-      {!isOwnProfile && <Search />}
       {isOwnProfile && <Recommended recommended={recommended} />}
       <ProfileMain main={main} />
     </Stack>

@@ -1,6 +1,5 @@
 import {
   Form,
-  Outlet,
   useNavigate,
   useParams,
   useSearchParams,
@@ -107,7 +106,6 @@ const Search = () => {
           </InputGroup>
         </Flex>
       </Form>
-      {search ? <Outlet /> : null}
     </>
   );
 };

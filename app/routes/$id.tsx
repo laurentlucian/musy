@@ -20,12 +20,14 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
+import Search from '~/components/profile/Search';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader />
+      {/* {currentUser?.id !== user.id && <Search />}  */}
       <Outlet />
     </Stack>
   );
