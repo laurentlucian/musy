@@ -1,4 +1,5 @@
 import { drawerAnatomy as parts } from '@chakra-ui/anatomy';
+import { CloseButton } from '@chakra-ui/react';
 import { createMultiStyleConfigHelpers, cssVar, defineStyle } from '@chakra-ui/styled-system';
 import { mode } from '@chakra-ui/theme-tools';
 
@@ -35,9 +36,27 @@ const desktop = defineStyle({
 const nested = defineStyle({
   dialog: { backdropFilter: 'blur(14px)', zIndex: 'modal' },
 });
+
+const mobileAvatarDrawerDialog = defineStyle({
+  backdropFilter: 'blur(14px)',
+  zIndex: 'modal',
+  borderBottomRadius: '20px'
+});
+const mobileAvatarDrawer = definePartsStyle({
+  dialog: mobileAvatarDrawerDialog,
+  overlay: {
+    backdropFilter: 'blur(0px)',
+    zIndex: 'overlay',
+  },
+  dialogContainer: {
+    backdropFilter: 'blur(0px)',
+    zIndex: 'modal',
+  },
+});
 const variants = {
   desktop,
   nested,
+  mobileAvatarDrawer,
 };
 const baseStyleDialog = defineStyle((props) => {
   const { isFullHeight } = props;
@@ -57,7 +76,10 @@ const baseStyleDialog = defineStyle((props) => {
     [$bg.variable]: mode('music.900', `music.50`)(props),
   };
 });
-
+const closeButton = defineStyle({
+  userSelect: 'none !important',
+  boxShadow: 'none !important',
+});
 const body = defineStyle({
   color: 'white',
   flex: '1',
@@ -67,6 +89,7 @@ const body = defineStyle({
 
 const baseStyle = definePartsStyle((props) => ({
   body,
+  closeButton,
   dialog: runIfFn(baseStyleDialog, props),
   dialogContainer: runIfFn(baseStyleDialogContainer, props),
   overlay: runIfFn(baseStyleOverlay, props),
