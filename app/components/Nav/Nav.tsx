@@ -1,5 +1,4 @@
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
-import { useState } from 'react';
 
 import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 
@@ -7,11 +6,10 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
-import Settings from './Settings';
 import UserSearch from './UserSearch';
+import UserMenu from './UserMenu';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
-  const [show, setShow] = useState(true);
   const transition = useTransition();
   const { pathname, search } = useLocation();
   const isSmallScreen = useIsMobile();
@@ -26,9 +24,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <Image src="/favicon-32x32.png" />
         )}
-        <Heading size="sm" onClick={() => setShow(true)}>
-          musy
-        </Heading>
+        <Heading size="sm">musy</Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">
@@ -48,7 +44,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <>
             <UserSearch />
-            <Settings show={show} setShow={setShow} />
+            <UserMenu />
           </>
         )}
       </HStack>
