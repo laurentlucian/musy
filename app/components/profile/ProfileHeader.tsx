@@ -121,7 +121,11 @@ const ProfileHeader = () => {
         </VStack>
       </HStack>
       {Bio}
-      <Stack w="97%" pt="30px">{!isOwnProfile && <Search />}</Stack>
+      {!isOwnProfile && (
+        <Stack w="97%" pos="relative" top="30px">
+          <Search />
+        </Stack>
+      )}
     </VStack>
   );
 };

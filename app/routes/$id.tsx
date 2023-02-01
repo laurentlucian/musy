@@ -27,7 +27,6 @@ const Profile = () => {
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader />
-      {/* {currentUser?.id !== user.id && <Search />}  */}
       <Outlet />
     </Stack>
   );
