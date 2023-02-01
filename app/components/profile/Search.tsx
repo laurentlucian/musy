@@ -89,28 +89,27 @@ const Search = () => {
               fontSize="15px"
               onBlur={handleBlur}
             />
-            {search ||
-              (search === '' && (
-                <InputRightElement
-                  h="35px"
-                  w="65px"
-                  pr={2}
-                  justifyContent="end"
-                  children={
-                    <>
-                      {busy && <Spinner size="xs" mr={2} />}
-                      <IconButton
-                        aria-label="close"
-                        variant="ghost"
-                        size="xs"
-                        borderRadius={8}
-                        onClick={onClearSearch}
-                        icon={<CloseSquare />}
-                      />
-                    </>
-                  }
-                />
-              ))}
+            {search && (
+              <InputRightElement
+                h="35px"
+                w="65px"
+                pr={2}
+                justifyContent="end"
+                children={
+                  <>
+                    {busy && <Spinner size="xs" mr={2} />}
+                    <IconButton
+                      aria-label="close"
+                      variant="ghost"
+                      size="xs"
+                      borderRadius={8}
+                      onClick={onClearSearch}
+                      icon={<CloseSquare />}
+                    />
+                  </>
+                }
+              />
+            )}
           </InputGroup>
         </Flex>
       </Form>
