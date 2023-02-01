@@ -23,7 +23,7 @@ const Playlists = ({
 
   if (!playlists) return null;
   const scrollButtons = playlists.length > 5;
-  const title = 'Playlists';
+  const title = playlists.length > 1 ? 'Playlists' : 'Playlist';
 
   if (!playlists.length) return null;
 
@@ -32,7 +32,7 @@ const Playlists = ({
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {playlists.map((list, index) => {
           const isLast = index === playlists.length - 1;
-
+          if (list.tracks.total === 0) return null;
           return (
             <PlaylistTile
               ref={(node) => {
