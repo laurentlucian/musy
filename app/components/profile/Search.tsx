@@ -49,6 +49,12 @@ const Search = () => {
     }
   };
 
+  const handleBlur = () => {
+    if (search === '') {
+      navigate(`/${id}`);
+    }
+  };
+
   const onClearSearch = () => {
     setSearch('');
     searchParams.delete('spotify');
@@ -81,28 +87,30 @@ const Search = () => {
               borderRadius={0}
               onChange={onChange}
               fontSize="15px"
+              onBlur={handleBlur}
             />
-            {search && (
-              <InputRightElement
-                h="35px"
-                w="65px"
-                pr={2}
-                justifyContent="end"
-                children={
-                  <>
-                    {busy && <Spinner size="xs" mr={2} />}
-                    <IconButton
-                      aria-label="close"
-                      variant="ghost"
-                      size="xs"
-                      borderRadius={8}
-                      onClick={onClearSearch}
-                      icon={<CloseSquare />}
-                    />
-                  </>
-                }
-              />
-            )}
+            {search ||
+              (search === '' && (
+                <InputRightElement
+                  h="35px"
+                  w="65px"
+                  pr={2}
+                  justifyContent="end"
+                  children={
+                    <>
+                      {busy && <Spinner size="xs" mr={2} />}
+                      <IconButton
+                        aria-label="close"
+                        variant="ghost"
+                        size="xs"
+                        borderRadius={8}
+                        onClick={onClearSearch}
+                        icon={<CloseSquare />}
+                      />
+                    </>
+                  }
+                />
+              ))}
           </InputGroup>
         </Flex>
       </Form>
