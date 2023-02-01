@@ -18,7 +18,7 @@ type RecommendedProps = RecommendedSongs & {
 
 const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
   const scrollButtons = recommended.length > 5;
-  const show = true;
+  const show = recommended.length > 0;
   const { id } = useParams();
   const fetcher = useTypedFetcher<typeof action>();
   const action = `/${id}/removeRecommend`;
