@@ -188,7 +188,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               )}
             </Stack>
             <Stack>
-              {!isSearching ? <SpotifyLogo icon px="5px" /> : null}
+              {!isSearching ? <SpotifyLogo icon mx="5px" /> : null}
               {isSearching ? (
                 <IconButton
                   onClick={addToQueue}
