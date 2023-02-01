@@ -1,9 +1,6 @@
 import { Check } from 'react-feather';
-
 import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chakra-ui/react';
-
 import { useTypedFetcher } from 'remix-typedjson';
-
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import type { action } from '~/routes/$id/add';
 

@@ -19,8 +19,6 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
   const scrollButtons = recommended.length > 5;
   const show = true;
 
-  const testDummy = <Minus size="32" color="#f47373" />;
-
   return (
     <>
       {show && (

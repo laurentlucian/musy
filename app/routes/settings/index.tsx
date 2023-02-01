@@ -37,7 +37,6 @@ const Account = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
-
   return (
     <>
       <Stack spacing={5} w={['unset', '400px']}>
@@ -201,6 +200,13 @@ export const action = async ({ request }: ActionArgs) => {
   if (typeof queuePreference === 'string') {
     await prisma.settings.update({
       data: { allowQueue: queuePreference },
+      where: { userId },
+    });
+  }
+  const recommendPreference = data.get('allow-recommend');
+  if (typeof recommendPreference === 'string') {
+    await prisma.settings.update({
+      data: { allowRecommend: recommendPreference },
       where: { userId },
     });
   }
