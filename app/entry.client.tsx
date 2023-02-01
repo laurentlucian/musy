@@ -5,14 +5,14 @@ import { hydrateRoot } from 'react-dom/client';
 import { CacheProvider } from '@emotion/react';
 
 import { ClientStyleContext } from './lib/emotion/context';
-import { createEmotionCache } from './lib/emotion/createEmotionCache';
+import { createEmotionCache, defaultCache } from './lib/emotion/createEmotionCache';
 
 interface ClientCacheProviderProps {
   children: React.ReactNode;
 }
 
 const ClientCacheProvider = ({ children }: ClientCacheProviderProps) => {
-  const [cache, setCache] = React.useState(createEmotionCache());
+  const [cache, setCache] = React.useState(defaultCache);
 
   const reset = () => {
     setCache(createEmotionCache());
