@@ -1,5 +1,5 @@
 import type { ChakraProps } from '@chakra-ui/react';
-import { Image, Link, useColorModeValue } from '@chakra-ui/react';
+import { Image, useColorModeValue } from '@chakra-ui/react';
 
 import spotify_icon_black from '~/assets/spotify_icon_black.png';
 import spotify_icon_white from '~/assets/spotify_icon_white.png';
@@ -10,7 +10,6 @@ type SpotifyLogoProps = {
   h?: string;
   icon?: boolean;
   link?: boolean;
-  mt?: string;
   w?: string;
   white?: boolean;
 } & ChakraProps;
@@ -20,7 +19,6 @@ const SpotifyLogo = ({
   icon = false,
   h = icon ? '25px' : '30px',
   w = icon ? '25px' : '98px',
-  mt = '0px',
   white,
   ...props
 }: SpotifyLogoProps) => {
@@ -33,23 +31,22 @@ const SpotifyLogo = ({
     Spotify_Logo_White,
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
+
   return (
-    <>
-      {link ? (
-        <Link
-          href="https://open.spotify.com"
-          target="_blank"
-          rel="external"
-          mt={mt}
-          _focus={{ boxShadow: 'none !important', outline: 'none !important' }}
-          {...props}
-        >
-          <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify} />
-        </Link>
-      ) : (
-        <Image minH={h} maxH={h} minW={w} maxW={w} src={spotify} {...props} />
-      )}
-    </>
+    <Image
+      minH={h}
+      maxH={h}
+      minW={w}
+      maxW={w}
+      src={spotify}
+      {...props}
+      onClick={(e) => {
+        if (link) {
+          e.preventDefault();
+          window.open('https://open.spotify.com');
+        }
+      }}
+    />
   );
 };
 export default SpotifyLogo;
