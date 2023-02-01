@@ -34,6 +34,8 @@ import PlayController from './PlayController';
 import PlayerBar from './PlayerBar';
 import PlayingFromTooltip from './PlayingFromTooltip';
 
+import type { Track as DrawerTrack } from '~/lib/types/types';
+
 type PlayerProps = {
   id: string;
   party: Party[];
@@ -69,6 +71,20 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const drawerTrack: DrawerTrack = {
+    albumName: playback.track.albumName,
+    albumUri: playback.track.albumUri,
+    artist: playback.track.artist,
+    artistUri: playback.track.artistUri,
+    explicit: playback.track.explicit,
+    image: playback.track.image,
+    link: playback.track.link,
+    name: playback.track.name,
+    preview_url: playback.track.preview_url,
+    trackId: playback.trackId,
+    uri: playback.track.uri,
+  };
 
   const handleMusicControls = () => {
     if (audioRef.current && !playing) {
@@ -191,7 +207,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                       noOfLines={1}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      // onClick={() => onClick(track)}
+                      onClick={() => onClick(drawerTrack)}
                       cursor="pointer"
                       w={['200px', '68%']}
                       overflow="hidden"
@@ -202,7 +218,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                     <Flex
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      // onClick={() => onClick(track)}
+                      onClick={() => onClick(drawerTrack)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
@@ -355,7 +371,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                       top={0}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      // onClick={() => onClick(track)}
+                      onClick={() => onClick(drawerTrack)}
                       cursor="pointer"
                     />
                   </Tooltip>
