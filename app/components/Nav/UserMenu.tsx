@@ -70,6 +70,7 @@ const UserMenu = () => {
           >
             friends
           </MenuItem>
+          <MenuDivider border={`solid ${color} 1px`} w="90%" ml="9px" opacity={0.2} />
           <MenuItem icon={<Setting2 />} onClick={onClickSettings} bg={bg} color={color}>
             settings
           </MenuItem>
@@ -82,6 +83,7 @@ const UserMenu = () => {
           >
             toggle theme
           </MenuItem>
+          <MenuDivider border={`solid ${color} 1px`} w="90%" ml="9px" opacity={0.2} />
           <Form action="/logout" method="post">
             <MenuItem
               icon={<LogOut transform="scale(-1)" />}
