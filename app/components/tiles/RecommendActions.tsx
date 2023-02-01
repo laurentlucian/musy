@@ -18,6 +18,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import type { action } from '~/routes/$id/removeRecommend';
+import { Minus } from 'iconsax-react';
 
 const RecommendActions = ({
   recommendedBy,
@@ -61,7 +62,9 @@ const RecommendActions = ({
           <DrawerBody>
             <Stack direction={['column', 'row']} align="center" justify="center">
               <Image borderRadius="full" src={recommendedBy?.image} boxSize="100px" />
-              <Button onClick={removeFromRecommended}>-</Button>
+              <Button onClick={removeFromRecommended} variant="ghost" _hover={{ color: 'red' }}>
+                <Minus size="32" />
+              </Button>
               <Stack>
                 <Text>{recommendedBy?.name}</Text>
                 {/* <Text>{}</Text> */}

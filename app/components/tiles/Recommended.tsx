@@ -1,20 +1,25 @@
 import { Image, Link, Stack, Text } from '@chakra-ui/react';
 
 import type { Profile, RecommendedSongs } from '@prisma/client';
+import { Minus } from 'iconsax-react';
 
 import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
+import RecommendActions from './RecommendActions';
 import Tiles from './Tiles';
 
 // import RecommendActions from './RecommendActions';
 type RecommendedProps = RecommendedSongs & {
   sender: Profile;
+  senderProfile: Profile;
 };
 
 const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
   const scrollButtons = recommended.length > 5;
-  const show = recommended.length > 0;
+  const show = true;
+
+  const testDummy = <Minus size="32" color="#f47373" />;
 
   return (
     <>
@@ -39,10 +44,10 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                   />
 
                   <Stack direction="row">
-                    {/* <RecommendActions
+                    <RecommendActions
                       recommendedBy={recommended.senderProfile}
                       trackId={recommended.trackId}
-                    /> */}
+                    />
                     <Link href={`/${recommended.senderId}`}>
                       <Image
                         borderRadius="full"
