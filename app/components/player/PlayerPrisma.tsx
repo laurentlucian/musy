@@ -253,70 +253,57 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                     </Stack> */}
                   </Stack>
                   <HStack>
-                    {/* {active ? (
-                      <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo icon={isSmallScreen} />
-                        {isOwnProfile && (
-                          <PlayController fetcher={fetcher} playback={playback} id={id} />
-                        )}
-                        {party.length && (
-                          <AvatarGroup size="xs" spacing={-2} max={5}>
-                            {party.map((u) => {
-                              return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                            })}
-                          </AvatarGroup>
-                        )}
-                        {!isOwnProfile && (
-                          <>
-                            <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                              <fetcher.Form
-                                action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                                method="post"
-                                replace
-                              >
-                                <IconButton
-                                  aria-label={isUserInParty ? 'Leave' : 'Join'}
-                                  name="party"
-                                  icon={<People size="24px" />}
-                                  color={isUserInParty ? 'spotify.green' : undefined}
-                                  _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
-                                  variant="ghost"
-                                  type="submit"
-                                  cursor="pointer"
-                                  isLoading={busy}
-                                />
-                              </fetcher.Form>
-                            </Tooltip>
-                            <Tooltip
-                              label={hasPreview ? '' : 'song has no preview'}
-                              openDelay={hasPreview ? 200 : 0}
-                              // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
-                            >
-                              <IconButton
-                                onClick={handleMusicControls}
-                                icon={icon}
-                                variant="ghost"
-                                aria-label={playing ? 'pause' : 'play'}
-                                _hover={{ color: 'spotify.green' }}
-                                _active={{ boxShadow: 'none' }}
-                                onMouseLeave={handleMouseLeavePreviewButton}
-                                onMouseEnter={handleMouseEnterPreviewButton}
-                              />
-                            </Tooltip>
-                          </>
-                        )}
-                      </HStack>
-                    ) : (
-                      <HStack>
-                        <SpotifyLogo />
-                        {isOwnProfile && (
-                          <PlayController fetcher={fetcher} playback={playback} id={id} />
-                        )}
-                      </HStack>
-                    )} */}
+                    <HStack mb="5px !important" mt="40px">
+                      <SpotifyLogo icon={isSmallScreen} />
+                      {/* {party.length && (
+                        <AvatarGroup size="xs" spacing={-2} max={5}>
+                          {party.map((u) => {
+                            return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
+                          })}
+                        </AvatarGroup>
+                      )} */}
+                      {/* {!isOwnProfile && (
+                        <> */}
+                      {/* <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                        <fetcher.Form
+                          action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
+                          method="post"
+                          replace
+                        >
+                          <IconButton
+                            aria-label={isUserInParty ? 'Leave' : 'Join'}
+                            name="party"
+                            icon={<People size="24px" />}
+                            color={isUserInParty ? 'spotify.green' : undefined}
+                            _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
+                            variant="ghost"
+                            type="submit"
+                            cursor="pointer"
+                            isLoading={busy}
+                          />
+                        </fetcher.Form>
+                      </Tooltip> */}
+                      <Tooltip
+                        label={hasPreview ? '' : 'song has no preview'}
+                        openDelay={hasPreview ? 200 : 0}
+                        // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                      >
+                        <IconButton
+                          onClick={handleMusicControls}
+                          icon={icon}
+                          variant="ghost"
+                          aria-label={playing ? 'pause' : 'play'}
+                          _hover={{ color: 'spotify.green' }}
+                          _active={{ boxShadow: 'none' }}
+                          onMouseLeave={handleMouseLeavePreviewButton}
+                          onMouseEnter={handleMouseEnterPreviewButton}
+                        />
+                      </Tooltip>
+                      {/* </>
+                      )} */}
+                    </HStack>
                   </HStack>
                 </Stack>
-
                 <HStack spacing={1} align="end">
                   {/* {playback.context &&
                             playback.context.name &&
