@@ -113,7 +113,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
   const Activity = (
     <>
       {track ? (
-        <HStack w="100%" spacing={2} justify="end" border="1px red solid">
+        <HStack w="100%" spacing={2} justify="end">
           <Stack spacing={1} h="100%" align="end">
             <LinkB
               as="span"
