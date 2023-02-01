@@ -19,7 +19,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { Logout } from 'iconsax-react';
+import { Ghost, Logout } from 'iconsax-react';
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
@@ -45,7 +45,18 @@ const Account = () => {
           <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
             private profile
           </FormLabel>
-          <Switch
+          <Ghost
+            size="32"
+            color={currentUser.settings?.isPrivate ? '#f47373' : '#555555'}
+            onClick={() => {
+              submit(
+                { 'private-profile': `${!(currentUser.settings?.isPrivate ?? false)}` },
+                { method: 'post', replace: true },
+              );
+            }}
+            cursor="pointer"
+          />
+          {/* <Switch
             colorScheme="music"
             id="private-profile"
             defaultChecked={currentUser.settings?.isPrivate ?? false}
@@ -57,7 +68,7 @@ const Account = () => {
               );
             }}
             size="lg"
-          />
+          /> */}
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
         <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
