@@ -67,7 +67,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
         image: track.image,
         link: track.link,
         name: track.name,
-        preview_url: '',
+        preview_url: track.preview_url,
         trackId: track.id,
         uri: track.uri,
         userId: user.userId,

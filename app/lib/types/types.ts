@@ -31,7 +31,7 @@ export type Activity = {
     liked?: { user: Profile | null }[];
     link: string;
     name: string;
-    preview_url?: string | null;
+    preview_url: string | null;
     recent?: { user: Profile | null }[];
     uri: string;
   };

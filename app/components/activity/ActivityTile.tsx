@@ -139,7 +139,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     image: activity.track.image,
     link: activity.track.link,
     name: activity.track.name,
-    preview_url: '',
+    preview_url: activity.track.preview_url,
     trackId: activity.trackId ?? '',
     uri: activity.track.uri,
     userId: activity.user?.userId,
