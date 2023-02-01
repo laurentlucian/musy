@@ -15,7 +15,6 @@ import {
   ChakraProvider,
   Text,
   cookieStorageManagerSSR,
-  localStorageManager,
   ColorModeProvider,
 } from '@chakra-ui/react';
 
@@ -35,13 +34,18 @@ import { prisma } from './services/db.server';
 
 const App = () => {
   const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
-  const colorModeManager =
-    typeof cookie === 'string' ? cookieStorageManagerSSR(cookie) : localStorageManager;
-
+  const colorModeManager = cookieStorageManagerSSR(cookie);
   return (
     <Document>
-      <ChakraProvider theme={theme} colorModeManager={colorModeManager}>
-        <ColorModeProvider>
+      <ChakraProvider theme={theme}>
+        <ColorModeProvider
+          colorModeManager={colorModeManager}
+          options={{
+            disableTransitionOnChange: true,
+            initialColorMode: theme.config.initialColorMode,
+            useSystemColorMode: theme.config.useSystemColorMode,
+          }}
+        >
           <Layout authorized={!!currentUser}>
             <ActionDrawer />
             <MobileDrawer />
