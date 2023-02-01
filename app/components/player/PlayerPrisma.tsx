@@ -283,22 +283,29 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                           />
                         </fetcher.Form>
                       </Tooltip> */}
-                      <Tooltip
-                        label={hasPreview ? '' : 'song has no preview'}
-                        openDelay={hasPreview ? 200 : 0}
-                        // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
-                      >
-                        <IconButton
-                          onClick={handleMusicControls}
-                          icon={icon}
-                          variant="ghost"
-                          aria-label={playing ? 'pause' : 'play'}
-                          _hover={{ color: 'spotify.green' }}
-                          _active={{ boxShadow: 'none' }}
-                          onMouseLeave={handleMouseLeavePreviewButton}
-                          onMouseEnter={handleMouseEnterPreviewButton}
-                        />
-                      </Tooltip>
+                      {isOwnProfile ? (
+                        <>
+                          {/* <PlayController fetcher={fetcher} playback={playback} id={id} /> */}
+                        </>
+                      ) : (
+                        <Tooltip
+                          label={hasPreview ? '' : 'song has no preview'}
+                          openDelay={hasPreview ? 200 : 0}
+                          // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
+                        >
+                          <IconButton
+                            onClick={handleMusicControls}
+                            icon={icon}
+                            variant="ghost"
+                            aria-label={playing ? 'pause' : 'play'}
+                            _hover={{ color: 'spotify.green' }}
+                            _active={{ boxShadow: 'none' }}
+                            onMouseLeave={handleMouseLeavePreviewButton}
+                            onMouseEnter={handleMouseEnterPreviewButton}
+                          />
+                        </Tooltip>
+                      )}
+
                       {/* </>
                       )} */}
                     </HStack>

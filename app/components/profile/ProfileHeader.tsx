@@ -59,7 +59,7 @@ const ProfileHeader = () => {
             rows={2}
             py={0}
             focusBorderColor="spotify.green"
-            w="100%"
+            w={isSmallScreen ? '100%' : '50%'}
             spellCheck={false}
             h="100%"
             minH="20px"
