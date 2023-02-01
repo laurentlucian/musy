@@ -12,7 +12,6 @@ import Tiles from './Tiles';
 // import RecommendActions from './RecommendActions';
 type RecommendedProps = RecommendedSongs & {
   sender: Profile;
-  senderProfile: Profile;
 };
 
 const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
@@ -43,7 +42,7 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
 
                   <Stack direction="row">
                     <RecommendActions
-                      recommendedBy={recommended.senderProfile}
+                      recommendedBy={recommended.sender}
                       trackId={recommended.trackId}
                     />
                     <Link href={`/${recommended.senderId}`}>
