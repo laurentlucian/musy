@@ -1,4 +1,5 @@
 import type { Prisma } from '@prisma/client';
+import { useLocation } from '@remix-run/react';
 import { Authenticator } from 'remix-auth';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
@@ -150,9 +151,12 @@ export const getAllUsers = async (isAuthenticated = false) => {
   return users;
 };
 
+const callbackURL = process.env.SPOTIFY_CALLBACK_URL;
+// const callbackURL = 'http://192.168.0.105:3000/auth/spotify/callback';
+
 export const spotifyStrategy = new SpotifyStrategy(
   {
-    callbackURL: process.env.SPOTIFY_CALLBACK_URL,
+    callbackURL,
     clientID: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     scope: scopes,

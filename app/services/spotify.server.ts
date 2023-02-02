@@ -1,6 +1,8 @@
 import type { Profile } from '@prisma/client';
+import { useLocation } from '@remix-run/react';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
+import useIsMobile from '~/hooks/useIsMobile';
 
 import { getUser, updateToken } from './auth.server';
 
@@ -15,11 +17,12 @@ if (!process.env.SPOTIFY_CLIENT_SECRET) {
 if (!process.env.SPOTIFY_CALLBACK_URL) {
   throw new Error('Missing SPOTIFY_CALLBACK_URL env');
 }
-
+const redirectUri = process.env.SPOTIFY_CALLBACK_URL;
+// const redirectUri =  'http://192.168.0.105:3000/auth/spotify/ca// llback'
 export const spotifyClient = new SpotifyWebApi({
   clientId: process.env.SPOTIFY_CLIENT_ID,
   clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-  redirectUri: process.env.SPOTIFY_CALLBACK_URL,
+  redirectUri,
 });
 
 declare global {
@@ -34,7 +37,7 @@ const createSpotifyClient = () => {
   return new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: process.env.SPOTIFY_CALLBACK_URL,
+    redirectUri,
   });
 };
 
