@@ -23,6 +23,7 @@ const Appearance = () => {
   const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
   const color = useColorModeValue('music.800', 'white');
+  const bg = useColorModeValue('white', 'music.800');
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
   const options = [
     {
@@ -55,10 +56,22 @@ const Appearance = () => {
         <Text fontSize={['sm', 'md']} color={color}>
           Scheduled:
         </Text>
-        <Button size={['xs', 'sm']} aria-label="off" onClick={() => setScheduled(false)}>
+        <Button
+          size={['xs', 'sm']}
+          aria-label="off"
+          onClick={() => setScheduled(false)}
+          bg={bg}
+          color={color}
+        >
           off
         </Button>
-        <Button size={['xs', 'sm']} aria-label="on" onClick={() => setScheduled(true)}>
+        <Button
+          size={['xs', 'sm']}
+          aria-label="on"
+          onClick={() => setScheduled(true)}
+          bg={bg}
+          color={color}
+        >
           on
         </Button>
         {scheduled && <TimeRangePicker />}
