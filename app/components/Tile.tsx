@@ -96,7 +96,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       const sendToUserId = id;
 
       const data = {
-        action: 'add',
+        action: 'send',
 
         fromId: fromUserId ?? '',
         toId: sendToUserId ?? '',
