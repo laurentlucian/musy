@@ -25,24 +25,18 @@ const Appearance = () => {
   const color = useColorModeValue('music.800', 'white');
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
   const options = [
-    { name: 'Dark', value: 'dark' },
-    { name: 'Light', value: 'light' },
+    {
+      name: 'Dark',
+      value: 'dark',
+      icon: <Moon size="24" variant="Bold" />,
+    },
+    {
+      name: 'Light',
+      value: 'light',
+      icon: <Sun1 size="24" variant="Bold" />,
+    },
     // { name: 'system', value: 'system' }, //<---- will return when we can store a default value
   ];
-  console.log('selection', defaultValue);
-  const icon =
-    defaultValue === 'dark' ? (
-      <Moon size="24" color="#1DB954" variant="Bold" />
-    ) : (
-      <Sun1 size="24" color="#1DB954" variant="Bold" />
-    );
-  const icon2 =
-    defaultValue === 'dark' ? (
-      <Sun1 size="24" color="#555555" variant="Bold" />
-    ) : (
-      <Moon size="24" color="#555555" variant="Bold" />
-    );
-
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue, // fix default value to be stored value
     name: 'appearance',
@@ -70,23 +64,23 @@ const Appearance = () => {
         {scheduled && <TimeRangePicker />}
       </Stack>
       <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
-        {options.map(({ name, value }) => {
+        {options.map(({ name, value, icon }) => {
           const radio = getRadioProps({ value });
-
+          console.log(radio);
           return (
             <RadioButtons key={value} {...radio} value={value}>
               <HStack justifyContent="space-between">
                 {radio.isChecked ? (
                   <>
                     <HStack gap={2} w="100%">
-                      {icon}
+                      <Stack color="#1DB954">{icon}</Stack>
                       <>{name}</>
                     </HStack>
                     <Check />
                   </>
                 ) : (
                   <HStack gap={2} w="100%">
-                    {icon2}
+                    <Stack color="#555555">{icon}</Stack>
                     <>{name}</>
                   </HStack>
                 )}
