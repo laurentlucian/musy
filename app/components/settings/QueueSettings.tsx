@@ -21,7 +21,7 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
     onChange: (value) => onChange(value),
   });
   const group = getRootProps();
-  console.log(allowQueue.allowQueue);
+
   return (
     <>
       <FormControl
