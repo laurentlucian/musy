@@ -84,7 +84,7 @@ const ProfileHeader = () => {
     );
   const Mood = currentUser ? <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} /> : null;
   const SubHeader = (
-    <HStack spacing={5} position="relative">
+    <HStack spacing={[3, 5]} position="relative">
       <Flex wrap="wrap" align="baseline">
         {Mood}
       </Flex>
@@ -93,7 +93,7 @@ const ProfileHeader = () => {
           <Text fontSize="13px" mr="8px">
             {listened}
           </Text>
-          <Text as="span" fontSize="12px" opacity={0.5}>
+          <Text as="span" fontSize="10px" opacity={0.5}>
             /&nbsp; 24h
           </Text>
         </Flex>

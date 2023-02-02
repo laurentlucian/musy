@@ -30,7 +30,7 @@ const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => 
         p={0}
       >
         {text}
-        <Text as="span" fontSize="12px" opacity={0.5} pl={2}>
+        <Text as="span" fontSize="11px" opacity={0.5} pl={2}>
           {timePassed}
         </Text>
       </Button>
