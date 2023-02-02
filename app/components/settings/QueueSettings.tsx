@@ -3,6 +3,7 @@ import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chak
 import { useTypedFetcher } from 'remix-typedjson';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import type { action } from '~/routes/$id/add';
+import { Layer } from 'iconsax-react';
 
 const QueueSettings = (allowQueue: { allowQueue: string }) => {
   const fetcher = useTypedFetcher<typeof action>();
@@ -20,6 +21,7 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
     onChange: (value) => onChange(value),
   });
   const group = getRootProps();
+  console.log(allowQueue.allowQueue);
   return (
     <>
       <FormControl
@@ -28,9 +30,12 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
         gap={['10px', null, '20px']}
         alignContent="center"
       >
-        <FormLabel htmlFor="allow-queue" mb="0">
-          queue
-        </FormLabel>
+        <HStack>
+          <Layer color={allowQueue.allowQueue === 'off' ? '#555555' : '#1DB954'} variant="Bold" />
+          <FormLabel htmlFor="allow-queue" mb="0">
+            Queue
+          </FormLabel>
+        </HStack>
         <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
           {options.map(({ name, value }) => {
             const radio = getRadioProps({ value });

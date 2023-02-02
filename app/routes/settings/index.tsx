@@ -17,9 +17,10 @@ import {
   FormControl,
   useColorModeValue,
   Text,
+  HStack,
 } from '@chakra-ui/react';
 
-import { Ghost, Logout } from 'iconsax-react';
+import { Ghost, Logout, MusicPlay, Scroll } from 'iconsax-react';
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
@@ -35,27 +36,20 @@ const Account = () => {
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const spotifyGreen = '#1DB954';
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
   return (
     <>
       <Stack spacing={5} w={['unset', '400px']}>
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
-            private profile
-          </FormLabel>
-          <Ghost
-            size="32"
-            color={currentUser.settings?.isPrivate ? '#f47373' : '#555555'}
-            onClick={() => {
-              submit(
-                { 'private-profile': `${!(currentUser.settings?.isPrivate ?? false)}` },
-                { method: 'post', replace: true },
-              );
-            }}
-            cursor="pointer"
-          />
-          {/* <Switch
+          <HStack>
+            <Ghost size="24" color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
+            <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
+              Private Profile
+            </FormLabel>
+          </HStack>
+          <Switch
             colorScheme="music"
             id="private-profile"
             defaultChecked={currentUser.settings?.isPrivate ?? false}
@@ -67,14 +61,17 @@ const Account = () => {
               );
             }}
             size="lg"
-          /> */}
+          />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
         <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0" color={color}>
-            auto scroll
-          </FormLabel>
+          <HStack>
+            <Scroll size="24" color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
+            <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0" color={color}>
+              Auto Scroll
+            </FormLabel>
+          </HStack>
           <Switch
             colorScheme="music"
             id="auto-scroll"
@@ -90,9 +87,16 @@ const Account = () => {
           />
         </FormControl>
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
-          <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
-            song previews
-          </FormLabel>
+          <HStack>
+            <MusicPlay
+              size="24"
+              color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
+              variant="Bold"
+            />
+            <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
+              Song Preview
+            </FormLabel>
+          </HStack>
           <Switch
             colorScheme="music"
             id="allowPreview"
@@ -114,7 +118,7 @@ const Account = () => {
           _hover={{ bgColor: 'red.500' }}
           onClick={onOpen}
         >
-          logout
+          Logout
         </Button>
       </Stack>
 

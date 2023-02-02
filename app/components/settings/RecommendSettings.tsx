@@ -3,6 +3,7 @@ import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chak
 import { useTypedFetcher } from 'remix-typedjson';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import type { action } from '~/routes/$id/add';
+import { Layer } from 'iconsax-react';
 
 const RecommendSettings = ({ allowRecommend }: { allowRecommend: string }) => {
   const fetcher = useTypedFetcher<typeof action>();
@@ -23,9 +24,12 @@ const RecommendSettings = ({ allowRecommend }: { allowRecommend: string }) => {
   return (
     <>
       <FormControl display="flex" flexDirection="column" gap={['10px', null, '20px']}>
-        <FormLabel htmlFor="allow-recommend" mb="0">
-          recommendations
-        </FormLabel>
+        <HStack>
+          <Layer color={allowRecommend === 'off' ? '#555555' : '#1DB954'} />
+          <FormLabel htmlFor="allow-recommend" mb="0">
+            Recommendations
+          </FormLabel>
+        </HStack>
         <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
           {options.map(({ name, value }) => {
             const radio = getRadioProps({ value });
