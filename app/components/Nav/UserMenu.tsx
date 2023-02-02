@@ -59,6 +59,11 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
     <IconButton icon={icon} {...props} ref={ref} m={0} />
   ));
 
+  const onClickUser = () => {
+    navigate(`/${currentUser?.userId}`);
+    onClose();
+  };
+
   const onClickSettings = () => {
     navigate(`/settings`);
     onClose();
@@ -96,8 +101,6 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     <DrawerCloseButton />
                   </Stack>
                   <Button
-                    as="a"
-                    href={`/${currentUser?.userId}`}
                     leftIcon={mobileIcon}
                     iconSpacing="20px"
                     bg="#0000"
@@ -105,7 +108,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     h="70px"
                     fontSize="20px"
                     justifyContent="left"
-                    onMouseEnter={() => onClose()}
+                    onMouseEnter={onClickUser}
                   >
                     {currentUser?.name}
                   </Button>
