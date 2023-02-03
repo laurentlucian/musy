@@ -8,9 +8,9 @@ import {
   DrawerContent,
   Input,
   Stack,
-  Spinner,
   InputRightElement,
   InputGroup,
+  IconButton,
 } from '@chakra-ui/react';
 
 import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
@@ -19,6 +19,8 @@ import { type Track } from '~/lib/types/types';
 
 import Tile from '../Tile';
 import Tiles from '../tiles/Tiles';
+import { CloseSquare } from 'iconsax-react';
+import Waver from '../icons/Waver';
 
 const MobileDrawer = () => {
   const { isOpen } = useMobileDrawer();
@@ -43,6 +45,9 @@ const MobileDrawer = () => {
     } else {
       setSearch('');
     }
+  };
+  const onClearSearch = () => {
+    setSearch('');
   };
 
   useEffect(() => {
@@ -101,13 +106,27 @@ const MobileDrawer = () => {
                   }}
                   onBlur={removeFocus}
                 />
-                <InputRightElement
-                  h="35px"
-                  w="65px"
-                  pr={2}
-                  justifyContent="end"
-                  children={<>{busy && <Spinner size="xs" mr={2} />}</>}
-                />
+                {search && (
+                  <InputRightElement
+                    h="35px"
+                    w="65px"
+                    pr={2}
+                    justifyContent="end"
+                    children={
+                      <>
+                        {busy && <Waver />}
+                        <IconButton
+                          aria-label="close"
+                          variant="ghost"
+                          size="xs"
+                          borderRadius={8}
+                          onClick={onClearSearch}
+                          icon={<CloseSquare />}
+                        />
+                      </>
+                    }
+                  />
+                )}
               </InputGroup>
               <Tiles>
                 {search &&
