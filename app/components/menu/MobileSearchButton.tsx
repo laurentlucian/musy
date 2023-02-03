@@ -1,6 +1,6 @@
 import { useLocation } from '@remix-run/react';
 
-import { Button } from '@chakra-ui/react';
+import { Button, useColorModeValue } from '@chakra-ui/react';
 
 import { ArrowDown } from 'iconsax-react';
 
@@ -20,11 +20,14 @@ const MobileSearchButton = () => {
     if (icon === 'down') removeFocus();
     if (icon === 'x') onClose();
   };
-
+  const bg = useColorModeValue('music.200', 'music.700');
+  const color = useColorModeValue('music.700', 'music.200');
   return (
     <>
       {isMobile && (
         <Button
+          bg={bg}
+          color={color}
           aria-label="search song"
           variant="searchCircle"
           onClick={onClick}
