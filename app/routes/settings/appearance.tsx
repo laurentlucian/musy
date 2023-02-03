@@ -79,7 +79,6 @@ const Appearance = () => {
       <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
         {options.map(({ name, value, icon }) => {
           const radio = getRadioProps({ value });
-          console.log(radio);
           return (
             <RadioButtons key={value} {...radio} value={value}>
               <HStack justifyContent="space-between">

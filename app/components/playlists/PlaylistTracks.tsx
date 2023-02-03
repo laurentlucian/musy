@@ -29,7 +29,6 @@ const PlaylistTracks = () => {
   //   }
   // }, [fetcher.data]);
 
-  console.log('PLAYLIST: ', playlist);
   return <>{}</>;
 };
 
