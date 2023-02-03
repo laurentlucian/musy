@@ -3,7 +3,7 @@ import type { DataFunctionArgs } from '@remix-run/server-runtime';
 import { forwardRef, useRef } from 'react';
 import { Check, AlertCircle } from 'react-feather';
 
-import { Flex, HStack, IconButton, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, HStack, IconButton, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
@@ -67,6 +67,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       });
     };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
+    const color = useColorModeValue('music.800', 'music.200');
     const track: Track = {
       albumName,
       albumUri,
@@ -196,7 +197,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   onClick={addToQueue}
                   pos="relative"
                   variant="ghost"
-                  color="music.200"
+                  color={color}
                   icon={icon}
                   _hover={{ color: 'white' }}
                   aria-label="add to this friend's queue"

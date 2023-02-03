@@ -11,7 +11,15 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
 
-import { Flex, IconButton, Input, InputGroup, InputRightElement, Spinner } from '@chakra-ui/react';
+import {
+  Flex,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Spinner,
+  useColorModeValue,
+} from '@chakra-ui/react';
 
 import { CloseSquare } from 'iconsax-react';
 
@@ -25,6 +33,7 @@ const Search = () => {
   const busy = transition.submission?.formData.has('spotify') ?? false;
   const { id } = useParams();
   const navigate = useNavigate();
+  const color = useColorModeValue('music.800', 'music.200');
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
@@ -97,7 +106,7 @@ const Search = () => {
                 justifyContent="end"
                 children={
                   <>
-                    {busy && <Spinner size="xs" mr={2} />}
+                    {busy && <Spinner size="xs" mr={2} color={color} />}
                     <IconButton
                       aria-label="close"
                       variant="ghost"
@@ -105,6 +114,7 @@ const Search = () => {
                       borderRadius={8}
                       onClick={onClearSearch}
                       icon={<CloseSquare />}
+                      color={color}
                     />
                   </>
                 }

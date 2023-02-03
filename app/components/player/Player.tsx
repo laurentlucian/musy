@@ -61,6 +61,8 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
 
   const bg = useColorModeValue('music.50', '#10101066');
   const color = useColorModeValue('#10101066', 'music.50');
+  const color1 = useColorModeValue('music.800', 'music.200');
+  
 
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
@@ -349,6 +351,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                                 _active={{ boxShadow: 'none' }}
                                 onMouseLeave={handleMouseLeavePreviewButton}
                                 onMouseEnter={handleMouseEnterPreviewButton}
+                                color={color1}
                               />
                             </Tooltip>
                           </>
