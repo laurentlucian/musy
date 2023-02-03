@@ -30,6 +30,7 @@ type TileProps = Track & {
   id?: string;
   playlist?: Boolean;
   submit?: SubmitFunction;
+  inDrawer?: boolean;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -53,6 +54,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       submit,
       trackId,
       uri,
+      inDrawer,
       ...props
     },
     ref,
@@ -177,7 +179,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                           {artist}
                         </Text>
                       </Stack>
-                      {isSearching ? <SpotifyLogo w="70px" h="21px" /> : null}
+                      {isSearching ? <SpotifyLogo w="70px" h="21px" white={inDrawer} /> : null}
                     </Stack>
                   ) : (
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
@@ -188,7 +190,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               )}
             </Stack>
             <Stack>
-              {!isSearching ? <SpotifyLogo icon mx="5px" /> : null}
+              {!isSearching ? <SpotifyLogo icon mx="5px" white={inDrawer} /> : null}
               {isSearching ? (
                 <IconButton
                   onClick={addToQueue}

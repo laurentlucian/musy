@@ -144,6 +144,7 @@ const MobileDrawer = () => {
                       explicit={track.explicit}
                       preview_url={track.preview_url}
                       link={track.link}
+                      inDrawer
                     />
                   ))}
               </Tiles>
