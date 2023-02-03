@@ -20,12 +20,18 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
-import Search from '~/components/profile/Search';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
   return (
-    <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0} overflowX={isSmallScreen? "hidden" : "unset"}>
+    <Stack
+      spacing={5}
+      pb={5}
+      pt={5}
+      h="max-content"
+      px={isSmallScreen ? '5px' : 0}
+      overflowX={isSmallScreen ? 'hidden' : 'unset'}
+    >
       <ProfileHeader />
       <Outlet />
     </Stack>
@@ -187,6 +193,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const bio = data.get('bio');
   const follow = data.get('follow');
   const mood = data.get('mood');
+  const founder = data.get('component');
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'Missing current user');
   const { spotify } = await spotifyApi(currentUser.userId);
@@ -199,8 +206,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   }
 
   if (typeof bio === 'string') {
-    const user = await prisma.profile.update({ data: { bio }, where: { userId: id } });
-    return user;
+    await prisma.profile.update({ data: { bio }, where: { userId: id } });
   }
 
   if (typeof mood === 'string') {
@@ -219,6 +225,18 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.aI.upsert({
       create: { mood: response, userId: id },
       update: { mood: response },
+      where: { userId: id },
+    });
+  }
+
+  if (founder === '69') {
+    await prisma.profile.update({
+      data: { founder: true },
+      where: { userId: id },
+    });
+  } else {
+    await prisma.profile.update({
+      data: { founder: false },
       where: { userId: id },
     });
   }

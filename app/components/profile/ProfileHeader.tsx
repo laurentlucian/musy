@@ -65,6 +65,19 @@ const ProfileHeader = () => {
             minH="20px"
             overflow="hidden"
           />
+          <Textarea
+            name="component"
+            size="xs"
+            variant="unstyled"
+            resize="none"
+            w="20px"
+            h="20px"
+            overflow="hidden"
+            cursor="default"
+            pos="absolute"
+            bottom={0}
+            onBlur={(e) => submit(e.currentTarget.form)}
+          />
         </Form>
       </Stack>
     ) : (
@@ -85,7 +98,7 @@ const ProfileHeader = () => {
   const Mood = currentUser ? <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} /> : null;
   const SubHeader = (
     <HStack spacing={[3, 5]} position="relative">
-        {Mood}
+      {Mood}
       <Tooltip label="hours listened" placement="bottom-end" hasArrow>
         <Flex align="baseline" pt="1px">
           <Text fontSize="13px" mr="8px">

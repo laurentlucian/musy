@@ -5,6 +5,7 @@ import spotify_icon_black from '~/assets/spotify_icon_black.png';
 import spotify_icon_white from '~/assets/spotify_icon_white.png';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type SpotifyLogoProps = {
   h?: string;
@@ -31,22 +32,29 @@ const SpotifyLogo = ({
     Spotify_Logo_White,
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
+  const currentUser = useSessionUser();
 
   return (
-    <Image
-      minH={h}
-      maxH={h}
-      minW={w}
-      maxW={w}
-      src={spotify}
-      {...props}
-      onClick={(e) => {
-        if (link) {
-          e.preventDefault();
-          window.open('https://open.spotify.com');
-        }
-      }}
-    />
+    <>
+      {currentUser?.founder === false ? (
+        <Image
+          minH={h}
+          maxH={h}
+          minW={w}
+          maxW={w}
+          src={spotify}
+          {...props}
+          onClick={(e) => {
+            if (link) {
+              e.preventDefault();
+              window.open('https://open.spotify.com');
+            }
+          }}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 export default SpotifyLogo;
