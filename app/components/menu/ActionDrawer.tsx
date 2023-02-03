@@ -180,9 +180,10 @@ const ActionDrawer = () => {
             <Stack direction={['column', 'row']} align="center" justify="center">
               {track && (
                 <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
-                  {isSmallScreen && <Box h="90px" w="10px" />}
+                  {!isSmallScreen && <SpotifyLogo mt="10px" white />}
+                  {isSmallScreen ? <Box h="90px" w="10px" /> : <Box h="6vh" w="10px" />}
                   {/* <LikedBy /> */}
-                  <SpotifyLogo mt="10px" white />
+                  {isSmallScreen && <SpotifyLogo mt="10px" white />}
                   {track.albumUri && (
                     <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
                       <Image
@@ -191,7 +192,6 @@ const ActionDrawer = () => {
                         src={track.image}
                         alignSelf="center"
                         mr={['0', '25px']}
-                        // mt={[0, '100px']}
                       />
                     </Link>
                   )}
@@ -257,7 +257,12 @@ const ActionDrawer = () => {
                   {!isSmallScreen && <LikedBy />}
                 </Stack>
               )}
-              <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
+              <Stack
+                pos={['unset', 'sticky']}
+                bottom="50%"
+                pl={['none', '40px !important']}
+                mt={['none', '300px !important']}
+              >
                 {track && (
                   <>
                     <SaveToLiked trackId={track.trackId} />
