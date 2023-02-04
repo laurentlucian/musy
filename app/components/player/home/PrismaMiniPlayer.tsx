@@ -111,10 +111,9 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           {!isSmallScreen && loading && <Waver />}
         </HStack>
       </Stack>
-      {track && <QuickActions />}
+      {track && <QuickActions name={name} id={user.userId}/>}
     </Stack>
   );
-
   const Activity = (
     <>
       {track ? (

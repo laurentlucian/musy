@@ -145,6 +145,7 @@ const MobileDrawer = () => {
                       preview_url={track.preview_url}
                       link={track.link}
                       inDrawer
+                      isQueuing
                     />
                   ))}
               </Tiles>

@@ -40,6 +40,7 @@ const Search = () => {
           submit={submit}
           id={id}
           fetcher={fetcher}
+          isQueuing
         />
       ))}
     </Tiles>

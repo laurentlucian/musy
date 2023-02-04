@@ -31,6 +31,8 @@ type TileProps = Track & {
   playlist?: Boolean;
   submit?: SubmitFunction;
   inDrawer?: boolean;
+  isQueuing?: boolean;
+  isRecommending?: boolean;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -55,12 +57,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       trackId,
       uri,
       inDrawer,
+      isQueuing,
+      isRecommending,
       ...props
     },
     ref,
   ) => {
     const { pathname, search } = useLocation();
-    const isSearching = pathname.includes('/search');
     const decodeHtmlEntity = (str?: string) => {
       return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
         return String.fromCharCode(parseInt(dec, 16));
@@ -82,7 +85,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       uri: uri,
     };
     const clickedRef = useRef<string>();
-    const addToQueue = () => {
+    const handleSendButton = () => {
       if (!currentUser && submit) {
         // @todo figure out a better way to require authentication on click;
         // after authentication redirect, add to queue isn't successful. user needs to click again
@@ -93,12 +96,12 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         });
       }
       clickedRef.current = trackId;
-      const action = `/${id}/add`;
+      const action = isQueuing ? `/${id}/add` : `/${id}/recommend`;
 
       const fromUserId = currentUser?.userId;
       const sendToUserId = id;
 
-      const data = {
+      const queueData = {
         action: 'send',
 
         fromId: fromUserId ?? '',
@@ -106,8 +109,30 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         trackId: trackId ?? '',
       };
 
-      if (fetcher) {
-        fetcher.submit(data, { action, method: 'post', replace: true });
+      const recommendData = {
+        action: 'recommend',
+        albumName: track?.albumName ?? '',
+        albumUri: track?.albumUri ?? '',
+        artist: track?.artist ?? '',
+        artistUri: track?.artistUri ?? '',
+        comment: '',
+        explicit: track?.explicit ? 'true' : '',
+        fromId: fromUserId ?? '',
+        image: track?.image ?? '',
+        link: track?.link ?? '',
+        name: track?.name ?? '',
+        preview_url: track?.preview_url ?? '',
+
+        toId: sendToUserId ?? '',
+        trackId: track?.trackId ?? '',
+        uri: track?.uri ?? '',
+      };
+
+      if (fetcher && isQueuing) {
+        fetcher.submit(queueData, { action, method: 'post', replace: true });
+      }
+      if (fetcher && isRecommending) {
+        fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
     const isClicked = clickedRef.current === trackId;
@@ -120,7 +145,15 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           : null
         : null
       : null;
-    const icon = isAdding ? <Waver /> : isDone ? <Check /> : isError ? <AlertCircle /> : <Send2 />;
+    const icon = isAdding ? (
+      <Waver />
+    ) : isDone ? (
+      <Check />
+    ) : isError ? (
+      <AlertCircle />
+    ) : (
+      <Send2 variant={isQueuing ? 'Outline' : 'Bold'} />
+    );
     return (
       <>
         <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
@@ -180,7 +213,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                           {artist}
                         </Text>
                       </Stack>
-                      {isSearching ? <SpotifyLogo w="70px" h="21px" white={inDrawer} /> : null}
+                      {isQueuing || isRecommending ? (
+                        <SpotifyLogo w="70px" h="21px" white={inDrawer} />
+                      ) : null}
                     </Stack>
                   ) : (
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
@@ -191,16 +226,18 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               )}
             </Stack>
             <Stack>
-              {!isSearching ? <SpotifyLogo icon mx="5px" white={inDrawer} /> : null}
-              {isSearching ? (
+              {!isQueuing || !isRecommending ? (
+                <SpotifyLogo icon mx="5px" white={inDrawer} />
+              ) : null}
+              {isQueuing || isRecommending ? (
                 <IconButton
-                  onClick={addToQueue}
+                  onClick={handleSendButton}
                   pos="relative"
                   variant="ghost"
                   color={color}
                   icon={icon}
                   _hover={{ color: 'white' }}
-                  aria-label="add to this friend's queue"
+                  aria-label={isQueuing ? 'add to this friends queue' : 'recommend to this friend'}
                 />
               ) : null}
             </Stack>
