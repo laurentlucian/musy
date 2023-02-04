@@ -91,8 +91,6 @@ const ActionDrawer = () => {
     setComment(event.target.value);
   };
 
-  // Use useMemo to store the filtered list of users in a variable
-  // so that it only re-calculates when either allUsers or currentUser changes
   const queueableUsers = useMemo(() => {
     return allUsers.filter((user) => {
       const isAllowed =
@@ -133,7 +131,7 @@ const ActionDrawer = () => {
   );
   const RecommendTo = () => (
     <Button
-      leftIcon={<Send2 />}
+      leftIcon={<Send2 variant="Bold" />}
       onClick={onClickRecommend}
       pos="relative"
       variant="ghost"
