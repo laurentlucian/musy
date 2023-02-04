@@ -81,7 +81,6 @@ const ProfileHeader = () => {
             pos="absolute"
             bottom={0}
             onBlur={(e) => submit(e.currentTarget.form)}
-            border="1px solid red"
           />
         </Form>
       </Stack>
