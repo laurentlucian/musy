@@ -7,7 +7,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { action } from '~/routes/$id/add';
+import type { action } from '~/routes/$id/recommend';
 
 import Waver from '../icons/Waver';
 
@@ -68,7 +68,7 @@ const Recommend = ({ comment, user, userId }: RecommendProps) => {
   const isDone = fetcher.type === 'done';
   const isError =
     typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
+      ? (fetcher.data as string).includes('Error')
         ? fetcher.data
         : null
       : null;
