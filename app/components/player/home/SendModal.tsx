@@ -3,9 +3,15 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
   InputGroup,
   Input,
   InputRightElement,
@@ -27,6 +33,7 @@ import { Refresh } from 'iconsax-react';
 import Tiles from '~/components/tiles/Tiles';
 import Tile from '~/components/Tile';
 import { X } from 'react-feather';
+import useIsMobile from '~/hooks/useIsMobile';
 
 interface SendModalConfig {
   isOpen: boolean;
@@ -49,6 +56,7 @@ const SendModal = ({
   sendList,
   setSendList,
 }: SendModalConfig) => {
+  const isSmallScreen = useIsMobile();
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
   const [showTracks, setShowTracks] = useState(false);
@@ -107,114 +115,133 @@ const SendModal = ({
     sendList ? setTitle('queue') : setTitle('recommend');
   }, [sendList]);
 
-  return (
-    <>
-      <Modal
-        isOpen={isOpen}
-        onClose={onCloseModal}
-        // isCentered
-        motionPreset="scale"
-        size="6xl"
-        initialFocusRef={inputRef}
-      >
-        <ModalOverlay />
-        <ModalContent w={['300px', '800px']}>
-          <ModalHeader>
-            {title} to {name}
-          </ModalHeader>
-          <ModalCloseButton />
-          <IconButton
-            variant="ghost"
-            aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
-            icon={<Refresh size="15px" />}
-            onClick={() => {
-              setSendList(!sendList);
-            }}
-            pos="absolute"
-            right="40px"
-            top="8px"
-          />
-          <ModalBody>
-            <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
-              <Input
-                ref={inputRef}
-                name="spotify"
-                variant="flushed"
-                value={search}
-                placeholder="search"
-                autoComplete="off"
-                borderRadius={0}
-                onChange={onChange}
-                fontSize="15px"
-                id="myInput"
+  const Desktop = (
+    <Modal
+      isOpen={isOpen}
+      onClose={onCloseModal}
+      // isCentered
+      motionPreset="scale"
+      size="6xl"
+      initialFocusRef={inputRef}
+      blockScrollOnMount={!search}
+    >
+      <ModalOverlay />
+      <ModalContent w={['300px', '800px']}>
+        <ModalHeader>
+          {title} to {name}
+        </ModalHeader>
+        <ModalCloseButton />
+        <IconButton
+          variant="ghost"
+          aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
+          icon={<Refresh size="15px" />}
+          onClick={() => {
+            setSendList(!sendList);
+          }}
+          pos="absolute"
+          right="40px"
+          top="8px"
+        />
+        <ModalBody>
+          <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
+            <Input
+              ref={inputRef}
+              name="spotify"
+              variant="flushed"
+              value={search}
+              placeholder="search"
+              autoComplete="off"
+              borderRadius={0}
+              onChange={onChange}
+              fontSize="15px"
+              id="myInput"
+            />
+            {search && (
+              <InputRightElement
+                h="35px"
+                w="65px"
+                pr={2}
+                justifyContent="end"
+                children={
+                  <IconButton
+                    aria-label="close"
+                    variant="ghost"
+                    borderRadius={8}
+                    onClick={onClearSearch}
+                    icon={<X />}
+                  />
+                }
               />
-              {search && (
-                <InputRightElement
-                  h="35px"
-                  w="65px"
-                  pr={2}
-                  justifyContent="end"
-                  children={
-                    <IconButton
-                      aria-label="close"
-                      variant="ghost"
-                      borderRadius={8}
-                      onClick={onClearSearch}
-                      icon={<X />}
-                    />
-                  }
-                />
-              )}
-            </InputGroup>
-            <Tiles>
-              {showTracks ? (
-                tracks.map((track) => (
-                  <Box minH="325px">
-                    <Tile
-                      key={track.trackId}
-                      trackId={track.trackId}
-                      uri={track.uri}
-                      image={track.image}
-                      albumUri={track.albumUri}
-                      albumName={track.albumName}
-                      name={track.name}
-                      artist={track.artist}
-                      artistUri={track.artistUri}
-                      explicit={track.explicit}
-                      preview_url={track.preview_url}
-                      link={track.link}
-                      isQueuing={sendList}
-                      isRecommending={!sendList}
-                    />
+            )}
+          </InputGroup>
+          <Tiles>
+            {showTracks ? (
+              tracks.map((track) => (
+                <Box minH="325px">
+                  <Tile
+                    key={track.trackId}
+                    trackId={track.trackId}
+                    uri={track.uri}
+                    image={track.image}
+                    albumUri={track.albumUri}
+                    albumName={track.albumName}
+                    name={track.name}
+                    artist={track.artist}
+                    artistUri={track.artistUri}
+                    explicit={track.explicit}
+                    preview_url={track.preview_url}
+                    link={track.link}
+                    isQueuing={sendList}
+                    isRecommending={!sendList}
+                  />
+                </Box>
+              ))
+            ) : erect && !search ? (
+              <Box h="325px">
+                {busy && (
+                  <Box pos="relative" top="50%" left="980%">
+                    <Waver />
                   </Box>
-                ))
-              ) : erect && !search ? (
-                <Box h="325px">
-                  {busy && (
-                    <Box pos="relative" top="50%" left="980%">
-                      <Waver />
-                    </Box>
-                  )}
-                </Box>
-              ) : (
-                <Box
-                  h={search ? '325px' : 0}
-                  transition="height 0.8s ease-in-out"
-                  transitionDelay="0.4s"
-                >
-                  {busy && (
-                    <Box pos="relative" top="50%" left="980%">
-                      <Waver />
-                    </Box>
-                  )}
-                </Box>
-              )}
-            </Tiles>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+                )}
+              </Box>
+            ) : (
+              <Box
+                h={search ? '325px' : 0}
+                transition="height 0.8s ease-in-out"
+                transitionDelay="0.4s"
+              >
+                {busy && (
+                  <Box pos="relative" top="50%" left="980%">
+                    <Waver />
+                  </Box>
+                )}
+              </Box>
+            )}
+          </Tiles>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
+
+  const Mobile = (
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} initialFocusRef={inputRef}>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader>
+          {title} to {name}
+        </DrawerHeader>
+
+        <DrawerBody>
+          <Input placeholder="Type here..." />
+        </DrawerBody>
+
+        <DrawerFooter></DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+
+  return isSmallScreen ? Mobile : Desktop;
 };
 
 export default SendModal;

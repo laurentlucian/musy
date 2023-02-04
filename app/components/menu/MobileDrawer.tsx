@@ -79,6 +79,7 @@ const MobileDrawer = () => {
         initialFocusRef={inputRef}
         size="full"
         autoFocus={false}
+        blockScrollOnMount={false}
       >
         <DrawerOverlay />
         <DrawerContent>
