@@ -36,6 +36,7 @@ import { X } from 'react-feather';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import type { action } from '~/routes/$id/add';
+import type { action as actionB } from '~/routes/$id/recommend';
 import { useTypedFetcher } from 'remix-typedjson';
 
 interface SendModalConfig {
@@ -69,7 +70,8 @@ const SendModal = ({
   const [erect, setErect] = useState(false);
   const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
   const fetcher = useFetcher();
-  const fetcherB = useTypedFetcher<typeof action>();
+  const fetcherA = useTypedFetcher<typeof action>();
+  const fetcherB = useTypedFetcher<typeof actionB>();
   const busy = fetcher.state === 'loading' ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
   const track = useDrawerTrack();
@@ -223,7 +225,8 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
-                    fetcher={fetcherB}
+                    fetcher={fetcherA}
+                    fetcherB={fetcherB}
                     isQueuing={sendList}
                     isRecommending={!sendList}
                     id={id}
@@ -332,7 +335,8 @@ const SendModal = ({
                   explicit={track.explicit}
                   preview_url={track.preview_url}
                   link={track.link}
-                  fetcher={fetcherB}
+                  fetcher={fetcherA}
+                  fetcherB={fetcherB}
                   inDrawer
                   isQueuing={sendList}
                   isRecommending={!sendList}

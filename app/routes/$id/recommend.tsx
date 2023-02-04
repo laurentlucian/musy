@@ -75,7 +75,9 @@ export const action = async ({ params, request }: ActionArgs) => {
       console.log('recommend -> error', error);
       return typedjson('failed to send');
     }
-    return typedjson('Sent');
+    return typedjson('sent');
+  } else {
+    return typedjson('why are you recommending to yourself');
   }
 };
 

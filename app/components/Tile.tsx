@@ -1,6 +1,6 @@
 import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
 import type { DataFunctionArgs } from '@remix-run/server-runtime';
-import { forwardRef, useRef } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import { Check, AlertCircle } from 'react-feather';
 
 import { Flex, HStack, IconButton, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
@@ -28,6 +28,9 @@ type TileProps = Track & {
   fetcher?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
+  fetcherB?: TypedFetcherWithComponents<
+    ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string> | undefined>
+  >;
   id?: string;
   playlist?: Boolean;
   submit?: SubmitFunction;
@@ -49,6 +52,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       currentUserId,
       explicit,
       fetcher,
+      fetcherB,
       id,
       image,
       link,
@@ -135,26 +139,28 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         console.log('YOU QUEUED');
         fetcher.submit(queueData, { action, method: 'post', replace: true });
       }
-      if (fetcher && isRecommending) {
+      if (fetcherB && isRecommending) {
         console.log('YOU RECOMMENDED');
-        fetcher.submit(recommendData, { action, method: 'post', replace: true });
+        fetcherB.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
+    const fetchers = isRecommending ? fetcherB : fetcher;
+    console.log('fetchers: ', fetchers);
     const isClicked = clickedRef.current === trackId;
-    const isAdding = fetcher ? fetcher.submission?.formData.get('trackId') === trackId : null;
-    const isDone = fetcher ? fetcher.type === 'done' && isClicked : null;
-    const isError = fetcher
-      ? typeof fetcher.data === 'string' && isClicked
-        ? fetcher.data.includes('Error') && isClicked
-          ? fetcher.data && isClicked
+    const isAdding = fetchers ? fetchers.submission?.formData.get('trackId') === trackId : null;
+    const isDone = fetchers ? fetchers.type === 'done' && isClicked : null;
+    const isError = fetchers
+      ? typeof fetchers.data === 'string' && isClicked
+        ? fetchers.data.includes('Error') && isClicked
+          ? fetchers.data && isClicked
           : null
         : null
       : null;
 
-    // console.log('isClicked: ', isClicked);
-    // console.log('isAdding: ', isAdding);
-    // console.log('isDone: ', isDone);
-    // console.log('isError: ', isError);
+    console.log('isClicked: ', isClicked);
+    console.log('isAdding: ', isAdding);
+    console.log('isDone: ', isDone);
+    console.log('isError: ', isError);
     const icon = isAdding ? (
       <Waver />
     ) : isDone ? (
