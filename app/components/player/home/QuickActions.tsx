@@ -14,7 +14,17 @@ import { MoreHorizontal } from 'react-feather';
 import SendModal from './SendModal';
 import { useState } from 'react';
 
-const QuickActions = ({ name, id }: { name: string; id: string }) => {
+const QuickActions = ({
+  name,
+  id,
+  que,
+  recommend,
+}: {
+  name: string;
+  id: string;
+  que?: string;
+  recommend?: string;
+}) => {
   const [title, setTitle] = useState('');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -24,6 +34,7 @@ const QuickActions = ({ name, id }: { name: string; id: string }) => {
     e.preventDefault();
     onOpen();
   };
+
   return (
     <>
       <Menu placement="bottom-start">
@@ -39,30 +50,39 @@ const QuickActions = ({ name, id }: { name: string; id: string }) => {
         </Stack>
         <Portal>
           <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
-            <MenuItem
-              icon={<Send2 />}
-              bg={bg}
-              color={color}
-              onClick={(e) => {
-                onClickMenuItem(e);
-                setTitle(`queue`);
-                setSendList(true);
-              }}
-            >
-              queue to {name}
-            </MenuItem>
-            <MenuItem
-              icon={<Send2 variant="Bold" />}
-              bg={bg}
-              color={color}
-              onClick={(e) => {
-                onClickMenuItem(e);
-                setTitle(`recommend`);
-                setSendList(false);
-              }}
-            >
-              recommend to {name}
-            </MenuItem>
+            {que === 'on' ? (
+              <MenuItem
+                icon={<Send2 />}
+                bg={bg}
+                color={color}
+                onClick={(e) => {
+                  onClickMenuItem(e);
+                  setTitle(`queue`);
+                  setSendList(true);
+                }}
+              >
+                queue to {name}
+              </MenuItem>
+            ) : (
+              <></>
+            )}
+
+            {recommend === 'on' ? (
+              <MenuItem
+                icon={<Send2 variant="Bold" />}
+                bg={bg}
+                color={color}
+                onClick={(e) => {
+                  onClickMenuItem(e);
+                  setTitle(`recommend`);
+                  setSendList(false);
+                }}
+              >
+                recommend to {name}
+              </MenuItem>
+            ) : (
+              <></>
+            )}
           </MenuList>
         </Portal>
       </Menu>

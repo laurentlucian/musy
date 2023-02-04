@@ -59,6 +59,8 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
 
   const playback = user.playback;
   const track = playback?.track;
+  const que = user?.settings?.allowQueue;
+  const recommend = user?.settings?.allowRecommend;
 
   const formattedTrack = track
     ? {
@@ -111,7 +113,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           {!isSmallScreen && loading && <Waver />}
         </HStack>
       </Stack>
-      {track && <QuickActions name={name} id={user.userId}/>}
+      {track && <QuickActions name={name} id={user.userId} que={que} recommend={recommend} />}
     </Stack>
   );
   const Activity = (
