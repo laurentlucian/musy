@@ -10,7 +10,6 @@ import {
   Input,
   InputRightElement,
   IconButton,
-  Stack,
   Box,
 } from '@chakra-ui/react';
 import {
@@ -24,7 +23,7 @@ import {
 import { useFetcher } from '@remix-run/react';
 import type { Track } from '~/lib/types/types';
 import Waver from '~/components/icons/Waver';
-import { CloseSquare, Refresh } from 'iconsax-react';
+import { Refresh } from 'iconsax-react';
 import Tiles from '~/components/tiles/Tiles';
 import Tile from '~/components/Tile';
 import { X } from 'react-feather';
@@ -57,7 +56,7 @@ const SendModal = ({
   const fetcher = useFetcher();
   const busy = fetcher.state === 'loading' ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
-  console.log(fetcher.state);
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
@@ -113,7 +112,7 @@ const SendModal = ({
       <Modal
         isOpen={isOpen}
         onClose={onCloseModal}
-        isCentered
+        // isCentered
         motionPreset="scale"
         size="6xl"
         initialFocusRef={inputRef}
@@ -136,7 +135,7 @@ const SendModal = ({
             top="8px"
           />
           <ModalBody>
-            <InputGroup justifySelf="center" w="725px" ml="26px">
+            <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
               <Input
                 ref={inputRef}
                 name="spotify"
@@ -156,16 +155,13 @@ const SendModal = ({
                   pr={2}
                   justifyContent="end"
                   children={
-                    <>
-                      {busy && <Waver />}
-                      <IconButton
-                        aria-label="close"
-                        variant="ghost"
-                        borderRadius={8}
-                        onClick={onClearSearch}
-                        icon={<X />}
-                      />
-                    </>
+                    <IconButton
+                      aria-label="close"
+                      variant="ghost"
+                      borderRadius={8}
+                      onClick={onClearSearch}
+                      icon={<X />}
+                    />
                   }
                 />
               )}
@@ -173,40 +169,48 @@ const SendModal = ({
             <Tiles>
               {showTracks ? (
                 tracks.map((track) => (
-                  <Tile
-                    key={track.trackId}
-                    trackId={track.trackId}
-                    uri={track.uri}
-                    image={track.image}
-                    albumUri={track.albumUri}
-                    albumName={track.albumName}
-                    name={track.name}
-                    artist={track.artist}
-                    artistUri={track.artistUri}
-                    explicit={track.explicit}
-                    preview_url={track.preview_url}
-                    link={track.link}
-                    isQueuing={sendList}
-                    isRecommending={!sendList}
-                  />
+                  <Box minH="325px">
+                    <Tile
+                      key={track.trackId}
+                      trackId={track.trackId}
+                      uri={track.uri}
+                      image={track.image}
+                      albumUri={track.albumUri}
+                      albumName={track.albumName}
+                      name={track.name}
+                      artist={track.artist}
+                      artistUri={track.artistUri}
+                      explicit={track.explicit}
+                      preview_url={track.preview_url}
+                      link={track.link}
+                      isQueuing={sendList}
+                      isRecommending={!sendList}
+                    />
+                  </Box>
                 ))
               ) : erect && !search ? (
-                <Box h="320px" />
+                <Box h="325px">
+                  {busy && (
+                    <Box pos="relative" top="50%" left="980%">
+                      <Waver />
+                    </Box>
+                  )}
+                </Box>
               ) : (
                 <Box
-                  h={search ? '320px' : 0}
-                  transition="height 1s ease-in-out"
+                  h={search ? '325px' : 0}
+                  transition="height 0.8s ease-in-out"
                   transitionDelay="0.4s"
-                />
+                >
+                  {busy && (
+                    <Box pos="relative" top="50%" left="980%">
+                      <Waver />
+                    </Box>
+                  )}
+                </Box>
               )}
             </Tiles>
           </ModalBody>
-          <ModalFooter>
-            {/* <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button> */}
-            {/* <Button variant="ghost">Secondary Action</Button> */}
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </>
