@@ -26,7 +26,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import { useFetcher } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import type { Track } from '~/lib/types/types';
 import Waver from '~/components/icons/Waver';
 import { Refresh } from 'iconsax-react';
@@ -57,6 +57,7 @@ const SendModal = ({
   setSendList,
 }: SendModalConfig) => {
   const isSmallScreen = useIsMobile();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
   const [showTracks, setShowTracks] = useState(false);
@@ -68,19 +69,24 @@ const SendModal = ({
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
-      setTimeout(() => {
-        if (search.trim().length > 0) {
-          fetcher.load(`/${id}/search?spotify=${search}`);
-        }
-      }, 1000);
     } else {
       setSearch('');
       setShowTracks(false);
+      searchParams.delete('spotify');
+      setSearchParams(searchParams, {
+        replace: true,
+        state: { scroll: false },
+      });
     }
   };
   const onClearSearch = () => {
     setSearch('');
     setShowTracks(false);
+    searchParams.delete('spotify');
+    setSearchParams(searchParams, {
+      replace: true,
+      state: { scroll: false },
+    });
   };
 
   const onCloseModal = () => {
@@ -88,7 +94,22 @@ const SendModal = ({
     setShowTracks(false);
     onClose();
     setErect(false);
+    searchParams.delete('spotify');
+    setSearchParams(searchParams, {
+      replace: true,
+      state: { scroll: false },
+    });
   };
+
+  useEffect(() => {
+    const delaySubmit = setTimeout(() => {
+      if (search.trim().length > 0) {
+        fetcher.load(`/${id}/search?spotify=${search}`);
+      }
+    }, 1000);
+
+    return () => clearTimeout(delaySubmit);
+  }, [search, fetcher.load]);
 
   useEffect(() => {
     if (fetcher.data) {

@@ -61,6 +61,11 @@ const Search = () => {
   const handleBlur = () => {
     if (search === '') {
       navigate(`/${id}`);
+      searchParams.delete('spotify');
+      setSearchParams(searchParams, {
+        replace: true,
+        state: { scroll: false },
+      });
     }
   };
 

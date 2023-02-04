@@ -1,4 +1,4 @@
-import { useFetcher } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import { type ChangeEvent, useRef, useState, useEffect } from 'react';
 
 import {
@@ -29,6 +29,7 @@ const MobileDrawer = () => {
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
   const fetcher = useFetcher();
@@ -37,18 +38,33 @@ const MobileDrawer = () => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
-      setTimeout(() => {
-        if (search.trim().length > 0) {
-          fetcher.load(`/${id}/search?spotify=${search}`);
-        }
-      }, 1000);
     } else {
       setSearch('');
+      searchParams.delete('spotify');
+      setSearchParams(searchParams, {
+        replace: true,
+        state: { scroll: false },
+      });
     }
   };
   const onClearSearch = () => {
     setSearch('');
+    searchParams.delete('spotify');
+    setSearchParams(searchParams, {
+      replace: true,
+      state: { scroll: false },
+    });
   };
+
+  useEffect(() => {
+    const delaySubmit = setTimeout(() => {
+      if (search.trim().length > 0) {
+        fetcher.load(`/${id}/search?spotify=${search}`);
+      }
+    }, 1000);
+
+    return () => clearTimeout(delaySubmit);
+  }, [search, fetcher.load]);
 
   useEffect(() => {
     if (fetcher.data) {
