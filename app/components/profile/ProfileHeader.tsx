@@ -103,20 +103,22 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const timeframe = params.get('listened') === 'week' ? '7d' : '24h';
   const SubHeader = (
-    <HStack
-      spacing={[3, 5]}
-      position="relative"
-      onClick={() => {
-        if (params.get('listened') === 'week') {
-          params.delete('listened');
-        } else {
-          setParams({ listened: 'week' });
-        }
-      }}
-    >
+    <HStack spacing={[3, 5]} position="relative">
       {Mood}
       <Tooltip label="hours listened" placement="bottom-end" hasArrow>
-        <Flex align="baseline" pt="1px">
+        <Flex
+          align="baseline"
+          pt="1px"
+          cursor="pointer"
+          onClick={() => {
+            if (params.get('listened') === 'week') {
+              params.delete('listened');
+              setParams(params);
+            } else {
+              setParams({ listened: 'week' });
+            }
+          }}
+        >
           <Text fontSize="13px" mr="8px">
             {listened}
           </Text>
