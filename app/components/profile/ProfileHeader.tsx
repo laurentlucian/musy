@@ -1,4 +1,4 @@
-import { Form, useSubmit } from '@remix-run/react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
@@ -7,14 +7,15 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 import Following from '~/components/profile/Following';
 import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
+import useIsMobile from '~/hooks/useIsMobile';
 import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
-import useIsMobile from '~/hooks/useIsMobile';
 import Search from './Search';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
+  const [params, setParams] = useSearchParams();
   const submit = useSubmit();
   const isSmallScreen = useIsMobile();
   if (!data) return null;
@@ -44,7 +45,6 @@ const ProfileHeader = () => {
     </Heading>
   );
 
-  console.log(user, currentUser, 'test');
   const Bio =
     user.id === currentUser?.id ? (
       <Stack w="100%" minW="100%" maxW="100%" pt="20px">
@@ -100,8 +100,20 @@ const ProfileHeader = () => {
       </Text>
     );
   const Mood = currentUser ? <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} /> : null;
+
+  const timeframe = params.get('listened') === 'week' ? '7d' : '24h';
   const SubHeader = (
-    <HStack spacing={[3, 5]} position="relative">
+    <HStack
+      spacing={[3, 5]}
+      position="relative"
+      onClick={() => {
+        if (params.get('listened') === 'week') {
+          params.delete('listened');
+        } else {
+          setParams({ listened: 'week' });
+        }
+      }}
+    >
       {Mood}
       <Tooltip label="hours listened" placement="bottom-end" hasArrow>
         <Flex align="baseline" pt="1px">
@@ -109,7 +121,7 @@ const ProfileHeader = () => {
             {listened}
           </Text>
           <Text as="span" fontSize="10px" opacity={0.5}>
-            /&nbsp; 24h
+            /&nbsp; {timeframe}
           </Text>
         </Flex>
       </Tooltip>
