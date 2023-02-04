@@ -226,9 +226,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               )}
             </Stack>
             <Stack>
-              {!isQueuing || !isRecommending ? (
-                <SpotifyLogo icon mx="5px" white={inDrawer} />
-              ) : null}
               {isQueuing || isRecommending ? (
                 <IconButton
                   onClick={handleSendButton}
@@ -239,7 +236,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   _hover={{ color: 'white' }}
                   aria-label={isQueuing ? 'add to this friends queue' : 'recommend to this friend'}
                 />
-              ) : null}
+              ) : (
+                <SpotifyLogo icon mx="5px" white={inDrawer} />
+              )}
             </Stack>
           </Flex>
         </Stack>
