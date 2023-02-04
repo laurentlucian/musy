@@ -53,7 +53,14 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
     />
   );
   const icon = (
-    <Image src={currentUser?.image} borderRadius="full" minW={30} maxW={30} minH={30} maxH={30} />
+    <Image
+      src={currentUser?.image}
+      borderRadius="full"
+      minW={['40px', 30]}
+      maxW={['40px', 30]}
+      minH={['40px', 30]}
+      maxH={['40px', 30]}
+    />
   );
 
   const iconButton = forwardRef<IconButtonProps, 'button'>(({ ...props }, ref) => (

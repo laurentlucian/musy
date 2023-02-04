@@ -15,17 +15,17 @@ import SendModal from './SendModal';
 import { useState } from 'react';
 
 const QuickActions = ({
-  name,
   id,
-  currentUserId,
   que,
+  name,
   recommend,
+  currentUserId,
 }: {
-  name: string;
   id: string;
-  currentUserId: string | undefined;
   que?: string;
+  name: string;
   recommend?: string;
+  currentUserId: string | undefined;
 }) => {
   const [title, setTitle] = useState('');
   const [sendList, setSendList] = useState<boolean>();

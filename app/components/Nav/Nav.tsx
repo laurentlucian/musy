@@ -20,11 +20,11 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
     <Flex w="100%" as="header" py={[2, 5]} justify="space-between" px={isSmallScreen ? '5px' : 0}>
       <HStack as={Link} to="/" spacing="8px">
         {isSmallScreen ? (
-          <Image src="/musylogo1.svg" boxSize="35px" />
+          <Image src="/musylogo1.svg" boxSize="35px" mb="10px" />
         ) : (
           <Image src="/favicon-32x32.png" />
         )}
-        <Heading size="sm">musy</Heading>
+        <Heading size='sm'>musy</Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">
@@ -47,7 +47,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
               <UserMenu isSmallScreen={isSmallScreen} />
             ) : (
               <HStack w="100%" spacing={3}>
-                <UserSearch /> <UserMenu isSmallScreen={isSmallScreen} />{' '}
+                <UserSearch /> <UserMenu isSmallScreen={isSmallScreen} />
               </HStack>
             )}
           </>
