@@ -12,7 +12,7 @@ import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Friends = () => {
-  const { users } = useTypedLoaderData<typeof loader>();
+  const { users, currentUserId } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
 
@@ -28,7 +28,7 @@ const Friends = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
       {users.map((user) => {
-        return <PrismaMiniPlayer key={user.userId} user={user} />;
+        return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}
     </Stack>
   );
@@ -38,9 +38,10 @@ export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
   const users = await getAllUsers(!!currentUser);
+  const currentUserId = currentUser?.id;
 
   return typedjson(
-    { now: Date.now(), users },
+    { now: Date.now(), users, currentUserId },
     {
       headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
     },

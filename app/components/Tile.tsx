@@ -24,6 +24,7 @@ type TileProps = Track & {
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
   currentUser?: User | null;
+  currentUserId?: string | undefined;
   fetcher?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
@@ -45,6 +46,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       createdAt,
       createdBy,
       currentUser,
+      currentUserId,
       explicit,
       fetcher,
       id,
@@ -87,6 +89,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     const clickedRef = useRef<string>();
     const handleSendButton = () => {
       if (!currentUser && submit) {
+        console.log('you made it here0');
         // @todo figure out a better way to require authentication on click;
         // after authentication redirect, add to queue isn't successful. user needs to click again
         return submit(null, {
@@ -95,10 +98,11 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           replace: true,
         });
       }
-      clickedRef.current = trackId;
-      const action = isQueuing ? `/${id}/add` : `/${id}/recommend`;
 
-      const fromUserId = currentUser?.userId;
+      clickedRef.current = trackId;
+      const action = isRecommending ? `/${id}/recommend` : `/${id}/add`;
+
+      const fromUserId = currentUser?.userId || currentUserId;
       const sendToUserId = id;
 
       const queueData = {
@@ -127,11 +131,12 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         trackId: track?.trackId ?? '',
         uri: track?.uri ?? '',
       };
-
       if (fetcher && isQueuing) {
+        console.log('YOU QUEUED');
         fetcher.submit(queueData, { action, method: 'post', replace: true });
       }
       if (fetcher && isRecommending) {
+        console.log('YOU RECOMMENDED');
         fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
@@ -145,6 +150,11 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           : null
         : null
       : null;
+
+    // console.log('isClicked: ', isClicked);
+    // console.log('isAdding: ', isAdding);
+    // console.log('isDone: ', isDone);
+    // console.log('isError: ', isError);
     const icon = isAdding ? (
       <Waver />
     ) : isDone ? (

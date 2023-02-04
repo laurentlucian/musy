@@ -35,6 +35,8 @@ import Tile from '~/components/Tile';
 import { X } from 'react-feather';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useDrawerTrack } from '~/hooks/useDrawer';
+import type { action } from '~/routes/$id/add';
+import { useTypedFetcher } from 'remix-typedjson';
 
 interface SendModalConfig {
   isOpen: boolean;
@@ -43,6 +45,7 @@ interface SendModalConfig {
   title: string;
   setTitle: Dispatch<SetStateAction<string>>;
   id: string;
+  currentUserId: string | undefined;
   sendList: boolean | undefined;
   setSendList: Dispatch<SetStateAction<boolean | undefined>>;
 }
@@ -54,6 +57,7 @@ const SendModal = ({
   title,
   setTitle,
   id,
+  currentUserId,
   sendList,
   setSendList,
 }: SendModalConfig) => {
@@ -65,10 +69,10 @@ const SendModal = ({
   const [erect, setErect] = useState(false);
   const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
   const fetcher = useFetcher();
+  const fetcherB = useTypedFetcher<typeof action>();
   const busy = fetcher.state === 'loading' ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
   const track = useDrawerTrack();
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
@@ -219,8 +223,11 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
+                    fetcher={fetcherB}
                     isQueuing={sendList}
                     isRecommending={!sendList}
+                    id={id}
+                    currentUserId={currentUserId}
                   />
                 </Box>
               ))
@@ -325,9 +332,12 @@ const SendModal = ({
                   explicit={track.explicit}
                   preview_url={track.preview_url}
                   link={track.link}
+                  fetcher={fetcherB}
                   inDrawer
                   isQueuing={sendList}
                   isRecommending={!sendList}
+                  id={id}
+                  currentUserId={currentUserId}
                 />
               ))}
           </Tiles>

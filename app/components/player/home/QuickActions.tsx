@@ -17,11 +17,13 @@ import { useState } from 'react';
 const QuickActions = ({
   name,
   id,
+  currentUserId,
   que,
   recommend,
 }: {
   name: string;
   id: string;
+  currentUserId: string | undefined;
   que?: string;
   recommend?: string;
 }) => {
@@ -98,6 +100,7 @@ const QuickActions = ({
         setTitle={setTitle}
         sendList={sendList}
         setSendList={setSendList}
+        currentUserId={currentUserId}
       />
     </>
   );

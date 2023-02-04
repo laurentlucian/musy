@@ -10,7 +10,6 @@ import {
   useColorModeValue,
   Link as LinkB,
   Box,
-  IconButton,
 } from '@chakra-ui/react';
 
 import type { Playback, Profile, Track } from '@prisma/client';
@@ -23,7 +22,6 @@ import type { User } from '~/lib/types/types';
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
-import { MoreHorizontal } from 'react-feather';
 import QuickActions from './QuickActions';
 
 // import PlayerBarCSS from './PlayerBarCSS';
@@ -43,9 +41,10 @@ interface Friends extends User {
 }
 type PlayerProps = {
   user: Friends;
+  currentUserId: string | undefined;
 };
 
-const PrismaMiniPlayer = ({ user }: PlayerProps) => {
+const PrismaMiniPlayer = ({ user, currentUserId }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -113,7 +112,15 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
           {!isSmallScreen && loading && <Waver />}
         </HStack>
       </Stack>
-      {track && <QuickActions name={name} id={user.userId} que={que} recommend={recommend} />}
+      {track && (
+        <QuickActions
+          name={name}
+          id={user.userId}
+          currentUserId={currentUserId}
+          que={que}
+          recommend={recommend}
+        />
+      )}
     </Stack>
   );
   const Activity = (
