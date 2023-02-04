@@ -8,7 +8,7 @@ import invariant from 'tiny-invariant';
 
 import ProfileHeader from '~/components/profile/ProfileHeader';
 import useIsMobile from '~/hooks/useIsMobile';
-import { lessThanADay } from '~/lib/utils';
+import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
 import {
@@ -115,10 +115,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     where: { userId: id },
   });
 
+  const { searchParams } = new URL(request.url);
+  const listenedTimeframe = searchParams.get('listened');
   const filteredRecent = recentDb.filter(({ playedAt }) => {
     const d = new Date(playedAt);
+    if (listenedTimeframe === 'week') {
+      return lessThanAWeek(d);
+    }
+
     return lessThanADay(d);
-    // return lessThanAWeek(d);
   });
 
   const listened = msToString(
