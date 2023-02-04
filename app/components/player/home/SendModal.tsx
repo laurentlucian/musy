@@ -34,6 +34,7 @@ import Tiles from '~/components/tiles/Tiles';
 import Tile from '~/components/Tile';
 import { X } from 'react-feather';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 
 interface SendModalConfig {
   isOpen: boolean;
@@ -62,9 +63,11 @@ const SendModal = ({
   const [tracks, setTracks] = useState<Track[]>([]);
   const [showTracks, setShowTracks] = useState(false);
   const [erect, setErect] = useState(false);
+  const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
   const fetcher = useFetcher();
   const busy = fetcher.state === 'loading' ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
+  const track = useDrawerTrack();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -137,6 +140,10 @@ const SendModal = ({
     sendList ? setTitle('queue') : setTitle('recommend');
   }, [sendList]);
 
+  useEffect(() => {
+    track ? setBlockScrollOnMount(false) : setBlockScrollOnMount(true);
+  }, [track]);
+
   const Desktop = (
     <Modal
       isOpen={isOpen}
@@ -144,7 +151,7 @@ const SendModal = ({
       motionPreset="scale"
       size="6xl"
       initialFocusRef={inputRef}
-      blockScrollOnMount={!search}
+      blockScrollOnMount={blockScrollOnMount}
     >
       <ModalOverlay />
       <ModalContent w={['300px', '800px']}>
@@ -243,18 +250,75 @@ const SendModal = ({
       </ModalContent>
     </Modal>
   );
-
   const Mobile = (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose} initialFocusRef={inputRef}>
+    <Drawer
+      isOpen={isOpen}
+      placement="left"
+      size="full"
+      onClose={onClose}
+      initialFocusRef={inputRef}
+      blockScrollOnMount={blockScrollOnMount}
+    >
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton />
         <DrawerHeader>
           {title} to {name}
         </DrawerHeader>
-
+        <DrawerCloseButton />
         <DrawerBody>
-          <Input placeholder="Type here..." />
+          <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
+            <Input
+              ref={inputRef}
+              name="spotify"
+              variant="flushed"
+              value={search}
+              placeholder="search"
+              autoComplete="off"
+              borderRadius={0}
+              onChange={onChange}
+              fontSize="15px"
+              id="myInput"
+            />
+            {search && (
+              <InputRightElement
+                h="35px"
+                w="65px"
+                pr={2}
+                justifyContent="end"
+                children={
+                  <IconButton
+                    aria-label="close"
+                    variant="ghost"
+                    borderRadius={8}
+                    onClick={onClearSearch}
+                    icon={<X />}
+                  />
+                }
+              />
+            )}
+          </InputGroup>
+          <Tiles>
+            {showTracks &&
+              tracks.map((track) => (
+                <Tile
+                  key={track.trackId}
+                  trackId={track.trackId}
+                  uri={track.uri}
+                  image={track.image}
+                  albumUri={track.albumUri}
+                  albumName={track.albumName}
+                  name={track.name}
+                  artist={track.artist}
+                  artistUri={track.artistUri}
+                  explicit={track.explicit}
+                  preview_url={track.preview_url}
+                  link={track.link}
+                  inDrawer
+                  isQueuing={sendList}
+                  isRecommending={!sendList}
+                />
+              ))}
+          </Tiles>
         </DrawerBody>
 
         <DrawerFooter></DrawerFooter>

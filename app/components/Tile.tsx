@@ -70,7 +70,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       });
     };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-    const color = useColorModeValue('music.800', 'music.200');
+    const color = useColorModeValue(`${inDrawer ? 'music.200' : 'music.800'}`, 'music.200');
     const track: Track = {
       albumName,
       albumUri,
