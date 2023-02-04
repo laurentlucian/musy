@@ -43,6 +43,8 @@ const ProfileHeader = () => {
       {user.name}
     </Heading>
   );
+
+  console.log(user, currentUser, 'test');
   const Bio =
     user.id === currentUser?.id ? (
       <Stack w="100%" minW="100%" maxW="100%" pt="20px">
@@ -69,6 +71,8 @@ const ProfileHeader = () => {
             name="component"
             size="xs"
             variant="unstyled"
+            defaultValue={user.founder === true ? '69' : ''}
+            textColor={user.founder === true ? 'rgba(0, 0, 0, 0)' : undefined}
             resize="none"
             w="20px"
             h="20px"
@@ -77,6 +81,7 @@ const ProfileHeader = () => {
             pos="absolute"
             bottom={0}
             onBlur={(e) => submit(e.currentTarget.form)}
+            border="1px solid red"
           />
         </Form>
       </Stack>
