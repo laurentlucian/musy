@@ -1,9 +1,9 @@
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { Link, Outlet, useCatch } from '@remix-run/react';
 
-import { Heading, Stack, Button } from '@chakra-ui/react';
+import { Heading, Stack, Button, Text } from '@chakra-ui/react';
 
-import { typedjson } from 'remix-typedjson';
+import { typedjson, useTypedRouteLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileHeader from '~/components/profile/ProfileHeader';
@@ -23,6 +23,10 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
+  const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
+  const user = data?.user;
+  const currentUser = data?.currentUser;
+
   return (
     <Stack
       spacing={5}
@@ -33,7 +37,11 @@ const Profile = () => {
       overflowX={isSmallScreen ? 'hidden' : 'unset'}
     >
       <ProfileHeader />
-      <Outlet />
+      {user?.settings?.isPrivate && currentUser?.id !== user.id ? (
+        <Text>This profile is private</Text>
+      ) : (
+        <Outlet />
+      )}
     </Stack>
   );
 };
