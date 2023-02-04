@@ -129,6 +129,7 @@ const MobileDrawer = () => {
                     }
                   }}
                   onBlur={removeFocus}
+                  _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
                 />
                 {search && (
                   <InputRightElement

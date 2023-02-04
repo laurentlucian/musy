@@ -20,8 +20,8 @@ const MobileSearchButton = () => {
     if (icon === 'down') removeFocus();
     if (icon === 'x') onClose();
   };
-  const bg = useColorModeValue('music.200', 'music.700');
-  const color = useColorModeValue('music.700', 'music.200');
+  const bg = useColorModeValue( 'music.500','music.200');
+  const color = useColorModeValue( 'music.200','music.500');
   return (
     <>
       {isMobile && (

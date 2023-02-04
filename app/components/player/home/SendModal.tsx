@@ -289,6 +289,7 @@ const SendModal = ({
               onChange={onChange}
               fontSize="15px"
               id="myInput"
+              _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
             />
             {search && (
               <InputRightElement
