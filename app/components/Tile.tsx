@@ -132,15 +132,12 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         uri: track?.uri ?? '',
       };
       if (fetcher && isQueuing) {
-        console.log('YOU QUEUED');
         fetcher.submit(queueData, { action, method: 'post', replace: true });
       }
       if (fetcher && isRecommending) {
-        console.log('YOU RECOMMENDED');
         fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
-    console.log('fetchers: ', fetcher);
     const isClicked = clickedRef.current === trackId;
     const isAdding = fetcher ? fetcher.submission?.formData.get('trackId') === trackId : null;
     const isDone = fetcher ? fetcher.type === 'done' && isClicked : null;
@@ -152,10 +149,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         : null
       : null;
 
-    console.log('isClicked: ', isClicked);
-    console.log('isAdding: ', isAdding);
-    console.log('isDone: ', isDone);
-    console.log('isError: ', isError);
     const icon = isAdding ? (
       <Waver />
     ) : isDone ? (
