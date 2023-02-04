@@ -13,7 +13,7 @@ import type { loader } from '~/routes/$id';
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
 
-const ProfileHeader = () => {
+const ProfileHeader = (isPrivate: any) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
@@ -143,11 +143,11 @@ const ProfileHeader = () => {
             {FollowButton}
           </HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
-            {SubHeader}
+            {isPrivate && !isOwnProfile ? <></> : <> {SubHeader}</>}
           </VStack>
         </VStack>
       </HStack>
-      {Bio}
+      {isPrivate && !isOwnProfile ? <></> : <> {Bio}</>}
       {!isOwnProfile && (
         <Stack w="97%" pos="relative" top="30px">
           <Search />

@@ -26,7 +26,9 @@ const Profile = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const user = data?.user;
   const currentUser = data?.currentUser;
+  const isPrivate = user?.settings?.isPrivate;
 
+  console.log(isPrivate);
   return (
     <Stack
       spacing={5}
@@ -36,12 +38,8 @@ const Profile = () => {
       px={isSmallScreen ? '5px' : 0}
       overflowX={isSmallScreen ? 'hidden' : 'unset'}
     >
-      <ProfileHeader />
-      {user?.settings?.isPrivate && currentUser?.id !== user.id ? (
-        <Text>This profile is private</Text>
-      ) : (
-        <Outlet />
-      )}
+      <ProfileHeader isPrivate={isPrivate} />
+      {isPrivate && currentUser?.id === user.id ? <Text>This profile is private</Text> : <Outlet />}
     </Stack>
   );
 };
