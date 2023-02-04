@@ -86,32 +86,32 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
     </Text>
   );
   const User = (
-    <Stack direction="row" w="100%">
-      <Stack>
+    <Stack justifySelf="left">
+      <Stack direction="row" w="100%">
         {ProfilePic}
-        {track && <QuickActions />}
-      </Stack>
-      <HStack>
-        <Stack>
-          {isSmallScreen && !user.bio && loading ? (
-            <Stack ml="8px">
+        <HStack>
+          <Stack>
+            {isSmallScreen && !user.bio && loading ? (
+              <Stack ml="8px">
+                <Waver />
+              </Stack>
+            ) : (
+              Username
+            )}
+            {isSmallScreen && user.bio && loading && track ? (
               <Waver />
-            </Stack>
-          ) : (
-            Username
-          )}
-          {isSmallScreen && user.bio && loading && track ? (
-            <Waver />
-          ) : user.bio ? (
-            <Stack maxW={['40px', '100%']}>
-              <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
-                {user.bio.slice(0, 15)}
-              </Text>
-            </Stack>
-          ) : null}
-        </Stack>
-        {!isSmallScreen && loading && <Waver />}
-      </HStack>
+            ) : user.bio ? (
+              <Stack maxW={['40px', '100%']}>
+                <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
+                  {user.bio.slice(0, 15)}
+                </Text>
+              </Stack>
+            ) : null}
+          </Stack>
+          {!isSmallScreen && loading && <Waver />}
+        </HStack>
+      </Stack>
+      {track && <QuickActions />}
     </Stack>
   );
 
@@ -224,6 +224,7 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
       maxW="100%"
       borderRadius={5}
       _hover={isSmallScreen && !loading ? { bg } : { bg: hoverBg }}
+      justifyContent="left"
     >
       {User}
       {Activity}
