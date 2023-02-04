@@ -3,11 +3,12 @@ import { Link, Outlet, useCatch } from '@remix-run/react';
 
 import { Heading, Stack, Button, Text } from '@chakra-ui/react';
 
-import { typedjson, useTypedRouteLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileHeader from '~/components/profile/ProfileHeader';
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
 import { askDaVinci } from '~/services/ai.server';
@@ -23,12 +24,11 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
-  const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
-  const user = data?.user;
-  const currentUser = data?.currentUser;
+  const { user } = useTypedLoaderData<typeof loader>();
+  const currentUser = useSessionUser();
   const isPrivate = user?.settings?.isPrivate;
+  const isOwnProfile = currentUser?.userId === user.userId;
 
-  console.log(isPrivate);
   return (
     <Stack
       spacing={5}
@@ -39,7 +39,7 @@ const Profile = () => {
       overflowX={isSmallScreen ? 'hidden' : 'unset'}
     >
       <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && currentUser?.id === user.id ? <Text>This profile is private</Text> : <Outlet />}
+      {isPrivate && !isOwnProfile ? <Text>This profile is private</Text> : <Outlet />}
     </Stack>
   );
 };
