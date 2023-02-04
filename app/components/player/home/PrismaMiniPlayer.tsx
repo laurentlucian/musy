@@ -10,6 +10,7 @@ import {
   useColorModeValue,
   Link as LinkB,
   Box,
+  IconButton,
 } from '@chakra-ui/react';
 
 import type { Playback, Profile, Track } from '@prisma/client';
@@ -19,9 +20,11 @@ import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { User } from '~/lib/types/types';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
-import Waver from '../icons/Waver';
-import Tooltip from '../Tooltip';
+import SpotifyLogo from '../../icons/SpotifyLogo';
+import Waver from '../../icons/Waver';
+import Tooltip from '../../Tooltip';
+import { MoreHorizontal } from 'react-feather';
+import QuickActions from './QuickActions';
 
 // import PlayerBarCSS from './PlayerBarCSS';
 interface Friends extends User {
@@ -84,8 +87,10 @@ const PrismaMiniPlayer = ({ user }: PlayerProps) => {
   );
   const User = (
     <Stack direction="row" w="100%">
-      {ProfilePic}
-
+      <Stack>
+        {ProfilePic}
+        {track && <QuickActions />}
+      </Stack>
       <HStack>
         <Stack>
           {isSmallScreen && !user.bio && loading ? (

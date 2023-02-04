@@ -6,7 +6,7 @@ import { Stack } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/player/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getAllUsers } from '~/services/auth.server';

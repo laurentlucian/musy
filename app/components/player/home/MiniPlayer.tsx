@@ -18,9 +18,9 @@ import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Playback } from '~/services/spotify.server';
 
-import Waver from '../icons/Waver';
-import Tooltip from '../Tooltip';
-import PlayerBar from './PlayerBar';
+import Waver from '../../icons/Waver';
+import Tooltip from '../../Tooltip';
+import PlayerBar from '../PlayerBar';
 
 type PlayerProps = {
   playback?: Playback;
