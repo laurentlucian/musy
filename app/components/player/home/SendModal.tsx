@@ -72,6 +72,7 @@ const SendModal = ({
   const fetcher = useFetcher();
   const fetcherA = useTypedFetcher<typeof action>();
   const fetcherB = useTypedFetcher<typeof actionB>();
+  const [fetchers, setFetchers] = useState(sendList ? fetcherA : fetcherB);
   const busy = fetcher.state === 'loading' ?? false;
   const inputRef = useRef<HTMLInputElement>(null);
   const track = useDrawerTrack();
@@ -144,6 +145,7 @@ const SendModal = ({
 
   useEffect(() => {
     sendList ? setTitle('queue') : setTitle('recommend');
+    sendList ? setFetchers(fetcherA) : setFetchers(fetcherB);
   }, [sendList]);
 
   useEffect(() => {
@@ -225,8 +227,7 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
-                    fetcher={fetcherA}
-                    fetcherB={fetcherB}
+                    fetcher={fetchers}
                     isQueuing={sendList}
                     isRecommending={!sendList}
                     id={id}
@@ -335,8 +336,7 @@ const SendModal = ({
                   explicit={track.explicit}
                   preview_url={track.preview_url}
                   link={track.link}
-                  fetcher={fetcherA}
-                  fetcherB={fetcherB}
+                  fetcher={fetchers}
                   inDrawer
                   isQueuing={sendList}
                   isRecommending={!sendList}

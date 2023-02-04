@@ -28,9 +28,6 @@ type TileProps = Track & {
   fetcher?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
-  fetcherB?: TypedFetcherWithComponents<
-    ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string> | undefined>
-  >;
   id?: string;
   playlist?: Boolean;
   submit?: SubmitFunction;
@@ -52,7 +49,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       currentUserId,
       explicit,
       fetcher,
-      fetcherB,
       id,
       image,
       link,
@@ -139,20 +135,19 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         console.log('YOU QUEUED');
         fetcher.submit(queueData, { action, method: 'post', replace: true });
       }
-      if (fetcherB && isRecommending) {
+      if (fetcher && isRecommending) {
         console.log('YOU RECOMMENDED');
-        fetcherB.submit(recommendData, { action, method: 'post', replace: true });
+        fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
-    const fetchers = isRecommending ? fetcherB : fetcher;
-    console.log('fetchers: ', fetchers);
+    console.log('fetchers: ', fetcher);
     const isClicked = clickedRef.current === trackId;
-    const isAdding = fetchers ? fetchers.submission?.formData.get('trackId') === trackId : null;
-    const isDone = fetchers ? fetchers.type === 'done' && isClicked : null;
-    const isError = fetchers
-      ? typeof fetchers.data === 'string' && isClicked
-        ? fetchers.data.includes('Error') && isClicked
-          ? fetchers.data && isClicked
+    const isAdding = fetcher ? fetcher.submission?.formData.get('trackId') === trackId : null;
+    const isDone = fetcher ? fetcher.type === 'done' && isClicked : null;
+    const isError = fetcher
+      ? typeof fetcher.data === 'string' && isClicked
+        ? fetcher.data.includes('Error') && isClicked
+          ? fetcher.data && isClicked
           : null
         : null
       : null;

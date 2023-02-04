@@ -68,7 +68,7 @@ const Recommend = ({ comment, user, userId }: RecommendProps) => {
   const isDone = fetcher.type === 'done';
   const isError =
     typeof fetcher.data === 'string'
-      ? (fetcher.data as string).includes('Error')
+      ? fetcher.data.includes('Error')
         ? fetcher.data
         : null
       : null;
