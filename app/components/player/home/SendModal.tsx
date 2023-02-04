@@ -75,6 +75,7 @@ const SendModal = ({
       }, 1000);
     } else {
       setSearch('');
+      setShowTracks(false);
     }
   };
   const onClearSearch = () => {
@@ -119,7 +120,6 @@ const SendModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onCloseModal}
-      // isCentered
       motionPreset="scale"
       size="6xl"
       initialFocusRef={inputRef}
@@ -199,7 +199,7 @@ const SendModal = ({
             ) : erect && !search ? (
               <Box h="325px">
                 {busy && (
-                  <Box pos="relative" top="50%" left="980%">
+                  <Box pos="relative" top="30%" left="980%">
                     <Waver />
                   </Box>
                 )}
@@ -211,7 +211,7 @@ const SendModal = ({
                 transitionDelay="0.4s"
               >
                 {busy && (
-                  <Box pos="relative" top="50%" left="980%">
+                  <Box pos="relative" top="30%" left="980%">
                     <Waver />
                   </Box>
                 )}
