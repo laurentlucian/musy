@@ -21,6 +21,7 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
+import PrivateProfile from '~/components/profile/PrivateProfile';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
@@ -39,7 +40,7 @@ const Profile = () => {
       overflowX={isSmallScreen ? 'hidden' : 'unset'}
     >
       <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && !isOwnProfile ? <Text>This profile is private</Text> : <Outlet />}
+      {isPrivate && !isOwnProfile ? <PrivateProfile /> : <Outlet />}
     </Stack>
   );
 };
