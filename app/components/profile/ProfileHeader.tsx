@@ -80,6 +80,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             cursor="default"
             pos="absolute"
             bottom={0}
+            left="50%"
             onBlur={(e) => submit(e.currentTarget.form)}
           />
         </Form>
