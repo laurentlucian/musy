@@ -264,6 +264,17 @@ const SendModal = ({
         <DrawerHeader>
           {title} to {name}
         </DrawerHeader>
+        <IconButton
+          variant="ghost"
+          aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
+          icon={<Refresh size="15px" />}
+          onClick={() => {
+            setSendList(!sendList);
+          }}
+          pos="absolute"
+          right="40px"
+          top="8px"
+        />
         <DrawerCloseButton />
         <DrawerBody>
           <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
