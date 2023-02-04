@@ -43,8 +43,13 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
           </Form>
         ) : (
           <>
-            <UserSearch />
-            <UserMenu isSmallScreen={isSmallScreen} />
+            {isSmallScreen ? (
+              <UserMenu isSmallScreen={isSmallScreen} />
+            ) : (
+              <HStack w="100%" spacing={3}>
+                <UserSearch /> <UserMenu isSmallScreen={isSmallScreen} />{' '}
+              </HStack>
+            )}
           </>
         )}
       </HStack>
