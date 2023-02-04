@@ -63,11 +63,11 @@ const QuickActions = ({
                   setSendList(true);
                 }}
               >
-                Queue to {name}
+                queue to {name}
               </MenuItem>
             ) : (
               <MenuItem pointerEvents="none" icon={<Send2 />}>
-                Queues are off
+                queues are off
               </MenuItem>
             )}
             {recommend === 'on' ? (
@@ -85,7 +85,7 @@ const QuickActions = ({
               </MenuItem>
             ) : (
               <MenuItem pointerEvents="none" icon={<Send2 variant="Bold" />}>
-                Recommendations are off
+                recommendations are off
               </MenuItem>
             )}
           </MenuList>

@@ -27,12 +27,12 @@ const Appearance = () => {
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
   const options = [
     {
-      name: 'Dark',
+      name: 'dark',
       value: 'dark',
       icon: <Moon size="24" variant="Bold" />,
     },
     {
-      name: 'Light',
+      name: 'light',
       value: 'light',
       icon: <Sun1 size="24" variant="Bold" />,
     },
@@ -54,7 +54,7 @@ const Appearance = () => {
     <Stack spacing={5} w={['unset', '400px']}>
       <Stack direction="row" alignItems="center">
         <Text fontSize={['sm', 'md']} color={color}>
-          Scheduled:
+          scheduled:
         </Text>
         <Button
           size={['xs', 'sm']}

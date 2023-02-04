@@ -27,7 +27,7 @@ const RecommendSettings = ({ allowRecommend }: { allowRecommend: string }) => {
         <HStack>
           <Layer color={allowRecommend === 'off' ? '#555555' : '#1DB954'} />
           <FormLabel htmlFor="allow-recommend" mb="0">
-            Recommendations
+            recommendations
           </FormLabel>
         </HStack>
         <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>

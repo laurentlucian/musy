@@ -26,7 +26,7 @@ const Settings = () => {
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
           color={color}
         >
-          Account
+          account
         </Link>
         <Link
           as={RemixLink}
@@ -36,7 +36,7 @@ const Settings = () => {
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
           color={color}
         >
-          Appearance
+          appearance
         </Link>
       </Stack>
       <Center px={['40px', '100px']} height={[0, '200px']}>

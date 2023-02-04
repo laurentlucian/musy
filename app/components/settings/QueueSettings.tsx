@@ -5,7 +5,7 @@ import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import type { action } from '~/routes/$id/add';
 import { Layer } from 'iconsax-react';
 
-const QueueSettings = (allowQueue: { allowQueue: string }) => {
+const QueueSettings = ({ allowQueue }: { allowQueue: string }) => {
   const fetcher = useTypedFetcher<typeof action>();
   const onChange = (value: string) => {
     fetcher.submit({ 'allow-queue': value }, { method: 'post', replace: true });
@@ -16,7 +16,7 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
     { name: 'link only', value: 'link' },
   ];
   const { getRadioProps, getRootProps } = useRadioGroup({
-    defaultValue: allowQueue.allowQueue,
+    defaultValue: allowQueue,
     name: 'allow-queue',
     onChange: (value) => onChange(value),
   });
@@ -31,9 +31,9 @@ const QueueSettings = (allowQueue: { allowQueue: string }) => {
         alignContent="center"
       >
         <HStack>
-          <Layer color={allowQueue.allowQueue === 'off' ? '#555555' : '#1DB954'} variant="Bold" />
+          <Layer color={allowQueue === 'off' ? '#555555' : '#1DB954'} variant="Bold" />
           <FormLabel htmlFor="allow-queue" mb="0">
-            Queue
+            queue
           </FormLabel>
         </HStack>
         <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>

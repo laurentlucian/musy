@@ -46,7 +46,7 @@ const Account = () => {
           <HStack>
             <Ghost size="24" color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
             <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
-              Private Profile
+              private profile
             </FormLabel>
           </HStack>
           <Switch
@@ -69,7 +69,7 @@ const Account = () => {
           <HStack>
             <Scroll size="24" color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
             <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0" color={color}>
-              Auto Scroll
+              auto scroll
             </FormLabel>
           </HStack>
           <Switch
@@ -94,7 +94,7 @@ const Account = () => {
               variant="Bold"
             />
             <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
-              Song Preview
+              song preview
             </FormLabel>
           </HStack>
           <Switch
@@ -118,7 +118,7 @@ const Account = () => {
           _hover={{ bgColor: 'red.500' }}
           onClick={onOpen}
         >
-          Logout
+          log out
         </Button>
       </Stack>
 
@@ -126,10 +126,10 @@ const Account = () => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold" bg={bg} color={color}>
-              Log Out
+              log out
             </AlertDialogHeader>
             <AlertDialogBody bg={bg} color={color}>
-              <Text pl="20px">Are you sure you want to logout?</Text>
+              <Text pl="20px">are you sure you want to logout?</Text>
             </AlertDialogBody>
             <AlertDialogFooter bg={bg} color={color}>
               <Form action={'/logout'} method="post">
@@ -140,7 +140,7 @@ const Account = () => {
                   color={color}
                   _hover={{ bg: cancelBg, color: 'music.800' }}
                 >
-                  Cancel
+                  cancel
                 </Button>
                 <Button
                   bgColor="red"
@@ -150,7 +150,7 @@ const Account = () => {
                   type="submit"
                   _hover={{ bgColor: 'red.500' }}
                 >
-                  Log Out
+                  log out
                 </Button>
               </Form>
             </AlertDialogFooter>
