@@ -17,19 +17,18 @@ import { Send2 } from 'iconsax-react';
 
 import SendModal from './SendModal';
 
-
 const QuickActions = ({
-  currentUserId,
   id,
   name,
   que,
   recommend,
+  currentUserId,
 }: {
-  currentUserId: string | undefined;
   id: string;
   name: string;
   que?: string;
   recommend?: string;
+  currentUserId: string | undefined;
 }) => {
   const [title, setTitle] = useState('');
   const [sendList, setSendList] = useState<boolean>();
