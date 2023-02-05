@@ -4,7 +4,7 @@ import { type PropsWithChildren, useMemo } from 'react';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import MobileSearchButton from './menu/MobileSearchButton';
-import Nav from './Nav/Nav';
+import Nav from './Nav';
 
 type LayoutProps = {
   authorized: boolean;

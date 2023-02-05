@@ -4,8 +4,8 @@ import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra
 
 import useIsMobile from '~/hooks/useIsMobile';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
-import Waver from '../icons/Waver';
+import SpotifyLogo from './icons/SpotifyLogo';
+import Waver from './icons/Waver';
 import UserMenu from './UserMenu';
 import UserSearch from './UserSearch';
 
