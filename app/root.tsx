@@ -137,6 +137,11 @@ export let links: LinksFunction = () => {
       href: musylogo,
       rel: 'apple-touch-icon',
     },
+    {
+      as: 'manifest',
+      rel: 'manifest',
+      href: '/manifest.json',
+    },
   ];
 };
 
