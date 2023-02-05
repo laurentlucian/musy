@@ -42,7 +42,6 @@ import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
 import type { action as actionB } from '~/routes/$id/recommend';
 
-
 interface SendModalConfig {
   currentUserId: string | undefined;
   id: string;
@@ -78,7 +77,11 @@ const SendModal = ({
   const fetcherB = useTypedFetcher<typeof actionB>();
   const [fetchers, setFetchers] = useState(sendList ? fetcherA : fetcherB);
   const busy = fetcher.state === 'loading' ?? false;
-  const inputRef = useRef<HTMLInputElement>(null);
+  const onInputMount = (input: HTMLInputElement | null) => {
+    if (input && isOpen) {
+      input.focus();
+    }
+  };
   const track = useDrawerTrack();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -162,7 +165,6 @@ const SendModal = ({
       onClose={onCloseModal}
       motionPreset="scale"
       size="6xl"
-      initialFocusRef={inputRef}
       blockScrollOnMount={blockScrollOnMount}
     >
       <ModalOverlay />
@@ -170,7 +172,7 @@ const SendModal = ({
         <ModalHeader>
           {title} to {name}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton autoFocus={false} />
         <IconButton
           variant="ghost"
           aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
@@ -185,7 +187,7 @@ const SendModal = ({
         <ModalBody>
           <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
             <Input
-              ref={inputRef}
+              ref={onInputMount}
               name="spotify"
               variant="flushed"
               value={search}
@@ -195,6 +197,7 @@ const SendModal = ({
               onChange={onChange}
               fontSize="15px"
               id="myInput"
+              autoFocus
             />
             {search && (
               <InputRightElement
@@ -271,7 +274,7 @@ const SendModal = ({
       placement="left"
       size="full"
       onClose={onClose}
-      initialFocusRef={inputRef}
+      autoFocus={false}
       blockScrollOnMount={blockScrollOnMount}
     >
       <DrawerOverlay />
@@ -289,12 +292,13 @@ const SendModal = ({
           pos="absolute"
           right="40px"
           top="8px"
+          autoFocus={false}
         />
-        <DrawerCloseButton />
+        <DrawerCloseButton autoFocus={false} />
         <DrawerBody>
           <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
             <Input
-              ref={inputRef}
+              ref={onInputMount}
               name="spotify"
               variant="flushed"
               value={search}
@@ -305,6 +309,7 @@ const SendModal = ({
               fontSize="15px"
               id="myInput"
               _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
+              autoFocus
             />
             {search && (
               <InputRightElement
