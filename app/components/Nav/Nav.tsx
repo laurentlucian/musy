@@ -6,8 +6,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
-import UserSearch from './UserSearch';
 import UserMenu from './UserMenu';
+import UserSearch from './UserSearch';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const transition = useTransition();
@@ -24,7 +24,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <Image src="/favicon-32x32.png" />
         )}
-        <Heading size='sm'>musy</Heading>
+        <Heading size="sm">musy</Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px">

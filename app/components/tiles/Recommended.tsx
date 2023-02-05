@@ -1,16 +1,17 @@
+import { useParams } from '@remix-run/react';
+
 import { IconButton, Image, Link, Stack, Text } from '@chakra-ui/react';
 
 import type { Profile, RecommendedSongs } from '@prisma/client';
 import { Minus } from 'iconsax-react';
+import { useTypedFetcher } from 'remix-typedjson';
 
 import { timeSince } from '~/lib/utils';
+import type { action } from '~/routes/$id/removeRecommend'; // why is this value never read?
 
 import Tile from '../Tile';
 import Tiles from './Tiles';
 
-import type { action } from '~/routes/$id/removeRecommend'; // why is this value never read?
-import { useTypedFetcher } from 'remix-typedjson';
-import { useParams } from '@remix-run/react';
 
 type RecommendedProps = RecommendedSongs & {
   sender: Profile;

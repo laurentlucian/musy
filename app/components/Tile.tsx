@@ -29,11 +29,11 @@ type TileProps = Track & {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   id?: string;
-  playlist?: Boolean;
-  submit?: SubmitFunction;
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
+  playlist?: Boolean;
+  submit?: SubmitFunction;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -51,6 +51,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       fetcher,
       id,
       image,
+      inDrawer,
+      isQueuing,
+      isRecommending,
       link,
       name,
       playlist,
@@ -58,9 +61,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       submit,
       trackId,
       uri,
-      inDrawer,
-      isQueuing,
-      isRecommending,
       ...props
     },
     ref,

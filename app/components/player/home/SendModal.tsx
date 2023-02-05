@@ -1,3 +1,14 @@
+import { useFetcher, useSearchParams } from '@remix-run/react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
+import { X } from 'react-feather';
+
 import {
   Modal,
   ModalOverlay,
@@ -18,49 +29,42 @@ import {
   IconButton,
   Box,
 } from '@chakra-ui/react';
-import {
-  useState,
-  useEffect,
-  useRef,
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-} from 'react';
-import { useFetcher, useSearchParams } from '@remix-run/react';
-import type { Track } from '~/lib/types/types';
-import Waver from '~/components/icons/Waver';
+
 import { Refresh } from 'iconsax-react';
-import Tiles from '~/components/tiles/Tiles';
-import Tile from '~/components/Tile';
-import { X } from 'react-feather';
-import useIsMobile from '~/hooks/useIsMobile';
-import { useDrawerTrack } from '~/hooks/useDrawer';
-import type { action } from '~/routes/$id/add';
-import type { action as actionB } from '~/routes/$id/recommend';
 import { useTypedFetcher } from 'remix-typedjson';
 
+import Waver from '~/components/icons/Waver';
+import Tile from '~/components/Tile';
+import Tiles from '~/components/tiles/Tiles';
+import { useDrawerTrack } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
+import type { Track } from '~/lib/types/types';
+import type { action } from '~/routes/$id/add';
+import type { action as actionB } from '~/routes/$id/recommend';
+
+
 interface SendModalConfig {
-  isOpen: boolean;
-  onClose: () => void;
-  name: string;
-  title: string;
-  setTitle: Dispatch<SetStateAction<string>>;
-  id: string;
   currentUserId: string | undefined;
+  id: string;
+  isOpen: boolean;
+  name: string;
+  onClose: () => void;
   sendList: boolean | undefined;
   setSendList: Dispatch<SetStateAction<boolean | undefined>>;
+  setTitle: Dispatch<SetStateAction<string>>;
+  title: string;
 }
 
 const SendModal = ({
-  isOpen,
-  onClose,
-  name,
-  title,
-  setTitle,
-  id,
   currentUserId,
+  id,
+  isOpen,
+  name,
+  onClose,
   sendList,
   setSendList,
+  setTitle,
+  title,
 }: SendModalConfig) => {
   const isSmallScreen = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();

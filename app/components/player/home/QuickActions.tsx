@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { MoreHorizontal } from 'react-feather';
+
 import {
   Menu,
   MenuButton,
@@ -9,29 +12,30 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+
 import { Send2 } from 'iconsax-react';
-import { MoreHorizontal } from 'react-feather';
+
 import SendModal from './SendModal';
-import { useState } from 'react';
+
 
 const QuickActions = ({
-  id,
-  que,
-  name,
-  recommend,
   currentUserId,
+  id,
+  name,
+  que,
+  recommend,
 }: {
-  id: string;
-  que?: string;
-  name: string;
-  recommend?: string;
   currentUserId: string | undefined;
+  id: string;
+  name: string;
+  que?: string;
+  recommend?: string;
 }) => {
   const [title, setTitle] = useState('');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const onClickMenuItem = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     onOpen();

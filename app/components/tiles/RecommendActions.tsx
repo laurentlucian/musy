@@ -14,11 +14,11 @@ import {
 } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
+import { Minus } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import type { action } from '~/routes/$id/removeRecommend';
-import { Minus } from 'iconsax-react';
 
 const RecommendActions = ({
   recommendedBy,

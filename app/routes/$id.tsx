@@ -6,6 +6,7 @@ import { Heading, Stack, Button, Text } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
+import PrivateProfile from '~/components/profile/PrivateProfile';
 import ProfileHeader from '~/components/profile/ProfileHeader';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -21,7 +22,6 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
-import PrivateProfile from '~/components/profile/PrivateProfile';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();

@@ -12,7 +12,7 @@ import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Friends = () => {
-  const { users, currentUserId } = useTypedLoaderData<typeof loader>();
+  const { currentUserId, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
 
@@ -41,7 +41,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUserId = currentUser?.id;
 
   return typedjson(
-    { now: Date.now(), users, currentUserId },
+    { currentUserId, now: Date.now(), users },
     {
       headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
     },

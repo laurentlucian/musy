@@ -12,9 +12,10 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
+import { Moon, Sun1 } from 'iconsax-react';
+
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
-import { Moon, Sun1 } from 'iconsax-react';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
@@ -27,14 +28,14 @@ const Appearance = () => {
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
   const options = [
     {
+      icon: <Moon size="24" variant="Bold" />,
       name: 'dark',
       value: 'dark',
-      icon: <Moon size="24" variant="Bold" />,
     },
     {
+      icon: <Sun1 size="24" variant="Bold" />,
       name: 'light',
       value: 'light',
-      icon: <Sun1 size="24" variant="Bold" />,
     },
     // { name: 'system', value: 'system' }, //<---- will return when we can store a default value
   ];
@@ -77,7 +78,7 @@ const Appearance = () => {
         {scheduled && <TimeRangePicker />}
       </Stack>
       <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
-        {options.map(({ name, value, icon }) => {
+        {options.map(({ icon, name, value }) => {
           const radio = getRadioProps({ value });
           return (
             <RadioButtons key={value} {...radio} value={value}>

@@ -39,24 +39,24 @@ const nested = defineStyle({
 
 const mobileAvatarDrawerDialog = defineStyle({
   backdropFilter: 'blur(14px)',
-  zIndex: 'modal',
-  borderBottomRadius: '20px'
+  borderBottomRadius: '20px',
+  zIndex: 'modal'
 });
 const mobileAvatarDrawer = definePartsStyle({
   dialog: mobileAvatarDrawerDialog,
-  overlay: {
-    backdropFilter: 'blur(0px)',
-    zIndex: 'overlay',
-  },
   dialogContainer: {
     backdropFilter: 'blur(0px)',
     zIndex: 'modal',
   },
+  overlay: {
+    backdropFilter: 'blur(0px)',
+    zIndex: 'overlay',
+  },
 });
 const variants = {
   desktop,
-  nested,
   mobileAvatarDrawer,
+  nested,
 };
 const baseStyleDialog = defineStyle((props) => {
   const { isFullHeight } = props;
@@ -77,8 +77,8 @@ const baseStyleDialog = defineStyle((props) => {
   };
 });
 const closeButton = defineStyle({
-  userSelect: 'none !important',
   boxShadow: 'none !important',
+  userSelect: 'none !important',
 });
 const body = defineStyle({
   color: 'white',

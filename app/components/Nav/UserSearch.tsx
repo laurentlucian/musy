@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Input, InputGroup, InputLeftElement, Icon, Box, useDisclosure } from '@chakra-ui/react';
+
 import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup, InputLeftElement, Icon, Box, useDisclosure } from '@chakra-ui/react';
+
+import { motion, AnimatePresence } from 'framer-motion';
 
 const UserSearch = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value);

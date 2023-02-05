@@ -1,3 +1,7 @@
+import { Form, useNavigate } from '@remix-run/react';
+import { useRef } from 'react';
+import { LogOut } from 'react-feather';
+
 import {
   Menu,
   MenuButton,
@@ -14,7 +18,6 @@ import {
   IconButton,
   Image,
   forwardRef,
-  IconButtonProps,
   useColorMode,
   useColorModeValue,
   Button,
@@ -23,10 +26,10 @@ import {
   Stack,
   Portal,
 } from '@chakra-ui/react';
-import { Form, useNavigate } from '@remix-run/react';
+import type { IconButtonProps } from '@chakra-ui/react';
+
 import { Moon, Profile2User, Setting2, Sun1 } from 'iconsax-react';
-import { useRef } from 'react';
-import { LogOut } from 'react-feather';
+
 import useSessionUser from '~/hooks/useSessionUser';
 
 interface UserActionsConfig {
@@ -40,7 +43,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
   const btnRef = useRef<HTMLButtonElement>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const mobileIcon = (
     <Image

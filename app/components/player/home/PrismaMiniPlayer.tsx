@@ -40,11 +40,11 @@ interface Friends extends User {
     | null;
 }
 type PlayerProps = {
-  user: Friends;
   currentUserId: string | undefined;
+  user: Friends;
 };
 
-const PrismaMiniPlayer = ({ user, currentUserId }: PlayerProps) => {
+const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');

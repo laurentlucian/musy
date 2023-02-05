@@ -25,6 +25,7 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { Track as DrawerTrack } from '~/lib/types/types';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
@@ -34,7 +35,6 @@ import PlayController from './PlayController';
 import PlayerBar from './PlayerBar';
 import PlayingFromTooltip from './PlayingFromTooltip';
 
-import type { Track as DrawerTrack } from '~/lib/types/types';
 
 type PlayerProps = {
   id: string;
