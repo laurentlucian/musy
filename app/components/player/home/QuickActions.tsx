@@ -48,6 +48,7 @@ const QuickActions = ({
             variant="unstyled"
             h="15px"
             _hover={{ color: 'spotify.green' }}
+            _active={{ boxShadow: 'none' }}
           />
         </Stack>
         <Portal>
