@@ -214,7 +214,12 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
           </Tooltip>
         </HStack>
       ) : (
-        isSmallScreen && loading && <Waver />
+        isSmallScreen &&
+        loading && (
+          <Box pl="20px">
+            <Waver />
+          </Box>
+        )
       )}
     </>
   );
