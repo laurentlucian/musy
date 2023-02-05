@@ -93,7 +93,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
         {ProfilePic}
         <HStack>
           <Stack>
-            {isSmallScreen && !user.bio && loading ? (
+            {isSmallScreen && !user.bio && loading && track ? (
               <Stack ml="8px">
                 <Waver />
               </Stack>
