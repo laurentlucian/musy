@@ -4,44 +4,21 @@
   "description": "music sharing platform",
   "id": "/",
   "start_url": "/",
+  "background_color":"#050404",
   "display": "fullscreen",
+  "categories": ["music", "music share", "music taste", "spotify", "spotify share"],
   "scope": "/",
   "icons": [
     {
-      "src": "/musylogo1.svg",
-      "sizes": "128x128",
+      "src": "musylogo1.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/musylogo1.svg",
-      "sizes": "144x144",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/musylogo1.svg",
-      "sizes": "152x152",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/musylogo1.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/musylogo1.svg",
-      "sizes": "384x384",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/musylogo1.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "musylogo1.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ]
 }
