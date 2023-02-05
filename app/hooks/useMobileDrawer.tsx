@@ -4,6 +4,8 @@ import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {
   actions: {
+    hideButton: () => void;
+    showButton: () => void;
     addFocus: () => void;
     onClose: () => void;
     onOpen: () => void;
@@ -19,6 +21,8 @@ interface DrawerStateConfig {
 
 const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
+    hideButton: () => set({ right: -50 }),
+    showButton: () => set({ bottom: 3, right: 3 }),
     addFocus: () => set({ bottom: 305, icon: 'down', right: 3 }),
     onClose: () => set({ bottom: 3, icon: 'plus', isOpen: false, right: 3, track: null }),
     onOpen: () => set({ bottom: 305, icon: 'down', isOpen: true, right: 3 }),
