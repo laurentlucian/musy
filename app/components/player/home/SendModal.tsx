@@ -28,6 +28,7 @@ import {
   InputRightElement,
   IconButton,
   Box,
+  Stack,
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
@@ -82,6 +83,7 @@ const SendModal = ({
       input.focus();
     }
   };
+  const inputRef = useRef<HTMLInputElement>(null);
   const track = useDrawerTrack();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -158,6 +160,35 @@ const SendModal = ({
   useEffect(() => {
     track ? setBlockScrollOnMount(false) : setBlockScrollOnMount(true);
   }, [track]);
+
+  const ModalControls = (
+    <Box
+      pos="absolute"
+      top="-245px"
+      right={isOpen ? 3 : '-50px'}
+      zIndex={9999}
+      display={isOpen ? 'block' : 'none'}
+    >
+      <IconButton
+        variant="ghost"
+        aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
+        icon={<Refresh size="15px" />}
+        onClick={(e) => {
+          e.preventDefault();
+          setSendList(!sendList);
+        }}
+      />
+      <IconButton
+        variant="ghost"
+        aria-label="close"
+        icon={<X />}
+        onClick={(e) => {
+          e.preventDefault();
+          onClose();
+        }}
+      />
+    </Box>
+  );
 
   const Desktop = (
     <Modal
@@ -269,96 +300,84 @@ const SendModal = ({
     </Modal>
   );
   const Mobile = (
-    <Drawer
-      isOpen={isOpen}
-      placement="left"
-      size="full"
-      onClose={onClose}
-      autoFocus={false}
-      blockScrollOnMount={blockScrollOnMount}
-    >
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerHeader>
-          {title} to {name}
-        </DrawerHeader>
-        <IconButton
-          variant="ghost"
-          aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
-          icon={<Refresh size="15px" />}
-          onClick={() => {
-            setSendList(!sendList);
-          }}
-          pos="absolute"
-          right="40px"
-          top="8px"
-          autoFocus={false}
-        />
-        <DrawerCloseButton autoFocus={false} />
-        <DrawerBody>
-          <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
-            <Input
-              ref={onInputMount}
-              name="spotify"
-              variant="flushed"
-              value={search}
-              placeholder="search"
-              autoComplete="off"
-              borderRadius={0}
-              onChange={onChange}
-              fontSize="15px"
-              id="myInput"
-              _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
-              autoFocus
-            />
-            {search && (
-              <InputRightElement
-                h="35px"
-                w="65px"
-                pr={2}
-                justifyContent="end"
-                children={
-                  <IconButton
-                    aria-label="close"
-                    variant="ghost"
-                    borderRadius={8}
-                    onClick={onClearSearch}
-                    icon={<X />}
-                  />
-                }
+    <>
+      {ModalControls}
+      <Drawer
+        isOpen={isOpen}
+        placement="left"
+        size="full"
+        onClose={onClose}
+        autoFocus={false}
+        blockScrollOnMount={blockScrollOnMount}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader>
+            {title} to {name}
+          </DrawerHeader>
+          <DrawerBody>
+            <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
+              <Input
+                ref={inputRef}
+                name="spotify"
+                variant="flushed"
+                value={search}
+                placeholder="search"
+                autoComplete="off"
+                borderRadius={0}
+                onChange={onChange}
+                fontSize="15px"
+                id="myInput"
+                _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
+                autoFocus
               />
-            )}
-          </InputGroup>
-          <Tiles>
-            {showTracks &&
-              tracks.map((track) => (
-                <Tile
-                  key={track.trackId}
-                  trackId={track.trackId}
-                  uri={track.uri}
-                  image={track.image}
-                  albumUri={track.albumUri}
-                  albumName={track.albumName}
-                  name={track.name}
-                  artist={track.artist}
-                  artistUri={track.artistUri}
-                  explicit={track.explicit}
-                  preview_url={track.preview_url}
-                  link={track.link}
-                  fetcher={fetchers}
-                  inDrawer
-                  isQueuing={sendList}
-                  isRecommending={!sendList}
-                  id={id}
-                  currentUserId={currentUserId}
+              {search && (
+                <InputRightElement
+                  h="35px"
+                  w="65px"
+                  pr={2}
+                  justifyContent="end"
+                  children={
+                    <IconButton
+                      aria-label="close"
+                      variant="ghost"
+                      borderRadius={8}
+                      onClick={onClearSearch}
+                      icon={<X />}
+                    />
+                  }
                 />
-              ))}
-          </Tiles>
-        </DrawerBody>
-
-        <DrawerFooter></DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+              )}
+            </InputGroup>
+            <Tiles>
+              {showTracks &&
+                tracks.map((track) => (
+                  <Tile
+                    key={track.trackId}
+                    trackId={track.trackId}
+                    uri={track.uri}
+                    image={track.image}
+                    albumUri={track.albumUri}
+                    albumName={track.albumName}
+                    name={track.name}
+                    artist={track.artist}
+                    artistUri={track.artistUri}
+                    explicit={track.explicit}
+                    preview_url={track.preview_url}
+                    link={track.link}
+                    fetcher={fetchers}
+                    inDrawer
+                    isQueuing={sendList}
+                    isRecommending={!sendList}
+                    id={id}
+                    currentUserId={currentUserId}
+                  />
+                ))}
+            </Tiles>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 
   return isSmallScreen ? Mobile : Desktop;
