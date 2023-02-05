@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { Send2 } from 'iconsax-react';
+import { Minus, Send2 } from 'iconsax-react';
 
 import SendModal from './SendModal';
 import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
@@ -63,6 +63,7 @@ const QuickActions = ({
         </Stack>
         <Portal>
           <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
+            <MenuItem icon={<Minus />}>open {name}'s profile</MenuItem>
             {que === 'off' ? (
               <MenuItem pointerEvents="none" icon={<Send2 />} bg={bg} color={color}>
                 queue is off
