@@ -53,7 +53,7 @@ const QuickActions = ({
         <Portal>
           <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
             {que === 'off' ? (
-              <MenuItem pointerEvents="none" icon={<Send2 />}>
+              <MenuItem pointerEvents="none" icon={<Send2 />} bg={bg} color={color}>
                 queue is off
               </MenuItem>
             ) : (
@@ -71,7 +71,7 @@ const QuickActions = ({
               </MenuItem>
             )}
             {recommend === 'off' ? (
-              <MenuItem pointerEvents="none" icon={<Send2 variant="Bold" />}>
+              <MenuItem pointerEvents="none" icon={<Send2 variant="Bold" />} bg={bg} color={color}>
                 recommendation is off
               </MenuItem>
             ) : (
