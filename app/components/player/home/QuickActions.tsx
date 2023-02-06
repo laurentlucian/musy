@@ -59,11 +59,14 @@ const QuickActions = ({
             h="15px"
             _hover={{ color: 'spotify.green' }}
             _active={{ boxShadow: 'none' }}
+            _focus={{ boxShadow: 'none' }}
           />
         </Stack>
         <Portal>
           <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
-            <MenuItem icon={<Minus />}>open {name}'s profile</MenuItem>
+            <MenuItem icon={<Minus />} bg={bg} color={color}>
+              open {name}'s profile
+            </MenuItem>
             {que === 'off' ? (
               <MenuItem pointerEvents="none" icon={<Send2 />} bg={bg} color={color}>
                 queue is off
