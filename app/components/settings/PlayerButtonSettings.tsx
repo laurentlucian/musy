@@ -11,7 +11,6 @@ import { useSubmit } from '@remix-run/react';
 
 const PlayerButtonSettings = ({ playerButtonRight }: { playerButtonRight?: boolean }) => {
   const defaultValue = playerButtonRight ? 'true' : 'false';
-  console.log(defaultValue);
   const submit = useSubmit();
   const onChange = (value: string) => {
     submit({ 'player-button-side': value }, { method: 'post', replace: true });

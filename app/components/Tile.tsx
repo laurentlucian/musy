@@ -89,7 +89,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     const clickedRef = useRef<string>();
     const handleSendButton = () => {
       if (!currentUser && submit) {
-        console.log('you made it here0');
         // @todo figure out a better way to require authentication on click;
         // after authentication redirect, add to queue isn't successful. user needs to click again
         return submit(null, {

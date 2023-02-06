@@ -52,7 +52,6 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();
 
-  console.log(currentUserId, user.userId, 'currentUserId, user.userId');
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
   const loading = transition.location?.pathname.includes(user.userId);
