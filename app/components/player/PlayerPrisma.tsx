@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 
 import type { Party, Playback, Track } from '@prisma/client';
-import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
+import { ArrowDown2, ArrowLeft2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
@@ -37,13 +37,14 @@ import PlayingFromTooltip from './PlayingFromTooltip';
 
 type PlayerProps = {
   id: string;
+  name: string;
   party: Party[];
   playback: Playback & {
     track: Track;
   };
 };
 
-const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
+const PlayerPrisma = ({ id, party, playback, name }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
@@ -54,6 +55,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const [size, setSize] = useState('large');
+  const [show, setShow] = useState(false);
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
@@ -61,6 +63,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
   const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue('music.50', '#10101066');
+  const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');
 
@@ -147,11 +150,14 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
 
   useEffect(() => {
     const checkStick = () => {
+      console.log(window.scrollY);
+      console.log(show);
       window.scrollY <= 100
         ? setSize('large')
         : window.scrollY <= 168
         ? setSize('medium')
         : setSize('small');
+      window.scrollY <= 310 ? setShow(false) : setShow(true);
     };
     window.addEventListener('scroll', checkStick);
 
@@ -189,10 +195,29 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
   if (!playback) return null;
   const { track } = playback;
 
+  const User = (
+    <HStack
+      bg={bg}
+      backdropFilter="blur(27px)"
+      opacity={show ? 1 : 0}
+      transition="all 0.3s ease-in-out"
+    >
+      <IconButton
+        aria-label="Back"
+        icon={<ArrowLeft2 />}
+        variant="ghost"
+        onClick={() => window.history.back()}
+        color={color}
+      />
+      <Text>{name}</Text>
+    </HStack>
+  );
+
   return (
     <>
-      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflowY={['scroll', 'visible']}>
-        <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
+      <Stack pos="sticky" top={0} zIndex={1} spacing={-1}>
+        {User}
+        <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
           <Collapse in={!isOpen} animateOpacity>
             <Stack
               spacing={0}
@@ -341,10 +366,10 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                       src={track.image}
                       mt={
                         size === 'large'
-                          ? [0, -47, -47, -47, -200]
+                          ? ['28px', -47, -47, -47, -200]
                           : size === 'medium'
-                          ? [0, -47, -47, -47, '-86px']
-                          : 0
+                          ? ['28px', -47, -47, -47, '-86px']
+                          : ['28px', 0]
                       }
                       boxSize={
                         size === 'large'
@@ -354,6 +379,13 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
                           : 135
                       }
                       minW={
+                        size === 'large'
+                          ? [135, 160, 160, 200, 334]
+                          : size === 'medium'
+                          ? [135, 160, 160, 200, 221]
+                          : 135
+                      }
+                      minH={
                         size === 'large'
                           ? [135, 160, 160, 200, 334]
                           : size === 'medium'
