@@ -137,7 +137,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
     ) : null;
 
   return (
-    <VStack mb="40px" alignItems="baseline" ml={['15px', '20px']} w="100%">
+    <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
       <HStack>
         {ProfilePic}
         <VStack align="left" pos="relative" top="20px" left="10px">

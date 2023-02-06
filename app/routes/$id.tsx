@@ -31,14 +31,7 @@ const Profile = () => {
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
-    <Stack
-      spacing={5}
-      pb={5}
-      pt={5}
-      h="max-content"
-      px={isSmallScreen ? '5px' : 0}
-      overflowX={isSmallScreen ? 'hidden' : 'unset'}
-    >
+    <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader isPrivate={isPrivate} />
       {isPrivate && !isOwnProfile ? <PrivateProfile /> : <Outlet />}
     </Stack>
