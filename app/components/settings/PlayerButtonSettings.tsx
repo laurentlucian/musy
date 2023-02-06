@@ -1,14 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Check } from 'react-feather';
 
-import {
-  useRadioGroup,
-  SimpleGrid,
-  HStack,
-  useColorModeValue,
-  FormControl,
-  FormLabel,
-} from '@chakra-ui/react';
+import { useRadioGroup, SimpleGrid, HStack, FormControl, FormLabel } from '@chakra-ui/react';
 
 import { ArrangeHorizontal } from 'iconsax-react';
 
