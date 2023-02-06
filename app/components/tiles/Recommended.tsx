@@ -53,7 +53,7 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                           />
                         </Link>
                         <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                          <Text fontSize={['10px', '11px']} alignSelf="end">
+                          <Text fontSize={['10px', '11px']}>
                             {recommended.sender.name}
                           </Text>
                         </Link>
@@ -63,8 +63,8 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                       </Stack>
                       <RecommendActions
                         trackId={recommended.trackId}
-                        recommendedByName={recommended.sender.name}
-                        recommendedByImage={recommended.sender.image}
+                        // recommendedByName={recommended.sender.name}
+                        // recommendedByImage={recommended.sender.image}
                         onToggle={onToggle}
                       />
                     </Stack>

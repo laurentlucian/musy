@@ -27,20 +27,20 @@ import { BarChart, MoreHorizontal } from 'react-feather';
 import type { action } from '~/routes/$id/removeRecommend';
 
 const RecommendActions = ({
-  recommendedByName,
-  recommendedByImage,
+  // recommendedByName,
+  // recommendedByImage,
   trackId,
   onToggle,
 }: {
-  recommendedByName?: string;
-  recommendedByImage?: string;
+  // recommendedByName?: string;
+  // recommendedByImage?: string;
   trackId: string;
   onToggle: () => void;
 }) => {
   const isSmallScreen = useIsMobile();
   const { id } = useParams();
   const fetcher = useTypedFetcher<typeof action>();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  // const { isOpen, onClose, onOpen } = useDisclosure();
   const btnRef = useRef<any>(null);
 
   const archiveRecommend = () => {
@@ -49,46 +49,46 @@ const RecommendActions = ({
   };
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
-  const Mobile = (
-    <>
-      <IconButton
-        p={0}
-        variant="ghost"
-        aria-label="open options"
-        _hover={{ color: 'spotify.green' }}
-        icon={<MoreHorizontal />}
-        onClick={onOpen}
-        ref={btnRef}
-        h="10px"
-        alignSelf="center"
-      />
-      <Drawer
-        isOpen={isOpen}
-        placement="bottom"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-        lockFocusAcrossFrames
-        preserveScrollBarGap
-        size="full"
-        variant={isSmallScreen ? 'none' : 'desktop'}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerBody>
-            <Stack direction={['column', 'row']} align="center" justify="center">
-              <Image borderRadius="full" src={recommendedByImage} boxSize="100px" />
-              <Button onClick={archiveRecommend} variant="ghost" _hover={{ color: 'red' }}>
-                <Minus size="32" />
-              </Button>
-              <Stack>
-                <Text>{recommendedByName}</Text>
-              </Stack>
-            </Stack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
-  );
+  // const Mobile = (
+  //   <>
+  //     <IconButton
+  //       p={0}
+  //       variant="ghost"
+  //       aria-label="open options"
+  //       _hover={{ color: 'spotify.green' }}
+  //       icon={<MoreHorizontal />}
+  //       onClick={onOpen}
+  //       ref={btnRef}
+  //       h="10px"
+  //       alignSelf="center"
+  //     />
+  //     <Drawer
+  //       isOpen={isOpen}
+  //       placement="bottom"
+  //       onClose={onClose}
+  //       finalFocusRef={btnRef}
+  //       lockFocusAcrossFrames
+  //       preserveScrollBarGap
+  //       size="full"
+  //       variant={isSmallScreen ? 'none' : 'desktop'}
+  //     >
+  //       <DrawerOverlay />
+  //       <DrawerContent>
+  //         <DrawerBody>
+  //           <Stack direction={['column', 'row']} align="center" justify="center">
+  //             <Image borderRadius="full" src={recommendedByImage} boxSize="100px" />
+  //             <Button onClick={archiveRecommend} variant="ghost" _hover={{ color: 'red' }}>
+  //               <Minus size="32" />
+  //             </Button>
+  //             <Stack>
+  //               <Text>{recommendedByName}</Text>
+  //             </Stack>
+  //           </Stack>
+  //         </DrawerBody>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   </>
+  // );
 
   const Desktop = (
     <Menu placement="bottom-end">
