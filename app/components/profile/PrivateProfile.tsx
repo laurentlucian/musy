@@ -18,12 +18,12 @@ const PrivateProfile = () => {
         <LockCircle size="32" color={green} variant="Bulk" />
         <HStack>
           {ghost}
-          <Text>This Profile is Hidden</Text>
+          <Text>profile is hidden</Text>
           {ghost}
         </HStack>
 
         <Button _hover={{ color: 'spotify.green' }} onClick={() => window.history.back()}>
-          Go Back
+        go back
         </Button>
       </Stack>
     </motion.div>
