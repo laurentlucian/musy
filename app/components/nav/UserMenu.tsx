@@ -41,7 +41,8 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('music.200', 'music.700');
+  const hoverBg = useColorModeValue('music.400', 'music.900');
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -114,8 +115,8 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerBody flexDirection="column">
-                <Stack align="flex-start">
+              <DrawerBody flexDirection="column" bg={bg} color={color} borderBottomRadius="10%">
+                <Stack align="flex-start" pb="20px">
                   <Stack w="100%" h="40px">
                     <DrawerCloseButton />
                   </Stack>
@@ -128,6 +129,9 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     fontSize="20px"
                     justifyContent="left"
                     onMouseEnter={onClickUser}
+                    color={color}
+                    opacity={0.8}
+                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
                   >
                     {currentUser?.name}
                   </Button>
@@ -141,6 +145,9 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     w="100%"
                     h="45px"
                     justifyContent="flex-start"
+                    color={color}
+                    opacity={0.8}
+                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
                   >
                     friends
                   </Button>
@@ -156,6 +163,9 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     w="100%"
                     h="45px"
                     justifyContent="flex-start"
+                    color={color}
+                    opacity={0.8}
+                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
                   >
                     settings
                   </Button>
@@ -169,13 +179,16 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                       )
                     }
                     iconSpacing="30px"
-                    bg="#0000 !important"
+                    bg="#0000"
                     size="20px"
                     pl="25px"
                     mt="10px"
                     w="100%"
                     h="45px"
                     justifyContent="flex-start"
+                    color={color}
+                    opacity={0.8}
+                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
                   >
                     toggle theme
                   </Button>
@@ -189,10 +202,11 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                       bg="#0000"
                       size="20px"
                       pl="25px"
-                      mt="10px"
+                      mt="20px"
                       w="100vw"
                       h="45px"
                       justifyContent="flex-start"
+                      color={color}
                     >
                       log out
                     </Button>
