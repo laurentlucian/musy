@@ -42,6 +42,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
 import type { action as actionB } from '~/routes/$id/recommend';
+import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 
 interface SendModalConfig {
   currentUserId: string | undefined;
@@ -72,7 +73,7 @@ const SendModal = ({
   const [tracks, setTracks] = useState<Track[]>([]);
   const [showTracks, setShowTracks] = useState(false);
   const [erect, setErect] = useState(false);
-  const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
+  const { blockScrollOnMount } = useBlockScrollCheck();
   const fetcher = useFetcher();
   const fetcherA = useTypedFetcher<typeof action>();
   const fetcherB = useTypedFetcher<typeof actionB>();
@@ -84,7 +85,6 @@ const SendModal = ({
     }
   };
   const inputRef = useRef<HTMLInputElement>(null);
-  const track = useDrawerTrack();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
@@ -156,10 +156,6 @@ const SendModal = ({
     sendList ? setTitle('queue') : setTitle('recommend');
     sendList ? setFetchers(fetcherA) : setFetchers(fetcherB);
   }, [sendList]);
-
-  useEffect(() => {
-    track ? setBlockScrollOnMount(false) : setBlockScrollOnMount(true);
-  }, [track]);
 
   const ModalControls = (
     <Box

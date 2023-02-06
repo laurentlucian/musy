@@ -23,7 +23,7 @@ import { type Track } from '~/lib/types/types';
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
 import Tiles from '../tiles/Tiles';
-
+import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 
 const MobileDrawer = () => {
   const { isOpen } = useMobileDrawer();
@@ -35,10 +35,9 @@ const MobileDrawer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
-  const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
+  const { blockScrollOnMount } = useBlockScrollCheck();
   const fetcher = useFetcher();
   const busy = fetcher.state === 'loading' ?? false;
-  const track = useDrawerTrack();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -60,10 +59,6 @@ const MobileDrawer = () => {
       state: { scroll: false },
     });
   };
-
-  useEffect(() => {
-    track ? setBlockScrollOnMount(false) : setBlockScrollOnMount(true);
-  }, [track]);
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {

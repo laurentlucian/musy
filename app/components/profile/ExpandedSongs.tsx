@@ -15,6 +15,7 @@ import {
 import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
+import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 
 type TilesProps = {
   Filter?: ReactNode;
@@ -37,6 +38,7 @@ const ExpandedSongs = ({
   ...ChakraProps
 }: TilesProps) => {
   const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
+  const { blockScrollOnMount } = useBlockScrollCheck();
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
 
@@ -52,6 +54,7 @@ const ExpandedSongs = ({
         preserveScrollBarGap
         lockFocusAcrossFrames
         finalFocusRef={btnRef}
+        blockScrollOnMount={blockScrollOnMount}
         variant={isSmallScreen ? 'none' : 'desktop'}
       >
         <DrawerOverlay />
