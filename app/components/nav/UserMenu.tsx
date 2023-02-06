@@ -83,6 +83,14 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
     navigate(`/home/friends`);
     onClose();
   };
+  let reloadTimeout: NodeJS.Timeout;
+  const onClickToggleTheme = () => {
+    toggleColorMode();
+    clearTimeout(reloadTimeout);
+    reloadTimeout = setTimeout(() => {
+      location.reload();
+    }, 100);
+  };
 
   return (
     <>
@@ -223,7 +231,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                 settings
               </MenuItem>
               <MenuItem
-                onClick={toggleColorMode}
+                onClick={onClickToggleTheme}
                 icon={colorMode === 'light' ? <Moon variant="Bold" /> : <Sun1 variant="Bold" />}
                 closeOnSelect={false}
                 bg={bg}

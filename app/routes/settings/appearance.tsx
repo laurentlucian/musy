@@ -14,8 +14,6 @@ import {
 
 import { Moon, Sun1 } from 'iconsax-react';
 
-import { useSubmit } from '@remix-run/react';
-
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 import PlayerButtonSettings from '~/components/settings/PlayerButtonSettings';
@@ -24,12 +22,10 @@ import { authenticator } from '~/services/auth.server';
 import type { ActionArgs } from '@remix-run/server-runtime';
 import { prisma } from '~/services/db.server';
 import useSessionUser from '~/hooks/useSessionUser';
-import RecommendSettings from '~/components/settings/RecommendSettings';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
 const Appearance = () => {
-  const submit = useSubmit();
   const [scheduled, setScheduled] = useState(false);
   const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
@@ -37,6 +33,14 @@ const Appearance = () => {
   const color = useColorModeValue('music.800', 'white');
   const bg = useColorModeValue('white', 'music.800');
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
+  let reloadTimeout: NodeJS.Timeout;
+  const onChange = (value: string) => {
+    setSelection(value);
+    clearTimeout(reloadTimeout);
+    reloadTimeout = setTimeout(() => {
+      location.reload();
+    }, 100);
+  };
   const options = [
     {
       icon: <Moon size="24" variant="Bold" />,
@@ -53,7 +57,7 @@ const Appearance = () => {
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue, // fix default value to be stored value
     name: 'appearance',
-    onChange: setSelection,
+    onChange: (value) => onChange(value),
   });
 
   const group = getRootProps();
