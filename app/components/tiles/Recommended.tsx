@@ -41,21 +41,23 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
               const { isOpen, onToggle, onClose } = useDisclosure();
               return (
                 <Stack key={recommended.id} direction="row">
-                  <Link href={`/${recommended.senderId}`}>
-                    <Image
-                      borderRadius="full"
-                      src={recommended.sender.image}
-                      boxSize="40px"
-                      mr="5px"
-                    />
-                  </Link>
                   <Stack>
                     <Stack direction="row" justifyContent="space-between">
-                      <Stack direction="row">
-                        <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                          <Text fontSize={['10px', '11px']}>{recommended.sender.name}</Text>
+                      <Stack direction="row" align="center">
+                        <Link href={`/${recommended.senderId}`}>
+                          <Image
+                            borderRadius="full"
+                            src={recommended.sender.image}
+                            boxSize="40px"
+                            mr="5px"
+                          />
                         </Link>
-                        <Text fontSize={['9px', '10px']} opacity={0.6} alignSelf="end">
+                        <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
+                          <Text fontSize={['10px', '11px']} alignSelf="end">
+                            {recommended.sender.name}
+                          </Text>
+                        </Link>
+                        <Text fontSize={['9px', '10px']} opacity={0.6}>
                           {timeSince(recommended.createdAt)}
                         </Text>
                       </Stack>
