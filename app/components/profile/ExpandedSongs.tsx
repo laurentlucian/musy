@@ -22,7 +22,6 @@ type TilesProps = {
   autoScroll?: boolean;
   children: ReactNode;
   onClose: () => void;
-  scrollButtons?: boolean;
   show: boolean;
   title?: string;
 } & StackProps;
@@ -32,10 +31,8 @@ const ExpandedSongs = ({
   autoScroll,
   children,
   onClose,
-  scrollButtons,
   show,
   title,
-  ...ChakraProps
 }: TilesProps) => {
   const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
   const { blockScrollOnMount } = useBlockScrollCheck();
