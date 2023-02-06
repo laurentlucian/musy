@@ -154,7 +154,14 @@ const ActionDrawer = () => {
     };
     const text = isOpen && !sendMenu.isOpen ? 'close' : 'cancel';
     return (
-      <Button variant="drawer" onClick={handleClick} h={['10px', '40px']} pt="10px" w="100vw">
+      <Button
+        variant="drawer"
+        onClick={handleClick}
+        h={['10px', '40px']}
+        pt="10px"
+        pb="30px"
+        w="100vw"
+      >
         {text}
       </Button>
     );
