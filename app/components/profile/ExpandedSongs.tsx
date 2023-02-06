@@ -68,7 +68,15 @@ const ExpandedSongs = ({
           <DrawerBody alignSelf="center" ref={scrollRef} {...props}>
             {children}
           </DrawerBody>
-          <Button variant="drawer" color="white" onClick={onClose}>
+          <Button
+            variant="drawer"
+            color="white"
+            onClick={onClose}
+            h={['20px', '40px']}
+            pt="20px"
+            pb="40px"
+            w="100vw"
+          >
             close
           </Button>
         </DrawerContent>

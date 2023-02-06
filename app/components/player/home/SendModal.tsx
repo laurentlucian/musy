@@ -163,8 +163,8 @@ const SendModal = ({
 
   const ModalControls = (
     <Box
-      pos="absolute"
-      top="-245px"
+      pos="fixed"
+      top={3}
       right={isOpen ? 3 : '-50px'}
       zIndex={9999}
       display={isOpen ? 'block' : 'none'}
