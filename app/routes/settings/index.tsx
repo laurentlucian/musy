@@ -63,8 +63,11 @@ const Account = () => {
             size="lg"
           />
         </FormControl>
-        <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} />
-        <RecommendSettings allowRecommend={currentUser.settings?.allowRecommend ?? 'on'} />
+        <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
+        <RecommendSettings
+          allowRecommend={currentUser.settings?.allowRecommend ?? 'on'}
+          submit={submit}
+        />
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <HStack>
             <Scroll size="24" color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />

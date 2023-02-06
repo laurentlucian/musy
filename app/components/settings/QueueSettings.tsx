@@ -3,15 +3,13 @@ import { Check } from 'react-feather';
 import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chakra-ui/react';
 
 import { Layer } from 'iconsax-react';
-import { useTypedFetcher } from 'remix-typedjson';
 
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
-import type { action } from '~/routes/$id/add';
+import { type SubmitFunction } from '@remix-run/react';
 
-const QueueSettings = ({ allowQueue }: { allowQueue: string }) => {
-  const fetcher = useTypedFetcher<typeof action>();
+const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: SubmitFunction }) => {
   const onChange = (value: string) => {
-    fetcher.submit({ 'allow-queue': value }, { method: 'post', replace: true });
+    submit({ 'allow-queue': value }, { method: 'post', replace: true });
   };
   const options = [
     { name: 'off', value: 'off' },
