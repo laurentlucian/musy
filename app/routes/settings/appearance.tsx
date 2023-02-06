@@ -14,15 +14,26 @@ import {
 
 import { Moon, Sun1 } from 'iconsax-react';
 
+import { useSubmit } from '@remix-run/react';
+
 import TimeRangePicker from '~/components/settings/TimeRangePicker';
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
+import PlayerButtonSettings from '~/components/settings/PlayerButtonSettings';
+import invariant from 'tiny-invariant';
+import { authenticator } from '~/services/auth.server';
+import type { ActionArgs } from '@remix-run/server-runtime';
+import { prisma } from '~/services/db.server';
+import useSessionUser from '~/hooks/useSessionUser';
+import RecommendSettings from '~/components/settings/RecommendSettings';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 
 const Appearance = () => {
+  const submit = useSubmit();
   const [scheduled, setScheduled] = useState(false);
   const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
+  const currentUser = useSessionUser();
   const color = useColorModeValue('music.800', 'white');
   const bg = useColorModeValue('white', 'music.800');
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
@@ -50,6 +61,8 @@ const Appearance = () => {
   useEffect(() => {
     if (selection) setColorMode(selection);
   }, [selection, setColorMode]);
+
+  if (!currentUser) return null;
 
   return (
     <Stack spacing={5} w={['unset', '400px']}>
@@ -102,7 +115,26 @@ const Appearance = () => {
           );
         })}
       </SimpleGrid>
+      <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
     </Stack>
   );
 };
+export const action = async ({ request }: ActionArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const userId = session?.user?.id;
+  invariant(userId, 'Unauthenticated');
+
+  const data = await request.formData();
+  const playerButtonPreference = data.get('player-button-side');
+  if (playerButtonPreference) {
+    const playerButtonRight = playerButtonPreference === 'true';
+    await prisma.settings.upsert({
+      create: { playerButtonRight, userId },
+      update: { playerButtonRight },
+      where: { userId },
+    });
+  }
+  return null;
+};
+
 export default Appearance;

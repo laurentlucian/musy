@@ -35,7 +35,6 @@ import PlayController from './PlayController';
 import PlayerBar from './PlayerBar';
 import PlayingFromTooltip from './PlayingFromTooltip';
 
-
 type PlayerProps = {
   id: string;
   party: Party[];
@@ -384,6 +383,7 @@ const PlayerPrisma = ({ id, party, playback }: PlayerProps) => {
           borderRadius="0px 0px 3px 3px"
           zIndex={-1}
           backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
+          alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
         >
           <IconButton
             icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
