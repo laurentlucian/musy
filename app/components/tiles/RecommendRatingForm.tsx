@@ -3,14 +3,16 @@ import { FormControl, FormLabel, useRadioGroup, HStack, useColorModeValue } from
 import { RadioButtons } from '~/lib/theme/components/RatingRadio';
 import { useTypedFetcher } from 'remix-typedjson';
 import { useParams } from '@remix-run/react';
+import type { action } from '~/routes/$id/rateRecommend';
 
 const RecommendRatingForm = ({ rating, sender }: { rating?: string; sender: string }) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
   const fetcher = useTypedFetcher<typeof action>();
   const { id } = useParams();
-  const action = `/${id}/removeRecommend`;
+
   const onChange = (value: string) => {
+    const action = `/${id}/removeRecommend`;
     fetcher.submit({ rating: value }, { action, method: 'post', replace: true });
   };
   const options = [

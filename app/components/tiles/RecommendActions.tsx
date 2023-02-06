@@ -24,6 +24,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { BarChart, MoreHorizontal } from 'react-feather';
+import type { action } from '~/routes/$id/removeRecommend';
 
 const RecommendActions = ({
   recommendedByName,
@@ -41,8 +42,9 @@ const RecommendActions = ({
   const fetcher = useTypedFetcher<typeof action>();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const btnRef = useRef<any>(null);
-  const action = `/${id}/removeRecommend`;
+
   const archiveRecommend = () => {
+    const action = `/${id}/removeRecommend`;
     fetcher.submit({ trackId }, { action, method: 'post', replace: true });
   };
   const color = useColorModeValue('#161616', '#EEE6E2');
