@@ -1,7 +1,7 @@
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { Link, Outlet, useCatch } from '@remix-run/react';
 
-import { Heading, Stack, Button, Text } from '@chakra-ui/react';
+import { Heading, Stack, Button } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
