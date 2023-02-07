@@ -20,7 +20,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 
-import { Ghost, Logout, MusicPlay, Scroll } from 'iconsax-react';
+import { Code1, Ghost, Logout, MusicPlay, Scroll } from 'iconsax-react';
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
@@ -39,6 +39,7 @@ const Account = () => {
   const spotifyGreen = '#1DB954';
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
+
   return (
     <>
       <Stack spacing={5} w={['unset', '400px']}>
@@ -114,6 +115,29 @@ const Account = () => {
             size="lg"
           />
         </FormControl>
+        {currentUser.founder && (
+          <FormControl display="flex" alignItems="center" justifyContent="space-between">
+            <HStack>
+              <Code1 size="24" color={currentUser.dev ? spotifyGreen : '#555555'} />
+              <FormLabel fontSize={['sm', 'md']} htmlFor="'dev-mode'" mb="0" color={color}>
+                dev mode
+              </FormLabel>
+            </HStack>
+            <Switch
+              colorScheme="music"
+              id="dev-mode"
+              defaultChecked={currentUser.dev ?? false}
+              onChange={(e) => {
+                submit(
+                  { 'dev-mode': `${e.target.checked}` },
+
+                  { method: 'post', replace: true },
+                );
+              }}
+              size="lg"
+            />
+          </FormControl>
+        )}
         <Button
           leftIcon={<Logout />}
           bgColor="red.600"
@@ -199,6 +223,16 @@ export const action = async ({ request }: ActionArgs) => {
     await prisma.settings.upsert({
       create: { isPrivate, userId },
       update: { isPrivate },
+      where: { userId },
+    });
+  }
+
+  const devMode = data.get('dev-mode');
+  if (devMode) {
+    const isChecked = devMode === 'true';
+
+    await prisma.profile.update({
+      data: { dev: isChecked },
       where: { userId },
     });
   }

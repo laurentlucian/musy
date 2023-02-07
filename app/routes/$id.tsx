@@ -30,7 +30,7 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.founder === true;
-
+  console.log(currentUser, 'currentUser');
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader isPrivate={isPrivate} />
