@@ -12,7 +12,7 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
-import { LockCircle } from 'iconsax-react';
+import { CodeCircle, LockCircle } from 'iconsax-react';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -45,7 +45,16 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
       >
         {user.name}
       </Heading>
-      {isPrivate && <LockCircle size="32" variant="Bulk" />}
+      {isPrivate && (
+        <Tooltip label="Private" placement="top" hasArrow>
+          <LockCircle size="32" variant="Bulk" />
+        </Tooltip>
+      )}
+      {user.founder === true && (
+        <Tooltip label="Dev" placement="top" hasArrow>
+          <CodeCircle size="32" variant="Bulk" />
+        </Tooltip>
+      )}
     </HStack>
   );
 
@@ -86,6 +95,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             bottom={0}
             left="50%"
             onBlur={(e) => submit(e.currentTarget.form)}
+            border="1px solid red"
           />
         </Form>
       </Stack>
@@ -150,7 +160,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             {FollowButton}
           </HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
-            {isPrivate && !isOwnProfile ? null : <> {SubHeader}</>}
+            {SubHeader}
           </VStack>
         </VStack>
       </HStack>

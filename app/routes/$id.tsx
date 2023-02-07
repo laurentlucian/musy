@@ -29,12 +29,12 @@ const Profile = () => {
   const currentUser = useSessionUser();
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
-  // console.log(user, 'user');
+  const isDev = currentUser?.founder === true;
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && !isOwnProfile ? <PrivateProfile name={user.name} /> : <Outlet />}
+      {isPrivate && !isOwnProfile && !isDev ? <PrivateProfile name={user.name} /> : <Outlet />}
     </Stack>
   );
 };
@@ -238,11 +238,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   if (founder === '69') {
     await prisma.profile.update({
       data: { founder: true },
-      where: { userId: id },
-    });
-  } else {
-    await prisma.profile.update({
-      data: { founder: false },
       where: { userId: id },
     });
   }
