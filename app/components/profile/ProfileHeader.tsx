@@ -12,7 +12,7 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
-import { CodeCircle, LockCircle } from 'iconsax-react';
+import { CodeCircle, LockCircle, Nebulas } from 'iconsax-react';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -51,9 +51,15 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
         </Tooltip>
       )}
       {user.founder === true && (
-        <Tooltip label="Dev" placement="top" hasArrow>
-          <CodeCircle size="32" variant="Bulk" />
-        </Tooltip>
+        <>
+          <Tooltip label="Dev" placement="top" hasArrow>
+            <CodeCircle size="32" variant="Bulk" />
+          </Tooltip>
+          {/* Founder Icon if needed maybe a musy icon down the line for founders????????? */}
+          {/* <Tooltip label="Founder" placement="top" hasArrow>
+            <Nebulas size="32" variant="Bulk" />
+          </Tooltip> */}
+        </>
       )}
     </HStack>
   );
