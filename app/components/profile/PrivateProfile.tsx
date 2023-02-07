@@ -1,8 +1,7 @@
 import { Button, HStack, Stack, Text } from '@chakra-ui/react';
-import { Profile } from '@prisma/client';
 
 import { motion } from 'framer-motion';
-import { Ghost, LockCircle } from 'iconsax-react';
+import { Ghost } from 'iconsax-react';
 
 const PrivateProfile = ({ name }: { name: string }) => {
   const green = '#1DB954';
