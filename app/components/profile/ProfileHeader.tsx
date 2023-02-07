@@ -12,6 +12,7 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
+import { LockCircle } from 'iconsax-react';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -36,13 +37,16 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
     </Tooltip>
   );
   const Username = (
-    <Heading
-      size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
-      fontWeight="bold"
-      textAlign="left"
-    >
-      {user.name}
-    </Heading>
+    <HStack>
+      <Heading
+        size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
+        fontWeight="bold"
+        textAlign="left"
+      >
+        {user.name}
+      </Heading>
+      {isPrivate && <LockCircle size="32" variant="Bulk" />}
+    </HStack>
   );
 
   const Bio =
@@ -150,7 +154,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
           </VStack>
         </VStack>
       </HStack>
-      {isPrivate && !isOwnProfile ? null : <> {Bio}</>}
+      {Bio}
       {!isOwnProfile && (
         <Stack w="97%" pos="relative" top="30px">
           <Search />
