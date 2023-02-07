@@ -21,10 +21,10 @@ const PrivateProfile = ({ name }: { name: string }) => {
           oops the content for {name} are hidden
         </Text>
         <Text textAlign="center" maxW="300px" opacity=".25">
-          it looks like {name} has set their account private tell them to make it public to view
-          their content
+          it looks like {name} has set their account private tell them to make it public to stalk
+          them ;)
         </Text>
-        <Button _hover={{ color: 'spotify.green' }} onClick={() => window.history.back()}>
+        <Button size="md" _hover={{ color: 'spotify.green' }} onClick={() => window.history.back()}>
           go back
         </Button>
       </Stack>
