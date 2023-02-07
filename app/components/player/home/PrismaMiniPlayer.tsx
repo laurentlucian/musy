@@ -227,6 +227,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
     <Button
       as={Link}
       to={`/${user.userId}`}
+      prefetch="intent"
       bg={loading ? hoverBg : bg}
       color={color}
       px={['4px', 0]}
