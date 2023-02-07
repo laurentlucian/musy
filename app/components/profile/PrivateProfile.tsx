@@ -9,22 +9,26 @@ const PrivateProfile = ({ name }: { name: string }) => {
 
   const ghost = (
     <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
-      <Ghost size="32" color={green} />
+      <Ghost size="64" color={green} />
     </motion.div>
   );
   console.log(name, 'user');
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 3 }}>
-      <Stack w="100%" align="center">
+      <Stack align="center">
         {ghost}
-        <Text textAlign="center" fontSize="32px" fontWeight="bold">
-          oops the content for {name} are hidden
+        <Text textAlign="center" fontSize="64px" fontWeight="bold">
+          oops
         </Text>
-        <Text textAlign="center" maxW="300px" opacity=".25">
-          it looks like {name} has set their account private tell them to make it public to stalk
-          them ;)
+        <Text textAlign="center" opacity=".5">
+          the content for {name} are hidden
         </Text>
-        <Button size="md" _hover={{ color: 'spotify.green' }} onClick={() => window.history.back()}>
+        <Button
+          w="300px"
+          size="md"
+          _hover={{ color: 'spotify.green' }}
+          onClick={() => window.history.back()}
+        >
           go back
         </Button>
       </Stack>
