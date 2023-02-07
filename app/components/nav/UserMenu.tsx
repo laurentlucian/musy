@@ -220,7 +220,12 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
         <Menu placement="bottom-end">
           <MenuButton aria-label="your actions" as={iconButton} variant="unstyled" isRound />
           <Portal>
-            <MenuList overflowX="clip" bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
+            <MenuList
+              overflowX="clip"
+              bg={bg}
+              boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)"
+              rounded="xl"
+            >
               <MenuItem
                 as="a"
                 href={`/${currentUser?.userId}`}
