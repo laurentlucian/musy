@@ -29,11 +29,12 @@ const Profile = () => {
   const currentUser = useSessionUser();
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
+  // console.log(user, 'user');
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && !isOwnProfile ? <PrivateProfile /> : <Outlet />}
+      {isPrivate && !isOwnProfile ? <PrivateProfile name={user.name} /> : <Outlet />}
     </Stack>
   );
 };
