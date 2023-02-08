@@ -18,7 +18,6 @@ import type { Track } from '~/lib/types/types';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
 
@@ -79,7 +78,6 @@ const NavSearch = () => {
     const handleOpenButtonOutside = (e: MouseEvent) => {
       if (divRef.current && !divRef.current.contains(e.target as Node) && search === '') {
         setShow(false);
-        setIsFocused(false);
         inputRef.current?.blur();
       }
     };
@@ -117,7 +115,7 @@ const NavSearch = () => {
 
   return (
     <div ref={divRef}>
-      <InputGroup w={show ? '180px' : '30px'} transition="all 0.5s ease-in-out" size="xs">
+      <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out" >
         <InputLeftElement
           pointerEvents="all"
           children={
@@ -139,17 +137,11 @@ const NavSearch = () => {
           autoComplete="off"
           onChange={handleChange}
           border={show ? `solid 1px ${color}` : '#0000'}
-          w={show ? '180px' : '30px'}
+          w={show ? '400px' : '30px'}
           transition="all 0.5s ease-in-out"
           cursor={show ? 'text' : 'pointer'}
           _placeholder={{ color: '#414040' }}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => {
-            if (search === '') {
-              setIsFocused(false);
-            }
-          }}
-          rounded="xl"
+          
         />
         {search && (
           <InputRightElement

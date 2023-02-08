@@ -29,7 +29,7 @@ const Profile = () => {
   const currentUser = useSessionUser();
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
-  const isDev = currentUser?.dev === true;
+  const isDev = currentUser?.settings?.dev === true;
 
   return (
     <Stack spacing={5} pb={5} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
@@ -236,12 +236,12 @@ export const action = async ({ params, request }: ActionArgs) => {
   }
 
   if (easterEgg === '69') {
-    await prisma.profile.update({
+    await prisma.settings.update({
       data: { easterEgg: true },
       where: { userId: id },
     });
   } else {
-    await prisma.profile.update({
+    await prisma.settings.update({
       data: { easterEgg: false },
       where: { userId: id },
     });

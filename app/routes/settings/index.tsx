@@ -115,10 +115,10 @@ const Account = () => {
             size="lg"
           />
         </FormControl>
-        {currentUser.founder && (
+        {currentUser.settings?.founder && (
           <FormControl display="flex" alignItems="center" justifyContent="space-between">
             <HStack>
-              <Code1 size="24" color={currentUser.dev ? spotifyGreen : '#555555'} />
+              <Code1 size="24" color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
               <FormLabel fontSize={['sm', 'md']} htmlFor="'dev-mode'" mb="0" color={color}>
                 dev mode
               </FormLabel>
@@ -126,7 +126,7 @@ const Account = () => {
             <Switch
               colorScheme="music"
               id="dev-mode"
-              defaultChecked={currentUser.dev ?? false}
+              defaultChecked={currentUser.settings.dev ?? false}
               onChange={(e) => {
                 submit(
                   { 'dev-mode': `${e.target.checked}` },
@@ -231,7 +231,7 @@ export const action = async ({ request }: ActionArgs) => {
   if (devMode) {
     const isChecked = devMode === 'true';
 
-    await prisma.profile.update({
+    await prisma.settings.update({
       data: { dev: isChecked },
       where: { userId },
     });

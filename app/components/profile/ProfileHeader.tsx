@@ -51,7 +51,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
           <LockCircle size="32" variant="Bulk" />
         </Tooltip>
       )}
-      {user.founder === true && (
+      {user.settings?.founder === true && (
         <>
           <Tooltip label="Dev" placement="top" hasArrow>
             <CodeCircle size="32" variant="Bulk" />
@@ -91,8 +91,8 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             name="component"
             size="xs"
             variant="unstyled"
-            defaultValue={user.easterEgg === true ? '69' : ''}
-            textColor={user.easterEgg === true ? 'rgba(0, 0, 0, 0)' : undefined}
+            defaultValue={user.settings?.easterEgg === true ? '69' : ''}
+            textColor={user.settings?.easterEgg === true ? 'rgba(0, 0, 0, 0)' : undefined}
             resize="none"
             w="20px"
             h="20px"

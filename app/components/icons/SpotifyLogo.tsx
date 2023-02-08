@@ -36,8 +36,8 @@ const SpotifyLogo = ({
 
   return (
     <>
-      {!currentUser?.easterEgg ||
-        (currentUser?.dev && (
+      {!currentUser?.settings?.easterEgg ||
+        (currentUser?.settings?.dev && (
           <Image
             minH={h}
             maxH={h}
