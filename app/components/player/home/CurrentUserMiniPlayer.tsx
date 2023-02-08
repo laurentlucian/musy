@@ -239,7 +239,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
       px={['4px', 0]}
       pl={[0, '10px']}
       variant="ghost"
-      h={track ? ['100px', '200px'] : '65px'}
+      h={track ? ['100px', '200px'] : '120px'}
       minW="100%"
       maxW="100%"
       borderRadius={5}
