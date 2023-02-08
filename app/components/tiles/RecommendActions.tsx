@@ -105,10 +105,10 @@ const RecommendActions = ({
       />
       <MenuList bg={bg}>
         <MenuItem icon={<BarChart />} onClick={onToggle} bg="#0000" color={color}>
-          rate recommendation
+          rate
         </MenuItem>
         <MenuItem icon={<Archive />} onClick={archiveRecommend} bg="#0000" color={color}>
-          archive recommendation
+          archive
         </MenuItem>
       </MenuList>
     </Menu>
