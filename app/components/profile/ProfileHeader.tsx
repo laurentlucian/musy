@@ -102,7 +102,6 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             bottom={0}
             left="50%"
             onBlur={(e) => submit(e.currentTarget.form)}
-            border="1px solid red"
           />
         </Form>
       </Stack>
