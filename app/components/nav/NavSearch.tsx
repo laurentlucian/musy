@@ -39,7 +39,8 @@ const NavSearch = () => {
       state: { scroll: false },
     });
   };
-  const handleOpenButton = () => {
+  const handleOpenButton = (e: React.MouseEvent<Element, MouseEvent>) => {
+    e.stopPropagation();
     setSearch('');
     setShow(!show);
     const deleteParamDelay = setTimeout(() => {
@@ -50,7 +51,6 @@ const NavSearch = () => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
-      console.log(search === '' ? 'TRUE!!!' : 'FALSE!!!');
     } else {
       setSearch('');
       deleteSearch();
@@ -76,8 +76,8 @@ const NavSearch = () => {
   }, [search, fetcher.load]);
 
   useEffect(() => {
-    const handleOpenButtonOutside = (event: MouseEvent) => {
-      if (divRef.current && !divRef.current.contains(event.target as Node) && search === '') {
+    const handleOpenButtonOutside = (e: MouseEvent) => {
+      if (divRef.current && !divRef.current.contains(e.target as Node) && search === '') {
         setShow(false);
         setIsFocused(false);
         inputRef.current?.blur();
@@ -91,8 +91,9 @@ const NavSearch = () => {
   }, [divRef, search]);
 
   useEffect(() => {
-    if (show && !isFocused) inputRef.current?.focus();
-  }, [show, isFocused]);
+    if (show) inputRef.current?.focus();
+    else inputRef.current?.blur();
+  }, [show]);
 
   useEffect(() => {
     if (fetcher.data) {
@@ -126,7 +127,7 @@ const NavSearch = () => {
               variant="unstyled"
               color={color}
               cursor="pointer"
-              onClick={handleOpenButton}
+              onClick={(e) => handleOpenButton(e)}
             />
           }
         />
@@ -162,7 +163,6 @@ const NavSearch = () => {
                   borderRadius={8}
                   onClick={handleCloseButton}
                   icon={<CloseButton />}
-                  // mt="4px"
                 />
               </>
             }
