@@ -60,6 +60,7 @@ const QuickActions = ({
             _hover={{ color: 'spotify.green' }}
             _active={{ boxShadow: 'none' }}
             _focus={{ boxShadow: 'none' }}
+            pl={['14px', '10px']}
           />
         </Stack>
         <Portal>

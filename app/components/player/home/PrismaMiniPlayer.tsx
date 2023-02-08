@@ -79,7 +79,14 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
     : null;
 
   const ProfilePic = (
-    <Image boxSize="50px" borderRadius="100%" minH="50px" minW="50px" src={user.image} />
+    <Image
+      boxSize="50px"
+      borderRadius="100%"
+      minH="50px"
+      minW="50px"
+      src={user.image}
+      mr={[0, '10px']}
+    />
   );
   const Username = (
     <Text fontWeight="bold" fontSize={['15px', '20px']}>
@@ -230,8 +237,8 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
       prefetch="intent"
       bg={loading ? hoverBg : bg}
       color={color}
-      px={['4px', 0]}
-      pl={[0, '10px']}
+      pl={['2px', '10px']}
+      pr={0}
       variant="ghost"
       h={track ? ['100px', '120px'] : '65px'}
       minW="100%"
