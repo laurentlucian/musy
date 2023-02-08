@@ -33,10 +33,13 @@ const SpotifyLogo = ({
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
   const currentUser = useSessionUser();
+  console.log(currentUser?.founder);
 
   return (
     <>
-      {currentUser?.dev === false ? (
+      {currentUser?.dev || currentUser?.founder ? (
+        <></>
+      ) : (
         <Image
           minH={h}
           maxH={h}
@@ -51,8 +54,6 @@ const SpotifyLogo = ({
             }
           }}
         />
-      ) : (
-        <></>
       )}
     </>
   );
