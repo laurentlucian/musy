@@ -36,22 +36,23 @@ const SpotifyLogo = ({
 
   return (
     <>
-      {!currentUser?.dev && (
-        <Image
-          minH={h}
-          maxH={h}
-          minW={w}
-          maxW={w}
-          src={spotify}
-          {...props}
-          onClick={(e) => {
-            if (link) {
-              e.preventDefault();
-              window.open('https://open.spotify.com');
-            }
-          }}
-        />
-      )}
+      {!currentUser?.easterEgg ||
+        (currentUser?.dev && (
+          <Image
+            minH={h}
+            maxH={h}
+            minW={w}
+            maxW={w}
+            src={spotify}
+            {...props}
+            onClick={(e) => {
+              if (link) {
+                e.preventDefault();
+                window.open('https://open.spotify.com');
+              }
+            }}
+          />
+        ))}
     </>
   );
 };
