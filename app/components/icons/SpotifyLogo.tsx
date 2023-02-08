@@ -33,7 +33,6 @@ const SpotifyLogo = ({
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
   const currentUser = useSessionUser();
-  console.log(currentUser?.founder);
 
   return (
     <>
