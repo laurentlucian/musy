@@ -36,9 +36,7 @@ const SpotifyLogo = ({
 
   return (
     <>
-      {currentUser?.dev || currentUser?.founder ? (
-        <></>
-      ) : (
+      {!currentUser?.dev && (
         <Image
           minH={h}
           maxH={h}
