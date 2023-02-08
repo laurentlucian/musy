@@ -2,11 +2,12 @@ import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import CurrentUserMiniPlayer from '~/components/player/home/CurrentUserMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getAllUsers } from '~/services/auth.server';
@@ -15,6 +16,8 @@ const Friends = () => {
   const { currentUserId, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
+  const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
+  const otherUsers = users.filter((user) => user.userId !== currentUserId);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -27,7 +30,25 @@ const Friends = () => {
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
-      {users.map((user) => {
+      {currentUserData && (
+        <Stack spacing={5}>
+          <CurrentUserMiniPlayer
+            key={currentUserData.userId}
+            user={currentUserData}
+            currentUserId={currentUserId}
+          />
+          <HStack spacing={3}>
+            <Image boxSize="24px" src="/users.svg" />
+            <Text fontSize="sm" fontWeight="bold">
+              friends
+            </Text>
+          </HStack>
+
+          <Divider bgColor="spotify.green" />
+        </Stack>
+      )}
+
+      {otherUsers.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}
     </Stack>
