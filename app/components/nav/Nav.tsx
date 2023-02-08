@@ -8,6 +8,7 @@ import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 import UserMenu from './UserMenu';
 import UserSearch from './UserSearch';
+import NavSearch from './NavSearch';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const transition = useTransition();
@@ -47,7 +48,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
               <UserMenu isSmallScreen={isSmallScreen} />
             ) : (
               <HStack w="100%" spacing={3}>
-                <UserSearch /> <UserMenu isSmallScreen={isSmallScreen} />
+                <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} />
               </HStack>
             )}
           </>
