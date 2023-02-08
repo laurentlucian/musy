@@ -199,7 +199,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const bio = data.get('bio');
   const follow = data.get('follow');
   const mood = data.get('mood');
-  const founder = data.get('component');
+  const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'Missing current user');
   const { spotify } = await spotifyApi(currentUser.userId);
@@ -235,9 +235,14 @@ export const action = async ({ params, request }: ActionArgs) => {
     });
   }
 
-  if (founder === '69') {
+  if (easterEgg === '69') {
     await prisma.profile.update({
-      data: { founder: true },
+      data: { easterEgg: true },
+      where: { userId: id },
+    });
+  } else {
+    await prisma.profile.update({
+      data: { easterEgg: false },
       where: { userId: id },
     });
   }

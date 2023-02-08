@@ -42,6 +42,7 @@ model Profile {
   image       String
   founder     Boolean            @default(false)
   dev         Boolean            @default(false)
+  easterEgg   Boolean            @default(false)
   party       Party?
   queue       Queue[]
   liked       LikedSongs[]

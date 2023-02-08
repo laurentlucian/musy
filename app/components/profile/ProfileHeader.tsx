@@ -23,6 +23,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const { currentUser, following, listened, user } = data;
   const isOwnProfile = currentUser?.userId === user.userId;
+  console.log(currentUser, 'user');
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image
@@ -90,8 +91,8 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             name="component"
             size="xs"
             variant="unstyled"
-            defaultValue={user.founder === true ? '69' : ''}
-            textColor={user.founder === true ? 'rgba(0, 0, 0, 0)' : undefined}
+            defaultValue={user.easterEgg === true ? '69' : ''}
+            textColor={user.easterEgg === true ? 'rgba(0, 0, 0, 0)' : undefined}
             resize="none"
             w="20px"
             h="20px"
@@ -101,6 +102,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             bottom={0}
             left="50%"
             onBlur={(e) => submit(e.currentTarget.form)}
+            border="1px solid red"
           />
         </Form>
       </Stack>
