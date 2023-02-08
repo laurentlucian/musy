@@ -47,7 +47,7 @@ const ProfileSong = ({ user }: { user: Profile | null }) => {
         color="music.200"
         _hover={{ color: 'white' }}
       >
-        Add as Offline Song
+        Add as Profile Song
       </Button>
     </>
   );
