@@ -150,8 +150,8 @@ const PlayerPrisma = ({ id, party, playback, name }: PlayerProps) => {
 
   useEffect(() => {
     const checkStick = () => {
-      console.log(window.scrollY);
-      console.log(show);
+      // console.log(window.scrollY);
+      // console.log(show);
       window.scrollY <= 100
         ? setSize('large')
         : window.scrollY <= 168

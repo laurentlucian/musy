@@ -11,7 +11,6 @@ const PrivateProfile = ({ name }: { name: string }) => {
       <Ghost size="210" color={green} />
     </motion.div>
   );
-  console.log(name, 'user');
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 3 }}>
       <Stack align="center">
