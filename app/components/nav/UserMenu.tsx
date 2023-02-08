@@ -113,7 +113,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerBody flexDirection="column" bg={bg} color={color} borderBottomRadius="10%">
+              <DrawerBody flexDirection="column" bg={bg} color={color} borderBottomRadius="5%">
                 <Stack align="flex-start" pb="20px">
                   <Stack w="100%" h="40px">
                     <DrawerCloseButton />
