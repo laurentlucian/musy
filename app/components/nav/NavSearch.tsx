@@ -117,13 +117,13 @@ const NavSearch = () => {
 
   return (
     <div ref={divRef}>
-      <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out">
+      <InputGroup w={show ? '180px' : '30px'} transition="all 0.5s ease-in-out" size="xs">
         <InputLeftElement
           pointerEvents="all"
           children={
             <IconButton
               aria-label="search"
-              icon={<SearchIcon boxSize="18px" />}
+              icon={<SearchIcon boxSize="16px" />}
               variant="unstyled"
               color={color}
               cursor="pointer"
@@ -135,11 +135,11 @@ const NavSearch = () => {
           ref={inputRef}
           name="spotify"
           value={search}
-          placeholder="hey"
+          placeholder="search"
           autoComplete="off"
           onChange={handleChange}
           border={show ? `solid 1px ${color}` : '#0000'}
-          w={show ? '400px' : '30px'}
+          w={show ? '180px' : '30px'}
           transition="all 0.5s ease-in-out"
           cursor={show ? 'text' : 'pointer'}
           _placeholder={{ color: '#414040' }}
@@ -149,6 +149,7 @@ const NavSearch = () => {
               setIsFocused(false);
             }
           }}
+          rounded="xl"
         />
         {search && (
           <InputRightElement
