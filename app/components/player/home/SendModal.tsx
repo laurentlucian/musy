@@ -163,12 +163,12 @@ const SendModal = ({
       right="40px"
       top="8px"
       mt="8px"
-      color={color}
+      color={['unset', color]}
     />
   );
 
   const SearchLine = (
-    <InputGroup justifySelf="center" w={['88vw', '94%']} ml="26px" mb="33px" bg={bg} color={color}>
+    <InputGroup justifySelf="center" w={['88vw', '94%']} ml="26px" mb="33px">
       <Input
         ref={onInputMount}
         name="spotify"
@@ -180,6 +180,7 @@ const SendModal = ({
         onChange={onChange}
         fontSize="15px"
         tabIndex={1}
+        _placeholder={isSmallScreen ? undefined : { color: '#41404080' }}
       />
       {search && (
         <InputRightElement
