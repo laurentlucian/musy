@@ -40,6 +40,8 @@ const NavSearch = () => {
   const busy = fetcher.state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
+  const bg = useColorModeValue('music.200', 'music.700');
+  const hoverBg = useColorModeValue('music.400', 'music.900');
   // const { props, scrollRef } = useMouseScroll('reverse', false); // doesnt allow mouse wheel scroll
 
   const divRef = useRef<HTMLInputElement>(null);
@@ -135,6 +137,7 @@ const NavSearch = () => {
         isOpen={search !== ''}
         autoFocus={false}
         isLazy
+        offset={[0, 10]}
       >
         <PopoverTrigger>
           <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out">
@@ -188,6 +191,9 @@ const NavSearch = () => {
           w="400px"
           h="300px"
           overflowY="scroll"
+          bg={bg}
+          color={color}
+          boxShadow="0px 0px 10px 2px rgba(117,117,117,0.39)"
           //  ref={scrollRef} //these are buggy
           //   {...props}
         >
@@ -209,8 +215,6 @@ const NavSearch = () => {
                     preview_url={track.preview_url}
                     link={track.link}
                     list
-                    // inDrawer
-                    // isQueuing
                   />
                 ))}
             </Stack>
