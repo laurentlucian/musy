@@ -184,7 +184,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
           {...props}
-          cursor="pointer"
         >
           <Flex direction="column">
             {createdAt && (
@@ -220,6 +219,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
                 onClick={() => onClick(track)}
+                cursor="pointer"
               />
             </Tooltip>
           </Flex>
@@ -229,6 +229,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
               onClick={() => onClick(track)}
+              cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {name}
