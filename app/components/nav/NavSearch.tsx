@@ -13,18 +13,12 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
 } from '@chakra-ui/react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
 import Waver from '../icons/Waver';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
-import Tiles from '../tiles/Tiles';
 import Tile from '../Tile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 
@@ -41,7 +35,7 @@ const NavSearch = () => {
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
-  const hoverBg = useColorModeValue('music.400', 'music.900');
+  // const hoverBg = useColorModeValue('music.400', 'music.900');
   // const { props, scrollRef } = useMouseScroll('reverse', false); // doesnt allow mouse wheel scroll
 
   const divRef = useRef<HTMLInputElement>(null);
@@ -58,6 +52,7 @@ const NavSearch = () => {
     e.stopPropagation();
     setSearch('');
     setShow(!show);
+    setTracks([]);
     const deleteParamDelay = setTimeout(() => {
       deleteSearch();
     }, 600);
@@ -74,6 +69,7 @@ const NavSearch = () => {
   const handleCloseButton = () => {
     setSearch('');
     setShow(false);
+    setTracks([]);
     const deleteParamDelay = setTimeout(() => {
       deleteSearch();
     }, 600);
@@ -94,6 +90,7 @@ const NavSearch = () => {
     const handleOpenButtonOutside = (e: MouseEvent) => {
       if (divRef.current && !divRef.current.contains(e.target as Node) && search === '') {
         setShow(false);
+        setTracks([]);
         inputRef.current?.blur();
       }
     };
@@ -134,7 +131,7 @@ const NavSearch = () => {
       <Popover
         closeOnBlur={false}
         placement="bottom"
-        isOpen={search !== ''}
+        isOpen={tracks.length >= 1}
         autoFocus={false}
         isLazy
         offset={[0, 10]}
@@ -195,11 +192,11 @@ const NavSearch = () => {
           color={color}
           boxShadow="0px 0px 10px 2px rgba(117,117,117,0.39)"
           //  ref={scrollRef} //these are buggy
-          //   {...props}
+          //   {...props} // help! D:
         >
           <PopoverBody>
             <Stack>
-              {search &&
+              {tracks.length >= 1 &&
                 tracks.map((track) => (
                   <Tile
                     key={track.trackId}
