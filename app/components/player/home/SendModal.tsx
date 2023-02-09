@@ -1,12 +1,5 @@
 import { useFetcher, useSearchParams } from '@remix-run/react';
-import {
-  useState,
-  useEffect,
-  useRef,
-  type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
-} from 'react';
+import { useState, useEffect, type ChangeEvent, type Dispatch, type SetStateAction } from 'react';
 import { X } from 'react-feather';
 
 import {
@@ -18,17 +11,14 @@ import {
   ModalCloseButton,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
   InputGroup,
   Input,
   InputRightElement,
   IconButton,
   Box,
-  Stack,
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
@@ -37,7 +27,6 @@ import { useTypedFetcher } from 'remix-typedjson';
 import Waver from '~/components/icons/Waver';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
-import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
@@ -78,12 +67,13 @@ const SendModal = ({
   const fetcherQueue = useTypedFetcher<typeof action>();
   const fetcherRec = useTypedFetcher<typeof actionB>();
   const busy = fetcher.state === 'loading' ?? false;
+
   const onInputMount = (input: HTMLInputElement | null) => {
     if (input && isOpen) {
       input.focus();
     }
   };
-  const inputRef = useRef<HTMLInputElement>(null);
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
       setSearch(e.currentTarget.value);
@@ -97,6 +87,7 @@ const SendModal = ({
       });
     }
   };
+
   const onClearSearch = () => {
     setSearch('');
     setShowTracks(false);
@@ -196,19 +187,19 @@ const SendModal = ({
       <ModalContent w={['300px', '800px']}>
         <ModalHeader>
           {title} to {name}
+          <ModalCloseButton />
+          <IconButton
+            variant="ghost"
+            aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
+            icon={<Refresh size="15px" />}
+            onClick={() => {
+              setSendList(!sendList);
+            }}
+            pos="absolute"
+            right="40px"
+            top="8px"
+          />
         </ModalHeader>
-        <ModalCloseButton autoFocus={false} />
-        <IconButton
-          variant="ghost"
-          aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
-          icon={<Refresh size="15px" />}
-          onClick={() => {
-            setSendList(!sendList);
-          }}
-          pos="absolute"
-          right="40px"
-          top="8px"
-        />
         <ModalBody>
           <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
             <Input
@@ -221,8 +212,7 @@ const SendModal = ({
               borderRadius={0}
               onChange={onChange}
               fontSize="15px"
-              id="myInput"
-              autoFocus
+              tabIndex={1}
             />
             {search && (
               <InputRightElement
@@ -302,7 +292,6 @@ const SendModal = ({
         placement="left"
         size="full"
         onClose={onClose}
-        autoFocus={false}
         blockScrollOnMount={blockScrollOnMount}
       >
         <DrawerOverlay />
@@ -313,7 +302,7 @@ const SendModal = ({
           <DrawerBody>
             <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
               <Input
-                ref={inputRef}
+                ref={onInputMount}
                 name="spotify"
                 variant="flushed"
                 value={search}
@@ -324,7 +313,6 @@ const SendModal = ({
                 fontSize="15px"
                 id="myInput"
                 _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
-                autoFocus
               />
               {search && (
                 <InputRightElement
