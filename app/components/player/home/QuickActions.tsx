@@ -11,6 +11,7 @@ import {
   Stack,
   useColorModeValue,
   useDisclosure,
+  Image,
 } from '@chakra-ui/react';
 
 import { Minus, Send2 } from 'iconsax-react';
@@ -21,12 +22,14 @@ import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 const QuickActions = ({
   id,
   name,
+  image,
   que,
   recommend,
   currentUserId,
 }: {
   id: string;
   name: string;
+  image: string;
   que?: string;
   recommend?: string;
   currentUserId: string | undefined;
@@ -65,9 +68,6 @@ const QuickActions = ({
         </Stack>
         <Portal>
           <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
-            <MenuItem icon={<Minus />} bg={bg} color={color}>
-              open {name}'s profile
-            </MenuItem>
             {que === 'off' ? (
               <MenuItem pointerEvents="none" icon={<Send2 />} bg={bg} color={color}>
                 queue is off
@@ -104,6 +104,21 @@ const QuickActions = ({
                 recommend to {name}
               </MenuItem>
             )}
+            <MenuItem
+              icon={
+                <Image
+                  boxSize="25px"
+                  borderRadius="full"
+                  minH="25px"
+                  minW="25px"
+                  src={image}
+                />
+              }
+              bg={bg}
+              color={color}
+            >
+              {name}
+            </MenuItem>
           </MenuList>
         </Portal>
       </Menu>

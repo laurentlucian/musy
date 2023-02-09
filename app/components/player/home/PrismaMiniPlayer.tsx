@@ -122,6 +122,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
       {track && currentUserId !== user.userId ? (
         <QuickActions
           name={name}
+          image={user.image}
           id={user.userId}
           currentUserId={currentUserId}
           que={que}
