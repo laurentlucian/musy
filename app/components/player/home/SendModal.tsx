@@ -19,6 +19,7 @@ import {
   InputRightElement,
   IconButton,
   Box,
+  DrawerCloseButton,
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
@@ -146,33 +147,48 @@ const SendModal = ({
     sendList ? setTitle('queue') : setTitle('recommend');
   }, [sendList]);
 
-  const ModalControls = (
-    <Box
-      pos="fixed"
-      top={3}
-      right={isOpen ? 3 : '-50px'}
-      zIndex={9999}
-      display={isOpen ? 'block' : 'none'}
-    >
-      <IconButton
-        variant="ghost"
-        aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
-        icon={<Refresh size="15px" />}
-        onClick={(e) => {
-          e.preventDefault();
-          setSendList(!sendList);
-        }}
+  const CycleButton = (
+    <IconButton
+      variant="ghost"
+      aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
+      icon={<Refresh size="15px" />}
+      onClick={() => {
+        setSendList(!sendList);
+      }}
+      pos="absolute"
+      right="40px"
+      top="8px"
+    />
+  );
+
+  const SearchLine = (
+    <InputGroup justifySelf="center" w={['85vw', '725px']} ml="26px" mb="33px">
+      <Input
+        ref={onInputMount}
+        name="spotify"
+        variant="flushed"
+        value={search}
+        placeholder="search"
+        autoComplete="off"
+        borderRadius={0}
+        onChange={onChange}
+        fontSize="15px"
+        tabIndex={1}
       />
-      <IconButton
-        variant="ghost"
-        aria-label="close"
-        icon={<X />}
-        onClick={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
-      />
-    </Box>
+      {search && (
+        <InputRightElement
+          children={
+            <IconButton
+              aria-label="close"
+              variant="ghost"
+              borderRadius={8}
+              onClick={onClearSearch}
+              icon={<X />}
+            />
+          }
+        />
+      )}
+    </InputGroup>
   );
 
   const Desktop = (
@@ -188,50 +204,10 @@ const SendModal = ({
         <ModalHeader>
           {title} to {name}
           <ModalCloseButton />
-          <IconButton
-            variant="ghost"
-            aria-label={`switch to ${sendList ? 'queue' : 'recommend'}`}
-            icon={<Refresh size="15px" />}
-            onClick={() => {
-              setSendList(!sendList);
-            }}
-            pos="absolute"
-            right="40px"
-            top="8px"
-          />
+          {CycleButton}
         </ModalHeader>
         <ModalBody>
-          <InputGroup justifySelf="center" w="725px" ml="26px" mb="33px">
-            <Input
-              ref={onInputMount}
-              name="spotify"
-              variant="flushed"
-              value={search}
-              placeholder="search"
-              autoComplete="off"
-              borderRadius={0}
-              onChange={onChange}
-              fontSize="15px"
-              tabIndex={1}
-            />
-            {search && (
-              <InputRightElement
-                h="35px"
-                w="65px"
-                pr={2}
-                justifyContent="end"
-                children={
-                  <IconButton
-                    aria-label="close"
-                    variant="ghost"
-                    borderRadius={8}
-                    onClick={onClearSearch}
-                    icon={<X />}
-                  />
-                }
-              />
-            )}
-          </InputGroup>
+          {SearchLine}
           <Tiles>
             {showTracks ? (
               tracks.map((track) => (
@@ -284,9 +260,9 @@ const SendModal = ({
       </ModalContent>
     </Modal>
   );
+  
   const Mobile = (
     <>
-      {ModalControls}
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -298,40 +274,11 @@ const SendModal = ({
         <DrawerContent>
           <DrawerHeader>
             {title} to {name}
+            <DrawerCloseButton />
+            {CycleButton}
           </DrawerHeader>
           <DrawerBody>
-            <InputGroup justifySelf="center" w="85vw" ml="26px" mb="33px">
-              <Input
-                ref={onInputMount}
-                name="spotify"
-                variant="flushed"
-                value={search}
-                placeholder="search"
-                autoComplete="off"
-                borderRadius={0}
-                onChange={onChange}
-                fontSize="15px"
-                id="myInput"
-                _placeholder={{ color: 'RGBA(255, 255, 255, 0.24)' }}
-              />
-              {search && (
-                <InputRightElement
-                  h="35px"
-                  w="65px"
-                  pr={2}
-                  justifyContent="end"
-                  children={
-                    <IconButton
-                      aria-label="close"
-                      variant="ghost"
-                      borderRadius={8}
-                      onClick={onClearSearch}
-                      icon={<X />}
-                    />
-                  }
-                />
-              )}
-            </InputGroup>
+            {SearchLine}
             <Tiles>
               {showTracks &&
                 tracks.map((track) => (
