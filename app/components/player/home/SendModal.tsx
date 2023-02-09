@@ -158,11 +158,12 @@ const SendModal = ({
       pos="absolute"
       right="40px"
       top="8px"
+      mt="8px"
     />
   );
 
   const SearchLine = (
-    <InputGroup justifySelf="center" w={['85vw', '725px']} ml="26px" mb="33px">
+    <InputGroup justifySelf="center" w={['88vw', '94%']} ml="26px" mb="33px">
       <Input
         ref={onInputMount}
         name="spotify"
@@ -203,7 +204,7 @@ const SendModal = ({
       <ModalContent w={['300px', '800px']}>
         <ModalHeader>
           {title} to {name}
-          <ModalCloseButton />
+          <ModalCloseButton mt="8px" />
           {CycleButton}
         </ModalHeader>
         <ModalBody>
@@ -260,7 +261,7 @@ const SendModal = ({
       </ModalContent>
     </Modal>
   );
-  
+
   const Mobile = (
     <>
       <Drawer
@@ -274,7 +275,7 @@ const SendModal = ({
         <DrawerContent>
           <DrawerHeader>
             {title} to {name}
-            <DrawerCloseButton />
+            <DrawerCloseButton mt="8px" />
             {CycleButton}
           </DrawerHeader>
           <DrawerBody>
