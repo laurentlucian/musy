@@ -18,15 +18,15 @@ import colors from './foundations/colors';
 const styles = {
   global: (props: GlobalStyleProps) => ({
     '*::-webkit-scrollbar': {
-      bg: mode('#050404', '#f5f5f5')(props), // <---
+      bg: 'transparent', 
       h: '2px',
       w: '3px',
     },
     '*::-webkit-scrollbar-thumb': {
-      bg: mode('#050404', '#f5f5f5')(props), // <---
+      bg: mode('#050404', '#f5f5f5')(props),
     },
     '*::-webkit-scrollbar-track': {
-      bg: mode('#EEE6E2', '#050404')(props), // these too
+      bg: 'transparent', 
     },
     body: {
       WebkitTapHighlightColor: '#0000 !important',
