@@ -29,6 +29,7 @@ type TileProps = Track & {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   id?: string;
+  list?: boolean;
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
@@ -51,6 +52,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       fetcher,
       id,
       image,
+      list,
       inDrawer,
       isQueuing,
       isRecommending,
@@ -159,7 +161,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     );
     return (
       <>
-        <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
+        <Stack
+          ref={ref}
+          flex={list ? undefined : '0 0 200px'}
+          direction={list ? 'row' : undefined}
+          {...props}
+          cursor="pointer"
+        >
           <Flex direction="column">
             {createdAt && (
               <HStack align="center" h="35px">
@@ -185,8 +193,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             )}
             <Tooltip label={albumName} placement="top-start">
               <Image
-                boxSize="200px"
-                minW="200px"
+                boxSize={list ? '40px' : '200px'}
+                minW={list ? '40px' : '200px'}
+                minH={list ? '40px' : '200px'}
                 objectFit="cover"
                 src={image}
                 draggable={false}

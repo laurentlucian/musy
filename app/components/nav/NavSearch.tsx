@@ -8,12 +8,25 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Stack,
   useColorModeValue,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
 } from '@chakra-ui/react';
 import { useFetcher, useSearchParams } from '@remix-run/react';
 import Waver from '../icons/Waver';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
+import Tiles from '../tiles/Tiles';
+import Tile from '../Tile';
+import { useMouseScroll } from '~/hooks/useMouseScroll';
 
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,6 +40,7 @@ const NavSearch = () => {
   const busy = fetcher.state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
+  // const { props, scrollRef } = useMouseScroll('reverse', false); // doesnt allow mouse wheel scroll
 
   const divRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -115,53 +129,94 @@ const NavSearch = () => {
 
   return (
     <div ref={divRef}>
-      <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out" >
-        <InputLeftElement
-          pointerEvents="all"
-          children={
-            <IconButton
-              aria-label="search"
-              icon={<SearchIcon boxSize="16px" />}
-              variant="unstyled"
-              color={color}
-              cursor="pointer"
-              onClick={(e) => handleOpenButton(e)}
-            />
-          }
-        />
-        <Input
-          ref={inputRef}
-          name="spotify"
-          value={search}
-          placeholder="search"
-          autoComplete="off"
-          onChange={handleChange}
-          border={show ? `solid 1px ${color}` : '#0000'}
-          w={show ? '400px' : '30px'}
-          transition="all 0.5s ease-in-out"
-          cursor={show ? 'text' : 'pointer'}
-          _placeholder={{ color: '#414040' }}
-          
-        />
-        {search && (
-          <InputRightElement
-            justifyContent="end"
-            w="69px"
-            children={
-              <>
-                {busy && <Waver />}
+      <Popover
+        closeOnBlur={false}
+        placement="bottom"
+        isOpen={search !== ''}
+        autoFocus={false}
+        isLazy
+      >
+        <PopoverTrigger>
+          <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out">
+            <InputLeftElement
+              pointerEvents="all"
+              children={
                 <IconButton
-                  aria-label="close"
+                  aria-label="search"
+                  icon={<SearchIcon boxSize="16px" />}
                   variant="unstyled"
-                  borderRadius={8}
-                  onClick={handleCloseButton}
-                  icon={<CloseButton />}
+                  color={color}
+                  cursor="pointer"
+                  onClick={(e) => handleOpenButton(e)}
                 />
-              </>
-            }
-          />
-        )}
-      </InputGroup>
+              }
+            />
+            <Input
+              ref={inputRef}
+              name="spotify"
+              value={search}
+              placeholder="search"
+              autoComplete="off"
+              onChange={handleChange}
+              border={show ? `solid 1px ${color}` : '#0000'}
+              w={show ? '400px' : '30px'}
+              transition="all 0.5s ease-in-out"
+              cursor={show ? 'text' : 'pointer'}
+              _placeholder={{ color: '#414040' }}
+            />
+            {search && (
+              <InputRightElement
+                justifyContent="end"
+                w="69px"
+                children={
+                  <>
+                    {busy && <Waver />}
+                    <IconButton
+                      aria-label="close"
+                      variant="unstyled"
+                      borderRadius={8}
+                      onClick={handleCloseButton}
+                      icon={<CloseButton />}
+                    />
+                  </>
+                }
+              />
+            )}
+          </InputGroup>
+        </PopoverTrigger>
+        <PopoverContent
+          w="400px"
+          h="300px"
+          overflowY="scroll"
+          //  ref={scrollRef} //these are buggy
+          //   {...props}
+        >
+          <PopoverBody>
+            <Stack>
+              {search &&
+                tracks.map((track) => (
+                  <Tile
+                    key={track.trackId}
+                    trackId={track.trackId}
+                    uri={track.uri}
+                    image={track.image}
+                    albumUri={track.albumUri}
+                    albumName={track.albumName}
+                    name={track.name}
+                    artist={track.artist}
+                    artistUri={track.artistUri}
+                    explicit={track.explicit}
+                    preview_url={track.preview_url}
+                    link={track.link}
+                    list
+                    // inDrawer
+                    // isQueuing
+                  />
+                ))}
+            </Stack>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };
