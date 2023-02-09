@@ -118,15 +118,6 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
           {!isSmallScreen && loading && <Waver />}
         </HStack>
       </Stack>
-      {track && currentUserId !== user.userId ? (
-        <QuickActions
-          name={name}
-          id={user.userId}
-          currentUserId={currentUserId}
-          que={que}
-          recommend={recommend}
-        />
-      ) : null}
     </Stack>
   );
   const Activity = (
