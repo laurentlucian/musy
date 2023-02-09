@@ -20,6 +20,7 @@ import {
   IconButton,
   Box,
   DrawerCloseButton,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
@@ -68,6 +69,9 @@ const SendModal = ({
   const fetcherQueue = useTypedFetcher<typeof action>();
   const fetcherRec = useTypedFetcher<typeof actionB>();
   const busy = fetcher.state === 'loading' ?? false;
+
+  const color = useColorModeValue('#161616', '#EEE6E2');
+  const bg = useColorModeValue('music.200', 'music.900');
 
   const onInputMount = (input: HTMLInputElement | null) => {
     if (input && isOpen) {
@@ -159,11 +163,12 @@ const SendModal = ({
       right="40px"
       top="8px"
       mt="8px"
+      color={color}
     />
   );
 
   const SearchLine = (
-    <InputGroup justifySelf="center" w={['88vw', '94%']} ml="26px" mb="33px">
+    <InputGroup justifySelf="center" w={['88vw', '94%']} ml="26px" mb="33px" bg={bg} color={color}>
       <Input
         ref={onInputMount}
         name="spotify"
@@ -201,7 +206,7 @@ const SendModal = ({
       blockScrollOnMount={blockScrollOnMount}
     >
       <ModalOverlay />
-      <ModalContent w={['300px', '800px']}>
+      <ModalContent w={['300px', '800px']} bg={bg} color={color}>
         <ModalHeader>
           {title} to {name}
           <ModalCloseButton mt="8px" />
