@@ -149,7 +149,13 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                   >
                     friends
                   </Button>
-                  <Divider border={`solid white 1px`} w="90%" ml="9px" opacity={0.2} />
+                  <Divider
+                    border={`solid white 1px`}
+                    w="90%"
+                    ml="9px"
+                    opacity={0.2}
+                    alignSelf="center"
+                  />
                   <Button
                     leftIcon={<Setting2 size="30px" />}
                     iconSpacing="30px"
@@ -190,7 +196,13 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                   >
                     toggle theme
                   </Button>
-                  <Divider border={`solid white 1px`} w="90%" ml="9px" opacity={0.2} />
+                  <Divider
+                    border={`solid white 1px`}
+                    w="90%"
+                    ml="9px"
+                    opacity={0.2}
+                    alignSelf="center"
+                  />
                   <Form action="/logout" method="post">
                     <Button
                       leftIcon={<LogOut transform="scale(-1)" size="30px" />}
@@ -243,7 +255,13 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
               >
                 friends
               </MenuItem>
-              <MenuDivider border={`solid ${color} 1px`} w="90%" ml="9px" opacity={0.2} />
+              <MenuDivider
+                border={`solid ${color} 1px`}
+                w="90%"
+                ml="9px"
+                opacity={0.2}
+                alignSelf="center"
+              />
               <MenuItem icon={<Setting2 />} onClick={onClickSettings} bg={bg} color={color}>
                 settings
               </MenuItem>
@@ -256,7 +274,13 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
               >
                 toggle theme
               </MenuItem>
-              <MenuDivider border={`solid ${color} 1px`} w="90%" ml="9px" opacity={0.2} />
+              <MenuDivider
+                border={`solid ${color} 1px`}
+                w="90%"
+                ml="9px"
+                opacity={0.2}
+                alignSelf="center"
+              />
               <Form action="/logout" method="post">
                 <MenuItem
                   icon={<LogOut transform="scale(-1)" />}
