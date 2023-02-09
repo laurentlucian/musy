@@ -28,6 +28,9 @@ type TileProps = Track & {
   fetcher?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
+  fetcherRec?: TypedFetcherWithComponents<
+    ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
+  >;
   id?: string;
   list?: boolean;
   inDrawer?: boolean;
@@ -50,6 +53,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       currentUserId,
       explicit,
       fetcher,
+      fetcherRec,
       id,
       image,
       list,
@@ -140,12 +144,26 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       }
     };
     const isClicked = clickedRef.current === trackId;
-    const isAdding = fetcher ? fetcher.submission?.formData.get('trackId') === trackId : null;
-    const isDone = fetcher ? fetcher.type === 'done' && isClicked : null;
+    const isAdding = fetcher
+      ? fetcher.submission?.formData.get('trackId') === trackId
+      : fetcherRec
+      ? fetcherRec.submission?.formData.get('trackId') === trackId
+      : null;
+    const isDone = fetcher
+      ? fetcher.type === 'done' && isClicked
+      : fetcherRec
+      ? fetcherRec.type === 'done' && isClicked
+      : null;
     const isError = fetcher
       ? typeof fetcher.data === 'string' && isClicked
         ? fetcher.data.includes('Error') && isClicked
           ? fetcher.data && isClicked
+          : fetcherRec
+          ? typeof fetcherRec.data === 'string' && isClicked
+            ? fetcherRec.data.includes('Error') && isClicked
+              ? fetcherRec.data && isClicked
+              : null
+            : null
           : null
         : null
       : null;

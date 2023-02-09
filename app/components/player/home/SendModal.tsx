@@ -75,9 +75,8 @@ const SendModal = ({
   const [erect, setErect] = useState(false);
   const { blockScrollOnMount } = useBlockScrollCheck();
   const fetcher = useFetcher();
-  const fetcherA = useTypedFetcher<typeof action>();
-  const fetcherB = useTypedFetcher<typeof actionB>();
-  const [fetchers, setFetchers] = useState(sendList ? fetcherA : fetcherB);
+  const fetcherQueue = useTypedFetcher<typeof action>();
+  const fetcherRec = useTypedFetcher<typeof actionB>();
   const busy = fetcher.state === 'loading' ?? false;
   const onInputMount = (input: HTMLInputElement | null) => {
     if (input && isOpen) {
@@ -154,7 +153,6 @@ const SendModal = ({
 
   useEffect(() => {
     sendList ? setTitle('queue') : setTitle('recommend');
-    sendList ? setFetchers(fetcherA) : setFetchers(fetcherB);
   }, [sendList]);
 
   const ModalControls = (
@@ -261,7 +259,8 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
-                    fetcher={fetchers}
+                    fetcher={fetcherQueue}
+                    fetcherRec={fetcherRec}
                     isQueuing={sendList}
                     isRecommending={!sendList}
                     id={id}
@@ -361,7 +360,8 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
-                    fetcher={fetchers}
+                    fetcher={fetcherQueue}
+                    fetcherRec={fetcherRec}
                     inDrawer
                     isQueuing={sendList}
                     isRecommending={!sendList}
