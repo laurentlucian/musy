@@ -137,7 +137,7 @@ const NavSearch = () => {
         offset={[0, 10]}
       >
         <PopoverTrigger>
-          <InputGroup w={show ? '400px' : '30px'} transition="all 0.5s ease-in-out">
+          <InputGroup w={show ? '300px' : '30px'} transition="all 0.5s ease-in-out" size="sm">
             <InputLeftElement
               pointerEvents="all"
               children={
@@ -159,7 +159,7 @@ const NavSearch = () => {
               autoComplete="off"
               onChange={handleChange}
               border={show ? `solid 1px ${color}` : '#0000'}
-              w={show ? '400px' : '30px'}
+              w={show ? '300px' : '30px'}
               transition="all 0.5s ease-in-out"
               cursor={show ? 'text' : 'pointer'}
               _placeholder={{ color: '#414040' }}
@@ -185,7 +185,7 @@ const NavSearch = () => {
           </InputGroup>
         </PopoverTrigger>
         <PopoverContent
-          w="400px"
+          w="300px"
           h="300px"
           overflowY="scroll"
           bg={bg}
