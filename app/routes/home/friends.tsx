@@ -27,7 +27,6 @@ const Friends = () => {
       // revalidate();
     }
   }, [shouldRevalidate, revalidate]);
-  console.log(currentUserData, 'currentUserData');
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
