@@ -111,7 +111,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
             ) : user.bio ? (
               <Stack maxW={['40px', '100%']}>
                 <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
-                  {user.bio.slice(0, 15)}
+                  {user.bio.slice(0, isSmallScreen? 14 : 50)}
                 </Text>
               </Stack>
             ) : null}
