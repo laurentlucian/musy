@@ -78,7 +78,7 @@ const ActionDrawer = () => {
   }, [onCloseDrawer]);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isSmallScreen) {
       // Add a fake history event so that the back button does nothing if pressed once
       window.history.pushState({ drawer: 'SongDrawer' }, document.title, window.location.href);
 
@@ -87,7 +87,7 @@ const ActionDrawer = () => {
       // Here is the cleanup when this component unmounts
       return () => removeEventListener('popstate', onClose);
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isSmallScreen]);
 
   useEffect(() => {
     if (!isOpen && type === 'normalLoad') {
@@ -161,7 +161,7 @@ const ActionDrawer = () => {
   const CloseMenu = () => {
     const handleClick = () => {
       isOpen && !sendMenu.isOpen ? onClose() : sendMenu.onClose();
-      if (window.history.state === 'SongDrawer') {
+      if (window.history.state === 'SongDrawer' && !isSmallScreen) {
         window.history.back();
       }
     };

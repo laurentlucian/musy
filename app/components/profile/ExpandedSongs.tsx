@@ -43,7 +43,7 @@ const ExpandedSongs = ({
   const isOpen = track !== null ? true : false;
 
   useEffect(() => {
-    if (show && !isOpen) {
+    if (show && !isOpen && !isSmallScreen) {
       // Add a fake history event so that the back button does nothing if pressed once
       window.history.pushState({ drawer: 'SongsDrawer' }, document.title, window.location.href);
 
@@ -52,7 +52,7 @@ const ExpandedSongs = ({
       // Here is the cleanup when this component unmounts
       return () => removeEventListener('popstate', onClose);
     }
-  }, [show, onClose, isOpen]);
+  }, [show, onClose, isOpen, isSmallScreen]);
   return (
     <>
       <Drawer
@@ -85,7 +85,7 @@ const ExpandedSongs = ({
             color="white"
             onClick={() => {
               onClose();
-              if (window.history.state === 'SongsDrawer') {
+              if (window.history.state === 'SongsDrawer' && !isSmallScreen) {
                 window.history.back();
               }
             }}
