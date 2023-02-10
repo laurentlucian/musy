@@ -23,7 +23,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const { currentUser, following, listened, user } = data;
   const isOwnProfile = currentUser?.userId === user.userId;
-  console.log(currentUser, 'user');
+  
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image
