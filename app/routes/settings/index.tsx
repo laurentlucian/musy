@@ -20,7 +20,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 
-import { Code1, Ghost, Logout, MusicPlay, Scroll } from 'iconsax-react';
+import { Code1, Ghost, Logout, MusicPlay, PlayCricle, Scroll } from 'iconsax-react';
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
@@ -99,6 +99,31 @@ const Account = () => {
             />
             <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
               song preview
+            </FormLabel>
+          </HStack>
+          <Switch
+            colorScheme="music"
+            id="allowPreview"
+            defaultChecked={currentUser.settings?.allowPreview ?? false}
+            onChange={(e) => {
+              submit(
+                { allowPreview: `${e.target.checked}` },
+
+                { method: 'post', replace: true },
+              );
+            }}
+            size="lg"
+          />
+        </FormControl>
+        <FormControl display="flex" alignItems="center" justifyContent="space-between">
+          <HStack>
+            <PlayCricle
+              size="24"
+              color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
+              variant="Bold"
+            />
+            <FormLabel fontSize={['sm', 'md']} htmlFor="home miniplayer" mb="0" color={color}>
+              home miniplayer
             </FormLabel>
           </HStack>
           <Switch
