@@ -1,6 +1,6 @@
 import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
 import type { DataFunctionArgs } from '@remix-run/server-runtime';
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useRef } from 'react';
 import { Check, AlertCircle } from 'react-feather';
 
 import { Flex, HStack, IconButton, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
@@ -32,10 +32,11 @@ type TileProps = Track & {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   id?: string;
-  list?: boolean;
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
+  list?: boolean;
+
   playlist?: Boolean;
   submit?: SubmitFunction;
 } & ChakraProps;
@@ -56,13 +57,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       fetcherRec,
       id,
       image,
-      list,
       inDrawer,
       isQueuing,
       isRecommending,
       link,
+      list,
       name,
-      playlist,
+      // playlist,
       preview_url,
       submit,
       trackId,
@@ -90,7 +91,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       name,
       preview_url,
       trackId,
-      uri: uri,
+      uri,
     };
     const clickedRef = useRef<string>();
     const handleSendButton = () => {
