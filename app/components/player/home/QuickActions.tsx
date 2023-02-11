@@ -16,30 +16,31 @@ import {
 
 import { Minus, Send2 } from 'iconsax-react';
 
-import SendModal from './SendModal';
 import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 
+import SendModal from './SendModal';
+
 const QuickActions = ({
+  currentUserId,
   id,
-  name,
   image,
+  name,
   que,
   recommend,
-  currentUserId,
 }: {
+  currentUserId: string | undefined;
   id: string;
-  name: string;
   image: string;
+  name: string;
   que?: string;
   recommend?: string;
-  currentUserId: string | undefined;
 }) => {
   const [title, setTitle] = useState('');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { showButton, hideButton } = useMobileDrawerActions();
+  const { hideButton, showButton } = useMobileDrawerActions();
   const onClickMenuItem = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     onOpen();
@@ -83,7 +84,7 @@ const QuickActions = ({
                   setSendList(true);
                 }}
               >
-                queue to {name}
+                queue
               </MenuItem>
             )}
             {recommend === 'off' ? (
@@ -101,18 +102,12 @@ const QuickActions = ({
                   setSendList(false);
                 }}
               >
-                recommend to {name}
+                recommend
               </MenuItem>
             )}
             <MenuItem
               icon={
-                <Image
-                  boxSize="25px"
-                  borderRadius="full"
-                  minH="25px"
-                  minW="25px"
-                  src={image}
-                />
+                <Image boxSize="25px" borderRadius="full" minH="25px" minW="25px" src={image} />
               }
               bg={bg}
               color={color}

@@ -6,8 +6,8 @@ import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import CurrentUserMiniPlayer from '~/components/player/home/CurrentUserMiniPlayer';
+import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getAllUsers } from '~/services/auth.server';
@@ -31,11 +31,11 @@ const Friends = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
       {currentUserData && (
-        <Stack spacing={5} mt={10}>
-          <HStack spacing={3}>
-            <Image boxSize="24px" src="/users.svg" />
-            <Text fontSize="sm" fontWeight="bold">
-              {currentUserData.name} friends
+        <Stack mt={7}>
+          <HStack>
+            <Image boxSize="15px" src="/users.svg" />
+            <Text fontSize="xs" fontWeight="hairline">
+              friends
             </Text>
           </HStack>
           <Divider bgColor="spotify.green" />
