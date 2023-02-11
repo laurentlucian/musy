@@ -32,6 +32,13 @@ const Friends = () => {
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
       {currentUserData && (
         <Stack mt={7}>
+          {currentUserData.settings?.miniPlayer && (
+            <CurrentUserMiniPlayer
+              key={currentUserData.userId}
+              user={currentUserData}
+              currentUserId={currentUserId}
+            />
+          )}
           <HStack>
             <Image boxSize="15px" src="/users.svg" />
             <Text fontSize="xs" fontWeight="hairline">
