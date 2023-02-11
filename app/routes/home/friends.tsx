@@ -41,7 +41,7 @@ const Friends = () => {
           )}
           <HStack>
             <Image boxSize="15px" src="/users.svg" />
-            <Text fontSize="xs" fontWeight="hairline">
+            <Text fontSize="sm" fontWeight="400">
               friends
             </Text>
           </HStack>
