@@ -33,7 +33,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     <Form
       method="get"
       onChange={(e) => {
-        submit(e.currentTarget, { replace: true });
+        submit(e.currentTarget, { preventScrollReset: true, replace: true });
       }}
     >
       <HStack spacing={4} {...group} p={0} m={0}>
