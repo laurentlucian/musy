@@ -39,6 +39,7 @@ const Account = () => {
   const spotifyGreen = '#1DB954';
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
+  console.log(currentUser.settings?.miniPlayer, 'currentUser');
 
   return (
     <>
@@ -119,20 +120,20 @@ const Account = () => {
           <HStack>
             <PlayCricle
               size="24"
-              color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
+              color={currentUser.settings?.miniPlayer ? spotifyGreen : '#555555'}
               variant="Bold"
             />
-            <FormLabel fontSize={['sm', 'md']} htmlFor="home miniplayer" mb="0" color={color}>
+            <FormLabel fontSize={['sm', 'md']} htmlFor="miniplayer" mb="0" color={color}>
               home miniplayer
             </FormLabel>
           </HStack>
           <Switch
             colorScheme="music"
-            id="allowPreview"
-            defaultChecked={currentUser.settings?.allowPreview ?? false}
+            id="miniplayer"
+            defaultChecked={currentUser.settings?.miniPlayer ?? false}
             onChange={(e) => {
               submit(
-                { allowPreview: `${e.target.checked}` },
+                { miniplayer: `${e.target.checked}` },
 
                 { method: 'post', replace: true },
               );
@@ -258,6 +259,16 @@ export const action = async ({ request }: ActionArgs) => {
 
     await prisma.settings.update({
       data: { dev: isChecked },
+      where: { userId },
+    });
+  }
+
+  const miniPlayer = data.get('miniplayer');
+  if (miniPlayer) {
+    const isChecked = miniPlayer === 'true';
+
+    await prisma.settings.update({
+      data: { miniPlayer: isChecked },
       where: { userId },
     });
   }
