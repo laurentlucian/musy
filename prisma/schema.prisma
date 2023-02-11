@@ -209,6 +209,7 @@ model Settings {
   founder           Boolean  @default(false)
   dev               Boolean  @default(false)
   easterEgg         Boolean  @default(false)
+  miniPlayer        Boolean  @default(false)
   // background     String?
   // theme          String   @default("preset")
   // theme String @default("light")
