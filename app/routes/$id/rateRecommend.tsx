@@ -19,7 +19,6 @@ export const action = async ({ params, request }: ActionArgs) => {
         trackId,
       },
     });
-    console.log('rated the song', rating);
   } catch (error) {
     console.log('remove recommend -> error', error);
     return typedjson('failed to remove');

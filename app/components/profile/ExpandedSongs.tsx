@@ -1,4 +1,4 @@
-import { type ReactNode, useRef } from 'react';
+import { type ReactNode, useRef, useEffect } from 'react';
 
 import {
   Stack,
@@ -16,6 +16,7 @@ import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 
 type TilesProps = {
   Filter?: ReactNode;
@@ -38,9 +39,20 @@ const ExpandedSongs = ({
   const { blockScrollOnMount } = useBlockScrollCheck();
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
+  const track = useDrawerTrack();
+  const isOpen = track !== null ? true : false;
 
-  useDrawerBackButton(onClose, show);
+  useEffect(() => {
+    if (show && !isOpen && !isSmallScreen) {
+      // Add a fake history event so that the back button does nothing if pressed once
+      window.history.pushState({ drawer: 'SongsDrawer' }, document.title, window.location.href);
 
+      addEventListener('popstate', onClose);
+
+      // Here is the cleanup when this component unmounts
+      return () => removeEventListener('popstate', onClose);
+    }
+  }, [show, onClose, isOpen, isSmallScreen]);
   return (
     <>
       <Drawer
@@ -71,7 +83,12 @@ const ExpandedSongs = ({
           <Button
             variant="drawer"
             color="white"
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              if (window.history.state === 'SongsDrawer' && !isSmallScreen) {
+                window.history.back();
+              }
+            }}
             h={['20px', '40px']}
             pt="20px"
             pb="40px"
