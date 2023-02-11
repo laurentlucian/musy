@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const returnTo: string = (await returnToCookie.parse(request.headers.get('Cookie'))) ?? '/';
   const session = await authenticator.authenticate('spotify', request).catch(async (e) => {
     if (e instanceof Response) {
-      const { message } = await e.json();
+      const message = await e.text();
       console.log('authenticator.authenticate -> catch', e.status, message);
       // returning 401 unauthorized as authenticator crashes on any error by spotify api without info
       // @todo fix spotify stragegy to return proper error
