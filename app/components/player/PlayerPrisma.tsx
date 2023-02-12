@@ -385,7 +385,7 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
                           ? [135, 160, 160, 200, 221]
                           : 135
                       }
-                      transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
+                      transition="all 0.25s"
                       pos="absolute"
                       right={0}
                       top={0}
