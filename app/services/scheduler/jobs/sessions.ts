@@ -12,6 +12,9 @@ import { Queue } from '~/services/scheduler/queue.server';
  *
  */
 
+// 30 minutes
+const TIME_BETWEEN_SONGS_TO_QUALIFY_AS_SESSION_MS = 30 * 60 * 1000;
+
 export const sessionsQ = Queue<{}>('sessions', async () => {
   console.log('sessionsQ -> running...');
   // Find a song without a session
@@ -31,14 +34,21 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
   }
 
   console.log('sessionsQ -> found song without session', songWithoutSession.id);
-  // Find sessions that have songs that were played within 10 minutes of the song we found above
+  // Find sessions that have songs that were played within 30 minutes of the song we found above
   const session = await prisma.sessions.findFirst({
+    orderBy: {
+      startTime: 'desc',
+    },
     where: {
       songs: {
         some: {
           playedAt: {
-            gte: new Date(songWithoutSession.playedAt.getTime() - 10 * 60 * 1000),
-            lte: new Date(songWithoutSession.playedAt.getTime() + 10 * 60 * 1000),
+            gte: new Date(
+              songWithoutSession.playedAt.getTime() - TIME_BETWEEN_SONGS_TO_QUALIFY_AS_SESSION_MS,
+            ),
+            lte: new Date(
+              songWithoutSession.playedAt.getTime() + TIME_BETWEEN_SONGS_TO_QUALIFY_AS_SESSION_MS,
+            ),
           },
         },
       },
