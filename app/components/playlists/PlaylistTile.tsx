@@ -43,12 +43,12 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
       setOpen(true);
     };
 
-    // playlist in dependency array causes infinite loop
-    const newPlaylist = useMemo(() => ({ ...playlist, tracks }), [tracks, playlist]);
-
     useEffect(() => {
-      if (newPlaylist) setPlaylist(newPlaylist);
-    }, [newPlaylist]);
+      setPlaylist((p) => ({
+        ...p,
+        tracks,
+      }));
+    }, [tracks]);
 
     useEffect(() => {
       if (open && !initialFetch.current) {
