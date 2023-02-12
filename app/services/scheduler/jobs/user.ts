@@ -73,10 +73,10 @@ export const userQ = Queue<{ userId: string }>(
       // See model on prisma schema for docs
       await prisma.recentSongs.deleteMany({
         where: {
-          // only if it is within 5 minutes of the current song
+          // only if it is within 10 minutes of the current song
           playedAt: {
-            gte: new Date(playedAt.getTime() - minutesToMs(5)),
-            lte: new Date(playedAt.getTime() + minutesToMs(5)),
+            gte: new Date(playedAt.getTime() - minutesToMs(10)),
+            lte: new Date(playedAt.getTime() + minutesToMs(10)),
           },
           trackId: track.id,
           userId,
