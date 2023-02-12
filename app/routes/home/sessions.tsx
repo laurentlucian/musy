@@ -63,6 +63,10 @@ export const loader = async ({ request }: LoaderArgs) => {
       },
       user: true,
     },
+    orderBy: {
+      startTime: 'desc',
+    },
+    take: 10,
   });
 
   return typedjson(
