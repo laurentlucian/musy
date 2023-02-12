@@ -38,19 +38,15 @@ export const userQ = Queue<{ userId: string }>(
       const trackDb = createTrackModel(track);
       const data = {
         action: 'played',
-
-        albumName: track.album.name,
-        albumUri: track.album.uri,
-        artist: track.artists[0].name,
-        artistUri: track.artists[0].uri,
-        duration: track.duration_ms,
-        explicit: track.explicit,
-        image: track.album.images[0].url,
-        link: track.external_urls.spotify,
-        name: track.name,
         playedAt: new Date(played_at),
-        preview_url: track.preview_url,
-        uri: track.uri,
+        track: {
+          connectOrCreate: {
+            create: trackDb,
+            where: {
+              id: track.id,
+            },
+          },
+        },
 
         user: {
           connect: {
@@ -60,28 +56,8 @@ export const userQ = Queue<{ userId: string }>(
       };
 
       await prisma.recentSongs.upsert({
-        create: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
-          },
-        },
-        update: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
-          },
-        },
+        create: data,
+        update: data,
         where: {
           playedAt_userId: {
             playedAt: data.playedAt,
