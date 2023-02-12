@@ -52,6 +52,7 @@ model Profile {
   theme       Theme?
   playback    Playback?
   ColorPreset ColorPreset[]
+  Sessions    Sessions[]
 }
 
 model AI {
@@ -89,8 +90,8 @@ model Queue {
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
 
-  track       Track  @relation(fields: [trackId], references: [id])
-  trackId     String
+  track   Track  @relation(fields: [trackId], references: [id])
+  trackId String
 
   // can be anonymous
   user   Profile? @relation(fields: [userId], references: [userId])
@@ -102,28 +103,14 @@ model LikedSongs {
   id      Int      @id @default(autoincrement())
   likedAt DateTime @default(now())
 
-  track       Track  @relation(fields: [trackId], references: [id])
-  trackId     String
+  track   Track  @relation(fields: [trackId], references: [id])
+  trackId String
 
   user   Profile @relation(fields: [userId], references: [userId])
   userId String
-  action String   @default("liked")
+  action String  @default("liked")
 
   @@unique([trackId, userId])
-}
-
-model RecentSongs {
-  id       Int      @id @default(autoincrement())
-  playedAt DateTime @default(now())
-
-  track       Track  @relation(fields: [trackId], references: [id])
-  trackId     String
-
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String
-  action String  @default("recent")
-
-  @@unique([playedAt, userId])
 }
 
 model RecommendedSongs {
@@ -134,23 +121,23 @@ model RecommendedSongs {
   pending   Boolean  @default(false)
   comment   String?
   rating    Int?
-
-  track       Track  @relation(fields: [trackId], references: [id])
-  trackId     String
-
-  sender   Profile @relation(fields: [senderId], references: [userId])
-  senderId String
-  action   String  @default("recommend")
+  //
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
+  //
+  sender    Profile  @relation(fields: [senderId], references: [userId])
+  senderId  String
+  action    String   @default("recommend")
 }
 
 model Settings {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String  @unique
-
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+  //
+  user              Profile  @relation(fields: [userId], references: [userId])
+  userId            String   @unique
+  //
   autoscroll        Boolean  @default(true)
   isPrivate         Boolean  @default(false)
   allowQueue        String   @default("on")
@@ -172,48 +159,48 @@ model Settings {
 }
 
 model ColorPreset {
-  id          Int     @id @default(autoincrement())
-  createdBy   Profile @relation(fields: [createdById], references: [userId])
-  createdById String
-
-  name             String @default("musy")
-  backgroundLight  String @default("#EEE6E2")
-  backgroundDark   String @default("#090808")
-  mainTextLight    String @default("#161616")
-  mainTextDark     String @default("#EEE6E2")
-  subTextLight     String @default("#161616")
-  subTextDark      String @default("#EEE6E2")
-  playerColorLight String @default("#E7DFD9")
-  playerColorDark  String @default("#101010")
-
-  selectedBy Theme[]
+  id               Int     @id @default(autoincrement())
+  createdBy        Profile @relation(fields: [createdById], references: [userId])
+  createdById      String
+  //
+  name             String  @default("musy")
+  backgroundLight  String  @default("#EEE6E2")
+  backgroundDark   String  @default("#090808")
+  mainTextLight    String  @default("#161616")
+  mainTextDark     String  @default("#EEE6E2")
+  subTextLight     String  @default("#161616")
+  subTextDark      String  @default("#EEE6E2")
+  playerColorLight String  @default("#E7DFD9")
+  playerColorDark  String  @default("#101010")
+  //
+  selectedBy       Theme[]
 }
 
 model Theme {
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String  @id @unique
-
-  colorPreset ColorPreset[]
-
-  isPreset        Boolean @default(true)
-  backgroundLight String  @default("#EEE6E2")
-  backgroundDark  String  @default("#090808")
-  mainTextLight   String  @default("#161616")
-  mainTextDark    String  @default("#EEE6E2")
-  subTextLight    String  @default("#161616")
-  subTextDark     String  @default("#EEE6E2")
-  gradient        Boolean @default(false)
-
-  playerColorLight String  @default("#E7DFD9")
-  playerColorDark  String  @default("#101010")
-  blur             Boolean @default(true)
-  opaque           Boolean @default(false)
-
-  musyLogo String @default("musy")
+  user             Profile       @relation(fields: [userId], references: [userId])
+  userId           String        @id @unique
+  //
+  colorPreset      ColorPreset[]
+  //
+  isPreset         Boolean       @default(true)
+  backgroundLight  String        @default("#EEE6E2")
+  backgroundDark   String        @default("#090808")
+  mainTextLight    String        @default("#161616")
+  mainTextDark     String        @default("#EEE6E2")
+  subTextLight     String        @default("#161616")
+  subTextDark      String        @default("#EEE6E2")
+  gradient         Boolean       @default(false)
+  //
+  playerColorLight String        @default("#E7DFD9")
+  playerColorDark  String        @default("#101010")
+  blur             Boolean       @default(true)
+  opaque           Boolean       @default(false)
+  //
+  musyLogo         String        @default("musy")
 }
 
 model Track {
-  id          String  @id @unique
+  id          String             @id @unique
   uri         String
   name        String
   image       String
@@ -225,7 +212,7 @@ model Track {
   preview_url String?
   link        String
   duration    Int
-
+  //
   queue       Queue[]
   liked       LikedSongs[]
   recent      RecentSongs[]
@@ -238,12 +225,38 @@ model Playback {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt Int // timestamp from spotify response
+  //
+  user      Profile  @relation(fields: [userId], references: [userId])
+  userId    String   @unique
+  //
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
+  //
+  progress  Int
+}
 
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String  @unique
+model RecentSongs {
+  id        Int       @id @default(autoincrement())
+  playedAt  DateTime  @default(now())
+  //
+  track     Track     @relation(fields: [trackId], references: [id])
+  trackId   String
+  //
+  user      Profile   @relation(fields: [userId], references: [userId])
+  userId    String
+  action    String    @default("recent")
+  session   Sessions? @relation(fields: [sessionId], references: [id])
+  sessionId Int?
 
-  track   Track  @relation(fields: [trackId], references: [id])
-  trackId String
+  @@unique([playedAt, userId])
+}
 
-  progress Int
+model Sessions {
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now()) @updatedAt
+  startTime DateTime
+  user      Profile       @relation(fields: [userId], references: [userId])
+  userId    String
+  songs     RecentSongs[]
 }
