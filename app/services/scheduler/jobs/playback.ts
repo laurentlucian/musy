@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
 import { createTrackModel, notNull } from '~/lib/utils';
@@ -49,6 +50,33 @@ const upsertPlayback = async (
     where: {
       userId,
     },
+  });
+
+  const endedAt = new Date(timestamp + track.duration_ms);
+
+  const recentSongs: Prisma.RecentSongsCreateInput = {
+    action: 'played',
+    playedAt: endedAt,
+    track: {
+      connectOrCreate: {
+        create: createTrackModel(track),
+        where: {
+          id: track.id,
+        },
+      },
+    },
+    user: {
+      connect: {
+        userId,
+      },
+    },
+    verifiedFromSpotify: false,
+  };
+
+  await prisma.recentSongs.upsert({
+    create: recentSongs,
+    update: recentSongs,
+    where: { playedAt_userId: { playedAt: endedAt, userId } },
   });
 
   console.log('playbackQ -> prisma updated', userId);

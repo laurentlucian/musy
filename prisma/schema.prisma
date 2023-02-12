@@ -248,6 +248,20 @@ model RecentSongs {
   session   Sessions? @relation(fields: [sessionId], references: [id])
   sessionId Int?
 
+  // HACK(po): 
+  // We add songs to this model in two ocassions: 
+  // 1. Via the playbackQ: we add the song to the `playback` model and optimistically add here
+  // 2. Via the userQ: we fetch the last 50 recently from spotify and add here
+  // We want to do this because `userQ` runs every 30 minutes, which leaves `sessions` outdated for 30 minutes. 
+  // By leveraging the `playback` endpoint that runs every 30 seconds, we can keep the `sessions` up to date.
+  // But it seems that the `playback` endpoint returns the `playedAt` timestamp from the moment the song started playing, 
+  // while the `recentlyPlayed` endpoint returns the `playedAt` timestamp from the moment the song finished playing.
+  // Which leads to duplicated data as `playedAt` is different for the same song.
+  // To fix this, we add a `verifiedFromSpotify` field that is set to true when the song comes from `recentlyPlayed` endpoint
+  // and false when it comes from `playback` endpoint.
+  // This way, we can delete the songs that come from `playback` endpoint once they are filled by the `recentlyPlayed` endpoint.
+  verifiedFromSpotify Boolean @default(true)
+
   @@unique([playedAt, userId])
 }
 
