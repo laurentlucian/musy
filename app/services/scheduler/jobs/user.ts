@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/client';
+
 import { createTrackModel, isProduction, minutesToMs } from '~/lib/utils';
 import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -75,21 +77,19 @@ export const userQ = Queue<{ userId: string }>(
     for (const { added_at, track } of liked) {
       const trackDb = createTrackModel(track);
 
-      const data = {
+      const data: Prisma.LikedSongsCreateInput = {
         action: 'liked',
-        albumName: track.album.name,
-        albumUri: track.album.uri,
-        artist: track.artists[0].name,
-        artistUri: track.artists[0].uri,
-        duration: track.duration_ms,
-        explicit: track.explicit,
-        image: track.album.images[0].url,
-        likedAt: new Date(added_at),
-        link: track.external_urls.spotify,
-        name: track.name,
-        preview_url: track.preview_url,
-        uri: track.uri,
 
+        likedAt: new Date(added_at),
+
+        track: {
+          connectOrCreate: {
+            create: trackDb,
+            where: {
+              id: track.id,
+            },
+          },
+        },
         user: {
           connect: {
             userId,
@@ -98,28 +98,8 @@ export const userQ = Queue<{ userId: string }>(
       };
 
       await prisma.likedSongs.upsert({
-        create: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
-          },
-        },
-        update: {
-          ...data,
-          track: {
-            connectOrCreate: {
-              create: trackDb,
-              where: {
-                id: track.id,
-              },
-            },
-          },
-        },
+        create: data,
+        update: data,
         where: {
           trackId_userId: {
             trackId: track.id,

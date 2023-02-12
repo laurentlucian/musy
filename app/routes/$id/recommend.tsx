@@ -2,6 +2,7 @@ import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 
+import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -19,43 +20,22 @@ export const action = async ({ params, request }: ActionArgs) => {
   const trackId = body.get('trackId') as string;
   const fromUserId = body.get('fromId') as string;
   const action = body.get('action') as string;
-  const uri = body.get('uri') as string;
-  const name = body.get('name') as string;
-  const image = body.get('image') as string;
-  const albumUri = body.get('albumUri') as string;
-  const albumName = body.get('albumName') as string;
-  const artist = body.get('artist') as string;
-  const artistUri = body.get('artistUri') as string;
-  const explicit = body.get('explicit') as string;
-  const preview_url = body.get('explicit') as string;
-  const link = body.get('explicit') as string;
 
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
 
-  const data = {
+  const data: Prisma.RecommendedSongsCreateInput = {
     action,
-    albumName,
-    albumUri,
-    artist,
-    artistUri,
-    explicit: explicit ? true : false,
-    image,
-    link,
-    name,
     owner: {
       connect: {
         id,
       },
     },
-    preview_url,
-
     sender: {
       connect: {
         userId: fromUserId,
       },
     },
-
     track: {
       connectOrCreate: {
         create: trackDb,
@@ -64,8 +44,6 @@ export const action = async ({ params, request }: ActionArgs) => {
         },
       },
     },
-
-    uri,
   };
 
   if (id !== fromUserId) {

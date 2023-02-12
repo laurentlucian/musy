@@ -1,6 +1,7 @@
 // import type { LikedSongs } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/node';
 
+import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -27,20 +28,9 @@ export const action = async ({ params, request }: ActionArgs) => {
 
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
-  const data = {
+  const data: Prisma.LikedSongsCreateInput = {
     action: 'liked',
-
-    albumName: track.album.name,
-    albumUri: track.album.uri,
-    artist: track.artists[0].name,
-    artistUri: track.artists[0].uri,
-    duration: track.duration_ms,
-    explicit: track.explicit,
-    image: track.album.images[0].url,
     likedAt: new Date(),
-    link: track.external_urls.spotify,
-    name: track.name,
-    preview_url: track.preview_url,
     track: {
       connectOrCreate: {
         create: trackDb,
@@ -49,8 +39,6 @@ export const action = async ({ params, request }: ActionArgs) => {
         },
       },
     },
-
-    uri: track.uri,
     user: {
       connect: {
         userId: currentUser.userId,

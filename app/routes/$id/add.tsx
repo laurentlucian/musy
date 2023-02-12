@@ -2,6 +2,7 @@ import type { ActionArgs, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 
+import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 
 import { createTrackModel } from '~/lib/utils';
@@ -26,15 +27,8 @@ export const action = async ({ params, request }: ActionArgs) => {
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
 
-  const data = {
+  const data: Prisma.QueueCreateInput = {
     action,
-    albumName: track.album.name,
-    albumUri: track.album.uri,
-    artist: track.artists[0].name,
-    artistUri: track.artists[0].uri,
-    explicit: track.explicit,
-    image: track.album.images[0].url,
-    name: track.name,
     owner: {
       connect: {
         id,
@@ -49,7 +43,6 @@ export const action = async ({ params, request }: ActionArgs) => {
         },
       },
     },
-    uri: track.uri,
 
     user: {
       connect: {
