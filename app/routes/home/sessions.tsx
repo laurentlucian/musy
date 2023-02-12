@@ -60,6 +60,9 @@ export const loader = async ({ request }: LoaderArgs) => {
         include: {
           track: true,
         },
+        orderBy: {
+          playedAt: 'desc',
+        },
       },
       user: true,
     },
