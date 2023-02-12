@@ -114,7 +114,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const recentDb = await prisma.recentSongs.findMany({
     orderBy: { playedAt: 'desc' },
     select: { playedAt: true, track: { select: { duration: true } } },
-    where: { userId: id },
+    where: { track: { id: { not: 'aa' } }, userId: id }, // added a where track exists as a null check :)
   });
 
   const { searchParams } = new URL(request.url);
@@ -129,7 +129,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   });
 
   const listened = msToString(
-    filteredRecent.map(({track}) => track.duration).reduce((a, b) => a + b, 0),
+    filteredRecent.map(({ track }) => track.duration).reduce((a, b) => a + b, 0),
   );
 
   const currentUser = await getCurrentUser(request);
