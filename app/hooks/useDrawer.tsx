@@ -1,39 +1,33 @@
 import { useState } from 'react';
 
+import type { Profile, Track } from '@prisma/client';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
-import type { Track } from '~/lib/types/types';
-
+type DrawerTrack = Track & {
+  liked?: {
+    user: Profile;
+  }[];
+  recent?: {
+    user: Profile;
+  }[];
+};
 interface DrawerStateConfig {
   actions: {
     onClose: () => void;
-    onOpen: (by: Track) => void;
+    onOpen: (by: DrawerTrack) => void;
     setIsPlaying: (by: boolean) => void;
   };
   isPlaying?: boolean;
-  track: Track | null;
+  track: DrawerTrack | null;
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
     onClose: () => set({ isPlaying: false, track: null }),
-    onOpen: (by) =>
+    onOpen: (track) =>
       set({
-        track: {
-          albumName: by.albumName,
-          albumUri: by.albumUri,
-          artist: by.artist,
-          artistUri: by.artistUri,
-          explicit: by.explicit,
-          image: by.image,
-          link: by.link,
-          name: by.name,
-          preview_url: by.preview_url,
-          trackId: by.trackId,
-          uri: by.uri,
-          userId: by.userId,
-        },
+        track,
       }),
     setIsPlaying: (by) => set({ isPlaying: by }),
   },

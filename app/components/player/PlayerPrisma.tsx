@@ -1,15 +1,12 @@
-import { useFetcher, useRevalidator } from '@remix-run/react';
+import { useRevalidator } from '@remix-run/react';
 import { useEffect, useRef, useState } from 'react';
 
 import {
   Box,
-  Avatar,
-  AvatarGroup,
   Flex,
   HStack,
   IconButton,
   Image,
-  Link,
   Stack,
   Text,
   useColorModeValue,
@@ -19,21 +16,16 @@ import {
 } from '@chakra-ui/react';
 
 import type { Party, Playback, Track } from '@prisma/client';
-import { ArrowDown2, ArrowLeft2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
+import { ArrowDown2, ArrowLeft2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { Track as DrawerTrack } from '~/lib/types/types';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from '../Tooltip';
-import PlayController from './PlayController';
-import PlayerBar from './PlayerBar';
-import PlayingFromTooltip from './PlayingFromTooltip';
 
 type PlayerProps = {
   id: string;
@@ -44,7 +36,7 @@ type PlayerProps = {
   };
 };
 
-const PlayerPrisma = ({ id, party, playback, name }: PlayerProps) => {
+const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
@@ -63,29 +55,30 @@ const PlayerPrisma = ({ id, party, playback, name }: PlayerProps) => {
   const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue('music.50', '#10101066');
-  const userBg = useColorModeValue('#EEE6E2', '#050404');
+  // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');
 
-  const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
-  const fetcher = useFetcher();
+  // const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
+  // const fetcher = useFetcher();
   const { revalidate } = useRevalidator();
-  const busy = fetcher.submission?.formData.has('party') ?? false;
+  // const busy = fetcher.submission?.formData.has('party') ?? false;
   const isSmallScreen = useIsMobile();
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const drawerTrack: DrawerTrack = {
+  const drawerTrack = {
     albumName: playback.track.albumName,
     albumUri: playback.track.albumUri,
     artist: playback.track.artist,
     artistUri: playback.track.artistUri,
+    duration: 0,
     explicit: playback.track.explicit,
+    id: playback.trackId,
     image: playback.track.image,
     link: playback.track.link,
     name: playback.track.name,
     preview_url: playback.track.preview_url,
-    trackId: playback.trackId,
     uri: playback.track.uri,
   };
 

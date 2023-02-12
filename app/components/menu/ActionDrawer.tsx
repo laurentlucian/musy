@@ -38,7 +38,6 @@ import {
 } from 'iconsax-react';
 
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
 import useIsMobile from '~/hooks/useIsMobile';
 import useParamUser from '~/hooks/useParamUser';
 import useSendMenu from '~/hooks/useSendMenu';
@@ -283,20 +282,14 @@ const ActionDrawer = () => {
               >
                 {track && (
                   <>
-                    <SaveToLiked trackId={track.trackId} />
+                    <SaveToLiked trackId={track.id} />
                     {/* <SaveToPlaylist  trackId={track.trackId} /> */}
                     {/* <SaveTo currentUserId={currentUser?.userId}/> */} {/* WIP */}
-                    <AnalyzeTrack trackId={track.trackId} />
+                    <AnalyzeTrack trackId={track.id} />
                     {track.link !== '' && <CopyLink link={track.link} />}
                     <PlayPreview preview_url={track.preview_url} />
                     <ProfileSong user={user} />
-                    <AddQueue
-                      track={{
-                        trackId: track.trackId,
-                        userId: track.userId,
-                      }}
-                      user={null}
-                    />
+                    <AddQueue trackId={track.id} fromUseId="gi" user={null} />
                   </>
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
@@ -324,22 +317,11 @@ const ActionDrawer = () => {
                             {!sendList ? (
                               <Stack>
                                 {!isOwnProfile && id && track && (
-                                  <AddQueue
-                                    track={{
-                                      trackId: track.trackId,
-                                    }}
-                                    user={user}
-                                  />
+                                  <AddQueue trackId={track.id} user={user} />
                                 )}
                                 {track &&
                                   queueableUsers.map((user) => (
-                                    <AddQueue
-                                      key={user.userId}
-                                      track={{
-                                        trackId: track.trackId,
-                                      }}
-                                      user={user}
-                                    />
+                                    <AddQueue key={user.userId} trackId={track.id} user={user} />
                                   ))}
                                 <Box h="150px" />
                               </Stack>
@@ -394,22 +376,11 @@ const ActionDrawer = () => {
                             {!sendList ? (
                               <Stack overflowX="hidden">
                                 {!isOwnProfile && id && track && (
-                                  <AddQueue
-                                    track={{
-                                      trackId: track.trackId,
-                                    }}
-                                    user={user}
-                                  />
+                                  <AddQueue trackId={track.id} user={user} />
                                 )}
                                 {track &&
                                   queueableUsers.map((user) => (
-                                    <AddQueue
-                                      key={user.userId}
-                                      track={{
-                                        trackId: track.trackId,
-                                      }}
-                                      user={user}
-                                    />
+                                    <AddQueue key={user.userId} trackId={track.id} user={user} />
                                   ))}
                               </Stack>
                             ) : (

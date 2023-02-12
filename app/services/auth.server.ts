@@ -1,5 +1,3 @@
-import { useLocation } from '@remix-run/react';
-
 import type { Prisma } from '@prisma/client';
 import { Authenticator } from 'remix-auth';
 import type { Session } from 'remix-auth-spotify';

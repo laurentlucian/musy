@@ -15,7 +15,7 @@ import {
 
 import { CloseSquare } from 'iconsax-react';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { type Track } from '~/lib/types/types';
@@ -23,7 +23,6 @@ import { type Track } from '~/lib/types/types';
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
 import Tiles from '../tiles/Tiles';
-import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 
 const MobileDrawer = () => {
   const { isOpen } = useMobileDrawer();
@@ -36,8 +35,8 @@ const MobileDrawer = () => {
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
   const { blockScrollOnMount } = useBlockScrollCheck();
-  const fetcher = useFetcher();
-  const busy = fetcher.state === 'loading' ?? false;
+  const { data, load, state } = useFetcher();
+  const busy = state === 'loading' ?? false;
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -63,17 +62,17 @@ const MobileDrawer = () => {
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
       if (search.trim().length > 0) {
-        fetcher.load(`/${id}/search?spotify=${search}`);
+        load(`/${id}/search?spotify=${search}`);
       }
     }, 1000);
 
     return () => clearTimeout(delaySubmit);
-  }, [search, fetcher.load]);
+  }, [search, load, id]);
 
   useEffect(() => {
-    if (fetcher.data) {
+    if (data) {
       setTracks(
-        fetcher.data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
+        data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
           albumName: track.album.name,
           albumUri: track.album.uri,
           artist: track.album.artists[0].name,
@@ -88,7 +87,7 @@ const MobileDrawer = () => {
         })),
       );
     }
-  }, [fetcher.data]);
+  }, [data]);
 
   return (
     <>

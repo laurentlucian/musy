@@ -6,9 +6,9 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
-import UserMenu from './UserMenu';
-import UserSearch from './UserSearch';
 import NavSearch from './NavSearch';
+import UserMenu from './UserMenu';
+// import UserSearch from './UserSearch';
 
 const Nav = ({ authorized }: { authorized: boolean }) => {
   const transition = useTransition();

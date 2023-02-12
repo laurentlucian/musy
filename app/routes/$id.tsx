@@ -113,6 +113,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const recentDb = await prisma.recentSongs.findMany({
     orderBy: { playedAt: 'desc' },
+    select: { playedAt: true, track: { select: { duration: true } } },
     where: { userId: id },
   });
 
@@ -128,7 +129,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   });
 
   const listened = msToString(
-    filteredRecent.map((track) => track.duration).reduce((a, b) => a + b, 0),
+    filteredRecent.map(({track}) => track.duration).reduce((a, b) => a + b, 0),
   );
 
   const currentUser = await getCurrentUser(request);

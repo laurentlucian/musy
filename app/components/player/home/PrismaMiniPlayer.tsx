@@ -30,7 +30,7 @@ interface Friends extends User {
     | (Playback & {
         track: Track & {
           liked: {
-            user: Profile | null;
+            user: Profile;
           }[];
           recent: {
             user: Profile;
@@ -60,23 +60,6 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
   const track = playback?.track;
   const que = user?.settings?.allowQueue;
   const recommend = user?.settings?.allowRecommend;
-
-  const formattedTrack = track
-    ? {
-        albumName: track.albumName,
-        albumUri: track.albumUri,
-        artist: track.artist,
-        artistUri: track.artistUri,
-        explicit: track.explicit,
-        image: track.image,
-        link: track.link,
-        name: track.name,
-        preview_url: track.preview_url,
-        trackId: track.id,
-        uri: track.uri,
-        userId: user.userId,
-      }
-    : null;
 
   const ProfilePic = (
     <Image
@@ -111,7 +94,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
             ) : user.bio ? (
               <Stack maxW={['40px', '100%']}>
                 <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
-                  {user.bio.slice(0, isSmallScreen? 14 : 50)}
+                  {user.bio.slice(0, isSmallScreen ? 14 : 50)}
                 </Text>
               </Stack>
             ) : null}
@@ -205,7 +188,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
               as="span"
               onClick={(e) => {
                 e.preventDefault();
-                formattedTrack && onOpen(formattedTrack);
+                track && onOpen(track);
               }}
             >
               <Image

@@ -1,5 +1,4 @@
 import { drawerAnatomy as parts } from '@chakra-ui/anatomy';
-import { CloseButton } from '@chakra-ui/react';
 import { createMultiStyleConfigHelpers, cssVar, defineStyle } from '@chakra-ui/styled-system';
 import { mode } from '@chakra-ui/theme-tools';
 
@@ -40,7 +39,7 @@ const nested = defineStyle({
 const mobileAvatarDrawerDialog = defineStyle({
   backdropFilter: 'blur(14px)',
   borderBottomRadius: '20px',
-  zIndex: 'modal'
+  zIndex: 'modal',
 });
 const mobileAvatarDrawer = definePartsStyle({
   dialog: mobileAvatarDrawerDialog,

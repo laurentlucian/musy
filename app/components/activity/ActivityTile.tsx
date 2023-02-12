@@ -16,7 +16,7 @@ import { Heart, Play, Send2 } from 'iconsax-react';
 
 import { useDrawerActions } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
-import type { Activity, Track } from '~/lib/types/types';
+import type { Activity } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
@@ -130,17 +130,18 @@ const ActivityTile = ({ activity }: ActivityProps) => {
 
   const { onOpen } = useDrawerActions();
 
-  const item: Track = {
+  const item = {
     albumName: activity.track.albumName,
     albumUri: activity.track.albumUri,
     artist: activity.track.artist,
     artistUri: activity.track.artistUri,
+    duration: 0,
     explicit: activity.track.explicit,
+    id: activity.trackId,
     image: activity.track.image,
     link: activity.track.link,
     name: activity.track.name,
     preview_url: activity.track.preview_url,
-    trackId: activity.trackId ?? '',
     uri: activity.track.uri,
     userId: activity.user?.userId,
   };

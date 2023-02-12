@@ -18,7 +18,7 @@ import colors from './foundations/colors';
 const styles = {
   global: (props: GlobalStyleProps) => ({
     '*::-webkit-scrollbar': {
-      bg: 'transparent', 
+      bg: 'transparent',
       h: '2px',
       w: '3px',
     },
@@ -26,7 +26,7 @@ const styles = {
       bg: mode('#050404', '#f5f5f5')(props),
     },
     '*::-webkit-scrollbar-track': {
-      bg: 'transparent', 
+      bg: 'transparent',
     },
     body: {
       WebkitTapHighlightColor: '#0000 !important',

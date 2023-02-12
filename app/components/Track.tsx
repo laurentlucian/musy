@@ -19,11 +19,11 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) =>
     artistUri: props.track.artists[0].uri,
     duration: props.track.duration_ms,
     explicit: props.track.explicit,
+    id: props.track.id,
     image: props.track.album.images[0].url,
     link: props.track.external_urls.spotify,
     name: props.track.name,
     preview_url: props.track.preview_url,
-    trackId: props.track.id,
     uri: props.track.uri,
   };
 

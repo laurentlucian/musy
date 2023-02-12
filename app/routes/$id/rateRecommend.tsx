@@ -5,7 +5,7 @@ import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
 
-export const action = async ({ params, request }: ActionArgs) => {
+export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
   const trackId = body.get('trackId') as string;
   const rating = Number(body.get('rating'));

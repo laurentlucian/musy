@@ -1,10 +1,10 @@
 import type { Profile, Settings } from '@prisma/client';
 
 export interface Track {
-  albumName: string | null;
-  albumUri: string | null;
-  artist: string | null;
-  artistUri: string | null;
+  albumName: string;
+  albumUri: string;
+  artist: string;
+  artistUri: string;
   explicit: boolean;
   image: string;
   link: string;
@@ -35,7 +35,7 @@ export type Activity = {
     recent?: { user: Profile | null }[];
     uri: string;
   };
-  trackId: string | null;
+  trackId: string;
   user: Profile | null;
   userId: string | null;
 };

@@ -57,13 +57,13 @@ const Recommend = ({ comment, user, userId }: RecommendProps) => {
       preview_url: track?.preview_url ?? '',
 
       toId: sendToUserId ?? '',
-      trackId: track?.trackId ?? '',
+      trackId: track?.id ?? '',
       uri: track?.uri ?? '',
     };
 
     fetcher.submit(data, { action, method: 'post', replace: true });
   };
-  const isAdding = fetcher.submission?.formData.get('trackId') === track?.trackId;
+  const isAdding = fetcher.submission?.formData.get('trackId') === track?.id;
 
   const isDone = fetcher.type === 'done';
   const isError =

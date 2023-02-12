@@ -12,33 +12,34 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import type { Profile, RecommendedSongs } from '@prisma/client';
+import type { Profile, RecommendedSongs, Track } from '@prisma/client';
 
 import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
-import Tiles from './Tiles';
 import RecommendActions from './RecommendActions';
 import RecommendRatingForm from './RecommendRatingForm';
+import Tiles from './Tiles';
 
-type RecommendedProps = RecommendedSongs & {
-  sender: Profile;
-};
-
-const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
-  const scrollButtons = recommended.length > 5;
-  const show = recommended.length > 0;
+const Recommended = (props: {
+  recommended: (RecommendedSongs & {
+    sender: Profile;
+    track: Track;
+  })[];
+}) => {
+  const scrollButtons = props.recommended.length > 5;
+  const show = props.recommended.length > 0;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
+  const { isOpen, onClose, onToggle } = useDisclosure();
 
   return (
     <>
       {show && (
         <Stack spacing={3}>
           <Tiles title="Recommended" scrollButtons={scrollButtons}>
-            {recommended.map((recommended) => {
-              const { isOpen, onToggle, onClose } = useDisclosure();
+            {props.recommended.map((recommended) => {
               return (
                 <Stack key={recommended.id} direction="row">
                   <Stack>
@@ -53,20 +54,13 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                           />
                         </Link>
                         <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                          <Text fontSize={['10px', '11px']}>
-                            {recommended.sender.name}
-                          </Text>
+                          <Text fontSize={['10px', '11px']}>{recommended.sender.name}</Text>
                         </Link>
                         <Text fontSize={['9px', '10px']} opacity={0.6}>
                           {timeSince(recommended.createdAt)}
                         </Text>
                       </Stack>
-                      <RecommendActions
-                        trackId={recommended.trackId}
-                        // recommendedByName={recommended.sender.name}
-                        // recommendedByImage={recommended.sender.image}
-                        onToggle={onToggle}
-                      />
+                      <RecommendActions trackId={recommended.trackId} onToggle={onToggle} />
                     </Stack>
                     <Popover
                       returnFocusOnClose={false}
@@ -76,17 +70,17 @@ const Recommended = ({ recommended }: { recommended: RecommendedProps[] }) => {
                     >
                       <PopoverTrigger>
                         <Tile
-                          uri={recommended.uri}
+                          uri={recommended.track.uri}
                           trackId={recommended.trackId}
-                          image={recommended.image}
-                          albumUri={recommended.albumUri}
-                          albumName={recommended.albumName}
-                          name={recommended.name}
-                          artist={recommended.artist}
-                          artistUri={recommended.albumUri}
-                          explicit={recommended.explicit}
-                          preview_url={recommended.preview_url} // old recommended tracks dont have preview url :(((
-                          link={recommended.link}
+                          image={recommended.track.image}
+                          albumUri={recommended.track.albumUri}
+                          albumName={recommended.track.albumName}
+                          name={recommended.track.name}
+                          artist={recommended.track.artist}
+                          artistUri={recommended.track.albumUri}
+                          explicit={recommended.track.explicit}
+                          preview_url={recommended.track.preview_url}
+                          link={recommended.track.link}
                         />
                       </PopoverTrigger>
                       <PopoverContent bg={bg} color={color}>

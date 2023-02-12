@@ -29,11 +29,11 @@ import { useTypedFetcher } from 'remix-typedjson';
 import Waver from '~/components/icons/Waver';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
+import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
 import type { action as actionB } from '~/routes/$id/recommend';
-import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 
 interface SendModalConfig {
   currentUserId: string | undefined;
@@ -65,10 +65,10 @@ const SendModal = ({
   const [showTracks, setShowTracks] = useState(false);
   const [erect, setErect] = useState(false);
   const { blockScrollOnMount } = useBlockScrollCheck();
-  const fetcher = useFetcher();
+  const { data, load, state } = useFetcher();
   const fetcherQueue = useTypedFetcher<typeof action>();
   const fetcherRec = useTypedFetcher<typeof actionB>();
-  const busy = fetcher.state === 'loading' ?? false;
+  const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
@@ -118,19 +118,19 @@ const SendModal = ({
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
       if (search.trim().length > 0) {
-        fetcher.load(`/${id}/search?spotify=${search}`);
+        load(`/${id}/search?spotify=${search}`);
       }
     }, 1000);
 
     return () => clearTimeout(delaySubmit);
-  }, [search, fetcher.load]);
+  }, [search, load, id]);
 
   useEffect(() => {
-    if (fetcher.data) {
+    if (data) {
       setShowTracks(true);
       setErect(true);
       setTracks(
-        fetcher.data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
+        data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
           albumName: track.album.name,
           albumUri: track.album.uri,
           artist: track.album.artists[0].name,
@@ -145,11 +145,11 @@ const SendModal = ({
         })),
       );
     }
-  }, [fetcher.data]);
+  }, [data]);
 
   useEffect(() => {
     sendList ? setTitle('queue') : setTitle('recommend');
-  }, [sendList]);
+  }, [sendList, setTitle]);
 
   const CycleButton = (
     <IconButton
@@ -218,9 +218,8 @@ const SendModal = ({
           <Tiles>
             {showTracks ? (
               tracks.map((track) => (
-                <Box minH="325px">
+                <Box minH="325px" key={track.trackId}>
                   <Tile
-                    key={track.trackId}
                     trackId={track.trackId}
                     uri={track.uri}
                     image={track.image}

@@ -1,4 +1,4 @@
-import { Button, HStack, Stack, Text } from '@chakra-ui/react';
+import { Button, Stack, Text } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 import { Ghost } from 'iconsax-react';
@@ -16,7 +16,7 @@ const PrivateProfile = ({ name }: { name: string }) => {
       <Stack align="center">
         {ghost}
         <Text textAlign="center" opacity=".5">
-          {name}'s profile is private
+          {name}&apos;s profile is private
         </Text>
         <Button
           w="300px"

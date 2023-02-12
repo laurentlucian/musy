@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';

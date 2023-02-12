@@ -6,7 +6,6 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import Player from '~/components/player/Player';
-import Search from '~/components/profile/Search';
 import LikedTracks from '~/components/tiles/LikedTracks';
 import Playlists from '~/components/tiles/Playlists';
 import RecentTracks from '~/components/tiles/RecentTracks';
@@ -84,15 +83,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const [recommended, { currently_playing: playback }, party, ...main] = await Promise.all([
     prisma.recommendedSongs.findMany({
-      include: {
-        owner: true,
-        sender: true,
-        track: {
-          include: {
-            recommended: { include: { owner: true, sender: true } },
-          },
-        },
-      },
+      include: { sender: true, track: true },
       orderBy: { createdAt: 'desc' },
       where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
     }),

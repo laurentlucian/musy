@@ -14,10 +14,6 @@ import type { action } from '~/routes/$id/removeRecommend';
 import SpotifyLogo from '../icons/SpotifyLogo';
 
 type CardProps = Track & {
-  // will show header (profile above Card) if createdAt is defined
-  // createdBy?: Profile | null;
-  // createdAt?: Date;
-  // playlist?: Boolean;
   recommend?: boolean;
   ref?: (node: HTMLDivElement | null) => void;
 } & ChakraProps;
@@ -35,23 +31,21 @@ const Card = ({
   recommend,
   trackId,
   uri,
-}: // createdAt,
-// createdBy,
-// playlist,
-CardProps) => {
+}: CardProps) => {
   const isSmallScreen = useIsMobile();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const track: Track = {
+  const track = {
     albumName,
     albumUri,
     artist,
     artistUri,
+    duration: 0,
     explicit,
+    id: trackId,
     image,
     link,
     name,
     preview_url,
-    trackId,
     uri: uri,
   };
   const fetcher = useTypedFetcher<typeof action>();

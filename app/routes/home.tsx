@@ -1,4 +1,3 @@
-import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack } from '@chakra-ui/react';
@@ -29,7 +28,7 @@ const Index = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async () => {
   // const session = await authenticator.isAuthenticated(request);
   // const currentUser = session?.user ?? null;
   // const users = await getAllUsers(!!currentUser);

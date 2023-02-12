@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Page() {
-  return <Heading size="md">I'm a page!</Heading>;
+  return <Heading size="md">I&apos;m a page!</Heading>;
 }
 
 export function CatchBoundary() {

@@ -1,5 +1,3 @@
-import type { LoaderArgs } from '@remix-run/node';
-
 import { redirect } from 'remix-typedjson';
 
 const Index = () => {
@@ -10,7 +8,7 @@ const Index = () => {
   return null;
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async () => {
   // const session = await authenticator.isAuthenticated(request);
   // const currentUser = session?.user ?? null;
 

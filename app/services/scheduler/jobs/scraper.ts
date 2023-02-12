@@ -5,8 +5,6 @@ import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-import { addPreviewUrlAndLink } from './user';
-
 export const libraryQ = Queue<{ pages: number; userId: string }>('user-library', async (job) => {
   const { pages, userId } = job.data;
   const limit = 50;
@@ -80,8 +78,4 @@ export const libraryQ = Queue<{ pages: number; userId: string }>('user-library',
     console.log('libraryQ -> sleeping for 5 seconds');
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
-});
-
-export const longScriptQ = Queue<null>('long-script', async (job) => {
-  await addPreviewUrlAndLink();
 });

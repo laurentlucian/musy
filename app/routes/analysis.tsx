@@ -28,7 +28,7 @@ import invariant from 'tiny-invariant';
 import explicitImage from '~/assets/explicit-solid.svg';
 import Tiles from '~/components/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
-import { authenticator } from '~/services/auth.server';
+// import { authenticator } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Analysis = () => {
@@ -153,7 +153,7 @@ const Analysis = () => {
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
+  // const session = await authenticator.isAuthenticated(request);
 
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');
@@ -210,10 +210,10 @@ export const CatchBoundary = () => {
   let message;
   switch (caught.status) {
     case 401:
-      message = <Text>Oops, you shouldn't be here (No access)</Text>;
+      message = <Text>Oops, you shouldn&apos;t be here (No access)</Text>;
       break;
     case 404:
-      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
       break;
     case 429:
       message = <Text>Oops, API suspended (too many requests)</Text>;

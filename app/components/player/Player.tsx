@@ -25,7 +25,6 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { Track } from '~/lib/types/types';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
@@ -62,7 +61,6 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
   const bg = useColorModeValue('music.50', '#10101066');
   const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');
-  
 
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
@@ -72,17 +70,18 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const track: Track = {
+  const track = {
     albumName: item.album.name,
     albumUri: item.album.uri,
     artist: item.artists[0].name,
     artistUri: item.artists[0].uri,
+    duration: 0,
     explicit: item.explicit,
+    id: item.id,
     image: item.album?.images[0].url,
     link: item.external_urls.spotify,
     name: item.name,
     preview_url: item.preview_url,
-    trackId: item.id,
     uri: item.uri,
   };
 

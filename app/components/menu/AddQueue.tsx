@@ -12,16 +12,14 @@ import type { action } from '~/routes/$id/add';
 import Waver from '../icons/Waver';
 
 type AddQueueProps = {
-  track: {
-    trackId: string;
-
-    // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
-    userId?: string;
-  };
+  fromUseId?: string;
+  trackId: string;
+  // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
   user: Profile | null;
+  userId?: string | null;
 };
 
-const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
+const AddQueue = ({ fromUseId, trackId, user, userId }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const submit = useSubmit();
@@ -40,7 +38,7 @@ const AddQueue = ({ track: { trackId, userId }, user }: AddQueueProps) => {
       });
     }
 
-    const id = userId || user?.userId || paramId;
+    const id = fromUseId || user?.userId || paramId;
     const action = isSending ? `/${id}/add` : `/${currentUser.userId}/add`;
 
     const fromUserId = isSending ? currentUser?.userId : id;

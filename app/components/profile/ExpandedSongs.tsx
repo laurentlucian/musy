@@ -12,11 +12,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import useDrawerBackButton from '~/hooks/useDrawerBackButton';
-import useIsMobile from '~/hooks/useIsMobile';
-import { useMouseScroll } from '~/hooks/useMouseScroll';
 import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useDrawerTrack } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
+import { useMouseScroll } from '~/hooks/useMouseScroll';
 
 type TilesProps = {
   Filter?: ReactNode;
@@ -44,12 +43,10 @@ const ExpandedSongs = ({
 
   useEffect(() => {
     if (show && !isOpen && !isSmallScreen) {
-      // Add a fake history event so that the back button does nothing if pressed once
       window.history.pushState({ drawer: 'SongsDrawer' }, document.title, window.location.href);
 
       addEventListener('popstate', onClose);
 
-      // Here is the cleanup when this component unmounts
       return () => removeEventListener('popstate', onClose);
     }
   }, [show, onClose, isOpen, isSmallScreen]);

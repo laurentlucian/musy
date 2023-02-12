@@ -29,7 +29,7 @@ const ProfileSong = ({ user }: { user: Profile | null }) => {
     const id = currentUser?.userId;
     const action = `/${id}/profileSong`;
     const data = {
-      trackId: track?.trackId ?? '',
+      trackId: track?.id ?? '',
     };
 
     fetcher.submit(data, { action, method: 'post', replace: true });

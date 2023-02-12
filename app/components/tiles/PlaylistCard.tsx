@@ -10,7 +10,7 @@ type PlaylistCardProps = SpotifyPlaylist & {
 } & ChakraProps;
 
 const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
-  ({ description, image, name, playlistUri, uri, ...props }, ref) => {
+  ({ description, image, name, ...props }, ref) => {
     const PlaylistTitle = (
       <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
         {name}

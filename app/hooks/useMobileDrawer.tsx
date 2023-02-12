@@ -4,13 +4,13 @@ import type { Track } from '~/lib/types/types';
 
 interface DrawerStateConfig {
   actions: {
-    hideButton: () => void;
-    showButton: () => void;
     addFocus: () => void;
+    hideButton: () => void;
     onClose: () => void;
     onOpen: () => void;
     onSearch: (by: Track) => void;
     removeFocus: () => void;
+    showButton: () => void;
   };
   bottom: number;
   icon: 'x' | 'down' | 'plus';
@@ -21,9 +21,8 @@ interface DrawerStateConfig {
 
 const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
-    hideButton: () => set({ right: -50 }),
-    showButton: () => set({ bottom: 3, right: 3 }),
     addFocus: () => set({ bottom: 340, icon: 'down', right: 3 }),
+    hideButton: () => set({ right: -50 }),
     onClose: () => set({ bottom: 3, icon: 'plus', isOpen: false, right: 3, track: null }),
     onOpen: () => set({ bottom: 340, icon: 'down', isOpen: true, right: 3 }),
     onSearch: (by) =>
@@ -44,6 +43,7 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
         },
       }),
     removeFocus: () => set({ bottom: 3, icon: 'x', right: 3 }),
+    showButton: () => set({ bottom: 3, right: 3 }),
   },
   bottom: 3,
   icon: 'plus',

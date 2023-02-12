@@ -2,6 +2,7 @@ import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
+import { CodeCircle, LockCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import Following from '~/components/profile/Following';
@@ -12,7 +13,6 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
-import { CodeCircle, LockCircle, Nebulas } from 'iconsax-react';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -23,7 +23,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const { currentUser, following, listened, user } = data;
   const isOwnProfile = currentUser?.userId === user.userId;
-  
+
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image
@@ -181,6 +181,3 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 };
 
 export default ProfileHeader;
-{
-  /* <SpotifyLogo h="22px" w="70px" alignSelf="center" px="10px" /> */
-}

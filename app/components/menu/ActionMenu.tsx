@@ -52,29 +52,10 @@ const ActionMenu = ({ track: { trackId, userId }, ...menuProps }: ActionMenuConf
       <MenuItem icon={<ArrowLeft2 />} onClick={() => setIsSending(false)} closeOnSelect={false}>
         Send to:
       </MenuItem>
-      <AddQueue
-        track={{
-          trackId,
-          userId,
-        }}
-        user={null}
-      />
-      {!isOwnProfile && id && (
-        <AddQueue
-          track={{
-            trackId,
-          }}
-          user={user}
-        />
-      )}
+      <AddQueue trackId={trackId} userId={userId} user={null} />
+      {!isOwnProfile && id && <AddQueue trackId={trackId} user={user} />}
       {users.map((user) => (
-        <AddQueue
-          key={user.userId}
-          track={{
-            trackId,
-          }}
-          user={user}
-        />
+        <AddQueue key={user.userId} trackId={trackId} user={user} />
       ))}
     </>
   );

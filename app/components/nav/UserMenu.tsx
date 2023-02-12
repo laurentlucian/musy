@@ -129,7 +129,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     onMouseEnter={onClickUser}
                     color={color}
                     opacity={0.8}
-                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
+                    _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
                   >
                     {currentUser?.name}
                   </Button>
@@ -145,7 +145,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     justifyContent="flex-start"
                     color={color}
                     opacity={0.8}
-                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
+                    _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
                   >
                     friends
                   </Button>
@@ -169,7 +169,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     justifyContent="flex-start"
                     color={color}
                     opacity={0.8}
-                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
+                    _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
                   >
                     settings
                   </Button>
@@ -192,7 +192,7 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                     justifyContent="flex-start"
                     color={color}
                     opacity={0.8}
-                    _hover={{ boxShadow: 'none', opacity: 1, bg: hoverBg }}
+                    _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
                   >
                     toggle theme
                   </Button>

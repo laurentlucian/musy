@@ -7,7 +7,6 @@ import createEmotionServer from '@emotion/server/create-instance';
 
 import { ServerStyleContext } from './lib/emotion/context';
 import { createEmotionCache } from './lib/emotion/createEmotionCache';
-import { clearActivityQOnDev } from './services/scheduler/jobs/activity';
 import { addUsersToQueue } from './services/scheduler/jobs/user';
 
 void addUsersToQueue();

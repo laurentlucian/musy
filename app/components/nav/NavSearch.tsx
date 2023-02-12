@@ -1,3 +1,4 @@
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import { useState, useRef, type ChangeEvent, useEffect } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
@@ -15,12 +16,13 @@ import {
   PopoverContent,
   PopoverBody,
 } from '@chakra-ui/react';
-import { useFetcher, useSearchParams } from '@remix-run/react';
-import Waver from '../icons/Waver';
+
+// import { useMouseScroll } from '~/hooks/useMouseScroll';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
+
+import Waver from '../icons/Waver';
 import Tile from '../Tile';
-import { useMouseScroll } from '~/hooks/useMouseScroll';
 
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,8 +32,8 @@ const NavSearch = () => {
 
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
-  const fetcher = useFetcher();
-  const busy = fetcher.state === 'loading' ?? false;
+  const { data, load, state } = useFetcher();
+  const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
@@ -79,12 +81,12 @@ const NavSearch = () => {
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
       if (search.trim().length > 0) {
-        fetcher.load(`/${id}/search?spotify=${search}`);
+        load(`/${id}/search?spotify=${search}`);
       }
     }, 1000);
 
     return () => clearTimeout(delaySubmit);
-  }, [search, fetcher.load]);
+  }, [search, load, id]);
 
   useEffect(() => {
     const handleOpenButtonOutside = (e: MouseEvent) => {
@@ -107,9 +109,9 @@ const NavSearch = () => {
   }, [show]);
 
   useEffect(() => {
-    if (fetcher.data) {
+    if (data) {
       setTracks(
-        fetcher.data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
+        data.results.tracks.items.map((track: SpotifyApi.TrackObjectFull) => ({
           albumName: track.album.name,
           albumUri: track.album.uri,
           artist: track.album.artists[0].name,
@@ -124,7 +126,7 @@ const NavSearch = () => {
         })),
       );
     }
-  }, [fetcher.data]);
+  }, [data]);
 
   return (
     <div ref={divRef}>

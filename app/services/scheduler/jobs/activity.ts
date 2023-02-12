@@ -5,7 +5,10 @@ import { spotifyApi } from '~/services/spotify.server';
 export const activityQ = Queue<{ activityId: number }>('pending_activity', async (job) => {
   console.log('activityQ -> pending job starting...');
   const { activityId } = job.data;
-  const pendingTrack = await prisma.queue.findUnique({ where: { id: activityId } });
+  const pendingTrack = await prisma.queue.findUnique({
+    include: { track: { select: { uri: true } } },
+    where: { id: activityId },
+  });
   if (!pendingTrack) {
     console.log('activityQ -> activity doesnt exist (shouldnt be possible)');
     return null;
@@ -46,7 +49,7 @@ export const activityQ = Queue<{ activityId: number }>('pending_activity', async
 
     try {
       console.log('activityQ -> sending to spotify...');
-      await spotify.addToQueue(pendingTrack.uri);
+      await spotify.addToQueue(pendingTrack.track.uri);
       console.log('activityQ -> sent to spotify...');
       await prisma.queue.update({ data: { pending: false }, where: { id: activityId } });
       await removeJob();

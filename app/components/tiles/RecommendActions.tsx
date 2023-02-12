@@ -1,47 +1,28 @@
 import { useParams } from '@remix-run/react';
-import { useRef } from 'react';
+// import { useRef } from 'react';
+import { BarChart, MoreHorizontal } from 'react-feather';
 
 import {
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerOverlay,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   IconButton,
-  Image,
-  Stack,
-  Text,
-  useDisclosure,
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import { Archive, Minus } from 'iconsax-react';
+import { Archive } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import { BarChart, MoreHorizontal } from 'react-feather';
 import type { action } from '~/routes/$id/removeRecommend';
 
-const RecommendActions = ({
-  // recommendedByName,
-  // recommendedByImage,
-  trackId,
-  onToggle,
-}: {
-  // recommendedByName?: string;
-  // recommendedByImage?: string;
-  trackId: string;
-  onToggle: () => void;
-}) => {
+const RecommendActions = ({ onToggle, trackId }: { onToggle: () => void; trackId: string }) => {
   const isSmallScreen = useIsMobile();
   const { id } = useParams();
   const fetcher = useTypedFetcher<typeof action>();
   // const { isOpen, onClose, onOpen } = useDisclosure();
-  const btnRef = useRef<any>(null);
+  // const btnRef = useRef<any>(null);
 
   const archiveRecommend = () => {
     const action = `/${id}/removeRecommend`;

@@ -1,10 +1,6 @@
-import { useLocation } from '@remix-run/react';
-
 import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
-
-import useIsMobile from '~/hooks/useIsMobile';
 
 import { getUser, updateToken } from './auth.server';
 

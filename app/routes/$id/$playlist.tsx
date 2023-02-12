@@ -76,7 +76,7 @@ const Playlist = () => {
   );
 };
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderArgs) => {
   const id = params.id;
   const playlistId = params.playlist;
   invariant(id, 'Missing params id');

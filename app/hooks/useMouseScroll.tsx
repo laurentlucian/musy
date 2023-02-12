@@ -137,12 +137,12 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
     }
   }, [isDragging]);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = useCallback(() => {
     clearTimeout(recentlyDraggedTimeout.current);
     hasRecentlyDragged.current = true;
   }, []);
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchEnd = useCallback(() => {
     clearTimeout(recentlyDraggedTimeout.current);
     recentlyDraggedTimeout.current = setTimeout(() => (hasRecentlyDragged.current = false), 2000);
   }, []);

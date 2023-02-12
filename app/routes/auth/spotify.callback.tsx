@@ -52,7 +52,7 @@ export const CatchBoundary = () => {
       message = <Text>Only authorized users while in development</Text>;
       break;
     case 404:
-      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
       break;
     case 429:
       message = <Text>Oops, API suspended (too many requests)</Text>;

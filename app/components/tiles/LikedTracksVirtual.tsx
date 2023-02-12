@@ -12,7 +12,6 @@ import { useMouseScroll } from '~/hooks/useMouseScroll';
 import Tile from '../Tile';
 
 const LikedTracksVirtual = ({
-  currentUser,
   liked: initialLiked,
 }: {
   currentUser: Profile | null;

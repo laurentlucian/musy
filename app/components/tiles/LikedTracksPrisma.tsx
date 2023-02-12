@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Stack } from '@chakra-ui/react';
 
 import type { LikedSongs } from '@prisma/client';
+import type { Track } from '@prisma/client';
 
 import useIsVisible from '~/hooks/useIsVisible';
 
@@ -12,13 +13,21 @@ import Tile from '../Tile';
 import Card from './Card';
 import Tiles from './Tiles';
 
-const LikedTracksPrisma = ({ liked: initialLiked }: { liked: LikedSongs[] }) => {
+const LikedTracksPrisma = ({
+  liked: initialLiked,
+}: {
+  liked: (LikedSongs & {
+    track: Track & {
+      liked: LikedSongs[];
+    };
+  })[];
+}) => {
   const [liked, setLiked] = useState(initialLiked);
   const [show, setShow] = useState(false);
   const { id } = useParams();
 
   const fetcher = useFetcher();
-  const offsetRef = useRef(0);
+  // const offsetRef = useRef(0);
   const [setRef, isVisible] = useIsVisible();
   const hasFetched = useRef(false);
 
@@ -55,9 +64,8 @@ const LikedTracksPrisma = ({ liked: initialLiked }: { liked: LikedSongs[] }) => 
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {liked.map((track, index) => {
+        {liked.map(({ track }, index) => {
           const isLast = index === liked.length - 1;
-
           return (
             <Tile
               ref={(node) => {
@@ -65,7 +73,7 @@ const LikedTracksPrisma = ({ liked: initialLiked }: { liked: LikedSongs[] }) => 
               }}
               key={track.id}
               uri={track.uri}
-              trackId={track.trackId}
+              trackId={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -80,7 +88,7 @@ const LikedTracksPrisma = ({ liked: initialLiked }: { liked: LikedSongs[] }) => 
         })}
       </Tiles>
       <ExpandedSongs title={title} show={show} onClose={onClose}>
-        {liked.map((track, index) => {
+        {liked.map(({ track }, index) => {
           const isLast = index === liked.length - 1;
           return (
             <Card
@@ -89,7 +97,7 @@ const LikedTracksPrisma = ({ liked: initialLiked }: { liked: LikedSongs[] }) => 
               }}
               key={track.id}
               uri={track.uri}
-              trackId={track.trackId}
+              trackId={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}

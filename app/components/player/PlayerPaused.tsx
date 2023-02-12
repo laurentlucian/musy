@@ -19,7 +19,6 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { Track } from '~/lib/types/types';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
 import SpotifyLogo from '../icons/SpotifyLogo';
@@ -32,7 +31,7 @@ type PlayerPausedProps = {
   username: string;
 };
 
-const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, profileSong }: PlayerPausedProps) => {
   const currentUser = useSessionUser();
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
@@ -53,17 +52,18 @@ const PlayerPaused = ({ item, profileSong, username }: PlayerPausedProps) => {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const track: Track = {
+  const track = {
     albumName: profileSong ? profileSong.albumName : song.album.name,
     albumUri: profileSong ? profileSong.albumUri : song.album.uri,
     artist,
     artistUri: profileSong ? profileSong.artistUri : song.artists[0].uri,
+    duration: 0,
     explicit: song.explicit,
+    id: song.id,
     image,
     link: profileSong ? profileSong.link : song.external_urls.spotify,
     name,
     preview_url: song.preview_url,
-    trackId: song.id,
     uri: song.uri,
   };
 

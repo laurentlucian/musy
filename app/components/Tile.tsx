@@ -80,17 +80,18 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
     const color = useColorModeValue(`${inDrawer ? 'music.200' : 'music.800'}`, 'music.200');
-    const track: Track = {
+    const track = {
       albumName,
       albumUri,
       artist,
       artistUri,
+      duration: 0,
       explicit,
+      id: trackId,
       image,
       link,
       name,
       preview_url,
-      trackId,
       uri,
     };
     const clickedRef = useRef<string>();
@@ -134,7 +135,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         preview_url: track?.preview_url ?? '',
 
         toId: sendToUserId ?? '',
-        trackId: track?.trackId ?? '',
+        trackId: track?.id ?? '',
         uri: track?.uri ?? '',
       };
       if (fetcher && isQueuing) {

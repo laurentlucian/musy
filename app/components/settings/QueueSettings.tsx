@@ -1,3 +1,4 @@
+import { type SubmitFunction } from '@remix-run/react';
 import { Check } from 'react-feather';
 
 import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chakra-ui/react';
@@ -5,7 +6,6 @@ import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chak
 import { Layer } from 'iconsax-react';
 
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
-import { type SubmitFunction } from '@remix-run/react';
 
 const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: SubmitFunction }) => {
   const onChange = (value: string) => {

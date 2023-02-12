@@ -23,21 +23,21 @@ export const RadioButtons = (props: any) => {
         _hover={{
           bg,
           color,
+          fontSize: '20px',
           opacity: 1,
           textDecor: 'none',
-          fontSize: '20px',
         }}
         px="4px"
         py={0}
         opacity={1}
         _checked={{
           bg,
-          color,
-          opacity: 1,
-          textDecor: 'none',
-          fontSize: '20px',
-          px: '6px',
           border: 'solid',
+          color,
+          fontSize: '20px',
+          opacity: 1,
+          px: '6px',
+          textDecor: 'none',
         }}
       >
         {props.children}

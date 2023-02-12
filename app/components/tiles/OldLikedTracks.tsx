@@ -11,7 +11,6 @@ import Tile from '../Tile';
 import Tiles from './Tiles';
 
 const OldLikedSongs = ({
-  currentUser,
   liked: initialLiked,
 }: {
   currentUser: Profile | null;

@@ -32,17 +32,18 @@ const MiniTile = ({
   uri,
 }: MiniTileProps) => {
   const { onOpen } = useDrawerActions();
-  const item: Track = {
+  const item = {
     albumName,
     albumUri,
     artist,
     artistUri,
+    duration: 0,
     explicit,
+    id: trackId,
     image,
     link,
     name,
     preview_url,
-    trackId,
     uri,
   };
   return (
@@ -71,23 +72,19 @@ const MiniTile = ({
           </HStack>
         )}
         {albumUri ? (
-          // <LinkB href={albumUri} target="_blank">
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} w="200px" draggable={false} onClick={() => onOpen(item)} />
           </Tooltip>
         ) : (
-          // </LinkB>
           <Tooltip label={albumName} placement="top-start">
             <Image src={image} borderRadius={5} w="200px" draggable={false} />
           </Tooltip>
         )}
       </Flex>
       <Tooltip label={name} placement="top-start">
-        {/* <LinkB href={uri} target="_blank"> */}
         <Text fontSize="12px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
           {name}
         </Text>
-        {/* </LinkB> */}
       </Tooltip>
     </Stack>
   );

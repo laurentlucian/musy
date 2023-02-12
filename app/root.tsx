@@ -139,8 +139,8 @@ export let links: LinksFunction = () => {
     },
     {
       as: 'manifest',
-      rel: 'manifest',
       href: '/manifest.json',
+      rel: 'manifest',
     },
   ];
 };
@@ -216,15 +216,15 @@ export const CatchBoundary = () => {
   let message;
   switch (caught.status) {
     case 401:
-      message = <Text>Oops, you shouldn't be here (No access)</Text>;
+      message = <Text>Oops, you shouldn&apos;t be here (No access)</Text>;
       break;
     case 404:
-      message = <Text>Oops, you shouldn't be here (Page doesn't exist)</Text>;
+      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
       break;
 
     default:
       // throw new Error(caught.data || caught.statusText);
-      message = <Text>Oops, this definitely shouldn't have happened</Text>;
+      message = <Text>Oops, this definitely shouldn&apos;t have happened</Text>;
   }
 
   return (

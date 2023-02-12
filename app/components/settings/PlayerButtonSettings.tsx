@@ -1,3 +1,4 @@
+import { useSubmit } from '@remix-run/react';
 import { Check } from 'react-feather';
 
 import { useRadioGroup, SimpleGrid, HStack, FormControl, FormLabel } from '@chakra-ui/react';
@@ -5,7 +6,6 @@ import { useRadioGroup, SimpleGrid, HStack, FormControl, FormLabel } from '@chak
 import { ArrangeHorizontal } from 'iconsax-react';
 
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
-import { useSubmit } from '@remix-run/react';
 
 // changes color mode but when navigating to new page it changes color back unless you refresh before route change
 

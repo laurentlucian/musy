@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
-import { Input, InputGroup, InputLeftElement, Icon, Box, useDisclosure } from '@chakra-ui/react';
+import { Input, InputGroup, InputLeftElement, Box, useDisclosure } from '@chakra-ui/react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 

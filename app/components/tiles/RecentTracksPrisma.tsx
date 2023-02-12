@@ -2,14 +2,22 @@ import { useState, useCallback } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
-import type { RecentSongs } from '@prisma/client';
+import type { LikedSongs, RecentSongs, Track } from '@prisma/client';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import Card from './Card';
 import Tiles from './Tiles';
 
-const RecentTracksPrisma = ({ recent }: { recent: RecentSongs[] }) => {
+const RecentTracksPrisma = ({
+  recent,
+}: {
+  recent: (RecentSongs & {
+    track: Track & {
+      liked: LikedSongs[];
+    };
+  })[];
+}) => {
   const [show, setShow] = useState(false);
   const scrollButtons = recent.length > 5;
 
@@ -23,12 +31,12 @@ const RecentTracksPrisma = ({ recent }: { recent: RecentSongs[] }) => {
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {recent.map((track, index) => {
+        {recent.map(({ track }, index) => {
           return (
             <Tile
               key={index}
               uri={track.uri}
-              trackId={track.trackId}
+              trackId={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -43,12 +51,12 @@ const RecentTracksPrisma = ({ recent }: { recent: RecentSongs[] }) => {
         })}
       </Tiles>
       <ExpandedSongs title={title} show={show} onClose={onClose}>
-        {recent.map((track, index) => {
+        {recent.map(({ track }, index) => {
           return (
             <Card
               key={index}
               uri={track.uri}
-              trackId={track.trackId}
+              trackId={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}

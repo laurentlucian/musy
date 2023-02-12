@@ -14,7 +14,7 @@ import {
   Image,
 } from '@chakra-ui/react';
 
-import { Minus, Send2 } from 'iconsax-react';
+import { Send2 } from 'iconsax-react';
 
 import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 
