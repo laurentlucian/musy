@@ -44,7 +44,7 @@ const Friends = () => {
             <Text fontSize="sm" fontWeight="400">
               friends
             </Text>
-            <Text fontSize="2xs" fontWeight="300">
+            <Text fontSize="xs" fontWeight="300">
               ~ {otherUsers.length}
             </Text>
           </HStack>
