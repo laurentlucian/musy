@@ -33,7 +33,7 @@ const Friends = () => {
       {currentUserData && (
         <Stack mt={7}>
           {currentUserData.settings?.miniPlayer && (
-            <CurrentUserMiniPlayer
+            <PrismaMiniPlayer
               key={currentUserData.userId}
               user={currentUserData}
               currentUserId={currentUserId}
