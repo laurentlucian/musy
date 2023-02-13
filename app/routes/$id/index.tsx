@@ -68,7 +68,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
     }),
     prisma.recentSongs.findMany({
-      include: { track: { include: { liked: true } } },
+      include: { track: true },
       orderBy: {
         playedAt: 'desc',
       },
@@ -78,7 +78,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       },
     }),
     prisma.likedSongs.findMany({
-      include: { track: { include: { liked: true } } },
+      include: { track: true },
       orderBy: {
         likedAt: 'desc',
       },

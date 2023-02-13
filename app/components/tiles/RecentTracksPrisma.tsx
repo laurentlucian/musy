@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
-import type { LikedSongs, RecentSongs, Track } from '@prisma/client';
+import type { RecentSongs, Track } from '@prisma/client';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
@@ -14,7 +14,6 @@ const RecentTracksPrisma = ({
 }: {
   recent: (RecentSongs & {
     track: Track & {
-      liked: LikedSongs[];
     };
   })[];
 }) => {

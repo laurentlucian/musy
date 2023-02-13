@@ -17,9 +17,7 @@ const LikedTracksPrisma = ({
   liked: initialLiked,
 }: {
   liked: (LikedSongs & {
-    track: Track & {
-      liked: LikedSongs[];
-    };
+    track: Track & {};
   })[];
 }) => {
   const [liked, setLiked] = useState(initialLiked);
