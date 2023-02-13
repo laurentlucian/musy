@@ -1,30 +1,35 @@
 import type { LoaderArgs } from '@remix-run/node';
 
-import { Stack } from '@chakra-ui/react';
+import { Divider, Stack, Text } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import Tile from '~/components/Tile';
-import Tiles from '~/components/tiles/Tiles';
+import SessionModal from '~/components/sessions/SessionModal';
+import SessionTiles from '~/components/tiles/SessionTiles';
+import { timeSince } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
+  console.log(sessions, 'session');
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
-            <Tiles
+            <SessionModal title={timeSince(session.startTime)} user={session.user}>
+              {/* <Tiles
               title={`${new Date(session.startTime).toLocaleString()} ${
                 session.user.name
               } listened to ${session.songs.length} songs `}
-            >
+            > */}
+
               {session.songs.map(({ id, track }) => {
                 return (
-                  <Tile
+                  <SessionTiles
+                    list
                     key={id}
                     uri={track.uri}
                     trackId={track.id}
@@ -40,7 +45,7 @@ const Friends = () => {
                   />
                 );
               })}
-            </Tiles>
+            </SessionModal>
           </Stack>
         );
       })}
