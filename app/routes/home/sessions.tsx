@@ -12,7 +12,6 @@ import { prisma } from '~/services/db.server';
 
 const Friends = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
-  console.log(sessions, 'session');
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
@@ -29,7 +28,6 @@ const Friends = () => {
               {session.songs.map(({ id, track }) => {
                 return (
                   <SessionTiles
-                    list
                     key={id}
                     uri={track.uri}
                     trackId={track.id}
@@ -42,6 +40,7 @@ const Friends = () => {
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.preview_url!}
+                    trackDuration={track.duration}
                   />
                 );
               })}

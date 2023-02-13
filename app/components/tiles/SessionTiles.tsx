@@ -25,6 +25,7 @@ type TileProps = Track & {
   createdBy?: Profile | null;
   currentUser?: User | null;
   currentUserId?: string | undefined;
+
   fetcher?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
@@ -37,8 +38,8 @@ type TileProps = Track & {
   isRecommending?: boolean;
   list?: boolean;
 
-  playlist?: Boolean;
   submit?: SubmitFunction;
+  trackDuration?: number;
 } & ChakraProps;
 
 const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
@@ -61,11 +62,10 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       isQueuing,
       isRecommending,
       link,
-      list,
       name,
-      // playlist,
       preview_url,
       submit,
+      trackDuration,
       trackId,
       uri,
       ...props
@@ -179,97 +179,113 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
     ) : (
       <Send2 variant={isQueuing ? 'Outline' : 'Bold'} />
     );
+
+    const convert = (ms: number) => {
+      const minutes = Math.floor(ms / 60000);
+      const seconds = ((ms % 60000) / 1000).toFixed(0);
+      return minutes + ':' + (Number(seconds) < 10 ? '0' : '') + seconds;
+    };
+
     return (
       <>
-        <Stack ref={ref} direction="row" {...props}>
-          <Flex direction="column">
-            {createdAt && (
-              <HStack align="center" h="35px">
-                {createdBy ? (
-                  <Link to={`/${createdBy.userId}`}>
-                    <HStack align="center">
-                      <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
-                      <Text fontWeight="semibold" fontSize="13px">
-                        {createdBy.name.split(' ')[0]}
-                      </Text>
-                    </HStack>
-                  </Link>
-                ) : (
-                  <Text fontWeight="semibold" fontSize="13px">
-                    Anon
+        <Stack ref={ref} direction="row" {...props} justify="space-between" w="100%">
+          <HStack>
+            <Flex direction="column">
+              {createdAt && (
+                <HStack align="center" h="35px">
+                  {createdBy ? (
+                    <Link to={`/${createdBy.userId}`}>
+                      <HStack align="center">
+                        <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
+                        <Text fontWeight="semibold" fontSize="13px">
+                          {createdBy.name.split(' ')[0]}
+                        </Text>
+                      </HStack>
+                    </Link>
+                  ) : (
+                    <Text fontWeight="semibold" fontSize="13px">
+                      Anon
+                    </Text>
+                  )}
+                  <Text as="span">·</Text>
+                  <Text fontSize="12px" opacity={0.6}>
+                    {timeSince(createdAt ?? null)}
                   </Text>
-                )}
-                <Text as="span">·</Text>
-                <Text fontSize="12px" opacity={0.6}>
-                  {timeSince(createdAt ?? null)}
-                </Text>
-              </HStack>
-            )}
-            <Tooltip label={albumName} placement="top-start">
-              <Image
-                boxSize="50px"
-                minW="50px"
-                minH="50px"
-                borderRadius="5px"
-                objectFit="cover"
-                src={image}
-                draggable={false}
+                </HStack>
+              )}
+              <Tooltip label={albumName} placement="top-start">
+                <Image
+                  boxSize="50px"
+                  minW="50px"
+                  minH="50px"
+                  borderRadius="5px"
+                  objectFit="cover"
+                  src={image}
+                  draggable={false}
+                  onMouseDown={onMouseDown}
+                  onMouseMove={onMouseMove}
+                  onClick={() => onClick(track)}
+                  cursor="pointer"
+                />
+              </Tooltip>
+            </Flex>
+            <Flex justify="space-between">
+              <Stack
+                spacing={0}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
                 onClick={() => onClick(track)}
                 cursor="pointer"
-              />
-            </Tooltip>
-          </Flex>
-          <Flex justify="space-between">
-            <Stack
-              spacing={0}
-              onMouseDown={onMouseDown}
-              onMouseMove={onMouseMove}
-              onClick={() => onClick(track)}
-              cursor="pointer"
-            >
-              <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
-                {name}
-              </Text>
-              {artist && (
-                <Flex align="center">
-                  {artistUri ? (
-                    <Stack>
-                      <Stack direction="row">
-                        {explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
-                        <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                          {artist}
-                        </Text>
+              >
+                <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+                  {name}
+                </Text>
+                {artist && (
+                  <Flex align="center">
+                    {artistUri ? (
+                      <Stack>
+                        <Stack direction="row">
+                          {explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
+                          <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                            {artist}
+                          </Text>
+                        </Stack>
+                        {isQueuing || isRecommending ? (
+                          <SpotifyLogo w="70px" h="21px" white={inDrawer} />
+                        ) : null}
                       </Stack>
-                      {isQueuing || isRecommending ? (
-                        <SpotifyLogo w="70px" h="21px" white={inDrawer} />
-                      ) : null}
-                    </Stack>
-                  ) : (
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {decodeHtmlEntity(artist)}
-                    </Text>
-                  )}
-                </Flex>
-              )}
-            </Stack>
-            <Stack>
-              {isQueuing || isRecommending ? (
-                <IconButton
-                  onClick={handleSendButton}
-                  pos="relative"
-                  variant="ghost"
-                  color={color}
-                  icon={icon}
-                  _hover={{ color: 'white' }}
-                  aria-label={isQueuing ? 'add to this friends queue' : 'recommend to this friend'}
-                />
-              ) : (
-                <SpotifyLogo icon mx="5px" white={inDrawer} />
-              )}
-            </Stack>
-          </Flex>
+                    ) : (
+                      <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                        {decodeHtmlEntity(artist)}
+                      </Text>
+                    )}
+                  </Flex>
+                )}
+              </Stack>
+              <Stack>
+                {isQueuing || isRecommending ? (
+                  <IconButton
+                    onClick={handleSendButton}
+                    pos="relative"
+                    variant="ghost"
+                    color={color}
+                    icon={icon}
+                    _hover={{ color: 'white' }}
+                    aria-label={
+                      isQueuing ? 'add to this friends queue' : 'recommend to this friend'
+                    }
+                  />
+                ) : (
+                  <SpotifyLogo icon mx="5px" white={inDrawer} />
+                )}
+              </Stack>
+            </Flex>
+          </HStack>
+          <Stack>
+            <Text fontSize="12px" fontWeight="hairline">
+              {convert(trackDuration)}
+            </Text>
+          </Stack>
         </Stack>
       </>
     );
