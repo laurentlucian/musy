@@ -165,6 +165,20 @@ const close = defineStyle((props) => ({
   userSelect: 'none !important',
   zIndex: 10000,
 }));
+const mobileNav = defineStyle({
+  _active: {
+    backfaceVisibility: 'none !important',
+    opacity: 1,
+  },
+  _focus: {
+    backfaceVisibility: 'none !important',
+    opacity: 1,
+  },
+  opacity: 0.8,
+  transition: 'width 0.25s ease-out , height 0.25s ease-out',
+  userSelect: 'none',
+  width: '30px',
+});
 
 export const Button = defineStyleConfig({
   baseStyle,
@@ -178,6 +192,7 @@ export const Button = defineStyleConfig({
     drawer,
     ghost: variantGhost,
     login,
+    mobileNav,
     music: variantMusic,
     searchCircle,
   },

@@ -27,7 +27,6 @@ import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 
 import ActionDrawer from './components/menu/ActionDrawer';
-import MobileDrawer from './components/menu/MobileDrawer';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { prisma } from './services/db.server';
@@ -46,9 +45,12 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          <Layout authorized={!!currentUser}>
+          <Layout
+            authorized={!!currentUser}
+            profilePicture={currentUser?.image}
+            userId={currentUser?.userId}
+          >
             <ActionDrawer />
-            <MobileDrawer />
             <Outlet />
           </Layout>
         </ColorModeProvider>

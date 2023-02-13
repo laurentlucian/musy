@@ -3,14 +3,21 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
-import MobileSearchButton from './menu/MobileSearchButton';
+import MobileNavBar from './nav/MobileNavBar';
 import Nav from './nav/Nav';
 
 type LayoutProps = {
   authorized: boolean;
+  profilePicture?: string;
+  userId?: string;
 };
 
-const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
+const Layout = ({
+  authorized,
+  children,
+  profilePicture,
+  userId,
+}: PropsWithChildren<LayoutProps>) => {
   const { pathname } = useLocation();
   const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
   const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
@@ -33,7 +40,7 @@ const Layout = ({ authorized, children }: PropsWithChildren<LayoutProps>) => {
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
         <Nav authorized={authorized} />
         {children}
-        {!!authorized && <MobileSearchButton />}
+        {!!authorized && <MobileNavBar profilePicture={profilePicture} userId={userId} />}
       </Box>
     </Flex>
   );

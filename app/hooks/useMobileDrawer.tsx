@@ -23,7 +23,7 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
     addFocus: () => set({ bottom: 340, icon: 'down', right: 3 }),
     hideButton: () => set({ right: -50 }),
-    onClose: () => set({ bottom: 3, icon: 'plus', isOpen: false, right: 3, track: null }),
+    onClose: () => set({ bottom: 0, icon: 'plus', isOpen: false, right: 3, track: null }),
     onOpen: () => set({ bottom: 340, icon: 'down', isOpen: true, right: 3 }),
     onSearch: (by) =>
       set({
@@ -42,10 +42,10 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
           userId: by.userId,
         },
       }),
-    removeFocus: () => set({ bottom: 3, icon: 'x', right: 3 }),
-    showButton: () => set({ bottom: 3, right: 3 }),
+    removeFocus: () => set({ bottom: 0, icon: 'x', right: 3 }),
+    showButton: () => set({ bottom: 0, right: 3 }),
   },
-  bottom: 3,
+  bottom: 0,
   icon: 'plus',
   isOpen: false,
   right: 3,
