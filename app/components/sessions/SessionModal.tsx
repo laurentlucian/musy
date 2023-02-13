@@ -4,13 +4,14 @@ import {
   Avatar,
   Stack,
   StackProps,
-  Text,
   HStack,
   Heading,
   Divider,
   IconButton,
+  OrderedList,
+  ListItem,
 } from '@chakra-ui/react';
-import { mode } from '@chakra-ui/theme-tools';
+
 import { PlayAdd } from 'iconsax-react';
 
 type SessionUser = {
@@ -43,7 +44,7 @@ const SessionModal = ({
     if (setShow) setShow(true);
   };
 
-  const test = false;
+  const test = true;
 
   const header = test
     ? `${user?.name} started listening to music ${title}`
@@ -56,13 +57,13 @@ const SessionModal = ({
   const data = [1, 2, 3];
 
   return (
-    <Stack bgColor={'whiteAlpha.100'} borderRadius="xl">
+    <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
         {user && (
           <>
             <HStack>
-              <Avatar size="lg" src={user.image} />
-              <Heading fontSize={['xs', 'sm']} fontWeight="300" onClick={onClick} cursor="pointer">
+              <Avatar size="md" src={user.image} />
+              <Heading fontSize={['xs', 'sm']} fontWeight="200" onClick={onClick} cursor="pointer">
                 {header}
               </Heading>
             </HStack>
@@ -79,13 +80,13 @@ const SessionModal = ({
                 />
               </Stack>
             ) : (
-              <Stack>
+              <OrderedList spacing={1}>
                 {data.map(() => (
-                  <>
-                    <Text>hi</Text>
-                  </>
+                  <ListItem key={''} fontSize="10px" fontWeight="200">
+                    Drake
+                  </ListItem>
                 ))}
-              </Stack>
+              </OrderedList>
             )}
           </>
         )}
