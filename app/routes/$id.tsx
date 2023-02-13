@@ -100,13 +100,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     }
   }
 
-  const [activity, users, profileSong] = await Promise.all([
-    prisma.queue.findMany({
-      include: { owner: { select: { accessToken: false, user: true } }, track: true, user: true },
-      orderBy: { createdAt: 'desc' },
-      where: { OR: [{ userId: id }, { ownerId: id }] },
-    }),
-
+  const [users, profileSong] = await Promise.all([
     getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
     getProfileSong(id),
   ]);
@@ -182,7 +176,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   // });
 
   return typedjson({
-    activity,
     currentUser,
     following: null,
     listened,
