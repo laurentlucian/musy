@@ -67,27 +67,31 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       orderBy: { createdAt: 'desc' },
       where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
     }),
-    prisma.recentSongs.findMany({
-      include: { track: true },
-      orderBy: {
-        playedAt: 'desc',
-      },
-      take: 50,
-      where: {
-        userId: id,
-      },
-    }),
-    prisma.likedSongs.findMany({
-      include: { track: true },
-      orderBy: {
-        likedAt: 'desc',
-      },
-      take: 50,
-      where: {
-        track: { uri: { startsWith: 'spotify' } }, // this is to make sure the track exists
-        userId: id,
-      },
-    }),
+    prisma.recentSongs
+      .findMany({
+        include: { track: true },
+        orderBy: {
+          playedAt: 'desc',
+        },
+        take: 50,
+        where: {
+          userId: id,
+        },
+      })
+      .catch(() => []),
+    prisma.likedSongs
+      .findMany({
+        include: { track: true },
+        orderBy: {
+          likedAt: 'desc',
+        },
+        take: 50,
+        where: {
+          track: { uri: { startsWith: 'spotify' } }, // this is to make sure the track exists
+          userId: id,
+        },
+      })
+      .catch(() => []),
     prisma.party.findMany({ where: { ownerId: id } }),
   ]);
 
