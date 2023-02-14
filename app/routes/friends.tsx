@@ -5,7 +5,6 @@ import { Users } from 'react-feather';
 
 import { Divider, HStack, Icon, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
-import { Profile2User } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
@@ -33,18 +32,6 @@ const Friends = () => {
 
   return (
     <Stack pb="100px" spacing={3} w="100%" px={['4px', 0]}>
-      <Stack pos="sticky" top={0} zIndex={1} bg={bg}>
-        <HStack>
-          <Icon as={Users} color={color} />
-          <Text fontSize="sm" fontWeight="400">
-            friends
-          </Text>
-          <Text fontSize="xs" fontWeight="300">
-            ~ {friends.length}
-          </Text>
-        </HStack>
-        <Divider bgColor={color} />
-      </Stack>
       {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}

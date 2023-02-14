@@ -3,6 +3,9 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
+import useIsMobile from '~/hooks/useIsMobile';
+
+import MobileHeader from './nav/MobileHeader';
 import MobileNavBar from './nav/MobileNavBar';
 import Nav from './nav/Nav';
 
@@ -19,6 +22,7 @@ const Layout = ({
   userId,
 }: PropsWithChildren<LayoutProps>) => {
   const { pathname } = useLocation();
+  const isSmallScreen = useIsMobile();
   const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
   const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -38,9 +42,9 @@ const Layout = ({
       color={color}
     >
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
-        <Nav authorized={authorized} />
+        {isSmallScreen ? <MobileHeader authorized={authorized} /> : <Nav authorized={authorized} />}
         {children}
-        {!!authorized && <MobileNavBar profilePicture={profilePicture} userId={userId} />}
+        {isSmallScreen && <MobileNavBar profilePicture={profilePicture} userId={userId} />}
       </Box>
     </Flex>
   );

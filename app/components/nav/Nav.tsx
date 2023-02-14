@@ -18,13 +18,9 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   return (
-    <Flex w="100%" as="header" py={[2, 5]} justify="space-between" px={isSmallScreen ? '5px' : 0}>
+    <Flex w="100%" as="header" py={5} justify="space-between" px={0}>
       <HStack as={Link} to="/" spacing="8px">
-        {isSmallScreen ? (
-          <Image src="/musylogo1.svg" boxSize="35px" mb="10px" />
-        ) : (
-          <Image src="/favicon-32x32.png" />
-        )}
+        <Image src="/favicon-32x32.png" />
         <Heading size="sm">musy</Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
@@ -44,13 +40,9 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
           </Form>
         ) : (
           <>
-            {isSmallScreen ? (
-              <UserMenu isSmallScreen={isSmallScreen} />
-            ) : (
-              <HStack w="100%" spacing={3}>
-                <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} />
-              </HStack>
-            )}
+            <HStack w="100%" spacing={3}>
+              <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} />
+            </HStack>
           </>
         )}
       </HStack>
