@@ -54,7 +54,7 @@ const Recommended = (props: {
                           />
                         </Link>
                         <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
-                          <Text fontSize={['10px', '11px']}>{recommended.sender.name}</Text>
+                          <Text fontSize="13px">{recommended.sender.name}</Text>
                         </Link>
                         <Text fontSize={['9px', '10px']} opacity={0.6}>
                           {timeSince(recommended.createdAt)}

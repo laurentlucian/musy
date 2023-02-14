@@ -5,24 +5,35 @@ import { Stack, useColorModeValue } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
+import MobileActivityTile from '~/components/activity/MobileActivityTile';
 import Tiles from '~/components/tiles/Tiles';
+import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Activity } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
+  const isSmallScreen = useIsMobile();
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} bg={bg} h="100vh">
       <Stack px={['5px', 0]}>
-        <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
-          {activity.map((item) => {
-            return <ActivityTile key={item.id} activity={item} />;
-          })}
-        </Tiles>
+        {isSmallScreen ? (
+          <Stack bg={bg}>
+            {activity.map((item) => {
+              return <MobileActivityTile key={item.id} activity={item} />;
+            })}
+          </Stack>
+        ) : (
+          <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
+            {activity.map((item) => {
+              return <ActivityTile key={item.id} activity={item} />;
+            })}
+          </Tiles>
+        )}
       </Stack>
       <Outlet />
     </Stack>
