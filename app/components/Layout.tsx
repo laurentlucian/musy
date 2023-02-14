@@ -32,6 +32,7 @@ const Layout = ({
     : isDanica
     ? `linear(to-t, ${bg} 40%, #563776 110%)`
     : 'none';
+  const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');
 
   return (
     <Flex
@@ -43,9 +44,13 @@ const Layout = ({
     >
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
         {isSmallScreen ? <MobileHeader authorized={authorized} /> : <Nav authorized={authorized} />}
-        <Box h={['84vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
-          {children}
-        </Box>
+        {isProfile ? (
+          <Box h={['84vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
+            {children}
+          </Box>
+        ) : (
+          children
+        )}
         {isSmallScreen && (
           <MobileNavBar profilePicture={profilePicture} userId={userId} authorized={authorized} />
         )}

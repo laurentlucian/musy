@@ -49,7 +49,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
 
-  console.log(authorized);
+  console.log('scroll!!: ', show);
 
   const Home = (
     <HStack w="100%" bg={bg} h="100%" pl="5px" justifyContent="space-between">
