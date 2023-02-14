@@ -114,7 +114,6 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
             pos="fixed"
             top={2}
             right="0"
-            border="1px solid red"
           />
           <Drawer
             isOpen={isOpen}

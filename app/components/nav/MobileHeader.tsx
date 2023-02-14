@@ -77,17 +77,17 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     <Stack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
       <HStack w="100%" justifyContent="space-between">
         <HStack>
-          <Icon as={Users} color={color} boxSize="25px" alignSelf="start" />
-          <Heading fontSize="sm" pt="9px" pl="6px">
+          <Image boxSize="15px" src="/users.svg" />
+          <Text fontSize="sm" pt="9px" pl="6px" fontWeight="400">
             friends
-          </Heading>
+          </Text>
           <Text fontSize="xs" fontWeight="300" pt="10px">
             ~ {friendCount}
           </Text>
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={color} />
+      <Divider bgColor="spotify.green" />
     </Stack>
   );
 
