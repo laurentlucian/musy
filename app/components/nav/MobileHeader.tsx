@@ -1,4 +1,4 @@
-import { useLocation, useTransition, Form } from '@remix-run/react';
+import { useLocation, useTransition, Form, useNavigate } from '@remix-run/react';
 import { useEffect, useMemo, useState } from 'react';
 import { Users } from 'react-feather';
 
@@ -26,8 +26,6 @@ import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 import UserMenu from './UserMenu';
 
-// import UserSearch from './UserSearch';
-
 type ParentData = {
   currentUserId: string;
   timestamp: number;
@@ -38,6 +36,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(0);
   const { pathname } = useLocation();
   const transition = useTransition();
+  const navigate = useNavigate();
   const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
   const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
 
@@ -48,8 +47,6 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const users = useParentData('/friends') as ParentData | undefined;
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
-
-  console.log('scroll!!: ', show);
 
   const Home = (
     <HStack w="100%" bg={bg} h="100%" pl="5px" justifyContent="space-between">
@@ -118,6 +115,24 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   const Search = <UserMenu isSmallScreen={true} pathname={pathname} />;
 
+  const Settings = (
+    <HStack w="100%" pb="20px" bg={bg}>
+      <Heading fontSize="13px" mt="15px" ml="20px">
+        Settings
+      </Heading>
+      <Button
+        onClick={() => {
+          navigate(-1);
+        }}
+        pos="fixed"
+        top={2}
+        right="0"
+      >
+        Done
+      </Button>
+    </HStack>
+  );
+
   const Header = pathname.includes('home')
     ? Home
     : pathname.includes('friends')
@@ -126,6 +141,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     ? Search
     : pathname.includes('sessions')
     ? Home
+    : pathname.includes('settings')
+    ? Settings
     : Profile;
 
   useEffect(() => {

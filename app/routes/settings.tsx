@@ -10,7 +10,7 @@ const Settings = () => {
   return (
     <Stack
       direction={['column', 'row']}
-      pt={[0, 4]}
+      pt={['60px', 4]}
       justifyContent={['start', 'center']}
       overflow="hidden"
       px={['20px', 0]}
@@ -21,6 +21,7 @@ const Settings = () => {
         <Link
           as={RemixLink}
           to="/settings"
+          replace
           fontSize={['sm', 'md']}
           aria-current={location.pathname === '/settings' ? 'page' : undefined}
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
@@ -31,6 +32,7 @@ const Settings = () => {
         <Link
           as={RemixLink}
           to="/settings/appearance"
+          replace
           fontSize={['sm', 'md']}
           aria-current={location.pathname === '/settings/appearance' ? 'page' : undefined}
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
