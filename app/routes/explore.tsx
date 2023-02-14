@@ -54,12 +54,6 @@ const Explore = () => {
     }
   };
 
-  const onBlur = () => {
-    // if (search === '') {
-    //   deleteSearch();
-    // }
-  };
-
   const onClose = () => {
     setSearch('');
     setTracks([]);

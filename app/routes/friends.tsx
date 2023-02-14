@@ -1,9 +1,11 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
+import { Users } from 'react-feather';
 
-import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Divider, HStack, Icon, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
+import { Profile2User } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
@@ -15,8 +17,10 @@ const Friends = () => {
   const { currentUserId, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-  const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
-  const otherUsers = users.filter((user) => user.userId !== currentUserId);
+  const friends = users.filter((user) => user.userId !== currentUserId);
+
+  const bg = useColorModeValue('#EEE6E2', '#050404');
+  const color = useColorModeValue('#111111', '#DFD7D1');
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -28,30 +32,20 @@ const Friends = () => {
   }, [shouldRevalidate, revalidate]);
 
   return (
-    <Stack pb="100px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
-      {currentUserData && (
-        <Stack mt={7}>
-          {currentUserData.settings?.miniPlayer && (
-            <PrismaMiniPlayer
-              key={currentUserData.userId}
-              user={currentUserData}
-              currentUserId={currentUserId}
-            />
-          )}
-          <HStack>
-            <Image boxSize="15px" src="/users.svg" />
-            <Text fontSize="sm" fontWeight="400">
-              friends
-            </Text>
-            <Text fontSize="xs" fontWeight="300">
-              ~ {otherUsers.length}
-            </Text>
-          </HStack>
-          <Divider bgColor="spotify.green" />
-        </Stack>
-      )}
-
-      {otherUsers.map((user) => {
+    <Stack pb="100px" spacing={3} w="100%" px={['4px', 0]}>
+      <Stack pos="sticky" top={0} zIndex={1} bg={bg}>
+        <HStack>
+          <Icon as={Users} color={color} />
+          <Text fontSize="sm" fontWeight="400">
+            friends
+          </Text>
+          <Text fontSize="xs" fontWeight="300">
+            ~ {friends.length}
+          </Text>
+        </HStack>
+        <Divider bgColor={color} />
+      </Stack>
+      {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}
     </Stack>
