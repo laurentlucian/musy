@@ -12,7 +12,7 @@ export const loader = async () => {
   // const session = await authenticator.isAuthenticated(request);
   // const currentUser = session?.user ?? null;
 
-  return redirect('/home');
+  return redirect('/home/friends');
 };
 
 export default Index;
