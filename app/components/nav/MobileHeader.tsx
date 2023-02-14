@@ -86,6 +86,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     ? Friends
     : pathname.includes('explore')
     ? Search
+    : pathname.includes('sessions')
+    ? Home
     : Profile;
 
   useEffect(() => {

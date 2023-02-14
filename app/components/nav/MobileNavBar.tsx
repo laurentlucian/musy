@@ -31,7 +31,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
     setActive(1);
   };
   const onClickSessions = () => {
-    navigate(`/home/sessions`);
+    navigate(`/sessions`);
     setActive(2);
   };
   const onClickExplore = () => {
