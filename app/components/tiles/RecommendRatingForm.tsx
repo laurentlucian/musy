@@ -1,8 +1,10 @@
+import { useParams } from '@remix-run/react';
+
 import { FormControl, FormLabel, useRadioGroup, HStack, useColorModeValue } from '@chakra-ui/react';
 
-import { RadioButtons } from '~/lib/theme/components/RatingRadio';
 import { useTypedFetcher } from 'remix-typedjson';
-import { useParams } from '@remix-run/react';
+
+import { RadioButtons } from '~/lib/theme/components/RatingRadio';
 import type { action } from '~/routes/$id/rateRecommend';
 
 const RecommendRatingForm = ({ rating, sender }: { rating?: string; sender: string }) => {
@@ -42,7 +44,7 @@ const RecommendRatingForm = ({ rating, sender }: { rating?: string; sender: stri
       color={color}
     >
       <FormLabel htmlFor="tating" mb="0">
-        rate {sender}'s recommendation
+        rate {sender}&apos;s recommendation
       </FormLabel>
       <HStack gap={0} {...group} p={0} m={0}>
         {options.map(({ name, value }) => {
