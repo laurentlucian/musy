@@ -41,7 +41,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <>
             <HStack w="100%" spacing={3}>
-              <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} />
+              <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} pathname={pathname} />
             </HStack>
           </>
         )}

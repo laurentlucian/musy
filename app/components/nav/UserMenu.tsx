@@ -1,6 +1,6 @@
 import { Form, useNavigate } from '@remix-run/react';
 import { useRef } from 'react';
-import { LogOut } from 'react-feather';
+import { LogOut, MoreHorizontal } from 'react-feather';
 
 import {
   Menu,
@@ -32,9 +32,10 @@ import useSessionUser from '~/hooks/useSessionUser';
 
 interface UserActionsConfig {
   isSmallScreen: boolean;
+  pathname: string;
 }
 
-const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
+const UserMenu = ({ isSmallScreen, pathname, ...props }: UserActionsConfig) => {
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -70,8 +71,12 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
   ));
 
   const onClickUser = () => {
-    navigate(`/${currentUser?.userId}`);
-    onClose();
+    if (!pathname.includes(`${currentUser?.userId}`)) {
+      navigate(`/${currentUser?.userId}`);
+      onClose();
+    } else {
+      onClose();
+    }
   };
 
   const onClickSettings = () => {
@@ -99,9 +104,12 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
             aria-label="your actions"
             ref={btnRef}
             onClick={onOpen}
-            icon={icon}
+            icon={<MoreHorizontal />}
             bg="#0000 !important"
             boxShadow="none"
+            pos="fixed"
+            top={2}
+            right="0"
           />
           <Drawer
             isOpen={isOpen}
@@ -136,7 +144,10 @@ const UserMenu = ({ isSmallScreen }: UserActionsConfig) => {
                   <Button
                     leftIcon={<Profile2User variant="Bold" size="30px" />}
                     iconSpacing="30px"
-                    onClick={onClickFriends}
+                    onClick={() => {
+                      navigate(`/home/friends`);
+                      onClose();
+                    }}
                     bg="#0000"
                     size="20px"
                     pl="25px"

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   CloseButton,
+  HStack,
   IconButton,
   Input,
   InputGroup,
@@ -16,6 +17,7 @@ import {
 import type { Track } from '@prisma/client';
 
 import Waver from '~/components/icons/Waver';
+import UserMenu from '~/components/nav/UserMenu';
 import Tile from '~/components/Tile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -95,51 +97,54 @@ const Explore = () => {
 
   return (
     <Stack bg={bg} h="100vh" alignItems="center">
-      <InputGroup w="98vw">
-        <InputLeftElement
-          pointerEvents="all"
-          children={
-            <IconButton
-              aria-label="search"
-              icon={<SearchIcon boxSize="16px" />}
-              variant="unstyled"
-              color={color}
-              cursor="pointer"
-            />
-          }
-        />
-        <Input
-          ref={inputRef}
-          name="spotify"
-          value={search}
-          placeholder="search"
-          autoComplete="off"
-          onChange={onChange}
-          onBlur={showMenu}
-          transition="all 0.5s ease-in-out"
-          _placeholder={{ color: '#414040' }}
-          focusBorderColor={color}
-          onFocus={hideMenu}
-        />
-        {search && (
-          <InputRightElement
-            justifyContent="end"
-            w="69px"
+      <HStack justifyContent="space-between">
+        <InputGroup w="90vw" mr="27px" mt="-5px">
+          <InputLeftElement
+            pointerEvents="all"
             children={
-              <>
-                {busy && <Waver />}
-                <IconButton
-                  aria-label="close"
-                  variant="unstyled"
-                  borderRadius={8}
-                  onClick={onClose}
-                  icon={<CloseButton />}
-                />
-              </>
+              <IconButton
+                aria-label="search"
+                icon={<SearchIcon boxSize="16px" />}
+                variant="unstyled"
+                color={color}
+                cursor="pointer"
+              />
             }
           />
-        )}
-      </InputGroup>
+          <Input
+            ref={inputRef}
+            name="spotify"
+            value={search}
+            placeholder="search"
+            autoComplete="off"
+            onChange={onChange}
+            onBlur={showMenu}
+            transition="all 0.5s ease-in-out"
+            _placeholder={{ color: '#414040' }}
+            focusBorderColor={color}
+            onFocus={hideMenu}
+          />
+          {search && (
+            <InputRightElement
+              justifyContent="end"
+              w="69px"
+              children={
+                <>
+                  {busy && <Waver />}
+                  <IconButton
+                    aria-label="close"
+                    variant="unstyled"
+                    borderRadius={8}
+                    onClick={onClose}
+                    icon={<CloseButton />}
+                  />
+                </>
+              }
+            />
+          )}
+        </InputGroup>
+        <UserMenu isSmallScreen={true} pathname={'/explore'} />
+      </HStack>
       <Stack>
         {tracks?.map((track) => (
           <Tile
