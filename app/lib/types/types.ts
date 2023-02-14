@@ -1,20 +1,6 @@
 import type { Profile, Settings } from '@prisma/client';
 
-export interface Track {
-  albumName: string;
-  albumUri: string;
-  artist: string;
-  artistUri: string;
-  explicit: boolean;
-  image: string;
-  link: string;
-  name: string;
-  preview_url: string | null;
-  trackId: string;
-  uri: string;
-  userId?: string;
-}
-
+export type { Track } from '@prisma/client';
 export type Activity = {
   action: string;
   createdAt: Date;

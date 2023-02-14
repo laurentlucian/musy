@@ -4,7 +4,7 @@ import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import SessionT from '~/components/sessions/SassionT';
+import SessionT from '~/components/sessions/SessionTile';
 import SessionModal from '~/components/sessions/SessionModal';
 import { timeSince } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';

@@ -1,131 +1,48 @@
-import type { ReactNode } from 'react';
-
-import {
-  Avatar,
-  Stack,
-  StackProps,
-  HStack,
-  Heading,
-  Divider,
-  IconButton,
-  OrderedList,
-  ListItem,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react';
-
-import { PlayAdd } from 'iconsax-react';
+import type { StackProps } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
+import { VStack } from '@chakra-ui/react';
+import { Avatar, Stack, HStack, Heading } from '@chakra-ui/react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
+import { timeSince } from '~/lib/utils';
+import type { SessionsWithData } from '~/routes/home/sessions';
 
 import ScrollButtons from '../tiles/ScrollButtons';
 
-type SessionUser = {
-  image: string;
-  name: string;
-  userId: string;
-};
-
 type SessionProps = {
-  Filter?: ReactNode;
-  autoScroll?: boolean;
-
-  //   children: ReactNode;
-  scrollButtons?: boolean;
-  setShow?: React.Dispatch<React.SetStateAction<boolean>>;
-  title?: string;
-  user?: SessionUser;
+  session: SessionsWithData[0];
 } & StackProps;
 
-const SessionModal = ({
-  Filter = null,
-  autoScroll,
-  children,
-  scrollButtons,
-  setShow,
-  title,
-  user,
-  ...ChakraProps
-}: SessionProps) => {
-  const { props, scrollRef } = useMouseScroll('natural', autoScroll);
-  const onClick = () => {
-    if (setShow) setShow(true);
-  };
-
-  const test = true;
-
-  const header = test
-    ? `${user?.name} started listening to music ${title}`
-    : `${user?.name}'s session ${title}`;
-
-  const joinSession = () => {
-    alert('join session');
-  };
-
-  const data = [1, 2, 3];
+const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
+  const { scrollRef } = useMouseScroll('natural', false);
+  const user = session.user;
 
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
-        {user && (
-          <>
-            <HStack>
-              <Avatar size="md" src={user.image} />
-              <Heading fontSize={['xs', 'sm']} fontWeight="200" onClick={onClick} cursor="pointer">
-                {header}
-              </Heading>
-            </HStack>
-            {test ? (
-              <Stack>
-                <IconButton
-                  aria-label="play-add"
-                  as={PlayAdd}
-                  name="play-add"
-                  size="24px"
-                  _hover={{ color: 'spotify.green' }}
-                  cursor="pointer"
-                  onClick={joinSession}
-                />
-              </Stack>
-            ) : (
-              <OrderedList spacing={1}>
-                {data.map(() => (
-                  <ListItem key={''} fontSize="10px" fontWeight="200">
-                    Drake
-                  </ListItem>
-                ))}
-              </OrderedList>
-            )}
-          </>
-        )}
-
-        {Filter}
+        <HStack>
+          <Avatar size="md" src={user.image} />
+          <VStack align="flex-start" spacing={1}>
+            <Heading size="md" fontWeight={400}>
+              {session.user.name}
+            </Heading>
+            <Text fontSize={'sm'}>
+              {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
+            </Text>
+          </VStack>
+        </HStack>
+        <ScrollButtons scrollRef={scrollRef} />
       </HStack>
-      <Divider h="2px" bgColor="black" />
-      {/* If you want a grid format */}
-      {/* <Grid
-        px={3}
-        maxH="300px"
-        className="scrollbar"
-        overflow="scroll"
-        templateColumns="repeat(10, 1fr)"
-        {...ChakraProps}
-      >
-        {children?.map((child, index) => (
-          <GridItem key={index}>{child}</GridItem>
-        ))}
-      </Grid> */}
-
-      {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
       <HStack
-        spacing={0}
+        spacing={1}
+        m={2}
+        py={2}
         maxH="300px"
         className="scrollbar"
         ref={scrollRef}
         overflow="auto"
         align="flex-start"
-        {...props}
-        {...ChakraProps}
+        {...chakraProps}
       >
         {children}
       </HStack>

@@ -2,12 +2,11 @@ import type { LoaderArgs } from '@remix-run/node';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
+import type { Prisma } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import SessionT from '~/components/sessions/SassionT';
 import SessionModal from '~/components/sessions/SessionModal';
-import SessionTiles from '~/components/sessions/SessionTiles';
-import { timeSince } from '~/lib/utils';
+import SessionT from '~/components/sessions/SessionTile';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
@@ -20,45 +19,9 @@ const Friends = () => {
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
-            <SessionModal title={timeSince(session.startTime)} user={session.user}>
-              {/* <Tiles
-              title={`${new Date(session.startTime).toLocaleString()} ${
-                session.user.name
-              } listened to ${session.songs.length} songs `}
-            > */}
-
-              {session.songs.map(({ id, track }) => {
-                return (
-                  // <SessionTiles
-                  //   key={id}
-                  //   uri={track.uri}
-                  //   trackId={track.id}
-                  //   image={track.image}
-                  //   albumUri={track.albumUri}
-                  //   albumName={track.albumName}
-                  //   name={track.name}
-                  //   artist={track.artist}
-                  //   artistUri={track.artistUri}
-                  //   explicit={track.explicit}
-                  //   preview_url={track.preview_url}
-                  //   link={track.preview_url!}
-                  //   trackDuration={track.duration}
-                  // />
-                  <SessionT
-                    key={id}
-                    uri={track.uri}
-                    trackId={track.id}
-                    image={track.image}
-                    albumUri={track.albumUri}
-                    albumName={track.albumName}
-                    name={track.name}
-                    artist={track.artist}
-                    artistUri={track.artistUri}
-                    explicit={track.explicit}
-                    preview_url={track.preview_url}
-                    link={track.preview_url!}
-                  />
-                );
+            <SessionModal session={session}>
+              {session.songs.map(({ id, playedAt, track }) => {
+                return <SessionT key={id} track={track} playedAt={playedAt} />;
               })}
             </SessionModal>
           </Stack>
@@ -68,13 +31,8 @@ const Friends = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-
-  const currentUserId = currentUser?.id;
-
-  const sessions = await prisma.sessions.findMany({
+function getSessions() {
+  return prisma.sessions.findMany({
     include: {
       songs: {
         include: {
@@ -84,13 +42,28 @@ export const loader = async ({ request }: LoaderArgs) => {
           playedAt: 'desc',
         },
       },
-      user: true,
+      user: {
+        include: {
+          playback: true,
+        },
+      },
     },
     orderBy: {
       startTime: 'desc',
     },
     take: 30,
   });
+}
+
+export type SessionsWithData = Prisma.PromiseReturnType<typeof getSessions>;
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session?.user ?? null;
+
+  const currentUserId = currentUser?.id;
+
+  const sessions = await getSessions();
 
   return typedjson(
     { currentUserId, now: Date.now(), sessions },
