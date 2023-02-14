@@ -1,11 +1,12 @@
 import type { LoaderArgs } from '@remix-run/node';
 
-import { Divider, Stack, Text } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
+import SessionT from '~/components/sessions/SassionT';
 import SessionModal from '~/components/sessions/SessionModal';
-import SessionTiles from '~/components/tiles/SessionTiles';
+import SessionTiles from '~/components/sessions/SessionTiles';
 import { timeSince } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -27,7 +28,22 @@ const Friends = () => {
 
               {session.songs.map(({ id, track }) => {
                 return (
-                  <SessionTiles
+                  // <SessionTiles
+                  //   key={id}
+                  //   uri={track.uri}
+                  //   trackId={track.id}
+                  //   image={track.image}
+                  //   albumUri={track.albumUri}
+                  //   albumName={track.albumName}
+                  //   name={track.name}
+                  //   artist={track.artist}
+                  //   artistUri={track.artistUri}
+                  //   explicit={track.explicit}
+                  //   preview_url={track.preview_url}
+                  //   link={track.preview_url!}
+                  //   trackDuration={track.duration}
+                  // />
+                  <SessionT
                     key={id}
                     uri={track.uri}
                     trackId={track.id}
@@ -40,7 +56,6 @@ const Friends = () => {
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.preview_url!}
-                    trackDuration={track.duration}
                   />
                 );
               })}
