@@ -2,7 +2,7 @@ import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -16,6 +16,7 @@ const Friends = () => {
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const friends = users.filter((user) => user.userId !== currentUserId);
+  const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -28,6 +29,27 @@ const Friends = () => {
 
   return (
     <Stack pt={['53px', '25px']} pb="100px" spacing={3} w="100%" px={['4px', 0]}>
+      {currentUserData && currentUserData.settings?.miniPlayer && (
+        <Stack w="100%" h="100%" mt={-2} pl="10px">
+          {currentUserData.settings?.miniPlayer && (
+            <PrismaMiniPlayer
+              key={currentUserData.userId}
+              user={currentUserData}
+              currentUserId={currentUserId}
+            />
+          )}
+        </Stack>
+      )}
+      <HStack>
+        <Image boxSize="15px" src="/users.svg" />
+        <Text fontSize="sm" fontWeight="400">
+          friends
+        </Text>
+        <Text fontSize="xs" fontWeight="300">
+          ~ {friends.length}
+        </Text>
+      </HStack>
+      <Divider bgColor="spotify.green" />
       {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}

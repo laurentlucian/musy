@@ -73,23 +73,23 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     </HStack>
   );
 
-  const Friends = (
-    <Stack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
-      <HStack w="100%" justifyContent="space-between">
-        <HStack>
-          <Image boxSize="15px" src="/users.svg" />
-          <Text fontSize="sm" pt="9px" pl="6px" fontWeight="400">
-            friends
-          </Text>
-          <Text fontSize="xs" fontWeight="300" pt="10px">
-            ~ {friendCount}
-          </Text>
-        </HStack>
-        <UserMenu isSmallScreen={true} pathname={pathname} />
-      </HStack>
-      <Divider bgColor="spotify.green" />
-    </Stack>
-  );
+  // const Friends = (
+  //   <Stack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
+  //     <HStack w="100%" justifyContent="space-between">
+  //       <HStack>
+  //         <Image boxSize="15px" src="/users.svg" />
+  //         <Text fontSize="sm" pt="9px" pl="6px" fontWeight="400">
+  //           friends
+  //         </Text>
+  //         <Text fontSize="xs" fontWeight="300" pt="10px">
+  //           ~ {friendCount}
+  //         </Text>
+  //       </HStack>
+  //       <UserMenu isSmallScreen={true} pathname={pathname} />
+  //     </HStack>
+  //     <Divider bgColor="spotify.green" />
+  //   </Stack>
+  // );
 
   const Profile = (
     <HStack opacity={1}>
@@ -135,9 +135,9 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   const Header = pathname.includes('home')
     ? Home
-    : pathname.includes('friends')
-    ? Friends
-    : pathname.includes('explore')
+    : // : pathname.includes('friends')
+    // ? Friends
+    pathname.includes('explore')
     ? Search
     : pathname.includes('sessions')
     ? Home
