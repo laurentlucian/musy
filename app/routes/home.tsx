@@ -22,7 +22,7 @@ const Index = () => {
     <Stack pb="50px" pt={{ base: 4, md: 0 }} bg={bg} h="100vh">
       <Stack px={['5px', 0]}>
         {isSmallScreen ? (
-          <Stack bg={bg}>
+          <Stack bg={bg} mb="100px">
             {activity.map((item) => {
               return <MobileActivityTile key={item.id} activity={item} />;
             })}
