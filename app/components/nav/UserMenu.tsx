@@ -1,4 +1,4 @@
-import { Form, useNavigate } from '@remix-run/react';
+import { Form, useNavigate, useTransition } from '@remix-run/react';
 import { useRef } from 'react';
 import { LogOut, MoreHorizontal } from 'react-feather';
 
@@ -30,6 +30,9 @@ import { Moon, Profile2User, Setting2, Sun1 } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
+import SpotifyLogo from '../icons/SpotifyLogo';
+import Waver from '../icons/Waver';
+
 interface UserActionsConfig {
   isSmallScreen: boolean;
   pathname: string;
@@ -44,6 +47,7 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
   const hoverBg = useColorModeValue('music.400', 'music.900');
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const transition = useTransition();
 
   const mobileIcon = (
     <Image
@@ -110,6 +114,7 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
             pos="fixed"
             top={2}
             right="0"
+            border="1px solid red"
           />
           <Drawer
             isOpen={isOpen}
@@ -214,24 +219,39 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
                     opacity={0.2}
                     alignSelf="center"
                   />
-                  <Form action="/logout" method="post">
-                    <Button
-                      leftIcon={<LogOut transform="scale(-1)" size="30px" />}
-                      iconSpacing="30px"
-                      _hover={{ bgColor: 'red.500', color: 'white' }}
-                      type="submit"
-                      bg="#0000"
-                      size="20px"
-                      pl="25px"
-                      mt="20px"
-                      w="100vw"
-                      h="45px"
-                      justifyContent="flex-start"
-                      color={color}
-                    >
-                      log out
-                    </Button>
-                  </Form>
+                  {currentUser ? (
+                    <Form action="/logout" method="post">
+                      <Button
+                        leftIcon={<LogOut transform="scale(-1)" size="30px" />}
+                        iconSpacing="30px"
+                        _hover={{ bgColor: 'red.500', color: 'white' }}
+                        type="submit"
+                        bg="#0000"
+                        size="20px"
+                        pl="25px"
+                        mt="20px"
+                        w="100vw"
+                        h="45px"
+                        justifyContent="flex-start"
+                        color={color}
+                      >
+                        log out
+                      </Button>
+                    </Form>
+                  ) : (
+                    <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
+                      <Button
+                        type="submit"
+                        variant="login"
+                        spinner={<Waver />}
+                        isLoading={transition.submission?.action.includes('auth')}
+                        bg={bg}
+                        color={color}
+                      >
+                        Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
+                      </Button>
+                    </Form>
+                  )}
                 </Stack>
               </DrawerBody>
             </DrawerContent>
