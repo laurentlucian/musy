@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from '@remix-run/react';
+import { useLocation, useNavigate, useSubmit } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 // import { Search, Users } from 'react-feather';
 
@@ -22,13 +22,20 @@ const MobileNavBar = ({
   const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const submit = useSubmit();
   const track = useDrawerTrack();
   const { show } = useMobileKeyboard();
   const { pathname } = useLocation();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
-  const profileIcon = <Image src={profilePicture} borderRadius="full" boxSize="30px" />;
+  const profileIcon = (
+    <Image
+      src={authorized ? profilePicture : '/favicon-32x32.png'}
+      borderRadius="full"
+      boxSize="30px"
+    />
+  );
 
   const onClickHome = () => {
     navigate(`/home`);
@@ -47,7 +54,13 @@ const MobileNavBar = ({
     setActive(3);
   };
   const onClickUser = () => {
-    navigate(`/${userId}`);
+    authorized
+      ? navigate(`/${userId}`)
+      : submit(null, {
+          action: '/auth/spotify?returnTo=' + pathname,
+          method: 'post',
+          replace: true,
+        });
     setActive(4);
   };
 

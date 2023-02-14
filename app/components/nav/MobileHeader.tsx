@@ -1,4 +1,4 @@
-import { useLocation } from '@remix-run/react';
+import { useLocation, useTransition, Form } from '@remix-run/react';
 import { useEffect, useMemo, useState } from 'react';
 import { Users } from 'react-feather';
 
@@ -13,6 +13,7 @@ import {
   useColorModeValue,
   Stack,
   Box,
+  Button,
 } from '@chakra-ui/react';
 
 import type { User } from '@prisma/client';
@@ -21,6 +22,8 @@ import useParamUser from '~/hooks/useParamUser';
 import useParentData from '~/hooks/useParentData';
 import useSessionUser from '~/hooks/useSessionUser';
 
+import SpotifyLogo from '../icons/SpotifyLogo';
+import Waver from '../icons/Waver';
 import UserMenu from './UserMenu';
 
 // import UserSearch from './UserSearch';
@@ -34,6 +37,7 @@ type ParentData = {
 const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(0);
   const { pathname } = useLocation();
+  const transition = useTransition();
   const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
   const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
 
@@ -45,13 +49,30 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
 
+  console.log(authorized);
+
   const Home = (
     <HStack w="100%" bg={bg} h="100%" pl="5px" justifyContent="space-between">
       <HStack>
         <Image src="/musylogo1.svg" boxSize="35px" mb="10px" />
         <Heading size="sm">musy</Heading>
       </HStack>
-      <UserMenu isSmallScreen={true} pathname={pathname} />
+      {!authorized ? (
+        <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
+          <Button
+            type="submit"
+            variant="login"
+            spinner={<Waver />}
+            isLoading={transition.submission?.action.includes('auth')}
+            bg={bg}
+            color={color}
+          >
+            Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
+          </Button>
+        </Form>
+      ) : (
+        <UserMenu isSmallScreen={true} pathname={pathname} />
+      )}
     </HStack>
   );
 

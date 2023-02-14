@@ -138,6 +138,25 @@ const ActionDrawer = () => {
       />
     </Button>
   );
+  const LogOutSendTo = () => (
+    <Button
+      leftIcon={<Send2 />}
+      pos="relative"
+      variant="ghost"
+      mx="25px"
+      w={['100vw', '550px']}
+      justifyContent="left"
+      _hover={{ color: 'white' }}
+      disabled
+    >
+      Log in to Send
+      <Icon
+        as={sendMenu.isOpen && !sendList ? ArrowDown2 : ArrowRight2}
+        boxSize="25px"
+        ml={['auto !important', '40px !important']}
+      />
+    </Button>
+  );
   const RecommendTo = () => (
     <Button
       leftIcon={<Send2 variant="Bold" />}
@@ -150,6 +169,25 @@ const ActionDrawer = () => {
       _hover={{ color: 'white' }}
     >
       Recommend to Friend
+      <Icon
+        as={sendMenu.isOpen && sendList ? ArrowDown2 : ArrowRight2}
+        boxSize="25px"
+        ml={['auto !important', '36px !important']}
+      />
+    </Button>
+  );
+  const LogOutRecommendTo = () => (
+    <Button
+      leftIcon={<Send2 variant="Bold" />}
+      pos="relative"
+      variant="ghost"
+      mx="25px"
+      w={['100vw', '550px']}
+      justifyContent="left"
+      _hover={{ color: 'white' }}
+      disabled
+    >
+      Log in to Recommend
       <Icon
         as={sendMenu.isOpen && sendList ? ArrowDown2 : ArrowRight2}
         boxSize="25px"
@@ -289,11 +327,13 @@ const ActionDrawer = () => {
                     {track.link !== '' && <CopyLink link={track.link} />}
                     <PlayPreview preview_url={track.preview_url} />
                     <ProfileSong user={user} />
-                    <AddQueue trackId={track.id} fromUseId="gi" user={null} />
+                    <AddQueue trackId={track.id} fromUseId="" user={null} />
                   </>
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
                 {recommendableUsers.length > 0 && <RecommendTo />}
+                {!currentUser && <LogOutSendTo />}
+                {!currentUser && <LogOutRecommendTo />}
                 {isSmallScreen ? (
                   <>
                     <Box h="50px" w="10px" />

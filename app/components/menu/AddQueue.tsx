@@ -1,4 +1,4 @@
-import { useLocation, useParams, useSubmit } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 
 import { Button, Image } from '@chakra-ui/react';
 
@@ -22,24 +22,12 @@ type AddQueueProps = {
 const AddQueue = ({ fromUseId, trackId, user, userId }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
-  const submit = useSubmit();
   const fetcher = useTypedFetcher<typeof action>();
-  const { pathname, search } = useLocation();
   const isSending = !!user;
 
   const addToQueue = () => {
-    if (!currentUser) {
-      // @todo figure out a better way to require authentication on click;
-      // after authentication redirect, add to queue isn't successful. user needs to click again
-      return submit(null, {
-        action: '/auth/spotify?returnTo=' + pathname + search,
-        method: 'post',
-        replace: true,
-      });
-    }
-
     const id = fromUseId || user?.userId || paramId;
-    const action = isSending ? `/${id}/add` : `/${currentUser.userId}/add`;
+    const action = isSending ? `/${id}/add` : `/${currentUser?.userId}/add`;
 
     const fromUserId = isSending ? currentUser?.userId : id;
     const sendToUserId = isSending ? id : currentUser?.userId;
@@ -100,7 +88,7 @@ const AddQueue = ({ fromUseId, trackId, user, userId }: AddQueueProps) => {
           />
           {isAdding ? <Waver /> : text}
         </Button>
-      ) : (
+      ) : currentUser ? (
         <Button // button to add to your own queue
           onClick={addToQueue}
           leftIcon={icon}
@@ -112,6 +100,18 @@ const AddQueue = ({ fromUseId, trackId, user, userId }: AddQueueProps) => {
           _hover={{ color: 'white' }}
         >
           {isAdding ? <Waver /> : text}
+        </Button>
+      ) : (
+        <Button // button to add to your own queue
+          leftIcon={icon}
+          variant="ghost"
+          justifyContent="left"
+          fontSize="14px"
+          w={['100vw', '550px']}
+          _hover={{ color: 'white' }}
+          disabled
+        >
+          Log in to Add to Your Queue
         </Button>
       )}
     </>
