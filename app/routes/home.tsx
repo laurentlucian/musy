@@ -1,6 +1,6 @@
 import { Outlet } from '@remix-run/react';
 
-import { Stack } from '@chakra-ui/react';
+import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -13,9 +13,10 @@ import { prisma } from '~/services/db.server';
 const Index = () => {
   const currentUser = useSessionUser();
   const { activity } = useTypedLoaderData<typeof loader>();
+  const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
-    <Stack pb="50px" pt={{ base: 4, md: 0 }}>
+    <Stack pb="50px" pt={{ base: 4, md: 0 }} bg={bg} h="100vh">
       <Stack px={['5px', 0]}>
         <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
           {activity.map((item) => {

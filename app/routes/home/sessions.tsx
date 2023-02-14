@@ -1,6 +1,6 @@
 import type { LoaderArgs } from '@remix-run/node';
 
-import { Stack } from '@chakra-ui/react';
+import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -13,9 +13,10 @@ import { prisma } from '~/services/db.server';
 
 const Friends = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
+  const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
-    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]}>
+    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" px={['4px', 0]} bg={bg}>
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
