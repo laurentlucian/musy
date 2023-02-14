@@ -27,7 +27,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
     setActive(0);
   };
   const onClickFriends = () => {
-    navigate(`/home/friends`);
+    navigate(`/friends`);
     setActive(1);
   };
   const onClickSessions = () => {
