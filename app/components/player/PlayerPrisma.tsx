@@ -188,14 +188,13 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
 
   return (
     <>
-      <Stack pos="sticky" top={0} zIndex={1} spacing={-1}>
-        <Box h="46px" />
+      <Stack pos="sticky" top={isOpen ? ['52px', 0] : ['48px', 0]} zIndex={1} spacing={-1}>
+        {/* <Box h="46px" /> */}
         <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
           <Collapse in={!isOpen} animateOpacity>
             <Stack
               spacing={0}
               bg={bg}
-              borderRadius={size === 'small' ? 0 : 5}
               backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
             >
               <Flex h="135px" px="2px" py="2px" justify="space-between">

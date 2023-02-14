@@ -10,7 +10,15 @@ import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 
-const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; userId?: string }) => {
+const MobileNavBar = ({
+  authorized,
+  profilePicture,
+  userId,
+}: {
+  authorized: boolean;
+  profilePicture?: string;
+  userId?: string;
+}) => {
   const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();

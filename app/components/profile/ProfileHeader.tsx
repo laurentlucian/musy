@@ -172,7 +172,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
       </HStack>
       {Bio}
       {!isOwnProfile && (
-        <Stack w="97%" pos="relative" top="30px">
+        <Stack w="97%" pos="relative" top="30px" pb="20px">
           <Search />
         </Stack>
       )}

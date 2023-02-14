@@ -44,7 +44,7 @@ const Layout = ({
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
         {isSmallScreen ? <MobileHeader authorized={authorized} /> : <Nav authorized={authorized} />}
         <Box mt={isSmallScreen ? '28px' : 0}>{children}</Box>
-        {isSmallScreen && <MobileNavBar profilePicture={profilePicture} userId={userId} />}
+        {isSmallScreen && <MobileNavBar profilePicture={profilePicture} userId={userId} authorized={authorized}/>}
       </Box>
     </Flex>
   );

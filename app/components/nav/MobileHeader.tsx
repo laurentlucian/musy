@@ -1,5 +1,5 @@
 import { useLocation } from '@remix-run/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Users } from 'react-feather';
 
 import {
@@ -12,6 +12,7 @@ import {
   Text,
   useColorModeValue,
   Stack,
+  Box,
 } from '@chakra-ui/react';
 
 import type { User } from '@prisma/client';
@@ -33,9 +34,12 @@ type ParentData = {
 const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const [show, setShow] = useState(0);
   const { pathname } = useLocation();
+  const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
+  const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
+
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
-
+  const customBg = isNya ? '#FE5BAC' : isDanica ? '#563776' : bg;
   const currentUser = useSessionUser();
   const users = useParentData('/friends') as ParentData | undefined;
   const user = useParamUser();
@@ -70,10 +74,23 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   );
 
   const Profile = (
-    <HStack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
-      <Text h="37px" mt="6px" alignSelf="center" opacity={show / 105}>
-        {user?.name}
-      </Text>
+    <HStack opacity={1}>
+      <HStack
+        w="100vw"
+        h="48px"
+        bg={customBg}
+        pt="5px"
+        pl="10px"
+        opacity={show / 90}
+        overflow="clip"
+      >
+        <Stack w="100vw" h="74px">
+          {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '20px'} /> : <Box h="20px" />}
+          <Text h="37px" mt="6px" alignSelf="center" opacity={show / 90} w="100vw">
+            {user?.name}
+          </Text>
+        </Stack>
+      </HStack>
       <UserMenu isSmallScreen={true} pathname={pathname} />
     </HStack>
   );
@@ -92,7 +109,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   useEffect(() => {
     const checkScroll = () => {
-      setShow(window.scrollY);
+      setShow(window.scrollY - 50);
     };
     window.addEventListener('scroll', checkScroll);
 
