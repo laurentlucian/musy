@@ -23,6 +23,8 @@ import {
 
 import { CloseSquare } from 'iconsax-react';
 
+import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
+
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchDefault = searchParams.get('spotify');
@@ -34,6 +36,7 @@ const Search = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const color = useColorModeValue('music.800', 'music.200');
+  const { hideMenu, showMenu } = useMobileKeyboardActions();
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
@@ -59,6 +62,7 @@ const Search = () => {
   };
 
   const handleBlur = () => {
+    showMenu();
     if (search === '') {
       navigate(`/${id}`);
       searchParams.delete('spotify');
@@ -102,6 +106,7 @@ const Search = () => {
               onChange={onChange}
               fontSize="15px"
               onBlur={handleBlur}
+              onFocus={hideMenu}
             />
             {search && (
               <InputRightElement

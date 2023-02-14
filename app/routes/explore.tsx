@@ -17,6 +17,7 @@ import type { Track } from '@prisma/client';
 
 import Waver from '~/components/icons/Waver';
 import Tile from '~/components/Tile';
+import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const Explore = () => {
@@ -29,6 +30,7 @@ const Explore = () => {
   const color = useColorModeValue('music.800', 'music.200');
 
   const { data, load, state } = useFetcher();
+  const { hideMenu, showMenu } = useMobileKeyboardActions();
   const busy = state === 'loading' ?? false;
   const currentUser = useSessionUser();
   const id = currentUser?.userId || 'daniel.valdecantos';
@@ -119,10 +121,11 @@ const Explore = () => {
           placeholder="search"
           autoComplete="off"
           onChange={onChange}
-          onBlur={onBlur}
+          onBlur={showMenu}
           transition="all 0.5s ease-in-out"
           _placeholder={{ color: '#414040' }}
           focusBorderColor={color}
+          onFocus={hideMenu}
         />
         {search && (
           <InputRightElement

@@ -8,14 +8,16 @@ import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 
 const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; userId?: string }) => {
   const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const track = useDrawerTrack();
+  const { show } = useMobileKeyboard();
   const { pathname } = useLocation();
-  const hideButton = track !== null || pathname.includes('/settings') ? true : false;
+  const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
   const profileIcon = <Image src={profilePicture} borderRadius="full" boxSize="30px" />;
@@ -66,10 +68,11 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
           borderRadius="20px"
           color={color}
           aria-label="search song"
-          bottom={hideButton ? '-100px' : 0}
+          bottom={hideButton ? '-100px' : '0%'}
           display="flex"
           justifyContent="space-around"
           transition="bottom 0.25s ease-out"
+          overflow="hidden"
         >
           <Box display="flex" justifyContent="space-around" w="100%" mt="10px" color={color}>
             <IconButton
