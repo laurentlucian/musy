@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
 import {
-  Button,
   CloseButton,
   IconButton,
   Input,

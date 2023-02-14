@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from '@remix-run/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { Search, Users } from 'react-feather';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
@@ -40,6 +40,21 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
     navigate(`/${userId}`);
     setActive(4);
   };
+
+  useEffect(() => {
+    if (pathname.includes('friends')) {
+      setActive(1);
+    } else if (pathname.includes('sessions')) {
+      setActive(2);
+    } else if (pathname.includes('home')) {
+      setActive(0);
+    } else if (pathname.includes('explore')) {
+      setActive(3);
+    } else if (pathname.includes(`${userId}`)) {
+      setActive(4);
+    }
+  }, [pathname, userId]);
+
   return (
     <>
       {isMobile && (
