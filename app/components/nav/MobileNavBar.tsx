@@ -32,6 +32,10 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
     navigate(`/home/sessions`);
     setActive(2);
   };
+  const onClickExplore = () => {
+    navigate(`/explore`);
+    setActive(3);
+  };
   const onClickUser = () => {
     navigate(`/${userId}`);
     setActive(4);
@@ -87,6 +91,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               bg={bg}
               opacity={active === 3 ? 1 : 0.8}
               color={color}
+              onClick={onClickExplore}
             />
             <IconButton
               aria-label="profile"
