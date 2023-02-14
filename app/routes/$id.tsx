@@ -32,7 +32,7 @@ const Profile = () => {
   const isDev = currentUser?.settings?.dev === true;
 
   return (
-    <Stack spacing={5} pb={['75px', 5]} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
+    <Stack spacing={5} pb={['110px', 5]} pt={5} h="max-content" px={isSmallScreen ? '5px' : 0}>
       <ProfileHeader isPrivate={isPrivate} />
       {isPrivate && !isOwnProfile && !isDev ? <PrivateProfile name={user.name} /> : <Outlet />}
     </Stack>
