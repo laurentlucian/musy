@@ -10,9 +10,15 @@ import {
   IconButton,
   OrderedList,
   ListItem,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 
 import { PlayAdd } from 'iconsax-react';
+
+import { useMouseScroll } from '~/hooks/useMouseScroll';
+
+import ScrollButtons from '../tiles/ScrollButtons';
 
 type SessionUser = {
   image: string;
@@ -33,13 +39,15 @@ type SessionProps = {
 
 const SessionModal = ({
   Filter = null,
+  autoScroll,
   children,
+  scrollButtons,
   setShow,
   title,
   user,
   ...ChakraProps
 }: SessionProps) => {
-  //   const { props, scrollRef } = useMouseScroll('natural', autoScroll);
+  const { props, scrollRef } = useMouseScroll('natural', autoScroll);
   const onClick = () => {
     if (setShow) setShow(true);
   };
@@ -94,16 +102,33 @@ const SessionModal = ({
         {Filter}
       </HStack>
       <Divider h="2px" bgColor="black" />
-      <Stack
+      {/* If you want a grid format */}
+      {/* <Grid
         px={3}
         maxH="300px"
         className="scrollbar"
         overflow="scroll"
+        templateColumns="repeat(10, 1fr)"
+        {...ChakraProps}
+      >
+        {children?.map((child, index) => (
+          <GridItem key={index}>{child}</GridItem>
+        ))}
+      </Grid> */}
+
+      {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
+      <HStack
+        spacing={0}
+        maxH="300px"
+        className="scrollbar"
+        ref={scrollRef}
+        overflow="auto"
         align="flex-start"
+        {...props}
         {...ChakraProps}
       >
         {children}
-      </Stack>
+      </HStack>
     </Stack>
   );
 };
