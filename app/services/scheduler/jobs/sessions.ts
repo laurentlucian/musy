@@ -16,7 +16,7 @@ import { Queue } from '~/services/scheduler/queue.server';
 const TIME_BETWEEN_SONGS_TO_QUALIFY_AS_SESSION_MS = 30 * 60 * 1000;
 
 export const sessionsQ = Queue<{}>('sessions', async () => {
-  console.log('sessionsQ -> running...');
+  console.debug('sessionsQ -> running...');
   // Find a song without a session
   const songWithoutSession = await prisma.recentSongs.findFirst({
     orderBy: {
@@ -29,11 +29,11 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
 
   // If there are no songs without a session, we're done
   if (!songWithoutSession) {
-    console.log('sessionsQ -> no songs without a session');
+    console.debug('sessionsQ -> no songs without a session');
     return;
   }
 
-  console.log('sessionsQ -> found song without session', songWithoutSession.id);
+  console.info('sessionsQ -> found song without session', songWithoutSession.id);
   // Find sessions that have songs that were played within 30 minutes of the song we found above
   const session = await prisma.sessions.findFirst({
     orderBy: {
@@ -57,7 +57,7 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
   });
 
   if (session) {
-    console.log('sessionsQ -> found session', session.id);
+    console.debug('sessionsQ -> found session', session.id);
     // If there is a session, add the song to the session
     await prisma.recentSongs.update({
       data: {
@@ -71,7 +71,7 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
     return;
   }
 
-  console.log('sessionsQ -> no session found, creating new session');
+  console.debug('sessionsQ -> no session found, creating new session');
   // If there is no session, create a new session
   await prisma.sessions.create({
     data: {
@@ -92,18 +92,18 @@ declare global {
 }
 
 export async function runSessionsQ() {
-  console.log('runSessionsQ -> starting...');
+  console.debug('runSessionsQ -> starting...');
   // To ensure this function only runs once per environment,
   // we use a global variable to keep track if it has run
   if (global.__didRegisterSessionsQ) {
-    console.log('runSessionsQ -> already ran');
+    console.debug('runSessionsQ -> already ran');
     // and stop if it did.
     return;
   }
   // If it hasn't run, we set the global variable to true
   global.__didRegisterSessionsQ = true;
 
-  console.log('runSessionsQ -> registering job');
+  console.info('runSessionsQ -> registering job');
   await sessionsQ.obliterate({ force: true });
   await sessionsQ.add(
     'sessions',
@@ -116,8 +116,6 @@ export async function runSessionsQ() {
     },
   );
 
-  console.log(
-    'sessionsQ -> non repeateable jobs created (only at startup):',
-    await sessionsQ.getJobCounts(),
-  );
+  console.info("runSessionsQ -> job registered, here's the job counts:");
+  console.table(await sessionsQ.getJobCounts());
 }
