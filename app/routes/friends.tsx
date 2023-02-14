@@ -1,9 +1,8 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
-import { Users } from 'react-feather';
 
-import { Divider, HStack, Icon, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -17,9 +16,6 @@ const Friends = () => {
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const friends = users.filter((user) => user.userId !== currentUserId);
-
-  const bg = useColorModeValue('#EEE6E2', '#050404');
-  const color = useColorModeValue('#111111', '#DFD7D1');
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
