@@ -10,6 +10,8 @@ import { createEmotionCache } from '~/lib/emotion/createEmotionCache';
 import { runSessionsQ } from '~/services/scheduler/jobs/sessions';
 import { addUsersToQueue } from '~/services/scheduler/jobs/user';
 
+require('better-logging')(console);
+
 void runSessionsQ();
 void addUsersToQueue();
 // clearActivityQOnDev();

@@ -44,6 +44,7 @@
     "@remix-run/serve": "1.11.1",
     "@remix-run/server-runtime": "1.11.1",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
+    "better-logging": "^5.0.0",
     "bullmq": "^1.86.4",
     "framer-motion": "^8.2.4",
     "iconsax-react": "^0.0.8",
