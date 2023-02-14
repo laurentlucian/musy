@@ -65,12 +65,12 @@ const MobileNavBar = ({
   };
 
   useEffect(() => {
-    if (pathname.includes('friends')) {
+    if (pathname.includes('home')) {
+      setActive(0);
+    } else if (pathname.includes('friends')) {
       setActive(1);
     } else if (pathname.includes('sessions')) {
       setActive(2);
-    } else if (pathname.includes('home')) {
-      setActive(0);
     } else if (pathname.includes('explore')) {
       setActive(3);
     } else if (pathname.includes(`${userId}`)) {
