@@ -96,9 +96,19 @@ const Explore = () => {
   }, [data]);
 
   return (
-    <Stack bg={bg} h="100vh" alignItems="center">
+    <Stack bg={bg} alignItems="center">
       <HStack justifyContent="space-between">
-        <InputGroup w="90vw" mr="27px" mt="-5px" pos="fixed" top={2} left={0} bg={bg}>
+        <InputGroup
+          w="90vw"
+          mr="27px"
+          mt="-5px"
+          pos="fixed"
+          top={2}
+          left={0}
+          bg={bg}
+          zIndex={1}
+          overflowY="hidden"
+        >
           <InputLeftElement
             pointerEvents="all"
             children={
@@ -145,7 +155,7 @@ const Explore = () => {
         </InputGroup>
         <UserMenu isSmallScreen={true} pathname={'/explore'} />
       </HStack>
-      <Stack pt="50px" pb="120px" overflowY="scroll" w="100%">
+      <Stack pt="50px" overflowY="scroll" w="100%" h="84vh">
         {tracks?.map((track) => (
           <Tile
             key={track.id}
@@ -167,18 +177,5 @@ const Explore = () => {
     </Stack>
   );
 };
-
-// export const loader = async ({ request }: LoaderArgs) => {
-//   const id = 'daniel.valdecantos';
-
-//   const { spotify } = await spotifyApi(id);
-//   invariant(spotify, 'No access to spotify API');
-//   const url = new URL(request.url);
-//   const searchURL = url.searchParams.get('spotify');
-//   if (!searchURL) return typedjson({ results: null });
-
-//   const { body: results } = await spotify.searchTracks(searchURL);
-//   return typedjson({ results });
-// };
 
 export default Explore;
