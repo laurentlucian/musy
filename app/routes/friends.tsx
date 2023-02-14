@@ -27,7 +27,7 @@ const Friends = () => {
   }, [shouldRevalidate, revalidate]);
 
   return (
-    <Stack pb="100px" spacing={3} w="100%" px={['4px', 0]}>
+    <Stack pt="25px" pb="100px" spacing={3} w="100%" px={['4px', 0]}>
       {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}

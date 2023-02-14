@@ -35,7 +35,7 @@ interface UserActionsConfig {
   pathname: string;
 }
 
-const UserMenu = ({ isSmallScreen, pathname, ...props }: UserActionsConfig) => {
+const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
   const currentUser = useSessionUser();
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();

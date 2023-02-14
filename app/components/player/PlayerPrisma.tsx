@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 
 import type { Party, Playback, Track } from '@prisma/client';
-import { ArrowDown2, ArrowLeft2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
+import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
@@ -47,7 +47,6 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const [size, setSize] = useState('large');
-  const [show, setShow] = useState(false);
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
@@ -150,7 +149,6 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
         : window.scrollY <= 168
         ? setSize('medium')
         : setSize('small');
-      window.scrollY <= 310 ? setShow(false) : setShow(true);
     };
     window.addEventListener('scroll', checkStick);
 
@@ -188,28 +186,10 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
   if (!playback) return null;
   const { track } = playback;
 
-  const User = (
-    <HStack
-      bg={bg}
-      backdropFilter="blur(27px)"
-      opacity={show ? 1 : 0}
-      transition="all 0.3s ease-in-out"
-    >
-      <IconButton
-        aria-label="Back"
-        icon={<ArrowLeft2 />}
-        variant="ghost"
-        onClick={() => window.history.back()}
-        color={color}
-      />
-      <Text>{name}</Text>
-    </HStack>
-  );
-
   return (
     <>
       <Stack pos="sticky" top={0} zIndex={1} spacing={-1}>
-        {User}
+        <Box h="46px" />
         <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
           <Collapse in={!isOpen} animateOpacity>
             <Stack
@@ -359,10 +339,10 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
                       src={track.image}
                       mt={
                         size === 'large'
-                          ? ['28px', -47, -47, -47, -200]
+                          ? [0, -47, -47, -47, -200]
                           : size === 'medium'
-                          ? ['28px', -47, -47, -47, '-86px']
-                          : ['28px', 0]
+                          ? [0, -47, -47, -47, '-86px']
+                          : 0
                       }
                       boxSize={
                         size === 'large'

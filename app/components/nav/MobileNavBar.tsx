@@ -81,7 +81,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               variant="mobileNav"
               bg={bg}
               color={color}
-              opacity={active === 0 ? 1 : 0.8}
+              opacity={active === 0 ? 1 : 0.4}
               onClick={onClickHome}
             />
             <IconButton
@@ -90,7 +90,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               variant="mobileNav"
               bg={bg}
               color={color}
-              opacity={active === 1 ? 1 : 0.8}
+              opacity={active === 1 ? 1 : 0.4}
               onClick={onClickFriends}
             />
             <IconButton
@@ -99,7 +99,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               variant="mobileNav"
               bg={bg}
               color={color}
-              opacity={active === 2 ? 1 : 0.8}
+              opacity={active === 2 ? 1 : 0.4}
               onClick={onClickSessions}
             />
             <IconButton
@@ -107,7 +107,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
               bg={bg}
-              opacity={active === 3 ? 1 : 0.8}
+              opacity={active === 3 ? 1 : 0.4}
               color={color}
               onClick={onClickExplore}
             />
@@ -115,7 +115,7 @@ const MobileNavBar = ({ profilePicture, userId }: { profilePicture?: string; use
               aria-label="profile"
               icon={profileIcon}
               variant="mobileNav"
-              opacity={active === 4 ? 1 : 0.8}
+              opacity={active === 4 ? 1 : 0.4}
               onClick={onClickUser}
             />
           </Box>

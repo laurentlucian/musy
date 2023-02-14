@@ -98,7 +98,7 @@ const Explore = () => {
   return (
     <Stack bg={bg} h="100vh" alignItems="center">
       <HStack justifyContent="space-between">
-        <InputGroup w="90vw" mr="27px" mt="-5px">
+        <InputGroup w="90vw" mr="27px" mt="-5px" pos="fixed" top={2} left={0} bg={bg}>
           <InputLeftElement
             pointerEvents="all"
             children={
@@ -145,7 +145,7 @@ const Explore = () => {
         </InputGroup>
         <UserMenu isSmallScreen={true} pathname={'/explore'} />
       </HStack>
-      <Stack>
+      <Stack pt="50px" pb="120px" overflowY="scroll" w="100%">
         {tracks?.map((track) => (
           <Tile
             key={track.id}
