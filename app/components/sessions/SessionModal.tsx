@@ -18,6 +18,8 @@ type SessionProps = {
 
 const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps) => {
   const { scrollRef } = useMouseScroll('natural', false);
+  const [first, second = ''] = user.name.split(/[\s.]+/);
+  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
@@ -26,7 +28,7 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
           <Avatar size="md" src={user.image} />
           <VStack align="flex-start" spacing={1}>
             <Heading size="md" fontWeight={400}>
-              {session.user.name}
+              {name}
             </Heading>
             <Text fontSize={'sm'}>
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
