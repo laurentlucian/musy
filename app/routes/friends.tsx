@@ -40,16 +40,6 @@ const Friends = () => {
           )}
         </Stack>
       )}
-      {/* <HStack>
-        <Image boxSize="15px" src="/users.svg" />
-        <Text fontSize="sm" fontWeight="400">
-          friends
-        </Text>
-        <Text fontSize="xs" fontWeight="300">
-          ~ {friends.length}
-        </Text>
-      </HStack>
-      <Divider bgColor="spotify.green" /> */}
       {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}
