@@ -37,10 +37,10 @@ import type { action as actionB } from '~/routes/$id/recommend';
 
 interface SendModalConfig {
   currentUserId: string | undefined;
-  id: string;
   isOpen: boolean;
   name: string;
   onClose: () => void;
+  profileId: string;
   sendList: boolean | undefined;
   setSendList: Dispatch<SetStateAction<boolean | undefined>>;
   setTitle: Dispatch<SetStateAction<string>>;
@@ -49,10 +49,10 @@ interface SendModalConfig {
 
 const SendModal = ({
   currentUserId,
-  id,
   isOpen,
   name,
   onClose,
+  profileId,
   sendList,
   setSendList,
   setTitle,
@@ -118,12 +118,12 @@ const SendModal = ({
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
       if (search.trim().length > 0) {
-        load(`/${id}/search?spotify=${search}`);
+        load(`/${profileId}/search?spotify=${search}`);
       }
     }, 1000);
 
     return () => clearTimeout(delaySubmit);
-  }, [search, load, id]);
+  }, [search, load, profileId]);
 
   useEffect(() => {
     if (data) {
@@ -218,9 +218,9 @@ const SendModal = ({
           <Tiles>
             {showTracks ? (
               tracks.map((track) => (
-                <Box minH="325px" key={track.trackId}>
+                <Box minH="325px" key={track.id}>
                   <Tile
-                    trackId={track.trackId}
+                    id={track.id}
                     uri={track.uri}
                     image={track.image}
                     albumUri={track.albumUri}
@@ -231,11 +231,12 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
+                    duration={track.duration}
                     fetcher={fetcherQueue}
                     fetcherRec={fetcherRec}
                     isQueuing={sendList}
                     isRecommending={!sendList}
-                    id={id}
+                    profileId={profileId}
                     currentUserId={currentUserId}
                   />
                 </Box>
@@ -289,8 +290,8 @@ const SendModal = ({
               {showTracks &&
                 tracks.map((track) => (
                   <Tile
-                    key={track.trackId}
-                    trackId={track.trackId}
+                    key={track.id}
+                    id={track.id}
                     uri={track.uri}
                     image={track.image}
                     albumUri={track.albumUri}
@@ -301,12 +302,13 @@ const SendModal = ({
                     explicit={track.explicit}
                     preview_url={track.preview_url}
                     link={track.link}
+                    duration={track.duration}
                     fetcher={fetcherQueue}
                     fetcherRec={fetcherRec}
                     inDrawer
                     isQueuing={sendList}
                     isRecommending={!sendList}
-                    id={id}
+                    profileId={profileId}
                     currentUserId={currentUserId}
                   />
                 ))}

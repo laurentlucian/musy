@@ -2,7 +2,7 @@ import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -40,7 +40,7 @@ const Friends = () => {
           )}
         </Stack>
       )}
-      <HStack>
+      {/* <HStack>
         <Image boxSize="15px" src="/users.svg" />
         <Text fontSize="sm" fontWeight="400">
           friends
@@ -49,7 +49,7 @@ const Friends = () => {
           ~ {friends.length}
         </Text>
       </HStack>
-      <Divider bgColor="spotify.green" />
+      <Divider bgColor="spotify.green" /> */}
       {friends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}

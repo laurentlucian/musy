@@ -3,6 +3,8 @@ import { Text } from '@chakra-ui/react';
 import { VStack } from '@chakra-ui/react';
 import { Avatar, Stack, HStack, Heading } from '@chakra-ui/react';
 
+import type { Profile } from '@prisma/client';
+
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { timeSince } from '~/lib/utils';
 import type { SessionsWithData } from '~/routes/home/sessions';
@@ -11,11 +13,11 @@ import ScrollButtons from '../tiles/ScrollButtons';
 
 type SessionProps = {
   session: SessionsWithData[0];
+  user: Profile;
 } & StackProps;
 
-const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
+const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps) => {
   const { scrollRef } = useMouseScroll('natural', false);
-  const user = session.user;
 
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">

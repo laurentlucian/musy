@@ -24,7 +24,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             <Tile
               key={played_at}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}
@@ -34,6 +34,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}
@@ -44,7 +45,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             <Card
               key={played_at}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}
@@ -54,6 +55,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}

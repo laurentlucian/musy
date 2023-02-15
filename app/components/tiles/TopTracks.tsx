@@ -66,7 +66,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             <Tile
               key={track.id}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}
@@ -76,6 +76,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}
@@ -86,7 +87,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             <Card
               key={track.id}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
               albumName={track.album.name}
@@ -96,6 +97,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}

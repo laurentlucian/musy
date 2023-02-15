@@ -71,7 +71,7 @@ const Recommended = (props: {
                       <PopoverTrigger>
                         <Tile
                           uri={recommended.track.uri}
-                          trackId={recommended.trackId}
+                          id={recommended.trackId}
                           image={recommended.track.image}
                           albumUri={recommended.track.albumUri}
                           albumName={recommended.track.albumName}
@@ -81,6 +81,7 @@ const Recommended = (props: {
                           explicit={recommended.track.explicit}
                           preview_url={recommended.track.preview_url}
                           link={recommended.track.link}
+                          duration={recommended.track.duration}
                         />
                       </PopoverTrigger>
                       <PopoverContent bg={bg} color={color}>

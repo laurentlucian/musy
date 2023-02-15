@@ -60,7 +60,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                 isLast && setRef(node);
               }}
               key={track.id}
-              trackId={track.id}
+              id={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
@@ -71,6 +71,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}
@@ -84,7 +85,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                 isLast && setRef(node);
               }}
               key={track.id}
-              trackId={track.id}
+              id={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
               albumUri={track.album.uri}
@@ -95,6 +96,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
+              duration={track.duration_ms}
             />
           );
         })}
