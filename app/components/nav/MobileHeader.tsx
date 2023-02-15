@@ -45,15 +45,18 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
   const isDanica = pathname.includes('/danicadboo');
 
+  const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
+  const userIsDanica = currentUser?.userId === 'danicadboo';
+
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const customBg = isNya ? '#FE5BAC' : isDanica ? '#563776' : bg;
-  const customColor = isNya ? '#FE5BAC' : isDanica ? '#563776' : color;
+  const customColor = userIsNya ? '#FE5BAC' : userIsDanica ? '#563776' : color;
 
   const Home = (
     <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center">
       <HStack>
-        <Image src="/musylogo1.svg" boxSize="35px" mb='-8px' />
+        <Image src="/musylogo1.svg" boxSize="35px" mb="-8px" />
         {!authorized ? (
           <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
             <IconButton
@@ -73,7 +76,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           <UserMenu isSmallScreen={true} pathname={pathname} />
         )}
       </HStack>
-      <Divider bgColor={color} />
+      <Divider bgColor={customColor} />
     </Stack>
   );
 
@@ -103,7 +106,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={color} />
+      <Divider bgColor={customColor} />
     </Stack>
   );
 
