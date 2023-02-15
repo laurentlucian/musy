@@ -1,6 +1,4 @@
 import { useLocation, useNavigate, useSubmit } from '@remix-run/react';
-import { useEffect, useState } from 'react';
-// import { Search, Users } from 'react-feather';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 
@@ -12,17 +10,30 @@ import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const MobileNavBar = () => {
-  const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const submit = useSubmit();
   const track = useDrawerTrack();
-  const { show } = useMobileKeyboard();
   const { pathname } = useLocation();
+  const currentUser = useSessionUser();
+  const { show } = useMobileKeyboard();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
+
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
-  const currentUser = useSessionUser();
+
+  const active = pathname.includes('home')
+    ? 0
+    : pathname.includes('friend')
+    ? 1
+    : pathname.includes('sessions')
+    ? 2
+    : pathname.includes('explore')
+    ? 3
+    : pathname.includes(`${currentUser?.userId}`)
+    ? 4
+    : 5;
+
   const profileIcon = (
     <Image
       src={currentUser ? currentUser?.image : '/favicon-32x32.png'}
@@ -33,19 +44,15 @@ const MobileNavBar = () => {
 
   const onClickHome = () => {
     navigate(`/home`);
-    setActive(0);
   };
   const onClickFriends = () => {
     navigate(`/friends`);
-    setActive(1);
   };
   const onClickSessions = () => {
     navigate(`/sessions`);
-    setActive(2);
   };
   const onClickExplore = () => {
     navigate(`/explore`);
-    setActive(3);
   };
   const onClickUser = () => {
     currentUser
@@ -55,16 +62,7 @@ const MobileNavBar = () => {
           method: 'post',
           replace: true,
         });
-    setActive(4);
   };
-
-  useEffect(() => {
-    const pathnames = ['home', 'friends', 'sessions', 'explore', `${currentUser?.userId}`];
-    const index = pathnames.findIndex((pathname) => pathname === pathname.split('/')[1]);
-    if (index !== -1) {
-      setActive(index);
-    }
-  }, [pathname, currentUser?.userId]);
 
   return (
     <>
