@@ -135,7 +135,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const Search = <UserMenu isSmallScreen={true} pathname={pathname} />;
 
   const Settings = (
-    <HStack w="100%" pb="20px" bg={bg}>
+    <HStack w="100%" pb="20px" bg={bg} justifyContent="center">
       <Heading fontSize="13px" mt="15px" ml="20px">
         Settings
       </Heading>
