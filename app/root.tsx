@@ -21,7 +21,6 @@ import {
 import { withEmotionCache } from '@emotion/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import musylogo from '~/assets/musylogo.svg';
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
@@ -122,12 +121,12 @@ export let links: LinksFunction = () => {
     },
     {
       as: 'icon',
-      href: musylogo,
+      href: 'apple-touch-icon',
       rel: 'icon',
     },
     {
       as: 'icon',
-      href: musylogo,
+      href: 'apple-touch-icon',
       rel: 'mask-icon',
     },
     {
@@ -136,7 +135,7 @@ export let links: LinksFunction = () => {
       rel: 'manifest',
     },
     {
-      href: musylogo,
+      href: 'apple-touch-icon',
       rel: 'apple-touch-icon',
     },
   ];
