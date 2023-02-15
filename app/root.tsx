@@ -131,13 +131,13 @@ export let links: LinksFunction = () => {
       rel: 'mask-icon',
     },
     {
-      href: musylogo,
-      rel: 'apple-touch-icon',
-    },
-    {
       as: 'manifest',
       href: '/manifest.json',
       rel: 'manifest',
+    },
+    {
+      href: musylogo,
+      rel: 'apple-touch-icon',
     },
   ];
 };
