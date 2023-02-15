@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 
 import type { User } from '@prisma/client';
-import { LoginCurve } from 'iconsax-react';
+import { ArrowLeft2, LoginCurve } from 'iconsax-react';
 
 import useParamUser from '~/hooks/useParamUser';
 import useParentData from '~/hooks/useParentData';
@@ -42,6 +42,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
 
+  const isCurrentUserProfile = pathname.includes(`${currentUser?.userId}`);
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
   const isDanica = pathname.includes('/danicadboo');
 
@@ -69,7 +70,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
               color={color}
               pos="fixed"
               top={2}
-              right="0"
+              right={0}
             />
           </Form>
         ) : (
@@ -106,30 +107,52 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={customColor} p={0} />
+      <Divider bgColor={customColor} />
     </Stack>
   );
 
   const Profile = (
-    <HStack opacity={1}>
-      <HStack
-        w="100vw"
-        h="48px"
-        bg={customBg}
-        pt="5px"
-        pl="10px"
-        opacity={show / 90}
-        overflow="clip"
-      >
-        <Stack w="100vw" h="74px">
-          {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '20px'} /> : <Box h="20px" />}
-          <Text h="37px" mt="6px" alignSelf="center" opacity={show / 90} w="100vw">
-            {user?.name}
-          </Text>
-        </Stack>
+    <Stack>
+      <HStack opacity={1} mb="-8px">
+        <HStack
+          w="100vw"
+          h="41px"
+          bg={customBg}
+          opacity={show / 90}
+          overflow="clip"
+          textAlign={!isCurrentUserProfile ? 'left' : 'center'}
+        >
+          <Stack w="100vw" h="74px">
+            {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '16px'} /> : <Box h="16px" />}
+            <Text
+              h="37px"
+              pl={!isCurrentUserProfile ? '28px' : 0}
+              alignSelf="center"
+              opacity={show / 90}
+              w="100vw"
+            >
+              {user?.name}
+            </Text>
+          </Stack>
+        </HStack>
+        {!isCurrentUserProfile && (
+          <IconButton
+            aria-label="back"
+            icon={<ArrowLeft2 />}
+            variant="ghost"
+            onClick={() => {
+              navigate(-1);
+            }}
+            size="xs"
+            pos="fixed"
+            top={2}
+            left="-5px"
+          />
+        )}
+        <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <UserMenu isSmallScreen={true} pathname={pathname} />
-    </HStack>
+      <Divider bgColor={customColor} opacity={show / 90} />
+    </Stack>
   );
 
   const Search = <UserMenu isSmallScreen={true} pathname={pathname} />;
@@ -146,12 +169,12 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           }}
           pos="fixed"
           top={2}
-          right="0"
+          right={0}
         >
           Done
         </Button>
       </HStack>
-      <Divider bg={customColor} p={0} />
+      <Divider bg={customColor} />
     </Stack>
   );
 

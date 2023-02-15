@@ -1,7 +1,6 @@
-import type { StackProps } from '@chakra-ui/react';
-import { Text } from '@chakra-ui/react';
-import { VStack } from '@chakra-ui/react';
-import { Avatar, Stack, HStack, Heading } from '@chakra-ui/react';
+import { Link } from '@remix-run/react';
+
+import { Text, VStack, Avatar, Stack, HStack, Heading, type StackProps } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
 
@@ -25,11 +24,15 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
         <HStack>
-          <Avatar size="md" src={user.image} />
+          <Link to={`/${user.userId}`}>
+            <Avatar size="md" src={user.image} />
+          </Link>
           <VStack align="flex-start" spacing={1}>
-            <Heading size="md" fontWeight={400}>
-              {name}
-            </Heading>
+            <Link to={`/${user.userId}`}>
+              <Heading size="md" fontWeight={400}>
+                {name}
+              </Heading>
+            </Link>
             <Text fontSize={'sm'}>
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
             </Text>

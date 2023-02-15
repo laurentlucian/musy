@@ -36,7 +36,7 @@ type PlayerProps = {
   };
 };
 
-const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
+const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
@@ -142,8 +142,6 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
 
   useEffect(() => {
     const checkStick = () => {
-      // console.log(window.scrollY);
-      // console.log(show);
       window.scrollY <= 100
         ? setSize('large')
         : window.scrollY <= 168
@@ -188,8 +186,7 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
 
   return (
     <>
-      <Stack pos="sticky" top={isOpen ? ['52px', 0] : ['48px', 0]} zIndex={1} spacing={-1}>
-        {/* <Box h="46px" /> */}
+      <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={-1}>
         <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
           <Collapse in={!isOpen} animateOpacity>
             <Stack
@@ -332,7 +329,6 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
                                 </Tooltip>
                               </Link>
                             ))} */}
-                  {/* <Link href={albumLink ?? ''} target="_blank"> */}
                   <Tooltip label={track.albumName} placement="bottom-end">
                     <Image
                       src={track.image}
@@ -374,7 +370,6 @@ const PlayerPrisma = ({ id, name, party, playback }: PlayerProps) => {
                       cursor="pointer"
                     />
                   </Tooltip>
-                  {/* </Link> */}
                 </HStack>
               </Flex>
               {/* <PlayerBar playback={playback} /> */}
