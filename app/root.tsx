@@ -28,6 +28,7 @@ import { authenticator } from '~/services/auth.server';
 import ActionDrawer from './components/menu/ActionDrawer';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
+import { iosSplashScreens } from './lib/utils';
 import { prisma } from './services/db.server';
 
 const App = () => {
@@ -81,7 +82,7 @@ export const meta: MetaFunction = () => {
     description,
     keywords: 'music, discover, spotify, playlist, share, friends',
     'og:description': description,
-    'og:image': 'meta-image.png',
+    'og:image': '/meta-image.png',
     'og:image:alt': 'musy',
     'og:image:height': '630',
     'og:image:type': 'image/png',
@@ -90,7 +91,7 @@ export const meta: MetaFunction = () => {
 
     'twitter:card': 'summary_large_image',
     'twitter:description': description,
-    'twitter:image': 'meta-image.png',
+    'twitter:image': '/meta-image.png',
     'twitter:title': 'musy',
     viewport: 'width=device-width,initial-scale=1,user-scalable=no',
   };
@@ -128,6 +129,7 @@ export let links: LinksFunction = () => {
       href: '/apple-touch-icon.png',
       rel: 'apple-touch-icon',
     },
+    ...iosSplashScreens,
   ];
 };
 
