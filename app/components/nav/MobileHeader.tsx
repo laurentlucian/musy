@@ -1,6 +1,5 @@
 import { useLocation, useTransition, Form, useNavigate } from '@remix-run/react';
 import { useEffect, useState } from 'react';
-import { Users } from 'react-feather';
 
 import {
   Divider,
@@ -13,7 +12,6 @@ import {
   Stack,
   Box,
   Button,
-  Icon,
 } from '@chakra-ui/react';
 
 import type { User } from '@prisma/client';
@@ -75,9 +73,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   const Friends = (
     <Stack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
-      <HStack w="100%" justifyContent="space-between">
+      <HStack w="100%" justifyContent="center">
         <HStack>
-          <Icon as={Users} color={color} boxSize="25px" alignSelf="start" />
           <Heading fontSize="sm" pt="9px" pl="6px">
             friends
           </Heading>
