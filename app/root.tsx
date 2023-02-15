@@ -32,7 +32,7 @@ import loading from './lib/styles/loading.css';
 import { prisma } from './services/db.server';
 
 const App = () => {
-  const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
+  const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
   return (
     <Document>
@@ -45,11 +45,7 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          <Layout
-            authorized={!!currentUser}
-            profilePicture={currentUser?.image}
-            userId={currentUser?.userId}
-          >
+          <Layout>
             <ActionDrawer />
             <Outlet />
           </Layout>
@@ -135,7 +131,6 @@ export let links: LinksFunction = () => {
       rel: 'mask-icon',
     },
     {
-      as: 'icon',
       href: musylogo,
       rel: 'apple-touch-icon',
     },
@@ -204,7 +199,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout authorized={false}>
+        <Layout>
           <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
           <Text fontSize="sm">Trace(for debug): {error.message}</Text>
         </Layout>
@@ -232,7 +227,7 @@ export const CatchBoundary = () => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout authorized={false}>
+        <Layout>
           <Heading fontSize={['sm', 'md']}>
             {caught.status}: {caught.statusText}
           </Heading>

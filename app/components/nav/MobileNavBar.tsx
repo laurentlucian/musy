@@ -9,16 +9,9 @@ import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
+import useSessionUser from '~/hooks/useSessionUser';
 
-const MobileNavBar = ({
-  authorized,
-  profilePicture,
-  userId,
-}: {
-  authorized: boolean;
-  profilePicture?: string;
-  userId?: string;
-}) => {
+const MobileNavBar = () => {
   const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -29,9 +22,10 @@ const MobileNavBar = ({
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
+  const currentUser = useSessionUser();
   const profileIcon = (
     <Image
-      src={authorized ? profilePicture : '/favicon-32x32.png'}
+      src={currentUser ? currentUser?.image : '/favicon-32x32.png'}
       borderRadius="full"
       boxSize="30px"
     />
@@ -54,8 +48,8 @@ const MobileNavBar = ({
     setActive(3);
   };
   const onClickUser = () => {
-    authorized
-      ? navigate(`/${userId}`)
+    currentUser
+      ? navigate(`/${currentUser.id}`)
       : submit(null, {
           action: '/auth/spotify?returnTo=' + pathname,
           method: 'post',
@@ -73,10 +67,10 @@ const MobileNavBar = ({
       setActive(2);
     } else if (pathname.includes('explore')) {
       setActive(3);
-    } else if (pathname.includes(`${userId}`)) {
+    } else if (pathname.includes(`${currentUser?.id}`)) {
       setActive(4);
     }
-  }, [pathname, userId]);
+  }, [pathname, currentUser?.id]);
 
   return (
     <>
