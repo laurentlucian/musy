@@ -49,7 +49,7 @@ const MobileNavBar = () => {
   };
   const onClickUser = () => {
     currentUser
-      ? navigate(`/${currentUser.id}`)
+      ? navigate(`/${currentUser.userId}`)
       : submit(null, {
           action: '/auth/spotify?returnTo=' + pathname,
           method: 'post',
