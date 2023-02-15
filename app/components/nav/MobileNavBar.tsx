@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSubmit } from '@remix-run/react';
+import { Link, useLocation, useNavigate, useSubmit } from '@remix-run/react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 
@@ -42,18 +42,6 @@ const MobileNavBar = () => {
     />
   );
 
-  const onClickHome = () => {
-    navigate(`/home`);
-  };
-  const onClickFriends = () => {
-    navigate(`/friends`);
-  };
-  const onClickSessions = () => {
-    navigate(`/sessions`);
-  };
-  const onClickExplore = () => {
-    navigate(`/explore`);
-  };
   const onClickUser = () => {
     currentUser
       ? navigate(`/${currentUser.userId}`)
@@ -83,42 +71,46 @@ const MobileNavBar = () => {
           overflow="hidden"
         >
           <Box display="flex" justifyContent="space-around" w="100%" mt="10px" color={color}>
-            <IconButton
-              aria-label="home"
-              icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              bg={bg}
-              color={color}
-              opacity={active === 0 ? 1 : 0.4}
-              onClick={onClickHome}
-            />
-            <IconButton
-              aria-label="friends"
-              icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              bg={bg}
-              color={color}
-              opacity={active === 1 ? 1 : 0.4}
-              onClick={onClickFriends}
-            />
-            <IconButton
-              aria-label="sessions"
-              icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              bg={bg}
-              color={color}
-              opacity={active === 2 ? 1 : 0.4}
-              onClick={onClickSessions}
-            />
-            <IconButton
-              aria-label="search"
-              icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              bg={bg}
-              opacity={active === 3 ? 1 : 0.4}
-              color={color}
-              onClick={onClickExplore}
-            />
+            <Link to="/home" prefetch="render">
+              <IconButton
+                aria-label="home"
+                icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
+                variant="mobileNav"
+                bg={bg}
+                color={color}
+                opacity={active === 0 ? 1 : 0.4}
+              />
+            </Link>
+            <Link to="/friends" prefetch="render">
+              <IconButton
+                aria-label="friends"
+                icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
+                variant="mobileNav"
+                bg={bg}
+                color={color}
+                opacity={active === 1 ? 1 : 0.4}
+              />
+            </Link>
+            <Link to="/sessions" prefetch="render">
+              <IconButton
+                aria-label="sessions"
+                icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
+                variant="mobileNav"
+                bg={bg}
+                color={color}
+                opacity={active === 2 ? 1 : 0.4}
+              />
+            </Link>
+            <Link to="/explore" prefetch="render">
+              <IconButton
+                aria-label="search"
+                icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
+                variant="mobileNav"
+                bg={bg}
+                opacity={active === 3 ? 1 : 0.4}
+                color={color}
+              />
+            </Link>
             <IconButton
               aria-label="profile"
               icon={profileIcon}
