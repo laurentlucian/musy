@@ -14,8 +14,6 @@ const Friends = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
-  console.log('SESSIIONS: ', sessions);
-
   return (
     <Stack
       pb="50px"
