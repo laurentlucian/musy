@@ -12,15 +12,16 @@ import {
   Stack,
   Box,
   Button,
+  IconButton,
 } from '@chakra-ui/react';
 
 import type { User } from '@prisma/client';
+import { LoginCurve } from 'iconsax-react';
 
 import useParamUser from '~/hooks/useParamUser';
 import useParentData from '~/hooks/useParentData';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 import UserMenu from './UserMenu';
 
@@ -35,48 +36,53 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const { pathname } = useLocation();
   const transition = useTransition();
   const navigate = useNavigate();
+
+  const currentUser = useSessionUser();
+  const users = useParentData('/friends') as ParentData | undefined;
+  const user = useParamUser();
+  const friendCount = (users?.users?.length ?? 1) - 1;
+
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
   const isDanica = pathname.includes('/danicadboo');
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const customBg = isNya ? '#FE5BAC' : isDanica ? '#563776' : bg;
-  const currentUser = useSessionUser();
-  const users = useParentData('/friends') as ParentData | undefined;
-  const user = useParamUser();
-  const friendCount = (users?.users?.length ?? 1) - 1;
+  const customColor = isNya ? '#FE5BAC' : isDanica ? '#563776' : color;
 
   const Home = (
-    <HStack w="100%" bg={bg} h="100%" pl="5px" justifyContent="space-between">
+    <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center">
       <HStack>
-        <Image src="/musylogo1.svg" boxSize="35px" mb="10px" />
-        <Heading size="sm">musy</Heading>
+        <Image src="/musylogo1.svg" boxSize="35px" mb='-8px' />
+        {!authorized ? (
+          <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
+            <IconButton
+              aria-label="log in"
+              icon={<LoginCurve />}
+              type="submit"
+              variant="ghost"
+              spinner={<Waver />}
+              isLoading={transition.submission?.action.includes('auth')}
+              color={color}
+              pos="fixed"
+              top={2}
+              right="0"
+            />
+          </Form>
+        ) : (
+          <UserMenu isSmallScreen={true} pathname={pathname} />
+        )}
       </HStack>
-      {!authorized ? (
-        <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
-          <Button
-            type="submit"
-            variant="login"
-            spinner={<Waver />}
-            isLoading={transition.submission?.action.includes('auth')}
-            bg={bg}
-            color={color}
-          >
-            Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
-          </Button>
-        </Form>
-      ) : (
-        <UserMenu isSmallScreen={true} pathname={pathname} />
-      )}
-    </HStack>
+      <Divider bgColor={color} />
+    </Stack>
   );
 
   const Friends = (
-    <Stack w="100%" bg={bg} h="100%" pt="5px" pl="10px">
+    <Stack w="100%" h="100%" bg={bg} pt="5px">
       <HStack w="100%" justifyContent="center">
         <HStack>
-          <Heading fontSize="sm" pt="9px" pl="6px">
-            friends
+          <Heading fontSize="sm" pt="9px" pl="25px">
+            Friends
           </Heading>
           <Text fontSize="xs" fontWeight="300" pt="10px">
             ~ {friendCount}
@@ -84,7 +90,20 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor="spotify.green" />
+      <Divider bgColor={customColor} />
+    </Stack>
+  );
+  const Sessions = (
+    <Stack w="100%" h="100%" bg={bg} pt="5px">
+      <HStack w="100%" justifyContent="center">
+        <HStack>
+          <Heading fontSize="sm" pt="9px">
+            Sessions
+          </Heading>
+        </HStack>
+        <UserMenu isSmallScreen={true} pathname={pathname} />
+      </HStack>
+      <Divider bgColor={color} />
     </Stack>
   );
 
@@ -134,6 +153,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     ? Home
     : pathname.includes('friends')
     ? Friends
+    : pathname.includes('sessions')
+    ? Sessions
     : pathname.includes('explore')
     ? Search
     : pathname.includes('sessions')
