@@ -1,9 +1,7 @@
 import { useLocation, useTransition, Form, useNavigate } from '@remix-run/react';
-import { useEffect, useMemo, useState } from 'react';
-import { Users } from 'react-feather';
+import { useEffect, useState } from 'react';
 
 import {
-  Icon,
   Divider,
   Flex,
   Heading,
@@ -37,8 +35,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const { pathname } = useLocation();
   const transition = useTransition();
   const navigate = useNavigate();
-  const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
-  const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
+  const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
+  const isDanica = pathname.includes('/danicadboo');
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');

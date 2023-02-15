@@ -1,6 +1,5 @@
 import { useLocation } from '@remix-run/react';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
@@ -15,8 +14,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const { pathname } = useLocation();
   const isSmallScreen = useIsMobile();
   const currentUser = useSessionUser();
-  const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
-  const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
+  const authorized = !!currentUser;
+  const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
+  const isDanica = pathname.includes('/danicadboo');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const bgGradient = isNya
@@ -24,8 +24,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
     : isDanica
     ? `linear(to-t, ${bg} 40%, #563776 110%)`
     : 'none';
+
   const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');
-  const authorized = !!currentUser;
 
   return (
     <Flex
