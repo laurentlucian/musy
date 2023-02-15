@@ -1,6 +1,6 @@
 import { useLocation } from '@remix-run/react';
 import type { ReactNode } from 'react';
-import { type PropsWithChildren, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 

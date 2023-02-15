@@ -81,6 +81,7 @@ const MobileNavBar = () => {
           w="100vw"
           h="90px"
           borderRadius="20px"
+          borderBottomRadius={0}
           color={color}
           aria-label="search song"
           bottom={hideButton ? '-100px' : '0%'}
