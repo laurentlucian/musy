@@ -20,6 +20,8 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
+  if (session.songs.length === 0) return null;
+
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
