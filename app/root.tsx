@@ -120,22 +120,12 @@ export let links: LinksFunction = () => {
       rel: 'stylesheet',
     },
     {
-      as: 'icon',
-      href: 'apple-touch-icon',
-      rel: 'icon',
-    },
-    {
-      as: 'icon',
-      href: 'apple-touch-icon',
-      rel: 'mask-icon',
-    },
-    {
       as: 'manifest',
       href: '/manifest.json',
       rel: 'manifest',
     },
     {
-      href: 'apple-touch-icon',
+      href: '/apple-touch-icon.png',
       rel: 'apple-touch-icon',
     },
   ];
