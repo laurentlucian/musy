@@ -106,7 +106,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={customColor} />
+      <Divider bgColor={customColor} p={0} />
     </Stack>
   );
 
@@ -135,21 +135,24 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const Search = <UserMenu isSmallScreen={true} pathname={pathname} />;
 
   const Settings = (
-    <HStack w="100%" pb="20px" bg={bg} justifyContent="center">
-      <Heading fontSize="13px" mt="15px" ml="20px">
-        Settings
-      </Heading>
-      <Button
-        onClick={() => {
-          navigate(-1);
-        }}
-        pos="fixed"
-        top={2}
-        right="0"
-      >
-        Done
-      </Button>
-    </HStack>
+    <Stack w="100%" h="100%" bg={bg} pb="20px">
+      <HStack w="100%" bg={bg} justifyContent="center">
+        <Heading fontSize="13px" mt="15px" ml="20px">
+          Settings
+        </Heading>
+        <Button
+          onClick={() => {
+            navigate(-1);
+          }}
+          pos="fixed"
+          top={2}
+          right="0"
+        >
+          Done
+        </Button>
+      </HStack>
+      <Divider bg={customColor} p={0} />
+    </Stack>
   );
 
   const Header = pathname.includes('home')
