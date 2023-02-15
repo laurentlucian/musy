@@ -67,10 +67,10 @@ const MobileNavBar = () => {
       setActive(2);
     } else if (pathname.includes('explore')) {
       setActive(3);
-    } else if (pathname.includes(`${currentUser?.id}`)) {
+    } else if (pathname.includes(`${currentUser?.userId}`)) {
       setActive(4);
     }
-  }, [pathname, currentUser?.id]);
+  }, [pathname, currentUser?.userId]);
 
   return (
     <>
