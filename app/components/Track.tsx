@@ -27,6 +27,12 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) =>
     uri: props.track.uri,
   };
 
+  const convert = (ms: number) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = ((ms % 60000) / 1000).toFixed(0);
+    return minutes + ':' + (Number(seconds) < 10 ? '0' : '') + seconds;
+  };
+
   const SongTitle = (
     <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
       {track.name}
@@ -71,6 +77,12 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) =>
     </Text>
   );
 
+  const SongLength = (
+    <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
+      {convert(track.duration)}
+    </Text>
+  );
+
   return (
     <Tr cursor="pointer" onClick={() => onClick(track)}>
       <>
@@ -87,6 +99,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) =>
           <>
             <Td>{AlbumName}</Td>
             <Td>{AddedAt}</Td>
+            <Td>{SongLength}</Td>
           </>
         ) : null}
       </>

@@ -51,7 +51,7 @@ const Playlist = () => {
         </Stack>
       </HStack>
       <TableContainer margin="0px" padding="0px">
-        <Table variant="unstyled" margin="0px" padding="0px">
+        <Table variant="unstyled" margin="0px" padding="0px" border="1px solid red">
           <Thead>
             <Tr>
               <Th>Title</Th>
@@ -59,6 +59,7 @@ const Playlist = () => {
                 <>
                   <Th>Album</Th>
                   <Th>Date added</Th>
+                  <Th>Song Length</Th>
                 </>
               )}
             </Tr>
