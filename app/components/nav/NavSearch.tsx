@@ -204,9 +204,9 @@ const NavSearch = () => {
                 <UserTile
                   key={user.id}
                   image={user.image}
-                  albumName={user.name}
                   name={user.name}
-                  artist={user.bio}
+                  bio={user.bio}
+                  userId={user.userId}
                 />
               ))}
 
