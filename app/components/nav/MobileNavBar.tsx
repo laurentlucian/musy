@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSubmit } from '@remix-run/react';
+import { Link, useLocation, useNavigate, useSubmit } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
@@ -18,6 +18,7 @@ const MobileNavBar = () => {
   const track = useDrawerTrack();
   const { pathname } = useLocation();
   const currentUser = useSessionUser();
+  const profile = currentUser?.userId;
   const { show } = useMobileKeyboard();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
 
@@ -25,12 +26,12 @@ const MobileNavBar = () => {
   const color = useColorModeValue('music.500', 'music.200');
 
   useEffect(() => {
-    const pathnames = ['home', 'friends', 'sessions', 'explore', `${currentUser?.userId}`];
+    const pathnames = ['home', 'friends', 'sessions', 'explore', `${profile}`];
     const index = pathnames.findIndex((pathname) => pathname === pathname.split('/')[1]);
     if (index !== -1) {
       setActive(index);
     }
-  }, [pathname, currentUser?.userId]);
+  }, [pathname, profile]);
 
   const profileIcon = (
     <Image
@@ -41,19 +42,15 @@ const MobileNavBar = () => {
   );
 
   const onClickHome = () => {
-    navigate(`/home`);
     setActive(0);
   };
   const onClickFriends = () => {
-    navigate(`/friends`);
     setActive(1);
   };
   const onClickSessions = () => {
-    navigate(`/sessions`);
     setActive(2);
   };
   const onClickExplore = () => {
-    navigate(`/explore`);
     setActive(3);
   };
   const onClickUser = () => {
@@ -85,7 +82,7 @@ const MobileNavBar = () => {
           transition="bottom 0.25s ease-out"
           overflow="hidden"
         >
-          <Box display="flex" justifyContent="space-around" w="100%" mt="10px" color={color}>
+          <Link to="/home" prefetch="render" onClick={onClickHome}>
             <IconButton
               aria-label="home"
               icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
@@ -93,8 +90,9 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 0 ? 1 : 0.4}
-              onClick={onClickHome}
             />
+          </Link>
+          <Link to="/friends" prefetch="render" onClick={onClickFriends}>
             <IconButton
               aria-label="friends"
               icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
@@ -102,8 +100,9 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 1 ? 1 : 0.4}
-              onClick={onClickFriends}
             />
+          </Link>
+          <Link to="/sessions" prefetch="render" onClick={onClickSessions}>
             <IconButton
               aria-label="sessions"
               icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
@@ -111,8 +110,9 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 2 ? 1 : 0.4}
-              onClick={onClickSessions}
             />
+          </Link>
+          <Link to="/explore" prefetch="render" onClick={onClickExplore}>
             <IconButton
               aria-label="search"
               icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
@@ -120,16 +120,16 @@ const MobileNavBar = () => {
               bg={bg}
               opacity={active === 3 ? 1 : 0.4}
               color={color}
-              onClick={onClickExplore}
             />
+          </Link>
+          <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
             <IconButton
               aria-label="profile"
               icon={profileIcon}
               variant="mobileNav"
               opacity={active === 4 ? 1 : 0.4}
-              onClick={onClickUser}
             />
-          </Box>
+          </Link>
         </Box>
       )}
     </>
