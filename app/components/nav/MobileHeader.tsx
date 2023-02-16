@@ -48,11 +48,29 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
   const userIsDanica = currentUser?.userId === 'danicadboo';
+  const isMiggy = pathname.includes('/-miggy');
+  const isNat = pathname.includes('/12143615383');
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
-  const customBg = isNya ? '#FE5BAC' : isDanica ? '#563776' : bg;
-  const customColor = userIsNya ? '#FE5BAC' : userIsDanica ? '#563776' : color;
+  const customBg = isNya
+    ? '#FE5BAC'
+    : isDanica
+    ? '#563776'
+    : isMiggy
+    ? '#1f93a0'
+    : isNat
+    ? '#fcbde2'
+    : bg;
+  const customColor = userIsNya
+    ? '#FE5BAC'
+    : userIsDanica
+    ? '#563776'
+    : isMiggy
+    ? '#1f93a0'
+    : isNat
+    ? '#fcbde2'
+    : color;
 
   const Home = (
     <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center">
