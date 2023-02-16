@@ -24,11 +24,11 @@ const MiniTile = ({
   createdAt,
   createdBy,
   explicit,
+  id,
   image,
   link,
   name,
   preview_url,
-  trackId,
   uri,
 }: MiniTileProps) => {
   const { onOpen } = useDrawerActions();
@@ -39,7 +39,7 @@ const MiniTile = ({
     artistUri,
     duration: 0,
     explicit,
-    id: trackId,
+    id,
     image,
     link,
     name,

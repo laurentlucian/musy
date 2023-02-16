@@ -153,8 +153,8 @@ const MobileDrawer = () => {
                 {search &&
                   tracks.map((track) => (
                     <Tile
-                      key={track.trackId}
-                      trackId={track.trackId}
+                      key={track.id}
+                      id={track.id}
                       uri={track.uri}
                       image={track.image}
                       albumUri={track.albumUri}
@@ -165,6 +165,7 @@ const MobileDrawer = () => {
                       explicit={track.explicit}
                       preview_url={track.preview_url}
                       link={track.link}
+                      duration={track.duration}
                       inDrawer
                       isQueuing
                     />

@@ -21,7 +21,6 @@ import {
 import { withEmotionCache } from '@emotion/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import musylogo from '~/assets/musylogo.svg';
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
@@ -29,10 +28,11 @@ import { authenticator } from '~/services/auth.server';
 import ActionDrawer from './components/menu/ActionDrawer';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
+import { iosSplashScreens } from './lib/utils';
 import { prisma } from './services/db.server';
 
 const App = () => {
-  const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
+  const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
   return (
     <Document>
@@ -45,11 +45,7 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          <Layout
-            authorized={!!currentUser}
-            profilePicture={currentUser?.image}
-            userId={currentUser?.userId}
-          >
+          <Layout>
             <ActionDrawer />
             <Outlet />
           </Layout>
@@ -86,7 +82,7 @@ export const meta: MetaFunction = () => {
     description,
     keywords: 'music, discover, spotify, playlist, share, friends',
     'og:description': description,
-    'og:image': 'meta-image.png',
+    'og:image': '/meta-image.png',
     'og:image:alt': 'musy',
     'og:image:height': '630',
     'og:image:type': 'image/png',
@@ -95,7 +91,7 @@ export const meta: MetaFunction = () => {
 
     'twitter:card': 'summary_large_image',
     'twitter:description': description,
-    'twitter:image': 'meta-image.png',
+    'twitter:image': '/meta-image.png',
     'twitter:title': 'musy',
     viewport: 'width=device-width,initial-scale=1,user-scalable=no',
   };
@@ -125,25 +121,15 @@ export let links: LinksFunction = () => {
       rel: 'stylesheet',
     },
     {
-      as: 'icon',
-      href: musylogo,
-      rel: 'icon',
-    },
-    {
-      as: 'icon',
-      href: musylogo,
-      rel: 'mask-icon',
-    },
-    {
-      as: 'icon',
-      href: musylogo,
-      rel: 'apple-touch-icon',
-    },
-    {
       as: 'manifest',
       href: '/manifest.json',
       rel: 'manifest',
     },
+    {
+      href: '/apple-touch-icon.png',
+      rel: 'apple-touch-icon',
+    },
+    ...iosSplashScreens,
   ];
 };
 
@@ -204,7 +190,7 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout authorized={false}>
+        <Layout>
           <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
           <Text fontSize="sm">Trace(for debug): {error.message}</Text>
         </Layout>
@@ -232,7 +218,7 @@ export const CatchBoundary = () => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout authorized={false}>
+        <Layout>
           <Heading fontSize={['sm', 'md']}>
             {caught.status}: {caught.statusText}
           </Heading>

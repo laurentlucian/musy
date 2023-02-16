@@ -106,7 +106,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
         <QuickActions
           name={name}
           image={user.image}
-          id={user.userId}
+          profileId={user.userId}
           currentUserId={currentUserId}
           que={que}
           recommend={recommend}

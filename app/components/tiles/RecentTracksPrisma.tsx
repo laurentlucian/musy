@@ -13,8 +13,7 @@ const RecentTracksPrisma = ({
   recent,
 }: {
   recent: (RecentSongs & {
-    track: Track & {
-    };
+    track: Track & {};
   })[];
 }) => {
   const [show, setShow] = useState(false);
@@ -35,7 +34,7 @@ const RecentTracksPrisma = ({
             <Tile
               key={index}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -45,6 +44,7 @@ const RecentTracksPrisma = ({
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.link}
+              duration={track.duration}
             />
           );
         })}
@@ -55,7 +55,7 @@ const RecentTracksPrisma = ({
             <Card
               key={index}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -65,6 +65,7 @@ const RecentTracksPrisma = ({
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.link}
+              duration={track.duration}
             />
           );
         })}

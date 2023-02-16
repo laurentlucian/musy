@@ -10,13 +10,13 @@ import { timeSince } from '~/lib/utils';
 import Tooltip from '../Tooltip';
 
 type TileProps = {
-  playedAt: Date;
+  playedAt?: Date;
   track: Track;
 } & ChakraProps;
 
 const SessionTile = forwardRef<HTMLDivElement, TileProps>(({ playedAt, track, ...props }, ref) => {
   const image = track.image;
-  const tooltip = `${track.name} by ${track.artist} ${timeSince(playedAt)}`;
+  const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
 

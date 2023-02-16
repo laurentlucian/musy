@@ -4,8 +4,8 @@ import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import SessionT from '~/components/sessions/SessionTile';
 import SessionModal from '~/components/sessions/SessionModal';
+import SessionT from '~/components/sessions/SessionTile';
 import { timeSince } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -27,24 +27,13 @@ const Friends = () => {
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
-            <SessionModal title={timeSince(session.startTime)} user={session.user}>
+            <SessionModal
+              title={timeSince(session.startTime)}
+              user={session.user}
+              session={session}
+            >
               {session.songs.map(({ id, track }) => {
-                return (
-                  <SessionT
-                    key={id}
-                    uri={track.uri}
-                    trackId={track.id}
-                    image={track.image}
-                    albumUri={track.albumUri}
-                    albumName={track.albumName}
-                    name={track.name}
-                    artist={track.artist}
-                    artistUri={track.artistUri}
-                    explicit={track.explicit}
-                    preview_url={track.preview_url}
-                    link={track.preview_url!}
-                  />
-                );
+                return <SessionT key={id} track={track} />;
               })}
             </SessionModal>
           </Stack>
@@ -70,7 +59,11 @@ export const loader = async ({ request }: LoaderArgs) => {
           playedAt: 'desc',
         },
       },
-      user: true,
+      user: {
+        include: {
+          playback: true,
+        },
+      },
     },
     orderBy: {
       startTime: 'desc',

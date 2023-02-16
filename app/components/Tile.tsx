@@ -31,13 +31,13 @@ type TileProps = Track & {
   fetcherRec?: TypedFetcherWithComponents<
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
-  id?: string;
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
   list?: boolean;
-
   playlist?: Boolean;
+
+  profileId?: string;
   submit?: SubmitFunction;
 } & ChakraProps;
 
@@ -63,10 +63,10 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       link,
       list,
       name,
-      // playlist,
       preview_url,
+      // playlist,
+      profileId,
       submit,
-      trackId,
       uri,
       ...props
     },
@@ -87,7 +87,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       artistUri,
       duration: 0,
       explicit,
-      id: trackId,
+      id,
       image,
       link,
       name,
@@ -106,18 +106,18 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         });
       }
 
-      clickedRef.current = trackId;
-      const action = isRecommending ? `/${id}/recommend` : `/${id}/add`;
+      clickedRef.current = id;
+      const action = isRecommending ? `/${profileId}/recommend` : `/${profileId}/add`;
 
       const fromUserId = currentUser?.userId || currentUserId;
-      const sendToUserId = id;
+      const sendToUserId = profileId;
 
       const queueData = {
         action: 'send',
 
         fromId: fromUserId ?? '',
         toId: sendToUserId ?? '',
-        trackId: trackId ?? '',
+        trackId: id ?? '',
       };
 
       const recommendData = {
@@ -145,11 +145,11 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
-    const isClicked = clickedRef.current === trackId;
+    const isClicked = clickedRef.current === id;
     const isAdding = fetcher
-      ? fetcher.submission?.formData.get('trackId') === trackId
+      ? fetcher.submission?.formData.get('id') === id
       : fetcherRec
-      ? fetcherRec.submission?.formData.get('trackId') === trackId
+      ? fetcherRec.submission?.formData.get('id') === id
       : null;
     const isDone = fetcher
       ? fetcher.type === 'done' && isClicked

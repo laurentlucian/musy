@@ -24,12 +24,12 @@ const Card = ({
   artist,
   artistUri,
   explicit,
+  id,
   image,
   link,
   name,
   preview_url,
   recommend,
-  trackId,
   uri,
 }: CardProps) => {
   const isSmallScreen = useIsMobile();
@@ -41,7 +41,7 @@ const Card = ({
     artistUri,
     duration: 0,
     explicit,
-    id: trackId,
+    id,
     image,
     link,
     name,
@@ -49,10 +49,10 @@ const Card = ({
     uri: uri,
   };
   const fetcher = useTypedFetcher<typeof action>();
-  const { id } = useParams();
+  const { id: profileId } = useParams();
   const removeFromRecommended = () => {
-    const action = `/${id}/removeRecommend`;
-    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
+    const action = `/${profileId}/removeRecommend`;
+    fetcher.submit({ id }, { action, method: 'post', replace: true });
   };
   const SongTitle = (
     <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">

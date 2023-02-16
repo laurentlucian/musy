@@ -1,6 +1,7 @@
+import { Link } from '@remix-run/react';
+
 import {
   Image,
-  Link,
   Stack,
   Text,
   useDisclosure,
@@ -45,7 +46,7 @@ const Recommended = (props: {
                   <Stack>
                     <Stack direction="row" justifyContent="space-between">
                       <Stack direction="row" align="center">
-                        <Link href={`/${recommended.senderId}`}>
+                        <Link to={`/${recommended.senderId}`}>
                           <Image
                             borderRadius="full"
                             src={recommended.sender.image}
@@ -53,7 +54,7 @@ const Recommended = (props: {
                             mr="5px"
                           />
                         </Link>
-                        <Link href={`/${recommended.senderId}`} _hover={{ textDecor: 'none' }}>
+                        <Link to={`/${recommended.senderId}`}>
                           <Text fontSize="13px">{recommended.sender.name}</Text>
                         </Link>
                         <Text fontSize={['9px', '10px']} opacity={0.6}>
@@ -71,7 +72,7 @@ const Recommended = (props: {
                       <PopoverTrigger>
                         <Tile
                           uri={recommended.track.uri}
-                          trackId={recommended.trackId}
+                          id={recommended.trackId}
                           image={recommended.track.image}
                           albumUri={recommended.track.albumUri}
                           albumName={recommended.track.albumName}
@@ -81,6 +82,7 @@ const Recommended = (props: {
                           explicit={recommended.track.explicit}
                           preview_url={recommended.track.preview_url}
                           link={recommended.track.link}
+                          duration={recommended.track.duration}
                         />
                       </PopoverTrigger>
                       <PopoverContent bg={bg} color={color}>

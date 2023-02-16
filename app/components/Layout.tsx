@@ -1,30 +1,22 @@
 import { useLocation } from '@remix-run/react';
-import { type PropsWithChildren, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 
 import MobileHeader from './nav/MobileHeader';
 import MobileNavBar from './nav/MobileNavBar';
 import Nav from './nav/Nav';
 
-type LayoutProps = {
-  authorized: boolean;
-  profilePicture?: string;
-  userId?: string;
-};
-
-const Layout = ({
-  authorized,
-  children,
-  profilePicture,
-  userId,
-}: PropsWithChildren<LayoutProps>) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   const { pathname } = useLocation();
   const isSmallScreen = useIsMobile();
-  const isNya = useMemo(() => pathname.includes('/02mm0eoxnifin8xdnqwimls4y'), [pathname]);
-  const isDanica = useMemo(() => pathname.includes('/danicadboo'), [pathname]);
+  const currentUser = useSessionUser();
+  const authorized = !!currentUser;
+  const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
+  const isDanica = pathname.includes('/danicadboo');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const bgGradient = isNya
@@ -32,6 +24,7 @@ const Layout = ({
     : isDanica
     ? `linear(to-t, ${bg} 40%, #563776 110%)`
     : 'none';
+
   const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');
 
   return (
@@ -51,9 +44,7 @@ const Layout = ({
         ) : (
           children
         )}
-        {isSmallScreen && (
-          <MobileNavBar profilePicture={profilePicture} userId={userId} authorized={authorized} />
-        )}
+        {isSmallScreen && <MobileNavBar />}
       </Box>
     </Flex>
   );

@@ -25,22 +25,9 @@ const useMobileDrawerStore = create<DrawerStateConfig>()((set) => ({
     hideButton: () => set({ right: -50 }),
     onClose: () => set({ bottom: 0, icon: 'plus', isOpen: false, right: 3, track: null }),
     onOpen: () => set({ bottom: 340, icon: 'down', isOpen: true, right: 3 }),
-    onSearch: (by) =>
+    onSearch: (track) =>
       set({
-        track: {
-          albumName: by.albumName,
-          albumUri: by.albumUri,
-          artist: by.artist,
-          artistUri: by.artistUri,
-          explicit: by.explicit,
-          image: by.image,
-          link: by.link,
-          name: by.name,
-          preview_url: by.preview_url,
-          trackId: by.trackId,
-          uri: by.uri,
-          userId: by.userId,
-        },
+        track,
       }),
     removeFocus: () => set({ bottom: 0, icon: 'x', right: 3 }),
     showButton: () => set({ bottom: 0, right: 3 }),

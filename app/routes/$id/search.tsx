@@ -17,7 +17,7 @@ const Search = () => {
   const tracks = results?.tracks?.items ?? [];
   const currentUser = useSessionUser();
   const submit = useSubmit();
-  const { id } = useParams();
+  const { id: profileId } = useParams();
 
   if (tracks.length === 0) return <></>;
 
@@ -26,7 +26,7 @@ const Search = () => {
       {tracks?.map((track) => (
         <Tile
           key={track.id}
-          trackId={track.id}
+          id={track.id}
           uri={track.uri}
           image={track.album.images[1].url}
           albumUri={track.album.uri}
@@ -37,9 +37,10 @@ const Search = () => {
           explicit={track.explicit}
           preview_url={track.preview_url}
           link={track.external_urls.spotify}
+          duration={track.duration_ms}
           currentUser={currentUser}
           submit={submit}
-          id={id}
+          profileId={profileId}
           fetcher={fetcher}
           isQueuing
         />

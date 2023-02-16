@@ -49,6 +49,10 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const transition = useTransition();
 
+  const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
+  const userIsDanica = currentUser?.userId === 'danicadboo';
+  const customColor = userIsNya ? '#FE5BAC' : userIsDanica ? '#563776' : color;
+
   const mobileIcon = (
     <Image
       src={currentUser?.image}
@@ -114,6 +118,7 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
             pos="fixed"
             top={2}
             right="0"
+            color={customColor}
           />
           <Drawer
             isOpen={isOpen}

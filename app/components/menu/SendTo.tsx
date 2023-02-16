@@ -11,6 +11,7 @@ type SendToProps = Track & {
   // after authentication redirect, add to queue isn't successful. user needs to click again
   // user.name
   sendTo?: string;
+  userId: string;
 };
 
 const SendTo = ({

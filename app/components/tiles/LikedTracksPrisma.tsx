@@ -71,7 +71,7 @@ const LikedTracksPrisma = ({
               }}
               key={track.id}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -81,6 +81,7 @@ const LikedTracksPrisma = ({
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.link}
+              duration={track.duration}
             />
           );
         })}
@@ -95,7 +96,8 @@ const LikedTracksPrisma = ({
               }}
               key={track.id}
               uri={track.uri}
-              trackId={track.id}
+              id={track.id}
+              zIndex={track.id}
               image={track.image}
               albumUri={track.albumUri}
               albumName={track.albumName}
@@ -105,6 +107,7 @@ const LikedTracksPrisma = ({
               explicit={track.explicit}
               preview_url={track.preview_url}
               link={track.link}
+              duration={track.duration}
             />
           );
         })}

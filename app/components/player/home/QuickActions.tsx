@@ -22,16 +22,16 @@ import SendModal from './SendModal';
 
 const QuickActions = ({
   currentUserId,
-  id,
   image,
   name,
+  profileId,
   que,
   recommend,
 }: {
   currentUserId: string | undefined;
-  id: string;
   image: string;
   name: string;
+  profileId: string;
   que?: string;
   recommend?: string;
 }) => {
@@ -120,7 +120,7 @@ const QuickActions = ({
       <SendModal
         isOpen={isOpen}
         onClose={onCloseSendModal}
-        id={id}
+        profileId={profileId}
         name={name}
         title={title}
         setTitle={setTitle}

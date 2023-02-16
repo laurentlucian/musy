@@ -4,21 +4,8 @@
   "description": "music sharing platform",
   "id": "/",
   "start_url": "/",
-  "background_color":"#050404",
-  "display": "fullscreen",
+  "background_color": "#050404",
+  "display": "standalone",
   "categories": ["music", "music share", "music taste", "spotify", "spotify share"],
-  "scope": "/",
-  "icons": [
-    {
-      "src": "musylogo1.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "musylogo1.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
-  ]
+  "scope": "/"
 }
