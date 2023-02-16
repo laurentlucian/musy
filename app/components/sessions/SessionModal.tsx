@@ -25,17 +25,17 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
-        <HStack>
+        <HStack spacing={3}>
           <Link to={`/${user.userId}`}>
             <Avatar size="md" src={user.image} />
           </Link>
           <VStack align="flex-start" spacing={1}>
             <Link to={`/${user.userId}`}>
-              <Heading size="md" fontWeight={400}>
+              <Heading size="sm" fontWeight={400}>
                 {name}
               </Heading>
             </Link>
-            <Text fontSize={'sm'}>
+            <Text fontSize={'xs'} fontWeight="300">
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
             </Text>
           </VStack>
