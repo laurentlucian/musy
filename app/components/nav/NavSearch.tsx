@@ -15,7 +15,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
-  Divider,
 } from '@chakra-ui/react';
 
 // import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -36,7 +35,7 @@ const NavSearch = () => {
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
   const { data, load, state } = useFetcher();
-  console.log(data, ' data');
+
   const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
