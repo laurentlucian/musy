@@ -45,11 +45,13 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const isCurrentUserProfile = pathname.includes(`${currentUser?.userId}`);
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
   const isDanica = pathname.includes('/danicadboo');
+  const isMiggy = pathname.includes('/-miggy');
+  const isNat = pathname.includes('/12143615383');
 
   const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
   const userIsDanica = currentUser?.userId === 'danicadboo';
-  const isMiggy = pathname.includes('/-miggy');
-  const isNat = pathname.includes('/12143615383');
+  const userIsMig = currentUser?.userId === '-miggy';
+  const userIsNat = currentUser?.userId === '12143615383';
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
@@ -66,9 +68,9 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     ? '#FE5BAC'
     : userIsDanica
     ? '#563776'
-    : isMiggy
+    : userIsMig
     ? '#1f93a0'
-    : isNat
+    : userIsNat
     ? '#fcbde2'
     : color;
 
