@@ -61,7 +61,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const { body: results } = await spotify.searchTracks(searchURL);
 
-  const users = await prisma.profile.findMany({ where: { name: { contains: searchURL } } });
+  const users = await prisma.profile.findMany({ where: { name: { startsWith: searchURL } } });
   return typedjson({ results, users });
 };
 
