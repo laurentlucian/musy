@@ -19,6 +19,8 @@ import {
 } from '@chakra-ui/react';
 
 // import { useMouseScroll } from '~/hooks/useMouseScroll';
+import type { Profile } from '@prisma/client';
+
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 
@@ -200,14 +202,8 @@ const NavSearch = () => {
         >
           <PopoverBody>
             <Stack>
-              {data?.users.map((user) => (
-                <UserTile
-                  key={user.id}
-                  image={user.image}
-                  name={user.name}
-                  bio={user.bio}
-                  userId={user.userId}
-                />
+              {data?.users.map((user: Profile) => (
+                <UserTile key={user.id} profile={user} />
               ))}
 
               {tracks.length >= 1 &&
