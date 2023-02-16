@@ -1,32 +1,11 @@
-import { Link, type SubmitFunction, useLocation } from '@remix-run/react';
-import type { DataFunctionArgs } from '@remix-run/server-runtime';
-import { forwardRef, useRef } from 'react';
-import { Check, AlertCircle } from 'react-feather';
+import { Link } from '@remix-run/react';
+import { forwardRef } from 'react';
 
-import {
-  Avatar,
-  Button,
-  Flex,
-  HStack,
-  IconButton,
-  Image,
-  Stack,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Avatar, Flex, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
-import { Send2 } from 'iconsax-react';
-import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 
-import explicitImage from '~/assets/explicit-solid.svg';
-import { useClickDrag } from '~/hooks/useDrawer';
-import type { Track, User } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
-
-import SpotifyLogo from './icons/SpotifyLogo';
-import Waver from './icons/Waver';
 import Tooltip from './Tooltip';
 
 type UserTileProps = {
