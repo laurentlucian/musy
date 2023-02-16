@@ -45,7 +45,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           children
         )}
         {isSmallScreen && <MobileNavBar />}
-      </Box>
+       </Box>
     </Flex>
   );
 };
