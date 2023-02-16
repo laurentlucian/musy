@@ -16,6 +16,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const currentUser = useSessionUser();
   const authorized = !!currentUser;
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
+  const isMiggy = pathname.includes('/-miggy');
+  const isNat = pathname.includes('/12143615383');
   const isDanica = pathname.includes('/danicadboo');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
@@ -23,6 +25,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
     ? `linear(to-t, ${bg} 40%, #FE5BAC 130%)`
     : isDanica
     ? `linear(to-t, ${bg} 40%, #563776 110%)`
+    : isMiggy
+    ? `linear(to-t, ${bg} 40%, #26e4f9 110%)`
+    : isNat
+    ? `linear(to-t, ${bg} 40%, #fcbde2 110%)`
     : 'none';
 
   const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');
@@ -32,7 +38,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       justify="center"
       bgGradient={bgGradient}
       bgAttachment="fixed"
-      bg={isNya || isDanica ? bgGradient : bg}
+      bg={isNya || isDanica || isMiggy || isNat ? bgGradient : bg}
       color={color}
     >
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
@@ -45,7 +51,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           children
         )}
         {isSmallScreen && <MobileNavBar />}
-       </Box>
+      </Box>
     </Flex>
   );
 };
