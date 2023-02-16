@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
+  Divider,
 } from '@chakra-ui/react';
 
 // import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -23,7 +24,7 @@ import type { Track } from '~/lib/types/types';
 
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
-
+import UserTile from '../UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(false);
@@ -33,6 +34,7 @@ const NavSearch = () => {
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
   const { data, load, state } = useFetcher();
+  console.log(data, ' data');
   const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -198,6 +200,16 @@ const NavSearch = () => {
         >
           <PopoverBody>
             <Stack>
+              {data?.users.map((user) => (
+                <UserTile
+                  key={user.id}
+                  image={user.image}
+                  albumName={user.name}
+                  name={user.name}
+                  artist={user.bio}
+                />
+              ))}
+
               {tracks.length >= 1 &&
                 tracks.map((track) => (
                   <Tile

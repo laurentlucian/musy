@@ -8,6 +8,7 @@ import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
+import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
@@ -58,7 +59,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   if (!searchURL) return typedjson({ results: null });
 
   const { body: results } = await spotify.searchTracks(searchURL);
-  return typedjson({ results });
+
+  const users = await prisma.profile.findMany({ where: { name: { contains: searchURL } } });
+  return typedjson({ results, users });
 };
 
 export default Search;
