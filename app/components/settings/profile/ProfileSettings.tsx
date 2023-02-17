@@ -1,4 +1,4 @@
-import { useSubmit } from '@remix-run/react';
+import { useSubmit, useTransition } from '@remix-run/react';
 import { useRef, useState } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 
@@ -13,6 +13,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 
+import Waver from '~/components/icons/Waver';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import GradientSettings from './GradientSettings';
@@ -24,6 +25,7 @@ const ProfileSettings = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [showPicker1, setShowPicker1] = useState(false);
   const [showSave, setShowSave] = useState(false);
+  const [text, setText] = useState('Save');
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
       backgroundDark: '#090808',
@@ -47,7 +49,7 @@ const ProfileSettings = () => {
     },
   );
 
-  const bg = useColorModeValue('#090808', '#EEE6E2');
+  const bg = useColorModeValue('#EEE6E2', '#090808');
   const color = useColorModeValue(theme.mainTextLight, theme.mainTextDark);
   const { colorMode } = useColorMode();
   const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
@@ -65,6 +67,7 @@ const ProfileSettings = () => {
 
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const submit = useSubmit();
+  const transition = useTransition();
 
   if (!currentUser) return null;
 
@@ -136,29 +139,36 @@ const ProfileSettings = () => {
           <SketchPicker color={theme.gradientColorLight} onChange={(col) => onChange1(col)} />
         </div>
       </Collapse>
-      {showSave && (
-        <Button
-          pos="fixed"
-          bottom={2}
-          right={2}
-          bg={bg}
-          color={color}
-          onClick={() => {
-            submit(
-              {
-                bgGradientDark: `linear(to-t, #090808 74%, ${theme.gradientColorDark} 110%)`,
-                bgGradientLight: `linear(to-t, #EEE6E2 74%, ${theme.gradientColorDark} 110%)`,
-                gradientColorDark: theme.gradientColorDark,
-                gradientColorLight: theme.gradientColorLight,
-              },
+      <Button
+        pos="fixed"
+        bottom={showSave ? 2 : '-50px'}
+        right={2}
+        bg={bg}
+        color={color}
+        isLoading={transition.submission?.action.includes('/settings/appearance')}
+        spinner={<Waver />}
+        onClick={() => {
+          submit(
+            {
+              bgGradientDark: `linear(to-t, #090808 74%, ${theme.gradientColorDark} 110%)`,
+              bgGradientLight: `linear(to-t, #EEE6E2 74%, ${theme.gradientColorDark} 110%)`,
+              gradientColorDark: theme.gradientColorDark,
+              gradientColorLight: theme.gradientColorLight,
+            },
 
-              { method: 'post', replace: true },
-            );
-          }}
-        >
-          Save
-        </Button>
-      )}
+            { method: 'post', replace: true },
+          );
+          setText('Saved');
+          const delayExit = setTimeout(() => {
+            setShowSave(false);
+            setText('Save');
+          }, 1000);
+          return () => clearTimeout(delayExit);
+        }}
+        transition="bottom 0.25s"
+      >
+        {text}
+      </Button>
       <Box h="300px" ref={colorPickerRef} />
     </Stack>
   );
