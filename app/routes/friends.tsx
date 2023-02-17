@@ -26,7 +26,6 @@ const Friends = () => {
     // then sort by name in alphabetical order
     return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
   });
-  console.log('sort: ', sortedFriends);
 
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
