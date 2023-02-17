@@ -17,7 +17,7 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
       </Text>
       <Flex align="baseline" pt="1px" cursor="pointer">
         <Text fontSize="13px" mr="8px">
-          time listened
+          Time Listened
         </Text>
         <Text as="span" fontSize="10px" opacity={0.5}>
           /&nbsp; 24hr
@@ -27,7 +27,7 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
   );
 
   const Bio = (
-    <Stack w="100%" pt="4px" pr="5px">
+    <Stack w={['100%', '195%']} pt="4px" pr="5px">
       <Form method="post" replace>
         <Textarea
           name="bio"

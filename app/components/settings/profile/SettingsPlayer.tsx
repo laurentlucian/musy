@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
   Box,
@@ -40,54 +40,27 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
   };
 
   const currentUser = useSessionUser();
-  const [size, setSize] = useState('large');
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
-  // const { onClick, onMouseDown, onMouseMove } = useClickDrag();
 
   const bg = useColorModeValue('music.50', '#10101066');
   const color = useColorModeValue('#10101066', 'music.50');
 
   const isSmallScreen = useIsMobile();
 
-  useEffect(() => {
-    const checkStick = () => {
-      window.scrollY <= 100
-        ? setSize('large')
-        : window.scrollY <= 168
-        ? setSize('medium')
-        : setSize('small');
-    };
-    window.addEventListener('scroll', checkStick);
-
-    return () => window.removeEventListener('scroll', checkStick);
-  }, []);
-
   return (
     <Stack zIndex={1} spacing={-1} mt="10px" px="5px">
-      <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
+      <Stack backdropFilter="blur(27px)" h="100%" zIndex={1}>
         <Collapse in={!isOpen} animateOpacity>
           <Stack spacing={0} bg={bg} backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}>
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
                 <Stack direction="column" spacing={0.5}>
-                  <Text
-                    noOfLines={1}
-                    // onMouseDown={onMouseDown}
-                    // onMouseMove={onMouseMove}
-                    cursor="pointer"
-                    w={['190px', '220px']}
-                    textOverflow="ellipsis"
-                  >
+                  <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis">
                     {song.name}
                   </Text>
-                  <Flex
-                    // onMouseDown={onMouseDown}
-                    // onMouseMove={onMouseMove}
-                    cursor="pointer"
-                    w={['200px', '68%']}
-                  >
+                  <Flex w={['200px', '68%']}>
                     {song.explicit && <Image mr={1} src={explicitImage} w="19px" />}
                     <Text opacity={0.8} fontSize="13px" noOfLines={1} textOverflow="ellipsis">
                       {song.artist}
@@ -101,19 +74,7 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
                 </HStack>
               </Stack>
               <HStack spacing={1} align="end">
-                <Image
-                  src={song.image}
-                  boxSize={135}
-                  minW={135}
-                  minH={135}
-                  transition="all 0.25s"
-                  pos="absolute"
-                  right={0}
-                  top={0}
-                  // onMouseDown={onMouseDown}
-                  // onMouseMove={onMouseMove}
-                  cursor="pointer"
-                />
+                <Image src={song.image} boxSize={135} minW={135} minH={135} />
               </HStack>
             </Flex>
           </Stack>
@@ -123,7 +84,7 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
         w="-webkit-fit-content"
         bg={bg}
         borderRadius="0px 0px 3px 3px"
-        zIndex={-1}
+        zIndex={0}
         backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
         alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
       >
