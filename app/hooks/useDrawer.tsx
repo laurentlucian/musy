@@ -15,9 +15,10 @@ type DrawerTrack = Track & {
 interface DrawerStateConfig {
   actions: {
     onClose: () => void;
-    onOpen: (by: DrawerTrack) => void;
+    onOpen: (by: DrawerTrack, fromId: string) => void;
     setIsPlaying: (by: boolean) => void;
   };
+  fromId: string | null;
   isPlaying?: boolean;
   track: DrawerTrack | null;
 }
@@ -25,12 +26,14 @@ interface DrawerStateConfig {
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
     onClose: () => set({ isPlaying: false, track: null }),
-    onOpen: (track) =>
+    onOpen: (track, fromId) =>
       set({
+        fromId,
         track,
       }),
     setIsPlaying: (by) => set({ isPlaying: by }),
   },
+  fromId: null,
   isPlaying: false,
   track: null,
 }));
@@ -69,9 +72,9 @@ export const useClickDrag = () => {
     }
   };
 
-  const handleClick = (track: Track) => {
+  const handleClick = (track: Track, fromId: string) => {
     if (!isMouseDragged) {
-      onOpen(track);
+      onOpen(track, fromId);
     }
     setIsMouseDown(false);
     setIsMouseDragged(false);

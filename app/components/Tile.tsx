@@ -37,7 +37,7 @@ type TileProps = Track & {
   list?: boolean;
   playlist?: Boolean;
 
-  profileId?: string;
+  profileId: string;
   submit?: SubmitFunction;
 } & ChakraProps;
 
@@ -52,6 +52,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       createdBy,
       currentUser,
       currentUserId,
+      duration,
       explicit,
       fetcher,
       fetcherRec,
@@ -85,7 +86,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       albumUri,
       artist,
       artistUri,
-      duration: 0,
+      duration: duration ?? 0,
       explicit,
       id,
       image,
@@ -224,7 +225,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track)}
+                onClick={() => onClick(track, profileId)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -234,7 +235,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track)}
+              onClick={() => onClick(track, profileId)}
               cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">

@@ -1,3 +1,4 @@
+import { useParams } from '@remix-run/react';
 import { useState, useCallback } from 'react';
 
 import { Stack } from '@chakra-ui/react';
@@ -18,6 +19,7 @@ const RecentTracksPrisma = ({
 }) => {
   const [show, setShow] = useState(false);
   const scrollButtons = recent.length > 5;
+  const { id } = useParams();
 
   const onClose = useCallback(() => {
     setShow(false);
@@ -45,6 +47,7 @@ const RecentTracksPrisma = ({
               preview_url={track.preview_url}
               link={track.link}
               duration={track.duration}
+              profileId={id ?? ''}
             />
           );
         })}
@@ -66,6 +69,7 @@ const RecentTracksPrisma = ({
               preview_url={track.preview_url}
               link={track.link}
               duration={track.duration}
+              userId={id ?? ''}
             />
           );
         })}

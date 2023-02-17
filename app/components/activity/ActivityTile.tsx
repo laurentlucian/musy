@@ -143,7 +143,6 @@ const ActivityTile = ({ activity }: ActivityProps) => {
     name: activity.track.name,
     preview_url: activity.track.preview_url,
     uri: activity.track.uri,
-    userId: activity.user?.userId,
   };
 
   const liked = (activity.track.liked ?? []).filter(({ user }) => {
@@ -168,7 +167,7 @@ const ActivityTile = ({ activity }: ActivityProps) => {
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onOpen(item)}
+        onClick={() => onOpen(item, activity.user.userId)}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>

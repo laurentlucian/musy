@@ -7,7 +7,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import SpotifyLogo from './icons/SpotifyLogo';
 // import type { Profile } from '@prisma/client';
 
-const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) => {
+const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; userId: string }) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
 
   const isSmallScreen = useIsMobile();
@@ -84,7 +84,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull }) =>
   );
 
   return (
-    <Tr cursor="pointer" onClick={() => onClick(track)}>
+    <Tr cursor="pointer" onClick={() => onClick(track, props.userId)}>
       <>
         <Td>
           <HStack>

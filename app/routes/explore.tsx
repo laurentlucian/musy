@@ -175,6 +175,7 @@ const Explore = () => {
             preview_url={track.preview_url}
             link={track.link}
             duration={track.duration}
+            profileId={id}
             list
           />
         ))}

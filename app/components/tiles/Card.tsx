@@ -16,6 +16,7 @@ import SpotifyLogo from '../icons/SpotifyLogo';
 type CardProps = Track & {
   recommend?: boolean;
   ref?: (node: HTMLDivElement | null) => void;
+  userId: string;
 } & ChakraProps;
 
 const Card = ({
@@ -31,6 +32,7 @@ const Card = ({
   preview_url,
   recommend,
   uri,
+  userId,
 }: CardProps) => {
   const isSmallScreen = useIsMobile();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
@@ -67,7 +69,7 @@ const Card = ({
       draggable={false}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
-      onClick={() => onClick(track)}
+      onClick={() => onClick(track, userId)}
     />
   );
   const ArtistName = (

@@ -82,6 +82,7 @@ const LikedTracksPrisma = ({
               preview_url={track.preview_url}
               link={track.link}
               duration={track.duration}
+              profileId={id ?? ''}
             />
           );
         })}
@@ -108,6 +109,7 @@ const LikedTracksPrisma = ({
               preview_url={track.preview_url}
               link={track.link}
               duration={track.duration}
+              userId={id ?? ''}
             />
           );
         })}

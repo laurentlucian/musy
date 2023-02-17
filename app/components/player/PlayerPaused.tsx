@@ -28,10 +28,11 @@ type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
   // profileSong: (Settings & { profileSong: Track | null }) | null;
   profileSong: any;
+  userId: string;
   username: string;
 };
 
-const PlayerPaused = ({ item, profileSong }: PlayerPausedProps) => {
+const PlayerPaused = ({ item, profileSong, userId }: PlayerPausedProps) => {
   const currentUser = useSessionUser();
   const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
@@ -180,13 +181,13 @@ const PlayerPaused = ({ item, profileSong }: PlayerPausedProps) => {
                   <Stack>
                     <Text
                       noOfLines={[1]}
-                      onClick={() => onOpen(track)}
+                      onClick={() => onOpen(track, userId)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
                       {name}
                     </Text>
-                    <Flex onClick={() => onOpen(track)} cursor="pointer" w={['200px', '68%']}>
+                    <Flex onClick={() => onOpen(track, userId)} cursor="pointer" w={['200px', '68%']}>
                       {explicit && <Image mr={1} src={explicitImage} w="19px" />}
                       <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                         {artist}
@@ -252,7 +253,7 @@ const PlayerPaused = ({ item, profileSong }: PlayerPausedProps) => {
                       pos="absolute"
                       right={0}
                       top={0}
-                      onClick={() => onOpen(track)}
+                      onClick={() => onOpen(track, userId)}
                       cursor="pointer"
                     />
                   </Tooltip>

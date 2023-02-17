@@ -141,7 +141,7 @@ const LikedTracksVirtual = ({
 
             return (
               <Tile
-                id=""
+                id={track.id}
                 pos="absolute"
                 top="0"
                 left="0"
@@ -160,6 +160,7 @@ const LikedTracksVirtual = ({
                 preview_url={track.preview_url}
                 link={track.external_urls.spotify}
                 duration={track.duration_ms}
+                profileId={id ?? ''}
               />
             );
           })}

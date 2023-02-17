@@ -22,8 +22,8 @@ export type Activity = {
     uri: string;
   };
   trackId: string;
-  user: Profile | null;
-  userId: string | null;
+  user: Profile;
+  userId: string;
 };
 export interface PlaylistTrack {
   description: string | null;

@@ -68,7 +68,7 @@ const Playlist = () => {
             {playlist.tracks.items.map(({ added_at, track }) => {
               if (!track) return null;
 
-              return <Track key={track.id} track={track} addedAt={added_at} />;
+              return <Track key={track.id} track={track} addedAt={added_at} userId={id ?? ''} />;
             })}
           </Tbody>
         </Table>

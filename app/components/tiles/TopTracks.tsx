@@ -1,4 +1,4 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { Form, useSearchParams, useSubmit, useParams } from '@remix-run/react';
 import { useCallback, useState } from 'react';
 
 import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
@@ -14,6 +14,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [show, setShow] = useState(false);
   const submit = useSubmit();
   const [params] = useSearchParams();
+  const { id } = useParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
 
   const options = [
@@ -77,6 +78,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              profileId={id ?? ''}
             />
           );
         })}
@@ -98,6 +100,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              userId={id ?? ''}
             />
           );
         })}

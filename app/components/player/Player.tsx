@@ -206,7 +206,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                       noOfLines={1}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track)}
+                      onClick={() => onClick(track, id)}
                       cursor="pointer"
                       w={['200px', '68%']}
                       overflow="hidden"
@@ -217,7 +217,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                     <Flex
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track)}
+                      onClick={() => onClick(track, id)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
@@ -421,7 +421,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                       top={0}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track)}
+                      onClick={() => onClick(track, id)}
                       cursor="pointer"
                     />
                   </Tooltip>

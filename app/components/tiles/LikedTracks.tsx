@@ -72,6 +72,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              profileId={id ?? ''}
             />
           );
         })}
@@ -97,6 +98,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              userId={id ?? ''}
             />
           );
         })}

@@ -12,33 +12,36 @@ import Tooltip from '../Tooltip';
 type TileProps = {
   playedAt?: Date;
   track: Track;
+  userId: string;
 } & ChakraProps;
 
-const SessionTile = forwardRef<HTMLDivElement, TileProps>(({ playedAt, track, ...props }, ref) => {
-  const image = track.image;
-  const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
+const SessionTile = forwardRef<HTMLDivElement, TileProps>(
+  ({ playedAt, track, userId, ...props }, ref) => {
+    const image = track.image;
+    const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
 
-  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
+    const { onClick, onMouseDown, onMouseMove } = useClickDrag();
 
-  return (
-    <Flex direction="row" ref={ref} {...props}>
-      <Tooltip label={tooltip} placement="top-start">
-        <Image
-          boxSize={'50px'}
-          minW={'50px'}
-          minH={'50px'}
-          objectFit="cover"
-          src={image}
-          draggable={false}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onClick={() => onClick(track)}
-          cursor="pointer"
-        />
-      </Tooltip>
-    </Flex>
-  );
-});
+    return (
+      <Flex direction="row" ref={ref} {...props}>
+        <Tooltip label={tooltip} placement="top-start">
+          <Image
+            boxSize={'50px'}
+            minW={'50px'}
+            minH={'50px'}
+            objectFit="cover"
+            src={image}
+            draggable={false}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onClick={() => onClick(track, userId)}
+            cursor="pointer"
+          />
+        </Tooltip>
+      </Flex>
+    );
+  },
+);
 
 SessionTile.displayName = 'SessionT';
 

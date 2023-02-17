@@ -149,20 +149,23 @@ const MiniPlayer = ({ playback, user }: PlayerProps) => {
                           target="_blank"
                           onClick={(e) => {
                             e.preventDefault();
-                            onOpen({
-                              albumName: track.album.name,
-                              albumUri: track.album.uri,
-                              artist: track.album.artists[0].name,
-                              artistUri: track.album.artists[0].uri,
-                              duration: 0,
-                              explicit: track.explicit,
-                              id: track.id,
-                              image: track.album.images[0].url,
-                              link: track.external_urls.spotify,
-                              name: track.name,
-                              preview_url: track.preview_url,
-                              uri: track.uri,
-                            });
+                            onOpen(
+                              {
+                                albumName: track.album.name,
+                                albumUri: track.album.uri,
+                                artist: track.album.artists[0].name,
+                                artistUri: track.album.artists[0].uri,
+                                duration: 0,
+                                explicit: track.explicit,
+                                id: track.id,
+                                image: track.album.images[0].url,
+                                link: track.external_urls.spotify,
+                                name: track.name,
+                                preview_url: track.preview_url,
+                                uri: track.uri,
+                              },
+                              user.userId,
+                            );
                           }}
                         >
                           <Tooltip label={<Text>{track.name}</Text>}>
@@ -182,7 +185,7 @@ const MiniPlayer = ({ playback, user }: PlayerProps) => {
                   as="span"
                   onClick={(e) => {
                     e.preventDefault();
-                    formattedTrack && onOpen(formattedTrack);
+                    formattedTrack && onOpen(formattedTrack, user.userId);
                   }}
                 >
                   <Image src={image} m={0} boxSize={playback ? ['100px', '120px'] : '60px'} />

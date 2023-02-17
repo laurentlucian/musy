@@ -22,7 +22,6 @@ import type { User } from '~/lib/types/types';
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
-import QuickActions from './QuickActions';
 
 // import PlayerBarCSS from './PlayerBarCSS';
 interface Friends extends User {
@@ -75,7 +74,6 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
         name: track.name,
         preview_url: track.preview_url,
         uri: track.uri,
-        userId: user.userId,
       }
     : null;
 
@@ -195,7 +193,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
               as="span"
               onClick={(e) => {
                 e.preventDefault();
-                formattedTrack && onOpen(formattedTrack);
+                formattedTrack && onOpen(formattedTrack, user.userId);
               }}
             >
               <Image

@@ -221,6 +221,7 @@ const NavSearch = () => {
                     preview_url={track.preview_url}
                     link={track.link}
                     duration={track.duration}
+                    profileId=""
                     list
                   />
                 ))}

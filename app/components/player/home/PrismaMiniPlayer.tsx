@@ -188,7 +188,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
               as="span"
               onClick={(e) => {
                 e.preventDefault();
-                track && onOpen(track);
+                track && onOpen(track, user.userId);
               }}
             >
               <Image

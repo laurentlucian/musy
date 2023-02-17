@@ -1,3 +1,4 @@
+import { useParams } from '@remix-run/react';
 import { useState, useCallback } from 'react';
 
 import { Stack } from '@chakra-ui/react';
@@ -10,6 +11,7 @@ import Tiles from './Tiles';
 const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
   const [show, setShow] = useState(false);
   const scrollButtons = recent.length > 5;
+  const { id } = useParams();
 
   const onClose = useCallback(() => {
     setShow(false);
@@ -35,6 +37,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              profileId={id ?? ''}
             />
           );
         })}
@@ -56,6 +59,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              userId={id ?? ''}
             />
           );
         })}

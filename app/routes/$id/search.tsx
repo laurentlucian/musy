@@ -40,7 +40,7 @@ const Search = () => {
           duration={track.duration_ms}
           currentUser={currentUser}
           submit={submit}
-          profileId={profileId}
+          profileId={profileId ?? ''}
           fetcher={fetcher}
           isQueuing
         />

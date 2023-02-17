@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link, useParams } from '@remix-run/react';
 
 import {
   Image,
@@ -30,6 +30,7 @@ const Recommended = (props: {
 }) => {
   const scrollButtons = props.recommended.length > 5;
   const show = props.recommended.length > 0;
+  const { id } = useParams();
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
@@ -83,6 +84,7 @@ const Recommended = (props: {
                           preview_url={recommended.track.preview_url}
                           link={recommended.track.link}
                           duration={recommended.track.duration}
+                          profileId={id ?? ''}
                         />
                       </PopoverTrigger>
                       <PopoverContent bg={bg} color={color}>

@@ -48,7 +48,7 @@ const OldLikedSongs = ({
         {liked.map(({ track }) => {
           return (
             <Tile
-              id=""
+              id={track.id}
               key={track.id}
               uri={track.uri}
               image={track.album.images[1].url}
@@ -61,6 +61,7 @@ const OldLikedSongs = ({
               preview_url={track.preview_url}
               link={track.external_urls.spotify}
               duration={track.duration_ms}
+              profileId={id ?? ''}
             />
           );
         })}
