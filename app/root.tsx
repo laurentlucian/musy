@@ -62,7 +62,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   if (session && session.user) {
     const currentUser = await prisma.profile.findUnique({
-      include: { liked: { select: { trackId: true } }, settings: true },
+      include: { liked: { select: { trackId: true } }, settings: true, theme: true },
       where: { userId: session.user.id },
     });
 
