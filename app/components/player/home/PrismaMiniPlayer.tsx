@@ -206,7 +206,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
       ) : (
         isSmallScreen &&
         loading && (
-          <Box pl="20px">
+          <Box pl="30px">
             <Waver />
           </Box>
         )
