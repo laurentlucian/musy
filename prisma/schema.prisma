@@ -29,12 +29,12 @@ model User {
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  user      User        @relation(fields: [userId], references: [id])
   // should've been the @id
-  userId    String   @unique
+  userId      String    @unique
 
   name        String
   bio         String?

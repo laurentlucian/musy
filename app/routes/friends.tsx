@@ -16,6 +16,18 @@ const Friends = () => {
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const friends = users.filter((user) => user.userId !== currentUserId);
+  const sortedFriends = friends.sort((a, b) => {
+    // sort by playback status first
+    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+      return 1;
+    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+      return -1;
+    }
+    // then sort by name in alphabetical order
+    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  });
+  console.log('sort: ', sortedFriends);
+
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
@@ -40,7 +52,7 @@ const Friends = () => {
           )}
         </Stack>
       )}
-      {friends.map((user) => {
+      {sortedFriends.map((user) => {
         return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
       })}
     </Stack>
