@@ -110,7 +110,7 @@ const ProfileSettings = () => {
             return () => clearTimeout(delayScroll);
           }}
         />
-        <Text>Gradient Color Dark</Text>
+        <Text>Gradient Dark</Text>
       </HStack>
       <Collapse in={showPicker}>
         <div ref={colorPickerRef}>
@@ -132,7 +132,7 @@ const ProfileSettings = () => {
             return () => clearTimeout(delayScroll);
           }}
         />
-        <Text>Gradient Color Light</Text>
+        <Text>Gradient Light</Text>
       </HStack>
       <Collapse in={showPicker1}>
         <div ref={colorPickerRef}>
