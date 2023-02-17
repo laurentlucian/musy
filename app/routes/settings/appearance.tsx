@@ -4,8 +4,8 @@ import { Stack } from '@chakra-ui/react';
 
 import invariant from 'tiny-invariant';
 
-import PlayerButtonSettings from '~/components/settings/PlayerButtonSettings';
-import ProfileSettings from '~/components/settings/ProfileSettings';
+import PlayerButtonSettings from '~/components/settings/profile/PlayerButtonSettings';
+import ProfileSettings from '~/components/settings/profile/ProfileSettings';
 import ThemeToggle from '~/components/settings/ThemeToggle';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';

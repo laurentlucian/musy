@@ -21,7 +21,7 @@ import musyIcon from '~/assets/musySquareIcon.png';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
+import SpotifyLogo from '../../icons/SpotifyLogo';
 
 const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
   const song = track ?? {

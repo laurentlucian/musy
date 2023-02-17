@@ -55,6 +55,7 @@ const ProfileSettings = () => {
         <ProfileHeader profile={currentUser} />
         <Player track={currentUser.settings?.profileSong} />
       </Box>
+
       <Slider
         aria-label="gradient from"
         defaultValue={bgPlacement}
