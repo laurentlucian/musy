@@ -117,27 +117,27 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         action: 'send',
 
         fromId: fromUserId ?? '',
-        toId: sendToUserId ?? '',
-        trackId: id ?? '',
+        toId: sendToUserId,
+        trackId: id,
       };
 
       const recommendData = {
         action: 'recommend',
-        albumName: track?.albumName ?? '',
-        albumUri: track?.albumUri ?? '',
-        artist: track?.artist ?? '',
-        artistUri: track?.artistUri ?? '',
+        albumName: track.albumName,
+        albumUri: track.albumUri,
+        artist: track.artist,
+        artistUri: track.artistUri,
         comment: '',
-        explicit: track?.explicit ? 'true' : '',
+        explicit: track.explicit ? 'true' : '',
         fromId: fromUserId ?? '',
-        image: track?.image ?? '',
-        link: track?.link ?? '',
-        name: track?.name ?? '',
-        preview_url: track?.preview_url ?? '',
+        image: track.image,
+        link: track.link,
+        name: track.name,
+        preview_url: track.preview_url ?? '',
 
-        toId: sendToUserId ?? '',
-        trackId: track?.id ?? '',
-        uri: track?.uri ?? '',
+        toId: sendToUserId,
+        trackId: track.id,
+        uri: track.uri,
       };
       if (fetcher && isQueuing) {
         fetcher.submit(queueData, { action, method: 'post', replace: true });

@@ -53,6 +53,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       createdBy,
       currentUser,
       currentUserId,
+      duration,
       explicit,
       fetcher,
       fetcherRec,
@@ -66,7 +67,6 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       preview_url,
       profileId,
       submit,
-      trackDuration,
       uri,
       ...props
     },
@@ -85,7 +85,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       albumUri,
       artist,
       artistUri,
-      duration: 0,
+      duration,
       explicit,
       id,
       image,
@@ -116,27 +116,27 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
         action: 'send',
 
         fromId: fromUserId ?? '',
-        toId: sendToUserId ?? '',
-        trackId: id ?? '',
+        toId: sendToUserId,
+        trackId: id,
       };
 
       const recommendData = {
         action: 'recommend',
-        albumName: track?.albumName ?? '',
-        albumUri: track?.albumUri ?? '',
-        artist: track?.artist ?? '',
-        artistUri: track?.artistUri ?? '',
+        albumName: track.albumName,
+        albumUri: track.albumUri,
+        artist: track.artist,
+        artistUri: track.artistUri,
         comment: '',
-        explicit: track?.explicit ? 'true' : '',
+        explicit: track.explicit ? 'true' : '',
         fromId: fromUserId ?? '',
-        image: track?.image ?? '',
-        link: track?.link ?? '',
-        name: track?.name ?? '',
-        preview_url: track?.preview_url ?? '',
+        image: track.image,
+        link: track.link,
+        name: track.name,
+        preview_url: track.preview_url ?? '',
 
-        toId: sendToUserId ?? '',
-        trackId: track?.id ?? '',
-        uri: track?.uri ?? '',
+        toId: sendToUserId,
+        trackId: track.id,
+        uri: track.uri,
       };
       if (fetcher && isQueuing) {
         fetcher.submit(queueData, { action, method: 'post', replace: true });
@@ -146,29 +146,30 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       }
     };
     const isClicked = clickedRef.current === id;
-    const isAdding = fetcher
-      ? fetcher.submission?.formData.get('id') === id
-      : fetcherRec
-      ? fetcherRec.submission?.formData.get('id') === id
-      : null;
+    let isAdding = null;
+
+    if (fetcher) {
+      isAdding = fetcher.submission?.formData.get('trackId') === id;
+    } else if (fetcherRec) {
+      isAdding = fetcherRec.submission?.formData.get('trackId') === id;
+    }
+
     const isDone = fetcher
       ? fetcher.type === 'done' && isClicked
       : fetcherRec
       ? fetcherRec.type === 'done' && isClicked
       : null;
-    const isError = fetcher
-      ? typeof fetcher.data === 'string' && isClicked
-        ? fetcher.data.includes('Error') && isClicked
-          ? fetcher.data && isClicked
-          : fetcherRec
-          ? typeof fetcherRec.data === 'string' && isClicked
-            ? fetcherRec.data.includes('Error') && isClicked
-              ? fetcherRec.data && isClicked
-              : null
-            : null
-          : null
-        : null
-      : null;
+    let isError = null;
+
+    if (fetcher && typeof fetcher.data === 'string' && isClicked) {
+      if (fetcher.data.includes('Error') && isClicked) {
+        isError = fetcher.data && isClicked;
+      } else if (fetcherRec && typeof fetcherRec.data === 'string' && isClicked) {
+        if (fetcherRec.data.includes('Error') && isClicked) {
+          isError = fetcherRec.data && isClicked;
+        }
+      }
+    }
 
     const icon = isAdding ? (
       <Waver />
@@ -224,7 +225,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                   draggable={false}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}
-                  onClick={() => onClick(track,profileId)}
+                  onClick={() => onClick(track, profileId)}
                   cursor="pointer"
                 />
               </Tooltip>
@@ -283,7 +284,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
           </HStack>
           <Stack>
             <Text fontSize="12px" fontWeight="hairline">
-              {convert(trackDuration)}
+              {convert(duration)}
             </Text>
           </Stack>
         </Stack>
