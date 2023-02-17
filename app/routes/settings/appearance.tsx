@@ -15,12 +15,11 @@ const Appearance = () => {
   const currentUser = useSessionUser();
 
   if (!currentUser) return null;
-
   return (
     <Stack spacing={5} w={['unset', '400px']}>
       <ThemeToggle />
       <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
-      <ProfileSettings theme={currentUser.theme} />
+      <ProfileSettings />
     </Stack>
   );
 };

@@ -12,7 +12,7 @@ const Settings = () => {
       direction={['column', 'row']}
       pt={['60px', 4]}
       justifyContent={['start', 'center']}
-      overflow="hidden"
+      overflowX="hidden"
       px={['20px', 0]}
       bg={bg}
       h="100vh"
