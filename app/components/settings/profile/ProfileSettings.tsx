@@ -28,7 +28,8 @@ const ProfileSettings = () => {
     currentUser?.theme ?? {
       backgroundDark: '#090808',
       backgroundLight: '#EEE6E2',
-      bgGradient: 'linear(to-t, #090808 40%, #fcbde2 90%)',
+      bgGradientDark: 'linear(to-t, #090808 75%, #fcbde2 110%)',
+      bgGradientLight: 'linear(to-t, #EEE6E2 75%, #fcbde2 110%)',
       blur: true,
       gradient: false,
       gradientColorDark: '#fcbde2',
@@ -145,8 +146,8 @@ const ProfileSettings = () => {
           onClick={() => {
             submit(
               {
-                bgGradientDark: bgGradientDark,
-                bgGradientLight: bgGradientLight,
+                bgGradientDark: `linear(to-t, #090808 74%, ${theme.gradientColorDark} 110%)`,
+                bgGradientLight: `linear(to-t, #EEE6E2 74%, ${theme.gradientColorDark} 110%)`,
                 gradientColorDark: theme.gradientColorDark,
                 gradientColorLight: theme.gradientColorLight,
               },
