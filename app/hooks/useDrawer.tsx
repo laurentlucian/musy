@@ -54,6 +54,14 @@ export const useDrawerIsPlaying = () =>
     // a shallow comparison is used for objects
     shallow,
   );
+export const useDrawerFromId = () =>
+  useDrawerStore(
+    (state) => state.fromId,
+    // by default, zustand checks if state changes with a strict equality check
+    // this means that if you have an object in state, it would always be considered changed
+    // a shallow comparison is used for objects
+    shallow,
+  );
 
 export const useDrawerActions = () => useDrawerStore((state) => state.actions);
 

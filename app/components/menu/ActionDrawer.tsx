@@ -37,7 +37,7 @@ import {
   Send2,
 } from 'iconsax-react';
 
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useDrawerActions, useDrawerFromId, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useParamUser from '~/hooks/useParamUser';
 import useSendMenu from '~/hooks/useSendMenu';
@@ -63,6 +63,7 @@ const ActionDrawer = () => {
   const [comment, setComment] = useState('');
   const { onClose: onCloseDrawer } = useDrawerActions();
   const track = useDrawerTrack();
+  const fromId = useDrawerFromId();
   const isOpen = track !== null ? true : false;
   const currentUser = useSessionUser();
   const allUsers = useUsers();
@@ -327,7 +328,7 @@ const ActionDrawer = () => {
                     {track.link !== '' && <CopyLink link={track.link} />}
                     <PlayPreview preview_url={track.preview_url} />
                     <ProfileSong user={user} />
-                    <AddQueue trackId={track.id} fromId={currentUser?.userId} user={null} />
+                    <AddQueue trackId={track.id} fromId={fromId} user={null} />
                   </>
                 )}
                 {queueableUsers.length > 0 && <SendTo />}

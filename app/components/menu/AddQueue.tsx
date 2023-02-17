@@ -12,11 +12,10 @@ import type { action } from '~/routes/$id/add';
 import Waver from '../icons/Waver';
 
 type AddQueueProps = {
-  fromId?: string;
+  fromId?: string | null;
   trackId: string;
   // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
   user: Profile | null;
-  userId?: string | null;
 };
 
 const AddQueue = ({ fromId, trackId, user }: AddQueueProps) => {
