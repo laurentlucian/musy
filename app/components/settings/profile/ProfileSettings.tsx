@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useSubmit } from '@remix-run/react';
+import { useRef, useState } from 'react';
+import { SketchPicker, type ColorResult } from 'react-color';
 
 import {
   Box,
   useColorModeValue,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   useColorMode,
+  Collapse,
+  HStack,
+  Text,
+  Stack,
+  Button,
 } from '@chakra-ui/react';
 
 import useSessionUser from '~/hooks/useSessionUser';
@@ -18,32 +21,9 @@ import { default as ProfileHeader } from './SettingsProfileHeader';
 
 const ProfileSettings = () => {
   const currentUser = useSessionUser();
-  // const theme = currentUser?.theme ?? {
-  //   backgroundDark: '#090808',
-  //   backgroundLight: '#EEE6E2',
-  //   blur: true,
-  //   gradient: false,
-  //   isPreset: true,
-  //   mainTextDark: '#EEE6E2',
-  //   mainTextLight: '#161616',
-  //   musyLogo: 'musy',
-  //   opaque: false,
-  //   playerColorDark: '#101010',
-  //   playerColorLight: '#E7DFD9',
-  //   subTextDark: '#EEE6E2',
-  //   subTextLight: '#161616',
-  //   userId: currentUser?.userId,
-  // };
-
-  const [bgPlacement, setBgPlacement] = useState(90);
-  const [subPlacement, setSubPlacement] = useState(40);
   const [showPicker, setShowPicker] = useState(false);
-  // const [lightBgColor, setLightBgColor] = useState('#EEE6E2');
-  // const [darkBgColor, setDarkBgColor] = useState('#050404');
-  // const [lightGradientColor, setLightGradientColor] = useState('#fcbde2');
-  // const [darkGradientColor, setDarkGradientColor] = useState('#fcbde2');
-  // const [lightMainColor, setLightMainColor] = useState('#050404');
-  // const [darkMainColor, setDarkMainColor] = useState('#EEE6E2');
+  const [showPicker1, setShowPicker1] = useState(false);
+  const [showSave, setShowSave] = useState(false);
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
       backgroundDark: '#090808',
@@ -69,14 +49,29 @@ const ProfileSettings = () => {
   const color = useColorModeValue(theme.mainTextLight, theme.mainTextDark);
   const gradientColor = useColorModeValue(theme.gradientColorLight, theme.gradientColorDark);
   const { colorMode } = useColorMode();
-  const bgGradient = `linear(to-t, ${bg} ${subPlacement}%, ${gradientColor} ${bgPlacement}%)`;
+  const bgGradient = `linear(to-t, ${bg} 40%, ${gradientColor} 90%)`;
+
+  const onChange = (col: ColorResult) => {
+    setTheme((prevTheme) => ({ ...prevTheme, gradientColorDark: col.hex }));
+    setShowSave(true);
+  };
+  const onChange1 = (col: ColorResult) => {
+    setTheme((prevTheme) => ({ ...prevTheme, gradientColorLight: col.hex }));
+    setShowSave(true);
+  };
+
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+  const submit = useSubmit();
 
   if (!currentUser) return null;
 
-  // console.log('theme: ', currentUser.theme);
-
   return (
-    <>
+    <Stack
+      onClick={() => {
+        setShowPicker(false);
+        setShowPicker1(false);
+      }}
+    >
       <GradientSettings />
       <Box
         h="400px"
@@ -94,29 +89,73 @@ const ProfileSettings = () => {
         <ProfileHeader profile={currentUser} />
         <Player track={currentUser.settings?.profileSong} />
       </Box>
+      <HStack>
+        <Box
+          p="1px"
+          bg={theme.gradientColorDark}
+          boxSize="20px"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPicker(!showPicker);
+            setShowPicker1(false);
+            const delayScroll = setTimeout(() => {
+              colorPickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 0);
+            return () => clearTimeout(delayScroll);
+          }}
+        />
+        <Text>Gradient Color Dark</Text>
+      </HStack>
+      <Collapse in={showPicker}>
+        <div ref={colorPickerRef}>
+          <SketchPicker color={theme.gradientColorDark} onChange={(col) => onChange(col)} />
+        </div>
+      </Collapse>
+      <HStack>
+        <Box
+          p="1px"
+          bg={theme.gradientColorLight}
+          boxSize="20px"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPicker1(!showPicker1);
+            setShowPicker(false);
+            const delayScroll = setTimeout(() => {
+              colorPickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 0);
+            return () => clearTimeout(delayScroll);
+          }}
+        />
+        <Text>Gradient Color Light</Text>
+      </HStack>
+      <Collapse in={showPicker1}>
+        <div ref={colorPickerRef}>
+          <SketchPicker color={theme.gradientColorLight} onChange={(col) => onChange1(col)} />
+        </div>
+      </Collapse>
+      {showSave && (
+        <Button
+          pos="fixed"
+          bottom={2}
+          right={2}
+          bg={bg}
+          color={color}
+          onClick={() => {
+            submit(
+              {
+                gradientColorDark: theme.gradientColorDark,
+                gradientColorLight: theme.gradientColorLight,
+              },
 
-      {/* {currentUser.theme?.gradient && (
-        <>
-          <Slider
-            aria-label="gradient from"
-            defaultValue={bgPlacement}
-            min={subPlacement}
-            onChange={setBgPlacement}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-          <Slider aria-label="gradient to" defaultValue={subPlacement} onChange={setSubPlacement}>
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-        </>
-      )} */}
-    </>
+              { method: 'post', replace: true },
+            );
+          }}
+        >
+          Save
+        </Button>
+      )}
+      <Box h="300px" ref={colorPickerRef} />
+    </Stack>
   );
 };
 

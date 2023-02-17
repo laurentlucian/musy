@@ -47,6 +47,23 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const gradientColorDark = data.get('gradientColorDark');
+  if (typeof gradientColorDark === 'string') {
+    await prisma.theme.upsert({
+      create: { gradientColorDark, userId },
+      update: { gradientColorDark },
+      where: { userId },
+    });
+  }
+  const gradientColorLight = data.get('gradientColorLight');
+  if (typeof gradientColorLight === 'string') {
+    await prisma.theme.upsert({
+      create: { gradientColorLight, userId },
+      update: { gradientColorLight },
+      where: { userId },
+    });
+  }
+
   return null;
 };
 
