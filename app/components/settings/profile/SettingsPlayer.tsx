@@ -84,7 +84,7 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
                     // onMouseDown={onMouseDown}
                     // onMouseMove={onMouseMove}
                     cursor="pointer"
-                    w={['190px', '68%']}
+                    w={['190px', '220px']}
                     textOverflow="ellipsis"
                   >
                     {song.name}
@@ -110,34 +110,9 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
               <HStack spacing={1} align="end">
                 <Image
                   src={song.image}
-                  mt={
-                    size === 'large'
-                      ? [0, -47, -47, -47, -200]
-                      : size === 'medium'
-                      ? [0, -47, -47, -47, '-86px']
-                      : 0
-                  }
-                  boxSize={
-                    size === 'large'
-                      ? [135, 160, 160, 200, 334]
-                      : size === 'medium'
-                      ? [135, 160, 160, 200, 221]
-                      : 135
-                  }
-                  minW={
-                    size === 'large'
-                      ? [135, 160, 160, 200, 334]
-                      : size === 'medium'
-                      ? [135, 160, 160, 200, 221]
-                      : 135
-                  }
-                  minH={
-                    size === 'large'
-                      ? [135, 160, 160, 200, 334]
-                      : size === 'medium'
-                      ? [135, 160, 160, 200, 221]
-                      : 135
-                  }
+                  boxSize={135}
+                  minW={135}
+                  minH={135}
                   transition="all 0.25s"
                   pos="absolute"
                   right={0}
