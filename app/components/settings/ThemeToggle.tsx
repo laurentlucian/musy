@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Check } from 'react-feather';
 
 import {
@@ -19,14 +18,13 @@ import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 
 const ThemeToggle = () => {
   // const [scheduled, setScheduled] = useState(false);
-  const [selection, setSelection] = useState('');
   const { setColorMode } = useColorMode();
   const color = useColorModeValue('music.800', 'white');
   // const bg = useColorModeValue('white', 'music.800');
   const defaultValue = color === 'music.800' ? 'light' : 'dark';
   let reloadTimeout: NodeJS.Timeout;
   const onChange = (value: string) => {
-    setSelection(value);
+    setColorMode(value);
     clearTimeout(reloadTimeout);
     reloadTimeout = setTimeout(() => {
       location.reload();
@@ -53,10 +51,6 @@ const ThemeToggle = () => {
   });
 
   const group = getRootProps();
-
-  useEffect(() => {
-    if (selection) setColorMode(selection);
-  }, [selection, setColorMode]);
 
   return (
     <Stack spacing={5} w={['unset', '400px']}>
