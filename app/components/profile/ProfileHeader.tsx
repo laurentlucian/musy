@@ -34,6 +34,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
         maxH={[150, 150, 200]}
         src={user.image}
         mr={[0, '10px']}
+        zIndex={1}
       />
     </Tooltip>
   );

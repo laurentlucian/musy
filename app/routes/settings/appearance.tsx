@@ -47,6 +47,38 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const backgroundDark = data.get('backgroundDark');
+  if (typeof backgroundDark === 'string') {
+    await prisma.theme.upsert({
+      create: { backgroundDark, userId },
+      update: { backgroundDark },
+      where: { userId },
+    });
+  }
+  const backgroundLight = data.get('backgroundLight');
+  if (typeof backgroundLight === 'string') {
+    await prisma.theme.upsert({
+      create: { backgroundLight, userId },
+      update: { backgroundLight },
+      where: { userId },
+    });
+  }
+  const bgGradientDark = data.get('bgGradientDark');
+  if (typeof bgGradientDark === 'string') {
+    await prisma.theme.upsert({
+      create: { bgGradientDark, userId },
+      update: { bgGradientDark },
+      where: { userId },
+    });
+  }
+  const bgGradientLight = data.get('bgGradientLight');
+  if (typeof bgGradientLight === 'string') {
+    await prisma.theme.upsert({
+      create: { bgGradientLight, userId },
+      update: { bgGradientLight },
+      where: { userId },
+    });
+  }
   const gradientColorDark = data.get('gradientColorDark');
   if (typeof gradientColorDark === 'string') {
     await prisma.theme.upsert({

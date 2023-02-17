@@ -1,7 +1,8 @@
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
 import { Link, Outlet, useCatch } from '@remix-run/react';
+// import { useMemo } from 'react';
 
-import { Heading, Stack, Button } from '@chakra-ui/react';
+import { Heading, Stack, Button, Box, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -30,12 +31,30 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
+  // const bgGradientDark = useMemo(() => {  //these were not responsive
+  //   return user.theme?.bgGradientDark;
+  // }, [user.theme?.bgGradientDark]);
+  // const bgGradientLight = useMemo(() => {
+  //   return user.theme?.bgGradientLight;
+  // }, [user.theme?.bgGradientLight]);
+
+  const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
 
   return (
-    <Stack spacing={5} pb={['110px', 5]} pt={["44px",5]} h="max-content" px={isSmallScreen ? '5px' : 0}>
-      <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && !isOwnProfile && !isDev ? <PrivateProfile name={user.name} /> : <Outlet />}
-    </Stack>
+    <>
+      <Box pos="absolute" top={0} left={0} w="100vw" h="100%" bgGradient={bgGradient} zIndex={0} />
+      <Stack
+        spacing={5}
+        pb={['110px', 5]}
+        pt={['44px', 5]}
+        h="max-content"
+        px={isSmallScreen ? '5px' : 0}
+        zIndex={1}
+      >
+        <ProfileHeader isPrivate={isPrivate} />
+        {isPrivate && !isOwnProfile && !isDev ? <PrivateProfile name={user.name} /> : <Outlet />}
+      </Stack>
+    </>
   );
 };
 
@@ -51,7 +70,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
 
   const user = await prisma.profile.findUnique({
-    include: { ai: true, settings: true },
+    include: { ai: true, settings: true, theme: true },
     where: { userId: id },
   });
 

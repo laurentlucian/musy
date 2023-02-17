@@ -54,7 +54,10 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const userIsNat = currentUser?.userId === '12143615383';
 
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('#EEE6E2', '#050404');
+  const bg = useColorModeValue(
+    user?.theme?.gradientColorLight ?? '#EEE6E2',
+    user?.theme?.gradientColorDark ?? '#050404',
+  );
   const customBg = isNya
     ? '#FE5BAC'
     : isDanica
@@ -75,7 +78,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     : color;
 
   const Home = (
-    <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center">
+    <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center" zIndex={1}>
       <HStack>
         <Image src="/musylogo1.svg" boxSize="35px" mb="-8px" />
         {!authorized ? (

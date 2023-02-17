@@ -18,13 +18,13 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   return (
-    <Flex w="100%" as="header" py={5} justify="space-between" px={0}>
-      <HStack as={Link} to="/" spacing="8px">
+    <Flex w="100%" as="header" py={5} justify="space-between" px={0} zIndex={1}>
+      <HStack as={Link} to="/" spacing="8px" zIndex={1}>
         <Image src="/favicon-32x32.png" />
         <Heading size="sm">musy</Heading>
         {transition.state === 'loading' && <Waver />}
       </HStack>
-      <HStack h="39px">
+      <HStack h="39px" zIndex={1}>
         {!authorized ? (
           <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
             <Button

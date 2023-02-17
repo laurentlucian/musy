@@ -28,6 +28,7 @@ const ProfileSettings = () => {
     currentUser?.theme ?? {
       backgroundDark: '#090808',
       backgroundLight: '#EEE6E2',
+      bgGradient: 'linear(to-t, #090808 40%, #fcbde2 90%)',
       blur: true,
       gradient: false,
       gradientColorDark: '#fcbde2',
@@ -45,11 +46,12 @@ const ProfileSettings = () => {
     },
   );
 
-  const bg = useColorModeValue(theme.backgroundLight, theme.backgroundDark);
+  const bg = useColorModeValue('#090808', '#EEE6E2');
   const color = useColorModeValue(theme.mainTextLight, theme.mainTextDark);
-  const gradientColor = useColorModeValue(theme.gradientColorLight, theme.gradientColorDark);
   const { colorMode } = useColorMode();
-  const bgGradient = `linear(to-t, ${bg} 40%, ${gradientColor} 90%)`;
+  const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
+  const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorDark} 90%)`;
+  const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
 
   const onChange = (col: ColorResult) => {
     setTheme((prevTheme) => ({ ...prevTheme, gradientColorDark: col.hex }));
@@ -67,10 +69,10 @@ const ProfileSettings = () => {
 
   return (
     <Stack
-      onClick={() => {
-        setShowPicker(false);
-        setShowPicker1(false);
-      }}
+    // onClick={() => {
+    //   setShowPicker(false);
+    //   setShowPicker1(false);
+    // }}
     >
       <GradientSettings />
       <Box
@@ -143,6 +145,8 @@ const ProfileSettings = () => {
           onClick={() => {
             submit(
               {
+                bgGradientDark: bgGradientDark,
+                bgGradientLight: bgGradientLight,
                 gradientColorDark: theme.gradientColorDark,
                 gradientColorLight: theme.gradientColorLight,
               },
