@@ -81,6 +81,7 @@ const MobileNavBar = () => {
           justifyContent="space-around"
           transition="bottom 0.25s ease-out"
           overflow="hidden"
+          zIndex={9}
         >
           <Link to="/home" prefetch="render" onClick={onClickHome}>
             <IconButton
