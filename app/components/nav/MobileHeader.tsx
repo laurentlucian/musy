@@ -190,6 +190,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           pos="fixed"
           top={2}
           right={0}
+          bg={bg}
+          color={color}
         >
           Done
         </Button>
