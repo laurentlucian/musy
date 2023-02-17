@@ -39,7 +39,6 @@ const Account = () => {
   const spotifyGreen = '#1DB954';
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
-  console.log(currentUser.settings?.miniPlayer, 'currentUser');
 
   return (
     <>

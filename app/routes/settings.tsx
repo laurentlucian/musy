@@ -41,9 +41,7 @@ const Settings = () => {
           appearance
         </Link>
       </Stack>
-      <Center px={['40px', '100px']} height={[0, '200px']}>
-        {/* <Divider orientation="vertical" /> */}
-      </Center>
+      <Center px={['40px', '100px']} height={[0, '200px']}></Center>
       <Outlet />
     </Stack>
   );
