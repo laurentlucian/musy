@@ -14,11 +14,12 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
+import type { Profile, Track } from '@prisma/client';
 
 import Waver from '~/components/icons/Waver';
 import UserMenu from '~/components/nav/UserMenu';
 import Tile from '~/components/Tile';
+import UserTile from '~/components/UserTile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 
@@ -156,6 +157,9 @@ const Explore = () => {
         <UserMenu isSmallScreen={true} pathname={'/explore'} />
       </HStack>
       <Stack pt="50px" overflowY="scroll" w="100%" h="84vh">
+        {data?.users.map((user: Profile) => (
+          <UserTile key={user.id} profile={user} />
+        ))}
         {tracks?.map((track) => (
           <Tile
             key={track.id}
