@@ -87,26 +87,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     throw new Response('Failed to load Spotify [2]', { status: 500 });
   }
 
-  const spotifyProfile = await spotify.getMe().catch((e) => {
-    if (e.statusCode === 429) {
-      const retryAfter = e.headers['retry-after'];
-      const hours = Math.round(retryAfter / 3600);
-
-      throw new Response(`Rate Limited for ${hours} hours 🥹`, { status: 429 });
-    }
-
-    return null;
-  });
-  const pfp = spotifyProfile?.body.images;
-  if (pfp) {
-    await updateUserImage(id, pfp[0].url);
-  }
-
-  const name = spotifyProfile?.body.display_name;
-  if (name) {
-    await updateUserName(id, name);
-  }
-
   async function getProfileSong(id: string) {
     const settings = await prisma.settings.findUnique({
       include: { profileSong: true },

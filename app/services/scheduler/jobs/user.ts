@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
 import { createTrackModel, isProduction, minutesToMs } from '~/lib/utils';
-import { getAllUsers } from '~/services/auth.server';
+import { getAllUsers, updateUserImage, updateUserName } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -31,6 +31,18 @@ export const userQ = Queue<{ userId: string }>(
         await userQ.removeRepeatableByKey(jobKey);
       }
       return null;
+    }
+
+    const spotifyProfile = await spotify.getMe();
+
+    const pfp = spotifyProfile?.body.images;
+    if (pfp) {
+      await updateUserImage(userId, pfp[0].url);
+    }
+
+    const name = spotifyProfile?.body.display_name;
+    if (name) {
+      await updateUserName(userId, name);
     }
 
     console.log('userQ -> adding recent tracks to db', userId);
