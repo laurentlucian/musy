@@ -182,21 +182,23 @@ model Theme {
   //
   colorPreset      ColorPreset[]
   //
-  isPreset         Boolean       @default(true)
-  backgroundLight  String        @default("#EEE6E2")
-  backgroundDark   String        @default("#090808")
-  mainTextLight    String        @default("#161616")
-  mainTextDark     String        @default("#EEE6E2")
-  subTextLight     String        @default("#161616")
-  subTextDark      String        @default("#EEE6E2")
-  gradient         Boolean       @default(false)
+  isPreset             Boolean       @default(true)
+  backgroundLight      String        @default("#EEE6E2")
+  backgroundDark       String        @default("#090808")
+  mainTextLight        String        @default("#161616")
+  mainTextDark         String        @default("#EEE6E2")
+  subTextLight         String        @default("#161616")
+  subTextDark          String        @default("#EEE6E2")
+  gradient             Boolean       @default(false)
+  gradientColorLight   String        @default("#fcbde2")
+  gradientColorDark    String        @default("#fcbde2")
   //
-  playerColorLight String        @default("#E7DFD9")
-  playerColorDark  String        @default("#101010")
-  blur             Boolean       @default(true)
-  opaque           Boolean       @default(false)
+  playerColorLight     String        @default("#E7DFD9")
+  playerColorDark      String        @default("#101010")
+  blur                 Boolean       @default(true)
+  opaque               Boolean       @default(false)
   //
-  musyLogo         String        @default("musy")
+  musyLogo             String        @default("musy")
 }
 
 model Track {
