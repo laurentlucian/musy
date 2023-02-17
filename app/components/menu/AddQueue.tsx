@@ -12,21 +12,21 @@ import type { action } from '~/routes/$id/add';
 import Waver from '../icons/Waver';
 
 type AddQueueProps = {
-  fromUseId?: string;
+  fromId?: string;
   trackId: string;
   // this is used by ActivityFeed to let prisma know from who the track is from (who sent, or liked)
   user: Profile | null;
   userId?: string | null;
 };
 
-const AddQueue = ({ fromUseId, trackId, user, userId }: AddQueueProps) => {
+const AddQueue = ({ fromId, trackId, user }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
   const fetcher = useTypedFetcher<typeof action>();
   const isSending = !!user;
 
   const addToQueue = () => {
-    const id = fromUseId || user?.userId || paramId;
+    const id = fromId || user?.userId || paramId;
     const action = isSending ? `/${id}/add` : `/${currentUser?.userId}/add`;
 
     const fromUserId = isSending ? currentUser?.userId : id;

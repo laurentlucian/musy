@@ -327,7 +327,7 @@ const ActionDrawer = () => {
                     {track.link !== '' && <CopyLink link={track.link} />}
                     <PlayPreview preview_url={track.preview_url} />
                     <ProfileSong user={user} />
-                    <AddQueue trackId={track.id} fromUseId="" user={null} />
+                    <AddQueue trackId={track.id} fromId={currentUser?.userId} user={null} />
                   </>
                 )}
                 {queueableUsers.length > 0 && <SendTo />}
