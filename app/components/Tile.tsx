@@ -145,30 +145,34 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         fetcher.submit(recommendData, { action, method: 'post', replace: true });
       }
     };
+
+    console.log('fetcher submission form data: ', fetcher?.submission?.formData.get('trackId'));
+
     const isClicked = clickedRef.current === id;
-    const isAdding = fetcher
-      ? fetcher.submission?.formData.get('id') === id
-      : fetcherRec
-      ? fetcherRec.submission?.formData.get('id') === id
-      : null;
+    let isAdding = null;
+
+    if (fetcher) {
+      isAdding = fetcher.submission?.formData.get('trackId') === id;
+    } else if (fetcherRec) {
+      isAdding = fetcherRec.submission?.formData.get('trackId') === id;
+    }
+
     const isDone = fetcher
       ? fetcher.type === 'done' && isClicked
       : fetcherRec
       ? fetcherRec.type === 'done' && isClicked
       : null;
-    const isError = fetcher
-      ? typeof fetcher.data === 'string' && isClicked
-        ? fetcher.data.includes('Error') && isClicked
-          ? fetcher.data && isClicked
-          : fetcherRec
-          ? typeof fetcherRec.data === 'string' && isClicked
-            ? fetcherRec.data.includes('Error') && isClicked
-              ? fetcherRec.data && isClicked
-              : null
-            : null
-          : null
-        : null
-      : null;
+    let isError = null;
+
+    if (fetcher && typeof fetcher.data === 'string' && isClicked) {
+      if (fetcher.data.includes('Error') && isClicked) {
+        isError = fetcher.data && isClicked;
+      } else if (fetcherRec && typeof fetcherRec.data === 'string' && isClicked) {
+        if (fetcherRec.data.includes('Error') && isClicked) {
+          isError = fetcherRec.data && isClicked;
+        }
+      }
+    }
 
     const icon = isAdding ? (
       <Waver />
