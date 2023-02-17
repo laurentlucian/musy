@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     : isMiggy
     ? `linear(to-t, ${bg} 40%, #26e4f9 110%)`
     : isNat
-    ? `linear(to-t, ${bg} 40%, #fcbde2 90%)`
+    ? `linear(to-t, ${bg} 40%, #f2b8c6 90%)`
     : 'none';
 
   const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');

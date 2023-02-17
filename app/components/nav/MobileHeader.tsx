@@ -65,7 +65,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     : isMiggy
     ? '#1f93a0'
     : isNat
-    ? '#fcbde2'
+    ? '#f2b8c6'
     : bg;
   const customColor = userIsNya
     ? '#FE5BAC'
@@ -74,7 +74,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     : userIsMig
     ? '#1f93a0'
     : userIsNat
-    ? '#fcbde2'
+    ? '#f2b8c6'
     : color;
 
   const Home = (
