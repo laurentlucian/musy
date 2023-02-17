@@ -147,8 +147,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       }
     };
 
-    console.log('fetcher submission form data: ', fetcher?.submission?.formData.get('trackId'));
-
     const isClicked = clickedRef.current === id;
     let isAdding = null;
 
