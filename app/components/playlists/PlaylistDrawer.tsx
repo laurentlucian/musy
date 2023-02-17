@@ -73,7 +73,7 @@ const PlaylistDrawer = () => {
                         <Image
                           boxSize={['350px', '369px', 500]}
                           objectFit="cover"
-                          src={playlist.image}
+                          src={playlist.images[0].url}
                           alignSelf="center"
                           mr={['0', '25px']}
                           mt={[0, '100px']}

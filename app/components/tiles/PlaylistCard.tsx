@@ -3,32 +3,36 @@ import { forwardRef } from 'react';
 import { Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import type { SpotifyPlaylist } from '~/lib/types/spotify';
+import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
 
-type PlaylistCardProps = SpotifyPlaylist & {
-  // will show header (profile above PlaylistCard) if createdAt is defined
-} & ChakraProps;
+type PlaylistCardProps = { playlist: SpotifyApi.PlaylistObjectSimplified } & ChakraProps;
 
 const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
-  ({ description, image, name, ...props }, ref) => {
-    const PlaylistTitle = (
+  ({ playlist, ...props }, ref) => {
+    const { onOpen } = usePlaylistDrawerActions();
+    const Title = (
       <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
-        {name}
+        {playlist.name}
       </Text>
     );
     const PlaylistImage = (
-      <Image boxSize={['85px', '100px']} objectFit="cover" src={image} draggable={false} />
+      <Image
+        boxSize={['85px', '100px']}
+        objectFit="cover"
+        src={playlist.images[0].url} // 3 images available of different sizes this is the largest size
+        draggable={false}
+      />
     );
     const Description = (
       <Stack direction="row">
         <Text fontSize="14px" opacity={0.8} noOfLines={1}>
-          {description}
+          {playlist.description}
         </Text>
       </Stack>
     );
     const TitleAndDescription = (
       <Stack justifyContent="center" px={[0, '50px']}>
-        {PlaylistTitle}
+        {Title}
         {Description}
       </Stack>
     );
@@ -44,6 +48,7 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
           w={['100vw', '450px', '750px', '1100px']}
           py="5px"
           pl="5px"
+          onClick={() => onOpen(playlist)}
         >
           <Stack direction="row">
             {PlaylistImage}

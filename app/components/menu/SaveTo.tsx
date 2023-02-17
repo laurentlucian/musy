@@ -151,11 +151,7 @@ const SaveTo = ({ currentUserId }: { currentUserId: string | undefined }) => {
                     isLast && setRef(node);
                   }}
                   key={list.id}
-                  uri={list.uri}
-                  image={list.images[0]?.url}
-                  playlistUri={list.uri}
-                  name={list.name}
-                  description={list.description}
+                  playlist={list}
                 />
               );
             })}

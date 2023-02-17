@@ -39,14 +39,7 @@ const Playlists = ({
                 isLast && setRef(node);
               }}
               key={list.id}
-              uri={list.uri}
-              link={list.external_urls.spotify ?? ''}
-              name={list.name}
-              image={list.images[0]?.url}
-              trackTotal={list.tracks.total}
-              isPublic={list.public ?? true}
-              playlistId={list.id}
-              description={list.description}
+              playlist={list}
             />
           );
         })}
@@ -61,14 +54,7 @@ const Playlists = ({
                   isLast && setRef(node);
                 }}
                 key={list.id}
-                uri={list.uri}
-                // link={list.external_urls.spotify ?? ''}
-                name={list.name}
-                image={list.images[0]?.url}
-                // tracks={list.tracks.total}
-                // public={list.public}
-                playlistUri={list.uri}
-                description={list.description}
+                playlist={list}
               />
             );
           })}

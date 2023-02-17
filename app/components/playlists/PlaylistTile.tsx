@@ -1,11 +1,10 @@
 import { Link, useFetcher, useParams } from '@remix-run/react';
-import { forwardRef, useEffect, useState, useMemo, useRef } from 'react';
+import { forwardRef, useEffect, useState, useRef } from 'react';
 
 import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
 import { usePlaylistDrawerActions } from '~/hooks/usePlaylistDrawer';
-import type { PlaylistTrack } from '~/lib/types/types';
 
 import Tooltip from '../Tooltip';
 
@@ -15,117 +14,89 @@ export const decodeHtmlEntity = (str?: string) => {
   });
 };
 
-type TileProps = PlaylistTrack & ChakraProps;
+type TileProps = { playlist: SpotifyApi.PlaylistObjectSimplified } & ChakraProps;
 
-const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(
-  ({ description, image, isPublic, link, name, playlistId, trackTotal, uri, ...props }, ref) => {
-    const [open, setOpen] = useState(false);
-    const [tracks, setTracks] = useState<SpotifyApi.PlaylistObjectSimplified[]>();
-    const [playlist, setPlaylist] = useState<PlaylistTrack>({
-      description,
-      image,
-      isPublic,
-      link,
-      name,
-      playlistId,
-      trackTotal,
-      tracks,
-      uri,
-    });
-    const initialFetch = useRef(false);
-    const hasFetched = useRef(false);
+const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props }, ref) => {
+  const [open, setOpen] = useState(false);
+  const [trackz, setTrackz] = useState<SpotifyApi.PlaylistObjectSimplified[]>([]);
+  const [list, setList] = useState<
+    SpotifyApi.PlaylistObjectSimplified & { trackz: SpotifyApi.PlaylistObjectSimplified[] }
+  >({
+    ...playlist,
+    trackz: [],
+  });
 
-    const fetcher = useFetcher();
-    const { id } = useParams();
-    const { onOpen } = usePlaylistDrawerActions();
+  const initialFetch = useRef(false);
+  const hasFetched = useRef(false);
 
-    const onClick = () => {
-      setOpen(true);
-    };
+  const fetcher = useFetcher();
+  const { id } = useParams();
+  const { onOpen } = usePlaylistDrawerActions();
 
-    useEffect(() => {
-      setPlaylist((p) => ({
-        ...p,
-        tracks,
-      }));
-    }, [tracks]);
+  const onClick = () => {
+    setOpen(true);
+  };
 
-    useEffect(() => {
-      if (open && !initialFetch.current) {
-        hasFetched.current = true;
-        initialFetch.current = true;
-        fetcher.load(`/${id}/playlistTracks?playlistId=${playlistId}`);
-        setTracks(fetcher.data);
-      }
-    }, [open, fetcher, id, playlistId]);
+  useEffect(() => {
+    setList((p) => ({
+      ...p,
+      trackz,
+    }));
+  }, [trackz]);
 
-    useEffect(() => {
-      if (fetcher.data && !hasFetched.current) {
-        onOpen(playlist);
-        hasFetched.current = false;
-      }
-    }, [onOpen, playlist, fetcher.data, tracks]);
+  useEffect(() => {
+    if (open && !initialFetch.current) {
+      hasFetched.current = true;
+      initialFetch.current = true;
+      fetcher.load(`/${id}/playlistTracks?playlistId=${list.id}`);
+      setTrackz(fetcher.data);
+    }
+  }, [open, fetcher, id, list.id]);
 
-    return (
-      <>
-        <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
-          <Link to={`/${id}/${playlist.playlistId}`}>
-            <Flex direction="column">
-              {/* {createdAt && (
-              <HStack align="center" h="35px">
-                {createdBy ? (
-                  <Link to={`/${createdBy.userId}`}>
-                    <HStack align="center">
-                      <Image borderRadius={50} boxSize="25px" mb={1} src={createdBy.image} />
-                      <Text fontWeight="semibold" fontSize="13px">
-                        {createdBy.name.split(' ')[0]}
-                      </Text>
-                    </HStack>
-                  </Link>
-                ) : (
-                  <Text fontWeight="semibold" fontSize="13px">
-                    Anon
+  useEffect(() => {
+    if (fetcher.data && !hasFetched.current) {
+      onOpen(list);
+      hasFetched.current = false;
+    }
+  }, [onOpen, list, fetcher.data]);
+
+  return (
+    <>
+      <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
+        <Link to={`/${id}/${list.id}`}>
+          <Flex direction="column">
+            <Tooltip label={list.name} placement="top-start">
+              <Image
+                boxSize="200px"
+                objectFit="cover"
+                src={list.images[0].url}
+                draggable={false}
+                onClick={onClick}
+              />
+            </Tooltip>
+          </Flex>
+          <Flex justify="space-between">
+            <Stack spacing={0} onClick={onClick}>
+              <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+                {list.name}
+              </Text>
+              {list.description ? (
+                <Flex align="center">
+                  <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                    {decodeHtmlEntity(list.description)}
                   </Text>
-                )}
-                <Text as="span">·</Text>
-                <Text fontSize="12px" opacity={0.6}>
-                  {timeSince(createdAt ?? null)}
-                </Text>
-              </HStack>
-            )} */}
-              <Tooltip label={name} placement="top-start">
-                <Image
-                  boxSize="200px"
-                  objectFit="cover"
-                  src={image}
-                  draggable={false}
-                  onClick={onClick}
-                />
-              </Tooltip>
-            </Flex>
-            <Flex justify="space-between">
-              <Stack spacing={0} onClick={onClick}>
-                <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
-                  {name}
-                </Text>
-                {description ? (
-                  <Flex align="center">
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {decodeHtmlEntity(description)}
-                    </Text>
-                  </Flex>
-                ) : (
-                  <Box h="13px" />
-                )}
-                <Text fontSize="11px">{trackTotal} songs</Text>
-              </Stack>
-            </Flex>
-          </Link>
-        </Stack>
-      </>
-    );
-  },
-);
+                </Flex>
+              ) : (
+                <Box h="13px" />
+              )}
+              <Text fontSize="11px">{list.tracks.total} songs</Text>
+            </Stack>
+          </Flex>
+        </Link>
+      </Stack>
+    </>
+  );
+});
 
 PlaylistTile.displayName = 'Tile';
 

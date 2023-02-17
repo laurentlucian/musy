@@ -1,33 +1,20 @@
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
-import type { PlaylistTrack } from '~/lib/types/types';
-
 interface DrawerStateConfig {
   actions: {
     onClose: () => void;
-    onOpen: (by: PlaylistTrack) => void;
+    onOpen: (playlist: SpotifyApi.PlaylistObjectSimplified) => void;
   };
-  playlist: PlaylistTrack | null;
+  playlist: SpotifyApi.PlaylistObjectSimplified | null;
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
     onClose: () => set({ playlist: null }),
-    onOpen: (by) =>
+    onOpen: (playlist) =>
       set({
-        playlist: {
-          description: by.description,
-          image: by.image,
-          isPublic: by.isPublic,
-          link: by.link,
-          name: by.name,
-          playlistId: by.playlistId,
-          trackTotal: by.trackTotal,
-          tracks: by.tracks,
-          uri: by.uri,
-          userId: by.userId,
-        },
+        playlist,
       }),
   },
   playlist: null,
