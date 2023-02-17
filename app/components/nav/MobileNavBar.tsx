@@ -91,6 +91,7 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 0 ? 1 : 0.4}
+              pt="12px"
             />
           </Link>
           <Link to="/friends" prefetch="render" onClick={onClickFriends}>
@@ -101,6 +102,7 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 1 ? 1 : 0.4}
+              pt="12px"
             />
           </Link>
           <Link to="/sessions" prefetch="render" onClick={onClickSessions}>
@@ -111,6 +113,7 @@ const MobileNavBar = () => {
               bg={bg}
               color={color}
               opacity={active === 2 ? 1 : 0.4}
+              pt="12px"
             />
           </Link>
           <Link to="/explore" prefetch="render" onClick={onClickExplore}>
@@ -119,8 +122,9 @@ const MobileNavBar = () => {
               icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
               bg={bg}
-              opacity={active === 3 ? 1 : 0.4}
               color={color}
+              opacity={active === 3 ? 1 : 0.4}
+              pt="12px"
             />
           </Link>
           <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
@@ -129,6 +133,7 @@ const MobileNavBar = () => {
               icon={profileIcon}
               variant="mobileNav"
               opacity={active === 4 ? 1 : 0.4}
+              pt="12px"
             />
           </Link>
         </Box>
