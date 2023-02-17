@@ -27,7 +27,7 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
   );
 
   const Bio = (
-    <Stack w="100%" minW="100%" maxW="100%" pt="4px">
+    <Stack w="100%" pt="4px" pr="5px">
       <Form method="post" replace>
         <Textarea
           name="bio"

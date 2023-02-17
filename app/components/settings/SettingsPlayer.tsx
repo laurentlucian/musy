@@ -65,7 +65,14 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
   }, []);
 
   return (
-    <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={-1} mt="10px">
+    <Stack
+      pos="sticky"
+      top={isOpen ? ['47px', 0] : ['42px', 0]}
+      zIndex={1}
+      spacing={-1}
+      mt="10px"
+      px="5px"
+    >
       <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
         <Collapse in={!isOpen} animateOpacity>
           <Stack spacing={0} bg={bg} backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}>
