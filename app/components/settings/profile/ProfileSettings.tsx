@@ -51,7 +51,7 @@ const ProfileSettings = () => {
   const color = useColorModeValue(theme.mainTextLight, theme.mainTextDark);
   const { colorMode } = useColorMode();
   const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
-  const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorDark} 90%)`;
+  const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorLight} 90%)`;
   const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
 
   const onChange = (col: ColorResult) => {
