@@ -38,16 +38,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
       {track.name}
     </Text>
   );
-  const SongImage = (
-    <Image
-      boxSize={['85px', '100px']}
-      objectFit="cover"
-      src={track.image}
-      draggable={false}
-      onMouseDown={onMouseDown}
-      onMouseMove={onMouseMove}
-    />
-  );
+  const SongImage = <Image boxSize={['85px', '100px']} objectFit="cover" src={track.image} />;
   const ArtistName = (
     <Stack direction="row" justify={['space-between', 'unset']}>
       <Stack>
@@ -84,27 +75,28 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
   );
 
   return (
-    <Tr cursor="pointer" onClick={() => onClick(track, props.userId)}>
-      <>
-        <Td>
-          <HStack>
-            {SongImage}
-            <Stack w="100%">
-              {SongTitle}
-              {ArtistName}
-            </Stack>
-          </HStack>
-        </Td>
-        {!isSmallScreen ? (
-          <>
-            <Td>{AlbumName}</Td>
-            <Td>{AddedAt}</Td>
-            <Td>{SongLength}</Td>
-          </>
-        ) : null}
-      </>
-
-      {/* {recommend && <Button onClick={removeFromRecommended}>-</Button>} */}
+    <Tr
+      cursor="pointer"
+      onClick={() => onClick(track, props.userId)}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+    >
+      <Td>
+        <HStack>
+          {SongImage}
+          <Stack w="100%">
+            {SongTitle}
+            {ArtistName}
+          </Stack>
+        </HStack>
+      </Td>
+      {!isSmallScreen ? (
+        <>
+          <Td>{AlbumName}</Td>
+          <Td>{AddedAt}</Td>
+          <Td>{SongLength}</Td>
+        </>
+      ) : null}
     </Tr>
   );
 };
