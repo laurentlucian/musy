@@ -30,7 +30,7 @@ const Friends = () => {
   return (
     <Stack pt={{ base: '53px', lg: 0 }} pb="100px" spacing={3} w="100%" px={['4px', 0]}>
       {currentUserData && currentUserData.settings?.miniPlayer && (
-        <Stack w="100%" h="100%" mt={-2} pl="10px">
+        <Stack w="100%" h="100%">
           {currentUserData.settings?.miniPlayer && (
             <PrismaMiniPlayer
               key={currentUserData.userId}
