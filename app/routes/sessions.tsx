@@ -17,7 +17,7 @@ const Friends = () => {
   return (
     <Stack
       pb="50px"
-      pt={{ base: '50px', lg: 0 }}
+      pt={{ base: '60px', xl: 0 }}
       spacing={3}
       w="100%"
       px={['4px', 0]}
