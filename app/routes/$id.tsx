@@ -230,17 +230,17 @@ export const action = async ({ params, request }: ActionArgs) => {
     });
   }
 
-  if (easterEgg === '69') {
-    await prisma.settings.update({
-      data: { easterEgg: true },
-      where: { userId: id },
-    });
-  } else {
-    await prisma.settings.update({
-      data: { easterEgg: false },
-      where: { userId: id },
-    });
-  }
+  // if (easterEgg === '69') {
+  //   await prisma.settings.update({
+  //     data: { easterEgg: true },
+  //     where: { userId: id },
+  //   });
+  // } else {
+  //   await prisma.settings.update({
+  //     data: { easterEgg: false },
+  //     where: { userId: id },
+  //   });
+  // }
 
   return null;
 };
