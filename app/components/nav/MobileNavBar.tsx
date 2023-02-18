@@ -25,12 +25,18 @@ const MobileNavBar = () => {
   const color = useColorModeValue('music.500', 'music.200');
 
   useEffect(() => {
-    const pathnames = ['home', 'friends', 'sessions', 'explore', `${profile}`];
-    const index = pathnames.findIndex((pathname) => pathname === pathname.split('/')[1]);
-    if (index !== -1) {
-      setActive(index);
+    if (pathname.includes('home')) {
+      setActive(0);
+    } else if (pathname.includes('friends')) {
+      setActive(1);
+    } else if (pathname.includes('sessions')) {
+      setActive(2);
+    } else if (pathname.includes('explore')) {
+      setActive(3);
+    } else if (pathname.includes(`${currentUser?.userId}`)) {
+      setActive(4);
     }
-  }, [pathname, profile]);
+  }, [pathname, currentUser?.userId]);
 
   const profileIcon = (
     <Image
