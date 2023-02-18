@@ -144,42 +144,34 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           bg={customBg}
           opacity={show / 90}
           overflow="clip"
-          textAlign={!isCurrentUserProfile ? 'left' : 'center'}
+          textAlign="center"
         >
           <Stack w="100vw" h="74px">
             {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '16px'} /> : <Box h="16px" />}
-            <Text
-              h="37px"
-              pl={!isCurrentUserProfile ? '28px' : 0}
-              alignSelf="center"
-              opacity={show / 90}
-              w="100vw"
-            >
+            <Text h="37px" alignSelf="center" opacity={show / 90} w="100vw">
               {user?.name}
             </Text>
           </Stack>
         </HStack>
-        {!isCurrentUserProfile && (
-          <IconButton
-            aria-label="back"
-            icon={<ArrowLeft2 />}
-            variant="ghost"
-            onClick={() => {
-              searchParams.delete('spotify');
-              setSearchParams(searchParams, {
-                replace: true,
-                state: { scroll: false },
-              });
-              if (!pathname.includes('spotify')) {
-                navigate(-1);
-              }
-            }}
-            size="xs"
-            pos="fixed"
-            top={2}
-            left="-5px"
-          />
-        )}
+        <IconButton
+          aria-label="back"
+          icon={<ArrowLeft2 />}
+          variant="ghost"
+          onClick={() => {
+            searchParams.delete('spotify');
+            setSearchParams(searchParams, {
+              replace: true,
+              state: { scroll: false },
+            });
+            if (!pathname.includes('spotify')) {
+              navigate(-1);
+            }
+          }}
+          size="xs"
+          pos="fixed"
+          top={2}
+          left="-5px"
+        />
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
       <Divider bgColor={customColor} opacity={show / 90} />
