@@ -1,4 +1,4 @@
-import { Link, useLocation, useSubmit } from '@remix-run/react';
+import { Link, useLocation, Form } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
@@ -27,7 +27,6 @@ const MobileNavBar = () => {
       : 5,
   );
   const isMobile = useIsMobile();
-  const submit = useSubmit();
   const track = useDrawerTrack();
 
   const profile = currentUser?.userId;
@@ -36,6 +35,8 @@ const MobileNavBar = () => {
 
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
+
+  console.log(currentUser);
 
   useEffect(() => {
     if (pathname.includes('home')) {
@@ -51,13 +52,8 @@ const MobileNavBar = () => {
     }
   }, [pathname, currentUser?.userId]);
 
-  const profileIcon = (
-    <Image
-      src={currentUser ? currentUser?.image : '/favicon-32x32.png'}
-      borderRadius="full"
-      boxSize="30px"
-    />
-  );
+  const profileIcon = <Image src={currentUser?.image} borderRadius="full" boxSize="30px" />;
+  const logInIcon = <Image src={'/favicon-32x32.png'} borderRadius="full" boxSize="30px" />;
 
   const onClickHome = () => {
     setActive(0);
@@ -72,12 +68,6 @@ const MobileNavBar = () => {
     setActive(3);
   };
   const onClickUser = () => {
-    if (!currentUser)
-      submit(null, {
-        action: '/auth/spotify?returnTo=' + pathname,
-        method: 'post',
-        replace: true,
-      });
     setActive(4);
   };
 
@@ -144,15 +134,28 @@ const MobileNavBar = () => {
               pt="12px"
             />
           </Link>
-          <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
-            <IconButton
-              aria-label="profile"
-              icon={profileIcon}
-              variant="mobileNav"
-              opacity={active === 4 ? 1 : 0.4}
-              pt="12px"
-            />
-          </Link>
+          {currentUser ? (
+            <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
+              <IconButton
+                aria-label="profile"
+                icon={profileIcon}
+                variant="mobileNav"
+                opacity={active === 4 ? 1 : 0.4}
+                pt="12px"
+              />
+            </Link>
+          ) : (
+            <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
+              <IconButton
+                aria-label="log in"
+                icon={logInIcon}
+                type="submit"
+                variant="mobileNav"
+                opacity={active === 4 ? 1 : 0.4}
+                pt="12px"
+              />
+            </Form>
+          )}
         </Box>
       )}
     </>
