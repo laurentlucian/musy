@@ -24,6 +24,7 @@ import {
 import { CloseSquare } from 'iconsax-react';
 
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
+import useSessionUser from '~/hooks/useSessionUser';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,6 +40,8 @@ const Search = () => {
   const navigate = useNavigate();
   const color = useColorModeValue('music.800', 'music.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
+  const currentUser = useSessionUser();
+  const authorized = !!currentUser;
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
@@ -125,13 +128,14 @@ const Search = () => {
               variant="flushed"
               size="sm"
               value={search}
-              placeholder="Send a song"
+              placeholder={authorized ? 'Send a song' : 'Log in to Send a Song'}
               autoComplete="off"
               borderRadius={0}
               onChange={onChange}
               fontSize="15px"
               onBlur={handleBlur}
               onFocus={hideMenu}
+              disabled={!authorized}
             />
             {search && (
               <InputRightElement
