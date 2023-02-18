@@ -36,7 +36,7 @@ const AddQueue = ({ fromId, trackId, user }: AddQueueProps) => {
 
       fromId: fromUserId ?? '',
       toId: sendToUserId ?? '',
-      trackId: trackId ?? '',
+      trackId,
     };
 
     fetcher.submit(data, { action, method: 'post', replace: true });

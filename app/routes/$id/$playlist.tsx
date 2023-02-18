@@ -31,8 +31,6 @@ const Playlist = () => {
   const navigate = useNavigate();
   const isSmallScreen = useIsMobile();
 
-  console.log('TRACK: ', playlist.tracks.items);
-
   return (
     <Stack zIndex={5}>
       <HStack>
