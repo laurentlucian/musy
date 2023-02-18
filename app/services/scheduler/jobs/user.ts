@@ -355,10 +355,23 @@ export const addMissingTracks = async () => {
 
   const deleteRows = async (table: string, ids: string[]) => {
     const trackIds = [...new Set(ids)];
-    await prisma.$queryRaw`
-        DELETE FROM ${table}
-        WHERE trackId IN (${trackIds});
-      `;
+    switch (table) {
+      case 'LikedSongs':
+        await prisma.likedSongs.deleteMany({
+          where: { trackId: { in: trackIds } },
+        });
+        break;
+      case 'RecentSongs':
+        await prisma.recentSongs.deleteMany({
+          where: { trackId: { in: trackIds } },
+        });
+        break;
+      case 'Queue':
+        await prisma.queue.deleteMany({
+          where: { trackId: { in: trackIds } },
+        });
+        break;
+    }
   };
 
   await deleteRows(
