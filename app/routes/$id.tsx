@@ -39,6 +39,7 @@ const Profile = () => {
   // }, [user.theme?.bgGradientLight]);
 
   const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
+  console.log('theme: ', user.theme);
 
   return (
     <>
