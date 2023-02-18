@@ -1,4 +1,4 @@
-import { useLocation, useTransition, Form, useNavigate } from '@remix-run/react';
+import { useLocation, useTransition, Form, useNavigate, useSearchParams } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import {
@@ -32,6 +32,7 @@ type ParentData = {
 };
 
 const MobileHeader = ({ authorized }: { authorized: boolean }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(0);
   const { pathname } = useLocation();
   const transition = useTransition();
@@ -164,6 +165,11 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
             icon={<ArrowLeft2 />}
             variant="ghost"
             onClick={() => {
+              searchParams.delete('spotify');
+              setSearchParams(searchParams, {
+                replace: true,
+                state: { scroll: false },
+              });
               navigate(-1);
             }}
             size="xs"

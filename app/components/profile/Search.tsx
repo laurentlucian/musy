@@ -1,11 +1,4 @@
-import {
-  Form,
-  useNavigate,
-  useParams,
-  useSearchParams,
-  useSubmit,
-  useTransition,
-} from '@remix-run/react';
+import { Form, useNavigate, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -30,10 +23,10 @@ const Search = () => {
   const searchDefault = searchParams.get('spotify');
   const [search, setSearch] = useState(searchDefault ?? '');
   const ref = useRef<HTMLFormElement>(null);
+  const divRef = useRef<HTMLInputElement>(null);
   const submit = useSubmit();
   const transition = useTransition();
   const busy = transition.submission?.formData.has('spotify') ?? false;
-  const { id } = useParams();
   const navigate = useNavigate();
   const color = useColorModeValue('music.800', 'music.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
@@ -64,7 +57,7 @@ const Search = () => {
   const handleBlur = () => {
     showMenu();
     if (search === '') {
-      navigate(`/${id}`);
+      navigate(-1);
       searchParams.delete('spotify');
       setSearchParams(searchParams, {
         replace: true,
@@ -80,11 +73,28 @@ const Search = () => {
       replace: true,
       state: { scroll: false },
     });
-    navigate(`/${id}`);
+    navigate(-1);
   };
 
+  useEffect(() => {
+    if (!searchDefault) setSearch('');
+  }, [searchDefault]);
+
+  useEffect(() => {
+    const handleOpenButtonOutside = (e: MouseEvent) => {
+      if (divRef.current && !divRef.current.contains(e.target as Node) && search === '') {
+        navigate(-1);
+      }
+    };
+
+    document.addEventListener('click', handleOpenButtonOutside);
+    return () => {
+      document.removeEventListener('click', handleOpenButtonOutside);
+    };
+  }, [divRef, search, navigate]);
+
   return (
-    <>
+    <div ref={divRef}>
       <Form ref={ref} method="get" action="search">
         {searchParams.get('top-filter') && (
           <input
@@ -133,7 +143,7 @@ const Search = () => {
           </InputGroup>
         </Flex>
       </Form>
-    </>
+    </div>
   );
 };
 
