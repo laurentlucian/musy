@@ -4,6 +4,7 @@ import { Button, Stack, Text } from '@chakra-ui/react';
 
 import { Smileys } from 'iconsax-react';
 
+import useIsMobile from '~/hooks/useIsMobile';
 import { timeSince } from '~/lib/utils';
 
 import Waver from '../icons/Waver';
@@ -18,9 +19,11 @@ const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => 
   const icon = mood ? undefined : <Smileys />;
   const text = mood ? mood : 'get mood';
   const timePassed = timeSince(since ?? null, 'minimal');
+  const isSmallScreen = useIsMobile();
+  console.log(isSmallScreen);
 
   return (
-    <Tooltip label={label} placement="bottom-end" hasArrow>
+    <Tooltip label={label} placement="bottom-end" hasArrow isDisabled={isSmallScreen}>
       <Button
         aria-label="get mood"
         rightIcon={icon}
