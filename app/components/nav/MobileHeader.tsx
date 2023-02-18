@@ -43,7 +43,6 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
 
-  const isCurrentUserProfile = pathname.includes(`${currentUser?.userId}`);
   const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
   const isDanica = pathname.includes('/danicadboo');
   const isMiggy = pathname.includes('/-miggy');
