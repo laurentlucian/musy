@@ -31,15 +31,7 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
-  // const bgGradientDark = useMemo(() => {  //these were not responsive
-  //   return user.theme?.bgGradientDark;
-  // }, [user.theme?.bgGradientDark]);
-  // const bgGradientLight = useMemo(() => {
-  //   return user.theme?.bgGradientLight;
-  // }, [user.theme?.bgGradientLight]);
-
   const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
-  console.log('theme: ', user.theme);
 
   return (
     <>

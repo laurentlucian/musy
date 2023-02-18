@@ -36,8 +36,6 @@ const MobileNavBar = () => {
   const bg = useColorModeValue('music.200', 'music.500');
   const color = useColorModeValue('music.500', 'music.200');
 
-  console.log(currentUser);
-
   useEffect(() => {
     if (pathname.includes('home')) {
       setActive(0);
