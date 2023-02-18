@@ -1,5 +1,5 @@
 import { useFetcher, useSearchParams } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+// import type { LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
@@ -21,7 +21,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Waver from '~/components/icons/Waver';
 import UserMenu from '~/components/nav/UserMenu';
-import SessionTile from '~/components/sessions/SessionTile';
+// import SessionTile from '~/components/sessions/SessionTile';
 import Tile from '~/components/Tile';
 import TilePrisma from '~/components/TilePrisma';
 import UserTile from '~/components/UserTile';
@@ -104,8 +104,8 @@ const Explore = () => {
   }, [data]);
 
   return (
-    <Stack bg={bg} alignItems="center">
-      <HStack justifyContent="space-between">
+    <Stack bg={bg} alignItems="center" h="100%">
+      <HStack justifyContent="space-between" h="100%">
         <InputGroup
           w="90vw"
           mr="27px"
@@ -163,7 +163,7 @@ const Explore = () => {
         </InputGroup>
         <UserMenu isSmallScreen={true} pathname={'/explore'} />
       </HStack>
-      <Stack pt="50px" overflowY="scroll" w="100%" h="84vh">
+      <Stack pt="50px" overflowY="scroll" w="100%" h="91vh">
         {data?.users.map((user: Profile) => (
           <UserTile key={user.id} profile={user} />
         ))}

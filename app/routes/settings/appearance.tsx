@@ -16,7 +16,7 @@ const Appearance = () => {
 
   if (!currentUser) return null;
   return (
-    <Stack spacing={5} w={['unset', '400px']}>
+    <Stack spacing={5} w={['unset', '400px']} h="100%">
       <ThemeToggle />
       <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
       <ProfileSettings />

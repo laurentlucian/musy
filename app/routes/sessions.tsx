@@ -20,6 +20,7 @@ const Friends = () => {
       pt={{ base: '60px', xl: 0 }}
       spacing={3}
       w="100%"
+      h="100%"
       px={['4px', 0]}
       mb={['100px', 0]}
       bg={bg}

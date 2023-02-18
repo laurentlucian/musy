@@ -19,7 +19,7 @@ const Index = () => {
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
-    <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100vh">
+    <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
       <Stack px={['5px', 0]}>
         {isSmallScreen ? (
           <Stack bg={bg} mb="100px">

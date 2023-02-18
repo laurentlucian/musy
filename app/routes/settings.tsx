@@ -15,7 +15,7 @@ const Settings = () => {
       overflowX="hidden"
       px={['20px', 0]}
       bg={bg}
-      h="100vh"
+      h="100%"
     >
       <Stack direction={['row', 'column']}>
         <Link

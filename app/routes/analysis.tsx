@@ -70,7 +70,7 @@ const Analysis = () => {
   };
 
   return (
-    <Stack spacing={5}>
+    <Stack spacing={5} h="100%">
       <Form ref={ref} method="get">
         <Flex flex={1} mb={0} align="center">
           <InputGroup>

@@ -1,6 +1,8 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { useParams, useSubmit } from '@remix-run/react';
 
+import { Box } from '@chakra-ui/react';
+
 import { typedjson, useTypedFetcher, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -22,30 +24,32 @@ const Search = () => {
   if (tracks.length === 0) return <></>;
 
   return (
-    <Tiles title="">
-      {tracks?.map((track) => (
-        <Tile
-          key={track.id}
-          id={track.id}
-          uri={track.uri}
-          image={track.album.images[1].url}
-          albumUri={track.album.uri}
-          albumName={track.album.name}
-          name={track.name}
-          artist={track.album.artists[0].name}
-          artistUri={track.artists[0].uri}
-          explicit={track.explicit}
-          preview_url={track.preview_url}
-          link={track.external_urls.spotify}
-          duration={track.duration_ms}
-          currentUser={currentUser}
-          submit={submit}
-          profileId={profileId ?? ''}
-          fetcher={fetcher}
-          isQueuing
-        />
-      ))}
-    </Tiles>
+    <Box h="60vh">
+      <Tiles title="">
+        {tracks?.map((track) => (
+          <Tile
+            key={track.id}
+            id={track.id}
+            uri={track.uri}
+            image={track.album.images[1].url}
+            albumUri={track.album.uri}
+            albumName={track.album.name}
+            name={track.name}
+            artist={track.album.artists[0].name}
+            artistUri={track.artists[0].uri}
+            explicit={track.explicit}
+            preview_url={track.preview_url}
+            link={track.external_urls.spotify}
+            duration={track.duration_ms}
+            currentUser={currentUser}
+            submit={submit}
+            profileId={profileId ?? ''}
+            fetcher={fetcher}
+            isQueuing
+          />
+        ))}
+      </Tiles>
+    </Box>
   );
 };
 
