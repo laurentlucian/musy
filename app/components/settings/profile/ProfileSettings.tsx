@@ -150,8 +150,8 @@ const ProfileSettings = () => {
         onClick={() => {
           submit(
             {
-              bgGradientDark: `linear(to-t, #090808 74%, ${theme.gradientColorDark} 110%)`,
-              bgGradientLight: `linear(to-t, #EEE6E2 74%, ${theme.gradientColorDark} 110%)`,
+              bgGradientDark: `linear(to-t, #090808 50%%, ${theme.gradientColorDark} 110%)`,
+              bgGradientLight: `linear(to-t, #EEE6E2 50%%, ${theme.gradientColorDark} 110%)`,
               gradientColorDark: theme.gradientColorDark,
               gradientColorLight: theme.gradientColorLight,
             },
