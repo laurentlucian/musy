@@ -30,8 +30,8 @@ const ProfileSettings = () => {
     currentUser?.theme ?? {
       backgroundDark: '#090808',
       backgroundLight: '#EEE6E2',
-      bgGradientDark: 'linear(to-t, #090808 75%, #fcbde2 110%)',
-      bgGradientLight: 'linear(to-t, #EEE6E2 75%, #fcbde2 110%)',
+      bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
+      bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',
       blur: true,
       gradient: false,
       gradientColorDark: '#fcbde2',

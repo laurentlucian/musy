@@ -5,6 +5,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 
 import MobileHeader from './nav/MobileHeader';
 import MobileNavBar from './nav/MobileNavBar';
@@ -21,6 +22,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const isDanica = pathname.includes('/danicadboo');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
+
   const bgGradient = isNya
     ? `linear(to-t, ${bg} 40%, #FE5BAC 130%)`
     : isDanica
