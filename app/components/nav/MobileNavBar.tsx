@@ -11,12 +11,25 @@ import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const MobileNavBar = () => {
-  const [active, setActive] = useState<number>();
+  const { pathname } = useLocation();
+  const currentUser = useSessionUser();
+  const [active, setActive] = useState<number>(
+    pathname.includes('home')
+      ? 0
+      : pathname.includes('friend')
+      ? 1
+      : pathname.includes('sessions')
+      ? 2
+      : pathname.includes('explore')
+      ? 3
+      : pathname.includes(`${currentUser?.userId}`)
+      ? 4
+      : 5,
+  );
   const isMobile = useIsMobile();
   const submit = useSubmit();
   const track = useDrawerTrack();
-  const { pathname } = useLocation();
-  const currentUser = useSessionUser();
+
   const profile = currentUser?.userId;
   const { show } = useMobileKeyboard();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
