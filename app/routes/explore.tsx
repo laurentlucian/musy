@@ -1,4 +1,5 @@
 import { useFetcher, useSearchParams } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
@@ -11,19 +12,25 @@ import {
   InputLeftElement,
   InputRightElement,
   Stack,
+  Text,
   useColorModeValue,
 } from '@chakra-ui/react';
 
 import type { Profile, Track } from '@prisma/client';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Waver from '~/components/icons/Waver';
 import UserMenu from '~/components/nav/UserMenu';
+import SessionTile from '~/components/sessions/SessionTile';
 import Tile from '~/components/Tile';
+import TilePrisma from '~/components/TilePrisma';
 import UserTile from '~/components/UserTile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
+import { prisma } from '~/services/db.server';
 
 const Explore = () => {
+  const { top } = useTypedLoaderData<typeof loader>();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchDefault = searchParams.get('spotify');
   const [search, setSearch] = useState(searchDefault ?? '');
@@ -179,9 +186,45 @@ const Explore = () => {
             list
           />
         ))}
+
+        {!search ? (
+          <>
+            <HStack align="center">
+              <Text>Top</Text>
+              <Text fontSize={['9px', '10px']} opacity={0.6} pt="2px">
+                7d
+              </Text>
+            </HStack>
+            {top.map((track) => (
+              <TilePrisma key={id} track={track} profileId="" list />
+            ))}
+          </>
+        ) : null}
       </Stack>
     </Stack>
   );
+};
+
+export const loader = async () => {
+  const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
+  const trackIds = await prisma.recentSongs.groupBy({
+    by: ['trackId'],
+    orderBy: { _count: { trackId: 'desc' } },
+    take: 10,
+    where: { playedAt: { gte: SEVEN_DAYS } },
+  });
+
+  const top = await prisma.track.findMany({
+    where: { id: { in: trackIds.map((t) => t.trackId) } },
+  });
+
+  top.sort((a, b) => {
+    const aIndex = trackIds.findIndex((t) => t.trackId === a.id);
+    const bIndex = trackIds.findIndex((t) => t.trackId === b.id);
+    return aIndex - bIndex;
+  });
+
+  return typedjson({ top });
 };
 
 export default Explore;
