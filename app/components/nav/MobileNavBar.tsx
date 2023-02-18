@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useSubmit } from '@remix-run/react';
+import { Link, useLocation, useSubmit } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
@@ -13,7 +13,6 @@ import useSessionUser from '~/hooks/useSessionUser';
 const MobileNavBar = () => {
   const [active, setActive] = useState<number>();
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const submit = useSubmit();
   const track = useDrawerTrack();
   const { pathname } = useLocation();
@@ -54,13 +53,12 @@ const MobileNavBar = () => {
     setActive(3);
   };
   const onClickUser = () => {
-    currentUser
-      ? navigate(`/${currentUser.userId}`)
-      : submit(null, {
-          action: '/auth/spotify?returnTo=' + pathname,
-          method: 'post',
-          replace: true,
-        });
+    if (!currentUser)
+      submit(null, {
+        action: '/auth/spotify?returnTo=' + pathname,
+        method: 'post',
+        replace: true,
+      });
     setActive(4);
   };
 

@@ -1,4 +1,11 @@
-import { Form, useNavigate, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+import {
+  Form,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+  useTransition,
+  useLocation,
+} from '@remix-run/react';
 import type { ChangeEvent } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
@@ -26,6 +33,8 @@ const Search = () => {
   const divRef = useRef<HTMLInputElement>(null);
   const submit = useSubmit();
   const transition = useTransition();
+  const { pathname } = useLocation();
+  const isSearching = pathname.includes('search');
   const busy = transition.submission?.formData.has('spotify') ?? false;
   const navigate = useNavigate();
   const color = useColorModeValue('music.800', 'music.200');
@@ -53,10 +62,9 @@ const Search = () => {
       });
     }
   };
-
   const handleBlur = () => {
     showMenu();
-    if (search === '') {
+    if (search === '' && !isSearching) {
       navigate(-1);
       searchParams.delete('spotify');
       setSearchParams(searchParams, {
@@ -77,12 +85,19 @@ const Search = () => {
   };
 
   useEffect(() => {
-    if (!searchDefault) setSearch('');
+    if (!searchDefault) {
+      setSearch('');
+    }
   }, [searchDefault]);
 
   useEffect(() => {
     const handleOpenButtonOutside = (e: MouseEvent) => {
-      if (divRef.current && !divRef.current.contains(e.target as Node) && search === '') {
+      if (
+        divRef.current &&
+        !divRef.current.contains(e.target as Node) &&
+        search === '' &&
+        isSearching
+      ) {
         navigate(-1);
       }
     };
@@ -91,7 +106,7 @@ const Search = () => {
     return () => {
       document.removeEventListener('click', handleOpenButtonOutside);
     };
-  }, [divRef, search, navigate]);
+  }, [divRef, search, navigate, isSearching]);
 
   return (
     <div ref={divRef}>

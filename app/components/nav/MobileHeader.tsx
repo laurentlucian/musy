@@ -170,7 +170,9 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
                 replace: true,
                 state: { scroll: false },
               });
-              navigate(-1);
+              if (!pathname.includes('spotify')) {
+                navigate(-1);
+              }
             }}
             size="xs"
             pos="fixed"
