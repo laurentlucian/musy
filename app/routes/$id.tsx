@@ -38,11 +38,20 @@ const Profile = () => {
   //   return user.theme?.bgGradientLight;
   // }, [user.theme?.bgGradientLight]);
 
-  const bgGradient = useColorModeValue(user.theme?.bgGradientLight, 'linear(to-t, #090808 50%, #fcbde2 110%)');
+  const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
 
   return (
     <>
-      <Box pos="absolute" top={0} left={0} w="100vw" h="100%" bgGradient={bgGradient} zIndex={0} bgAttachment="fixed"/>
+      <Box
+        pos="absolute"
+        top={0}
+        left={0}
+        w="100vw"
+        h="100%"
+        bgGradient={bgGradient}
+        zIndex={0}
+        bgAttachment="fixed"
+      />
       <Stack
         spacing={5}
         pb={['110px', 5]}
