@@ -18,8 +18,8 @@ import {
   authenticator,
   getAllUsers,
   getCurrentUser,
-  updateUserImage,
-  updateUserName,
+  // updateUserImage,
+  // updateUserName,
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';

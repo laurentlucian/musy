@@ -31,8 +31,10 @@ const Playlist = () => {
   const navigate = useNavigate();
   const isSmallScreen = useIsMobile();
 
+  console.log('TRACK: ', playlist.tracks.items);
+
   return (
-    <Stack>
+    <Stack zIndex={5}>
       <HStack>
         <IconButton
           aria-label="Back"
@@ -64,7 +66,7 @@ const Playlist = () => {
               )}
             </Tr>
           </Thead>
-          <Tbody>
+          <Tbody zIndex={5}>
             {playlist.tracks.items.map(({ added_at, track }) => {
               if (!track) return null;
 
