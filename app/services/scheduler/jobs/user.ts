@@ -77,7 +77,7 @@ export const userQ = Queue<{ userId: string }>(
         where: {
           playedAt_userId: {
             playedAt,
-            userId: userId,
+            userId,
           },
         },
       });
@@ -132,7 +132,7 @@ export const userQ = Queue<{ userId: string }>(
         where: {
           trackId_userId: {
             trackId: track.id,
-            userId: userId,
+            userId,
           },
         },
       });
@@ -305,9 +305,9 @@ export const addUsersToQueue = async () => {
     await userQ.getJobCounts(),
   );
 
-  if (!isProduction) {
-    await addMissingTracks();
-  }
+  // if (!isProduction) {
+  //   await addMissingTracks();
+  // }
   // if ((await longScriptQ.getJobs())?.length === 0 && isProduction) {
   //   longScriptQ.add('long-script', null);
   // }

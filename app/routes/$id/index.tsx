@@ -86,10 +86,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
           likedAt: 'desc',
         },
         take: 50,
-        where: {
-          track: { uri: { startsWith: 'spotify' } }, // this is to make sure the track exists
-          userId: id,
-        },
+        where: { userId: id },
       })
       .catch(() => []),
     prisma.party.findMany({ where: { ownerId: id } }),

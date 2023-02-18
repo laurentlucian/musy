@@ -63,7 +63,7 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
   const { ownerId } = job.data;
 
   try {
-    const parties = await prisma.party.findMany({ where: { ownerId: ownerId } });
+    const parties = await prisma.party.findMany({ where: { ownerId } });
     if (parties.length === 0) {
       console.log('ownerQ -> failed: no active parties');
       const jobKey = job.repeatJobKey;

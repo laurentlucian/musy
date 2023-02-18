@@ -116,7 +116,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const recentDb = await prisma.recentSongs.findMany({
     orderBy: { playedAt: 'desc' },
     select: { playedAt: true, track: { select: { duration: true } } },
-    where: { AND: [{ track: { uri: { startsWith: 'spotify' } } }, { userId: id }] }, // added a where track exists as a null check :),
+    where: { userId: id },
   });
 
   const { searchParams } = new URL(request.url);

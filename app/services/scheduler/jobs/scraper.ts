@@ -45,7 +45,7 @@ export const libraryQ = Queue<{ pages: number; userId: string }>('user-library',
         where: {
           trackId_userId: {
             trackId: track.id,
-            userId: userId,
+            userId,
           },
         },
       });
