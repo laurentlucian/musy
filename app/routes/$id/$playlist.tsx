@@ -38,7 +38,7 @@ const Playlist = () => {
           aria-label="Back"
           icon={<ArrowLeft2 />}
           variant="ghost"
-          onClick={() => navigate(`/${id}`)}
+          onClick={() => navigate(-1)}
         />
         <Image src={playlist.images[0]?.url} boxSize={['90px', '140px']} />
         <Stack>
