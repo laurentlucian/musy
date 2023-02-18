@@ -20,14 +20,12 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
     duration: props.track.duration_ms,
     explicit: props.track.explicit,
     id: props.track.id,
-    image: props.track.album.images[0].url,
+    image: props.track.album.images[0]?.url, // @todo: add default image if one does not exist
     link: props.track.external_urls.spotify,
     name: props.track.name,
     preview_url: props.track.preview_url,
     uri: props.track.uri,
   };
-
-  console.log('hiiiii', track);
 
   const convert = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
