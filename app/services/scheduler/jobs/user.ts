@@ -305,7 +305,9 @@ export const addUsersToQueue = async () => {
     await userQ.getJobCounts(),
   );
 
-  await addMissingTracks();
+  if (!isProduction) {
+    await addMissingTracks();
+  }
   // if ((await longScriptQ.getJobs())?.length === 0 && isProduction) {
   //   longScriptQ.add('long-script', null);
   // }
@@ -319,7 +321,7 @@ export const addUsersToQueue = async () => {
 export const addMissingTracks = async () => {
   const { spotify } = await spotifyApi('1295028670');
   invariant(spotify, 'spotify api not found');
-  const missingTracks = await prisma.$queryRaw<{ id: number; trackId: string; userId: string }[]>`
+  const missingLiked = await prisma.$queryRaw<{ id: number; trackId: string; userId: string }[]>`
     SELECT trackId, id, userId
     FROM LikedSongs
     WHERE NOT EXISTS (
@@ -347,89 +349,110 @@ export const addMissingTracks = async () => {
     );
   `;
 
-  console.log('addMissingTracks -> missing tracks', missingTracks.length);
+  console.log('addMissingTracks -> missing tracks', missingLiked.length);
   console.log('addMissingTracks -> missing recent', missingRecent.length);
   console.log('addMissingTracks -> missing queue', missingQueues.length);
 
+  const deleteRows = async (table: string, ids: string[]) => {
+    const trackIds = [...new Set(ids)];
+    await prisma.$queryRaw`
+        DELETE FROM ${table}
+        WHERE trackId IN (${trackIds});
+      `;
+  };
+
+  await deleteRows(
+    'LikedSongs',
+    missingLiked.map((t) => t.trackId),
+  );
+  await deleteRows(
+    'RecentSongs',
+    missingRecent.map((t) => t.trackId),
+  );
+  await deleteRows(
+    'Queue',
+    missingQueues.map((t) => t.trackId),
+  );
+
   // connect missing likedSongs to existing track model
-  for (const missing of missingRecent) {
-    const track = await prisma.track.findUnique({
-      where: { id: missing.trackId },
-    });
-    if (track) {
-      console.log('addMissingTracks -> track exists; connecting');
-      await prisma.recentSongs.update({
-        data: { track: { connect: { id: track.id } } },
-        where: { id: missing.id },
-      });
-    }
-  }
+  //   for (const missing of missingRecent) {
+  //     const track = await prisma.track.findUnique({
+  //       where: { id: missing.trackId },
+  //     });
+  //     if (track) {
+  //       console.log('addMissingTracks -> track exists; connecting');
+  //       await prisma.recentSongs.update({
+  //         data: { track: { connect: { id: track.id } } },
+  //         where: { id: missing.id },
+  //       });
+  //     }
+  //   }
 
-  const missingRecentAfter = await prisma.$queryRaw<
-    { id: number; trackId: string; userId: string }[]
-  >`
-    SELECT trackId, id, userId
-    FROM RecentSongs
-    WHERE NOT EXISTS (
-      SELECT 1
-      FROM Track
-      WHERE Track.id = RecentSongs.trackId
-    );
-`;
+  //   const missingRecentAfter = await prisma.$queryRaw<
+  //     { id: number; trackId: string; userId: string }[]
+  //   >`
+  //     SELECT trackId, id, userId
+  //     FROM RecentSongs
+  //     WHERE NOT EXISTS (
+  //       SELECT 1
+  //       FROM Track
+  //       WHERE Track.id = RecentSongs.trackId
+  //     );
+  // `;
 
-  const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
-  const trackIds = [...new Set(trackIdsDuplicate)];
-  console.log('addMissingTracks -> trackIds', trackIds.length);
+  // const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
+  // const trackIds = [...new Set(trackIdsDuplicate)];
+  // console.log('addMissingTracks -> trackIds', trackIds.length);
 
-  const pages = [];
+  // const pages = [];
 
-  for (let i = 0; i < trackIds.length; i += 50) {
-    pages.push(trackIds.slice(i, i + 50));
-  }
+  // for (let i = 0; i < trackIds.length; i += 50) {
+  // pages.push(trackIds.slice(i, i + 50));
+  // }
 
-  console.log('addMissingTracks -> pages', pages.length);
-  for (const page of pages) {
-    console.log('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
+  // console.log('addMissingTracks -> pages', pages.length);
+  // for (const page of pages) {
+  // console.log('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
 
-    // ⚠️ don't run on development
-    // @todo add fn to delete missing tracks from dev db
-    // const {
-    //   body: { tracks },
-    // } = await spotify.getTracks(page);
-    // try {
-    //   console.log('addMissingTracks -> retrieved spotify; tracks', tracks.length);
-    //   for (const track of tracks) {
-    //     const trackDb = createTrackModel(track);
+  // ⚠️ don't run on development
+  // @todo add fn to delete missing tracks from dev db
+  // const {
+  //   body: { tracks },
+  // } = await spotify.getTracks(page);
+  // try {
+  //   console.log('addMissingTracks -> retrieved spotify; tracks', tracks.length);
+  //   for (const track of tracks) {
+  //     const trackDb = createTrackModel(track);
 
-    //     const instances = await prisma.recentSongs.findMany({
-    //       where: { trackId: track.id },
-    //     });
-    //     console.log(
-    //       'addMissingTracks -> likedsongs without relation',
-    //       instances.length,
-    //       track.name,
-    //     );
+  //     const instances = await prisma.recentSongs.findMany({
+  //       where: { trackId: track.id },
+  //     });
+  //     console.log(
+  //       'addMissingTracks -> likedsongs without relation',
+  //       instances.length,
+  //       track.name,
+  //     );
 
-    //     for (const instance of instances) {
-    //       console.log('addMissingTracks -> loop over instance', instance.userId);
+  //     for (const instance of instances) {
+  //       console.log('addMissingTracks -> loop over instance', instance.userId);
 
-    //       await prisma.recentSongs.update({
-    //         data: {
-    //           track: {
-    //             connectOrCreate: { create: trackDb, where: { id: track.id } },
-    //           },
-    //         },
-    //         where: { id: instance.id },
-    //       });
-    //       continue;
-    //     }
-    //     console.log('addMissingTracks -> track done', track.name);
-    //   }
-    // } catch (e) {
-    //   console.log('addMissingTracks -> error', e);
-    // }
-    console.log('addMissingTracks -> page done');
-  }
+  //       await prisma.recentSongs.update({
+  //         data: {
+  //           track: {
+  //             connectOrCreate: { create: trackDb, where: { id: track.id } },
+  //           },
+  //         },
+  //         where: { id: instance.id },
+  //       });
+  //       continue;
+  //     }
+  //     console.log('addMissingTracks -> track done', track.name);
+  //   }
+  // } catch (e) {
+  //   console.log('addMissingTracks -> error', e);
+  // }
+  // console.log('addMissingTracks -> page done');
+  // }
 
   console.log('addMissingTracks -> done');
 };
