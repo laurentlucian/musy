@@ -19,7 +19,7 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
       <Image
         boxSize={['85px', '100px']}
         objectFit="cover"
-        src={playlist.images[0].url} // 3 images available of different sizes this is the largest size
+        src={playlist.images[0]?.url} // 3 images available of different sizes this is the largest size
         draggable={false}
       />
     );

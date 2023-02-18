@@ -26,7 +26,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props
               <Image
                 boxSize="200px"
                 objectFit="cover"
-                src={playlist.images[0].url}
+                src={playlist.images[0]?.url}
                 draggable={false}
               />
             </Tooltip>
