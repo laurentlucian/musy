@@ -1,6 +1,7 @@
 import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
+import musyIcon from '~/assets/musySquareIcon.png';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 
@@ -20,7 +21,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
     duration: props.track.duration_ms,
     explicit: props.track.explicit,
     id: props.track.id,
-    image: props.track.album.images[0]?.url, // @todo: add default image if one does not exist
+    image: props.track.album.images[0]?.url ?? musyIcon, // @todo: add default image if one does not exist
     link: props.track.external_urls.spotify,
     name: props.track.name,
     preview_url: props.track.preview_url,
