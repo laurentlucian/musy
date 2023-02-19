@@ -48,4 +48,4 @@ const ColorPicker = ({
 
 export default ColorPicker;
 
-ColorPicker.displayname = ""
+ColorPicker.displayname = "Color Picker"

@@ -57,3 +57,5 @@ const SaveThemeButton = ({
 };
 
 export default SaveThemeButton;
+
+SaveThemeButton.displayName = "Save Theme Button"
