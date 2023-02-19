@@ -1,7 +1,9 @@
-import { type Dispatch, type SetStateAction, type RefObject, type MouseEvent } from 'react';
+import { type Dispatch, type SetStateAction, type RefObject } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 
-import { Box, Collapse, HStack, Text } from '@chakra-ui/react';
+import { Box, HStack, Text, Drawer, DrawerBody, DrawerContent, Collapse } from '@chakra-ui/react';
+
+import useIsMobile from '~/hooks/useIsMobile';
 
 interface ColorPickerProps {
   bgCol: string;
@@ -22,30 +24,50 @@ const ColorPicker = ({
   setPicker,
   title,
 }: ColorPickerProps) => {
-  const handleClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    e.stopPropagation();
-    setPicker(index);
-    const delayScroll = setTimeout(() => {
-      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    }, 0);
-    return () => clearTimeout(delayScroll);
+  const isSmallScreen = useIsMobile();
+  const onToggle = () => {
+    if (picker === index) {
+      setPicker(undefined);
+    } else {
+      setPicker(index);
+    }
   };
 
   return (
     <>
-      <HStack>
-        <Box p="1px" bg={bgCol} boxSize="20px" onClick={(e) => handleClick(e)} />
+      <HStack cursor="pointer" onClick={onToggle}>
+        <Box p="1px" bg={bgCol} boxSize="20px" />
         <Text>{title}</Text>
       </HStack>
-      <Collapse in={picker === index}>
-        <div ref={ref}>
-          <SketchPicker color={bgCol} onChange={(col) => onChange(col)} />
-        </div>
-      </Collapse>
+      <Box w="220px">
+        {isSmallScreen ? (
+          <Drawer
+            isOpen={picker === index}
+            placement="bottom"
+            onClose={() => setPicker(undefined)}
+            variant="colorPicker"
+            trapFocus={false}
+          >
+            <DrawerContent w="220px">
+              <DrawerBody>
+                <div ref={ref}>
+                  <SketchPicker color={bgCol} onChange={(col) => onChange(col)} />
+                </div>
+              </DrawerBody>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Collapse in={picker === index}>
+            <Box ref={ref}>
+              <SketchPicker color={bgCol} onChange={(col) => onChange(col)} />
+            </Box>
+          </Collapse>
+        )}
+      </Box>
     </>
   );
 };
 
 export default ColorPicker;
 
-ColorPicker.displayname = "Color Picker"
+ColorPicker.displayname = 'Color Picker';

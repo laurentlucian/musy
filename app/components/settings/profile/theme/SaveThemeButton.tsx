@@ -19,8 +19,27 @@ const SaveThemeButton = ({
   const [text, setText] = useState('Save');
   const submit = useSubmit();
   const transition = useTransition();
-
+  const isLoading = transition.submission?.action.includes('/settings/appearance');
   const bg = useColorModeValue('#EEE6E2', '#090808');
+
+  const handleClick = () => {
+    submit(
+      {
+        bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
+        bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
+        gradientColorDark: submission.gradientColorDark,
+        gradientColorLight: submission.gradientColorLight,
+      },
+
+      { method: 'post', replace: true },
+    );
+    setText('Saved');
+    const delayExit = setTimeout(() => {
+      setShowSave(false);
+      setText('Save');
+    }, 1000);
+    return () => clearTimeout(delayExit);
+  };
 
   return (
     <Button
@@ -29,27 +48,11 @@ const SaveThemeButton = ({
       right={2}
       bg={bg}
       color={color}
-      isLoading={transition.submission?.action.includes('/settings/appearance')}
+      isLoading={isLoading}
       spinner={<Waver />}
-      onClick={() => {
-        submit(
-          {
-            bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
-            bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
-            gradientColorDark: submission.gradientColorDark,
-            gradientColorLight: submission.gradientColorLight,
-          },
-
-          { method: 'post', replace: true },
-        );
-        setText('Saved');
-        const delayExit = setTimeout(() => {
-          setShowSave(false);
-          setText('Save');
-        }, 1000);
-        return () => clearTimeout(delayExit);
-      }}
+      onClick={handleClick}
       transition="bottom 0.25s"
+      zIndex={6969}
     >
       {text}
     </Button>
@@ -58,4 +61,4 @@ const SaveThemeButton = ({
 
 export default SaveThemeButton;
 
-SaveThemeButton.displayName = "Save Theme Button"
+SaveThemeButton.displayName = 'Save Theme Button';

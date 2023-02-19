@@ -97,7 +97,6 @@ const ProfileSettings = () => {
           gradientColorLight: theme.gradientColorLight,
         }}
       />
-      <Box h="300px" ref={colorPickerRef} />
     </Stack>
   );
 };

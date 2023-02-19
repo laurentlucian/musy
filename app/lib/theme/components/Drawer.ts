@@ -32,6 +32,11 @@ const desktop = defineStyle({
   dialog: { backdropFilter: 'blur(25px)', zIndex: 'modal' },
   overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
 });
+const colorPicker = defineStyle({
+  dialog: { backdropFilter: 'blur(0px)', zIndex: 'modal' },
+  dialogContainer: { backdropFilter: 'blur(0px)' },
+  overlay: { backdropFilter: 'blur(0px)', zIndex: 'overlay' },
+});
 const nested = defineStyle({
   dialog: { backdropFilter: 'blur(14px)', zIndex: 'modal' },
 });
@@ -53,6 +58,7 @@ const mobileAvatarDrawer = definePartsStyle({
   },
 });
 const variants = {
+  colorPicker,
   desktop,
   mobileAvatarDrawer,
   nested,
