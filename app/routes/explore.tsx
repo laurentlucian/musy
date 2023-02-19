@@ -27,6 +27,7 @@ import TilePrisma from '~/components/TilePrisma';
 import UserTile from '~/components/UserTile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
+import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Explore = () => {
@@ -206,6 +207,7 @@ const Explore = () => {
 };
 
 export const loader = async () => {
+  const users = await getAllUsers();
   const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
   const trackIds = await prisma.recentSongs.groupBy({
     by: ['trackId'],
@@ -224,7 +226,9 @@ export const loader = async () => {
     return aIndex - bIndex;
   });
 
-  return typedjson({ top });
+  return typedjson({ top, users });
 };
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export { CatchBoundary } from '~/components/error/CatchBoundary';
 
 export default Explore;
