@@ -1,8 +1,18 @@
 import { Link } from '@remix-run/react';
 
-import { Text, VStack, Avatar, Stack, HStack, Heading, type StackProps } from '@chakra-ui/react';
+import {
+  Text,
+  VStack,
+  Avatar,
+  Stack,
+  Icon,
+  HStack,
+  Heading,
+  type StackProps,
+} from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
+import { VolumeHigh } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { timeSince } from '~/lib/utils';
@@ -30,11 +40,17 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
             <Avatar size="md" src={user.image} />
           </Link>
           <VStack align="flex-start" spacing={1}>
-            <Link to={`/${user.userId}`}>
-              <Heading size="sm" fontWeight={400}>
-                {name}
-              </Heading>
-            </Link>
+            <HStack>
+              <Link to={`/${user.userId}`}>
+                <Heading size="sm" fontWeight={400}>
+                  {name}
+                </Heading>
+              </Link>
+              {session.updatedAt > new Date(Date.now() - 1000 * 60 * 15) &&
+              session.user.playback ? (
+                <Icon as={VolumeHigh} />
+              ) : null}
+            </HStack>
             <Text fontSize={'xs'} fontWeight="300">
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
             </Text>

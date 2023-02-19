@@ -67,6 +67,14 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
         id: songWithoutSession.id,
       },
     });
+    await prisma.sessions.update({
+      data: {
+        updatedAt: new Date(),
+      },
+      where: {
+        id: session.id,
+      },
+    });
 
     return;
   }
