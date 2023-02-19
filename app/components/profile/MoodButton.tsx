@@ -20,7 +20,6 @@ const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => 
   const text = mood ? mood : 'get mood';
   const timePassed = timeSince(since ?? null, 'minimal');
   const isSmallScreen = useIsMobile();
-  console.log(isSmallScreen);
 
   return (
     <Tooltip label={label} placement="bottom-end" hasArrow isDisabled={isSmallScreen}>
