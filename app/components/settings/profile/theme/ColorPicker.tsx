@@ -8,10 +8,11 @@ import useIsMobile from '~/hooks/useIsMobile';
 interface ColorPickerProps {
   bgCol: string;
   index: number;
-  onChange: (col: ColorResult) => void;
+  onChange: (col: ColorResult, property: string) => void;
   picker: number | undefined;
   ref: RefObject<HTMLDivElement>;
   setPicker: Dispatch<SetStateAction<number | undefined>>;
+  themeProp: string;
   title: string;
 }
 
@@ -22,6 +23,7 @@ const ColorPicker = ({
   picker,
   ref,
   setPicker,
+  themeProp,
   title,
 }: ColorPickerProps) => {
   const isSmallScreen = useIsMobile();
@@ -51,7 +53,7 @@ const ColorPicker = ({
             <DrawerContent w="220px">
               <DrawerBody>
                 <div ref={ref}>
-                  <SketchPicker color={bgCol} onChange={(col) => onChange(col)} />
+                  <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
                 </div>
               </DrawerBody>
             </DrawerContent>
@@ -59,7 +61,7 @@ const ColorPicker = ({
         ) : (
           <Collapse in={picker === index}>
             <Box ref={ref}>
-              <SketchPicker color={bgCol} onChange={(col) => onChange(col)} />
+              <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
             </Box>
           </Collapse>
         )}

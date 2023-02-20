@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
+import type { Theme, Track } from '@prisma/client';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
@@ -23,7 +23,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 
-const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
+const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefined }) => {
   const song = track ?? {
     albumName: 'Album',
     albumUri: '',
@@ -44,7 +44,7 @@ const SettingsPlayer = ({ track }: { track: Track | undefined }) => {
 
   const { isOpen, onToggle } = useDisclosure();
 
-  const bg = useColorModeValue('music.50', '#10101066');
+  const bg = useColorModeValue(theme.playerColorLight + '66', theme.playerColorDark + '66');
   const color = useColorModeValue('#10101066', 'music.50');
 
   const isSmallScreen = useIsMobile();

@@ -95,6 +95,22 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const playerColorDark = data.get('playerColorDark');
+  if (typeof playerColorDark === 'string') {
+    await prisma.theme.upsert({
+      create: { playerColorDark, userId },
+      update: { playerColorDark },
+      where: { userId },
+    });
+  }
+  const playerColorLight = data.get('playerColorLight');
+  if (typeof playerColorLight === 'string') {
+    await prisma.theme.upsert({
+      create: { playerColorLight, userId },
+      update: { playerColorLight },
+      where: { userId },
+    });
+  }
 
   return null;
 };

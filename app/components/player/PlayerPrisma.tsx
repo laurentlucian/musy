@@ -21,6 +21,7 @@ import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
@@ -38,6 +39,7 @@ type PlayerProps = {
 
 const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
+  const user = useParamUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
@@ -53,7 +55,10 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
-  const bg = useColorModeValue('music.50', '#10101066');
+  const bg = useColorModeValue(
+    user?.theme?.playerColorLight ?? 'music.50',
+    user?.theme?.playerColorDark ?? '#10101066',
+  );
   // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');

@@ -34,7 +34,7 @@ const ProfileSettings = () => {
       playerColorLight: '#E7DFD9',
       subTextDark: '#EEE6E2',
       subTextLight: '#161616',
-      userId: currentUser?.userId,
+      userId: currentUser?.userId ?? '',
     },
   );
 
@@ -44,12 +44,8 @@ const ProfileSettings = () => {
   const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorLight} 90%)`;
   const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
 
-  const onChange = (col: ColorResult) => {
-    setTheme((prevTheme) => ({ ...prevTheme, gradientColorDark: col.hex }));
-    setShowSave(true);
-  };
-  const onChange1 = (col: ColorResult) => {
-    setTheme((prevTheme) => ({ ...prevTheme, gradientColorLight: col.hex }));
+  const onChange = (col: ColorResult, property: string) => {
+    setTheme((prevTheme) => ({ ...prevTheme, [property]: col.hex }));
     setShowSave(true);
   };
 
@@ -68,7 +64,7 @@ const ProfileSettings = () => {
         bg={!theme.gradient ? bg : undefined}
       >
         <ProfileHeader profile={currentUser} />
-        <Player track={currentUser.settings?.profileSong} />
+        <Player track={currentUser.settings?.profileSong} theme={theme} />
       </Box>
       <ColorPicker
         bgCol={theme.gradientColorDark}
@@ -78,23 +74,49 @@ const ProfileSettings = () => {
         picker={picker}
         index={0}
         title="Gradient Dark"
+        themeProp="gradientColorDark"
       />
       <ColorPicker
         bgCol={theme.gradientColorLight}
-        onChange={onChange1}
+        onChange={onChange}
         ref={colorPickerRef}
         setPicker={setPicker}
         picker={picker}
         index={1}
         title="Gradient Light"
+        themeProp="gradientColorLight"
+      />
+      <ColorPicker
+        bgCol={theme.playerColorLight}
+        onChange={onChange}
+        ref={colorPickerRef}
+        setPicker={setPicker}
+        picker={picker}
+        index={2}
+        title="Player Light"
+        themeProp="playerColorLight"
+      />
+      <ColorPicker
+        bgCol={theme.playerColorDark}
+        onChange={onChange}
+        ref={colorPickerRef}
+        setPicker={setPicker}
+        picker={picker}
+        index={3}
+        title="Player Dark"
+        themeProp="playerColorDark"
       />
       <SaveThemeButton
         showSave={showSave}
         setShowSave={setShowSave}
         color={color}
+        setPicker={setPicker}
         submission={{
+          //eventually will pass whole theme object
           gradientColorDark: theme.gradientColorDark,
           gradientColorLight: theme.gradientColorLight,
+          playerColorDark: theme.playerColorDark,
+          playerColorLight: theme.playerColorLight,
         }}
       />
     </Stack>
