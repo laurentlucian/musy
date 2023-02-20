@@ -60,11 +60,14 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
     user?.theme?.playerColorDark + '66' ?? '#10101066',
   );
   // const userBg = useColorModeValue('#EEE6E2', '#050404');
-  const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');
   const main = useColorModeValue(
     user?.theme?.mainTextLight ?? '#161616',
     user?.theme?.mainTextDark ?? '#EEE6E2',
+  );
+  const sub = useColorModeValue(
+    user?.theme?.subTextLight ?? '#161616',
+    user?.theme?.subTextDark ?? '#EEE6E2',
   );
 
   // const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
@@ -227,7 +230,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
                       w={['200px', '68%']}
                     >
                       {track.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                      <Text opacity={0.8} fontSize="13px" noOfLines={1}>
+                      <Text opacity={0.8} fontSize="13px" noOfLines={1} color={sub}>
                         {track.artist}
                       </Text>
                     </Flex>
@@ -406,7 +409,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
             opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"
-            color={color}
+            color={sub}
           />
         </Box>
         {track.preview_url && <audio autoPlay={preview} ref={audioRef} src={track.preview_url} />}

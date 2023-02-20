@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { type ColorResult } from 'react-color';
 
-import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
+import { Box, useColorModeValue, Stack, useColorMode } from '@chakra-ui/react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
@@ -38,6 +38,7 @@ const ProfileSettings = () => {
     },
   );
 
+  const { colorMode } = useColorMode();
   const bg = useColorModeValue(theme.backgroundLight, theme.backgroundDark);
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
@@ -66,66 +67,94 @@ const ProfileSettings = () => {
         <ProfileHeader profile={currentUser} />
         <Player track={currentUser.settings?.profileSong} theme={theme} />
       </Box>
-      <ColorPicker
-        bgCol={theme.gradientColorDark}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={0}
-        title="Gradient Dark"
-        themeProp="gradientColorDark"
-      />
-      <ColorPicker
-        bgCol={theme.gradientColorLight}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={1}
-        title="Gradient Light"
-        themeProp="gradientColorLight"
-      />
-      <ColorPicker
-        bgCol={theme.playerColorLight}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={2}
-        title="Player Light"
-        themeProp="playerColorLight"
-      />
-      <ColorPicker
-        bgCol={theme.playerColorDark}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={3}
-        title="Player Dark"
-        themeProp="playerColorDark"
-      />
-      <ColorPicker
-        bgCol={theme.mainTextDark}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={4}
-        title="Player Text Dark"
-        themeProp="mainTextDark"
-      />
-      <ColorPicker
-        bgCol={theme.mainTextLight}
-        onChange={onChange}
-        ref={colorPickerRef}
-        setPicker={setPicker}
-        picker={picker}
-        index={5}
-        title="Player Text Light"
-        themeProp="mainTextLight"
-      />
+      {colorMode === 'dark' ? (
+        <>
+          <ColorPicker
+            bgCol={theme.gradientColorDark}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={0}
+            title="Gradient"
+            themeProp="gradientColorDark"
+          />
+          <ColorPicker
+            bgCol={theme.playerColorDark}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={1}
+            title="Player"
+            themeProp="playerColorDark"
+          />
+          <ColorPicker
+            bgCol={theme.mainTextDark}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={2}
+            title="Player Main"
+            themeProp="mainTextDark"
+          />
+          <ColorPicker
+            bgCol={theme.subTextDark}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={3}
+            title="Player Sub"
+            themeProp="subTextDark"
+          />
+        </>
+      ) : (
+        <>
+          <ColorPicker
+            bgCol={theme.gradientColorLight}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={4}
+            title="Gradient"
+            themeProp="gradientColorLight"
+          />
+          <ColorPicker
+            bgCol={theme.playerColorLight}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={5}
+            title="Player"
+            themeProp="playerColorLight"
+          />
+          <ColorPicker
+            bgCol={theme.mainTextLight}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={6}
+            title="Player Main"
+            themeProp="mainTextLight"
+          />
+          <ColorPicker
+            bgCol={theme.subTextLight}
+            onChange={onChange}
+            ref={colorPickerRef}
+            setPicker={setPicker}
+            picker={picker}
+            index={7}
+            title="Player Sub"
+            themeProp="subTextLight"
+          />
+        </>
+      )}
+
       <SaveThemeButton
         showSave={showSave}
         setShowSave={setShowSave}
@@ -139,6 +168,8 @@ const ProfileSettings = () => {
           mainTextLight: theme.mainTextLight,
           playerColorDark: theme.playerColorDark,
           playerColorLight: theme.playerColorLight,
+          subTextDark: theme.subTextDark,
+          subTextLight: theme.subTextLight,
         }}
       />
     </Stack>

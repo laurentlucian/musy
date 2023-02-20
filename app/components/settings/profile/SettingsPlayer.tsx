@@ -45,8 +45,8 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
   const { isOpen, onToggle } = useDisclosure();
 
   const bg = useColorModeValue(theme.playerColorLight + '66', theme.playerColorDark + '66');
-  const color = useColorModeValue('#10101066', 'music.50');
   const main = useColorModeValue(theme.mainTextLight ?? '#161616', theme.mainTextDark ?? '#EEE6E2');
+  const sub = useColorModeValue(theme.subTextLight ?? '#161616', theme.subTextDark ?? '#EEE6E2');
 
   const isSmallScreen = useIsMobile();
 
@@ -63,7 +63,13 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
                   </Text>
                   <Flex w={['200px', '68%']}>
                     {song.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                    <Text opacity={0.8} fontSize="13px" noOfLines={1} textOverflow="ellipsis">
+                    <Text
+                      opacity={0.8}
+                      fontSize="13px"
+                      noOfLines={1}
+                      textOverflow="ellipsis"
+                      color={sub}
+                    >
                       {song.artist}
                     </Text>
                   </Flex>
@@ -101,7 +107,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
           opacity={isSmallScreen ? 1 : 0.5}
           _active={{ boxShadow: 'none' }}
           boxShadow="none"
-          color={color}
+          color={sub}
         />
       </Box>
     </Stack>

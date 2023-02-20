@@ -127,6 +127,22 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const subTextDark = data.get('subTextDark');
+  if (typeof subTextDark === 'string') {
+    await prisma.theme.upsert({
+      create: { subTextDark, userId },
+      update: { subTextDark },
+      where: { userId },
+    });
+  }
+  const subTextLight = data.get('subTextLight');
+  if (typeof subTextLight === 'string') {
+    await prisma.theme.upsert({
+      create: { subTextLight, userId },
+      update: { subTextLight },
+      where: { userId },
+    });
+  }
 
   return null;
 };

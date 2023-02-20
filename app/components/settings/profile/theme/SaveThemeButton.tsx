@@ -24,6 +24,8 @@ const SaveThemeButton = ({
     mainTextLight: string;
     playerColorDark: string;
     playerColorLight: string;
+    subTextDark: string;
+    subTextLight: string;
   };
 }) => {
   const [text, setText] = useState('Save');
@@ -47,6 +49,8 @@ const SaveThemeButton = ({
         mainTextLight: submission.mainTextLight,
         playerColorDark: submission.playerColorDark,
         playerColorLight: submission.playerColorLight,
+        subTextDark: submission.subTextDark,
+        subTextLight: submission.subTextLight,
       },
 
       { method: 'post', replace: true },
