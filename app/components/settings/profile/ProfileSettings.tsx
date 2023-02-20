@@ -39,7 +39,7 @@ const ProfileSettings = () => {
   );
 
   const bg = useColorModeValue(theme.backgroundLight, theme.backgroundDark);
-  const color = useColorModeValue(theme.mainTextLight, theme.mainTextDark);
+  const color = useColorModeValue('#161616', '#EEE6E2');
   const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
   const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorLight} 90%)`;
   const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
@@ -106,6 +106,26 @@ const ProfileSettings = () => {
         title="Player Dark"
         themeProp="playerColorDark"
       />
+      <ColorPicker
+        bgCol={theme.mainTextDark}
+        onChange={onChange}
+        ref={colorPickerRef}
+        setPicker={setPicker}
+        picker={picker}
+        index={4}
+        title="Player Text Dark"
+        themeProp="mainTextDark"
+      />
+      <ColorPicker
+        bgCol={theme.mainTextLight}
+        onChange={onChange}
+        ref={colorPickerRef}
+        setPicker={setPicker}
+        picker={picker}
+        index={5}
+        title="Player Text Light"
+        themeProp="mainTextLight"
+      />
       <SaveThemeButton
         showSave={showSave}
         setShowSave={setShowSave}
@@ -115,6 +135,8 @@ const ProfileSettings = () => {
           //eventually will pass whole theme object
           gradientColorDark: theme.gradientColorDark,
           gradientColorLight: theme.gradientColorLight,
+          mainTextDark: theme.mainTextDark,
+          mainTextLight: theme.mainTextLight,
           playerColorDark: theme.playerColorDark,
           playerColorLight: theme.playerColorLight,
         }}

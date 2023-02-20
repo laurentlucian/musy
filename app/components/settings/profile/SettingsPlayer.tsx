@@ -46,6 +46,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
 
   const bg = useColorModeValue(theme.playerColorLight + '66', theme.playerColorDark + '66');
   const color = useColorModeValue('#10101066', 'music.50');
+  const main = useColorModeValue(theme.mainTextLight ?? '#161616', theme.mainTextDark ?? '#EEE6E2');
 
   const isSmallScreen = useIsMobile();
 
@@ -57,7 +58,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
                 <Stack direction="column" spacing={0.5}>
-                  <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis">
+                  <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis" color={main}>
                     {song.name}
                   </Text>
                   <Flex w={['200px', '68%']}>
@@ -96,7 +97,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
             setBlur(true);
           }}
           aria-label={isOpen ? 'open player' : 'close player'}
-          _hover={{ color: 'spotify.green', opacity: 1 }}
+          _hover={{ color: main, opacity: 1 }}
           opacity={isSmallScreen ? 1 : 0.5}
           _active={{ boxShadow: 'none' }}
           boxShadow="none"

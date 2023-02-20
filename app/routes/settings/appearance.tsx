@@ -111,6 +111,22 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const mainTextDark = data.get('mainTextDark');
+  if (typeof mainTextDark === 'string') {
+    await prisma.theme.upsert({
+      create: { mainTextDark, userId },
+      update: { mainTextDark },
+      where: { userId },
+    });
+  }
+  const mainTextLight = data.get('mainTextLight');
+  if (typeof mainTextLight === 'string') {
+    await prisma.theme.upsert({
+      create: { mainTextLight, userId },
+      update: { mainTextLight },
+      where: { userId },
+    });
+  }
 
   return null;
 };

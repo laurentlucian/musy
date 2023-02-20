@@ -62,6 +62,10 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#10101066', 'music.50');
   const color1 = useColorModeValue('music.800', 'music.200');
+  const main = useColorModeValue(
+    user?.theme?.mainTextLight ?? '#161616',
+    user?.theme?.mainTextDark ?? '#EEE6E2',
+  );
 
   // const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   // const fetcher = useFetcher();
@@ -211,6 +215,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
                       w={['200px', '68%']}
                       overflow="hidden"
                       whiteSpace="nowrap"
+                      color={main}
                     >
                       {track.name}
                     </Text>
@@ -297,7 +302,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
                             icon={icon}
                             variant="ghost"
                             aria-label={playing ? 'pause' : 'play'}
-                            _hover={{ color: 'spotify.green' }}
+                            _hover={{ color: main }}
                             _active={{ boxShadow: 'none' }}
                             onMouseLeave={handleMouseLeavePreviewButton}
                             onMouseEnter={handleMouseEnterPreviewButton}
@@ -397,7 +402,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
               setBlur(true);
             }}
             aria-label={isOpen ? 'open player' : 'close player'}
-            _hover={{ color: 'spotify.green', opacity: 1 }}
+            _hover={{ color: main, opacity: 1 }}
             opacity={isSmallScreen ? 1 : 0.5}
             _active={{ boxShadow: 'none' }}
             boxShadow="none"

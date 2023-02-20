@@ -20,6 +20,8 @@ const SaveThemeButton = ({
   submission: {
     gradientColorDark: string;
     gradientColorLight: string;
+    mainTextDark: string;
+    mainTextLight: string;
     playerColorDark: string;
     playerColorLight: string;
   };
@@ -41,6 +43,8 @@ const SaveThemeButton = ({
         bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
         gradientColorDark: submission.gradientColorDark,
         gradientColorLight: submission.gradientColorLight,
+        mainTextDark: submission.mainTextDark,
+        mainTextLight: submission.mainTextLight,
         playerColorDark: submission.playerColorDark,
         playerColorLight: submission.playerColorLight,
       },
