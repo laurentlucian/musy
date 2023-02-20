@@ -169,23 +169,7 @@ const Explore = () => {
           <UserTile key={user.id} profile={user} />
         ))}
         {tracks?.map((track) => (
-          <Tile
-            key={track.id}
-            id={track.id}
-            uri={track.uri}
-            image={track.image}
-            albumUri={track.albumUri}
-            albumName={track.albumName}
-            name={track.name}
-            artist={track.artist}
-            artistUri={track.artistUri}
-            explicit={track.explicit}
-            preview_url={track.preview_url}
-            link={track.link}
-            duration={track.duration}
-            profileId={id}
-            list
-          />
+          <Tile key={track.id} track={track} profileId={id} list />
         ))}
 
         {!search ? (

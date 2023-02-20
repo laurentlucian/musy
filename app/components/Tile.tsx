@@ -19,7 +19,7 @@ import SpotifyLogo from './icons/SpotifyLogo';
 import Waver from './icons/Waver';
 import Tooltip from './Tooltip';
 
-type TileProps = Track & {
+type TileProps = {
   createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
@@ -39,36 +39,25 @@ type TileProps = Track & {
 
   profileId: string;
   submit?: SubmitFunction;
+  track: Track;
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
-      albumName,
-      albumUri,
-      artist,
-      artistUri,
       createdAt,
       createdBy,
       currentUser,
       currentUserId,
-      duration,
-      explicit,
       fetcher,
       fetcherRec,
-      id,
-      image,
       inDrawer,
       isQueuing,
       isRecommending,
-      link,
       list,
-      name,
-      preview_url,
-      // playlist,
       profileId,
       submit,
-      uri,
+      track,
       ...props
     },
     ref,
@@ -81,20 +70,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
     const color = useColorModeValue(`${inDrawer ? 'music.200' : 'music.800'}`, 'music.200');
-    const track = {
-      albumName,
-      albumUri,
-      artist,
-      artistUri,
-      duration: duration ?? 0,
-      explicit,
-      id,
-      image,
-      link,
-      name,
-      preview_url,
-      uri,
-    };
+    const drawerTrack = track;
     const clickedRef = useRef<string>();
     const handleSendButton = () => {
       if (!currentUser && submit) {
@@ -107,7 +83,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
         });
       }
 
-      clickedRef.current = id;
+      clickedRef.current = track.id;
       const action = isRecommending ? `/${profileId}/recommend` : `/${profileId}/add`;
 
       const fromUserId = currentUser?.userId || currentUserId;
@@ -118,26 +94,26 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
 
         fromId: fromUserId ?? '',
         toId: sendToUserId,
-        trackId: id,
+        trackId: track.id,
       };
 
       const recommendData = {
         action: 'recommend',
-        albumName: track.albumName,
-        albumUri: track.albumUri,
-        artist: track.artist,
-        artistUri: track.artistUri,
+        albumName: drawerTrack.albumName,
+        albumUri: drawerTrack.albumUri,
+        artist: drawerTrack.artist,
+        artistUri: drawerTrack.artistUri,
         comment: '',
-        explicit: track.explicit ? 'true' : '',
+        explicit: drawerTrack.explicit ? 'true' : '',
         fromId: fromUserId ?? '',
-        image: track.image,
-        link: track.link,
-        name: track.name,
-        preview_url: track.preview_url ?? '',
+        image: drawerTrack.image,
+        link: drawerTrack.link,
+        name: drawerTrack.name,
+        preview_url: drawerTrack.preview_url ?? '',
 
         toId: sendToUserId,
-        trackId: track.id,
-        uri: track.uri,
+        trackId: drawerTrack.id,
+        uri: drawerTrack.uri,
       };
       if (fetcher && isQueuing) {
         fetcher.submit(queueData, { action, method: 'post', replace: true });
@@ -147,13 +123,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       }
     };
 
-    const isClicked = clickedRef.current === id;
+    const isClicked = clickedRef.current === track.id;
     let isAdding = null;
 
     if (fetcher) {
-      isAdding = fetcher.submission?.formData.get('trackId') === id;
+      isAdding = fetcher.submission?.formData.get('trackId') === track.id;
     } else if (fetcherRec) {
-      isAdding = fetcherRec.submission?.formData.get('trackId') === id;
+      isAdding = fetcherRec.submission?.formData.get('trackId') === track.id;
     }
 
     const isDone = fetcher
@@ -213,17 +189,17 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Text>
               </HStack>
             )}
-            <Tooltip label={albumName} placement="top-start">
+            <Tooltip label={track.albumName} placement="top-start">
               <Image
                 boxSize={list ? '40px' : '200px'}
                 minW={list ? '40px' : '200px'}
                 minH={list ? '40px' : '200px'}
                 objectFit="cover"
-                src={image}
+                src={track.image}
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId)}
+                onClick={() => onClick(drawerTrack, profileId)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -233,20 +209,20 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId)}
+              onClick={() => onClick(drawerTrack, profileId)}
               cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
-                {name}
+                {track.name}
               </Text>
-              {artist && (
+              {track.artist && (
                 <Flex align="center">
-                  {artistUri ? (
+                  {track.artistUri ? (
                     <Stack>
                       <Stack direction="row">
-                        {explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
+                        {track.explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
                         <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                          {artist}
+                          {track.artist}
                         </Text>
                       </Stack>
                       {isQueuing || isRecommending ? (
@@ -255,7 +231,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                     </Stack>
                   ) : (
                     <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {decodeHtmlEntity(artist)}
+                      {decodeHtmlEntity(track.artist)}
                     </Text>
                   )}
                 </Flex>

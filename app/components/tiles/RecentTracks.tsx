@@ -25,18 +25,20 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
           return (
             <Tile
               key={played_at}
-              uri={track.uri}
-              id={track.id}
-              image={track.album.images[1].url}
-              albumUri={track.album.uri}
-              albumName={track.album.name}
-              name={track.name}
-              artist={track.album.artists[0].name}
-              artistUri={track.album.artists[0].uri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.external_urls.spotify}
-              duration={track.duration_ms}
+              track={{
+                albumName: track.album.name,
+                albumUri: track.album.uri,
+                artist: track.artists[0].name,
+                artistUri: track.artists[0].uri,
+                duration: track.duration_ms,
+                explicit: track.explicit,
+                id: track.id,
+                image: track.album.images[1].url,
+                link: track.external_urls.spotify,
+                name: track.name,
+                preview_url: track.preview_url,
+                uri: track.uri,
+              }}
               profileId={id ?? ''}
             />
           );
@@ -47,18 +49,20 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
           return (
             <Card
               key={played_at}
-              uri={track.uri}
-              id={track.id}
-              image={track.album.images[1].url}
-              albumUri={track.album.uri}
-              albumName={track.album.name}
-              name={track.name}
-              artist={track.album.artists[0].name}
-              artistUri={track.album.artists[0].uri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.external_urls.spotify}
-              duration={track.duration_ms}
+              track={{
+                albumName: track.album.name,
+                albumUri: track.album.uri,
+                artist: track.artists[0].name,
+                artistUri: track.artists[0].uri,
+                duration: track.duration_ms,
+                explicit: track.explicit,
+                id: track.id,
+                image: track.album.images[1].url,
+                link: track.external_urls.spotify,
+                name: track.name,
+                preview_url: track.preview_url,
+                uri: track.uri,
+              }}
               userId={id ?? ''}
             />
           );

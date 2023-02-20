@@ -206,25 +206,7 @@ const NavSearch = () => {
               ))}
 
               {tracks.length >= 1 &&
-                tracks.map((track) => (
-                  <Tile
-                    key={track.id}
-                    id={track.id}
-                    uri={track.uri}
-                    image={track.image}
-                    albumUri={track.albumUri}
-                    albumName={track.albumName}
-                    name={track.name}
-                    artist={track.artist}
-                    artistUri={track.artistUri}
-                    explicit={track.explicit}
-                    preview_url={track.preview_url}
-                    link={track.link}
-                    duration={track.duration}
-                    profileId=""
-                    list
-                  />
-                ))}
+                tracks.map((track) => <Tile key={track.id} track={track} profileId="" list />)}
             </Stack>
           </PopoverBody>
         </PopoverContent>
