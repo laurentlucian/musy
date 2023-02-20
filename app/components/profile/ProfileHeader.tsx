@@ -1,8 +1,22 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 
-import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
+import { NotAllowedIcon } from '@chakra-ui/icons';
+import {
+  Heading,
+  HStack,
+  Stack,
+  Text,
+  Image,
+  Textarea,
+  Flex,
+  VStack,
+  MenuButton,
+  IconButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react';
 
-import { CodeCircle, LockCircle } from 'iconsax-react';
+import { CodeCircle, LockCircle, Menu } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import Following from '~/components/profile/Following';
@@ -14,6 +28,9 @@ import type { loader } from '~/routes/$id';
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
 import Favorite from './Favorite';
+import { MoreHorizontal, MoreVertical } from 'react-feather';
+import QuickActions from '../player/home/QuickActions';
+import ProfileActions from './ProfileActions';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -158,6 +175,17 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const FavButton = !isOwnProfile ? <Favorite favorite={true} /> : null;
 
+  const MenuBttn = !isOwnProfile ? (
+    <Menu>
+      <MenuButton as={IconButton} icon={<NotAllowedIcon />} aria-label="more" variant="unstyled" />
+      <MenuList>
+        <MenuItem icon={<NotAllowedIcon />}>block user</MenuItem>
+      </MenuList>
+    </Menu>
+  ) : null;
+
+  const test = !isOwnProfile ? <ProfileActions /> : null;
+
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
       <HStack>
@@ -168,6 +196,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
             <HStack>
               {FollowButton}
               {FavButton}
+              {test}
             </HStack>
             {SubHeader}
           </VStack>
