@@ -9,10 +9,12 @@ import {
   HStack,
   Heading,
   type StackProps,
+  OrderedList,
+  ListItem,
 } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
-import { VolumeHigh } from 'iconsax-react';
+import { People, VolumeHigh } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { timeSince } from '~/lib/utils';
@@ -35,12 +37,12 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
       <HStack spacing={2} align="center" p={3} justify="space-between">
-        <HStack spacing={3}>
+        <HStack spacing={3} w="100%">
           <Link to={`/${user.userId}`}>
             <Avatar size="md" src={user.image} />
           </Link>
-          <VStack align="flex-start" spacing={1}>
-            <HStack>
+          <VStack align="flex-start" spacing={1} w="100%">
+            <HStack w="100%">
               <Link to={`/${user.userId}`}>
                 <Heading size="sm" fontWeight={400}>
                   {name}
@@ -48,8 +50,19 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
               </Link>
               {session.updatedAt > new Date(Date.now() - 1000 * 60 * 15) &&
               session.user.playback ? (
-                <Icon as={VolumeHigh} />
-              ) : null}
+                <HStack>
+                  <Icon as={VolumeHigh} />
+                  <Icon as={People} cursor="pointer" />
+                </HStack>
+              ) : (
+                <HStack w="100%" justify={'end'} pr={5}>
+                  <OrderedList>
+                    <ListItem fontSize="8px">Kanye</ListItem>
+                    <ListItem fontSize="8px">Kanye</ListItem>
+                    <ListItem fontSize="8px">Kanye</ListItem>
+                  </OrderedList>
+                </HStack>
+              )}
             </HStack>
             <Text fontSize={'xs'} fontWeight="300">
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
