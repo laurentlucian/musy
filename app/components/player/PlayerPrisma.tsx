@@ -56,8 +56,8 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const isPlaying = useDrawerIsPlaying();
 
   const bg = useColorModeValue(
-    user?.theme?.playerColorLight ?? 'music.50',
-    user?.theme?.playerColorDark ?? '#10101066',
+    user?.theme?.playerColorLight + '66' ?? 'music.50',
+    user?.theme?.playerColorDark + '66' ?? '#10101066',
   );
   // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#10101066', 'music.50');
