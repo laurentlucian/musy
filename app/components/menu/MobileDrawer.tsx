@@ -18,7 +18,7 @@ import { CloseSquare } from 'iconsax-react';
 import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
-import { type Track } from '~/lib/types/types';
+import type { Track } from '~/lib/types/types';
 
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
@@ -152,24 +152,7 @@ const MobileDrawer = () => {
               <Tiles>
                 {search &&
                   tracks.map((track) => (
-                    <Tile
-                      key={track.id}
-                      id={track.id}
-                      uri={track.uri}
-                      image={track.image}
-                      albumUri={track.albumUri}
-                      albumName={track.albumName}
-                      name={track.name}
-                      artist={track.artist}
-                      artistUri={track.artistUri}
-                      explicit={track.explicit}
-                      preview_url={track.preview_url}
-                      link={track.link}
-                      duration={track.duration}
-                      profileId=""
-                      inDrawer
-                      isQueuing
-                    />
+                    <Tile key={track.id} track={track} profileId="" inDrawer isQueuing />
                   ))}
               </Tiles>
             </Stack>

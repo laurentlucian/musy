@@ -32,46 +32,12 @@ const RecentTracksPrisma = ({
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {recent.map(({ track }, index) => {
-          return (
-            <Tile
-              key={index}
-              uri={track.uri}
-              id={track.id}
-              image={track.image}
-              albumUri={track.albumUri}
-              albumName={track.albumName}
-              name={track.name}
-              artist={track.artist}
-              artistUri={track.albumUri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.link}
-              duration={track.duration}
-              profileId={id ?? ''}
-            />
-          );
+          return <Tile key={index} track={track} profileId={id ?? ''} />;
         })}
       </Tiles>
       <ExpandedSongs title={title} show={show} onClose={onClose}>
         {recent.map(({ track }, index) => {
-          return (
-            <Card
-              key={index}
-              uri={track.uri}
-              id={track.id}
-              image={track.image}
-              albumUri={track.albumUri}
-              albumName={track.albumName}
-              name={track.name}
-              artist={track.artist}
-              artistUri={track.albumUri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.link}
-              duration={track.duration}
-              userId={id ?? ''}
-            />
-          );
+          return <Card key={index} track={track} userId={id ?? ''} />;
         })}
       </ExpandedSongs>
     </Stack>

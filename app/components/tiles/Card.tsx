@@ -13,76 +13,51 @@ import type { action } from '~/routes/$id/removeRecommend';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 
-type CardProps = Track & {
+type CardProps = {
   recommend?: boolean;
   ref?: (node: HTMLDivElement | null) => void;
+  track: Track;
   userId: string;
 } & ChakraProps;
 
-const Card = ({
-  albumName,
-  albumUri,
-  artist,
-  artistUri,
-  explicit,
-  id,
-  image,
-  link,
-  name,
-  preview_url,
-  recommend,
-  uri,
-  userId,
-}: CardProps) => {
+const Card = ({ recommend, track, userId }: CardProps) => {
   const isSmallScreen = useIsMobile();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const track = {
-    albumName,
-    albumUri,
-    artist,
-    artistUri,
-    duration: 0,
-    explicit,
-    id,
-    image,
-    link,
-    name,
-    preview_url,
-    uri: uri,
-  };
+  const drawerTrack = track;
   const fetcher = useTypedFetcher<typeof action>();
   const { id: profileId } = useParams();
+  const id = track.id;
   const removeFromRecommended = () => {
     const action = `/${profileId}/removeRecommend`;
     fetcher.submit({ id }, { action, method: 'post', replace: true });
   };
   const SongTitle = (
     <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
-      {name}
+      {track.name}
     </Text>
   );
   const SongImage = (
     <Image
       boxSize={['85px', '100px']}
       objectFit="cover"
-      src={image}
+      src={track.image}
       draggable={false}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
-      onClick={() => onClick(track, userId)}
+      onClick={() => onClick(drawerTrack, userId)}
     />
   );
   const ArtistName = (
     <Stack direction="row">
-      {explicit && <Image src={explicitImage} mr={-1} w="19px" />}
+      {track.explicit && <Image src={explicitImage} mr={-1} w="19px" />}
       <Text fontSize="14px" opacity={0.8} noOfLines={1}>
-        {artist}
+        {track.artist}
       </Text>
     </Stack>
   );
   const AlbumName = (
     <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
-      {albumName}
+      {track.albumName}
     </Text>
   );
   const TitleArtistAlbumName = (

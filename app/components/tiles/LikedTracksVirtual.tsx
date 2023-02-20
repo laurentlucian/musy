@@ -141,7 +141,6 @@ const LikedTracksVirtual = ({
 
             return (
               <Tile
-                id={track.id}
                 pos="absolute"
                 top="0"
                 left="0"
@@ -149,17 +148,20 @@ const LikedTracksVirtual = ({
                 width={`${virtualRow.size}px`}
                 transform={`translateX(${virtualRow.start}px)`}
                 key={virtualRow.index}
-                uri={track.uri}
-                image={track.album.images[1].url}
-                albumUri={track.album.uri}
-                albumName={track.album.name}
-                name={track.name}
-                artist={track.album.artists[0].name}
-                artistUri={track.album.artists[0].uri}
-                explicit={track.explicit}
-                preview_url={track.preview_url}
-                link={track.external_urls.spotify}
-                duration={track.duration_ms}
+                track={{
+                  albumName: track.album.name,
+                  albumUri: track.album.uri,
+                  artist: track.artists[0].name,
+                  artistUri: track.artists[0].uri,
+                  duration: track.duration_ms,
+                  explicit: track.explicit,
+                  id: track.id,
+                  image: track.album.images[1].url,
+                  link: track.external_urls.spotify,
+                  name: track.name,
+                  preview_url: track.preview_url,
+                  uri: track.uri,
+                }}
                 profileId={id ?? ''}
               />
             );

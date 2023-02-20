@@ -73,18 +73,8 @@ const Recommended = (props: {
                       <PopoverTrigger>
                         <>
                           <Tile
-                            uri={recommended.track.uri}
-                            id={recommended.trackId}
-                            image={recommended.track.image}
-                            albumUri={recommended.track.albumUri}
-                            albumName={recommended.track.albumName}
-                            name={recommended.track.name}
-                            artist={recommended.track.artist}
-                            artistUri={recommended.track.albumUri}
-                            explicit={recommended.track.explicit}
-                            preview_url={recommended.track.preview_url}
-                            link={recommended.track.link}
-                            duration={recommended.track.duration}
+                            key={recommended.id}
+                            track={recommended.track}
                             profileId={id ?? ''}
                           />
                         </>

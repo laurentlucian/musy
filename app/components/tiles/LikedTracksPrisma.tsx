@@ -70,18 +70,7 @@ const LikedTracksPrisma = ({
                 isLast && setRef(node);
               }}
               key={track.id}
-              uri={track.uri}
-              id={track.id}
-              image={track.image}
-              albumUri={track.albumUri}
-              albumName={track.albumName}
-              name={track.name}
-              artist={track.artist}
-              artistUri={track.albumUri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.link}
-              duration={track.duration}
+              track={track}
               profileId={id ?? ''}
             />
           );
@@ -96,19 +85,7 @@ const LikedTracksPrisma = ({
                 isLast && setRef(node);
               }}
               key={track.id}
-              uri={track.uri}
-              id={track.id}
-              zIndex={track.id}
-              image={track.image}
-              albumUri={track.albumUri}
-              albumName={track.albumName}
-              name={track.name}
-              artist={track.artist}
-              artistUri={track.albumUri}
-              explicit={track.explicit}
-              preview_url={track.preview_url}
-              link={track.link}
-              duration={track.duration}
+              track={track}
               userId={id ?? ''}
             />
           );
