@@ -55,23 +55,23 @@ const SaveThemeButton = ({
     return () => clearTimeout(delayExit);
   };
 
-  const onReset = () => {
-    if (!isSmallScreen) {
-      setPicker(undefined);
-    }
-  };
+  // const onReset = () => {
+  //   if (!isSmallScreen) {
+  //     setPicker(undefined);
+  //   }
+  // };
 
   return (
     <Box
       bg={bg}
-      w="200px"
+      // w="200px"
       h="auto"
       pos="fixed"
       bottom={showSave ? 2 : '-50px'}
       right={[2, '25%']}
       zIndex={6969}
     >
-      <Button onClick={onReset}>Reset</Button>
+      {/* <Button onClick={onReset}>Reset</Button> */}
       <Button
         bg={bg}
         color={color}
