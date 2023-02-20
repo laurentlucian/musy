@@ -13,6 +13,7 @@ import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
 import Search from './Search';
+import Favorite from './Favorite';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -153,20 +154,21 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   );
 
   const FollowButton =
-    currentUser && following !== null && !isSmallScreen ? (
-      <Following following={following} />
-    ) : null;
+    currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
+
+  const FavButton = !isOwnProfile ? <Favorite favorite={true} /> : null;
 
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
       <HStack>
         {ProfilePic}
         <VStack align="left" pos="relative" top="20px" left="10px">
-          <HStack>
-            {Username}
-            {FollowButton}
-          </HStack>
+          <HStack>{Username}</HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
+            <HStack>
+              {FollowButton}
+              {FavButton}
+            </HStack>
             {SubHeader}
           </VStack>
         </VStack>
