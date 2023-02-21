@@ -1,4 +1,6 @@
+// import { Form } from '@remix-run/react';
 import { useState } from 'react';
+// import { Upload } from 'react-feather';
 
 import {
   Box,
@@ -11,6 +13,9 @@ import {
   useColorModeValue,
   Collapse,
   useDisclosure,
+  // InputGroup,
+  // InputLeftElement,
+  // Input,
 } from '@chakra-ui/react';
 
 import type { Theme, Track } from '@prisma/client';
@@ -57,7 +62,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
           <Stack spacing={0} bg={bg} backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}>
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
-                <Stack direction="column" spacing={0.5}>
+                <Stack direction="column" spacing={0.5} justifyContent="space-between">
                   <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis" color={main}>
                     {song.name}
                   </Text>
@@ -76,6 +81,20 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
                 </Stack>
                 <HStack>
                   <HStack mb="5px !important" mt="40px">
+                    {/* <Form method="post">
+                      <InputGroup>
+                        <InputLeftElement
+                          aria-label="upload image"
+                          borderRadius="full"
+                          children={<Upload />}
+                        />
+                        <Input
+                          type="file"
+                          accept="image/png, image/jpg, image/gif, image/jpeg"
+                          opacity={0}
+                        />
+                      </InputGroup>
+                    </Form> */}
                     <SpotifyLogo icon={isSmallScreen} />
                   </HStack>
                 </HStack>

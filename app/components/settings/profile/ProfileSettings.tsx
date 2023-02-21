@@ -21,6 +21,7 @@ const ProfileSettings = () => {
       bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
       bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',
       blur: true,
+      customPlayer: null,
       gradient: false,
       gradientColorDark: '#fcbde2',
       gradientColorLight: '#fcbde2',
