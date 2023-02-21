@@ -170,6 +170,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
           {...props}
+          maxW={list ? '40px' : width}
         >
           <Flex direction="column">
             {createdAt && (
@@ -216,6 +217,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               onMouseMove={onMouseMove}
               onClick={() => onClick(drawerTrack, profileId)}
               cursor="pointer"
+              w="175px"
             >
               <Text
                 fontSize="13px"
