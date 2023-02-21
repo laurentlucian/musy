@@ -40,6 +40,7 @@ type TileProps = {
   profileId: string;
   submit?: SubmitFunction;
   track: Track;
+  w?: string[];
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -58,6 +59,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       profileId,
       submit,
       track,
+      w,
       ...props
     },
     ref,
@@ -158,6 +160,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     ) : (
       <Send2 variant={isQueuing ? 'Outline' : 'Bold'} />
     );
+
+    const width = w ?? '200px';
+
     return (
       <>
         <Stack
@@ -191,9 +196,9 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             )}
             <Tooltip label={track.albumName} placement="top-start">
               <Image
-                boxSize={list ? '40px' : '200px'}
-                minW={list ? '40px' : '200px'}
-                minH={list ? '40px' : '200px'}
+                boxSize={list ? '40px' : width}
+                minW={list ? '40px' : width}
+                minH={list ? '40px' : width}
                 objectFit="cover"
                 src={track.image}
                 draggable={false}
@@ -212,7 +217,13 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               onClick={() => onClick(drawerTrack, profileId)}
               cursor="pointer"
             >
-              <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+              <Text
+                fontSize="13px"
+                noOfLines={3}
+                whiteSpace="normal"
+                wordBreak="break-word"
+                w={width}
+              >
                 {track.name}
               </Text>
               {track.artist && (

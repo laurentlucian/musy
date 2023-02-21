@@ -1,7 +1,7 @@
 import { Form, useSearchParams, useSubmit, useParams } from '@remix-run/react';
 import { useCallback, useState } from 'react';
 
-import { HStack, Stack, useRadioGroup } from '@chakra-ui/react';
+import { Box, HStack, SimpleGrid, Stack, useRadioGroup } from '@chakra-ui/react';
 
 import { RadioCard } from '~/lib/theme/components/Radio';
 
@@ -11,6 +11,7 @@ import Card from './Card';
 import Tiles from './Tiles';
 
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
+  const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const submit = useSubmit();
   const [params] = useSearchParams();
@@ -85,29 +86,69 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           );
         })}
       </Tiles>
-      <ExpandedSongs title={title} show={show} onClose={onClose} Filter={Filter}>
-        {top.map((track) => {
-          return (
-            <Card
-              key={track.id}
-              track={{
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              }}
-              userId={id ?? ''}
-            />
-          );
-        })}
+      <ExpandedSongs
+        title={title}
+        show={show}
+        onClose={onClose}
+        Filter={Filter}
+        setLayout={setLayout}
+        layout={layout}
+      >
+        {layout ? (
+          <SimpleGrid
+            minChildWidth={['115px', '100px']}
+            spacing="10px"
+            w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+          >
+            {top.map((track) => {
+              return (
+                <Box key={track.id}>
+                  <Tile
+                    track={{
+                      albumName: track.album.name,
+                      albumUri: track.album.uri,
+                      artist: track.artists[0].name,
+                      artistUri: track.artists[0].uri,
+                      duration: track.duration_ms,
+                      explicit: track.explicit,
+                      id: track.id,
+                      image: track.album.images[1].url,
+                      link: track.external_urls.spotify,
+                      name: track.name,
+                      preview_url: track.preview_url,
+                      uri: track.uri,
+                    }}
+                    profileId={id ?? ''}
+                    w={['115px', '100px']}
+                  />
+                </Box>
+              );
+            })}
+          </SimpleGrid>
+        ) : (
+          top.map((track) => {
+            return (
+              <Card
+                key={track.id}
+                track={{
+                  albumName: track.album.name,
+                  albumUri: track.album.uri,
+                  artist: track.artists[0].name,
+                  artistUri: track.artists[0].uri,
+                  duration: track.duration_ms,
+                  explicit: track.explicit,
+                  id: track.id,
+                  image: track.album.images[1].url,
+                  link: track.external_urls.spotify,
+                  name: track.name,
+                  preview_url: track.preview_url,
+                  uri: track.uri,
+                }}
+                userId={id ?? ''}
+              />
+            );
+          })
+        )}
       </ExpandedSongs>
     </Stack>
   );

@@ -1,4 +1,4 @@
-import { type ReactNode, useRef, useEffect } from 'react';
+import { type ReactNode, type Dispatch, type SetStateAction, useRef, useEffect } from 'react';
 
 import {
   Stack,
@@ -10,7 +10,10 @@ import {
   DrawerOverlay,
   type StackProps,
   Text,
+  IconButton,
 } from '@chakra-ui/react';
+
+import { Element3, TextalignJustifycenter } from 'iconsax-react';
 
 import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useDrawerTrack } from '~/hooks/useDrawer';
@@ -21,7 +24,9 @@ type TilesProps = {
   Filter?: ReactNode;
   autoScroll?: boolean;
   children: ReactNode;
+  layout: boolean;
   onClose: () => void;
+  setLayout: Dispatch<SetStateAction<boolean>>;
   show: boolean;
   title?: string;
 } & StackProps;
@@ -30,7 +35,9 @@ const ExpandedSongs = ({
   Filter = null,
   autoScroll,
   children,
+  layout,
   onClose,
+  setLayout,
   show,
   title,
 }: TilesProps) => {
@@ -70,6 +77,13 @@ const ExpandedSongs = ({
               <Text pl={title === 'Top' ? '115px' : 0} mr={title === 'Top' ? '20px' : 0}>
                 {title}
               </Text>
+              <IconButton
+                aria-label="switch layouts"
+                icon={layout ? <Element3 /> : <TextalignJustifycenter />}
+                onClick={() => setLayout(!layout)}
+                variant="ghost"
+                tabIndex={-1}
+              />
               {Filter}
             </Stack>
           </DrawerHeader>

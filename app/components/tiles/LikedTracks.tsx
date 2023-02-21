@@ -1,7 +1,7 @@
 import { useFetcher, useParams } from '@remix-run/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import useIsVisible from '~/hooks/useIsVisible';
 
@@ -12,6 +12,7 @@ import Tiles from './Tiles';
 
 const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
+  const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const { id } = useParams();
 
@@ -79,33 +80,72 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
           );
         })}
       </Tiles>
-      <ExpandedSongs title={title} show={show} onClose={onClose}>
-        {liked.map(({ track }, index) => {
-          const isLast = index === liked.length - 1;
-          return (
-            <Card
-              ref={(node: HTMLDivElement | null) => {
-                isLast && setRef(node);
-              }}
-              key={track.id}
-              track={{
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              }}
-              userId={id ?? ''}
-            />
-          );
-        })}
+      <ExpandedSongs
+        title={title}
+        show={show}
+        onClose={onClose}
+        setLayout={setLayout}
+        layout={layout}
+      >
+        {layout ? (
+          <SimpleGrid
+            minChildWidth={['115px', '100px']}
+            spacing="10px"
+            w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+          >
+            {liked.map(({ track }, index) => {
+              return (
+                <Box key={index}>
+                  <Tile
+                    track={{
+                      albumName: track.album.name,
+                      albumUri: track.album.uri,
+                      artist: track.artists[0].name,
+                      artistUri: track.artists[0].uri,
+                      duration: track.duration_ms,
+                      explicit: track.explicit,
+                      id: track.id,
+                      image: track.album.images[1].url,
+                      link: track.external_urls.spotify,
+                      name: track.name,
+                      preview_url: track.preview_url,
+                      uri: track.uri,
+                    }}
+                    profileId={id ?? ''}
+                    w={['115px', '100px']}
+                  />
+                </Box>
+              );
+            })}
+          </SimpleGrid>
+        ) : (
+          liked.map(({ track }, index) => {
+            const isLast = index === liked.length - 1;
+            return (
+              <Card
+                ref={(node: HTMLDivElement | null) => {
+                  isLast && setRef(node);
+                }}
+                key={track.id}
+                track={{
+                  albumName: track.album.name,
+                  albumUri: track.album.uri,
+                  artist: track.artists[0].name,
+                  artistUri: track.artists[0].uri,
+                  duration: track.duration_ms,
+                  explicit: track.explicit,
+                  id: track.id,
+                  image: track.album.images[1].url,
+                  link: track.external_urls.spotify,
+                  name: track.name,
+                  preview_url: track.preview_url,
+                  uri: track.uri,
+                }}
+                userId={id ?? ''}
+              />
+            );
+          })
+        )}
       </ExpandedSongs>
     </Stack>
   );

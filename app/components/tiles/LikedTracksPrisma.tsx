@@ -1,7 +1,7 @@
 import { useFetcher, useParams } from '@remix-run/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import type { LikedSongs } from '@prisma/client';
 import type { Track } from '@prisma/client';
@@ -21,6 +21,7 @@ const LikedTracksPrisma = ({
   })[];
 }) => {
   const [liked, setLiked] = useState(initialLiked);
+  const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const { id } = useParams();
 
@@ -76,20 +77,42 @@ const LikedTracksPrisma = ({
           );
         })}
       </Tiles>
-      <ExpandedSongs title={title} show={show} onClose={onClose}>
-        {liked.map(({ track }, index) => {
-          const isLast = index === liked.length - 1;
-          return (
-            <Card
-              ref={(node: HTMLDivElement | null) => {
-                isLast && setRef(node);
-              }}
-              key={track.id}
-              track={track}
-              userId={id ?? ''}
-            />
-          );
-        })}
+      <ExpandedSongs
+        title={title}
+        show={show}
+        onClose={onClose}
+        setLayout={setLayout}
+        layout={layout}
+      >
+        {layout ? (
+          <SimpleGrid
+            minChildWidth={['115px', '100px']}
+            spacing="10px"
+            w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+          >
+            {liked.map(({ track }, index) => {
+              return (
+                <Box key={index}>
+                  <Tile track={track} profileId={id ?? ''} w={['115px', '100px']} />
+                </Box>
+              );
+            })}
+          </SimpleGrid>
+        ) : (
+          liked.map(({ track }, index) => {
+            const isLast = index === liked.length - 1;
+            return (
+              <Card
+                ref={(node: HTMLDivElement | null) => {
+                  isLast && setRef(node);
+                }}
+                key={track.id}
+                track={track}
+                userId={id ?? ''}
+              />
+            );
+          })
+        )}
       </ExpandedSongs>
     </Stack>
   );

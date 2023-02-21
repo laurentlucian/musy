@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import { usePlaylists } from '~/hooks/usePlaylist';
 
@@ -16,6 +16,7 @@ const Playlists = ({
   playlists: SpotifyApi.PlaylistObjectSimplified[];
 }) => {
   const { playlists, setRef, setShow, show } = usePlaylists(initialPlaylists);
+  const [layout, setLayout] = useState(true);
 
   const onClose = useCallback(() => {
     setShow(false);
@@ -45,19 +46,49 @@ const Playlists = ({
         })}
       </Tiles>
       {scrollButtons && (
-        <ExpandedPlayLists title={title} show={show} onClose={onClose}>
-          {playlists.map((list, index) => {
-            const isLast = index === playlists.length - 1;
-            return (
-              <PlaylistCard
-                ref={(node) => {
-                  isLast && setRef(node);
-                }}
-                key={list.id}
-                playlist={list}
-              />
-            );
-          })}
+        <ExpandedPlayLists
+          title={title}
+          show={show}
+          onClose={onClose}
+          setLayout={setLayout}
+          layout={layout}
+        >
+          {layout ? (
+            <SimpleGrid
+              minChildWidth={['115px', '100px']}
+              spacing="10px"
+              w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+            >
+              {playlists.map((list, index) => {
+                const isLast = index === playlists.length - 1;
+                if (list.tracks.total === 0) return null;
+                return (
+                  <Box key={index}>
+                    <PlaylistTile
+                      ref={(node) => {
+                        isLast && setRef(node);
+                      }}
+                      key={list.id}
+                      playlist={list}
+                    />
+                  </Box>
+                );
+              })}
+            </SimpleGrid>
+          ) : (
+            playlists.map((list, index) => {
+              const isLast = index === playlists.length - 1;
+              return (
+                <PlaylistCard
+                  ref={(node) => {
+                    isLast && setRef(node);
+                  }}
+                  key={list.id}
+                  playlist={list}
+                />
+              );
+            })
+          )}
         </ExpandedPlayLists>
       )}
       <PlaylistDrawer />
