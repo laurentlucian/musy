@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 
-import { Box, HStack, Text, Drawer, DrawerBody, DrawerContent, Collapse } from '@chakra-ui/react';
+import { Box, HStack, Text, Drawer, DrawerBody, DrawerContent } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 
@@ -9,8 +9,8 @@ interface ColorPickerProps {
   bgCol: string;
   index: number;
   onChange: (col: ColorResult, property: string) => void;
-  picker: number | undefined;
-  setPicker: Dispatch<SetStateAction<number | undefined>>;
+  picker: number;
+  setPicker: Dispatch<SetStateAction<number>>;
   themeProp: string;
   title: string;
 }
@@ -27,40 +27,34 @@ const ColorPicker = ({
   const isSmallScreen = useIsMobile();
   const onToggle = () => {
     if (picker === index) {
-      setPicker(undefined);
+      setPicker(-1);
     } else {
       setPicker(index);
     }
   };
 
   return (
-    <>
+    <Box>
       <HStack cursor="pointer" onClick={onToggle}>
         <Box p="1px" bg={bgCol} boxSize="20px" />
         <Text>{title}</Text>
       </HStack>
-      <Box w={picker === index ? '220px' : 0}>
-        {isSmallScreen ? (
-          <Drawer
-            isOpen={picker === index}
-            placement="bottom"
-            onClose={() => setPicker(undefined)}
-            variant="colorPicker"
-            trapFocus={false}
-          >
-            <DrawerContent w="220px">
-              <DrawerBody>
-                <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
-              </DrawerBody>
-            </DrawerContent>
-          </Drawer>
-        ) : (
-          <Collapse in={picker === index}>
-            <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
-          </Collapse>
-        )}
-      </Box>
-    </>
+      {isSmallScreen ? (
+        <Drawer
+          isOpen={picker === index}
+          placement="bottom"
+          onClose={() => setPicker(-1)}
+          variant="colorPicker"
+          trapFocus={false}
+        >
+          <DrawerContent w="220px">
+            <DrawerBody>
+              <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      ) : null}
+    </Box>
   );
 };
 

@@ -4,9 +4,7 @@ import { Stack } from '@chakra-ui/react';
 
 import invariant from 'tiny-invariant';
 
-import PlayerButtonSettings from '~/components/settings/profile/PlayerButtonSettings';
 import ProfileSettings from '~/components/settings/profile/ProfileSettings';
-import ThemeToggle from '~/components/settings/ThemeToggle';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -16,9 +14,7 @@ const Appearance = () => {
 
   if (!currentUser) return null;
   return (
-    <Stack spacing={5} w={['unset', '400px']} h="100%">
-      <ThemeToggle />
-      <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
+    <Stack spacing={5} w="100%" h="100%" direction={['column', 'row']}>
       <ProfileSettings />
     </Stack>
   );
@@ -38,7 +34,7 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
-  
+
   const gradient = data.get('gradient');
   if (gradient) {
     const isChecked = gradient === 'true';

@@ -4,7 +4,9 @@ import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
+import ThemeToggle from '../ThemeToggle';
 import GradientSettings from './GradientSettings';
+import PlayerButtonSettings from './PlayerButtonSettings';
 import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
 import ColorPickers from './theme/ColorPickers';
@@ -13,7 +15,7 @@ import SaveThemeButton from './theme/SaveThemeButton';
 const ProfileSettings = () => {
   const currentUser = useSessionUser();
   const [showSave, setShowSave] = useState(false);
-  const [picker, setPicker] = useState<number>();
+  const [picker, setPicker] = useState<number>(-1);
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
       backgroundDark: '#090808',
@@ -46,45 +48,57 @@ const ProfileSettings = () => {
 
   if (!currentUser) return null;
 
+  // @todo connect all appearance options to save button
+
   return (
-    <Stack>
-      <GradientSettings setTheme={setTheme} />
-      <Box
-        h="400px"
-        border={`solid 1px ${color}`}
-        borderRadius="10px"
-        bgGradient={theme.gradient ? bgGradient : undefined}
-        bg={!theme.gradient ? bg : undefined}
-      >
-        <ProfileHeader profile={currentUser} />
-        <Player track={currentUser.settings?.profileSong} theme={theme} />
-      </Box>
-      <ColorPickers
-        setShowSave={setShowSave}
-        setTheme={setTheme}
-        theme={theme}
-        setPicker={setPicker}
-        picker={picker}
-      />
-      <SaveThemeButton
-        showSave={showSave}
-        setShowSave={setShowSave}
-        color={color}
-        setPicker={setPicker}
-        submission={{
-          //eventually will pass whole theme object
-          gradientColorDark: theme.gradientColorDark,
-          gradientColorLight: theme.gradientColorLight,
-          mainTextDark: theme.mainTextDark,
-          mainTextLight: theme.mainTextLight,
-          playerColorDark: theme.playerColorDark,
-          playerColorLight: theme.playerColorLight,
-          subTextDark: theme.subTextDark,
-          subTextLight: theme.subTextLight,
-        }}
-      />
-      <Box h="300px" />
-    </Stack>
+    <>
+      <Stack>
+        <ThemeToggle />
+        <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
+        <GradientSettings gradient={theme.gradient} setTheme={setTheme} />
+      </Stack>
+      <Stack w="100%">
+        <Stack direction={['column', 'row']}>
+          <Box
+            h="400px"
+            border={`solid 1px ${color}`}
+            borderRadius="10px"
+            bgGradient={theme.gradient ? bgGradient : undefined}
+            bg={!theme.gradient ? bg : undefined}
+          >
+            <ProfileHeader profile={currentUser} />
+            <Player track={currentUser.settings?.profileSong} theme={theme} />
+          </Box>
+          <Box w="100%">
+            <ColorPickers
+              setShowSave={setShowSave}
+              setTheme={setTheme}
+              theme={theme}
+              setPicker={setPicker}
+              picker={picker}
+            />
+          </Box>
+          <SaveThemeButton
+            showSave={showSave}
+            setShowSave={setShowSave}
+            color={color}
+            setPicker={setPicker}
+            submission={{
+              //eventually will pass whole theme object
+              gradientColorDark: theme.gradientColorDark,
+              gradientColorLight: theme.gradientColorLight,
+              mainTextDark: theme.mainTextDark,
+              mainTextLight: theme.mainTextLight,
+              playerColorDark: theme.playerColorDark,
+              playerColorLight: theme.playerColorLight,
+              subTextDark: theme.subTextDark,
+              subTextLight: theme.subTextLight,
+            }}
+          />
+        </Stack>
+        <Box h="300px" />
+      </Stack>
+    </>
   );
 };
 

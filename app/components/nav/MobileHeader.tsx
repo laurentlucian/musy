@@ -145,7 +145,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const Search = <UserMenu isSmallScreen={true} pathname={pathname} />;
 
   const Settings = (
-    <Stack w="100%" h="100%" bg={bg} pb="20px">
+    <Stack w="100%" h="100%" bg={bg}>
       <HStack w="100%" bg={bg} justifyContent="center">
         <Heading fontSize="13px" mt="15px" ml="20px">
           Settings
@@ -163,7 +163,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           Done
         </Button>
       </HStack>
-      <Divider bg={bg} />
+      <Divider bg={show + 50 <= 45 ? bg : color} />
     </Stack>
   );
 

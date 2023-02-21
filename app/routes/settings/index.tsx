@@ -42,7 +42,7 @@ const Account = () => {
 
   return (
     <>
-      <Stack spacing={5} w={['unset', '400px']} h="100%">
+      <Stack spacing={5} w="100%" h="100%">
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <HStack>
             <Ghost size="24" color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />

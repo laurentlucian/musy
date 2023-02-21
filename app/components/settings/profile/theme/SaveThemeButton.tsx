@@ -14,7 +14,7 @@ const SaveThemeButton = ({
   submission,
 }: {
   color: string;
-  setPicker: Dispatch<SetStateAction<number | undefined>>;
+  setPicker: Dispatch<SetStateAction<number>>;
   setShowSave: Dispatch<SetStateAction<boolean>>;
   showSave: boolean;
   submission: {
@@ -37,7 +37,7 @@ const SaveThemeButton = ({
 
   const onSave = () => {
     if (!isSmallScreen) {
-      setPicker(undefined);
+      setPicker(-1);
     }
     submit(
       {
