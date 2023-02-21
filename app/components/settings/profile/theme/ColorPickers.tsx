@@ -34,7 +34,7 @@ const ColorPickers = ({
       picker,
       setPicker,
       themeProp: 'gradientColor' + (colorMode === 'dark' ? 'Dark' : 'Light'),
-      title: 'Gradient',
+      title: 'background',
     },
     {
       bgCol: colorMode === 'dark' ? theme.playerColorDark : theme.playerColorLight,
@@ -44,7 +44,7 @@ const ColorPickers = ({
       picker,
       setPicker,
       themeProp: 'playerColor' + (colorMode === 'dark' ? 'Dark' : 'Light'),
-      title: 'Player',
+      title: 'player',
     },
     {
       bgCol: colorMode === 'dark' ? theme.mainTextDark : theme.mainTextLight,
@@ -54,7 +54,7 @@ const ColorPickers = ({
       picker,
       setPicker,
       themeProp: 'mainText' + (colorMode === 'dark' ? 'Dark' : 'Light'),
-      title: 'Player Main',
+      title: 'player main',
     },
     {
       bgCol: colorMode === 'dark' ? theme.subTextDark : theme.subTextLight,
@@ -64,7 +64,7 @@ const ColorPickers = ({
       picker,
       setPicker,
       themeProp: 'subText' + (colorMode === 'dark' ? 'Dark' : 'Light'),
-      title: 'Player Sub',
+      title: 'player sub',
     },
   ];
 
