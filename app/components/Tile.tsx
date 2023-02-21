@@ -219,13 +219,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               cursor="pointer"
               w="175px"
             >
-              <Text
-                fontSize="13px"
-                noOfLines={3}
-                whiteSpace="normal"
-                wordBreak="break-word"
-                w={width}
-              >
+              <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
                 {track.name}
               </Text>
               {track.artist && (
