@@ -38,6 +38,17 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  
+  const gradient = data.get('gradient');
+  if (gradient) {
+    const isChecked = gradient === 'true';
+
+    await prisma.theme.upsert({
+      create: { gradient: isChecked, userId },
+      update: { gradient: isChecked },
+      where: { userId },
+    });
+  }
   const gradientPreference = data.get('gradient');
   if (gradientPreference) {
     const gradient = gradientPreference === 'true';

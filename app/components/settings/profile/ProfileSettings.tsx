@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { type ColorResult } from 'react-color';
+import type { ColorResult } from 'react-color';
 
 import { Box, useColorModeValue, Stack, useColorMode } from '@chakra-ui/react';
 
@@ -51,12 +51,11 @@ const ProfileSettings = () => {
   };
 
   const colorPickerRef = useRef<HTMLDivElement>(null);
-
   if (!currentUser) return null;
 
   return (
     <Stack>
-      <GradientSettings />
+      <GradientSettings setTheme={setTheme} />
       <Box
         h="400px"
         border={`solid 1px ${color}`}
