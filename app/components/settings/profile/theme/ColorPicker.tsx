@@ -7,6 +7,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 interface ColorPickerProps {
   bgCol: string;
+  gradient?: string;
   index: number;
   onChange: (col: ColorResult, property: string) => void;
   picker: number;
@@ -17,6 +18,7 @@ interface ColorPickerProps {
 
 const ColorPicker = ({
   bgCol,
+  gradient,
   index,
   onChange,
   picker,
@@ -32,11 +34,10 @@ const ColorPicker = ({
       setPicker(index);
     }
   };
-
   return (
     <Box>
       <HStack cursor="pointer" onClick={onToggle}>
-        <Box p="1px" bg={bgCol} boxSize="20px" />
+        <Box p="1px" bg={bgCol} bgGradient={gradient} boxSize="20px" />
         <Text>{title}</Text>
       </HStack>
       {isSmallScreen ? (

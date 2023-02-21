@@ -85,6 +85,8 @@ const ProfileSettings = () => {
             setPicker={setPicker}
             submission={{
               //eventually will pass whole theme object
+              backgroundDark: theme.backgroundDark,
+              backgroundLight: theme.backgroundLight,
               gradientColorDark: theme.gradientColorDark,
               gradientColorLight: theme.gradientColorLight,
               mainTextDark: theme.mainTextDark,

@@ -18,6 +18,8 @@ const SaveThemeButton = ({
   setShowSave: Dispatch<SetStateAction<boolean>>;
   showSave: boolean;
   submission: {
+    backgroundDark: string;
+    backgroundLight: string;
     gradientColorDark: string;
     gradientColorLight: string;
     mainTextDark: string;
@@ -41,6 +43,8 @@ const SaveThemeButton = ({
     }
     submit(
       {
+        backgroundDark: submission.backgroundDark,
+        backgroundLight: submission.backgroundLight,
         bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
         bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
         gradientColorDark: submission.gradientColorDark,

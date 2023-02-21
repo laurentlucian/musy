@@ -33,9 +33,13 @@ const ColorPickers = ({
     colorMode === 'dark'
       ? [
           {
-            bgCol: theme.gradientColorDark,
-            onChange: (col: ColorResult) => onChange(col, 'gradientColorDark'),
-            themeProp: 'gradientColorDark',
+            bgCol: theme.gradient ? theme.gradientColorDark : theme.backgroundDark,
+            gradient: theme.gradient
+              ? `linear(to-t, #090808 1%, ${theme.gradientColorDark} 80%)`
+              : undefined,
+            onChange: (col: ColorResult) =>
+              onChange(col, theme.gradient ? 'gradientColorDark' : 'backgroundDark'),
+            themeProp: theme.gradient ? 'gradientColorDark' : 'backgroundDark',
             title: 'background',
           },
           {
@@ -59,9 +63,13 @@ const ColorPickers = ({
         ]
       : [
           {
-            bgCol: theme.gradientColorLight,
-            onChange: (col: ColorResult) => onChange(col, 'gradientColorLight'),
-            themeProp: 'gradientColorLight',
+            bgCol: theme.gradient ? theme.gradientColorLight : theme.backgroundDark,
+            gradient: theme.gradient
+              ? `linear(to-t, #EEE6E2 1%, ${theme.gradientColorDark} 80%)`
+              : undefined,
+            onChange: (col: ColorResult) =>
+              onChange(col, theme.gradient ? 'gradientColorLight' : 'backgroundLight'),
+            themeProp: theme.gradient ? 'gradientColorLight' : 'backgroundLight',
             title: 'background',
           },
           {
@@ -90,6 +98,7 @@ const ColorPickers = ({
         <Box key={i}>
           <ColorPicker
             bgCol={colorPicker.bgCol}
+            gradient={colorPicker.gradient}
             onChange={colorPicker.onChange}
             setPicker={setPicker}
             picker={picker}

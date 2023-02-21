@@ -31,6 +31,7 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
+  const bg = useColorModeValue(user.theme?.backgroundLight, user.theme?.backgroundDark);
   const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
   const gradient = user.theme?.gradient;
 
@@ -42,6 +43,7 @@ const Profile = () => {
         left={0}
         w="100vw"
         h="100%"
+        bg={bg}
         bgGradient={gradient ? bgGradient : undefined}
         zIndex={0}
         bgAttachment="fixed"
