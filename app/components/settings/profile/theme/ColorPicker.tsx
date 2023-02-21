@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, type RefObject } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 
 import { Box, HStack, Text, Drawer, DrawerBody, DrawerContent, Collapse } from '@chakra-ui/react';
@@ -10,7 +10,6 @@ interface ColorPickerProps {
   index: number;
   onChange: (col: ColorResult, property: string) => void;
   picker: number | undefined;
-  ref: RefObject<HTMLDivElement>;
   setPicker: Dispatch<SetStateAction<number | undefined>>;
   themeProp: string;
   title: string;
@@ -21,7 +20,6 @@ const ColorPicker = ({
   index,
   onChange,
   picker,
-  ref,
   setPicker,
   themeProp,
   title,
@@ -41,7 +39,7 @@ const ColorPicker = ({
         <Box p="1px" bg={bgCol} boxSize="20px" />
         <Text>{title}</Text>
       </HStack>
-      <Box w="220px">
+      <Box w={picker === index ? '220px' : 0}>
         {isSmallScreen ? (
           <Drawer
             isOpen={picker === index}
@@ -52,17 +50,13 @@ const ColorPicker = ({
           >
             <DrawerContent w="220px">
               <DrawerBody>
-                <div ref={ref}>
-                  <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
-                </div>
+                <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
               </DrawerBody>
             </DrawerContent>
           </Drawer>
         ) : (
           <Collapse in={picker === index}>
-            <Box ref={ref}>
-              <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
-            </Box>
+            <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
           </Collapse>
         )}
       </Box>
