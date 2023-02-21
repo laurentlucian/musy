@@ -43,39 +43,11 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
   const user = useParamUser();
   const friendCount = (users?.users?.length ?? 1) - 1;
 
-  const isNya = pathname.includes('/02mm0eoxnifin8xdnqwimls4y');
-  const isDanica = pathname.includes('/danicadboo');
-  const isMiggy = pathname.includes('/-miggy');
-  const isNat = pathname.includes('/12143615383');
-
-  const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
-  const userIsDanica = currentUser?.userId === 'danicadboo';
-  const userIsMig = currentUser?.userId === '-miggy';
-  const userIsNat = currentUser?.userId === '12143615383';
-
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue(
     user?.theme?.gradientColorLight ?? '#EEE6E2',
     user?.theme?.gradientColorDark ?? '#050404',
   );
-  const customBg = isNya
-    ? '#FE5BAC'
-    : isDanica
-    ? '#563776'
-    : isMiggy
-    ? '#1f93a0'
-    : isNat
-    ? '#f2b8c6'
-    : bg;
-  const customColor = userIsNya
-    ? '#FE5BAC'
-    : userIsDanica
-    ? '#563776'
-    : userIsMig
-    ? '#1f93a0'
-    : userIsNat
-    ? '#f2b8c6'
-    : color;
 
   const Home = (
     <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center" zIndex={1}>
@@ -100,7 +72,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           <UserMenu isSmallScreen={true} pathname={pathname} />
         )}
       </HStack>
-      <Divider bgColor={customColor} />
+      <Divider bgColor={color} />
     </Stack>
   );
 
@@ -117,7 +89,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={customColor} />
+      <Divider bgColor={color} />
     </Stack>
   );
   const Sessions = (
@@ -130,21 +102,14 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         </HStack>
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={customColor} />
+      <Divider bgColor={color} />
     </Stack>
   );
 
   const Profile = (
     <Stack>
       <HStack opacity={1} mb="-8px">
-        <HStack
-          w="100vw"
-          h="41px"
-          bg={customBg}
-          opacity={show / 90}
-          overflow="clip"
-          textAlign="center"
-        >
+        <HStack w="100vw" h="41px" bg={bg} opacity={show / 90} overflow="clip" textAlign="center">
           <Stack w="100vw" h="74px">
             {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '16px'} /> : <Box h="16px" />}
             <Text h="37px" alignSelf="center" opacity={show / 90} w="100vw">
@@ -173,7 +138,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         />
         <UserMenu isSmallScreen={true} pathname={pathname} />
       </HStack>
-      <Divider bgColor={customColor} opacity={show / 90} />
+      <Divider bgColor={color} opacity={show / 90} />
     </Stack>
   );
 
@@ -198,7 +163,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
           Done
         </Button>
       </HStack>
-      <Divider bg={customColor} />
+      <Divider bg={bg} />
     </Stack>
   );
 
