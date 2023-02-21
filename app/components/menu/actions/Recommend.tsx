@@ -9,7 +9,7 @@ import { useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/recommend';
 
-import Waver from '../icons/Waver';
+import Waver from '../../icons/Waver';
 
 type RecommendProps = {
   comment?: string;

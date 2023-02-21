@@ -6,7 +6,7 @@ import { Next, Pause, Play, Previous } from 'iconsax-react';
 
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
-import SaveToLiked from '../menu/SaveToLiked';
+import SaveToLiked from '../menu/actions/SaveToLiked';
 import Tooltip from '../Tooltip';
 
 type PlayControllerProps = {

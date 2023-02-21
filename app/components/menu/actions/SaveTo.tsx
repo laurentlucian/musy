@@ -18,7 +18,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 import useIsVisible from '~/hooks/useIsVisible';
 import type { loader } from '~/routes/$id/playlists';
 
-import PlaylistCard from '../tiles/PlaylistCard';
+import PlaylistCard from '../../tiles/PlaylistCard';
 
 const SaveTo = ({ currentUserId }: { currentUserId: string | undefined }) => {
   const fetcher = useTypedFetcher<typeof loader>();

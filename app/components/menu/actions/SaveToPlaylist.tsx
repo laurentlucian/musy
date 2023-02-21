@@ -8,7 +8,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 import useSessionUser from '~/hooks/useSessionUser';
 import LikeIcon from '~/lib/icon/Like';
 
-import Waver from '../icons/Waver';
+import Waver from '../../icons/Waver';
 
 type SaveToPlaylistProps = {
   trackId: string;

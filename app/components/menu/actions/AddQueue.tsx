@@ -9,7 +9,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
 
-import Waver from '../icons/Waver';
+import Waver from '../../icons/Waver';
 
 type AddQueueProps = {
   fromId?: string | null;

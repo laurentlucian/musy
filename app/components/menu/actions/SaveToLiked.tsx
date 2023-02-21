@@ -8,7 +8,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
 import LikeIcon from '~/lib/icon/Like';
 
-import Tooltip from '../Tooltip';
+import Tooltip from '../../Tooltip';
 
 type SaveToLikedProps = {
   iconOnly?: boolean;

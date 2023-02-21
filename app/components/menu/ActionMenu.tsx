@@ -12,8 +12,8 @@ import useParamUser from '~/hooks/useParamUser';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 
-import AddQueue from './AddQueue';
-import SaveToLiked from './SaveToLiked';
+import AddQueue from './actions/AddQueue';
+import SaveToLiked from './actions/SaveToLiked';
 
 type ActionMenuConfig = {
   track: {

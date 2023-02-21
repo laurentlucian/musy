@@ -47,14 +47,14 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
-import AddQueue from './AddQueue';
-import AnalyzeTrack from './AnalyzeTrack';
-import CopyLink from './CopyLink';
+import AddQueue from './actions/AddQueue';
+import AnalyzeTrack from './actions/AnalyzeTrack';
+import CopyLink from './actions/CopyLink';
+import PlayPreview from './actions/PlayPreview';
+import ProfileSong from './actions/ProfileSong';
+import Recommend from './actions/Recommend';
+import SaveToLiked from './actions/SaveToLiked';
 import LikedBy from './LikedBy';
-import PlayPreview from './PlayPreview';
-import ProfileSong from './ProfileSong';
-import Recommend from './Recommend';
-import SaveToLiked from './SaveToLiked';
 
 // import SaveTo from './SaveTo';
 
