@@ -1,4 +1,5 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { MoreHorizontal, MoreVertical } from 'react-feather';
 
 import { NotAllowedIcon } from '@chakra-ui/icons';
 import {
@@ -26,11 +27,10 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { loader } from '~/routes/$id';
 
 // import SpotifyLogo from '../icons/SpotifyLogo';
-import Search from './Search';
-import Favorite from './Favorite';
-import { MoreHorizontal, MoreVertical } from 'react-feather';
 import QuickActions from '../player/home/QuickActions';
+import Favorite from './Favorite';
 import ProfileActions from './ProfileActions';
+import Search from './Search';
 
 const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
