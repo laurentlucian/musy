@@ -1,6 +1,6 @@
 import { MoreHorizontal } from 'react-feather';
 
-import { NotAllowedIcon } from '@chakra-ui/icons';
+import { LinkIcon, NotAllowedIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
@@ -11,6 +11,7 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { VolumeMute } from 'iconsax-react';
 
 const ProfileActions = ({}) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -34,6 +35,23 @@ const ProfileActions = ({}) => {
         </Stack>
         <Portal>
           <MenuList bg={bg}>
+            <MenuItem
+              icon={<LinkIcon boxSize="18px" />}
+              bg={bg}
+              color={color}
+              _hover={{ color: 'grey' }}
+            >
+              copy link
+            </MenuItem>
+
+            <MenuItem
+              icon={<VolumeMute size="18px" />}
+              bg={bg}
+              color={color}
+              _hover={{ color: 'red' }}
+            >
+              mute user
+            </MenuItem>
             <MenuItem
               icon={<NotAllowedIcon boxSize="18px" />}
               bg={bg}
