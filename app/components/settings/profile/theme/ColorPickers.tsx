@@ -60,12 +60,18 @@ const ColorPickers = ({
             themeProp: 'subTextLight',
             title: 'player sub',
           },
+          {
+            bgCol: '#fff0',
+            onChange: () => {},
+            themeProp: '',
+            title: '',
+          },
         ]
       : [
           {
             bgCol: theme.gradient ? theme.gradientColorLight : theme.backgroundDark,
             gradient: theme.gradient
-              ? `linear(to-t, #EEE6E2 1%, ${theme.gradientColorDark} 80%)`
+              ? `linear(to-t, #EEE6E2 1%, ${theme.gradientColorLight} 80%)`
               : undefined,
             onChange: (col: ColorResult) =>
               onChange(col, theme.gradient ? 'gradientColorLight' : 'backgroundLight'),
@@ -89,6 +95,12 @@ const ColorPickers = ({
             onChange: (col: ColorResult) => onChange(col, 'subTextLight'),
             themeProp: 'subTextLight',
             title: 'player sub',
+          },
+          {
+            bgCol: '#fff0',
+            onChange: () => {},
+            themeProp: '',
+            title: '',
           },
         ];
 
