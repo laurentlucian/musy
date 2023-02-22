@@ -21,6 +21,7 @@ const SaveThemeButton = ({
     backgroundDark: string;
     backgroundLight: string;
     blur: boolean;
+    gradient: boolean;
     gradientColorDark: string;
     gradientColorLight: string;
     mainTextDark: string;
@@ -50,6 +51,7 @@ const SaveThemeButton = ({
         bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
         bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
         blur: `${submission.blur}`,
+        gradient: `${submission.gradient}`,
         gradientColorDark: submission.gradientColorDark,
         gradientColorLight: submission.gradientColorLight,
         mainTextDark: submission.mainTextDark,

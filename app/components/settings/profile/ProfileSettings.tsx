@@ -117,6 +117,7 @@ const ProfileSettings = () => {
               backgroundLight: theme.backgroundLight,
               //eventually will pass whole theme object
               blur: theme.blur,
+              gradient: theme.gradient,
               gradientColorDark: theme.gradientColorDark,
               gradientColorLight: theme.gradientColorLight,
               mainTextDark: theme.mainTextDark,
