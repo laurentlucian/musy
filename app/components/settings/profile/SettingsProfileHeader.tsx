@@ -11,7 +11,7 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
   const isSmallScreen = useIsMobile();
 
   const SubHeader = (
-    <HStack spacing={[3, 5]} position="relative">
+    <HStack spacing={[3, 5]} position="relative" w={['auto', '377px']}>
       <Text fontSize="13px" mr="8px">
         Mood
       </Text>

@@ -2,15 +2,17 @@ import { useState } from 'react';
 
 import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
+import { ArrowDown3, Blur, Eye, EyeSlash } from 'iconsax-react';
+
 import useSessionUser from '~/hooks/useSessionUser';
 
 import ThemeToggle from '../ThemeToggle';
-import GradientSettings from './GradientSettings';
 import PlayerButtonSettings from './PlayerButtonSettings';
 import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
 import ColorPickers from './theme/ColorPickers';
 import SaveThemeButton from './theme/SaveThemeButton';
+import ToggleSetting from './theme/ToggleSetting';
 
 const ProfileSettings = () => {
   const currentUser = useSessionUser();
@@ -50,12 +52,39 @@ const ProfileSettings = () => {
 
   // @todo connect all appearance options to save button
 
+  console.log('blur: ', theme.blur, 'opaque: ', theme.opaque);
+
   return (
     <>
       <Stack>
         <ThemeToggle />
         <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
-        <GradientSettings gradient={theme.gradient} setTheme={setTheme} />
+        <ToggleSetting
+          themeValue={theme.gradient}
+          setTheme={setTheme}
+          icon={<ArrowDown3 />}
+          title="Gradient"
+          label="gradient background"
+          setShowSave={setShowSave}
+        />
+        <ToggleSetting
+          themeValue={theme.opaque}
+          setTheme={setTheme}
+          icon={theme.opaque ? <EyeSlash /> : <Eye />}
+          title="Opaque"
+          label="opaque player"
+          value={theme.opaque}
+          setShowSave={setShowSave}
+        />
+        <ToggleSetting
+          themeValue={theme.blur}
+          setTheme={setTheme}
+          icon={<Blur />}
+          title="Blur"
+          label="blur player"
+          value={theme.blur}
+          setShowSave={setShowSave}
+        />
       </Stack>
       <Stack w="100%">
         <Stack direction={['column', 'row']}>
@@ -84,13 +113,15 @@ const ProfileSettings = () => {
             color={color}
             setPicker={setPicker}
             submission={{
-              //eventually will pass whole theme object
               backgroundDark: theme.backgroundDark,
               backgroundLight: theme.backgroundLight,
+              //eventually will pass whole theme object
+              blur: theme.blur,
               gradientColorDark: theme.gradientColorDark,
               gradientColorLight: theme.gradientColorLight,
               mainTextDark: theme.mainTextDark,
               mainTextLight: theme.mainTextLight,
+              opaque: theme.opaque,
               playerColorDark: theme.playerColorDark,
               playerColorLight: theme.playerColorLight,
               subTextDark: theme.subTextDark,

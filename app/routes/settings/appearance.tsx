@@ -45,6 +45,26 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
+  const opaque = data.get('opaque');
+  if (opaque) {
+    const isChecked = opaque === 'true';
+
+    await prisma.theme.upsert({
+      create: { opaque: isChecked, userId },
+      update: { opaque: isChecked },
+      where: { userId },
+    });
+  }
+  const blur = data.get('blur');
+  if (blur) {
+    const isChecked = blur === 'true';
+
+    await prisma.theme.upsert({
+      create: { blur: isChecked, userId },
+      update: { blur: isChecked },
+      where: { userId },
+    });
+  }
   const gradientPreference = data.get('gradient');
   if (gradientPreference) {
     const gradient = gradientPreference === 'true';

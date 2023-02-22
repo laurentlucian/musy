@@ -1,5 +1,4 @@
 // import { Form } from '@remix-run/react';
-import { useState } from 'react';
 // import { Upload } from 'react-feather';
 
 import {
@@ -44,12 +43,12 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
     uri: '',
   };
 
-  const currentUser = useSessionUser();
-  const [blur, setBlur] = useState(true);
-
   const { isOpen, onToggle } = useDisclosure();
+  const currentUser = useSessionUser();
 
-  const bg = useColorModeValue(theme.playerColorLight + '66', theme.playerColorDark + '66');
+  const opaque = theme.opaque ? '' : '66';
+
+  const bg = useColorModeValue(theme.playerColorLight + opaque, theme.playerColorDark + opaque);
   const main = useColorModeValue(theme.mainTextLight ?? '#161616', theme.mainTextDark ?? '#EEE6E2');
   const sub = useColorModeValue(theme.subTextLight ?? '#161616', theme.subTextDark ?? '#EEE6E2');
 
@@ -57,9 +56,13 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
 
   return (
     <Stack zIndex={1} spacing={-1} mt="10px" px="5px">
-      <Stack backdropFilter="blur(27px)" h="100%" zIndex={1}>
+      <Stack backdropFilter={theme.blur ? 'blur(27px)' : undefined} h="100%" zIndex={1}>
         <Collapse in={!isOpen} animateOpacity>
-          <Stack spacing={0} bg={bg} backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}>
+          <Stack
+            spacing={0}
+            bg={bg}
+            backdropFilter={theme.blur && isSmallScreen ? 'blur(27px)' : 'none'}
+          >
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
                 <Stack direction="column" spacing={0.5} justifyContent="space-between">
@@ -111,7 +114,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
         bg={bg}
         borderRadius="0px 0px 3px 3px"
         zIndex={0}
-        backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
+        backdropFilter={theme.blur && !isSmallScreen ? 'blur(27px)' : 'none'}
         alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
       >
         <IconButton
@@ -119,7 +122,6 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
           variant="ghost"
           onClick={() => {
             onToggle();
-            setBlur(true);
           }}
           aria-label={isOpen ? 'open player' : 'close player'}
           _hover={{ color: main, opacity: 1 }}

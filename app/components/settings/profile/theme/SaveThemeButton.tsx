@@ -20,10 +20,12 @@ const SaveThemeButton = ({
   submission: {
     backgroundDark: string;
     backgroundLight: string;
+    blur: boolean;
     gradientColorDark: string;
     gradientColorLight: string;
     mainTextDark: string;
     mainTextLight: string;
+    opaque: boolean;
     playerColorDark: string;
     playerColorLight: string;
     subTextDark: string;
@@ -47,10 +49,12 @@ const SaveThemeButton = ({
         backgroundLight: submission.backgroundLight,
         bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
         bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
+        blur: `${submission.blur}`,
         gradientColorDark: submission.gradientColorDark,
         gradientColorLight: submission.gradientColorLight,
         mainTextDark: submission.mainTextDark,
         mainTextLight: submission.mainTextLight,
+        opaque: `${submission.opaque}`,
         playerColorDark: submission.playerColorDark,
         playerColorLight: submission.playerColorLight,
         subTextDark: submission.subTextDark,

@@ -40,6 +40,7 @@ type PlayerProps = {
 const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const user = useParamUser();
+  const theme = user?.theme;
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
@@ -55,20 +56,18 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
 
+  const opaque = theme?.opaque ? '' : '66';
   const bg = useColorModeValue(
-    user?.theme?.playerColorLight + '66' ?? 'music.50',
-    user?.theme?.playerColorDark + '66' ?? '#10101066',
+    theme?.playerColorLight + opaque ?? 'music.50',
+    theme?.playerColorDark + opaque ?? '#10101066',
   );
   // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color1 = useColorModeValue('music.800', 'music.200');
   const main = useColorModeValue(
-    user?.theme?.mainTextLight ?? '#161616',
-    user?.theme?.mainTextDark ?? '#EEE6E2',
+    theme?.mainTextLight ?? '#161616',
+    theme?.mainTextDark ?? '#EEE6E2',
   );
-  const sub = useColorModeValue(
-    user?.theme?.subTextLight ?? '#161616',
-    user?.theme?.subTextDark ?? '#EEE6E2',
-  );
+  const sub = useColorModeValue(theme?.subTextLight ?? '#161616', theme?.subTextDark ?? '#EEE6E2');
 
   // const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   // const fetcher = useFetcher();
@@ -196,15 +195,23 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   if (!playback) return null;
   const { track } = playback;
 
+  console.log('blur from profile: ', theme?.blur, 'opaque from profile: ', theme?.opaque);
+
   return (
     <>
       <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={-1}>
-        <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5} h="100%">
+        <Stack
+          backdropFilter={theme?.blur || theme === null ? 'blur(27px)' : 'none'}
+          borderRadius={size === 'small' ? 0 : 5}
+          h="100%"
+        >
           <Collapse in={!isOpen} animateOpacity>
             <Stack
               spacing={0}
               bg={bg}
-              backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
+              backdropFilter={
+                (theme?.blur || theme === null) && blur && isSmallScreen ? 'blur(27px)' : 'none'
+              }
             >
               <Flex h="135px" px="2px" py="2px" justify="space-between">
                 <Stack pl="7px" spacing={1} flexGrow={1}>
@@ -394,7 +401,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
           bg={bg}
           borderRadius="0px 0px 3px 3px"
           zIndex={-1}
-          backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
+          backdropFilter={(theme?.blur || theme === null) && !isSmallScreen ? 'blur(27px)' : 'none'}
           alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
         >
           <IconButton
