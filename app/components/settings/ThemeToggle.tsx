@@ -9,6 +9,7 @@ import {
   Box,
   IconButton,
   Text,
+  Flex,
 } from '@chakra-ui/react';
 
 import { Moon, Sun1 } from 'iconsax-react';
@@ -95,7 +96,7 @@ const ThemeToggle = () => {
   };
 
   const Desktop = (
-    <Box display="flex" alignItems="center" justifyContent="space-between">
+    <Flex alignItems="center" justifyContent="space-between">
       <Tooltip label="toggle theme" hasArrow openDelay={300}>
         <IconButton
           aria-label="toggle theme"
@@ -105,7 +106,7 @@ const ThemeToggle = () => {
           borderRadius="md"
         />
       </Tooltip>
-    </Box>
+    </Flex>
   );
 
   return isSmallScreen ? Mobile : Desktop;

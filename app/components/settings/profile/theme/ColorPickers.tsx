@@ -96,16 +96,7 @@ const ColorPickers = ({
     <SimpleGrid columns={2} p={[1, 0]}>
       {colorPickers.map((colorPicker, i) => (
         <Box key={i}>
-          <ColorPicker
-            bgCol={colorPicker.bgCol}
-            gradient={colorPicker.gradient}
-            onChange={colorPicker.onChange}
-            setPicker={setPicker}
-            picker={picker}
-            index={i}
-            title={colorPicker.title}
-            themeProp={colorPicker.themeProp}
-          />
+          <ColorPicker setPicker={setPicker} picker={picker} index={i} {...colorPicker} />
         </Box>
       ))}
       <Collapse in={picker >= 0}>

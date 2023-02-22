@@ -10,6 +10,7 @@ import {
   Box,
   IconButton,
   useColorModeValue,
+  Flex,
 } from '@chakra-ui/react';
 
 import { ArrangeHorizontal } from 'iconsax-react';
@@ -92,7 +93,7 @@ const PlayerButtonSettings = ({ playerButtonRight }: { playerButtonRight?: boole
   };
 
   const Desktop = (
-    <Box display="flex" alignItems="center" justifyContent="space-between">
+    <Flex alignItems="center" justifyContent="space-between">
       <Tooltip label="player button side" hasArrow openDelay={300}>
         <IconButton
           aria-label="player button side"
@@ -112,7 +113,7 @@ const PlayerButtonSettings = ({ playerButtonRight }: { playerButtonRight?: boole
           borderRadius="md"
         />
       </Tooltip>
-    </Box>
+    </Flex>
   );
 
   return isSmallScreen ? Mobile : Desktop;
