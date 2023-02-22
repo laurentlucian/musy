@@ -2,8 +2,6 @@ import { useState } from 'react';
 
 import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
-import { ArrowDown3, Blur, Eye, EyeSlash } from 'iconsax-react';
-
 import useSessionUser from '~/hooks/useSessionUser';
 
 import ThemeToggle from '../ThemeToggle';
@@ -12,7 +10,7 @@ import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
 import ColorPickers from './theme/ColorPickers';
 import SaveThemeButton from './theme/SaveThemeButton';
-import ToggleSetting from './theme/ToggleSetting';
+import ToggleSettings from './theme/ToggleSettings';
 
 const ProfileSettings = () => {
   const currentUser = useSessionUser();
@@ -59,32 +57,7 @@ const ProfileSettings = () => {
       <Stack>
         <ThemeToggle />
         <PlayerButtonSettings playerButtonRight={currentUser.settings?.playerButtonRight} />
-        <ToggleSetting
-          themeValue={theme.gradient}
-          setTheme={setTheme}
-          icon={<ArrowDown3 />}
-          title="Gradient"
-          label="gradient background"
-          setShowSave={setShowSave}
-        />
-        <ToggleSetting
-          themeValue={theme.opaque}
-          setTheme={setTheme}
-          icon={theme.opaque ? <EyeSlash /> : <Eye />}
-          title="Opaque"
-          label="opaque player"
-          value={theme.opaque}
-          setShowSave={setShowSave}
-        />
-        <ToggleSetting
-          themeValue={theme.blur}
-          setTheme={setTheme}
-          icon={<Blur />}
-          title="Blur"
-          label="blur player"
-          value={theme.blur}
-          setShowSave={setShowSave}
-        />
+        <ToggleSettings setShowSave={setShowSave} setTheme={setTheme} theme={theme}/>
       </Stack>
       <Stack w="100%">
         <Stack direction={['column', 'row']}>
