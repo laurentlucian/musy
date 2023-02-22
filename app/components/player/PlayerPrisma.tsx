@@ -195,8 +195,6 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   if (!playback) return null;
   const { track } = playback;
 
-  console.log('blur from profile: ', theme?.blur, 'opaque from profile: ', theme?.opaque);
-
   return (
     <>
       <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={-1}>

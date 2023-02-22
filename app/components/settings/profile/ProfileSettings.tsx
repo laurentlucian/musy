@@ -50,8 +50,6 @@ const ProfileSettings = () => {
 
   // @todo connect all appearance options to save button
 
-  console.log('blur: ', theme.blur, 'opaque: ', theme.opaque);
-
   return (
     <>
       <Stack>

@@ -65,15 +65,6 @@ export const action = async ({ request }: ActionArgs) => {
       where: { userId },
     });
   }
-  const gradientPreference = data.get('gradient');
-  if (gradientPreference) {
-    const gradient = gradientPreference === 'true';
-    await prisma.theme.upsert({
-      create: { gradient, userId },
-      update: { gradient },
-      where: { userId },
-    });
-  }
   const backgroundDark = data.get('backgroundDark');
   if (typeof backgroundDark === 'string') {
     await prisma.theme.upsert({
