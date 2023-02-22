@@ -24,7 +24,20 @@ export const action = async ({ request }: ActionArgs) => {
   const userId = session?.user?.id;
   invariant(userId, 'Unauthenticated');
 
+  const upsertField = async (field: string, data: FormDataEntryValue | null, isToggle = false) => {
+    if (!data) return;
+
+    const value = isToggle ? data === 'true' : data;
+
+    await prisma.theme.upsert({
+      create: { [field]: value, userId },
+      update: { [field]: value },
+      where: { userId },
+    });
+  };
+
   const data = await request.formData();
+
   const playerButtonPreference = data.get('player-button-side');
   if (playerButtonPreference) {
     const playerButtonRight = playerButtonPreference === 'true';
@@ -35,132 +48,25 @@ export const action = async ({ request }: ActionArgs) => {
     });
   }
 
-  const gradient = data.get('gradient');
-  if (gradient) {
-    const isChecked = gradient === 'true';
+  const promises = [
+    upsertField('gradient', data.get('gradient'), true),
+    upsertField('opaque', data.get('opaque'), true),
+    upsertField('blur', data.get('blur'), true),
+    upsertField('backgroundDark', data.get('backgroundDark')),
+    upsertField('backgroundLight', data.get('backgroundLight')),
+    upsertField('bgGradientDark', data.get('bgGradientDark')),
+    upsertField('bgGradientLight', data.get('bgGradientLight')),
+    upsertField('gradientColorDark', data.get('gradientColorDark')),
+    upsertField('gradientColorLight', data.get('gradientColorLight')),
+    upsertField('playerColorDark', data.get('playerColorDark')),
+    upsertField('playerColorLight', data.get('playerColorLight')),
+    upsertField('mainTextDark', data.get('mainTextDark')),
+    upsertField('mainTextLight', data.get('mainTextLight')),
+    upsertField('subTextDark', data.get('subTextDark')),
+    upsertField('subTextLight', data.get('subTextLight')),
+  ];
 
-    await prisma.theme.upsert({
-      create: { gradient: isChecked, userId },
-      update: { gradient: isChecked },
-      where: { userId },
-    });
-  }
-  const opaque = data.get('opaque');
-  if (opaque) {
-    const isChecked = opaque === 'true';
-
-    await prisma.theme.upsert({
-      create: { opaque: isChecked, userId },
-      update: { opaque: isChecked },
-      where: { userId },
-    });
-  }
-  const blur = data.get('blur');
-  if (blur) {
-    const isChecked = blur === 'true';
-
-    await prisma.theme.upsert({
-      create: { blur: isChecked, userId },
-      update: { blur: isChecked },
-      where: { userId },
-    });
-  }
-  const backgroundDark = data.get('backgroundDark');
-  if (typeof backgroundDark === 'string') {
-    await prisma.theme.upsert({
-      create: { backgroundDark, userId },
-      update: { backgroundDark },
-      where: { userId },
-    });
-  }
-  const backgroundLight = data.get('backgroundLight');
-  if (typeof backgroundLight === 'string') {
-    await prisma.theme.upsert({
-      create: { backgroundLight, userId },
-      update: { backgroundLight },
-      where: { userId },
-    });
-  }
-  const bgGradientDark = data.get('bgGradientDark');
-  if (typeof bgGradientDark === 'string') {
-    await prisma.theme.upsert({
-      create: { bgGradientDark, userId },
-      update: { bgGradientDark },
-      where: { userId },
-    });
-  }
-  const bgGradientLight = data.get('bgGradientLight');
-  if (typeof bgGradientLight === 'string') {
-    await prisma.theme.upsert({
-      create: { bgGradientLight, userId },
-      update: { bgGradientLight },
-      where: { userId },
-    });
-  }
-  const gradientColorDark = data.get('gradientColorDark');
-  if (typeof gradientColorDark === 'string') {
-    await prisma.theme.upsert({
-      create: { gradientColorDark, userId },
-      update: { gradientColorDark },
-      where: { userId },
-    });
-  }
-  const gradientColorLight = data.get('gradientColorLight');
-  if (typeof gradientColorLight === 'string') {
-    await prisma.theme.upsert({
-      create: { gradientColorLight, userId },
-      update: { gradientColorLight },
-      where: { userId },
-    });
-  }
-  const playerColorDark = data.get('playerColorDark');
-  if (typeof playerColorDark === 'string') {
-    await prisma.theme.upsert({
-      create: { playerColorDark, userId },
-      update: { playerColorDark },
-      where: { userId },
-    });
-  }
-  const playerColorLight = data.get('playerColorLight');
-  if (typeof playerColorLight === 'string') {
-    await prisma.theme.upsert({
-      create: { playerColorLight, userId },
-      update: { playerColorLight },
-      where: { userId },
-    });
-  }
-  const mainTextDark = data.get('mainTextDark');
-  if (typeof mainTextDark === 'string') {
-    await prisma.theme.upsert({
-      create: { mainTextDark, userId },
-      update: { mainTextDark },
-      where: { userId },
-    });
-  }
-  const mainTextLight = data.get('mainTextLight');
-  if (typeof mainTextLight === 'string') {
-    await prisma.theme.upsert({
-      create: { mainTextLight, userId },
-      update: { mainTextLight },
-      where: { userId },
-    });
-  }
-  const subTextDark = data.get('subTextDark');
-  if (typeof subTextDark === 'string') {
-    await prisma.theme.upsert({
-      create: { subTextDark, userId },
-      update: { subTextDark },
-      where: { userId },
-    });
-  }
-  const subTextLight = data.get('subTextLight');
-  if (typeof subTextLight === 'string') {
-    await prisma.theme.upsert({
-      create: { subTextLight, userId },
-      update: { subTextLight },
-      where: { userId },
-    });
-  }
+  await Promise.all(promises);
 
   return null;
 };

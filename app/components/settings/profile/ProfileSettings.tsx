@@ -18,24 +18,24 @@ const ProfileSettings = () => {
   const [picker, setPicker] = useState<number>(-1);
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
-      backgroundDark: '#090808',
-      backgroundLight: '#EEE6E2',
-      bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
-      bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',
-      blur: true,
+      backgroundDark: '#090808',//
+      backgroundLight: '#EEE6E2',//
+      bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',//
+      bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',//
+      blur: true,//
       customPlayer: null,
-      gradient: false,
-      gradientColorDark: '#fcbde2',
-      gradientColorLight: '#fcbde2',
+      gradient: false,//
+      gradientColorDark: '#fcbde2',//
+      gradientColorLight: '#fcbde2',//
       isPreset: true,
-      mainTextDark: '#EEE6E2',
-      mainTextLight: '#161616',
+      mainTextDark: '#EEE6E2',//
+      mainTextLight: '#161616',//
       musyLogo: 'musy',
-      opaque: false,
-      playerColorDark: '#101010',
-      playerColorLight: '#E7DFD9',
-      subTextDark: '#EEE6E2',
-      subTextLight: '#161616',
+      opaque: false,//
+      playerColorDark: '#101010',//
+      playerColorLight: '#E7DFD9',//
+      subTextDark: '#EEE6E2',//
+      subTextLight: '#161616',//
       userId: currentUser?.userId ?? '',
     },
   );
@@ -83,22 +83,7 @@ const ProfileSettings = () => {
             setShowSave={setShowSave}
             color={color}
             setPicker={setPicker}
-            submission={{
-              backgroundDark: theme.backgroundDark,
-              backgroundLight: theme.backgroundLight,
-              //eventually will pass whole theme object
-              blur: theme.blur,
-              gradient: theme.gradient,
-              gradientColorDark: theme.gradientColorDark,
-              gradientColorLight: theme.gradientColorLight,
-              mainTextDark: theme.mainTextDark,
-              mainTextLight: theme.mainTextLight,
-              opaque: theme.opaque,
-              playerColorDark: theme.playerColorDark,
-              playerColorLight: theme.playerColorLight,
-              subTextDark: theme.subTextDark,
-              subTextLight: theme.subTextLight,
-            }}
+            submission={theme}
           />
         </Stack>
         <Box h="300px" />
