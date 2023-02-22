@@ -3,6 +3,8 @@ import { useState, type Dispatch, type SetStateAction } from 'react';
 
 import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 
+import type { Theme } from '@prisma/client';
+
 import Waver from '~/components/icons/Waver';
 import useIsMobile from '~/hooks/useIsMobile';
 
@@ -17,21 +19,7 @@ const SaveThemeButton = ({
   setPicker: Dispatch<SetStateAction<number>>;
   setShowSave: Dispatch<SetStateAction<boolean>>;
   showSave: boolean;
-  submission: {
-    backgroundDark: string;
-    backgroundLight: string;
-    blur: boolean;
-    gradient: boolean;
-    gradientColorDark: string;
-    gradientColorLight: string;
-    mainTextDark: string;
-    mainTextLight: string;
-    opaque: boolean;
-    playerColorDark: string;
-    playerColorLight: string;
-    subTextDark: string;
-    subTextLight: string;
-  };
+  submission: Theme;
 }) => {
   const [text, setText] = useState('Save');
   const submit = useSubmit();
@@ -49,7 +37,7 @@ const SaveThemeButton = ({
         backgroundDark: submission.backgroundDark,
         backgroundLight: submission.backgroundLight,
         bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
-        bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorDark} 110%)`,
+        bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorLight} 110%)`,
         blur: `${submission.blur}`,
         gradient: `${submission.gradient}`,
         gradientColorDark: submission.gradientColorDark,
