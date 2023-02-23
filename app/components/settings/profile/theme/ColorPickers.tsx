@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { ColorResult } from 'react-color';
-import { SketchPicker } from 'react-color';
+import { SketchPicker, type ColorResult } from 'react-color';
 
 import { Box, Collapse, SimpleGrid, useColorMode } from '@chakra-ui/react';
 
