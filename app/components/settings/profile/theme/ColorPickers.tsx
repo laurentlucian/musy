@@ -69,7 +69,7 @@ const ColorPickers = ({
         ]
       : [
           {
-            bgCol: theme.gradient ? theme.gradientColorLight : theme.backgroundDark,
+            bgCol: theme.gradient ? theme.gradientColorLight : theme.backgroundLight,
             gradient: theme.gradient
               ? `linear(to-t, #EEE6E2 1%, ${theme.gradientColorLight} 80%)`
               : undefined,
