@@ -45,8 +45,8 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue(
-    user?.theme?.gradientColorLight ?? '#EEE6E2',
-    user?.theme?.gradientColorDark ?? '#050404',
+    user?.theme?.backgroundLight ?? '#EEE6E2',
+    user?.theme?.backgroundDark ?? '#050404',
   );
 
   const Home = (

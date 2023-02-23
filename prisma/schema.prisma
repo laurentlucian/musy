@@ -192,8 +192,6 @@ model Theme {
   gradient             Boolean       @default(false)
   bgGradientDark       String        @default("linear(to-t, #090808 40%, #fcbde2 90%)")
   bgGradientLight      String        @default("linear(to-t, #EEE6E2 40%, #fcbde2 90%)")
-  gradientColorDark    String        @default("#fcbde2") 
-  gradientColorLight   String        @default("#fcbde2")
   //
   customPlayer         Bytes?       
   playerColorLight     String        @default("#E7DFD9")

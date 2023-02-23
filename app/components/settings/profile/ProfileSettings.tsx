@@ -26,8 +26,6 @@ const ProfileSettings = () => {
       blur: true, //
       customPlayer: null,
       gradient: false, //
-      gradientColorDark: '#fcbde2', //
-      gradientColorLight: '#fcbde2', //
       isPreset: true,
       mainTextDark: '#EEE6E2', //
       mainTextLight: '#161616', //
@@ -43,8 +41,8 @@ const ProfileSettings = () => {
 
   const bg = useColorModeValue(theme.backgroundLight, theme.backgroundDark);
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bgGradientDark = `linear(to-t, #090808 40%, ${theme.gradientColorDark} 90%)`;
-  const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.gradientColorLight} 90%)`;
+  const bgGradientDark = `linear(to-t, #090808 40%, ${theme.backgroundDark} 90%)`;
+  const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.backgroundLight} 90%)`;
   const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
 
   if (!currentUser) return null;

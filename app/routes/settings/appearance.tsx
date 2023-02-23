@@ -57,8 +57,6 @@ export const action = async ({ request }: ActionArgs) => {
     upsertField('backgroundLight', data.get('backgroundLight')),
     upsertField('bgGradientDark', data.get('bgGradientDark')),
     upsertField('bgGradientLight', data.get('bgGradientLight')),
-    upsertField('gradientColorDark', data.get('gradientColorDark')),
-    upsertField('gradientColorLight', data.get('gradientColorLight')),
     upsertField('playerColorDark', data.get('playerColorDark')),
     upsertField('playerColorLight', data.get('playerColorLight')),
     upsertField('mainTextDark', data.get('mainTextDark')),

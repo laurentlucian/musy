@@ -32,13 +32,12 @@ const ColorPickers = ({
     colorMode === 'dark'
       ? [
           {
-            bgCol: theme.gradient ? theme.gradientColorDark : theme.backgroundDark,
+            bgCol: theme.backgroundDark,
             gradient: theme.gradient
-              ? `linear(to-t, #090808 1%, ${theme.gradientColorDark} 80%)`
+              ? `linear(to-t, #090808 1%, ${theme.backgroundDark} 80%)`
               : undefined,
-            onChange: (col: ColorResult) =>
-              onChange(col, theme.gradient ? 'gradientColorDark' : 'backgroundDark'),
-            themeProp: theme.gradient ? 'gradientColorDark' : 'backgroundDark',
+            onChange: (col: ColorResult) => onChange(col, 'backgroundDark'),
+            themeProp: 'backgroundDark',
             title: 'background',
           },
           {
@@ -68,13 +67,12 @@ const ColorPickers = ({
         ]
       : [
           {
-            bgCol: theme.gradient ? theme.gradientColorLight : theme.backgroundLight,
+            bgCol: theme.backgroundLight,
             gradient: theme.gradient
-              ? `linear(to-t, #EEE6E2 1%, ${theme.gradientColorLight} 80%)`
+              ? `linear(to-t, #EEE6E2 1%, ${theme.backgroundLight} 80%)`
               : undefined,
-            onChange: (col: ColorResult) =>
-              onChange(col, theme.gradient ? 'gradientColorLight' : 'backgroundLight'),
-            themeProp: theme.gradient ? 'gradientColorLight' : 'backgroundLight',
+            onChange: (col: ColorResult) => onChange(col, 'backgroundLight'),
+            themeProp: 'backgroundLight',
             title: 'background',
           },
           {
