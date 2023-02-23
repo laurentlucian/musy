@@ -11,6 +11,7 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
+
 import { VolumeMute } from 'iconsax-react';
 
 const ProfileActions = ({}) => {
