@@ -23,11 +23,18 @@ import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import musyIcon from '~/assets/musySquareIcon.png';
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 
-const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefined }) => {
+const SettingsPlayer = ({
+  right,
+  theme,
+  track,
+}: {
+  right: boolean;
+  theme: Theme;
+  track: Track | undefined;
+}) => {
   const song = track ?? {
     albumName: 'Album',
     albumUri: '',
@@ -44,8 +51,6 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
   };
 
   const { isOpen, onToggle } = useDisclosure();
-  const currentUser = useSessionUser();
-
   const opaque = theme.opaque ? '' : '66';
 
   const bg = useColorModeValue(theme.playerColorLight + opaque, theme.playerColorDark + opaque);
@@ -115,7 +120,7 @@ const SettingsPlayer = ({ theme, track }: { theme: Theme; track: Track | undefin
         borderRadius="0px 0px 3px 3px"
         zIndex={0}
         backdropFilter={theme.blur && !isSmallScreen ? 'blur(27px)' : 'none'}
-        alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
+        alignSelf={right ? 'end' : 'unset'}
       >
         <IconButton
           icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}

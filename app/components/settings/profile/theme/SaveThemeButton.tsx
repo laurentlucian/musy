@@ -10,16 +10,18 @@ import useIsMobile from '~/hooks/useIsMobile';
 
 const SaveThemeButton = ({
   color,
+  playerBtnSide,
   setPicker,
   setShowSave,
   showSave,
-  submission,
+  theme,
 }: {
   color: string;
+  playerBtnSide: boolean;
   setPicker: Dispatch<SetStateAction<number>>;
   setShowSave: Dispatch<SetStateAction<boolean>>;
   showSave: boolean;
-  submission: Theme;
+  theme: Theme;
 }) => {
   const [text, setText] = useState('Save');
   const submit = useSubmit();
@@ -34,21 +36,22 @@ const SaveThemeButton = ({
     }
     submit(
       {
-        backgroundDark: submission.backgroundDark,
-        backgroundLight: submission.backgroundLight,
-        bgGradientDark: `linear(to-t, #090808 50%, ${submission.gradientColorDark} 110%)`,
-        bgGradientLight: `linear(to-t, #EEE6E2 50%, ${submission.gradientColorLight} 110%)`,
-        blur: `${submission.blur}`,
-        gradient: `${submission.gradient}`,
-        gradientColorDark: submission.gradientColorDark,
-        gradientColorLight: submission.gradientColorLight,
-        mainTextDark: submission.mainTextDark,
-        mainTextLight: submission.mainTextLight,
-        opaque: `${submission.opaque}`,
-        playerColorDark: submission.playerColorDark,
-        playerColorLight: submission.playerColorLight,
-        subTextDark: submission.subTextDark,
-        subTextLight: submission.subTextLight,
+        backgroundDark: theme.backgroundDark,
+        backgroundLight: theme.backgroundLight,
+        bgGradientDark: `linear(to-t, #090808 50%, ${theme.gradientColorDark} 110%)`,
+        bgGradientLight: `linear(to-t, #EEE6E2 50%, ${theme.gradientColorLight} 110%)`,
+        blur: `${theme.blur}`,
+        gradient: `${theme.gradient}`,
+        gradientColorDark: theme.gradientColorDark,
+        gradientColorLight: theme.gradientColorLight,
+        mainTextDark: theme.mainTextDark,
+        mainTextLight: theme.mainTextLight,
+        opaque: `${theme.opaque}`,
+        playerButtonSide: `${playerBtnSide}`,
+        playerColorDark: theme.playerColorDark,
+        playerColorLight: theme.playerColorLight,
+        subTextDark: theme.subTextDark,
+        subTextLight: theme.subTextLight,
       },
 
       { method: 'post', replace: true },

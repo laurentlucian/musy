@@ -9,29 +9,34 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const ToggleSetting = ({
+  bold,
   icon,
   label,
   setShowSave,
+  setState,
   setTheme,
   themeValue,
   title,
   value,
 }: {
+  bold?: boolean;
   icon: ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
   label: string;
   setShowSave: Dispatch<SetStateAction<boolean>>;
+  setState?: () => void;
   setTheme: Dispatch<SetStateAction<Theme>>;
   themeValue: boolean;
   title: string;
   value?: boolean;
 }) => {
-  // const bg = useColorModeValue('music.100', 'music.800');
-  const color = useColorModeValue('music.800', 'white');
+  const bg = useColorModeValue('music.200', 'music.800');
+  const color = useColorModeValue('music.800', 'music.200');
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
 
   const onToggle = () => {
     setShowSave(true);
+    if (setState) setState();
     setTheme((prevTheme) => ({ ...prevTheme, [title.toLowerCase()]: !themeValue }));
   };
 
@@ -46,22 +51,29 @@ const ToggleSetting = ({
 
   if (!currentUser) return null;
   return (
-    <FormControl display="flex" alignItems="center" justifyContent="space-between">
-      <HStack>
+    <FormControl
+      display="flex"
+      // alignItems="center"
+      // justifyContent="space-between"
+    >
+      {/* <HStack>
         {isSmallScreen && (
           <FormLabel fontSize={['sm', 'md']} htmlFor={title} mb="0" color={color}>
             {title}
           </FormLabel>
         )}
-      </HStack>
+      </HStack> */}
       <Tooltip label={label} hasArrow isDisabled={isSmallScreen} openDelay={300}>
         <IconButton
           aria-label={label}
+          bg={bg}
+          color={color}
           icon={icon}
           onClick={onToggle}
-          opacity={themeValue ? 1 : 0.3}
-          border={themeValue ? `1px solid ${color}` : undefined}
+          opacity={themeValue || bold ? 1 : 0.3}
+          border={themeValue || bold ? `1px solid white` : undefined} // color mode isn't working here
           borderRadius="md"
+          _hover={{}} // color mode doesn't switch hover colors
         />
       </Tooltip>
     </FormControl>
