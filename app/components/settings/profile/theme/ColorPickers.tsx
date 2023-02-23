@@ -57,7 +57,7 @@ const ColorPickers = ({
           {
             bgCol: theme.subTextDark,
             onChange: (col: ColorResult) => onChange(col, 'subTextDark'),
-            themeProp: 'subTextLight',
+            themeProp: 'subTextDark',
             title: 'player sub',
           },
           {

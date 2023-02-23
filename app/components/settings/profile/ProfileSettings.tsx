@@ -60,7 +60,7 @@ const ProfileSettings = () => {
         playerBtnSide={playerBtnSide}
         setPlayerBtnSide={setPlayerBtnSide}
       />
-      <Stack direction={['column', 'row']}>
+      <Stack direction={['column', 'row']} w="100%">
         <Box
           h="400px"
           border={`solid 1px ${color}`}
