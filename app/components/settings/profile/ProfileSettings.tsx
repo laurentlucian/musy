@@ -50,7 +50,7 @@ const ProfileSettings = () => {
   // @todo connect all appearance options to save button
 
   return (
-    <Stack direction={['column', 'row']} w="100%">
+    <Stack direction={['column', 'row']} w="100%" h="100%">
       <ToggleSettings
         setShowSave={setShowSave}
         setTheme={setTheme}
