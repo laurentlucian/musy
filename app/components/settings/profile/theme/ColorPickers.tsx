@@ -3,39 +3,24 @@ import { useRef } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 import { Move, X } from 'react-feather';
 
-import {
-  Box,
-  Collapse,
-  Flex,
-  IconButton,
-  SimpleGrid,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chakra-ui/react';
 
 import type { Theme } from '@prisma/client';
 import { motion, useDragControls } from 'framer-motion';
 
-import useIsMobile from '~/hooks/useIsMobile';
-
 import ColorPicker from './ColorPicker';
 
-const ColorPickers = ({
-  picker,
-  setPicker,
-  setShowSave,
-  setTheme,
-  theme,
-}: {
+type ColorPickersProps = {
   picker: number;
   setPicker: Dispatch<SetStateAction<number>>;
   setShowSave: Dispatch<SetStateAction<boolean>>;
   setTheme: Dispatch<SetStateAction<Theme>>;
   theme: Theme;
-}) => {
+};
+
+const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: ColorPickersProps) => {
   const [mouseIn, setMouseIn] = useState(false);
   const { colorMode } = useColorMode();
-  const isSmallScreen = useIsMobile();
   const onChange = (col: ColorResult, property: string) => {
     setTheme((prevTheme) => ({ ...prevTheme, [property]: col.hex }));
     setShowSave(true);
@@ -49,8 +34,6 @@ const ColorPickers = ({
   const dontDrag = () => {
     setMouseIn(false);
   };
-  const bg = useColorModeValue('white', '#161616');
-  const color = useColorModeValue('#161616', '#EEE6E2');
   const colorPickers =
     colorMode === 'dark'
       ? [
@@ -125,63 +108,68 @@ const ColorPickers = ({
         ];
 
   return (
-    <Box ref={constraintRef} h="100%" w="100%">
-      <SimpleGrid columns={2} p={[1, 0]} zIndex={99999}>
+    <Box ref={constraintRef} h="100%" w="100%" zIndex={99999}>
+      <SimpleGrid columns={2} p={[1, 0]} w="100%">
         {colorPickers.map((colorPicker, i) => (
           <Box key={i}>
             <ColorPicker setPicker={setPicker} picker={picker} index={i} {...colorPicker} />
           </Box>
         ))}
-        <Box zIndex={99999} boxSize="30px" w="100%">
-          <motion.div
-            drag={mouseIn}
-            dragConstraints={constraintRef}
-            dragControls={controls}
-            dragListener={false}
-          >
-            <Collapse in={picker >= 0}>
-              {picker >= 0 && !isSmallScreen && (
-                <>
-                  <Flex
-                    aria-label="color picker controls"
-                    onPointerDown={startDrag}
-                    onPointerUp={dontDrag}
-                    // style={{ touchAction: 'none' }}
-                    boxSize="30px"
-                  >
-                    <IconButton
-                      aria-label="move"
-                      icon={<Move />}
-                      bg={bg}
-                      color={color}
-                      _hover={{}}
-                      _active={{}}
-                    />
-                    <IconButton
-                      aria-label="close"
-                      icon={<X />}
-                      onClick={() => setPicker(-1)}
-                      onMouseDown={dontDrag}
-                      bg={bg}
-                      color={color}
-                      _hover={{}}
-                      _active={{}}
-                    />
-                  </Flex>
-                  <Box onPointerDown={dontDrag} w="300px">
-                    <SketchPicker
-                      color={colorPickers[picker].bgCol}
-                      onChange={(col) => onChange(col, colorPickers[picker].themeProp)}
-                    />
-                  </Box>
-                </>
-              )}
-            </Collapse>
-          </motion.div>
-        </Box>
       </SimpleGrid>
+      <Box zIndex={99999} boxSize="30px" w="222px">
+        <motion.div
+          drag={mouseIn}
+          dragConstraints={constraintRef}
+          dragControls={controls}
+          dragListener={false}
+          dragElastic={1}
+          whileDrag={{ scale: 1.02 }}
+        >
+          <Collapse in={picker >= 0}>
+            {picker >= 0 && (
+              <>
+                <Flex
+                  aria-label="color picker controls"
+                  onPointerDown={startDrag}
+                  onPointerUp={dontDrag}
+                  style={{ touchAction: 'none' }}
+                  boxSize="30px"
+                  bg="#fff"
+                >
+                  <IconButton
+                    aria-label="move"
+                    icon={<Move />}
+                    bg="#fff"
+                    color="#161616"
+                    _hover={{}}
+                    _active={{}}
+                  />
+                  <IconButton
+                    aria-label="close"
+                    icon={<X />}
+                    onClick={() => setPicker(-1)}
+                    onMouseDown={dontDrag}
+                    bg="#fff"
+                    color="#161616"
+                    _hover={{}}
+                    _active={{}}
+                  />
+                </Flex>
+                <Box onPointerDown={dontDrag} w="225px" h="178px">
+                  <SketchPicker
+                    color={colorPickers[picker].bgCol}
+                    onChange={(col) => onChange(col, colorPickers[picker].themeProp)}
+                  />
+                </Box>
+              </>
+            )}
+          </Collapse>
+        </motion.div>
+      </Box>
     </Box>
   );
 };
 
 export default ColorPickers;
+
+ColorPickers.displayName = 'Color Picker';

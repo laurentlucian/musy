@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
@@ -45,12 +45,12 @@ const ProfileSettings = () => {
   const bgGradientLight = `linear(to-t, #EEE6E2 40%, ${theme.backgroundLight} 90%)`;
   const bgGradient = useColorModeValue(bgGradientLight, bgGradientDark);
 
+  const constraintRef = useRef(null);
+
   if (!currentUser) return null;
 
-  // @todo connect all appearance options to save button
-
   return (
-    <Stack direction={['column', 'row']} w="100%" h="100%">
+    <Stack direction={['column', 'row']} w="100%" h="100%" ref={constraintRef}>
       <ToggleSettings
         setShowSave={setShowSave}
         setTheme={setTheme}
@@ -69,7 +69,7 @@ const ProfileSettings = () => {
           <ProfileHeader profile={currentUser} />
           <Player track={currentUser.settings?.profileSong} theme={theme} right={playerBtnSide} />
         </Box>
-        <Box w="100%">
+        <Box w="100%" zIndex={1}>
           <ColorPickers
             setShowSave={setShowSave}
             setTheme={setTheme}

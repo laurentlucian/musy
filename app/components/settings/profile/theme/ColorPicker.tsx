@@ -1,9 +1,7 @@
 import { type Dispatch, type SetStateAction } from 'react';
-import { SketchPicker, type ColorResult } from 'react-color';
+import { type ColorResult } from 'react-color';
 
-import { Box, HStack, Text, Drawer, DrawerBody, DrawerContent } from '@chakra-ui/react';
-
-import useIsMobile from '~/hooks/useIsMobile';
+import { Box, HStack, Text } from '@chakra-ui/react';
 
 interface ColorPickerProps {
   bgCol: string;
@@ -16,46 +14,16 @@ interface ColorPickerProps {
   title: string;
 }
 
-const ColorPicker = ({
-  bgCol,
-  gradient,
-  index,
-  onChange,
-  picker,
-  setPicker,
-  themeProp,
-  title,
-}: ColorPickerProps) => {
-  const isSmallScreen = useIsMobile();
+const ColorPicker = ({ bgCol, gradient, index, picker, setPicker, title }: ColorPickerProps) => {
+  if (title === '') return null;
   const onToggle = () => {
-    if (picker === index) {
-      setPicker(-1);
-    } else {
-      setPicker(index);
-    }
+    picker === index ? setPicker(-1) : setPicker(index);
   };
   return (
-    <Box>
-      <HStack cursor="pointer" onClick={onToggle}>
-        <Box p="1px" bg={bgCol} bgGradient={gradient} boxSize="20px" />
-        <Text>{title}</Text>
-      </HStack>
-      {isSmallScreen ? (
-        <Drawer
-          isOpen={picker === index}
-          placement="bottom"
-          onClose={() => setPicker(-1)}
-          variant="colorPicker"
-          trapFocus={false}
-        >
-          <DrawerContent w="220px">
-            <DrawerBody>
-              <SketchPicker color={bgCol} onChange={(col) => onChange(col, themeProp)} />
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
-      ) : null}
-    </Box>
+    <HStack cursor="pointer" onClick={onToggle}>
+      <Box p="1px" bg={bgCol} bgGradient={gradient} boxSize="20px" />
+      <Text>{title}</Text>
+    </HStack>
   );
 };
 
