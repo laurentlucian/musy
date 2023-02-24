@@ -60,16 +60,12 @@ const SettingsPlayer = ({
   const isSmallScreen = useIsMobile();
 
   return (
-    <Stack zIndex={1} spacing={-1} mt="10px" px="5px">
+    <Stack zIndex={1} spacing={0} mt="10px" px="5px">
       <Stack backdropFilter={theme.blur ? 'blur(27px)' : undefined} h="100%" zIndex={1}>
         <Collapse in={!isOpen} animateOpacity>
-          <Stack
-            spacing={0}
-            bg={bg}
-            backdropFilter={theme.blur && isSmallScreen ? 'blur(27px)' : 'none'}
-          >
+          <Stack bg={bg} backdropFilter={theme.blur && isSmallScreen ? 'blur(27px)' : 'none'}>
             <Flex h="135px" px="2px" py="2px" justify="space-between">
-              <Stack pl="7px" spacing={1} flexGrow={1}>
+              <Stack pl="7px">
                 <Stack direction="column" spacing={0.5} justifyContent="space-between">
                   <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis" color={main}>
                     {song.name}

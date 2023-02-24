@@ -196,8 +196,7 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
   const { track } = playback;
 
   return (
-    <>
-      <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={-1}>
+      <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={0}>
         <Stack
           backdropFilter={theme?.blur || theme === null ? 'blur(27px)' : 'none'}
           borderRadius={size === 'small' ? 0 : 5}
@@ -412,14 +411,13 @@ const PlayerPrisma = ({ id, playback }: PlayerProps) => {
             aria-label={isOpen ? 'open player' : 'close player'}
             _hover={{ color: main, opacity: 1 }}
             opacity={isSmallScreen ? 1 : 0.5}
-            _active={{ boxShadow: 'none' }}
+            _active={{}}
             boxShadow="none"
             color={sub}
           />
         </Box>
         {track.preview_url && <audio autoPlay={preview} ref={audioRef} src={track.preview_url} />}
       </Stack>
-    </>
   );
 };
 export default PlayerPrisma;
