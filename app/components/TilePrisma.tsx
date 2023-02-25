@@ -7,6 +7,7 @@ import { Flex, HStack, IconButton, Image, Stack, Text, useColorModeValue } from 
 import type { ChakraProps } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
+import { motion } from 'framer-motion';
 import { Send2 } from 'iconsax-react';
 import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 
@@ -193,6 +194,8 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
             )}
             <Tooltip label={track.albumName} placement="top-start">
               <Image
+                as={motion.img}
+                layoutId={list ? track.id + layoutKey : undefined}
                 boxSize={list ? '40px' : '200px'}
                 minW={list ? '40px' : '200px'}
                 minH={list ? '40px' : '200px'}

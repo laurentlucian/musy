@@ -168,8 +168,8 @@ const Explore = () => {
         {data?.users.map((user: Profile) => (
           <UserTile key={user.id} profile={user} />
         ))}
-        {tracks?.map((track) => (
-          <Tile key={track.id} layoutKey="Explore" track={track} profileId={id} list />
+        {tracks?.map((track, index) => (
+          <Tile key={track.id} layoutKey={"Explore" + index} track={track} profileId={id} list />
         ))}
 
         {!search ? (

@@ -169,7 +169,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       <>
         <Stack
           as={motion.div}
-          layoutId={track.id + layoutKey}
+          layoutId={list ? undefined : track.id + layoutKey}
           ref={ref}
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
@@ -201,6 +201,8 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
             )}
             <Tooltip label={track.albumName} placement="top-start">
               <Image
+                as={motion.img}
+                layoutId={list ? track.id + layoutKey : undefined}
                 boxSize={list ? '40px' : width}
                 minW={list ? '40px' : width}
                 minH={list ? '40px' : width}
