@@ -10,11 +10,13 @@ import {
   AvatarGroup,
   Avatar,
   Flex,
+  Box,
 } from '@chakra-ui/react';
 
+import { motion } from 'framer-motion';
 import { Heart, Play, Send2 } from 'iconsax-react';
 
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
 import type { Activity } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
@@ -25,6 +27,7 @@ import PlayedBy from './PlayedBy';
 
 interface ActivityProps {
   activity: Activity;
+  layoutKey: string;
 }
 
 const ActivityAction = ({ activity }: ActivityProps) => {
@@ -125,10 +128,12 @@ const ActivityAction = ({ activity }: ActivityProps) => {
   );
 };
 
-const ActivityTile = ({ activity }: ActivityProps) => {
+const ActivityTile = ({ activity, layoutKey }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   const { onOpen } = useDrawerActions();
+  // eslint-disable-next-line
+  const dontRemoveThis = useDrawerTrack();
 
   const item = {
     albumName: activity.track.albumName,
@@ -161,13 +166,13 @@ const ActivityTile = ({ activity }: ActivityProps) => {
   return (
     <Stack>
       <HStack>
-        <ActivityAction activity={activity} />
+        <ActivityAction activity={activity} layoutKey="Activity" />
       </HStack>
       <Flex
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onOpen(item, activity.user.userId)}
+        onClick={() => onOpen(item, activity.user.userId, layoutKey)}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
@@ -212,9 +217,11 @@ const ActivityTile = ({ activity }: ActivityProps) => {
             </Stack>
           </Flex>
         </Flex>
-        <Tooltip label={item.name} placement="top-start">
-          <Image boxSize="100px" objectFit="cover" src={item.image} />
-        </Tooltip>
+        <Box as={motion.div} layoutId={item.id + layoutKey} minW="100px">
+          <Tooltip label={item.name} placement="top-start">
+            <Image boxSize="100px" objectFit="cover" src={item.image} />
+          </Tooltip>
+        </Box>
       </Flex>
     </Stack>
   );

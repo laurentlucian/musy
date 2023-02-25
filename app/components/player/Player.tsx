@@ -37,11 +37,12 @@ import PlayingFromTooltip from './PlayingFromTooltip';
 type PlayerProps = {
   id: string;
   item: SpotifyApi.TrackObjectFull;
+  layoutKey: string;
   party: Party[];
   playback: CurrentlyPlayingObjectCustom;
 };
 
-const Player = ({ id, item, party, playback }: PlayerProps) => {
+const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
@@ -206,7 +207,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                       noOfLines={1}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id)}
+                      onClick={() => onClick(track, id, layoutKey)}
                       cursor="pointer"
                       w={['200px', '68%']}
                       overflow="hidden"
@@ -217,7 +218,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                     <Flex
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id)}
+                      onClick={() => onClick(track, id, layoutKey)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
@@ -421,7 +422,7 @@ const Player = ({ id, item, party, playback }: PlayerProps) => {
                       top={0}
                       onMouseDown={onMouseDown}
                       onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id)}
+                      onClick={() => onClick(track, id, layoutKey)}
                       cursor="pointer"
                     />
                   </Tooltip>

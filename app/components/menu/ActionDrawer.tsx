@@ -56,8 +56,6 @@ import Recommend from './actions/Recommend';
 import SaveToLiked from './actions/SaveToLiked';
 import LikedBy from './LikedBy';
 
-// import SaveTo from './SaveTo';
-
 const ActionDrawer = () => {
   const { onClickQueue, onClickRecommend, sendList, sendMenu, toggle } = useSendMenu();
   const [show, setShow] = useState(false);
@@ -329,7 +327,7 @@ const ActionDrawer = () => {
                             >
                               <LinkCircle size="20px" />
                             </Flex>
-                          </Text>
+                  track        </Text>
                         </Stack>
                       </Link>
                     )}
@@ -350,7 +348,7 @@ const ActionDrawer = () => {
                       <AnalyzeTrack trackId={track.id} />
                       {track.link !== '' && <CopyLink link={track.link} />}
                       <PlayPreview preview_url={track.preview_url} />
-                      <ProfileSong user={user} />
+                      <ProfileSong/>
                       <AddQueue trackId={track.id} fromId={fromId} user={null} />
                     </>
                   )}

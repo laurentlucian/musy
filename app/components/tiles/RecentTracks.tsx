@@ -26,6 +26,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
           return (
             <Tile
               key={played_at}
+              layoutKey="Recent"
               track={{
                 albumName: track.album.name,
                 albumUri: track.album.uri,
@@ -62,6 +63,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               return (
                 <Box key={played_at}>
                   <Tile
+                    layoutKey="RecentExpanded"
                     track={{
                       albumName: track.album.name,
                       albumUri: track.album.uri,
@@ -88,6 +90,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             return (
               <Card
                 key={played_at}
+                layoutKey="RecentCard"
                 track={{
                   albumName: track.album.name,
                   albumUri: track.album.uri,

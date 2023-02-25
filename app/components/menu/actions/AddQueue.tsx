@@ -6,6 +6,7 @@ import type { Profile } from '@prisma/client';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
+import { useDrawerFromId } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
 
@@ -18,9 +19,10 @@ type AddQueueProps = {
   user: Profile | null;
 };
 
-const AddQueue = ({ fromId, trackId, user }: AddQueueProps) => {
+const AddQueue = ({ trackId, user }: AddQueueProps) => {
   const { id: paramId } = useParams();
   const currentUser = useSessionUser();
+  const fromId = useDrawerFromId();
   const fetcher = useTypedFetcher<typeof action>();
   const isSending = !!user;
 

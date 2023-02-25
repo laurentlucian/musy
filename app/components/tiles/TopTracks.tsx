@@ -67,6 +67,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           return (
             <Tile
               key={track.id}
+              layoutKey="Top"
               track={{
                 albumName: track.album.name,
                 albumUri: track.album.uri,
@@ -104,6 +105,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               return (
                 <Box key={track.id}>
                   <Tile
+                    layoutKey="TopExpanded"
                     track={{
                       albumName: track.album.name,
                       albumUri: track.album.uri,
@@ -130,6 +132,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             return (
               <Card
                 key={track.id}
+                layoutKey="TopCard"
                 track={{
                   albumName: track.album.name,
                   albumUri: track.album.uri,

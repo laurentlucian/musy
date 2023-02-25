@@ -169,7 +169,7 @@ const Explore = () => {
           <UserTile key={user.id} profile={user} />
         ))}
         {tracks?.map((track) => (
-          <Tile key={track.id} track={track} profileId={id} list />
+          <Tile key={track.id} layoutKey="Explore" track={track} profileId={id} list />
         ))}
 
         {!search ? (
@@ -181,7 +181,7 @@ const Explore = () => {
               </Text>
             </HStack>
             {top.map((track) => (
-              <TilePrisma key={id} track={track} profileId="" list />
+              <TilePrisma key={id} layoutKey="ExplorePrisma" track={track} profileId="" list />
             ))}
           </>
         ) : null}

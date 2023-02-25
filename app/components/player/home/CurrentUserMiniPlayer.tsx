@@ -40,10 +40,11 @@ interface Friends extends User {
 }
 type PlayerProps = {
   currentUserId: string | undefined;
+  layoutKey: string;
   user: Friends;
 };
 
-const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
+const PrismaMiniPlayer = ({ layoutKey, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -57,8 +58,8 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
 
   const playback = user.playback;
   const track = playback?.track;
-  const que = user?.settings?.allowQueue;
-  const recommend = user?.settings?.allowRecommend;
+  // const que = user?.settings?.allowQueue;
+  // const recommend = user?.settings?.allowRecommend;
 
   const formattedTrack = track
     ? {
@@ -193,7 +194,7 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
               as="span"
               onClick={(e) => {
                 e.preventDefault();
-                formattedTrack && onOpen(formattedTrack, user.userId);
+                formattedTrack && onOpen(formattedTrack, user.userId, layoutKey);
               }}
             >
               <Image

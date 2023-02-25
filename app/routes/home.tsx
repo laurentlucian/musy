@@ -24,13 +24,13 @@ const Index = () => {
         {isSmallScreen ? (
           <Stack bg={bg} mb="100px">
             {activity.map((item) => {
-              return <MobileActivityTile key={item.id} activity={item} />;
+              return <MobileActivityTile key={item.id} layoutKey="mActivity" activity={item} />;
             })}
           </Stack>
         ) : (
           <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
             {activity.map((item) => {
-              return <ActivityTile key={item.id} activity={item} />;
+              return <ActivityTile key={item.id} layoutKey="mActivity" activity={item} />;
             })}
           </Tiles>
         )}

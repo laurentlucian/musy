@@ -19,9 +19,9 @@ const Friends = () => {
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
-            <SessionModal session={session} user={session.user}>
+            <SessionModal session={session}>
               {session.songs.map(({ id, playedAt, track, userId }) => {
-                return <SessionT key={id} track={track} playedAt={playedAt} userId={userId} />;
+                return <SessionT key={id} layoutKey="HomeSession" track={track} playedAt={playedAt} userId={userId} />;
               })}
             </SessionModal>
           </Stack>

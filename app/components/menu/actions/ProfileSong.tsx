@@ -1,6 +1,5 @@
 import { Button } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
 import { Music } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
@@ -8,7 +7,7 @@ import { useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/profileSong';
 
-const ProfileSong = ({ user }: { user: Profile | null }) => {
+const ProfileSong = () => {
   const currentUser = useSessionUser();
   const fetcher = useTypedFetcher<typeof action>();
   const track = useDrawerTrack();

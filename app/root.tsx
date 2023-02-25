@@ -25,7 +25,7 @@ import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 
-import ActionDrawer from './components/menu/ActionDrawer';
+import ExpandedTile from './components/tileActions/ExpandedTile';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
@@ -46,7 +46,8 @@ const App = () => {
           }}
         >
           <Layout>
-            <ActionDrawer />
+            {/* <ActionDrawer /> */}
+            <ExpandedTile />
             <Outlet />
           </Layout>
         </ColorModeProvider>

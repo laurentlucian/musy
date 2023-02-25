@@ -2,7 +2,7 @@ import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import musyIcon from '~/assets/musySquareIcon.png';
-import { useClickDrag } from '~/hooks/useDrawer';
+import { useClickDrag, useDrawerLayoutKey } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 
 import SpotifyLogo from './icons/SpotifyLogo';
@@ -10,7 +10,7 @@ import SpotifyLogo from './icons/SpotifyLogo';
 
 const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; userId: string }) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-
+  const layoutKey = useDrawerLayoutKey();
   const isSmallScreen = useIsMobile();
 
   const track = {
@@ -78,7 +78,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
   return (
     <Tr
       cursor="pointer"
-      onClick={() => onClick(track, props.userId)}
+      onClick={() => onClick(track, props.userId, layoutKey ?? 'Playlist')}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       zIndex={10}

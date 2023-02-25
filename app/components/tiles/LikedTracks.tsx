@@ -61,6 +61,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                 isLast && setRef(node);
               }}
               key={track.id}
+              layoutKey="LikedTracks"
               track={{
                 albumName: track.album.name,
                 albumUri: track.album.uri,
@@ -97,6 +98,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               return (
                 <Box key={index}>
                   <Tile
+                    layoutKey="LikedExpanded"
                     track={{
                       albumName: track.album.name,
                       albumUri: track.album.uri,
@@ -127,6 +129,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   isLast && setRef(node);
                 }}
                 key={track.id}
+                layoutKey="LikedCard"
                 track={{
                   albumName: track.album.name,
                   albumUri: track.album.uri,

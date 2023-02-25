@@ -34,7 +34,14 @@ const RecentTracksPrisma = ({
       <Stack spacing={3}>
         <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
           {recent.map(({ track }, index) => {
-            return <Tile key={index} track={track} profileId={id ?? ''} />;
+            return (
+              <Tile
+                key={index}
+                layoutKey={'RecentPrisma' + index}
+                track={track}
+                profileId={id ?? ''}
+              />
+            );
           })}
         </Tiles>
         <ExpandedSongs
@@ -53,14 +60,26 @@ const RecentTracksPrisma = ({
               {recent.map(({ track }, index) => {
                 return (
                   <Box key={index}>
-                    <Tile track={track} profileId={id ?? ''} w={['115px', '100px']} />
+                    <Tile
+                      layoutKey={'RecentPrismaExpanded' + index}
+                      track={track}
+                      profileId={id ?? ''}
+                      w={['115px', '100px']}
+                    />
                   </Box>
                 );
               })}
             </SimpleGrid>
           ) : (
             recent.map(({ track }, index) => {
-              return <Card key={index} track={track} userId={id ?? ''} />;
+              return (
+                <Card
+                  key={index}
+                  layoutKey={'RecentPrismaCard' + index}
+                  track={track}
+                  userId={id ?? ''}
+                />
+              );
             })
           )}
         </ExpandedSongs>

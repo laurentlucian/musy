@@ -67,6 +67,7 @@ const LikedTracksPrisma = ({
           const isLast = index === liked.length - 1;
           return (
             <Tile
+              layoutKey="LikedPrisma"
               ref={(node) => {
                 isLast && setRef(node);
               }}
@@ -93,7 +94,12 @@ const LikedTracksPrisma = ({
             {liked.map(({ track }, index) => {
               return (
                 <Box key={index}>
-                  <Tile track={track} profileId={id ?? ''} w={['115px', '100px']} />
+                  <Tile
+                    layoutKey="LikedPrismaExpanded"
+                    track={track}
+                    profileId={id ?? ''}
+                    w={['115px', '100px']}
+                  />
                 </Box>
               );
             })}
@@ -107,6 +113,7 @@ const LikedTracksPrisma = ({
                   isLast && setRef(node);
                 }}
                 key={track.id}
+                layoutKey="LikedPrismaCard"
                 track={track}
                 userId={id ?? ''}
               />

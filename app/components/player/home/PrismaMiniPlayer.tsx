@@ -1,27 +1,17 @@
 import { Link, useTransition } from '@remix-run/react';
 
-import {
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Stack,
-  Text,
-  useColorModeValue,
-  Link as LinkB,
-  Box,
-} from '@chakra-ui/react';
+import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
 import type { Playback, Profile, Track } from '@prisma/client';
+import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { User } from '~/lib/types/types';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
-import Tooltip from '../../Tooltip';
 import QuickActions from './QuickActions';
 
 // import PlayerBarCSS from './PlayerBarCSS';
@@ -41,10 +31,11 @@ interface Friends extends User {
 }
 type PlayerProps = {
   currentUserId: string | undefined;
+  layoutKey: string;
   user: Friends;
 };
 
-const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
+const PrismaMiniPlayer = ({ currentUserId, layoutKey, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -60,6 +51,9 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
   const track = playback?.track;
   const que = user?.settings?.allowQueue;
   const recommend = user?.settings?.allowRecommend;
+
+  // eslint-disable-next-line
+  const dontRemoveThis = useDrawerTrack();
 
   const ProfilePic = (
     <Image
@@ -119,89 +113,48 @@ const PrismaMiniPlayer = ({ currentUserId, user }: PlayerProps) => {
       {track ? (
         <HStack w="100%" spacing={2} justify="end">
           <Stack spacing={1} h="100%" align="end">
-            <LinkB
-              as="span"
-              onClick={(e) => {
-                e.preventDefault();
-                window.open(track.uri);
-              }}
+            <Text
+              noOfLines={[1]}
+              maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+              fontSize={{ base: 'smaller', md: 'sm' }}
             >
-              <Text
-                noOfLines={[1]}
-                maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                fontSize={{ base: 'smaller', md: 'sm' }}
-              >
-                {track.name}
-              </Text>
-            </LinkB>
+              {track.name}
+            </Text>
             <Flex>
               {track.explicit ? (
                 <Image mr={1} src={explicitImage} minW="16px" maxW="16px" />
               ) : (
                 <Box minW="16px" maxW="16px" />
               )}
-              <LinkB
-                as="span"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(track.artistUri);
-                }}
+              <Text
+                opacity={0.8}
+                noOfLines={[1]}
+                maxW={{ base: '110px', md: '300px', xl: 'unset' }}
+                fontSize={{ base: 'smaller', md: 'xs' }}
               >
-                <Text
-                  opacity={0.8}
-                  noOfLines={[1]}
-                  maxW={{ base: '110px', md: '300px', xl: 'unset' }}
-                  fontSize={{ base: 'smaller', md: 'xs' }}
-                >
-                  {track.artist}
-                </Text>
-              </LinkB>
+                {track.artist}
+              </Text>
             </Flex>
             <Stack pt="10px" my="30px">
               <SpotifyLogo h="22px" w="70px" />
             </Stack>
-            {/* {track.liked.length ? (
-            <HStack>
-              <Icon as={Heart} />
-              <AvatarGroup size="xs" max={4}>
-                {track.liked
-                  // .filter(({ user: u }) => u?.userId !== user.userId)
-                  .map(({ user }, index) => (
-                    <Avatar
-                      minW="20px"
-                      maxW="20px"
-                      minH="20px"
-                      maxH="20px"
-                      key={index}
-                      name={user?.name}
-                      src={user?.image}
-                      size={['xs', null, 'sm']}
-                    />
-                  ))}
-              </AvatarGroup>
-            </HStack>
-          ) : null}
-          {track.recent.length ? <PlayedBy played={track.recent} /> : null} */}
           </Stack>
-          <Tooltip label={<Text>{track.name}</Text>}>
-            <LinkB
-              as="span"
-              onClick={(e) => {
-                e.preventDefault();
-                track && onOpen(track, user.userId);
-              }}
-            >
-              <Image
-                src={track.image}
-                m={0}
-                boxSize={track ? ['100px', '120px'] : '60px'}
-                minH={track ? ['100px', '120px'] : '60px'}
-                maxH={track ? ['100px', '120px'] : '60px'}
-                minW={track ? ['100px', '120px'] : '60px'}
-                maxW={track ? ['100px', '120px'] : '60px'}
-              />
-            </LinkB>
-          </Tooltip>
+          <Image
+            as={motion.img}
+            layoutId={track.id + layoutKey}
+            src={track.image}
+            m={0}
+            boxSize={track ? ['100px', '120px'] : '60px'}
+            minH={track ? ['100px', '120px'] : '60px'}
+            maxH={track ? ['100px', '120px'] : '60px'}
+            minW={track ? ['100px', '120px'] : '60px'}
+            maxW={track ? ['100px', '120px'] : '60px'}
+            onClick={(e) => {
+              e.preventDefault();
+              // e.stopPropagation();
+              track && onOpen(track, user.userId, layoutKey);
+            }}
+          />
         </HStack>
       ) : (
         isSmallScreen &&

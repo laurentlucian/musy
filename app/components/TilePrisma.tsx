@@ -34,6 +34,7 @@ type TileProps = {
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
+  layoutKey: string;
   list?: boolean;
   playlist?: Boolean;
   profileId: string;
@@ -54,9 +55,10 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
       inDrawer,
       isQueuing,
       isRecommending,
+      layoutKey,
       list,
-      profileId,
       // playlist,
+      profileId,
       submit,
       track,
       ...props
@@ -199,7 +201,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId)}
+                onClick={() => onClick(track, profileId, layoutKey)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -209,7 +211,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId)}
+              onClick={() => onClick(track, profileId, layoutKey)}
               cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">

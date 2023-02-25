@@ -7,6 +7,7 @@ import { Flex, HStack, IconButton, Image, Stack, Text, useColorModeValue } from 
 import type { ChakraProps } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
+import { motion } from 'framer-motion';
 import { Send2 } from 'iconsax-react';
 import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 
@@ -34,9 +35,10 @@ type TileProps = {
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
+  layoutKey: string;
   list?: boolean;
-  playlist?: Boolean;
 
+  playlist?: Boolean;
   profileId: string;
   submit?: SubmitFunction;
   track: Track;
@@ -55,6 +57,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       inDrawer,
       isQueuing,
       isRecommending,
+      layoutKey,
       list,
       profileId,
       submit,
@@ -72,7 +75,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
     const color = useColorModeValue(`${inDrawer ? 'music.200' : 'music.800'}`, 'music.200');
-    const drawerTrack = track;
     const clickedRef = useRef<string>();
     const handleSendButton = () => {
       if (!currentUser && submit) {
@@ -101,21 +103,21 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
 
       const recommendData = {
         action: 'recommend',
-        albumName: drawerTrack.albumName,
-        albumUri: drawerTrack.albumUri,
-        artist: drawerTrack.artist,
-        artistUri: drawerTrack.artistUri,
+        albumName: track.albumName,
+        albumUri: track.albumUri,
+        artist: track.artist,
+        artistUri: track.artistUri,
         comment: '',
-        explicit: drawerTrack.explicit ? 'true' : '',
+        explicit: track.explicit ? 'true' : '',
         fromId: fromUserId ?? '',
-        image: drawerTrack.image,
-        link: drawerTrack.link,
-        name: drawerTrack.name,
-        preview_url: drawerTrack.preview_url ?? '',
+        image: track.image,
+        link: track.link,
+        name: track.name,
+        preview_url: track.preview_url ?? '',
 
         toId: sendToUserId,
-        trackId: drawerTrack.id,
-        uri: drawerTrack.uri,
+        trackId: track.id,
+        uri: track.uri,
       };
       if (fetcher && isQueuing) {
         fetcher.submit(queueData, { action, method: 'post', replace: true });
@@ -166,6 +168,8 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     return (
       <>
         <Stack
+          as={motion.div}
+          layoutId={track.id + layoutKey}
           ref={ref}
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
@@ -205,7 +209,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(drawerTrack, profileId)}
+                onClick={() => onClick(track, profileId, layoutKey)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -215,7 +219,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(drawerTrack, profileId)}
+              onClick={() => onClick(track, profileId, layoutKey)}
               cursor="pointer"
               w="175px"
             >

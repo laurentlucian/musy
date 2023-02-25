@@ -44,6 +44,7 @@ const Friends = () => {
           {currentUserData.settings?.miniPlayer && (
             <PrismaMiniPlayer
               key={currentUserData.userId}
+              layoutKey="MiniPlayerS"
               user={currentUserData}
               currentUserId={currentUserId}
             />
@@ -61,8 +62,15 @@ const Friends = () => {
         </Stack>
       )}
 
-      {sortedFriends.map((user) => {
-        return <PrismaMiniPlayer key={user.userId} user={user} currentUserId={currentUserId} />;
+      {sortedFriends.map((user, index) => {
+        return (
+          <PrismaMiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            currentUserId={currentUserId}
+          />
+        );
       })}
     </Stack>
   );

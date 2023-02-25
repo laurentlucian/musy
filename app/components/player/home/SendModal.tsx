@@ -221,6 +221,7 @@ const SendModal = ({
               tracks.map((track) => (
                 <Box minH="325px" key={track.id}>
                   <Tile
+                    layoutKey="SendModal"
                     track={track}
                     fetcher={fetcherQueue}
                     fetcherRec={fetcherRec}
@@ -281,6 +282,7 @@ const SendModal = ({
                 tracks.map((track) => (
                   <Tile
                     key={track.id}
+                    layoutKey="SendModal"
                     track={track}
                     fetcher={fetcherQueue}
                     fetcherRec={fetcherRec}

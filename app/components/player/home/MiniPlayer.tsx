@@ -23,11 +23,12 @@ import Tooltip from '../../Tooltip';
 import PlayerBar from '../PlayerBar';
 
 type PlayerProps = {
+  layoutKey: string;
   playback?: Playback;
   user: Profile;
 };
 
-const MiniPlayer = ({ playback, user }: PlayerProps) => {
+const MiniPlayer = ({ layoutKey, playback, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
@@ -165,6 +166,7 @@ const MiniPlayer = ({ playback, user }: PlayerProps) => {
                                 uri: track.uri,
                               },
                               user.userId,
+                              layoutKey,
                             );
                           }}
                         >
@@ -185,7 +187,7 @@ const MiniPlayer = ({ playback, user }: PlayerProps) => {
                   as="span"
                   onClick={(e) => {
                     e.preventDefault();
-                    formattedTrack && onOpen(formattedTrack, user.userId);
+                    formattedTrack && onOpen(formattedTrack, user.userId, layoutKey);
                   }}
                 >
                   <Image src={image} m={0} boxSize={playback ? ['100px', '120px'] : '60px'} />

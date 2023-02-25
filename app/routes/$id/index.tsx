@@ -26,7 +26,13 @@ const ProfilePrismaOutlet = () => {
   return (
     <Stack spacing={5} pos="relative" top={playback ? '-30px' : 0}>
       {playback && (
-        <PlayerPrisma id={user.userId} party={party} playback={playback} name={user.name} />
+        <PlayerPrisma
+          layoutKey="Player"
+          id={user.userId}
+          party={party}
+          playback={playback}
+          name={user.name}
+        />
       )}
       {isOwnProfile && <Recommended recommended={recommended} />}
       <RecentTracksPrisma recent={recent} />

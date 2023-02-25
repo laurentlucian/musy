@@ -64,8 +64,9 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
       w={['100vw', '550px']}
       color="music.200"
       _hover={{ color: 'white' }}
+      disabled={!currentUser}
     >
-      {isSaved ? 'Remove' : 'Save'}
+      {currentUser ? (isSaved ? 'Remove' : 'Save') : 'Log in to Save'}
     </Button>
   );
 };

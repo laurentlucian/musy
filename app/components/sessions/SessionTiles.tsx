@@ -35,6 +35,7 @@ type TileProps = Track & {
   inDrawer?: boolean;
   isQueuing?: boolean;
   isRecommending?: boolean;
+  layoutKey: string;
   list?: boolean;
   profileId: string;
 
@@ -62,6 +63,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       inDrawer,
       isQueuing,
       isRecommending,
+      layoutKey,
       link,
       name,
       preview_url,
@@ -225,7 +227,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                   draggable={false}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}
-                  onClick={() => onClick(track, profileId)}
+                  onClick={() => onClick(track, profileId, layoutKey)}
                   cursor="pointer"
                 />
               </Tooltip>
@@ -235,7 +237,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                 spacing={0}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId)}
+                onClick={() => onClick(track, profileId, layoutKey)}
                 cursor="pointer"
               >
                 <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">

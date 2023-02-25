@@ -14,6 +14,7 @@ type MiniTileProps = Track & {
   createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
   createdBy?: Profile | null;
+  layoutKey: string;
   userId: string;
 };
 
@@ -27,6 +28,7 @@ const MiniTile = ({
   explicit,
   id,
   image,
+  layoutKey,
   link,
   name,
   preview_url,
@@ -75,7 +77,12 @@ const MiniTile = ({
         )}
         {albumUri ? (
           <Tooltip label={albumName} placement="top-start">
-            <Image src={image} w="200px" draggable={false} onClick={() => onOpen(item, userId)} />
+            <Image
+              src={image}
+              w="200px"
+              draggable={false}
+              onClick={() => onOpen(item, userId, layoutKey)}
+            />
           </Tooltip>
         ) : (
           <Tooltip label={albumName} placement="top-start">

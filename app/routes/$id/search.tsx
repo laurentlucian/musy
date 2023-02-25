@@ -29,6 +29,7 @@ const Search = () => {
         {tracks?.map((track) => (
           <Tile
             key={track.id}
+            layoutKey="Search"
             track={{
               albumName: track.album.name,
               albumUri: track.album.uri,

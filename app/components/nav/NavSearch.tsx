@@ -206,7 +206,7 @@ const NavSearch = () => {
               ))}
 
               {tracks.length >= 1 &&
-                tracks.map((track) => <Tile key={track.id} track={track} profileId="" list />)}
+                tracks.map((track) => <Tile key={track.id} layoutKey="NavSearch" track={track} profileId="" list />)}
             </Stack>
           </PopoverBody>
         </PopoverContent>

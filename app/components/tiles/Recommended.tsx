@@ -74,6 +74,7 @@ const Recommended = (props: {
                         <>
                           <Tile
                             key={recommended.id}
+                            layoutKey="Recommend"
                             track={recommended.track}
                             profileId={id ?? ''}
                           />
