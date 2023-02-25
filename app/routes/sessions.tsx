@@ -6,7 +6,6 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import SessionModal from '~/components/sessions/SessionModal';
 import SessionT from '~/components/sessions/SessionTile';
-import { timeSince } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
@@ -28,11 +27,7 @@ const Friends = () => {
       {sessions.map((session) => {
         return (
           <Stack spacing={3} key={session.id}>
-            <SessionModal
-              title={timeSince(session.startTime)}
-              user={session.user}
-              session={session}
-            >
+            <SessionModal session={session}>
               {session.songs.map(({ id, track, userId }) => {
                 return <SessionT key={id} track={track} userId={userId} />;
               })}
@@ -69,7 +64,12 @@ export const loader = async ({ request }: LoaderArgs) => {
     orderBy: {
       updatedAt: 'desc',
     },
-    take: 30,
+    where: {
+      updatedAt: {
+        // Last week
+        gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+      },
+    },
   });
 
   return typedjson(

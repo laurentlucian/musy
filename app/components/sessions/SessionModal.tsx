@@ -9,30 +9,41 @@ import {
   HStack,
   Heading,
   type StackProps,
-  OrderedList,
-  ListItem,
+  Box,
+  Flex,
+  Badge,
 } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
 import { People, VolumeHigh } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { timeSince } from '~/lib/utils';
 import type { SessionsWithData } from '~/routes/home/sessions';
 
-import ScrollButtons from '../tiles/ScrollButtons';
-
 type SessionProps = {
   session: SessionsWithData[0];
-  user: Profile;
 } & StackProps;
 
-const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps) => {
+const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
   const { scrollRef } = useMouseScroll('natural', false);
+  const user = session.user;
   const [first, second = ''] = user.name.split(/[\s.]+/);
   const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
   if (session.songs.length === 0) return null;
+
+  const mostPlayedArtists = session.songs.reduce((acc, song) => {
+    const artist = song.track.artist;
+    if (acc[artist]) {
+      acc[artist] += 1;
+    } else {
+      acc[artist] = 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+  const sortedArtists = Object.entries(mostPlayedArtists).sort((a, b) => b[1] - a[1]);
+
+  const isPlaying = session.updatedAt > new Date(Date.now() - 1000 * 60 * 5);
 
   return (
     <Stack bgColor="whiteAlpha.100" borderRadius="xl">
@@ -48,28 +59,76 @@ const SessionModal = ({ children, session, user, ...chakraProps }: SessionProps)
                   {name}
                 </Heading>
               </Link>
-              {session.updatedAt > new Date(Date.now() - 1000 * 60 * 15) &&
-              session.user.playback ? (
+              {isPlaying ? (
                 <HStack>
                   <Icon as={VolumeHigh} />
                   <Icon as={People} cursor="pointer" />
                 </HStack>
-              ) : (
-                <HStack w="100%" justify={'end'} pr={5}>
-                  <OrderedList>
-                    <ListItem fontSize="8px">Kanye</ListItem>
-                    <ListItem fontSize="8px">Kanye</ListItem>
-                    <ListItem fontSize="8px">Kanye</ListItem>
-                  </OrderedList>
-                </HStack>
-              )}
+              ) : null}
             </HStack>
             <Text fontSize={'xs'} fontWeight="300">
               {timeSince(session.createdAt, 'minimal')} - {session.songs.length} songs
             </Text>
           </VStack>
         </HStack>
-        <ScrollButtons scrollRef={scrollRef} />
+
+        <HStack spacing={5} align="flex-start" display={{ base: 'none', lg: 'flex' }}>
+          <Box w={300}>
+            {sortedArtists.slice(0, 3).map(([artistName, plays], index) => (
+              <Flex
+                key={artistName}
+                alignItems="center"
+                py={2}
+                borderBottomWidth={index < sortedArtists.length - 1 ? '1px' : '0'}
+                borderBottomColor="whiteAlpha.300"
+              >
+                <Badge
+                  mr={2}
+                  variant="subtle"
+                  colorScheme={
+                    index === 0 ? 'yellow' : index === 1 ? 'gray' : index === 2 ? 'orange' : 'red'
+                  }
+                >
+                  {index + 1}
+                </Badge>
+                <Text flex={1} fontSize="sm" fontWeight="medium">
+                  {artistName}
+                </Text>
+                <Text flexShrink={0} fontSize="xs" fontWeight="medium">
+                  {plays.toLocaleString()}x
+                </Text>
+              </Flex>
+            ))}
+          </Box>
+          <Box w={300}>
+            {sortedArtists.slice(3, 6).map(([artistName, plays], index) => (
+              <Flex
+                key={artistName}
+                alignItems="center"
+                py={2}
+                borderBottomWidth={index < sortedArtists.length - 1 ? '1px' : '0'}
+                borderBottomColor="whiteAlpha.300"
+              >
+                <Badge mr={2} variant="solid" colorScheme="blackAlpha">
+                  {index + 4}
+                </Badge>
+                <Text flex={1} fontSize="sm" fontWeight="medium">
+                  {artistName}
+                </Text>
+                <Text flexShrink={0} fontSize="xs" fontWeight="medium">
+                  {plays.toLocaleString()}x
+                </Text>
+              </Flex>
+            ))}
+          </Box>
+        </HStack>
+        {/* <HStack w="100%" justify={'end'} pr={5}>
+          {sortedArtists.splice(0, 4).map((artist, i) => (
+            <ListItem fontSize="13px" key={i}>
+              {artist[0]} <Tag size={'sm'}>{artist[1]}x</Tag>
+            </ListItem>
+          ))}
+        </HStack> */}
       </HStack>
       <HStack
         spacing={1}
