@@ -1,15 +1,16 @@
-import { Box, Button, HStack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 
+import CloseButton from './actions/CloseButton';
 import { default as Track } from './ActionTrack';
 import { default as Actions } from './TileActions';
 
 const ExpandedTile = () => {
   const track = useDrawerTrack();
-  const { onClose } = useDrawerActions();
+
   return (
     <AnimatePresence>
       {track && (
@@ -27,11 +28,17 @@ const ExpandedTile = () => {
           top={0}
           left={0}
         >
-          <HStack>
+          <Stack
+            pos={['unset', 'relative']}
+            left="25%"
+            top="200"
+            w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+            direction={['column', 'row']}
+          >
             <Track track={track} />
             <Actions track={track} />
-          </HStack>
-          <Button onClick={onClose}>close</Button>
+            <CloseButton />
+          </Stack>
         </Box>
       )}
     </AnimatePresence>
