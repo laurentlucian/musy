@@ -74,7 +74,7 @@ const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
 
         <HStack spacing={5} align="flex-start" display={{ base: 'none', lg: 'flex' }}>
           <Box w={300}>
-            {sortedArtists.slice(0, 3).map(([artistName, plays], index) => (
+            {sortedArtists.slice(0, 2).map(([artistName, plays], index) => (
               <Flex
                 key={artistName}
                 alignItems="center"
@@ -85,9 +85,7 @@ const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
                 <Badge
                   mr={2}
                   variant="subtle"
-                  colorScheme={
-                    index === 0 ? 'yellow' : index === 1 ? 'gray' : index === 2 ? 'orange' : 'red'
-                  }
+                  colorScheme={index === 0 ? 'yellow' : index === 1 ? 'gray' : 'red'}
                 >
                   {index + 1}
                 </Badge>
@@ -101,7 +99,7 @@ const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
             ))}
           </Box>
           <Box w={300}>
-            {sortedArtists.slice(3, 6).map(([artistName, plays], index) => (
+            {sortedArtists.slice(2, 4).map(([artistName, plays], index) => (
               <Flex
                 key={artistName}
                 alignItems="center"
@@ -110,7 +108,7 @@ const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
                 borderBottomColor="whiteAlpha.300"
               >
                 <Badge mr={2} variant="solid" colorScheme="blackAlpha">
-                  {index + 4}
+                  {index + 3}
                 </Badge>
                 <Text flex={1} fontSize="sm" fontWeight="medium">
                   {artistName}
@@ -122,13 +120,6 @@ const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
             ))}
           </Box>
         </HStack>
-        {/* <HStack w="100%" justify={'end'} pr={5}>
-          {sortedArtists.splice(0, 4).map((artist, i) => (
-            <ListItem fontSize="13px" key={i}>
-              {artist[0]} <Tag size={'sm'}>{artist[1]}x</Tag>
-            </ListItem>
-          ))}
-        </HStack> */}
       </HStack>
       <HStack
         spacing={1}
