@@ -57,8 +57,8 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useDrawerIsPlaying();
-    // eslint-disable-next-line
-    const dontRemoveThis = useDrawerTrack();
+  // eslint-disable-next-line
+  const dontRemoveThis = useDrawerTrack();
 
   const opaque = theme?.opaque ? '' : '66';
   const bg = useColorModeValue(
@@ -367,7 +367,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                         ? [135, 160, 160, 200, 221]
                         : 135
                     }
-                    transition="all 0.25s"
+                    transition="margin-top 0.25s, width 0.25s, height 0.25s"
                     pos="absolute"
                     right={0}
                     top={0}
