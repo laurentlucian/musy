@@ -1,8 +1,10 @@
 import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 
+import { motion } from 'framer-motion';
+
 import explicitImage from '~/assets/explicit-solid.svg';
 import musyIcon from '~/assets/musySquareIcon.png';
-import { useClickDrag, useDrawerLayoutKey } from '~/hooks/useDrawer';
+import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 
 import SpotifyLogo from './icons/SpotifyLogo';
@@ -10,8 +12,8 @@ import SpotifyLogo from './icons/SpotifyLogo';
 
 const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; userId: string }) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const layoutKey = useDrawerLayoutKey();
   const isSmallScreen = useIsMobile();
+  const layoutkey = props.addedAt.toString();
 
   const track = {
     albumName: props.track.album.name,
@@ -39,7 +41,15 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
       {track.name}
     </Text>
   );
-  const SongImage = <Image boxSize={['85px', '100px']} objectFit="cover" src={track.image} />;
+  const SongImage = (
+    <Image
+      as={motion.img}
+      layoutId={track.id + layoutkey}
+      boxSize={['85px', '100px']}
+      objectFit="cover"
+      src={track.image}
+    />
+  );
   const ArtistName = (
     <Stack direction="row" justify={['space-between', 'unset']}>
       <Stack>
@@ -78,7 +88,7 @@ const Track = (props: { addedAt: string; track: SpotifyApi.TrackObjectFull; user
   return (
     <Tr
       cursor="pointer"
-      onClick={() => onClick(track, props.userId, layoutKey ?? 'Playlist')}
+      onClick={() => onClick(track, props.userId, layoutkey)}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
       zIndex={10}
