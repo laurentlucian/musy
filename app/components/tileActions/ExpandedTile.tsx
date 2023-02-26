@@ -15,7 +15,7 @@ const ExpandedTile = () => {
       {track && (
         <Box
           as={motion.div}
-          zIndex={999}
+          zIndex={9}
           bg="#10101066"
           backdropFilter="blur(27px)"
           initial={{ opacity: 0.2 }}

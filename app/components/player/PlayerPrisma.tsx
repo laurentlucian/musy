@@ -337,7 +337,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                   <Image
                     as={motion.img}
                     layoutId={track.id + layoutKey}
-                    zIndex={99}
+                    zIndex={9}
                     src={track.image}
                     mt={
                       size === 'large'

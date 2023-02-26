@@ -197,7 +197,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
       justify={pathname.includes(`${currentUser?.userId}`) ? 'end' : 'space-between'}
       pos="fixed"
       top={0}
-      zIndex={10}
+      zIndex={9}
     >
       {Header}
     </Flex>

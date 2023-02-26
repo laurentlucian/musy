@@ -23,7 +23,7 @@ const ActionTrack = ({ track }: { track: Track }) => {
         src={track.image}
         draggable={false}
         cursor="pointer"
-        zIndex={999}
+        zIndex={10}
       />
       <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
         <Text

@@ -154,7 +154,7 @@ const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProp
 
   return (
     <>
-      <Stack pos="sticky" top={0} zIndex={10} spacing={0}>
+      <Stack pos="sticky" top={0} zIndex={5} spacing={0}>
         <Stack
           backdropFilter="blur(27px)"
           spacing={0}

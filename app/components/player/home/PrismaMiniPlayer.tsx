@@ -144,7 +144,7 @@ const PrismaMiniPlayer = ({ currentUserId, layoutKey, user }: PlayerProps) => {
             layoutId={track.id + layoutKey}
             src={track.image}
             m={0}
-            zIndex={99}
+            zIndex={7}
             boxSize={track ? ['100px', '120px'] : '60px'}
             minH={track ? ['100px', '120px'] : '60px'}
             maxH={track ? ['100px', '120px'] : '60px'}

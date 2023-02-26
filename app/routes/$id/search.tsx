@@ -24,7 +24,7 @@ const Search = () => {
   if (tracks.length === 0) return <></>;
 
   return (
-    <Box h="60vh" zIndex={99}>
+    <Box h="60vh" zIndex={9}>
       <Tiles title="">
         {tracks?.map((track) => (
           <Tile
