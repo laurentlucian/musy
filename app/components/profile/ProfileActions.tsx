@@ -14,7 +14,7 @@ import {
 
 import { VolumeMute } from 'iconsax-react';
 
-const ProfileActions = ({}) => {
+const ProfileActions = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
 

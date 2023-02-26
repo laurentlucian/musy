@@ -1,33 +1,15 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
-import { MoreHorizontal, MoreVertical } from 'react-feather';
 
-import { NotAllowedIcon } from '@chakra-ui/icons';
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Image,
-  Textarea,
-  Flex,
-  VStack,
-  MenuButton,
-  IconButton,
-  MenuList,
-  MenuItem,
-} from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
-import { CodeCircle, LockCircle, Menu } from 'iconsax-react';
+import { CodeCircle, LockCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import Following from '~/components/profile/Following';
 import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
-
-// import SpotifyLogo from '../icons/SpotifyLogo';
 
 import Favorite from './Favorite';
 import ProfileActions from './ProfileActions';
@@ -37,7 +19,6 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
-  const cUser = useSessionUser();
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
