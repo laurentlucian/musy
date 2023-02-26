@@ -1,8 +1,22 @@
 import { useMatches } from '@remix-run/react';
 
-import type { Profile, Settings } from '@prisma/client';
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
 
-const useUsers = (): (Profile & { settings: Settings | null })[] => {
+const useUsers = (): (Profile & {
+  playback:
+    | (Playback & {
+        track: Track & {
+          liked: {
+            user: Profile;
+          }[];
+          recent: {
+            user: Profile;
+          }[];
+        };
+      })
+    | null;
+  settings: Settings | null;
+})[] => {
   const matches = useMatches();
 
   // find first route with users in its data

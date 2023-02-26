@@ -1,3 +1,4 @@
+import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
@@ -10,6 +11,7 @@ import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Activity } from '~/lib/types/types';
+import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
@@ -40,10 +42,10 @@ const Index = () => {
   );
 };
 
-export const loader = async () => {
-  // const session = await authenticator.isAuthenticated(request);
-  // const currentUser = session?.user ?? null;
-  // const users = await getAllUsers(!!currentUser);
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session?.user ?? null;
+  const users = await getAllUsers(!!currentUser);
 
   const liked = prisma.likedSongs
     .findMany({
@@ -83,7 +85,7 @@ export const loader = async () => {
     })
     .slice(0, 20) as Activity[];
 
-  return typedjson({ activity });
+  return typedjson({ activity, users });
 };
 
 export default Index;

@@ -1,22 +1,23 @@
-import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
 import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
+import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Friends = () => {
-  const { currentUserId, users } = useTypedLoaderData<typeof loader>();
+  const users = useUsers();
+  const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-  const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
-  const otherUsers = users.filter((user) => user.userId !== currentUserId);
+  const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
+  const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
   const sortedFriends = otherUsers.sort((a, b) => {
     // sort by playback status first
     if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
@@ -38,7 +39,7 @@ const Friends = () => {
   }, [shouldRevalidate, revalidate]);
 
   return (
-    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]} >
+    <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
       {currentUserData && (
         <Stack mt={7}>
           {currentUserData.settings?.miniPlayer && (
@@ -46,7 +47,7 @@ const Friends = () => {
               key={currentUserData.userId}
               layoutKey="MiniPlayerS"
               user={currentUserData}
-              currentUserId={currentUserId}
+              currentUserId={currentUser?.userId}
             />
           )}
           <HStack>
@@ -68,7 +69,7 @@ const Friends = () => {
             key={user.userId}
             layoutKey={'MiniPlayerF' + index}
             user={user}
-            currentUserId={currentUserId}
+            currentUserId={currentUser?.userId}
           />
         );
       })}
@@ -76,18 +77,10 @@ const Friends = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const users = await getAllUsers(!!currentUser);
-  const currentUserId = currentUser?.id;
-
-  return typedjson(
-    { currentUserId, now: Date.now(), users },
-    {
-      headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
-    },
-  );
+export const loader = async () => {
+  return typedjson({
+    headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
+  });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
