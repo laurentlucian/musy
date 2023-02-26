@@ -15,7 +15,6 @@ import {
 
 import { Element3, TextalignJustifycenter } from 'iconsax-react';
 
-import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -42,7 +41,6 @@ const ExpandedSongs = ({
   title,
 }: TilesProps) => {
   const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
-  const { blockScrollOnMount } = useBlockScrollCheck();
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
   const track = useDrawerTrack();
@@ -67,7 +65,6 @@ const ExpandedSongs = ({
         preserveScrollBarGap
         lockFocusAcrossFrames
         finalFocusRef={btnRef}
-        blockScrollOnMount={blockScrollOnMount}
         variant={isSmallScreen ? 'none' : 'desktop'}
       >
         <DrawerOverlay />

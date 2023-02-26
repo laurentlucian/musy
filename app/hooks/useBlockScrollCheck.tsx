@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
 
+import { extendTheme } from '@chakra-ui/react';
+
 import { useDrawerTrack } from './useDrawer';
 
-const useBlockScrollCheck = () => {
+const useBlockScrollCheck = (theme: Record<string, any>) => {
   const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
   const track = useDrawerTrack();
 
   useEffect(() => {
-    track ? setBlockScrollOnMount(false) : setBlockScrollOnMount(true);
+    track ? setBlockScrollOnMount(true) : setBlockScrollOnMount(false);
   }, [track]);
 
-  return { blockScrollOnMount };
+  const blockScroll = {
+    global: {
+      'html, body': {
+        overflow: 'hidden',
+      },
+    },
+  };
+  const newTheme = extendTheme(theme, { styles: blockScroll });
+
+  return { newTheme, shouldBlock: blockScrollOnMount };
 };
 
 export default useBlockScrollCheck;

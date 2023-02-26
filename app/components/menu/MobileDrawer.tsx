@@ -15,7 +15,6 @@ import {
 
 import { CloseSquare } from 'iconsax-react';
 
-import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import { useMobileDrawer, useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
@@ -34,7 +33,6 @@ const MobileDrawer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
-  const { blockScrollOnMount } = useBlockScrollCheck();
   const { data, load, state } = useFetcher();
   const busy = state === 'loading' ?? false;
 
@@ -98,7 +96,6 @@ const MobileDrawer = () => {
         initialFocusRef={inputRef}
         size="full"
         autoFocus={false}
-        blockScrollOnMount={blockScrollOnMount}
       >
         <DrawerOverlay />
         <DrawerContent>

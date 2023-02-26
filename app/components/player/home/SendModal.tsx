@@ -29,7 +29,6 @@ import { useTypedFetcher } from 'remix-typedjson';
 import Waver from '~/components/icons/Waver';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
-import useBlockScrollCheck from '~/hooks/useBlockScrollCheck';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
@@ -64,7 +63,6 @@ const SendModal = ({
   const [tracks, setTracks] = useState<Track[]>([]);
   const [showTracks, setShowTracks] = useState(false);
   const [erect, setErect] = useState(false);
-  const { blockScrollOnMount } = useBlockScrollCheck();
   const { data, load, state } = useFetcher();
   const fetcherQueue = useTypedFetcher<typeof action>();
   const fetcherRec = useTypedFetcher<typeof actionB>();
@@ -205,7 +203,6 @@ const SendModal = ({
       onClose={onCloseModal}
       motionPreset="scale"
       size="6xl"
-      blockScrollOnMount={blockScrollOnMount}
     >
       <ModalOverlay />
       <ModalContent w={['300px', '800px']} bg={bg} color={color}>
@@ -266,7 +263,6 @@ const SendModal = ({
         placement="left"
         size="full"
         onClose={onClose}
-        blockScrollOnMount={blockScrollOnMount}
       >
         <DrawerOverlay />
         <DrawerContent>
