@@ -9,6 +9,7 @@ import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
+import { AnimatePresence } from 'framer-motion';
 
 const MobileNavBar = () => {
   const { pathname } = useLocation();
@@ -70,8 +71,8 @@ const MobileNavBar = () => {
   };
 
   return (
-    <>
-      {isMobile && (
+    <AnimatePresence>
+      {!hideButton && (
         <Box
           pos="fixed"
           bg={bg}
@@ -81,7 +82,7 @@ const MobileNavBar = () => {
           borderBottomRadius={0}
           color={color}
           aria-label="search song"
-          bottom={hideButton ? '-100px' : '0%'}
+          bottom='0%'
           display="flex"
           justifyContent="space-around"
           transition="bottom 0.25s ease-out"
@@ -156,7 +157,7 @@ const MobileNavBar = () => {
           )}
         </Box>
       )}
-    </>
+    </AnimatePresence>
   );
 };
 
