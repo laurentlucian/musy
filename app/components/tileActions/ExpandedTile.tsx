@@ -1,4 +1,4 @@
-import { Box, Stack } from '@chakra-ui/react';
+import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -30,12 +30,14 @@ const ExpandedTile = () => {
           <Stack
             pos={['unset', 'relative']}
             left="25%"
-            top="200"
+            top={['100', '200']}
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
             direction={['column', 'row']}
           >
-            <Track track={track} />
-            <Actions track={track} />
+            <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" overflowX="hidden">
+              <Track track={track} />
+              <Actions track={track} />
+            </SimpleGrid>
             <CloseButton />
           </Stack>
         </Box>

@@ -47,8 +47,6 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
           _hover={{ boxShadow: 'none' }}
           _active={{ boxShadow: 'none' }}
           boxShadow="none"
-          // onMouseEnter={() => setHover(true)} //this does not work because when the icon changes
-          // onMouseLeave={() => setHover(false)} //it is as if the mouse has left the icon even though you haven't moved the mouse off it yet
           onClick={saveSong}
         />
       </Tooltip>
@@ -61,7 +59,7 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
       mr="0px"
       variant="ghost"
       justifyContent="left"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
       disabled={!currentUser}

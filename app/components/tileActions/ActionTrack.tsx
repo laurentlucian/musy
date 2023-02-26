@@ -12,13 +12,13 @@ const ActionTrack = ({ track }: { track: Track }) => {
     <Stack
       as={motion.div}
       layoutId={track.id + layoutKey}
-      w={['96%', '369px', 500]}
+      w={['93%', '369px', 500]}
       alignSelf="end"
     >
       <Image
-        boxSize={['96%', '369px', 500]}
-        minW={['96%', '369px', 500]}
-        minH={['96%', '369px', 500]}
+        boxSize={['93%', '369px', 500]}
+        minW={['93%', '369px', 500]}
+        minH={['93%', '369px', 500]}
         objectFit="cover"
         src={track.image}
         draggable={false}

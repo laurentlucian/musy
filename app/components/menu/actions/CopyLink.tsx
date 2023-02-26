@@ -22,7 +22,7 @@ const CopyLink = ({ link }: { link: string }) => {
       leftIcon={mouseDown ? <Link2 /> : <Link21 />}
       onClick={handleClick}
       variant="ghost"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
       justifyContent="left"

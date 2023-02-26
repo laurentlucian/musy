@@ -1,32 +1,30 @@
-import { Button, Icon, Text } from '@chakra-ui/react';
+import { type Dispatch, type SetStateAction } from 'react';
 
-import { ArrowRight2, Send2 } from 'iconsax-react';
+import { Button } from '@chakra-ui/react';
+
+import { Send2 } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
-const RecommendTo = () => {
+const RecommendTo = ({ setShow }: { setShow: Dispatch<SetStateAction<number>> }) => {
   const currentUser = useSessionUser();
+  const handleClick = () => {
+    setShow(2);
+  };
 
   const RecommendToFriend = (
     <Button
       leftIcon={<Send2 variant="Bold" />}
-      // onClick={onClickRecommend}
+      onClick={handleClick}
       pos="relative"
       variant="ghost"
       mx="25px"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       justifyContent="left"
       _hover={{ color: 'white' }}
       disabled={!currentUser}
     >
-      {currentUser ? (
-        <>
-          <Text>Recommend to Friend</Text>
-          <Icon as={ArrowRight2} boxSize="25px" ml={['auto !important', '36px !important']} />
-        </>
-      ) : (
-        'Log in to Recommend'
-      )}
+      {currentUser ? 'Recommend to Friend' : 'Log in to Recommend'}
     </Button>
   );
   return RecommendToFriend;

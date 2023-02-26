@@ -10,14 +10,7 @@ const CloseButton = () => {
     if (e.code === 'Escape') onClose();
   });
   return (
-    <Button
-      variant="ghost"
-      pos={['unset', 'fixed']}
-      bottom="10%"
-      right="50%"
-      left="50%"
-      onClick={onClose}
-    >
+    <Button variant="ghost" pos="fixed" bottom="10%" right="50%" left="50%" onClick={onClose}>
       close
     </Button>
   );

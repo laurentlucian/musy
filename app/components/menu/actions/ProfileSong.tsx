@@ -29,7 +29,7 @@ const ProfileSong = () => {
       mr="0px"
       variant="ghost"
       justifyContent="left"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
     >
@@ -41,7 +41,7 @@ const ProfileSong = () => {
       mr="0px"
       variant="ghost"
       justifyContent="left"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
       disabled
