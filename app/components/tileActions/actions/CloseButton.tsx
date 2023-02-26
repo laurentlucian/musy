@@ -1,9 +1,14 @@
-import { Button } from '@chakra-ui/react';
+import { Button, useEventListener } from '@chakra-ui/react';
+
+// import { useEventListener } from 'usehooks-ts';
 
 import { useDrawerActions } from '~/hooks/useDrawer';
 
 const CloseButton = () => {
   const { onClose } = useDrawerActions();
+  useEventListener('keydown', (e) => {
+    if (e.code === 'Escape') onClose();
+  });
   return (
     <Button
       variant="ghost"

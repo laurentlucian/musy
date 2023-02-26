@@ -10,7 +10,6 @@ import { default as Actions } from './TileActions';
 
 const ExpandedTile = () => {
   const track = useDrawerTrack();
-
   return (
     <AnimatePresence>
       {track && (
