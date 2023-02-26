@@ -8,6 +8,8 @@ import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chak
 import type { Theme } from '@prisma/client';
 import { motion, useDragControls } from 'framer-motion';
 
+import { useSetPicker } from '~/hooks/useBlockScrollCheck';
+
 import ColorPicker from './ColorPicker';
 
 type ColorPickersProps = {
@@ -34,6 +36,7 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
   const dontDrag = () => {
     setMouseIn(false);
   };
+  const setPickers = useSetPicker();
   const colorPickers =
     colorMode === 'dark'
       ? [
@@ -147,7 +150,10 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
                   <IconButton
                     aria-label="close"
                     icon={<X />}
-                    onClick={() => setPicker(-1)}
+                    onClick={() => {
+                      setPicker(-1);
+                      setPickers(false);
+                    }}
                     onMouseDown={dontDrag}
                     bg="#fff"
                     color="#161616"
@@ -158,7 +164,10 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
                 <Box onPointerDown={dontDrag} w="225px" h="178px">
                   <SketchPicker
                     color={colorPickers[picker].bgCol}
-                    onChange={(col) => onChange(col, colorPickers[picker].themeProp)}
+                    onChange={(col) => {
+                      setPickers(true);
+                      onChange(col, colorPickers[picker].themeProp);
+                    }}
                   />
                 </Box>
               </>

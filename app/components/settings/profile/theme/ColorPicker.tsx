@@ -2,6 +2,8 @@ import { type Dispatch, type SetStateAction } from 'react';
 
 import { Box, HStack, Text } from '@chakra-ui/react';
 
+import { useSetPicker } from '~/hooks/useBlockScrollCheck';
+
 interface ColorPickerProps {
   bgCol: string;
   gradient?: string;
@@ -12,9 +14,13 @@ interface ColorPickerProps {
 }
 
 const ColorPicker = ({ bgCol, gradient, index, picker, setPicker, title }: ColorPickerProps) => {
+  const setPickers = useSetPicker();
   if (title === '') return null;
   const onToggle = () => {
-    picker === index ? setPicker(-1) : setPicker(index);
+    if (picker === index) {
+      setPicker(-1);
+      setPickers(false);
+    } else setPicker(index);
   };
   return (
     <HStack cursor="pointer" onClick={onToggle}>

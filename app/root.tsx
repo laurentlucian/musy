@@ -26,7 +26,7 @@ import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 
 import ExpandedTile from './components/tileActions/ExpandedTile';
-import useBlockScrollCheck from './hooks/useBlockScrollCheck';
+import { useBlockScrollCheck } from './hooks/useBlockScrollCheck';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
