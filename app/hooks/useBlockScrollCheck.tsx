@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-
 import { extendTheme } from '@chakra-ui/react';
 
 import { create } from 'zustand';
@@ -14,13 +12,10 @@ const usePickerStore = create<{ pickers: boolean; setPickers: (by: boolean) => v
 const usePickerValue = () => usePickerStore((state) => state.pickers, shallow);
 export const useSetPicker = () => usePickerStore((state) => state.setPickers);
 export const useBlockScrollCheck = (theme: Record<string, any>) => {
-  const [blockScrollOnMount, setBlockScrollOnMount] = useState(false);
   const track = useDrawerTrack();
   const pickers = usePickerValue();
-
-  useEffect(() => {
-    track || pickers ? setBlockScrollOnMount(true) : setBlockScrollOnMount(false);
-  }, [track, pickers]);
+  
+  const shouldBlock = track || pickers;
 
   const blockScroll = {
     global: {
@@ -29,7 +24,8 @@ export const useBlockScrollCheck = (theme: Record<string, any>) => {
       },
     },
   };
+
   const newTheme = extendTheme(theme, { styles: blockScroll });
 
-  return { newTheme, shouldBlock: blockScrollOnMount };
+  return { newTheme, shouldBlock };
 };
