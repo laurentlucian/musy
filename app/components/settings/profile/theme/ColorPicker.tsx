@@ -1,5 +1,4 @@
 import { type Dispatch, type SetStateAction } from 'react';
-import { type ColorResult } from 'react-color';
 
 import { Box, HStack, Text } from '@chakra-ui/react';
 
@@ -7,10 +6,8 @@ interface ColorPickerProps {
   bgCol: string;
   gradient?: string;
   index: number;
-  onChange: (col: ColorResult, property: string) => void;
   picker: number;
   setPicker: Dispatch<SetStateAction<number>>;
-  themeProp: string;
   title: string;
 }
 
