@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 
+import { AnimatePresence } from 'framer-motion';
 import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
-import { AnimatePresence } from 'framer-motion';
 
 const MobileNavBar = () => {
   const { pathname } = useLocation();
@@ -27,7 +27,6 @@ const MobileNavBar = () => {
       ? 4
       : 5,
   );
-  const isMobile = useIsMobile();
   const track = useDrawerTrack();
 
   const profile = currentUser?.userId;
@@ -82,7 +81,7 @@ const MobileNavBar = () => {
           borderBottomRadius={0}
           color={color}
           aria-label="search song"
-          bottom='0%'
+          bottom="0%"
           display="flex"
           justifyContent="space-around"
           transition="bottom 0.25s ease-out"
