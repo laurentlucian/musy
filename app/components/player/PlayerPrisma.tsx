@@ -339,13 +339,6 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                     layoutId={track.id + layoutKey}
                     zIndex={9}
                     src={track.image}
-                    mt={
-                      size === 'large'
-                        ? [0, -47, -47, -47, -200]
-                        : size === 'medium'
-                        ? [0, -47, -47, -47, '-86px']
-                        : 0
-                    }
                     boxSize={
                       size === 'large'
                         ? [135, 160, 160, 200, 334]
@@ -368,9 +361,9 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                         : 135
                     }
                     transition="margin-top 0.25s, width 0.25s, height 0.25s"
-                    pos="absolute"
+                    pos="fixed"
                     right={0}
-                    top={0}
+                    bottom={0}
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
                     onClick={() => onClick(track, id, layoutKey)}
