@@ -270,6 +270,7 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
               bg={bg}
               boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)"
               rounded="xl"
+              zIndex={99} 
             >
               <MenuItem
                 as="a"
