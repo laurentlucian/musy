@@ -72,12 +72,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const users = await getAllUsers(!!currentUser);
   const currentUserId = currentUser?.id;
 
-  return typedjson(
-    { currentUserId, now: Date.now(), users },
-    {
-      headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
-    },
-  );
+  return typedjson({ currentUserId, now: Date.now(), users });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
