@@ -54,13 +54,14 @@ const QuickActions = ({
   return (
     <>
       <Menu placement="bottom-start">
-        <Stack onClick={(e) => e.preventDefault()}>
+        <Stack onClick={(e) => e.preventDefault()} w="45px" >
           <MenuButton
             as={IconButton}
             icon={<MoreHorizontal />}
             aria-label="more"
             variant="unstyled"
             h="15px"
+            w="45px"
             _hover={{ color: 'spotify.green' }}
             _active={{ boxShadow: 'none' }}
             _focus={{ boxShadow: 'none' }}
