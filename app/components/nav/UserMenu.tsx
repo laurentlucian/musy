@@ -1,4 +1,4 @@
-import { Form, useNavigate, useTransition } from '@remix-run/react';
+import { Form, useLocation, useNavigate, useTransition } from '@remix-run/react';
 import { useRef } from 'react';
 import { LogOut, MoreHorizontal } from 'react-feather';
 
@@ -28,20 +28,18 @@ import type { IconButtonProps } from '@chakra-ui/react';
 
 import { Moon, Profile2User, Setting2, Sun1 } from 'iconsax-react';
 
+import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 
-interface UserActionsConfig {
-  isSmallScreen: boolean;
-  pathname: string;
-}
-
-const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
+const UserMenu = () => {
   const currentUser = useSessionUser();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
+  const isSmallScreen = useIsMobile();
   const { colorMode, toggleColorMode } = useColorMode();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');

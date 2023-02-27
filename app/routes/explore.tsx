@@ -162,7 +162,7 @@ const Explore = () => {
             />
           )}
         </InputGroup>
-        <UserMenu isSmallScreen={true} pathname={'/explore'} />
+        <UserMenu/>
       </HStack>
       <Stack pt="50px" overflowY="scroll" w="100%" h="91vh">
         {data?.users.map((user: Profile) => (

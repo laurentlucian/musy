@@ -3,8 +3,8 @@ import type { MouseEvent } from 'react';
 
 import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 
-import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
+import useSessionUser from '~/hooks/useSessionUser';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
@@ -12,14 +12,16 @@ import NavSearch from './NavSearch';
 import UserMenu from './UserMenu';
 // import UserSearch from './UserSearch';
 
-const Nav = ({ authorized }: { authorized: boolean }) => {
+const Nav = () => {
   const transition = useTransition();
   const { pathname, search } = useLocation();
-  const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
+  const currentUser = useSessionUser();
+  const authorized = !!currentUser;
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
+
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     if (disable) {
       e.preventDefault();
@@ -51,7 +53,7 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
         ) : (
           <>
             <HStack w="100%" spacing={3}>
-              <NavSearch /> <UserMenu isSmallScreen={isSmallScreen} pathname={pathname} />
+              <NavSearch /> <UserMenu />
             </HStack>
           </>
         )}
