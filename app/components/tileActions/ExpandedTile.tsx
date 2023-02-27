@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
@@ -10,6 +12,14 @@ import { default as Actions } from './TileActions';
 
 const ExpandedTile = () => {
   const track = useDrawerTrack();
+
+  useEffect(() => {
+    if (track) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [track]);
   return (
     <AnimatePresence>
       {track && (

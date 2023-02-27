@@ -26,7 +26,6 @@ import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 
 import ExpandedTile from './components/tileActions/ExpandedTile';
-import { useBlockScrollCheck } from './hooks/useBlockScrollCheck';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
@@ -35,11 +34,10 @@ import { prisma } from './services/db.server';
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
-  const { newTheme, shouldBlock } = useBlockScrollCheck(theme);
 
   return (
     <Document>
-      <ChakraProvider theme={shouldBlock ? newTheme : theme}>
+      <ChakraProvider theme={theme}>
         <ColorModeProvider
           colorModeManager={colorModeManager}
           options={{

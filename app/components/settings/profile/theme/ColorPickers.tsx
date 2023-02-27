@@ -1,4 +1,4 @@
-import { type Dispatch, type PointerEvent, type SetStateAction, useState } from 'react';
+import { type Dispatch, type PointerEvent, type SetStateAction, useState, useEffect } from 'react';
 import { useRef } from 'react';
 import { SketchPicker, type ColorResult } from 'react-color';
 import { Move, X } from 'react-feather';
@@ -7,8 +7,6 @@ import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chak
 
 import type { Theme } from '@prisma/client';
 import { motion, useDragControls } from 'framer-motion';
-
-import { useSetPicker } from '~/hooks/useBlockScrollCheck';
 
 import ColorPicker from './ColorPicker';
 
@@ -36,7 +34,6 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
   const dontDrag = () => {
     setMouseIn(false);
   };
-  const setPickers = useSetPicker();
   const colorPickers =
     colorMode === 'dark'
       ? [
@@ -110,6 +107,14 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
           },
         ];
 
+  useEffect(() => {
+    if (picker >= 0) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [picker]);
+
   return (
     <Box ref={constraintRef} h="100%" w="100%" zIndex={99999}>
       <SimpleGrid columns={2} p={[1, 0]} w="100%">
@@ -152,7 +157,6 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
                     icon={<X />}
                     onClick={() => {
                       setPicker(-1);
-                      setPickers(false);
                     }}
                     onMouseDown={dontDrag}
                     bg="#fff"
@@ -165,7 +169,6 @@ const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: Color
                   <SketchPicker
                     color={colorPickers[picker].bgCol}
                     onChange={(col) => {
-                      setPickers(true);
                       onChange(col, colorPickers[picker].themeProp);
                     }}
                   />
