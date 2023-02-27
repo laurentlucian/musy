@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
+  useLocation,
 } from '@remix-run/react';
 import { useContext, useEffect } from 'react';
 
@@ -19,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 
 import { withEmotionCache } from '@emotion/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
@@ -146,6 +148,7 @@ type DocumentProps = {
 const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, emotionCache) => {
   const serverStyleData = useContext(ServerStyleContext);
   const clientStyleData = useContext(ClientStyleContext);
+  const location = useLocation();
 
   // Only executed on client
   useEffect(
@@ -181,7 +184,17 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
         <title>{title}</title>
       </head>
       <body>
-        {children}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.main
+            key={location.pathname}
+            initial={{ opacity: 0, x: '-10%' }}
+            animate={{ opacity: 1, x: '0' }}
+            exit={{ opacity: 0, x: '-10%' }}
+            transition={{ duration: 0.3 }}
+          >
+            {children}
+          </motion.main>
+        </AnimatePresence>
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}

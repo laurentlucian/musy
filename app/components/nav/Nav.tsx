@@ -1,7 +1,15 @@
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
 import type { MouseEvent } from 'react';
 
-import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  Image,
+  useColorModeValue,
+  Link as ChakraLink,
+} from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -34,6 +42,9 @@ const Nav = () => {
       <HStack as={Link} to="/" spacing="8px" zIndex={1} onClick={handleClick}>
         <Image src="/favicon-32x32.png" />
         <Heading size="sm">musy</Heading>
+        <ChakraLink as={Link} to="/sessions" fontSize="sm">
+          sessions
+        </ChakraLink>
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px" zIndex={1}>

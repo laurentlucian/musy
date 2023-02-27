@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
 
 import MobileHeader from './nav/MobileHeader';
 import MobileNavBar from './nav/MobileNavBar';
