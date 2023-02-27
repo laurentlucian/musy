@@ -68,9 +68,7 @@ const ProfileSettings = () => {
             <ProfileHeader profile={currentUser} />
             <Player track={currentUser.settings?.profileSong} theme={theme} right={playerBtnSide} />
           </Box>
-          <Box w="100%" zIndex={1}>
             <ColorPickers setTheme={setTheme} theme={theme} setPicker={setPicker} picker={picker} />
-          </Box>
         </Stack>
         <Box h="300px" />
       </Stack>
