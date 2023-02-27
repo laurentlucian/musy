@@ -1,7 +1,7 @@
 import { useSubmit, useTransition } from '@remix-run/react';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 
-import { Button, HStack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, HStack, Text } from '@chakra-ui/react';
 
 import type { Theme } from '@prisma/client';
 import { AnimatePresence } from 'framer-motion';
@@ -31,7 +31,7 @@ const SaveThemeButton = ({
   const isSmallScreen = useIsMobile();
   const isLoading = transition.submission?.action.includes('/settings/appearance');
   const alert = useAlertState();
-  const bg = useColorModeValue('#EEE6E2', '#313338');
+  const bg = '#313338';
   const setSave = useSetShowSave();
   const show = useSaveState();
 
@@ -107,7 +107,7 @@ const SaveThemeButton = ({
           bottom={5}
           alignSelf="center"
         >
-          <Text>Reset or Save changes</Text>
+          <Text color="white">Reset or Save changes</Text>
           <HStack>
             <Button variant="ghost" onClick={onReset}>
               Reset
