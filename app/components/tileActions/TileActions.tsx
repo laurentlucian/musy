@@ -21,7 +21,14 @@ const TileActions = ({ track }: { track: Track }) => {
 
   return (
     <AnimatePresence>
-      <Stack alignSelf={['unset', 'center']} px={['12px', '75px']} w="100%" overflowX="hidden">
+      <Stack
+        alignSelf={['unset', 'center']}
+        justifyContent="center"
+        px={['12px', '75px']}
+        w="100%"
+        h="100%"
+        overflowX="hidden"
+      >
         {show === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}

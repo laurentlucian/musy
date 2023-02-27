@@ -12,10 +12,12 @@ const CloseButton = () => {
   return (
     <Button
       variant="ghost"
-      pos="fixed"
-      bottom={['5%', '10%']}
+      pos={['unset', 'fixed']}
+      bottom={['unset', '10%']}
       right={['unset', '50%']}
       left={['unset', '50%']}
+      pb={['60px', 0]}
+      pt={['20px', 0]}
       alignSelf="center"
       onClick={onClose}
     >

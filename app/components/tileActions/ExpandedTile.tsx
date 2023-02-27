@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -20,6 +20,7 @@ const ExpandedTile = () => {
       document.body.style.overflow = 'auto';
     }
   }, [track]);
+
   return (
     <AnimatePresence>
       {track && (
@@ -37,19 +38,21 @@ const ExpandedTile = () => {
           top={0}
           left={0}
         >
-          <Stack
+          <Flex
             pos={['unset', 'relative']}
             left="25%"
             top={['100', '200']}
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+            h={['100%', 'unset']}
             direction={['column', 'row']}
+            justifyContent={['space-between', 'unset']}
           >
-            <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" overflowX="hidden">
+            <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" h="100%" overflow="hidden">
               <Track track={track} />
               <Actions track={track} />
             </SimpleGrid>
             <CloseButton />
-          </Stack>
+          </Flex>
         </Box>
       )}
     </AnimatePresence>
