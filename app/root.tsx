@@ -7,7 +7,6 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
-  useLocation,
 } from '@remix-run/react';
 import { useContext, useEffect } from 'react';
 
@@ -20,14 +19,16 @@ import {
 } from '@chakra-ui/react';
 
 import { withEmotionCache } from '@emotion/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 
+import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
+import useIsMobile from './hooks/useIsMobile';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
@@ -36,7 +37,7 @@ import { prisma } from './services/db.server';
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
-  const location = useLocation();
+  const isSmallScreen = useIsMobile();
 
   return (
     <Document>
@@ -49,20 +50,13 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          <Layout>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.main
-                key={location.key}
-                initial={{ opacity: 0, x: '10%' }}
-                animate={{ opacity: 1, x: '0' }}
-                exit={{ opacity: 0, x: '-10%' }}
-                transition={{ duration: 0.3 }}
-              >
-                <Outlet />
-              </motion.main>
-            </AnimatePresence>
-          </Layout>
+          <AnimatePresence mode="wait" initial={false}>
+            <Layout>
+              <Outlet />
+            </Layout>
+          </AnimatePresence>
           <ExpandedTile />
+          {isSmallScreen && <MobileNavBar />}
         </ColorModeProvider>
       </ChakraProvider>
     </Document>

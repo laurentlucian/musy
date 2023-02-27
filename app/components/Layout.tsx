@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
+import { motion } from 'framer-motion';
+
 import useIsMobile from '~/hooks/useIsMobile';
 
 import MobileHeader from './nav/MobileHeader';
-import MobileNavBar from './nav/MobileNavBar';
 import Nav from './nav/Nav';
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -22,12 +23,28 @@ const Layout = ({ children }: { children: ReactNode }) => {
         {isSmallScreen ? <MobileHeader /> : <Nav />}
         {isProfile ? (
           <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
-            {children}
+            <motion.div
+              key={pathname}
+              initial={{ x: '69%' }}
+              animate={{ x: '0' }}
+              exit={{ x: '-69%' }}
+              transition={{ duration: 0.3 }}
+            >
+              {children}
+            </motion.div>
+            ;
           </Box>
         ) : (
-          children
+          <motion.div
+            key={pathname}
+            initial={{ x: '69%' }}
+            animate={{ x: '0' }}
+            exit={{ x: '-69%' }}
+            transition={{ duration: 0.3 }}
+          >
+            {children}
+          </motion.div>
         )}
-        {isSmallScreen && <MobileNavBar />}
       </Box>
     </Flex>
   );
