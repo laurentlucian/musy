@@ -1,15 +1,24 @@
 import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
+import type { MouseEvent } from 'react';
 
 import { Link, Stack, useColorModeValue, Divider, Box } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 
 const Settings = () => {
   const isSmallScreen = useIsMobile();
   const location = useLocation();
   const color = useColorModeValue('#050404', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
-
+  const disable = useSaveState();
+  const showAlert = useSetShowAlert();
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (disable) {
+      e.preventDefault();
+      showAlert();
+    }
+  };
   return (
     <Stack
       direction={['column', 'row']}
@@ -31,6 +40,7 @@ const Settings = () => {
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
           color={color}
           w="80px"
+          onClick={handleClick}
         >
           account
         </Link>
@@ -43,6 +53,7 @@ const Settings = () => {
           _activeLink={{ opacity: 1, textDecor: 'underline' }}
           color={color}
           w="110px"
+          onClick={handleClick}
         >
           appearance
         </Link>

@@ -28,6 +28,7 @@ import type { IconButtonProps } from '@chakra-ui/react';
 
 import { Moon, Profile2User, Setting2, Sun1 } from 'iconsax-react';
 
+import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
@@ -48,6 +49,13 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
   const transition = useTransition();
+  const disable = useSaveState();
+  const showAlert = useSetShowAlert();
+  const handleClick = () => {
+    if (disable) {
+      showAlert();
+    }
+  };
 
   const userIsNya = currentUser?.userId === '02mm0eoxnifin8xdnqwimls4y';
   const userIsDanica = currentUser?.userId === 'danicadboo';
@@ -263,14 +271,21 @@ const UserMenu = ({ isSmallScreen, pathname }: UserActionsConfig) => {
         </>
       ) : (
         <Menu placement="bottom-end">
-          <MenuButton aria-label="your actions" as={iconButton} variant="unstyled" isRound />
+          <MenuButton
+            aria-label="your actions"
+            as={iconButton}
+            onClick={handleClick}
+            variant="unstyled"
+            isRound
+            disabled={disable}
+          />
           <Portal>
             <MenuList
               overflowX="clip"
               bg={bg}
               boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)"
               rounded="xl"
-              zIndex={9} 
+              zIndex={9}
             >
               <MenuItem
                 as="a"

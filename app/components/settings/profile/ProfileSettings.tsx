@@ -15,7 +15,6 @@ const ProfileSettings = () => {
   const [playerBtnSide, setPlayerBtnSide] = useState(
     currentUser?.settings?.playerButtonRight ? true : false,
   );
-  const [showSave, setShowSave] = useState(false);
   const [picker, setPicker] = useState<number>(-1);
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
@@ -50,44 +49,38 @@ const ProfileSettings = () => {
   if (!currentUser) return null;
 
   return (
-    <Stack direction={['column', 'row']} w="100%" h="100%" ref={constraintRef}>
-      <ToggleSettings
-        setShowSave={setShowSave}
+    <Stack>
+      <Stack direction={['column', 'row']} w="100%" h="100%" ref={constraintRef}>
+        <ToggleSettings
+          setTheme={setTheme}
+          theme={theme}
+          playerBtnSide={playerBtnSide}
+          setPlayerBtnSide={setPlayerBtnSide}
+        />
+        <Stack direction={['column', 'row']} w="100%">
+          <Box
+            h="400px"
+            border={`solid 1px ${color}`}
+            borderRadius="10px"
+            bgGradient={theme.gradient ? bgGradient : undefined}
+            bg={!theme.gradient ? bg : undefined}
+          >
+            <ProfileHeader profile={currentUser} />
+            <Player track={currentUser.settings?.profileSong} theme={theme} right={playerBtnSide} />
+          </Box>
+          <Box w="100%" zIndex={1}>
+            <ColorPickers setTheme={setTheme} theme={theme} setPicker={setPicker} picker={picker} />
+          </Box>
+        </Stack>
+        <Box h="300px" />
+      </Stack>
+      <SaveThemeButton
+        color={color}
+        setPicker={setPicker}
         setTheme={setTheme}
         theme={theme}
         playerBtnSide={playerBtnSide}
-        setPlayerBtnSide={setPlayerBtnSide}
       />
-      <Stack direction={['column', 'row']} w="100%">
-        <Box
-          h="400px"
-          border={`solid 1px ${color}`}
-          borderRadius="10px"
-          bgGradient={theme.gradient ? bgGradient : undefined}
-          bg={!theme.gradient ? bg : undefined}
-        >
-          <ProfileHeader profile={currentUser} />
-          <Player track={currentUser.settings?.profileSong} theme={theme} right={playerBtnSide} />
-        </Box>
-        <Box w="100%" zIndex={1}>
-          <ColorPickers
-            setShowSave={setShowSave}
-            setTheme={setTheme}
-            theme={theme}
-            setPicker={setPicker}
-            picker={picker}
-          />
-        </Box>
-        <SaveThemeButton
-          showSave={showSave}
-          setShowSave={setShowSave}
-          color={color}
-          setPicker={setPicker}
-          theme={theme}
-          playerBtnSide={playerBtnSide}
-        />
-      </Stack>
-      <Box h="300px" />
     </Stack>
   );
 };

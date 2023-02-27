@@ -1,8 +1,10 @@
 import { Form, Link, useLocation, useTransition } from '@remix-run/react';
+import type { MouseEvent } from 'react';
 
 import { Button, Flex, Heading, HStack, Image, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
@@ -16,10 +18,18 @@ const Nav = ({ authorized }: { authorized: boolean }) => {
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
+  const disable = useSaveState();
+  const showAlert = useSetShowAlert();
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (disable) {
+      e.preventDefault();
+      showAlert();
+    }
+  };
 
   return (
     <Flex w="100%" as="header" py={5} justify="space-between" px={0} zIndex={1}>
-      <HStack as={Link} to="/" spacing="8px" zIndex={1}>
+      <HStack as={Link} to="/" spacing="8px" zIndex={1} onClick={handleClick}>
         <Image src="/favicon-32x32.png" />
         <Heading size="sm">musy</Heading>
         {transition.state === 'loading' && <Waver />}

@@ -1,34 +1,39 @@
 import { useSubmit, useTransition } from '@remix-run/react';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
+import { Button, HStack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import type { Theme } from '@prisma/client';
+import { AnimatePresence } from 'framer-motion';
 
 import Waver from '~/components/icons/Waver';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSave';
+import useSessionUser from '~/hooks/useSessionUser';
 
 const SaveThemeButton = ({
   color,
   playerBtnSide,
   setPicker,
-  setShowSave,
-  showSave,
+  setTheme,
   theme,
 }: {
   color: string;
   playerBtnSide: boolean;
   setPicker: Dispatch<SetStateAction<number>>;
-  setShowSave: Dispatch<SetStateAction<boolean>>;
-  showSave: boolean;
+  setTheme: Dispatch<SetStateAction<Theme>>;
   theme: Theme;
 }) => {
   const [text, setText] = useState('Save');
+  const currentUser = useSessionUser();
   const submit = useSubmit();
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
   const isLoading = transition.submission?.action.includes('/settings/appearance');
-  const bg = useColorModeValue('#EEE6E2', '#090808');
+  const alert = useAlertState();
+  const bg = useColorModeValue('#EEE6E2', '#313338');
+  const setSave = useSetShowSave();
+  const show = useSaveState();
 
   const onSave = () => {
     if (!isSmallScreen) {
@@ -56,40 +61,70 @@ const SaveThemeButton = ({
     );
     setText('Saved');
     const delayExit = setTimeout(() => {
-      setShowSave(false);
+      setSave(false);
       setText('Save');
     }, 1000);
     return () => clearTimeout(delayExit);
   };
 
-  // const onReset = () => {
-  //   if (!isSmallScreen) {
-  //     setPicker(undefined);
-  //   }
-  // };
+  const onReset = () => {
+    setPicker(-1);
+    setSave(false);
+    setTheme(
+      currentUser?.theme ?? {
+        backgroundDark: '#090808', //
+        backgroundLight: '#EEE6E2', //
+        bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)', //
+        bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)', //
+        blur: true, //
+        customPlayer: null,
+        gradient: false, //
+        isPreset: true,
+        mainTextDark: '#EEE6E2', //
+        mainTextLight: '#161616', //
+        musyLogo: 'musy',
+        opaque: false, //
+        playerColorDark: '#101010', //
+        playerColorLight: '#E7DFD9', //
+        subTextDark: '#EEE6E2', //
+        subTextLight: '#161616', //
+        userId: currentUser?.userId ?? '',
+      },
+    );
+  };
 
   return (
-    <Box
-      bg={bg}
-      // w="200px"
-      h="auto"
-      pos="fixed"
-      bottom={showSave ? 2 : '-50px'}
-      right={[2, '25%']}
-      zIndex={6969}
-    >
-      {/* <Button onClick={onReset}>Reset</Button> */}
-      <Button
-        bg={bg}
-        color={color}
-        isLoading={isLoading}
-        spinner={<Waver />}
-        onClick={onSave}
-        transition="bottom 0.25s"
-      >
-        {text}
-      </Button>
-    </Box>
+    <AnimatePresence>
+      {show && (
+        <HStack
+          bg={alert ? 'red' : bg}
+          w={['95%', '100%']}
+          h="50px"
+          zIndex={6969}
+          justify="space-around"
+          borderRadius="10px"
+          pos={['fixed', 'unset']}
+          bottom={5}
+          alignSelf="center"
+        >
+          <Text>Reset or Save changes</Text>
+          <HStack>
+            <Button variant="ghost" onClick={onReset}>
+              Reset
+            </Button>
+            <Button
+              bg="green"
+              color={color}
+              isLoading={isLoading}
+              spinner={<Waver />}
+              onClick={onSave}
+            >
+              {text}
+            </Button>
+          </HStack>
+        </HStack>
+      )}
+    </AnimatePresence>
   );
 };
 

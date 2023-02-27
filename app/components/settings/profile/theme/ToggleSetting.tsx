@@ -1,18 +1,18 @@
 import { type Dispatch, type SetStateAction, type ReactElement, useEffect } from 'react';
 
-import { FormControl, FormLabel, HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
+import { FormControl, IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import type { Theme } from '@prisma/client';
 
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useSetShowSave } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const ToggleSetting = ({
   bold,
   icon,
   label,
-  setShowSave,
   setState,
   setTheme,
   themeValue,
@@ -22,7 +22,6 @@ const ToggleSetting = ({
   bold?: boolean;
   icon: ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
   label: string;
-  setShowSave: Dispatch<SetStateAction<boolean>>;
   setState?: () => void;
   setTheme: Dispatch<SetStateAction<Theme>>;
   themeValue: boolean;
@@ -33,9 +32,10 @@ const ToggleSetting = ({
   const color = useColorModeValue('music.800', 'music.200');
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
+  const setSave = useSetShowSave();
 
   const onToggle = () => {
-    setShowSave(true);
+    setSave(true);
     if (setState) setState();
     setTheme((prevTheme) => ({ ...prevTheme, [title.toLowerCase()]: !themeValue }));
   };

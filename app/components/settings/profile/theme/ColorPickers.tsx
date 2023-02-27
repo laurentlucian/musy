@@ -8,19 +8,21 @@ import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chak
 import type { Theme } from '@prisma/client';
 import { motion, useDragControls } from 'framer-motion';
 
+import { useSetShowSave } from '~/hooks/useSave';
+
 import ColorPicker from './ColorPicker';
 
 type ColorPickersProps = {
   picker: number;
   setPicker: Dispatch<SetStateAction<number>>;
-  setShowSave: Dispatch<SetStateAction<boolean>>;
   setTheme: Dispatch<SetStateAction<Theme>>;
   theme: Theme;
 };
 
-const ColorPickers = ({ picker, setPicker, setShowSave, setTheme, theme }: ColorPickersProps) => {
+const ColorPickers = ({ picker, setPicker, setTheme, theme }: ColorPickersProps) => {
   const [mouseIn, setMouseIn] = useState(false);
   const { colorMode } = useColorMode();
+  const setShowSave = useSetShowSave();
   const onChange = (col: ColorResult, property: string) => {
     setTheme((prevTheme) => ({ ...prevTheme, [property]: col.hex }));
     setShowSave(true);

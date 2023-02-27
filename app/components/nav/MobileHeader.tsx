@@ -20,6 +20,7 @@ import { ArrowLeft2, LoginCurve } from 'iconsax-react';
 
 import useParamUser from '~/hooks/useParamUser';
 import useParentData from '~/hooks/useParentData';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import Waver from '../icons/Waver';
@@ -48,6 +49,15 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
     user?.theme?.backgroundLight ?? '#EEE6E2',
     user?.theme?.backgroundDark ?? '#050404',
   );
+  const disable = useSaveState();
+  const showAlert = useSetShowAlert();
+  const handleClick = () => {
+    if (disable) {
+      showAlert();
+    } else {
+      navigate(-1);
+    }
+  };
 
   const Home = (
     <Stack w="100%" h="100%" bg={bg} pt="6px" alignItems="center" zIndex={1}>
@@ -92,6 +102,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
       <Divider bgColor={color} />
     </Stack>
   );
+
   const Sessions = (
     <Stack w="100%" h="100%" bg={bg} pt="5px">
       <HStack w="100%" justifyContent="center">
@@ -150,16 +161,7 @@ const MobileHeader = ({ authorized }: { authorized: boolean }) => {
         <Heading fontSize="13px" mt="15px" ml="20px">
           Settings
         </Heading>
-        <Button
-          onClick={() => {
-            navigate(-1);
-          }}
-          pos="fixed"
-          top={2}
-          right={0}
-          bg={bg}
-          color={color}
-        >
+        <Button onClick={handleClick} pos="fixed" top={2} right={0} bg={bg} color={color}>
           Done
         </Button>
       </HStack>

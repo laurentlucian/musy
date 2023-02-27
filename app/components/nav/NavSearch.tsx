@@ -20,6 +20,7 @@ import {
 // import { useMouseScroll } from '~/hooks/useMouseScroll';
 import type { Profile } from '@prisma/client';
 
+import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 
@@ -31,6 +32,9 @@ const NavSearch = () => {
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState('');
   const [tracks, setTracks] = useState<Track[]>([]);
+
+  const disable = useSaveState();
+  const showAlert = useSetShowAlert();
 
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
@@ -55,13 +59,17 @@ const NavSearch = () => {
   };
   const handleOpenButton = (e: React.MouseEvent<Element, MouseEvent>) => {
     e.stopPropagation();
-    setSearch('');
-    setShow(!show);
-    setTracks([]);
-    const deleteParamDelay = setTimeout(() => {
-      deleteSearch();
-    }, 600);
-    clearTimeout(deleteParamDelay);
+    if (disable) {
+      showAlert();
+    } else {
+      setSearch('');
+      setShow(!show);
+      setTracks([]);
+      const deleteParamDelay = setTimeout(() => {
+        deleteSearch();
+      }, 600);
+      clearTimeout(deleteParamDelay);
+    }
   };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
@@ -206,7 +214,9 @@ const NavSearch = () => {
               ))}
 
               {tracks.length >= 1 &&
-                tracks.map((track) => <Tile key={track.id} layoutKey="NavSearch" track={track} profileId="" list />)}
+                tracks.map((track) => (
+                  <Tile key={track.id} layoutKey="NavSearch" track={track} profileId="" list />
+                ))}
             </Stack>
           </PopoverBody>
         </PopoverContent>

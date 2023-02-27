@@ -11,13 +11,11 @@ import ToggleSetting from './ToggleSetting';
 const ToggleSettings = ({
   playerBtnSide,
   setPlayerBtnSide,
-  setShowSave,
   setTheme,
   theme,
 }: {
   playerBtnSide: boolean;
   setPlayerBtnSide: Dispatch<SetStateAction<boolean>>;
-  setShowSave: Dispatch<SetStateAction<boolean>>;
   setTheme: Dispatch<SetStateAction<Theme>>;
   theme: Theme;
 }) => {
@@ -89,7 +87,7 @@ const ToggleSettings = ({
   return (
     <Stack direction={['row', 'column']}>
       {toggleSettings.map((toggleSetting, i) => (
-        <ToggleSetting key={i} {...toggleSetting} setShowSave={setShowSave} setTheme={setTheme} />
+        <ToggleSetting key={i} {...toggleSetting} setTheme={setTheme} />
       ))}
     </Stack>
   );
