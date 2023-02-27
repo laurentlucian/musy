@@ -67,7 +67,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     where: {
       updatedAt: {
         // Last week
-        gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+        gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1),
       },
     },
   });
