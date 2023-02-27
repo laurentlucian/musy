@@ -360,7 +360,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                         ? [135, 160, 160, 200, 221]
                         : 135
                     }
-                    transition="margin-top 0.25s, width 0.25s, height 0.25s"
+                    transition="width 0.25s, height 0.25s"
                     pos="fixed"
                     right={0}
                     bottom={0}
