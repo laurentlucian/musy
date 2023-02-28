@@ -35,15 +35,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             ;
           </Box>
         ) : (
-          <motion.div
-            key={pathname}
-            initial={{ x: '69%' }}
-            animate={{ x: '0' }}
-            exit={{ x: '-69%' }}
-            transition={{ duration: 0.3 }}
-          >
-            {children}
-          </motion.div>
+          children
         )}
       </Box>
     </Flex>

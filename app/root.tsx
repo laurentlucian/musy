@@ -50,11 +50,11 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            <Layout>
-              <Outlet />
-            </Layout>
-          </AnimatePresence>
+          {/* <AnimatePresence mode="wait" initial={false}> */}
+          <Layout>
+            <Outlet />
+          </Layout>
+          {/* </AnimatePresence> */}
           <ExpandedTile />
           {isSmallScreen && <MobileNavBar />}
         </ColorModeProvider>
@@ -188,17 +188,7 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
         <title>{title}</title>
       </head>
       <body>
-        {/* <AnimatePresence mode="wait" initial={false}>
-          <motion.main
-            key={location.pathname}
-            initial={{ opacity: 0, x: '10%' }}
-            animate={{ opacity: 1, x: '0' }}
-            exit={{ opacity: 0, x: '-10%' }}
-            transition={{ duration: 0.3 }}
-          > */}
         {children}
-        {/* </motion.main>
-        </AnimatePresence> */}
         <ScrollRestoration />
         <Scripts />
         {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
