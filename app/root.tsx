@@ -50,11 +50,11 @@ const App = () => {
             useSystemColorMode: theme.config.useSystemColorMode,
           }}
         >
-          {/* <AnimatePresence mode="wait" initial={false}> */}
-          <Layout>
-            <Outlet />
-          </Layout>
-          {/* </AnimatePresence> */}
+          <AnimatePresence mode="wait" initial={false}>
+            <Layout>
+              <Outlet />
+            </Layout>
+          </AnimatePresence>
           <ExpandedTile />
           {isSmallScreen && <MobileNavBar />}
         </ColorModeProvider>

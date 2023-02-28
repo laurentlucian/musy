@@ -21,21 +21,20 @@ const Layout = ({ children }: { children: ReactNode }) => {
     <Flex justify="center" color={color} w="100%" h="100%" bg={bg}>
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }} h="100%">
         {isSmallScreen ? <MobileHeader /> : <Nav />}
-        {isProfile ? (
-          <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
-            <motion.div
-              key={pathname}
-              initial={{ x: '69%' }}
-              animate={{ x: '0' }}
-              exit={{ x: '-69%' }}
-              transition={{ duration: 0.3 }}
-            >
-              {children}
-            </motion.div>
-            ;
-          </Box>
-        ) : (
+        {!isProfile ? (
           children
+        ) : (
+          <motion.div
+            key={pathname}
+            initial={{ x: '69%' }}
+            animate={{ x: '0' }}
+            exit={{ x: '-69%' }}
+            transition={{ duration: 0.3 }}
+          >
+            <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
+              {children}
+            </Box>
+          </motion.div>
         )}
       </Box>
     </Flex>
