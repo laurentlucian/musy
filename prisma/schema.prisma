@@ -29,12 +29,12 @@ model User {
 }
 
 model Profile {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
-  user      User        @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
   // should've been the @id
-  userId      String    @unique
+  userId    String   @unique
 
   name        String
   bio         String?
@@ -47,13 +47,13 @@ model Profile {
   recent      RecentSongs[]
   recommended RecommendedSongs[]
 
-  ai          AI?
-  settings    Settings?
-  theme       Theme?
-  playback    Playback?
-  ColorPreset ColorPreset[]
-  Sessions    Sessions[]
-  favoriteUsers   FavUsers[]
+  ai            AI?
+  settings      Settings?
+  theme         Theme?
+  playback      Playback?
+  ColorPreset   ColorPreset[]
+  Sessions      Sessions[]
+  favoriteUsers FavUsers[]
 }
 
 model AI {
@@ -113,16 +113,13 @@ model LikedSongs {
 
   @@unique([trackId, userId])
 }
+
 model FavUsers {
-  id          Int      @id @default(autoincrement())
-  favAt       DateTime @default(now())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  user        Profile  @relation(fields: [userId], references: [userId] )
+  id     Int      @id @default(autoincrement())
+  favAt  DateTime @default(now())
+  user   Profile  @relation(fields: [userId], references: [userId])
   userId String
-
 }
-
 
 model RecommendedSongs {
   id        Int      @id @default(autoincrement())
@@ -193,24 +190,24 @@ model Theme {
   //
   colorPreset      ColorPreset[]
   //
-  isPreset             Boolean       @default(true)
-  backgroundLight      String        @default("#EEE6E2")
-  backgroundDark       String        @default("#090808")
-  mainTextLight        String        @default("#161616")
-  mainTextDark         String        @default("#EEE6E2")
-  subTextLight         String        @default("#161616")
-  subTextDark          String        @default("#EEE6E2")
-  gradient             Boolean       @default(false)
-  bgGradientDark       String        @default("linear(to-t, #090808 40%, #fcbde2 90%)")
-  bgGradientLight      String        @default("linear(to-t, #EEE6E2 40%, #fcbde2 90%)")
+  isPreset         Boolean       @default(true)
+  backgroundLight  String        @default("#EEE6E2")
+  backgroundDark   String        @default("#090808")
+  mainTextLight    String        @default("#161616")
+  mainTextDark     String        @default("#EEE6E2")
+  subTextLight     String        @default("#161616")
+  subTextDark      String        @default("#EEE6E2")
+  gradient         Boolean       @default(false)
+  bgGradientDark   String        @default("linear(to-t, #090808 40%, #fcbde2 90%)")
+  bgGradientLight  String        @default("linear(to-t, #EEE6E2 40%, #fcbde2 90%)")
   //
-  customPlayer         Bytes?       
-  playerColorLight     String        @default("#E7DFD9")
-  playerColorDark      String        @default("#101010")
-  blur                 Boolean       @default(true)
-  opaque               Boolean       @default(false)
+  customPlayer     Bytes?
+  playerColorLight String        @default("#E7DFD9")
+  playerColorDark  String        @default("#101010")
+  blur             Boolean       @default(true)
+  opaque           Boolean       @default(false)
   //
-  musyLogo             String        @default("musy")
+  musyLogo         String        @default("musy")
 }
 
 model Track {
