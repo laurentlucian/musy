@@ -187,11 +187,11 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   return (
     <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={0}>
       <Stack
-        backdropFilter={theme?.blur || theme === null ? 'blur(27px)' : 'none'}
+        backdropFilter={(theme?.blur || theme === null) && blur ? 'blur(27px)' : 'none'}
         borderRadius={size === 'small' ? 0 : 5}
         h="100%"
       >
-        <Collapse in={!isOpen} animateOpacity>
+        <Box as={Collapse} in={!isOpen} animateOpacity overflow="visible !important">
           <Stack
             spacing={0}
             bg={bg}
@@ -361,9 +361,6 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                         : 135
                     }
                     transition="width 0.25s, height 0.25s"
-                    pos="fixed"
-                    right={0}
-                    bottom={0}
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
                     onClick={() => onClick(track, id, layoutKey)}
@@ -374,7 +371,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
             </Flex>
             {/* <PlayerBar playback={playback} /> */}
           </Stack>
-        </Collapse>
+        </Box>
       </Stack>
       <Box
         w="-webkit-fit-content"
