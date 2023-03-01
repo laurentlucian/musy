@@ -41,7 +41,7 @@ const Profile = () => {
         pos="absolute"
         top={0}
         left={0}
-        w="100vw"
+        w="100%"
         h="100%"
         bg={bg}
         bgGradient={gradient ? bgGradient : undefined}
