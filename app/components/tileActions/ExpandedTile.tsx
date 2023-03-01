@@ -1,18 +1,23 @@
-import { useEffect } from 'react';
+// import { useMatches } from '@remix-run/react';
+import { useEffect, useState } from 'react';
 
 import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
+// import useParentData from '~/hooks/useParentData';
 
 import CloseButton from './actions/CloseButton';
 import { default as Track } from './ActionTrack';
 import { default as Actions } from './TileActions';
 
 const ExpandedTile = () => {
+  const [[page, direction], setPage] = useState([0, 0]);
   const track = useDrawerTrack();
-
+  // const test = useParentData('/daniel.valdecantos/');
+  // console.log(useMatches());
+  // console.log(track)
   useEffect(() => {
     if (track) {
       document.body.style.overflow = 'hidden';
@@ -22,7 +27,7 @@ const ExpandedTile = () => {
   }, [track]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false} custom={direction}>
       {track && (
         <Box
           as={motion.div}
@@ -48,7 +53,12 @@ const ExpandedTile = () => {
             justifyContent={['space-between', 'unset']}
           >
             <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" h="100%" overflow="hidden">
-              <Track track={track} />
+              <Track
+                track={track}
+                page={page}
+                direction={direction}
+                setPage={setPage}
+              />
               <Actions track={track} />
             </SimpleGrid>
             <CloseButton />

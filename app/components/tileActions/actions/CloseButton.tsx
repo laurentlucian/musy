@@ -11,7 +11,7 @@ const CloseButton = () => {
   });
   return (
     <Button
-      variant="ghost"
+      variant="mobileNav"
       pos={['unset', 'fixed']}
       bottom={['unset', '10%']}
       right={['unset', '50%']}

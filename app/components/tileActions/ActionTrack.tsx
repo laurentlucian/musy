@@ -1,3 +1,6 @@
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
+
 import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
@@ -6,7 +9,46 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerLayoutKey } from '~/hooks/useDrawer';
 import type { Track } from '~/lib/types/types';
 
-const ActionTrack = ({ track }: { track: Track }) => {
+type ActionTrackProps = {
+  direction: number;
+  // dragging: boolean;
+  page: number;
+  setPage: Dispatch<SetStateAction<[number, number]>>;
+  track: Track;
+};
+
+const variants = {
+  center: {
+    opacity: 1,
+    x: 0,
+    zIndex: 1,
+  },
+  enter: (direction: number) => {
+    return {
+      opacity: 0,
+      x: direction > 0 ? 1000 : -1000,
+    };
+  },
+  exit: (direction: number) => {
+    return {
+      opacity: 0,
+      x: direction < 0 ? 1000 : -1000,
+      zIndex: 0,
+    };
+  },
+};
+
+const swipePower = (offset: number, velocity: number) => {
+  return Math.abs(offset) * velocity;
+};
+
+const ActionTrack = ({ direction, page, setPage, track }: ActionTrackProps) => {
+  const paginate = (newDirection: number) => {
+    setPage([page + newDirection, newDirection]);
+  };
+  const [dragging, setDragging] = useState(false);
+  console.log(dragging);
+
   const layoutKey = useDrawerLayoutKey();
   return (
     <Stack
@@ -14,41 +56,70 @@ const ActionTrack = ({ track }: { track: Track }) => {
       layoutId={track.id + layoutKey}
       w={['93%', '369px', 500]}
       alignSelf="end"
+      onPointerDown={() => setDragging(true)}
     >
-      <Image
-        boxSize={['93%', '369px', 500]}
-        minW={['93%', '369px', 500]}
-        minH={['93%', '369px', 500]}
-        objectFit="cover"
-        src={track.image}
-        draggable={false}
-        cursor="pointer"
-        zIndex={10}
-      />
-      <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
-        <Text
-          fontSize={['xl', '5xl']}
-          fontWeight="bold"
-          textAlign="left"
+      <motion.div
+        key={page}
+        custom={direction}
+        variants={variants}
+        initial={dragging ? 'enter' : false}
+        animate="center"
+        exit={dragging ? 'exit' : 'unset'}
+        transition={{
+          opacity: { duration: 0.2 },
+          x: { damping: 30, stiffness: 300, type: 'spring' },
+        }}
+        style={{ touchAction: 'none' }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={1}
+        onDragEnd={(e, { offset, velocity }) => {
+          const swipe = swipePower(offset.x, velocity.x);
+          if (swipe < -10000) {
+            paginate(1);
+          } else if (swipe > 10000) {
+            paginate(-1);
+          }
+        }}
+        onPanEnd={() => {
+          setDragging(false);
+        }}
+      >
+        <Image
+          boxSize={['93%', '369px', 500]}
+          minW={['93%', '369px', 500]}
+          minH={['93%', '369px', 500]}
+          objectFit="cover"
+          src={track.image}
+          draggable={false}
+          cursor="pointer"
+          zIndex={10}
+        />
+        <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
+          <Text
+            fontSize={['xl', '5xl']}
+            fontWeight="bold"
+            textAlign="left"
+            w="fit-content"
+            wordBreak="break-word"
+            pos="relative"
+          >
+            {track.name}
+          </Text>
+        </Link>
+        <Link
+          href={track.artistUri}
+          _hover={{ textDecor: 'none' }}
           w="fit-content"
-          wordBreak="break-word"
+          _focus={{ boxShadow: 'none' }}
           pos="relative"
         >
-          {track.name}
-        </Text>
-      </Link>
-      <Link
-        href={track.artistUri}
-        _hover={{ textDecor: 'none' }}
-        w="fit-content"
-        _focus={{ boxShadow: 'none' }}
-        pos="relative"
-      >
-        <Flex dir="row">
-          {track.explicit && <Image src={explicitImage} w="19px" mr="3px" />}
-          <Text color="#BBB8B7">{track.artist}</Text>
-        </Flex>
-      </Link>
+          <Flex dir="row">
+            {track.explicit && <Image src={explicitImage} w="19px" mr="3px" />}
+            <Text color="#BBB8B7">{track.artist}</Text>
+          </Flex>
+        </Link>
+      </motion.div>
     </Stack>
   );
 };
