@@ -19,11 +19,15 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
+
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
   const { currentUser, following, listened, user } = data;
   const isOwnProfile = currentUser?.userId === user.userId;
+  // const isFavorite = currentUser?.favoriteUsers
+  //   ?.map((userId) => userId === currentUser.userId)
+  //   .filter((value) => value);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -156,7 +160,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const FollowButton =
     currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
 
-  const FavButton = !isOwnProfile ? <Favorite favorite={true} /> : null;
+  const FavButton = !isOwnProfile ? <Favorite favorite={false} /> : null;
 
   const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;
 

@@ -197,6 +197,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const bio = data.get('bio');
   const follow = data.get('follow');
   const mood = data.get('mood');
+  const favUser = data.get('favUser');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'Missing current user');
@@ -231,6 +232,34 @@ export const action = async ({ params, request }: ActionArgs) => {
       update: { mood: response },
       where: { userId: id },
     });
+  }
+
+  if (typeof favUser === 'string') {
+    // Get the Profile instance for the currentUser
+    const profile = await prisma.profile.findUnique({ where: { userId: currentUser.userId } });
+    invariant(profile, 'Profile not found');
+
+    if (favUser === 'add') {
+      await prisma.favUsers.create({
+        data: {
+          user: {
+            connect: { userId: id },
+          },
+        },
+      });
+
+      // Add the user's id from the favoriteUsers array
+      await prisma.profile.update({
+        data: { favoriteUsers: { connect: [{ userId: id }] } },
+        where: { userId: currentUser.userId },
+      });
+    } else if (favUser === 'remove') {
+      // Remove the user's id from the favoriteUsers array
+      await prisma.profile.update({
+        data: { favoriteUsers: { disconnect: [{ userId: id }] } },
+        where: { userId: currentUser.userId },
+      });
+    }
   }
 
   if (typeof easterEgg === 'string') {
