@@ -101,6 +101,8 @@ const LikedTracksPrisma = ({
                   <Tile
                     layoutKey="LikedPrismaExpanded"
                     track={track}
+                    tracks={tracks}
+                    index={index}
                     profileId={id ?? ''}
                     w={['115px', '100px']}
                   />

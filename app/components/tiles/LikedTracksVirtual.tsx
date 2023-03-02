@@ -123,7 +123,6 @@ const LikedTracksVirtual = ({
           </HStack>
         </HStack>
       </HStack>
-
       <Flex
         ref={scrollRef}
         // scrollbar of container isn't accurate to width of children; glitchy
@@ -136,7 +135,7 @@ const LikedTracksVirtual = ({
         {...props}
       >
         <Box h="100%" w={`${rowVirtualizer.getTotalSize()}px`} pos="relative">
-          {virtualItems.map((virtualRow) => {
+          {virtualItems.map((virtualRow, index) => {
             const { track } = liked[virtualRow.index];
 
             return (
@@ -163,6 +162,8 @@ const LikedTracksVirtual = ({
                   preview_url: track.preview_url,
                   uri: track.uri,
                 }}
+                tracks={[]}
+                index={index}
                 profileId={id ?? ''}
               />
             );

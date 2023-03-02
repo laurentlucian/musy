@@ -43,7 +43,7 @@ type TileProps = {
   profileId: string;
   submit?: SubmitFunction;
   track: Track;
-  tracks?: Track[];
+  tracks: Track[];
   w?: string[];
 } & ChakraProps;
 
@@ -215,7 +215,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId, layoutKey, tracks!, index!)}
+                onClick={() => onClick(track, profileId, layoutKey, tracks, index?? 0)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -225,7 +225,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId, layoutKey, tracks!, index!)}
+              onClick={() => onClick(track, profileId, layoutKey, tracks, index?? 0)}
               cursor="pointer"
               w="175px"
             >

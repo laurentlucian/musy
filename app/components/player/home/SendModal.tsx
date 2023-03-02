@@ -198,12 +198,7 @@ const SendModal = ({
   );
 
   const Desktop = (
-    <Modal
-      isOpen={isOpen}
-      onClose={onCloseModal}
-      motionPreset="scale"
-      size="6xl"
-    >
+    <Modal isOpen={isOpen} onClose={onCloseModal} motionPreset="scale" size="6xl">
       <ModalOverlay />
       <ModalContent w={['300px', '800px']} bg={bg} color={color}>
         <ModalHeader>
@@ -215,7 +210,7 @@ const SendModal = ({
           {SearchLine}
           <Tiles>
             {showTracks ? (
-              tracks.map((track) => (
+              tracks.map((track, index) => (
                 <Box minH="325px" key={track.id}>
                   <Tile
                     layoutKey="SendModal"
@@ -226,6 +221,8 @@ const SendModal = ({
                     isRecommending={!sendList}
                     profileId={profileId}
                     currentUserId={currentUserId}
+                    tracks={tracks}
+                    index={index}
                   />
                 </Box>
               ))
@@ -258,12 +255,7 @@ const SendModal = ({
 
   const Mobile = (
     <>
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        size="full"
-        onClose={onClose}
-      >
+      <Drawer isOpen={isOpen} placement="left" size="full" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader>
@@ -275,11 +267,13 @@ const SendModal = ({
             {SearchLine}
             <Tiles>
               {showTracks &&
-                tracks.map((track) => (
+                tracks.map((track, index) => (
                   <Tile
                     key={track.id}
                     layoutKey="SendModal"
                     track={track}
+                    tracks={tracks}
+                    index={index}
                     fetcher={fetcherQueue}
                     fetcherRec={fetcherRec}
                     inDrawer

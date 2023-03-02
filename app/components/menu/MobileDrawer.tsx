@@ -148,7 +148,7 @@ const MobileDrawer = () => {
               </InputGroup>
               <Tiles>
                 {search &&
-                  tracks.map((track) => (
+                  tracks.map((track, index) => (
                     <Tile
                       key={track.id}
                       layoutKey="MobileDrawer"
@@ -156,6 +156,8 @@ const MobileDrawer = () => {
                       profileId=""
                       inDrawer
                       isQueuing
+                      tracks={tracks}
+                      index={index}
                     />
                   ))}
               </Tiles>

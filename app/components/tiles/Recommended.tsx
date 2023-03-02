@@ -35,6 +35,8 @@ const Recommended = (props: {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
   const { isOpen, onClose, onToggle } = useDisclosure();
+  
+  const tracks = props.recommended.map(({ track }) => track);
 
   return (
     <>
@@ -76,6 +78,7 @@ const Recommended = (props: {
                             key={recommended.id}
                             layoutKey="Recommend"
                             track={recommended.track}
+                            tracks={tracks}
                             profileId={id ?? ''}
                           />
                         </>

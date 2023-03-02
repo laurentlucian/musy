@@ -103,6 +103,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                 uri: track.uri,
               }}
               profileId={id ?? ''}
+              tracks={tracks}
             />
           );
         })}

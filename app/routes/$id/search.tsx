@@ -9,6 +9,7 @@ import invariant from 'tiny-invariant';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/$id/add';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -20,6 +21,25 @@ const Search = () => {
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { id: profileId } = useParams();
+
+  const songs: Track[] = [];
+  for (let i = 0; i < tracks.length; i++) {
+    const track = {
+      albumName: tracks[i].album.name,
+      albumUri: tracks[i].album.uri,
+      artist: tracks[i].artists[0].name,
+      artistUri: tracks[i].artists[0].uri,
+      duration: tracks[i].duration_ms,
+      explicit: tracks[i].explicit,
+      id: tracks[i].id,
+      image: tracks[i].album.images[0]?.url,
+      link: tracks[i].external_urls.spotify,
+      name: tracks[i].name,
+      preview_url: tracks[i].preview_url,
+      uri: tracks[i].uri,
+    };
+    songs.push(track);
+  }
 
   if (tracks.length === 0) return <></>;
 
@@ -44,6 +64,7 @@ const Search = () => {
               preview_url: track.preview_url,
               uri: track.uri,
             }}
+            tracks={songs}
             currentUser={currentUser}
             submit={submit}
             profileId={profileId ?? ''}

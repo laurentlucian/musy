@@ -67,6 +67,7 @@ const RecentTracksPrisma = ({
                     <Tile
                       layoutKey={'RecentPrismaExpanded' + index}
                       track={track}
+                      tracks={tracks}
                       profileId={id ?? ''}
                       w={['115px', '100px']}
                     />
