@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { IconButton } from '@chakra-ui/react';
 
-import { Add, Minus, Star1 } from 'iconsax-react';
+import { Star1 } from 'iconsax-react';
 
 import Tooltip from '../Tooltip';
 
