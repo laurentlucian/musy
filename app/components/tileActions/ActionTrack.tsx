@@ -49,8 +49,6 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
   const tracks = useDrawerTracks();
   const index = wrap(0, tracks.length, page + originalIndex);
 
-  console.log('page: ', page);
-
   return (
     <Stack
       as={motion.div}
@@ -71,7 +69,7 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
           x: { damping: 30, stiffness: 300, type: 'spring' },
         }}
         style={{ touchAction: 'none' }}
-        drag="x"
+        drag={tracks.length > 1 ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={1}
         onDragEnd={(e, { offset, velocity }) => {
