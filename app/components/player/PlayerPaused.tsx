@@ -182,14 +182,14 @@ const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProp
                   <Stack>
                     <Text
                       noOfLines={[1]}
-                      onClick={() => onOpen(track, userId, layoutKey)}
+                      onClick={() => onOpen(track, userId, layoutKey, [], 0)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
                       {name}
                     </Text>
                     <Flex
-                      onClick={() => onOpen(track, userId, layoutKey)}
+                      onClick={() => onOpen(track, userId, layoutKey, [], 0)}
                       cursor="pointer"
                       w={['200px', '68%']}
                     >
@@ -258,7 +258,7 @@ const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProp
                       pos="absolute"
                       right={0}
                       top={0}
-                      onClick={() => onOpen(track, userId, layoutKey)}
+                      onClick={() => onOpen(track, userId, layoutKey, [], 0)}
                       cursor="pointer"
                     />
                   </Tooltip>

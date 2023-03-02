@@ -10,14 +10,16 @@ import { timeSince } from '~/lib/utils';
 import Tooltip from '../Tooltip';
 
 type TileProps = {
+  index: number;
   layoutKey: string;
   playedAt?: Date;
   track: Track;
+  tracks: Track[];
   userId: string;
 } & ChakraProps;
 
 const SessionTile = forwardRef<HTMLDivElement, TileProps>(
-  ({ layoutKey, playedAt, track, userId, ...props }, ref) => {
+  ({ index, layoutKey, playedAt, track, tracks, userId, ...props }, ref) => {
     const image = track.image;
     const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
 
@@ -35,7 +37,7 @@ const SessionTile = forwardRef<HTMLDivElement, TileProps>(
             draggable={false}
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
-            onClick={() => onClick(track, userId, layoutKey)}
+            onClick={() => onClick(track, userId, layoutKey, tracks, index)}
             cursor="pointer"
           />
         </Tooltip>

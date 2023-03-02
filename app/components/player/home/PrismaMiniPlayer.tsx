@@ -2,13 +2,13 @@ import { Link, useTransition } from '@remix-run/react';
 
 import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
-import type { Playback, Profile, Track } from '@prisma/client';
+import type { Playback, Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import type { User } from '~/lib/types/types';
+import type { Track, User } from '~/lib/types/types';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
@@ -31,11 +31,13 @@ interface Friends extends User {
 }
 type PlayerProps = {
   currentUserId: string | undefined;
+  index: number;
   layoutKey: string;
+  tracks: Track[];
   user: Friends;
 };
 
-const PrismaMiniPlayer = ({ currentUserId, layoutKey, user }: PlayerProps) => {
+const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -153,7 +155,7 @@ const PrismaMiniPlayer = ({ currentUserId, layoutKey, user }: PlayerProps) => {
             onClick={(e) => {
               e.preventDefault();
               // e.stopPropagation();
-              track && onOpen(track, user.userId, layoutKey);
+              track && onOpen(track, user.userId, layoutKey, tracks, index);
             }}
           />
         </HStack>

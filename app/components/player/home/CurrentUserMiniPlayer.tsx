@@ -40,11 +40,13 @@ interface Friends extends User {
 }
 type PlayerProps = {
   currentUserId: string | undefined;
+  index: number;
   layoutKey: string;
+  tracks: Track[];
   user: Friends;
 };
 
-const PrismaMiniPlayer = ({ layoutKey, user }: PlayerProps) => {
+const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -194,7 +196,7 @@ const PrismaMiniPlayer = ({ layoutKey, user }: PlayerProps) => {
               as="span"
               onClick={(e) => {
                 e.preventDefault();
-                formattedTrack && onOpen(formattedTrack, user.userId, layoutKey);
+                formattedTrack && onOpen(formattedTrack, user.userId, layoutKey, tracks, index);
               }}
             >
               <Image

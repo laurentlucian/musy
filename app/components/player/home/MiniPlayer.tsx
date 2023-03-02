@@ -167,6 +167,8 @@ const MiniPlayer = ({ layoutKey, playback, user }: PlayerProps) => {
                               },
                               user.userId,
                               layoutKey,
+                              [],
+                              0,
                             );
                           }}
                         >
@@ -187,7 +189,7 @@ const MiniPlayer = ({ layoutKey, playback, user }: PlayerProps) => {
                   as="span"
                   onClick={(e) => {
                     e.preventDefault();
-                    formattedTrack && onOpen(formattedTrack, user.userId, layoutKey);
+                    formattedTrack && onOpen(formattedTrack, user.userId, layoutKey, [], 0);
                   }}
                 >
                   <Image src={image} m={0} boxSize={playback ? ['100px', '120px'] : '60px'} />

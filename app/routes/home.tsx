@@ -10,7 +10,7 @@ import MobileActivityTile from '~/components/activity/MobileActivityTile';
 import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { Activity } from '~/lib/types/types';
+import type { Activity, Track } from '~/lib/types/types';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
@@ -20,19 +20,54 @@ const Index = () => {
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < activity.length; i++) {
+    const track = {
+      albumName: activity[i].track.albumName,
+      albumUri: activity[i].track.albumUri,
+      artist: activity[i].track.artist,
+      artistUri: activity[i].track.artistUri,
+      duration: 0,
+      explicit: activity[i].track.explicit,
+      id: activity[i].trackId,
+      image: activity[i].track.image,
+      link: activity[i].track.link,
+      name: activity[i].track.name,
+      preview_url: activity[i].track.preview_url ?? '',
+      uri: activity[i].track.uri,
+    };
+    tracks.push(track);
+  }
+
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
       <Stack px={['5px', 0]}>
         {isSmallScreen ? (
           <Stack bg={bg} mb="100px">
-            {activity.map((item) => {
-              return <MobileActivityTile key={item.id} layoutKey="mActivity" activity={item} />;
+            {activity.map((item, index) => {
+              return (
+                <MobileActivityTile
+                  key={item.id}
+                  layoutKey="mActivity"
+                  activity={item}
+                  tracks={tracks}
+                  index={index}
+                />
+              );
             })}
           </Stack>
         ) : (
           <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
-            {activity.map((item) => {
-              return <ActivityTile key={item.id} layoutKey="mActivity" activity={item} />;
+            {activity.map((item, index) => {
+              return (
+                <ActivityTile
+                  key={item.id}
+                  layoutKey="mActivity"
+                  activity={item}
+                  tracks={tracks}
+                  index={index}
+                />
+              );
             })}
           </Tiles>
         )}

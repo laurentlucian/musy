@@ -9,6 +9,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
+import type { Track } from '~/lib/types/types';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Friends = () => {
@@ -38,6 +39,25 @@ const Friends = () => {
     }
   }, [shouldRevalidate, revalidate]);
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < sortedFriends.length; i++) {
+    const track = {
+      albumName: sortedFriends[i].playback?.track.albumName ?? 'No Track',
+      albumUri: sortedFriends[i].playback?.track.albumUri ?? '',
+      artist: sortedFriends[i].playback?.track.artist ?? '',
+      artistUri: sortedFriends[i].playback?.track.artistUri ?? '',
+      duration: sortedFriends[i].playback?.track.duration ?? 0,
+      explicit: sortedFriends[i].playback?.track.explicit ?? false,
+      id: sortedFriends[i].playback?.track.id ?? '',
+      image: sortedFriends[i].playback?.track.image ?? '',
+      link: sortedFriends[i].playback?.track.link ?? '',
+      name: sortedFriends[i].playback?.track.name ?? '',
+      preview_url: sortedFriends[i].playback?.track.preview_url ?? '',
+      uri: sortedFriends[i].playback?.track.uri ?? '',
+    };
+    tracks.push(track);
+  }
+
   return (
     <Stack pt={{ base: '60px', xl: 0 }} pb="100px" spacing={3} w="100%" h="100%" px={['4px', 0]}>
       {currentUserData && currentUserData.settings?.miniPlayer && (
@@ -48,6 +68,8 @@ const Friends = () => {
               layoutKey="MiniPlayer"
               user={currentUserData}
               currentUserId={currentUserId}
+              tracks={[]}
+              index={0}
             />
           )}
         </Stack>
@@ -59,6 +81,8 @@ const Friends = () => {
             layoutKey={'MiniPlayer' + index}
             user={user}
             currentUserId={currentUserId}
+            tracks={tracks}
+            index={index}
           />
         );
       })}

@@ -5,7 +5,7 @@ import { Box, Flex, SimpleGrid } from '@chakra-ui/react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import { useDrawerTrack, useDrawerTrackIndex } from '~/hooks/useDrawer';
 // import useParentData from '~/hooks/useParentData';
 
 import CloseButton from './actions/CloseButton';
@@ -13,11 +13,10 @@ import { default as Track } from './ActionTrack';
 import { default as Actions } from './TileActions';
 
 const ExpandedTile = () => {
-  const [[page, direction], setPage] = useState([0, 0]);
+  const trackIndex = useDrawerTrackIndex();
+  const [[page, direction], setPage] = useState([0 + trackIndex, trackIndex]);
   const track = useDrawerTrack();
-  // const test = useParentData('/daniel.valdecantos/');
-  // console.log(useMatches());
-  // console.log(track)
+
   useEffect(() => {
     if (track) {
       document.body.style.overflow = 'hidden';
@@ -53,15 +52,10 @@ const ExpandedTile = () => {
             justifyContent={['space-between', 'unset']}
           >
             <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" h="100%" overflow="hidden">
-              <Track
-                track={track}
-                page={page}
-                direction={direction}
-                setPage={setPage}
-              />
+              <Track page={page} direction={direction} setPage={setPage} />
               <Actions track={track} />
             </SimpleGrid>
-            <CloseButton />
+            <CloseButton setPage={setPage}/>
           </Flex>
         </Box>
       )}

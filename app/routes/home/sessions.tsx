@@ -17,11 +17,22 @@ const Friends = () => {
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]} bg={bg}>
       {sessions.map((session) => {
+        const tracks = session.songs.map(({ track }) => track);
         return (
           <Stack spacing={3} key={session.id}>
             <SessionModal session={session}>
-              {session.songs.map(({ id, playedAt, track, userId }) => {
-                return <SessionT key={id} layoutKey="HomeSession" track={track} playedAt={playedAt} userId={userId} />;
+              {session.songs.map(({ id, playedAt, track, userId }, index) => {
+                return (
+                  <SessionT
+                    key={id}
+                    layoutKey="HomeSession"
+                    track={track}
+                    tracks={tracks}
+                    playedAt={playedAt}
+                    userId={userId}
+                    index={index}
+                  />
+                );
               })}
             </SessionModal>
           </Stack>

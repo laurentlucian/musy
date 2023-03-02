@@ -81,7 +81,7 @@ const MiniTile = ({
               src={image}
               w="200px"
               draggable={false}
-              onClick={() => onOpen(item, userId, layoutKey)}
+              onClick={() => onOpen(item, userId, layoutKey, [], 0)}
             />
           </Tooltip>
         ) : (

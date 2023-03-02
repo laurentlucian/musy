@@ -3,6 +3,8 @@ import { useState, useCallback } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
+import type { Track } from '~/lib/types/types';
+
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import Card from './Card';
@@ -19,10 +21,29 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   }, [setShow]);
   const title = 'Recent';
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < recent.length; i++) {
+    const track = {
+      albumName: recent[i].track.album.name,
+      albumUri: recent[i].track.album.uri,
+      artist: recent[i].track.artists[0].name,
+      artistUri: recent[i].track.artists[0].uri,
+      duration: recent[i].track.duration_ms,
+      explicit: recent[i].track.explicit,
+      id: recent[i].track.id,
+      image: recent[i].track.album.images[0]?.url,
+      link: recent[i].track.external_urls.spotify,
+      name: recent[i].track.name,
+      preview_url: recent[i].track.preview_url,
+      uri: recent[i].track.uri,
+    };
+    tracks.push(track);
+  }
+
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {recent.map(({ played_at, track }) => {
+        {recent.map(({ played_at, track }, index) => {
           return (
             <Tile
               key={played_at}
@@ -42,6 +63,8 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                 uri: track.uri,
               }}
               profileId={id ?? ''}
+              tracks={tracks}
+              index={index}
             />
           );
         })}
@@ -59,7 +82,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {recent.map(({ played_at, track }) => {
+            {recent.map(({ played_at, track }, index) => {
               return (
                 <Box key={played_at}>
                   <Tile
@@ -78,6 +101,8 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                       preview_url: track.preview_url,
                       uri: track.uri,
                     }}
+                    tracks={tracks}
+                    index={index}
                     profileId={id ?? ''}
                     w={['115px', '100px']}
                   />
@@ -86,7 +111,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             })}
           </SimpleGrid>
         ) : (
-          recent.map(({ played_at, track }) => {
+          recent.map(({ played_at, track }, index) => {
             return (
               <Card
                 key={played_at}
@@ -105,6 +130,8 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                   preview_url: track.preview_url,
                   uri: track.uri,
                 }}
+                tracks={tracks}
+                index={index}
                 userId={id ?? ''}
               />
             );

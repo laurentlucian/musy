@@ -27,6 +27,8 @@ const RecentTracksPrisma = ({
   }, [setShow]);
   const title = 'Recent';
 
+  const tracks = recent.map((data) => data.track);
+
   if (!recent.length) return null;
 
   return (
@@ -37,8 +39,10 @@ const RecentTracksPrisma = ({
             return (
               <Tile
                 key={index}
+                index={index}
                 layoutKey={'RecentPrisma' + index}
                 track={track}
+                tracks={tracks}
                 profileId={id ?? ''}
               />
             );
@@ -77,6 +81,8 @@ const RecentTracksPrisma = ({
                   key={index}
                   layoutKey={'RecentPrismaCard' + index}
                   track={track}
+                  tracks={tracks}
+                  index={index}
                   userId={id ?? ''}
                 />
               );

@@ -18,7 +18,7 @@ const TileMotion = forwardRef<
       ref={ref}
       onClick={() => {
         if (track) {
-          onOpen(track, profileId, layoutKey);
+          onOpen(track, profileId, layoutKey, [], 0);
         } else {
           onClose();
         }

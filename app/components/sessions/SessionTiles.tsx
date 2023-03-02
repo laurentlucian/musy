@@ -33,14 +33,16 @@ type TileProps = Track & {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   inDrawer?: boolean;
+  index: number;
   isQueuing?: boolean;
   isRecommending?: boolean;
   layoutKey: string;
   list?: boolean;
   profileId: string;
-
   submit?: SubmitFunction;
+
   trackDuration: number;
+  tracks: Track[];
 } & ChakraProps;
 
 const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
@@ -61,6 +63,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       id,
       image,
       inDrawer,
+      index,
       isQueuing,
       isRecommending,
       layoutKey,
@@ -69,6 +72,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
       preview_url,
       profileId,
       submit,
+      tracks,
       uri,
       ...props
     },
@@ -227,7 +231,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                   draggable={false}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}
-                  onClick={() => onClick(track, profileId, layoutKey)}
+                  onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
                   cursor="pointer"
                 />
               </Tooltip>
@@ -237,7 +241,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                 spacing={0}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId, layoutKey)}
+                onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
                 cursor="pointer"
               >
                 <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">

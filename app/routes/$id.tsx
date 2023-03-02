@@ -249,16 +249,16 @@ export const action = async ({ params, request }: ActionArgs) => {
       });
 
       // Add the user's id from the favoriteUsers array
-      await prisma.profile.update({
-        data: { favoriteUsers: { connect: [{ userId: id }] } },
-        where: { userId: currentUser.userId },
-      });
+      // await prisma.profile.update({
+      //   data: { favoriteUsers: { connect: [{ userId: id }] } },
+      //   where: { userId: currentUser.userId },
+      // });
     } else if (favUser === 'remove') {
       // Remove the user's id from the favoriteUsers array
-      await prisma.profile.update({
-        data: { favoriteUsers: { disconnect: [{ userId: id }] } },
-        where: { userId: currentUser.userId },
-      });
+      // await prisma.profile.update({
+      //   data: { favoriteUsers: { disconnect: [{ userId: id }] } },
+      //   where: { userId: currentUser.userId },
+      // });
     }
   }
 

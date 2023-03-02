@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import useIsVisible from '~/hooks/useIsVisible';
+import type { Track } from '~/lib/types/types';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
@@ -49,6 +50,25 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
   const scrollButtons = liked.length > 5;
   const title = 'Liked';
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < liked.length; i++) {
+    const track = {
+      albumName: liked[i].track.album.name,
+      albumUri: liked[i].track.album.uri,
+      artist: liked[i].track.artists[0].name,
+      artistUri: liked[i].track.artists[0].uri,
+      duration: liked[i].track.duration_ms,
+      explicit: liked[i].track.explicit,
+      id: liked[i].track.id,
+      image: liked[i].track.album.images[0]?.url,
+      link: liked[i].track.external_urls.spotify,
+      name: liked[i].track.name,
+      preview_url: liked[i].track.preview_url,
+      uri: liked[i].track.uri,
+    };
+    tracks.push(track);
+  }
+
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
@@ -77,6 +97,8 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                 uri: track.uri,
               }}
               profileId={id ?? ''}
+              tracks={tracks}
+              index={index}
             />
           );
         })}
@@ -115,6 +137,8 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                     }}
                     profileId={id ?? ''}
                     w={['115px', '100px']}
+                    tracks={tracks}
+                    index={index}
                   />
                 </Box>
               );
@@ -145,6 +169,8 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   uri: track.uri,
                 }}
                 userId={id ?? ''}
+                tracks={tracks}
+                index={index}
               />
             );
           })

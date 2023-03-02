@@ -1,14 +1,20 @@
+import type { Dispatch, SetStateAction } from 'react';
+
 import { Button, useEventListener } from '@chakra-ui/react';
 
 // import { useEventListener } from 'usehooks-ts';
 
 import { useDrawerActions } from '~/hooks/useDrawer';
 
-const CloseButton = () => {
+const CloseButton = ({ setPage }: { setPage: Dispatch<SetStateAction<[number, number]>> }) => {
   const { onClose } = useDrawerActions();
   useEventListener('keydown', (e) => {
     if (e.code === 'Escape') onClose();
   });
+  const handleClick = () => {
+    onClose();
+    setPage([0, 0]);
+  };
   return (
     <Button
       variant="mobileNav"
@@ -19,7 +25,7 @@ const CloseButton = () => {
       pb={['60px', 0]}
       pt={['20px', 0]}
       alignSelf="center"
-      onClick={onClose}
+      onClick={handleClick}
     >
       close
     </Button>

@@ -206,7 +206,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                     noOfLines={1}
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey)}
+                    onClick={() => onClick(track, id, layoutKey, [track], 0)}
                     cursor="pointer"
                     w={['200px', '68%']}
                     overflow="hidden"
@@ -218,7 +218,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                   <Flex
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey)}
+                    onClick={() => onClick(track, id, layoutKey, [track], 0)}
                     cursor="pointer"
                     w={['200px', '68%']}
                   >
@@ -363,7 +363,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                     transition="width 0.25s, height 0.25s"
                     onMouseDown={onMouseDown}
                     onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey)}
+                    onClick={() => onClick(track, id, layoutKey, [track], 0)}
                     cursor="pointer"
                   />
                 </Tooltip>

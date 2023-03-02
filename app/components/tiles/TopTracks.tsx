@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Box, HStack, SimpleGrid, Stack, useRadioGroup } from '@chakra-ui/react';
 
 import { RadioCard } from '~/lib/theme/components/Radio';
+import type { Track } from '~/lib/types/types';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
@@ -58,6 +59,25 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     setShow(false);
   }, [setShow]);
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < top.length; i++) {
+    const track = {
+      albumName: top[i].album.name,
+      albumUri: top[i].album.uri,
+      artist: top[i].artists[0].name,
+      artistUri: top[i].artists[0].uri,
+      duration: top[i].duration_ms,
+      explicit: top[i].explicit,
+      id: top[i].id,
+      image: top[i].album.images[0]?.url,
+      link: top[i].external_urls.spotify,
+      name: top[i].name,
+      preview_url: top[i].preview_url,
+      uri: top[i].uri,
+    };
+    tracks.push(track);
+  }
+
   if (!top.length) return null;
 
   return (
@@ -101,7 +121,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {top.map((track) => {
+            {top.map((track, index) => {
               return (
                 <Box key={track.id}>
                   <Tile
@@ -120,6 +140,8 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                       preview_url: track.preview_url,
                       uri: track.uri,
                     }}
+                    tracks={tracks}
+                    index={index}
                     profileId={id ?? ''}
                     w={['115px', '100px']}
                   />
@@ -128,7 +150,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             })}
           </SimpleGrid>
         ) : (
-          top.map((track) => {
+          top.map((track, index) => {
             return (
               <Card
                 key={track.id}
@@ -147,6 +169,8 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   preview_url: track.preview_url,
                   uri: track.uri,
                 }}
+                tracks={tracks}
+                index={index}
                 userId={id ?? ''}
               />
             );

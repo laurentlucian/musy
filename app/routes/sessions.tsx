@@ -25,11 +25,21 @@ const Friends = () => {
       bg={bg}
     >
       {sessions.map((session) => {
+        const tracks = session.songs.map(({ track }) => track);
         return (
           <Stack spacing={3} key={session.id}>
             <SessionModal session={session}>
-              {session.songs.map(({ id, track, userId }) => {
-                return <SessionT key={id} layoutKey="Session" track={track} userId={userId} />;
+              {session.songs.map(({ id, track, userId }, index) => {
+                return (
+                  <SessionT
+                    key={id}
+                    layoutKey="Session"
+                    track={track}
+                    userId={userId}
+                    tracks={tracks}
+                    index={index}
+                  />
+                );
               })}
             </SessionModal>
           </Stack>

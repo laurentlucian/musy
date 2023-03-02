@@ -3,18 +3,15 @@ import { useState } from 'react';
 
 import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
 
-import { motion } from 'framer-motion';
+import { motion, wrap } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerLayoutKey } from '~/hooks/useDrawer';
-import type { Track } from '~/lib/types/types';
+import { useDrawerLayoutKey, useDrawerTrackIndex, useDrawerTracks } from '~/hooks/useDrawer';
 
 type ActionTrackProps = {
   direction: number;
-  // dragging: boolean;
   page: number;
   setPage: Dispatch<SetStateAction<[number, number]>>;
-  track: Track;
 };
 
 const variants = {
@@ -42,18 +39,22 @@ const swipePower = (offset: number, velocity: number) => {
   return Math.abs(offset) * velocity;
 };
 
-const ActionTrack = ({ direction, page, setPage, track }: ActionTrackProps) => {
+const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
+  const [dragging, setDragging] = useState(false);
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
   };
-  const [dragging, setDragging] = useState(false);
-  console.log(dragging);
-
+  const originalIndex = useDrawerTrackIndex();
   const layoutKey = useDrawerLayoutKey();
+  const tracks = useDrawerTracks();
+  const index = wrap(0, tracks.length, page + originalIndex);
+
+  console.log('page: ', page);
+
   return (
     <Stack
       as={motion.div}
-      layoutId={track.id + layoutKey}
+      layoutId={tracks[originalIndex].id + layoutKey}
       w={['93%', '369px', 500]}
       alignSelf="end"
       onPointerDown={() => setDragging(true)}
@@ -90,12 +91,16 @@ const ActionTrack = ({ direction, page, setPage, track }: ActionTrackProps) => {
           minW={['93%', '369px', 500]}
           minH={['93%', '369px', 500]}
           objectFit="cover"
-          src={track.image}
+          src={tracks[index].image}
           draggable={false}
           cursor="pointer"
           zIndex={10}
         />
-        <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
+        <Link
+          href={tracks[index].uri}
+          _hover={{ textDecor: 'none' }}
+          _focus={{ boxShadow: 'none' }}
+        >
           <Text
             fontSize={['xl', '5xl']}
             fontWeight="bold"
@@ -104,19 +109,19 @@ const ActionTrack = ({ direction, page, setPage, track }: ActionTrackProps) => {
             wordBreak="break-word"
             pos="relative"
           >
-            {track.name}
+            {tracks[index].name}
           </Text>
         </Link>
         <Link
-          href={track.artistUri}
+          href={tracks[index].artistUri}
           _hover={{ textDecor: 'none' }}
           w="fit-content"
           _focus={{ boxShadow: 'none' }}
           pos="relative"
         >
           <Flex dir="row">
-            {track.explicit && <Image src={explicitImage} w="19px" mr="3px" />}
-            <Text color="#BBB8B7">{track.artist}</Text>
+            {tracks[index].explicit && <Image src={explicitImage} w="19px" mr="3px" />}
+            <Text color="#BBB8B7">{tracks[index].artist}</Text>
           </Flex>
         </Link>
       </motion.div>

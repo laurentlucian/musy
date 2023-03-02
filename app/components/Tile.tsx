@@ -33,15 +33,17 @@ type TileProps = {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   inDrawer?: boolean;
+  index?: number;
   isQueuing?: boolean;
   isRecommending?: boolean;
   layoutKey: string;
   list?: boolean;
-
   playlist?: Boolean;
+
   profileId: string;
   submit?: SubmitFunction;
   track: Track;
+  tracks?: Track[];
   w?: string[];
 } & ChakraProps;
 
@@ -55,6 +57,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       fetcher,
       fetcherRec,
       inDrawer,
+      index,
       isQueuing,
       isRecommending,
       layoutKey,
@@ -62,6 +65,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       profileId,
       submit,
       track,
+      tracks,
       w,
       ...props
     },
@@ -211,7 +215,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId, layoutKey)}
+                onClick={() => onClick(track, profileId, layoutKey, tracks!, index!)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -221,7 +225,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId, layoutKey)}
+              onClick={() => onClick(track, profileId, layoutKey, tracks!, index!)}
               cursor="pointer"
               w="175px"
             >

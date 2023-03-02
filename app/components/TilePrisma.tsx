@@ -33,6 +33,7 @@ type TileProps = {
     ({ params, request }: DataFunctionArgs) => Promise<TypedJsonResponse<string>>
   >;
   inDrawer?: boolean;
+  index: number;
   isQueuing?: boolean;
   isRecommending?: boolean;
   layoutKey: string;
@@ -40,8 +41,9 @@ type TileProps = {
   playlist?: Boolean;
   profileId: string;
   submit?: SubmitFunction;
-
   track: Track;
+
+  tracks: Track[];
 } & ChakraProps;
 
 const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
@@ -54,14 +56,16 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
       fetcher,
       fetcherRec,
       inDrawer,
+      index,
       isQueuing,
       isRecommending,
       layoutKey,
       list,
-      // playlist,
       profileId,
+      // playlist,
       submit,
       track,
+      tracks,
       ...props
     },
     ref,
@@ -204,7 +208,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId, layoutKey)}
+                onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -214,7 +218,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId, layoutKey)}
+              onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
               cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">

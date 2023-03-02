@@ -10,6 +10,7 @@ import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
+import type { Track } from '~/lib/types/types';
 
 const Friends = () => {
   const users = useUsers();
@@ -38,6 +39,28 @@ const Friends = () => {
     }
   }, [shouldRevalidate, revalidate]);
 
+  const tracks: Track[] = [];
+  for (let i = 0; i < sortedFriends.length; i++) {
+    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
+      continue;
+    }
+    const track = {
+      albumName: sortedFriends[i].playback!.track.albumName,
+      albumUri: sortedFriends[i].playback!.track.albumUri,
+      artist: sortedFriends[i].playback!.track.artist,
+      artistUri: sortedFriends[i].playback!.track.artistUri,
+      duration: sortedFriends[i].playback!.track.duration,
+      explicit: sortedFriends[i].playback!.track.explicit,
+      id: sortedFriends[i].playback!.track.id,
+      image: sortedFriends[i].playback!.track.image,
+      link: sortedFriends[i].playback!.track.link,
+      name: sortedFriends[i].playback!.track.name,
+      preview_url: sortedFriends[i].playback!.track.preview_url,
+      uri: sortedFriends[i].playback!.track.uri,
+    };
+    tracks.push(track);
+  }
+
   return (
     <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
       {currentUserData && (
@@ -48,6 +71,8 @@ const Friends = () => {
               layoutKey="MiniPlayerS"
               user={currentUserData}
               currentUserId={currentUser?.userId}
+              index={0}
+              tracks={[]}
             />
           )}
           <HStack>
@@ -62,7 +87,6 @@ const Friends = () => {
           <Divider bgColor="spotify.green" />
         </Stack>
       )}
-
       {sortedFriends.map((user, index) => {
         return (
           <PrismaMiniPlayer
@@ -70,6 +94,8 @@ const Friends = () => {
             layoutKey={'MiniPlayerF' + index}
             user={user}
             currentUserId={currentUser?.userId}
+            tracks={tracks}
+            index={index}
           />
         );
       })}

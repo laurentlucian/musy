@@ -15,30 +15,42 @@ type DrawerTrack = Track & {
 interface DrawerStateConfig {
   actions: {
     onClose: () => void;
-    onOpen: (by: DrawerTrack, fromId: string, layoutKey: string | null) => void;
+    onOpen: (
+      by: DrawerTrack,
+      fromId: string,
+      layoutKey: string | null,
+      tracks: Track[],
+      index: number,
+    ) => void;
     setIsPlaying: (by: boolean) => void;
   };
   fromId: string | null;
+  index: number;
   isPlaying?: boolean;
   layoutKey: string | null;
   track: DrawerTrack | null;
+  tracks: Track[] | [];
 }
 
 const useDrawerStore = create<DrawerStateConfig>()((set) => ({
   actions: {
     onClose: () => set({ isPlaying: false, track: null }),
-    onOpen: (track, fromId, layoutKey) =>
+    onOpen: (track, fromId, layoutKey, tracks, index) =>
       set({
         fromId,
+        index,
         layoutKey,
         track,
+        tracks,
       }),
     setIsPlaying: (by) => set({ isPlaying: by }),
   },
   fromId: null,
+  index: 0,
   isPlaying: false,
   layoutKey: null,
   track: null,
+  tracks: [],
 }));
 
 export const useDrawerTrack = () =>
@@ -49,23 +61,11 @@ export const useDrawerTrack = () =>
     // a shallow comparison is used for objects
     shallow,
   );
-export const useDrawerIsPlaying = () =>
-  useDrawerStore(
-    (state) => state.isPlaying,
-    // by default, zustand checks if state changes with a strict equality check
-    // this means that if you have an object in state, it would always be considered changed
-    // a shallow comparison is used for objects
-    shallow,
-  );
-export const useDrawerFromId = () =>
-  useDrawerStore(
-    (state) => state.fromId,
-    // by default, zustand checks if state changes with a strict equality check
-    // this means that if you have an object in state, it would always be considered changed
-    // a shallow comparison is used for objects
-    shallow,
-  );
+export const useDrawerTracks = () => useDrawerStore((state) => state.tracks, shallow);
+export const useDrawerIsPlaying = () => useDrawerStore((state) => state.isPlaying, shallow);
+export const useDrawerFromId = () => useDrawerStore((state) => state.fromId, shallow);
 export const useDrawerLayoutKey = () => useDrawerStore((state) => state.layoutKey, shallow);
+export const useDrawerTrackIndex = () => useDrawerStore((state) => state.index, shallow);
 
 export const useDrawerActions = () => useDrawerStore((state) => state.actions);
 
@@ -84,9 +84,15 @@ export const useClickDrag = () => {
     }
   };
 
-  const handleClick = (track: Track, fromId: string, layoutKey: string) => {
+  const handleClick = (
+    track: Track,
+    fromId: string,
+    layoutKey: string,
+    tracks: Track[] | [],
+    index: number,
+  ) => {
     if (!isMouseDragged) {
-      onOpen(track, fromId, layoutKey);
+      onOpen(track, fromId, layoutKey, tracks, index);
     }
     setIsMouseDown(false);
     setIsMouseDragged(false);

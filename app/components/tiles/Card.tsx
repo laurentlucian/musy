@@ -14,14 +14,16 @@ import type { action } from '~/routes/$id/removeRecommend';
 import SpotifyLogo from '../icons/SpotifyLogo';
 
 type CardProps = {
+  index: number;
   layoutKey: string;
   recommend?: boolean;
   ref?: (node: HTMLDivElement | null) => void;
   track: Track;
+  tracks: Track[];
   userId: string;
 } & ChakraProps;
 
-const Card = ({ layoutKey, recommend, track, userId }: CardProps) => {
+const Card = ({ index, layoutKey, recommend, track, tracks, userId }: CardProps) => {
   const isSmallScreen = useIsMobile();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const drawerTrack = track;
@@ -45,7 +47,7 @@ const Card = ({ layoutKey, recommend, track, userId }: CardProps) => {
       draggable={false}
       onMouseDown={onMouseDown}
       onMouseMove={onMouseMove}
-      onClick={() => onClick(drawerTrack, userId, layoutKey)}
+      onClick={() => onClick(drawerTrack, userId, layoutKey, tracks, index)}
     />
   );
   const ArtistName = (

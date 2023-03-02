@@ -162,14 +162,22 @@ const Explore = () => {
             />
           )}
         </InputGroup>
-        <UserMenu/>
+        <UserMenu />
       </HStack>
       <Stack pt="50px" overflowY="scroll" w="100%" h="91vh">
         {data?.users.map((user: Profile) => (
           <UserTile key={user.id} profile={user} />
         ))}
         {tracks?.map((track, index) => (
-          <Tile key={track.id} layoutKey={"Explore" + index} track={track} profileId={id} list />
+          <Tile
+            key={track.id}
+            layoutKey={'Explore' + index}
+            track={track}
+            tracks={tracks}
+            index={index}
+            profileId={id}
+            list
+          />
         ))}
 
         {!search ? (
@@ -180,8 +188,16 @@ const Explore = () => {
                 7d
               </Text>
             </HStack>
-            {top.map((track) => (
-              <TilePrisma key={id} layoutKey="ExplorePrisma" track={track} profileId="" list />
+            {top.map((track, index) => (
+              <TilePrisma
+                key={id}
+                layoutKey="ExplorePrisma"
+                track={track}
+                tracks={tracks}
+                index={index}
+                profileId=""
+                list
+              />
             ))}
           </>
         ) : null}

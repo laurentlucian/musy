@@ -59,6 +59,8 @@ const LikedTracksPrisma = ({
   const scrollButtons = liked.length > 5;
   const title = 'Liked';
 
+  const tracks = liked.map((data) => data.track);
+
   if (!liked.length) return null;
   return (
     <Stack spacing={3}>
@@ -74,6 +76,8 @@ const LikedTracksPrisma = ({
               key={track.id}
               track={track}
               profileId={id ?? ''}
+              tracks={tracks}
+              index={index}
             />
           );
         })}
@@ -115,6 +119,8 @@ const LikedTracksPrisma = ({
                 key={track.id}
                 layoutKey="LikedPrismaCard"
                 track={track}
+                tracks={tracks}
+                index={index}
                 userId={id ?? ''}
               />
             );

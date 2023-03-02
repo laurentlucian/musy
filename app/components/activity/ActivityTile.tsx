@@ -18,7 +18,7 @@ import { Heart, Play, Send2 } from 'iconsax-react';
 
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
-import type { Activity } from '~/lib/types/types';
+import type { Activity, Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
@@ -27,7 +27,9 @@ import PlayedBy from './PlayedBy';
 
 interface ActivityProps {
   activity: Activity;
+  index: number;
   layoutKey: string;
+  tracks: Track[];
 }
 
 const ActivityAction = ({ activity }: ActivityProps) => {
@@ -128,7 +130,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
   );
 };
 
-const ActivityTile = ({ activity, layoutKey }: ActivityProps) => {
+const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
   const { onOpen } = useDrawerActions();
@@ -166,13 +168,13 @@ const ActivityTile = ({ activity, layoutKey }: ActivityProps) => {
   return (
     <Stack>
       <HStack>
-        <ActivityAction activity={activity} layoutKey="Activity" />
+        <ActivityAction activity={activity} layoutKey="Activity" tracks={tracks} index={index} />
       </HStack>
       <Flex
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onOpen(item, activity.user.userId, layoutKey)}
+        onClick={() => onOpen(item, activity.user.userId, layoutKey, tracks, index)}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
