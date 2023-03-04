@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, wrap } from 'framer-motion';
 
-import type { Track } from '~/lib/types/types';
+import { useDrawerTrackIndex, useDrawerTracks } from '~/hooks/useDrawer';
 
 import AddQueue from '../menu/actions/AddQueue';
 import AnalyzeTrack from '../menu/actions/AnalyzeTrack';
@@ -16,9 +16,12 @@ import RecommendTo from './actions/RecommendTo';
 import SendList from './actions/SendList';
 import SendTo from './actions/SendTo';
 
-const TileActions = ({ track }: { track: Track }) => {
+const TileActions = ({ page }: { page: number }) => {
   const [show, setShow] = useState(0);
-
+  const tracks = useDrawerTracks();
+  const originalIndex = useDrawerTrackIndex();
+  const index = wrap(0, tracks.length, page + originalIndex);
+  
   return (
     <AnimatePresence>
       <Stack
@@ -37,18 +40,18 @@ const TileActions = ({ track }: { track: Track }) => {
             transition={{ delay: 0.1 }}
           >
             <Stack w="250px">
-              <SaveToLiked trackId={track.id} />
-              <AnalyzeTrack trackId={track.id} />
-              {track.link !== '' && <CopyLink link={track.link} />}
-              <PlayPreview preview_url={track.preview_url} />
+              <SaveToLiked trackId={tracks[index].id} />
+              <AnalyzeTrack trackId={tracks[index].id} />
+              {tracks[index].link !== '' && <CopyLink link={tracks[index].link} />}
+              <PlayPreview preview_url={tracks[index].preview_url} />
               <ProfileSong />
-              <AddQueue trackId={track.id} user={null} />
+              <AddQueue trackId={tracks[index].id} user={null} />
               <SendTo setShow={setShow} />
               <RecommendTo setShow={setShow} />
             </Stack>
           </motion.div>
         ) : (
-          <SendList trackId={track.id} setShow={setShow} show={show} />
+          <SendList trackId={tracks[index].id} setShow={setShow} show={show} />
         )}
       </Stack>
     </AnimatePresence>
