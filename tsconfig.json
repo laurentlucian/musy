@@ -1,12 +1,5 @@
 {
-  "include": [
-    "remix.env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "./.eslintrc.js",
-    "./commitlint.config.js",
-    "./remix.config.js"
-  ],
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "./.eslintrc.js", "./commitlint.config.js"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "isolatedModules": true,
