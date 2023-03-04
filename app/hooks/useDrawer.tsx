@@ -17,7 +17,7 @@ interface DrawerStateConfig {
     onClose: () => void;
     onOpen: (
       by: DrawerTrack,
-      fromId: string,
+      fromId: string | null,
       layoutKey: string | null,
       tracks: Track[],
       index: number,
@@ -86,7 +86,7 @@ export const useClickDrag = () => {
 
   const handleClick = (
     track: Track,
-    fromId: string,
+    fromId: string | null,
     layoutKey: string,
     tracks: Track[] | [],
     index: number,

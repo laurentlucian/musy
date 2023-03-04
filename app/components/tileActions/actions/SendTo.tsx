@@ -6,11 +6,7 @@ import { Send2 } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
-const SendTo = ({
-  setShow,
-}: {
-  setShow: Dispatch<SetStateAction<number>>;
-}) => {
+const SendTo = ({ setShow }: { setShow: Dispatch<SetStateAction<number>> }) => {
   const currentUser = useSessionUser();
   const handleClick = () => {
     setShow(1);

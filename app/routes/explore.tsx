@@ -175,7 +175,6 @@ const Explore = () => {
             track={track}
             tracks={tracks}
             index={index}
-            profileId={id}
             list
           />
         ))}
