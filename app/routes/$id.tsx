@@ -240,13 +240,13 @@ export const action = async ({ params, request }: ActionArgs) => {
     invariant(profile, 'Profile not found');
 
     if (favUser === 'add') {
-      await prisma.favUsers.create({
-        data: {
-          user: {
-            connect: { userId: id },
-          },
-        },
-      });
+      // await prisma.favUsers.create({
+      //   data: {
+      //     user: {
+      //       connect: { userId: id },
+      //     },
+      //   },
+      // });
 
       // Add the user's id from the favoriteUsers array
       // await prisma.profile.update({
