@@ -57,7 +57,7 @@ const Index = () => {
             })}
           </Stack>
         ) : (
-          <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? true}>
+          <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
             {activity.map((item, index) => {
               return (
                 <ActivityTile
