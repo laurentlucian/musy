@@ -1,6 +1,5 @@
 import { HStack, Text } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
 import { useTypedLoaderData } from 'remix-typedjson';
 
 import useSessionUser from '~/hooks/useSessionUser';
@@ -8,7 +7,7 @@ import type { loader } from '~/routes/explore';
 
 import Tile from '../Tile';
 
-const Top = ({ tracks }: { tracks: Track[] }) => {
+const Top = () => {
   const currentUser = useSessionUser();
   const id = currentUser?.userId;
   const { top } = useTypedLoaderData<typeof loader>();
@@ -24,11 +23,11 @@ const Top = ({ tracks }: { tracks: Track[] }) => {
       {top.map((track, index) => (
         <Tile
           key={track.id}
-          layoutKey={'ExploreTop' + index}
+          layoutKey="ExploreTop"
           track={track}
-          tracks={tracks}
+          tracks={top}
           index={index}
-          profileId={id}
+          profileId={id ?? ''}
           list
         />
       ))}

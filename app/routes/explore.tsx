@@ -36,7 +36,7 @@ const Explore = () => {
           />
         ))}
 
-        {!search ? <Top tracks={tracks} /> : null}
+        {!search ? <Top /> : null}
       </Stack>
     </Stack>
   );
