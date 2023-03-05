@@ -58,7 +58,7 @@ const Nav = () => {
               bg={bg}
               color={color}
             >
-              Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
+              Login{/*  with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} /> */}
             </Button>
           </Form>
         ) : (
