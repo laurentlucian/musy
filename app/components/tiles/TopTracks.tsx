@@ -83,7 +83,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
       <Tiles title={title} scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
-        {top.map((track) => {
+        {top.map((track, index) => {
           return (
             <Tile
               key={track.id}
@@ -104,6 +104,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               }}
               profileId={id ?? ''}
               tracks={tracks}
+              index={index}
             />
           );
         })}
