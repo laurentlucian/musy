@@ -16,7 +16,7 @@ import {
 import { motion } from 'framer-motion';
 import { Heart, Play, Send2 } from 'iconsax-react';
 
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useClickDrag, useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
 import type { Activity, Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
@@ -133,7 +133,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
 const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
 
-  const { onOpen } = useDrawerActions();
+  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   // eslint-disable-next-line
   const dontRemoveThis = useDrawerTrack();
 
@@ -174,7 +174,9 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onOpen(item, activity.user.userId, layoutKey, tracks, index)}
+        onClick={() => onClick(item, activity.user.userId, layoutKey, tracks, index)}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
