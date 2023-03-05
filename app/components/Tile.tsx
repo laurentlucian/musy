@@ -39,7 +39,6 @@ type TileProps = {
   layoutKey: string;
   list?: boolean;
   playlist?: Boolean;
-
   profileId?: string;
   submit?: SubmitFunction;
   track: Track;
@@ -215,7 +214,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, null, layoutKey, tracks, index ?? 0)}
+                onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -225,7 +224,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, null, layoutKey, tracks, index ?? 0)}
+              onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
               cursor="pointer"
               w="175px"
             >

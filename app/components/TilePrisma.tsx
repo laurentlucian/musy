@@ -39,10 +39,9 @@ type TileProps = {
   layoutKey: string;
   list?: boolean;
   playlist?: Boolean;
-  profileId: string;
+  profileId?: string;
   submit?: SubmitFunction;
   track: Track;
-
   tracks: Track[];
 } & ChakraProps;
 
@@ -100,7 +99,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
         action: 'send',
 
         fromId: fromUserId ?? '',
-        toId: sendToUserId,
+        toId: sendToUserId ?? '',
         trackId: track.id,
       };
 
@@ -118,7 +117,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
         name: track.name,
         preview_url: track.preview_url ?? '',
 
-        toId: sendToUserId,
+        toId: sendToUserId ?? '',
         trackId: track.id,
         uri: track.uri,
       };
@@ -208,7 +207,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
                 draggable={false}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
+                onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
                 cursor="pointer"
               />
             </Tooltip>
@@ -218,7 +217,7 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
               spacing={0}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
-              onClick={() => onClick(track, profileId, layoutKey, tracks, index)}
+              onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
               cursor="pointer"
             >
               <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
