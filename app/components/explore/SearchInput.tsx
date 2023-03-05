@@ -66,14 +66,14 @@ const SearchInput = ({
   };
 
   return (
-    <HStack justifyContent="space-between" h="100%">
+    <HStack justifyContent="space-between">
       <InputGroup
         w={['90vw', '500px']}
-        mr="27px"
-        mt="-5px"
-        pos="fixed"
-        top={[2]}
-        left={[0, '37.5%']}
+        mr={['27px', 0]}
+        mt={['-5px', 0]}
+        pos={['fixed', 'relative']}
+        top={[2, '-60px']}
+        left={0}
         bg={bg}
         zIndex={1}
         overflowY="hidden"

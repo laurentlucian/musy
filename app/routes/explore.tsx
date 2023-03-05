@@ -21,7 +21,7 @@ const Explore = () => {
   return (
     <Stack bg={bg} alignItems="center" h="100%">
       <SearchInput search={search} setSearch={setSearch} setTracks={setTracks} />
-      <Stack pt="50px" overflowY="scroll" w="100%" h="91vh">
+      <Stack pt={['50px', 0]} w={['100%', ' 500px']} h={['91vh', '100%']} overflowY="scroll">
         {data?.users.map((user: Profile) => (
           <UserTile key={user.id} profile={user} />
         ))}
