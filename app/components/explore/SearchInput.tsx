@@ -15,6 +15,7 @@ import {
 
 import type { Track } from '@prisma/client';
 
+import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 
 import Waver from '../icons/Waver';
@@ -34,8 +35,8 @@ const SearchInput = ({
   const color = useColorModeValue('music.800', 'music.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const inputRef = useRef<HTMLInputElement>(null);
+  const isSmallScreen = useIsMobile();
   const { state } = useFetcher();
-
   const busy = state === 'loading' ?? false;
 
   const deleteSearch = () => {
@@ -67,12 +68,12 @@ const SearchInput = ({
   return (
     <HStack justifyContent="space-between" h="100%">
       <InputGroup
-        w="90vw"
+        w={['90vw', '500px']}
         mr="27px"
         mt="-5px"
         pos="fixed"
-        top={2}
-        left={0}
+        top={[2]}
+        left={[0, '37.5%']}
         bg={bg}
         zIndex={1}
         overflowY="hidden"
@@ -121,7 +122,7 @@ const SearchInput = ({
           />
         )}
       </InputGroup>
-      <UserMenu />
+      {isSmallScreen && <UserMenu />}
     </HStack>
   );
 };

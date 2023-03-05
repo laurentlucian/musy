@@ -13,7 +13,6 @@ const Top = ({ tracks }: { tracks: Track[] }) => {
   const id = currentUser?.userId;
   const { top } = useTypedLoaderData<typeof loader>();
 
-
   return (
     <>
       <HStack align="center">
