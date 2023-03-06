@@ -22,14 +22,22 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }} h="100%">
         {isSmallScreen ? <MobileHeader /> : <Nav />}
         {!isProfile ? (
-          children
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }} // I dont think this is doing anything
+            transition={{ duration: 0.5 }}
+          >
+            {children}
+          </motion.div>
         ) : (
           <motion.div
             key={pathname}
-            initial={{ x: '69%' }}
-            animate={{ x: '0' }}
-            exit={{ x: '-69%' }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }} // I dont think this is doing anything
+            transition={{ duration: 0.5 }}
           >
             <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
               {children}
