@@ -1,6 +1,6 @@
 // import type { LoaderArgs } from '@remix-run/server-runtime';
 
-import { Outlet } from '@remix-run/react';
+import { Outlet, useLocation } from '@remix-run/react';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
@@ -17,7 +17,7 @@ import { useExplore } from '~/hooks/useExplore';
 
 const Explore = () => {
   const { search, setSearch, setTracks, tracks } = useExplore();
-  // const { pathname } = useLocation();
+  const { pathname } = useLocation();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
@@ -26,18 +26,21 @@ const Explore = () => {
       <Stack w={['100%', ' 500px']} h={['89vh', '100%']} overflowY="scroll">
         {/* {!pathname.includes('/explore/') &&
           data?.users.map((user: Profile) => <UserTile key={user.id} profile={user} />)} */}
-        {tracks?.map((track, index) => (
-          <Tile
-            key={track.id}
-            layoutKey={'Explore' + index}
-            track={track}
-            tracks={tracks}
-            index={index}
-            list
-          />
-        ))}
+        {tracks?.map(
+          (track, index) =>
+            !pathname.includes('/users') && (
+              <Tile
+                key={track.id}
+                layoutKey={'Explore' + index}
+                track={track}
+                tracks={tracks}
+                index={index}
+                list
+              />
+            ),
+        )}
 
-        {!search ? <Outlet /> : null}
+        {<Outlet />}
       </Stack>
     </Stack>
   );

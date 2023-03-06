@@ -53,11 +53,8 @@ const SearchInput = ({
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
-      if (pathname.includes('users')) {
-        setUserSearch(e.currentTarget.value);
-      } else {
-        setSearch(e.currentTarget.value);
-      }
+      setUserSearch(e.currentTarget.value);
+      setSearch(e.currentTarget.value);
     } else {
       setSearch('');
       deleteSearch();
