@@ -5,7 +5,7 @@ import type { Track } from '@prisma/client';
 
 import useSessionUser from './useSessionUser';
 
-export const useSearch = () => {
+export const useExplore = () => {
   const [searchParams] = useSearchParams();
   const searchDefault = searchParams.get('spotify');
   const [search, setSearch] = useState<string>(searchDefault || '');

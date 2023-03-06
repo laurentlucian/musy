@@ -1,30 +1,31 @@
 // import type { LoaderArgs } from '@remix-run/server-runtime';
 
+import { Outlet } from '@remix-run/react';
+
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
-import { typedjson } from 'remix-typedjson';
+// import { typedjson } from 'remix-typedjson';
+
+// import type { Profile } from '@prisma/client';
 
 import SearchInput from '~/components/explore/SearchInput';
-import Top from '~/components/explore/Top';
 // import SessionTile from '~/components/sessions/SessionTile';
 import Tile from '~/components/Tile';
-import UserTile from '~/components/UserTile';
-import { useSearch } from '~/hooks/useSearch';
-import { getAllUsers } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
+// import UserTile from '~/components/UserTile';
+import { useExplore } from '~/hooks/useExplore';
+// import { getAllUsers } from '~/services/auth.server';
 
 const Explore = () => {
-  const { data, search, setSearch, setTracks, tracks } = useSearch();
+  const { search, setSearch, setTracks, tracks } = useExplore();
+  // const { pathname } = useLocation();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
     <Stack bg={bg} alignItems="center" h="100%">
       <SearchInput search={search} setSearch={setSearch} setTracks={setTracks} />
-      <Stack pt={['50px', 0]} w={['100%', ' 500px']} h={['91vh', '100%']} overflowY="scroll">
-        {data?.users.map((user: Profile) => (
-          <UserTile key={user.id} profile={user} />
-        ))}
+      <Stack w={['100%', ' 500px']} h={['89vh', '100%']} overflowY="scroll">
+        {/* {!pathname.includes('/explore/') &&
+          data?.users.map((user: Profile) => <UserTile key={user.id} profile={user} />)} */}
         {tracks?.map((track, index) => (
           <Tile
             key={track.id}
@@ -36,34 +37,17 @@ const Explore = () => {
           />
         ))}
 
-        {!search ? <Top /> : null}
+        {!search ? <Outlet /> : null}
       </Stack>
     </Stack>
   );
 };
 
-export const loader = async () => {
-  const users = await getAllUsers();
-  const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
-  const trackIds = await prisma.recentSongs.groupBy({
-    by: ['trackId'],
-    orderBy: { _count: { trackId: 'desc' } },
-    take: 10,
-    where: { playedAt: { gte: SEVEN_DAYS } },
-  });
+// export const loader = async () => {
+//   const users = await getAllUsers();
 
-  const top = await prisma.track.findMany({
-    where: { id: { in: trackIds.map((t) => t.trackId) } },
-  });
-
-  top.sort((a, b) => {
-    const aIndex = trackIds.findIndex((t) => t.trackId === a.id);
-    const bIndex = trackIds.findIndex((t) => t.trackId === b.id);
-    return aIndex - bIndex;
-  });
-
-  return typedjson({ top, users });
-};
+//   return typedjson({ users });
+// };
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export { CatchBoundary } from '~/components/error/CatchBoundary';
 

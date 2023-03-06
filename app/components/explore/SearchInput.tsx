@@ -1,15 +1,15 @@
-import { useFetcher, useSearchParams } from '@remix-run/react';
+import { useFetcher, useLocation, useSearchParams } from '@remix-run/react';
 import { type ChangeEvent, type Dispatch, type SetStateAction, useRef } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   CloseButton,
-  HStack,
   IconButton,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
 
@@ -17,9 +17,11 @@ import type { Track } from '@prisma/client';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
+import { useSearch, useSetSearch } from '~/hooks/useSearchStore';
 
 import Waver from '../icons/Waver';
 import UserMenu from '../nav/UserMenu';
+import Filters from './Filters';
 
 const SearchInput = ({
   search,
@@ -37,8 +39,10 @@ const SearchInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const isSmallScreen = useIsMobile();
   const { state } = useFetcher();
+  const { pathname } = useLocation();
   const busy = state === 'loading' ?? false;
-
+  const setUserSearch = useSetSearch();
+  const userSearch = useSearch();
   const deleteSearch = () => {
     searchParams.delete('spotify');
     setSearchParams(searchParams, {
@@ -49,7 +53,11 @@ const SearchInput = ({
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.trim()) {
-      setSearch(e.currentTarget.value);
+      if (pathname.includes('users')) {
+        setUserSearch(e.currentTarget.value);
+      } else {
+        setSearch(e.currentTarget.value);
+      }
     } else {
       setSearch('');
       deleteSearch();
@@ -57,6 +65,7 @@ const SearchInput = ({
   };
 
   const onClose = () => {
+    setUserSearch('');
     setSearch('');
     setTracks([]);
     const deleteParamDelay = setTimeout(() => {
@@ -66,7 +75,7 @@ const SearchInput = ({
   };
 
   return (
-    <HStack justifyContent="space-between">
+    <Stack direction={['row', 'column']} justifyContent="space-between" overflow="hidden">
       <InputGroup
         w={['90vw', '500px']}
         mr={['27px', 0]}
@@ -93,7 +102,7 @@ const SearchInput = ({
         <Input
           ref={inputRef}
           name="spotify"
-          value={search}
+          value={search || userSearch}
           placeholder="search"
           autoComplete="off"
           onChange={onChange}
@@ -103,7 +112,7 @@ const SearchInput = ({
           focusBorderColor={color}
           onFocus={hideMenu}
         />
-        {search && (
+        {(search || userSearch) && (
           <InputRightElement
             justifyContent="end"
             w="69px"
@@ -122,8 +131,9 @@ const SearchInput = ({
           />
         )}
       </InputGroup>
+      <Filters />
       {isSmallScreen && <UserMenu />}
-    </HStack>
+    </Stack>
   );
 };
 

@@ -3,7 +3,7 @@ import { HStack, Text } from '@chakra-ui/react';
 import { useTypedLoaderData } from 'remix-typedjson';
 
 import useSessionUser from '~/hooks/useSessionUser';
-import type { loader } from '~/routes/explore';
+import type { loader } from '~/routes/explore/index';
 
 import Tile from '../Tile';
 
