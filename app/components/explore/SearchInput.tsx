@@ -1,4 +1,4 @@
-import { useFetcher, useLocation, useSearchParams } from '@remix-run/react';
+import { useFetcher, useSearchParams } from '@remix-run/react';
 import { type ChangeEvent, type Dispatch, type SetStateAction, useRef } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
@@ -39,7 +39,6 @@ const SearchInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const isSmallScreen = useIsMobile();
   const { state } = useFetcher();
-  const { pathname } = useLocation();
   const busy = state === 'loading' ?? false;
   const setUserSearch = useSetSearch();
   const userSearch = useSearch();
@@ -78,7 +77,7 @@ const SearchInput = ({
         mr={['27px', 0]}
         mt={['-5px', 0]}
         pos={['fixed', 'relative']}
-        top={[2, '-60px']}
+        top={[2, 0]}
         left={0}
         bg={bg}
         zIndex={1}
