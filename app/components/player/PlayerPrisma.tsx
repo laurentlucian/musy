@@ -132,7 +132,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
       setPlaying(false);
       setHasPreview(false);
     }
-  }, [audioRef]);
+  }, []);
 
   useEffect(() => {
     if (audioRef.current?.paused && playing) {
