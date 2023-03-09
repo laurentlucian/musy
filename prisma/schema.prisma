@@ -26,7 +26,21 @@ model User {
   // the relationship between users are using User model and Profile model as different
   queue       Queue[] // sent
   recommended RecommendedSongs[]
-}
+
+  friendsAdded Friends[] @relation("main")
+  friendsAddedMe Friends[] @relation("friends")
+ }
+
+ model Friends {
+  id        Int       @id @default(autoincrement())
+  user User @relation("main", fields: [userId], references: [id])
+  userId String
+  friend User @relation("friends", fields: [friendId], references: [id])
+  friendId String
+  status String
+  
+  @@unique([userId, friendId])
+ }
 
 model Profile {
   id        Int      @id @default(autoincrement())
