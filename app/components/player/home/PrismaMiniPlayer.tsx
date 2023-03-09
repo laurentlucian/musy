@@ -31,13 +31,21 @@ interface Friends extends User {
 }
 type PlayerProps = {
   currentUserId: string | undefined;
+  friendsTracks: Track[];
   index: number;
   layoutKey: string;
-  tracks: Track[];
+  tracks: Track[] | null;
   user: Friends;
 };
 
-const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
+const PrismaMiniPlayer = ({
+  currentUserId,
+  friendsTracks,
+  index,
+  layoutKey,
+  tracks,
+  user,
+}: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -155,7 +163,8 @@ const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: Pla
             onClick={(e) => {
               e.preventDefault();
               // e.stopPropagation();
-              track && onOpen(track, user.userId, layoutKey, tracks, index);
+              track &&
+                onOpen(track, user.userId, layoutKey, tracks ?? [track, ...friendsTracks], index);
             }}
           />
         </HStack>

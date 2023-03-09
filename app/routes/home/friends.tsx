@@ -72,7 +72,8 @@ const Friends = () => {
               user={currentUserData}
               currentUserId={currentUser?.userId}
               index={0}
-              tracks={[]}
+              friendsTracks={tracks}
+              tracks={null}
             />
           )}
           <HStack>
@@ -95,6 +96,7 @@ const Friends = () => {
             user={user}
             currentUserId={currentUser?.userId}
             tracks={tracks}
+            friendsTracks={[]}
             index={index}
           />
         );

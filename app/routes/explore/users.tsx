@@ -77,6 +77,7 @@ const Users = () => {
             user={user}
             currentUserId={currentUserId}
             tracks={tracks}
+            friendsTracks={[]}
             index={index}
           />
         );

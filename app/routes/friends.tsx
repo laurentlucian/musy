@@ -60,7 +60,6 @@ const Friends = () => {
     };
     tracks.push(track);
   }
-
   return (
     <Stack pt={{ base: '60px', xl: 0 }} pb="100px" spacing={3} w="100%" h="100%" px={['4px', 0]}>
       {currentUserData && currentUserData.settings?.miniPlayer && (
@@ -71,7 +70,8 @@ const Friends = () => {
               layoutKey="MiniPlayer"
               user={currentUserData}
               currentUserId={currentUserId}
-              tracks={[]}
+              tracks={null}
+              friendsTracks={tracks}
               index={0}
             />
           )}
@@ -85,6 +85,7 @@ const Friends = () => {
             user={user}
             currentUserId={currentUserId}
             tracks={tracks}
+            friendsTracks={[]}
             index={index}
           />
         );
