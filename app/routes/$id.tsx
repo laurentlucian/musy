@@ -240,24 +240,25 @@ export const action = async ({ params, request }: ActionArgs) => {
     invariant(profile, 'Profile not found');
 
     if (favUser === 'add') {
-      // await prisma.favUsers.create({
-      //   data: {
-      //     user: {
-      //       connect: { userId: id },
-      //     },
-      //   },
-      // });
+      await prisma.favorite.create({
+        data: {
+          favoriteId: id,
+          favoritedById: currentUser.userId,
+        },
+      });
 
-      // Add the user's id from the favoriteUsers array
+      // // Add the user's id to the current user's favorite list
       // await prisma.profile.update({
-      //   data: { favoriteUsers: { connect: [{ userId: id }] } },
+      //   data: { favorite: { connect: [{ favoriteId: id }] } },
       //   where: { userId: currentUser.userId },
       // });
     } else if (favUser === 'remove') {
-      // Remove the user's id from the favoriteUsers array
-      // await prisma.profile.update({
-      //   data: { favoriteUsers: { disconnect: [{ userId: id }] } },
-      //   where: { userId: currentUser.userId },
+      // Remove the user's id from the current user's favorite list
+      // await prisma.favorite.delete({
+      //   where: {
+      //     favoriteId: id,
+      //     favoritedById: currentUser.userId,
+      //   },
       // });
     }
   }
