@@ -153,9 +153,6 @@ const MobileDrawer = () => {
                       key={track.id}
                       layoutKey="MobileDrawer"
                       track={track}
-                      profileId=""
-                      inDrawer
-                      isQueuing
                       tracks={tracks}
                       index={index}
                     />

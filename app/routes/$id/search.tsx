@@ -3,20 +3,19 @@ import { useParams, useSubmit } from '@remix-run/react';
 
 import { Box } from '@chakra-ui/react';
 
-import { typedjson, useTypedFetcher, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
+import SendButton from '~/components/menu/actions/SendButton';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
-import type { action } from '~/routes/$id/add';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
-  const fetcher = useTypedFetcher<typeof action>();
   const tracks = results?.tracks?.items ?? [];
   const currentUser = useSessionUser();
   const submit = useSubmit();
@@ -46,32 +45,34 @@ const Search = () => {
   return (
     <Box h="60vh" zIndex={9}>
       <Tiles title="">
-        {tracks?.map((track) => (
-          <Tile
-            key={track.id}
-            layoutKey="Search"
-            track={{
-              albumName: track.album.name,
-              albumUri: track.album.uri,
-              artist: track.artists[0].name,
-              artistUri: track.artists[0].uri,
-              duration: track.duration_ms,
-              explicit: track.explicit,
-              id: track.id,
-              image: track.album.images[1].url,
-              link: track.external_urls.spotify,
-              name: track.name,
-              preview_url: track.preview_url,
-              uri: track.uri,
-            }}
-            tracks={songs}
-            currentUser={currentUser}
-            submit={submit}
-            profileId={profileId ?? ''}
-            fetcher={fetcher}
-            isQueuing
-          />
-        ))}
+        {tracks?.map((track) => {
+          const song = {
+            albumName: track.album.name,
+            albumUri: track.album.uri,
+            artist: track.artists[0].name,
+            artistUri: track.artists[0].uri,
+            duration: track.duration_ms,
+            explicit: track.explicit,
+            id: track.id,
+            image: track.album.images[1].url,
+            link: track.external_urls.spotify,
+            name: track.name,
+            preview_url: track.preview_url,
+            uri: track.uri,
+          };
+          return (
+            <Tile
+              key={track.id}
+              action={<SendButton sendType={true} sendingToId={profileId} track={song} />} // refactor search to recommend and queue
+              layoutKey="Search"
+              track={song}
+              tracks={songs}
+              currentUser={currentUser}
+              submit={submit}
+              profileId={profileId ?? ''}
+            />
+          );
+        })}
       </Tiles>
     </Box>
   );

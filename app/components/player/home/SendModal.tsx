@@ -24,15 +24,13 @@ import {
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
-import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/components/icons/Waver';
+import SendButton from '~/components/menu/actions/SendButton';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
-import type { action } from '~/routes/$id/add';
-import type { action as actionB } from '~/routes/$id/recommend';
 
 interface SendModalConfig {
   currentUserId: string | undefined;
@@ -64,8 +62,7 @@ const SendModal = ({
   const [showTracks, setShowTracks] = useState(false);
   const [erect, setErect] = useState(false);
   const { data, load, state } = useFetcher();
-  const fetcherQueue = useTypedFetcher<typeof action>();
-  const fetcherRec = useTypedFetcher<typeof actionB>();
+
   const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -213,12 +210,11 @@ const SendModal = ({
               tracks.map((track, index) => (
                 <Box minH="325px" key={track.id}>
                   <Tile
+                    action={
+                      <SendButton sendType={sendList} sendingToId={profileId} track={track} />
+                    }
                     layoutKey="SendModal"
                     track={track}
-                    fetcher={fetcherQueue}
-                    fetcherRec={fetcherRec}
-                    isQueuing={sendList}
-                    isRecommending={!sendList}
                     profileId={profileId}
                     currentUserId={currentUserId}
                     tracks={tracks}
@@ -270,15 +266,13 @@ const SendModal = ({
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
+                    action={
+                      <SendButton sendType={sendList} sendingToId={profileId} track={track} />
+                    }
                     layoutKey="SendModal"
                     track={track}
                     tracks={tracks}
                     index={index}
-                    fetcher={fetcherQueue}
-                    fetcherRec={fetcherRec}
-                    inDrawer
-                    isQueuing={sendList}
-                    isRecommending={!sendList}
                     profileId={profileId}
                     currentUserId={currentUserId}
                   />
@@ -294,11 +288,3 @@ const SendModal = ({
 };
 
 export default SendModal;
-
-/*
-body has a search
-your recent queued songs
-your recent likes
-your recent listened
-maybe a what does {name} like? button <- maybe in footer
-*/
