@@ -1,4 +1,4 @@
-import { Link, type SubmitFunction } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 
@@ -29,7 +29,6 @@ type TileProps = {
   list?: boolean;
   playlist?: Boolean;
   profileId?: string;
-  submit?: SubmitFunction;
   track: Track;
   tracks: Track[];
   w?: string[];

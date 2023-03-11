@@ -1,5 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { useParams, useSubmit } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 
 import { Box } from '@chakra-ui/react';
 
@@ -18,7 +18,6 @@ const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
   const tracks = results?.tracks?.items ?? [];
   const currentUser = useSessionUser();
-  const submit = useSubmit();
   const { id: profileId } = useParams();
 
   const songs: Track[] = [];
@@ -68,7 +67,6 @@ const Search = () => {
               track={song}
               tracks={songs}
               currentUser={currentUser}
-              submit={submit}
               profileId={profileId ?? ''}
             />
           );
