@@ -178,10 +178,20 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   //   listened,
   //   lazyMain,
   // });
+  let friendRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    friendRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: id,
+        userId: currentUser.userId,
+      },
+    });
+  }
 
   return typedjson({
     currentUser,
     following: null,
+    friendRecord,
     listened,
     profileSong,
     user,
@@ -247,7 +257,6 @@ export const action = async ({ params, request }: ActionArgs) => {
       //     },
       //   },
       // });
-
       // Add the user's id from the favoriteUsers array
       // await prisma.profile.update({
       //   data: { favoriteUsers: { connect: [{ userId: id }] } },
