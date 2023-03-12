@@ -234,33 +234,33 @@ export const action = async ({ params, request }: ActionArgs) => {
     });
   }
 
-  if (typeof favUser === 'string') {
+  if (favUser === 'true') {
     // Get the Profile instance for the currentUser
     const profile = await prisma.profile.findUnique({ where: { userId: currentUser.userId } });
     invariant(profile, 'Profile not found');
-
-    if (favUser === 'add') {
-      await prisma.favorite.create({
-        data: {
-          favoriteId: id,
-          favoritedById: currentUser.userId,
+    await prisma.favorite.create({
+      data: {
+        favorite: {
+          connect: { userId: id },
         },
-      });
-
-      // // Add the user's id to the current user's favorite list
-      // await prisma.profile.update({
-      //   data: { favorite: { connect: [{ favoriteId: id }] } },
-      //   where: { userId: currentUser.userId },
-      // });
-    } else if (favUser === 'remove') {
-      // Remove the user's id from the current user's favorite list
-      // await prisma.favorite.delete({
-      //   where: {
-      //     favoriteId: id,
-      //     favoritedById: currentUser.userId,
-      //   },
-      // });
-    }
+        favoritedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (favUser === 'false') {
+    // const favoriteProfile = await prisma.profile.findUnique({
+    //   where: {
+    //     favoritedId: id,
+    //   },
+    // });
+    // invariant(favoriteProfile, 'Profile not found');
+    // Remove the user's id from the current user's favorite list
+    // await prisma.favorite.delete({
+    //   where: {
+    //     id: 3,
+    //   },
+    // });
   }
 
   if (typeof easterEgg === 'string') {
