@@ -54,7 +54,7 @@ const QuickActions = ({
   return (
     <>
       <Menu placement="bottom-start">
-        <Stack onClick={(e) => e.preventDefault()} w="45px" >
+        <Stack onClick={(e) => e.preventDefault()} w="45px">
           <MenuButton
             as={IconButton}
             icon={<MoreHorizontal />}

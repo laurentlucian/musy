@@ -17,7 +17,7 @@ const Favorite = ({ favorite }: FavoriteType) => {
 
   const handleClick = () => {
     setFavorite(!isFavorite);
-    submit({ favorite: String(!isFavorite) }, { method: 'post', replace: true });
+    submit({ favUser: String(!isFavorite) }, { method: 'post', replace: true });
   };
 
   return (
@@ -29,6 +29,7 @@ const Favorite = ({ favorite }: FavoriteType) => {
         cursor="pointer"
         onClick={handleClick}
         color={isFavorite ? 'gold' : 'white'}
+        disabled
       />
     </Tooltip>
   );
