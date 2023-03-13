@@ -164,8 +164,9 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const FavButton = !isOwnProfile ? <Favorite favorite={false} /> : null;
 
   const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;
-  console.log('STATUS' + friendRecord.status);
-  const AddFriendBttn = !isOwnProfile ? <AddFriendsButton status={friendRecord.status} /> : null;
+  const AddFriendBttn = !isOwnProfile ? (
+    <AddFriendsButton status={friendRecord ? friendRecord.status : null} />
+  ) : null;
 
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">

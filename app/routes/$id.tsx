@@ -210,9 +210,48 @@ export const action = async ({ params, request }: ActionArgs) => {
   const favUser = data.get('favUser');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
+  const friendStatus = data.get('friendStatus');
   invariant(currentUser, 'Missing current user');
   const { spotify } = await spotifyApi(currentUser.userId);
   invariant(spotify, 'Spotify API Error');
+
+  console.log('friendStatus', friendStatus);
+  if (friendStatus === 'requested') {
+    const newFriendRecord = await prisma.friends.create({
+      data: {
+        friendId: id,
+        status: 'pending',
+        userId: currentUser.userId,
+      },
+    });
+
+    const friendRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: currentUser.userId,
+        userId: id,
+      },
+    });
+
+    if (friendRecord && friendRecord.status === 'pending') {
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: friendRecord.id,
+        },
+      });
+
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: newFriendRecord.id,
+        },
+      });
+    }
+  }
 
   if (follow === 'true') {
     await spotify.followUsers([id]);
