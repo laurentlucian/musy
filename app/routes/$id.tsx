@@ -179,8 +179,19 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   //   lazyMain,
   // });
 
+  let favRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    favRecord = await prisma.favorite.findFirst({
+      where: {
+        favoriteId: id,
+        favoritedById: currentUser.userId,
+      },
+    });
+  }
+
   return typedjson({
     currentUser,
+    favRecord,
     following: null,
     listened,
     profileSong,
