@@ -209,6 +209,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const follow = data.get('follow');
   const mood = data.get('mood');
   const favUser = data.get('favUser');
+  const favId = data.get('favId');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'Missing current user');
@@ -260,18 +261,11 @@ export const action = async ({ params, request }: ActionArgs) => {
       },
     });
   } else if (favUser === 'false') {
-    // const favoriteProfile = await prisma.profile.findUnique({
-    //   where: {
-    //     favoritedId: id,
-    //   },
-    // });
-    // invariant(favoriteProfile, 'Profile not found');
-    // Remove the user's id from the current user's favorite list
-    // await prisma.favorite.delete({
-    //   where: {
-    //     id: 3,
-    //   },
-    // });
+    await prisma.favorite.delete({
+      where: {
+        id: Number(favId),
+      },
+    });
   }
 
   if (typeof easterEgg === 'string') {
