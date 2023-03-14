@@ -1,12 +1,9 @@
-import { useParams } from '@remix-run/react';
-
 import { Button, Image } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
-import { useDrawerFromId } from '~/hooks/useDrawer';
+import { useQueueData } from '~/hooks/useSendButton';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
 
@@ -20,48 +17,15 @@ type AddQueueProps = {
 };
 
 const AddQueue = ({ trackId, user }: AddQueueProps) => {
-  const { id: paramId } = useParams();
   const currentUser = useSessionUser();
-  const fromId = useDrawerFromId();
   const fetcher = useTypedFetcher<typeof action>();
   const isSending = !!user;
 
-  const addToQueue = () => {
-    const id = fromId || user?.userId || paramId;
-    const action = isSending ? `/${id}/add` : `/${currentUser?.userId}/add`;
-
-    const fromUserId = isSending ? currentUser?.userId : id;
-    const sendToUserId = isSending ? id : currentUser?.userId;
-
-    const data = {
-      action: isSending ? 'send' : 'add',
-
-      fromId: fromUserId ?? '',
-      toId: sendToUserId ?? '',
-      trackId,
-    };
-
-    fetcher.submit(data, { action, method: 'post', replace: true });
-  };
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-
-  const isDone = fetcher.type === 'done';
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
-  const icon = isDone ? (
-    <TickSquare size="25px" />
-  ) : isError ? (
-    <CloseSquare size="25px" />
-  ) : user ? (
-    <Send2 />
-  ) : (
-    <AddSquare />
-  );
-
+  const { addToQueue, icon, isAdding, isDone, isError } = useQueueData({
+    fetcher,
+    trackId,
+    userId: user?.userId,
+  });
   const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Add to Your Queue';
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
