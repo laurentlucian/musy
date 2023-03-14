@@ -48,7 +48,7 @@ const Index = () => {
               return (
                 <MobileActivityTile
                   key={item.id}
-                  layoutKey="mActivity"
+                  layoutKey={'mActivity' + index}
                   activity={item}
                   tracks={tracks}
                   index={index}
@@ -62,7 +62,7 @@ const Index = () => {
               return (
                 <ActivityTile
                   key={item.id}
-                  layoutKey="mActivity"
+                  layoutKey={'mActivity' + index}
                   activity={item}
                   tracks={tracks}
                   index={index}

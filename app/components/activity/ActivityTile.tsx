@@ -168,7 +168,12 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   return (
     <Stack>
       <HStack>
-        <ActivityAction activity={activity} layoutKey="Activity" tracks={tracks} index={index} />
+        <ActivityAction
+          activity={activity}
+          layoutKey={'Activity' + index}
+          tracks={tracks}
+          index={index}
+        />
       </HStack>
       <Flex
         justify="space-between"

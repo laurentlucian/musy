@@ -90,7 +90,6 @@ export const useQueueData = ({ fetcher, trackId, userId }: QueueData) => {
   const fromId = useDrawerFromId();
   const id = fromId || userId;
   const isSending = !!userId;
-  console.log('am I sending to?', fromId);
   const fromUserId = isSending ? currentUser?.userId : id;
   const sendToUserId = isSending ? id : currentUser?.userId;
   const action = isSending
