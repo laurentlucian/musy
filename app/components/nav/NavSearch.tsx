@@ -26,6 +26,7 @@ import type { Track } from '~/lib/types/types';
 
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import UserTile from '../UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -223,6 +224,16 @@ const NavSearch = () => {
                     index={index}
                     profileId=""
                     list
+                    image={
+                      <TileImage
+                        src={track.image}
+                        index={index}
+                        layoutKey="NavSearch"
+                        track={track}
+                        tracks={tracks}
+                        size={'40px'}
+                      />
+                    }
                   />
                 ))}
             </Stack>
