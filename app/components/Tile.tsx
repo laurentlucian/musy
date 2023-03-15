@@ -1,26 +1,23 @@
-import { Link } from '@remix-run/react';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track, User } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from './icons/SpotifyLogo';
 
 type TileProps = {
   action?: ReactNode;
-  createdAt?: Date;
+  // createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
-  createdBy?: Profile | null;
+  // createdBy?: Profile | null;
   currentUser?: User | null;
   currentUserId?: string | undefined;
   image?: ReactNode;
@@ -38,8 +35,8 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
       action,
-      createdAt,
-      createdBy,
+      // createdAt,
+      // createdBy,
       image,
       index,
       layoutKey,
@@ -72,7 +69,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           maxW={list ? '40px' : w}
         >
           <Flex direction="column">
-            {createdAt && (
+            {/* {createdAt && (
               <HStack align="center" h="35px">
                 {createdBy ? (
                   <Link to={`/${createdBy.userId}`}>
@@ -93,7 +90,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   {timeSince(createdAt ?? null)}
                 </Text>
               </HStack>
-            )}
+            )} */}
             {image}
           </Flex>
           <Flex justify="space-between">
