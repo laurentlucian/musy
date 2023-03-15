@@ -28,7 +28,6 @@ type TileProps = {
   profileId?: string;
   track: Track;
   tracks: Track[];
-  w?: string[];
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
@@ -44,7 +43,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       profileId,
       track,
       tracks,
-      w = '200px',
       ...props
     },
     ref,
@@ -66,7 +64,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
           {...props}
-          maxW={list ? '40px' : w}
+          maxW={list ? '40px' : '200px'}
         >
           <Flex direction="column">
             {/* {createdAt && (

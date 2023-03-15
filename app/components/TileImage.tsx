@@ -28,6 +28,7 @@ const TileImage = ({
 }: TileImageT) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
+  const originId = profileId ?? id ?? '';
   return (
     <Tooltip label={track.albumName} placement="top-start">
       <Image
@@ -41,7 +42,7 @@ const TileImage = ({
         draggable={false}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
-        onClick={() => onClick(track, profileId ?? id ?? '', layoutKey, tracks, index)}
+        onClick={() => onClick(track, originId, layoutKey, tracks, index)}
         cursor="pointer"
       />
     </Tooltip>
