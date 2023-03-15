@@ -162,7 +162,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
     currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
 
   const FavButton = !isOwnProfile ? (
-    <Favorite favorite={favRecord === null ? false : true} favId={favRecord?.id} />
+    <Favorite favorite={!!favRecord} favId={favRecord?.favoriteId ?? ''} />
   ) : null;
 
   const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;

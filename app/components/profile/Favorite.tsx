@@ -18,7 +18,7 @@ const Favorite = ({ favId, favorite }: FavoriteType) => {
 
   const handleClick = () => {
     setFavorite(!isFavorite);
-    submit({ favId: favId, favUser: String(!isFavorite) }, { method: 'post', replace: true });
+    submit({ favId, favUser: String(!isFavorite) }, { method: 'post', replace: true });
   };
 
   return (
