@@ -13,7 +13,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
-import { askDaVinci } from '~/services/ai.server';
+import { getMood } from '~/services/ai.server';
 import {
   authenticator,
   getAllUsers,
@@ -230,15 +230,7 @@ export const action = async ({ params, request }: ActionArgs) => {
     const { spotify } = await spotifyApi(id);
     invariant(spotify, 'Spotify API Error');
     const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    const tracks = recent.body.items.map((item) => ({
-      album_name: item.track.album.name,
-      artist_name: item.track.artists[0].name,
-      song_name: item.track.name,
-    }));
-
-    const prompt = `Based on these songs given below, describe my current mood in one word. 
-    ${JSON.stringify(tracks)}`;
-    const response = (await askDaVinci(prompt)).split('.')[0];
+    const response = await getMood(recent.body);
     await prisma.aI.upsert({
       create: { mood: response, userId: id },
       update: { mood: response },
