@@ -7,6 +7,7 @@ import type { Track } from '~/lib/types/types';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -44,27 +45,37 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {recent.map(({ played_at, track }, index) => {
+          const song = {
+            albumName: track.album.name,
+            albumUri: track.album.uri,
+            artist: track.artists[0].name,
+            artistUri: track.artists[0].uri,
+            duration: track.duration_ms,
+            explicit: track.explicit,
+            id: track.id,
+            image: track.album.images[1].url,
+            link: track.external_urls.spotify,
+            name: track.name,
+            preview_url: track.preview_url,
+            uri: track.uri,
+          };
           return (
             <Tile
               key={played_at}
               layoutKey="Recent"
-              track={{
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              }}
+              track={song}
               profileId={id ?? ''}
               tracks={tracks}
               index={index}
+              image={
+                <TileImage
+                  src={track.album.images[1].url}
+                  index={index}
+                  layoutKey={'RecentExpanded' + index}
+                  track={song}
+                  tracks={tracks}
+                />
+              }
             />
           );
         })}
@@ -83,28 +94,38 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
             {recent.map(({ played_at, track }, index) => {
+              const song = {
+                albumName: track.album.name,
+                albumUri: track.album.uri,
+                artist: track.artists[0].name,
+                artistUri: track.artists[0].uri,
+                duration: track.duration_ms,
+                explicit: track.explicit,
+                id: track.id,
+                image: track.album.images[1].url,
+                link: track.external_urls.spotify,
+                name: track.name,
+                preview_url: track.preview_url,
+                uri: track.uri,
+              };
               return (
                 <Box key={played_at}>
                   <Tile
                     layoutKey="RecentExpanded"
-                    track={{
-                      albumName: track.album.name,
-                      albumUri: track.album.uri,
-                      artist: track.artists[0].name,
-                      artistUri: track.artists[0].uri,
-                      duration: track.duration_ms,
-                      explicit: track.explicit,
-                      id: track.id,
-                      image: track.album.images[1].url,
-                      link: track.external_urls.spotify,
-                      name: track.name,
-                      preview_url: track.preview_url,
-                      uri: track.uri,
-                    }}
+                    track={song}
                     tracks={tracks}
                     index={index}
                     profileId={id ?? ''}
-                    w={['115px', '100px']}
+                    image={
+                      <TileImage
+                        src={track.album.images[1].url}
+                        index={index}
+                        layoutKey={'RecentExpanded' + index}
+                        track={song}
+                        tracks={tracks}
+                        size={['115px', '100px']}
+                      />
+                    }
                   />
                 </Box>
               );

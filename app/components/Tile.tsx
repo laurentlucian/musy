@@ -15,7 +15,6 @@ import type { Track, User } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from './icons/SpotifyLogo';
-import Tooltip from './Tooltip';
 
 type TileProps = {
   action?: ReactNode;
@@ -24,6 +23,7 @@ type TileProps = {
   createdBy?: Profile | null;
   currentUser?: User | null;
   currentUserId?: string | undefined;
+  image?: ReactNode;
   index?: number;
   layoutKey: string;
   list?: boolean;
@@ -40,6 +40,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
       action,
       createdAt,
       createdBy,
+      image,
       index,
       layoutKey,
       list,
@@ -93,22 +94,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                 </Text>
               </HStack>
             )}
-            <Tooltip label={track.albumName} placement="top-start">
-              <Image
-                as={motion.img}
-                layoutId={list ? track.id + layoutKey : undefined}
-                boxSize={list ? '40px' : w}
-                minW={list ? '40px' : w}
-                minH={list ? '40px' : w}
-                objectFit="cover"
-                src={track.image}
-                draggable={false}
-                onMouseDown={onMouseDown}
-                onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
-                cursor="pointer"
-              />
-            </Tooltip>
+            {image}
           </Flex>
           <Flex justify="space-between">
             <Stack

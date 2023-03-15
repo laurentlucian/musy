@@ -7,6 +7,7 @@ import type { RecentSongs, Track } from '@prisma/client';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -43,7 +44,15 @@ const RecentTracksPrisma = ({
                 layoutKey={'RecentPrisma' + index}
                 track={track}
                 tracks={tracks}
-                profileId={id ?? ''}
+                image={
+                  <TileImage
+                    src={track.image}
+                    index={index}
+                    layoutKey={'RecentPrisma' + index}
+                    track={track}
+                    tracks={tracks}
+                  />
+                }
               />
             );
           })}
@@ -69,7 +78,16 @@ const RecentTracksPrisma = ({
                       track={track}
                       tracks={tracks}
                       profileId={id ?? ''}
-                      w={['115px', '100px']}
+                      image={
+                        <TileImage
+                          src={track.image}
+                          index={index}
+                          layoutKey={'RecentPrismaExpanded' + index}
+                          track={track}
+                          tracks={tracks}
+                          size={['115px', '100px']}
+                        />
+                      }
                     />
                   </Box>
                 );

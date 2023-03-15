@@ -18,6 +18,7 @@ import type { Profile, RecommendedSongs, Track } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import RecommendActions from './RecommendActions';
 import RecommendRatingForm from './RecommendRatingForm';
 import Tiles from './Tiles';
@@ -80,6 +81,15 @@ const Recommended = (props: {
                             track={recommended.track}
                             tracks={tracks}
                             profileId={id ?? ''}
+                            image={
+                              <TileImage
+                                src={recommended.track.image}
+                                index={index}
+                                layoutKey={'recommended' + index}
+                                track={recommended.track}
+                                tracks={tracks}
+                              />
+                            }
                           />
                         </>
                       </PopoverTrigger>

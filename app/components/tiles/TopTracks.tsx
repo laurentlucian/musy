@@ -8,6 +8,7 @@ import type { Track } from '~/lib/types/types';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -84,27 +85,37 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
       <Tiles title={title} scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
         {top.map((track, index) => {
+          const song = {
+            albumName: track.album.name,
+            albumUri: track.album.uri,
+            artist: track.artists[0].name,
+            artistUri: track.artists[0].uri,
+            duration: track.duration_ms,
+            explicit: track.explicit,
+            id: track.id,
+            image: track.album.images[1].url,
+            link: track.external_urls.spotify,
+            name: track.name,
+            preview_url: track.preview_url,
+            uri: track.uri,
+          };
           return (
             <Tile
               key={track.id}
               layoutKey="Top"
-              track={{
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              }}
+              track={song}
               profileId={id ?? ''}
               tracks={tracks}
               index={index}
+              image={
+                <TileImage
+                  src={track.album.images[1].url}
+                  index={index}
+                  layoutKey={'Top' + index}
+                  track={song}
+                  tracks={tracks}
+                />
+              }
             />
           );
         })}
@@ -124,28 +135,38 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
             {top.map((track, index) => {
+              const song = {
+                albumName: track.album.name,
+                albumUri: track.album.uri,
+                artist: track.artists[0].name,
+                artistUri: track.artists[0].uri,
+                duration: track.duration_ms,
+                explicit: track.explicit,
+                id: track.id,
+                image: track.album.images[1].url,
+                link: track.external_urls.spotify,
+                name: track.name,
+                preview_url: track.preview_url,
+                uri: track.uri,
+              };
               return (
                 <Box key={track.id}>
                   <Tile
                     layoutKey="TopExpanded"
-                    track={{
-                      albumName: track.album.name,
-                      albumUri: track.album.uri,
-                      artist: track.artists[0].name,
-                      artistUri: track.artists[0].uri,
-                      duration: track.duration_ms,
-                      explicit: track.explicit,
-                      id: track.id,
-                      image: track.album.images[1].url,
-                      link: track.external_urls.spotify,
-                      name: track.name,
-                      preview_url: track.preview_url,
-                      uri: track.uri,
-                    }}
+                    track={song}
                     tracks={tracks}
                     index={index}
                     profileId={id ?? ''}
-                    w={['115px', '100px']}
+                    image={
+                      <TileImage
+                        src={song.image}
+                        index={index}
+                        layoutKey={'TopExpanded' + index}
+                        track={song}
+                        tracks={tracks}
+                        size={['115px', '100px']}
+                      />
+                    }
                   />
                 </Box>
               );

@@ -10,6 +10,7 @@ import useIsVisible from '~/hooks/useIsVisible';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -78,6 +79,15 @@ const LikedTracksPrisma = ({
               profileId={id ?? ''}
               tracks={tracks}
               index={index}
+              image={
+                <TileImage
+                  src={track.image}
+                  index={index}
+                  layoutKey={'LikedPrisma' + index}
+                  track={track}
+                  tracks={tracks}
+                />
+              }
             />
           );
         })}
@@ -104,7 +114,16 @@ const LikedTracksPrisma = ({
                     tracks={tracks}
                     index={index}
                     profileId={id ?? ''}
-                    w={['115px', '100px']}
+                    image={
+                      <TileImage
+                        src={track.image}
+                        index={index}
+                        layoutKey={'LikedPrismaExpanded' + index}
+                        track={track}
+                        tracks={tracks}
+                        size={['115px', '100px']}
+                      />
+                    }
                   />
                 </Box>
               );
