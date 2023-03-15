@@ -7,9 +7,9 @@ import type { Friends, Profile } from '@prisma/client';
 import AcceptOrRejectFriendButton from './AcceptOrRejectFriendButton';
 
 type PendingFriendsContainerType = {
-    image: string;
-    name: string;
-    userId: string;
+  image: string;
+  name: string;
+  userId: string;
 };
 
 const PendingFriendsContainer = ({ image, name, userId }: PendingFriendsContainerType) => {
@@ -39,7 +39,7 @@ const PendingFriendsContainer = ({ image, name, userId }: PendingFriendsContaine
     <HStack>
       <ProfilePic />
       <AcceptOrRejectFriendButton userId={userId} accept={true} />
-      <AcceptOrRejectFriendButton userId={.userId} accept={false} />
+      <AcceptOrRejectFriendButton userId={userId} accept={false} />
     </HStack>
   );
 };

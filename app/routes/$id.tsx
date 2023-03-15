@@ -215,7 +215,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   const { spotify } = await spotifyApi(currentUser.userId);
   invariant(spotify, 'Spotify API Error');
 
-  console.log('friendStatus', friendStatus);
   if (friendStatus === 'requested') {
     const newFriendRecord = await prisma.friends.create({
       data: {
