@@ -51,7 +51,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
         fontWeight="bold"
         textAlign="left"
       >
-        {user.name}
+        {!user.name.includes('cunt') ? user.name : 'healthycat'}
       </Heading>
       {isPrivate && (
         <Tooltip label="Private" placement="top" hasArrow>
