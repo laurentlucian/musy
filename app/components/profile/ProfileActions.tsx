@@ -18,6 +18,20 @@ const ProfileActions = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
 
+  const handleCopyLinkClick = () => {
+    // Get the current page's URL
+    const currentUrl = window.location.href;
+    // Copy the URL to the clipboard
+    navigator.clipboard.writeText(currentUrl).then(
+      () => {
+        console.log('URL copied to clipboard!');
+      },
+      (err) => {
+        console.error('Failed to copy URL: ', err);
+      },
+    );
+  };
+
   return (
     <>
       <Menu placement="bottom-start">
@@ -41,6 +55,7 @@ const ProfileActions = () => {
               bg={bg}
               color={color}
               _hover={{ color: 'grey' }}
+              onClick={handleCopyLinkClick}
             >
               copy link
             </MenuItem>
