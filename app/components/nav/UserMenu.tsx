@@ -98,7 +98,7 @@ const UserMenu = () => {
     onClose();
   };
   const onClickFriends = () => {
-    navigate(`/home/friends`);
+    navigate(`/friends`);
     onClose();
   };
   let reloadTimeout: NodeJS.Timeout;
