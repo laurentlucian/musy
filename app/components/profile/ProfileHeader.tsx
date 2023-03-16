@@ -24,7 +24,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
-  const { currentUser, following, favRecord, friendRecord, listened, user } = data;
+  const { currentUser, favRecord, following, friendRecord, listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
   // const isFavorite = currentUser?.favoriteUsers
