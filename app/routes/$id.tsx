@@ -178,6 +178,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   //   listened,
   //   lazyMain,
   // });
+  let friendRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    friendRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: id,
+        userId: currentUser.userId,
+      },
+    });
+  }
 
   let favRecord = null;
   if (currentUser && currentUser.userId !== id) {
@@ -193,6 +202,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     currentUser,
     favRecord,
     following: null,
+    friendRecord,
     listened,
     profileSong,
     user,
@@ -212,9 +222,47 @@ export const action = async ({ params, request }: ActionArgs) => {
   const favId = data.get('favId');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
+  const friendStatus = data.get('friendStatus');
   invariant(currentUser, 'Missing current user');
   const { spotify } = await spotifyApi(currentUser.userId);
   invariant(spotify, 'Spotify API Error');
+
+  if (friendStatus === 'requested') {
+    const newFriendRecord = await prisma.friends.create({
+      data: {
+        friendId: id,
+        status: 'pending',
+        userId: currentUser.userId,
+      },
+    });
+
+    const friendRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: currentUser.userId,
+        userId: id,
+      },
+    });
+
+    if (friendRecord && friendRecord.status === 'pending') {
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: friendRecord.id,
+        },
+      });
+
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: newFriendRecord.id,
+        },
+      });
+    }
+  }
 
   if (follow === 'true') {
     await spotify.followUsers([id]);

@@ -31,6 +31,13 @@ model User {
   friendsAddedMe Friends[] @relation("friends")
  }
 
+  //The person who sent the request is the user and the person who received the request is the friend 
+  //The status of the request is pending until the friend accepts the request 
+  //The status of the request is accepted when the friend accepts the request, There will be 2 rows in the table, 
+  //one for each user
+  //The status of the request is rejected when the friend rejects the request, The row will be deleted from the table
+  
+  
  model Friends {
   id        Int       @id @default(autoincrement())
   user User @relation("main", fields: [userId], references: [id])

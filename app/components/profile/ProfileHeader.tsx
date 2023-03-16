@@ -5,6 +5,7 @@ import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@ch
 import { CodeCircle, LockCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
+import AddFriendsButton from '~/components/profile/AddFriendsButton';
 import Following from '~/components/profile/Following';
 import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
@@ -23,7 +24,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
-  const { currentUser, favRecord, following, listened, user } = data;
+  const { currentUser, following, favRecord, friendRecord, listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
   // const isFavorite = currentUser?.favoriteUsers
@@ -166,6 +167,9 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   ) : null;
 
   const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;
+  const AddFriendBttn = !isOwnProfile ? (
+    <AddFriendsButton status={friendRecord ? friendRecord.status : null} />
+  ) : null;
 
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
@@ -178,6 +182,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
               {FollowButton}
               {FavButton}
               {MenuBttn}
+              {AddFriendBttn}
             </HStack>
             {SubHeader}
           </VStack>
