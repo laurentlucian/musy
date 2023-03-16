@@ -1,7 +1,7 @@
 import { useSubmit } from '@remix-run/react';
 import { useEffect, useState } from 'react';
 
-import { Button, Text, Tooltip } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 
 import type { Friends } from '@prisma/client';
 
