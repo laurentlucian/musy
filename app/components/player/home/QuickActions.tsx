@@ -35,7 +35,7 @@ const QuickActions = ({
   que?: string;
   recommend?: string;
 }) => {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState<'queue' | 'recommend'>('queue');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');

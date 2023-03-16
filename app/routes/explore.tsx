@@ -12,6 +12,7 @@ import SearchInput from '~/components/explore/SearchInput';
 // import SessionTile from '~/components/sessions/SessionTile';
 import Tile from '~/components/Tile';
 // import UserTile from '~/components/UserTile';
+import TileImage from '~/components/TileImage';
 import { useExplore } from '~/hooks/useExplore';
 // import { getAllUsers } from '~/services/auth.server';
 
@@ -36,6 +37,16 @@ const Explore = () => {
                 tracks={tracks}
                 index={index}
                 list
+                image={
+                  <TileImage
+                    src={track.image}
+                    index={index}
+                    layoutKey={'Explore' + index}
+                    track={track}
+                    tracks={tracks}
+                    size={'40px'}
+                  />
+                }
               />
             ),
         )}

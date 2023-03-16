@@ -77,7 +77,7 @@ const PrismaMiniPlayer = ({
   );
   const Username = (
     <Text fontWeight="bold" fontSize={['15px', '20px']}>
-      {name}
+      {!name.includes('cunt') ? name : 'healthycat'}
     </Text>
   );
   const User = (

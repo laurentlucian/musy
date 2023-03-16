@@ -13,7 +13,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
-import { askDaVinci } from '~/services/ai.server';
+import { getMood } from '~/services/ai.server';
 import {
   authenticator,
   getAllUsers,
@@ -188,8 +188,19 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     });
   }
 
+  let favRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    favRecord = await prisma.favorite.findFirst({
+      where: {
+        favoriteId: id,
+        favoritedById: currentUser.userId,
+      },
+    });
+  }
+
   return typedjson({
     currentUser,
+    favRecord,
     following: null,
     friendRecord,
     listened,
@@ -208,6 +219,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const follow = data.get('follow');
   const mood = data.get('mood');
   const favUser = data.get('favUser');
+  const favId = data.get('favId');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   const friendStatus = data.get('friendStatus');
@@ -266,15 +278,7 @@ export const action = async ({ params, request }: ActionArgs) => {
     const { spotify } = await spotifyApi(id);
     invariant(spotify, 'Spotify API Error');
     const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    const tracks = recent.body.items.map((item) => ({
-      album_name: item.track.album.name,
-      artist_name: item.track.artists[0].name,
-      song_name: item.track.name,
-    }));
-
-    const prompt = `Based on these songs given below, describe my current mood in one word. 
-    ${JSON.stringify(tracks)}`;
-    const response = (await askDaVinci(prompt)).split('.')[0];
+    const response = await getMood(recent.body);
     await prisma.aI.upsert({
       create: { mood: response, userId: id },
       update: { mood: response },
@@ -297,18 +301,11 @@ export const action = async ({ params, request }: ActionArgs) => {
       },
     });
   } else if (favUser === 'false') {
-    // const favoriteProfile = await prisma.profile.findUnique({
-    //   where: {
-    //     favoritedId: id,
-    //   },
-    // });
-    // invariant(favoriteProfile, 'Profile not found');
-    // Remove the user's id from the current user's favorite list
-    // await prisma.favorite.delete({
-    //   where: {
-    //     id: 3,
-    //   },
-    // });
+    await prisma.favorite.delete({
+      where: {
+        id: Number(favId),
+      },
+    });
   }
 
   if (typeof easterEgg === 'string') {

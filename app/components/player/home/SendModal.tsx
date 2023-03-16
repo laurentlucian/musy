@@ -40,8 +40,8 @@ interface SendModalConfig {
   profileId: string;
   sendList: boolean | undefined;
   setSendList: Dispatch<SetStateAction<boolean | undefined>>;
-  setTitle: Dispatch<SetStateAction<string>>;
-  title: string;
+  setTitle: Dispatch<SetStateAction<'queue' | 'recommend'>>;
+  title: 'queue' | 'recommend';
 }
 
 const SendModal = ({
@@ -210,9 +210,7 @@ const SendModal = ({
               tracks.map((track, index) => (
                 <Box minH="325px" key={track.id}>
                   <Tile
-                    action={
-                      <SendButton sendType={sendList} sendingToId={profileId} track={track} />
-                    }
+                    action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
                     layoutKey="SendModal"
                     track={track}
                     profileId={profileId}
@@ -266,9 +264,7 @@ const SendModal = ({
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
-                    action={
-                      <SendButton sendType={sendList} sendingToId={profileId} track={track} />
-                    }
+                    action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
                     layoutKey="SendModal"
                     track={track}
                     tracks={tracks}

@@ -1,29 +1,26 @@
-import { Link } from '@remix-run/react';
 import type { ReactNode } from 'react';
 import { forwardRef } from 'react';
 
-import { Flex, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track, User } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from './icons/SpotifyLogo';
-import Tooltip from './Tooltip';
 
 type TileProps = {
   action?: ReactNode;
-  createdAt?: Date;
+  // createdAt?: Date;
   // will show header (profile above tile) if createdAt is defined
-  createdBy?: Profile | null;
+  // createdBy?: Profile | null;
   currentUser?: User | null;
   currentUserId?: string | undefined;
+  image?: ReactNode;
   index?: number;
   layoutKey: string;
   list?: boolean;
@@ -31,22 +28,21 @@ type TileProps = {
   profileId?: string;
   track: Track;
   tracks: Track[];
-  w?: string[];
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
   (
     {
       action,
-      createdAt,
-      createdBy,
+      // createdAt,
+      // createdBy,
+      image,
       index,
       layoutKey,
       list,
       profileId,
       track,
       tracks,
-      w = '200px',
       ...props
     },
     ref,
@@ -68,10 +64,10 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           flex={list ? undefined : '0 0 200px'}
           direction={list ? 'row' : undefined}
           {...props}
-          maxW={list ? '40px' : w}
+          maxW={list ? '40px' : '200px'}
         >
           <Flex direction="column">
-            {createdAt && (
+            {/* {createdAt && (
               <HStack align="center" h="35px">
                 {createdBy ? (
                   <Link to={`/${createdBy.userId}`}>
@@ -92,23 +88,8 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
                   {timeSince(createdAt ?? null)}
                 </Text>
               </HStack>
-            )}
-            <Tooltip label={track.albumName} placement="top-start">
-              <Image
-                as={motion.img}
-                layoutId={list ? track.id + layoutKey : undefined}
-                boxSize={list ? '40px' : w}
-                minW={list ? '40px' : w}
-                minH={list ? '40px' : w}
-                objectFit="cover"
-                src={track.image}
-                draggable={false}
-                onMouseDown={onMouseDown}
-                onMouseMove={onMouseMove}
-                onClick={() => onClick(track, profileId ?? null, layoutKey, tracks, index ?? 0)}
-                cursor="pointer"
-              />
-            </Tooltip>
+            )} */}
+            {image}
           </Flex>
           <Flex justify="space-between">
             <Stack

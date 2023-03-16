@@ -8,16 +8,17 @@ import { Star1 } from 'iconsax-react';
 import Tooltip from '../Tooltip';
 
 type FavoriteType = {
+  favId: string;
   favorite: boolean;
 };
 
-const Favorite = ({ favorite }: FavoriteType) => {
+const Favorite = ({ favId, favorite }: FavoriteType) => {
   const [isFavorite, setFavorite] = useState(favorite);
   const submit = useSubmit();
 
   const handleClick = () => {
     setFavorite(!isFavorite);
-    submit({ favUser: String(!isFavorite) }, { method: 'post', replace: true });
+    submit({ favId, favUser: String(!isFavorite) }, { method: 'post', replace: true });
   };
 
   return (
@@ -29,7 +30,6 @@ const Favorite = ({ favorite }: FavoriteType) => {
         cursor="pointer"
         onClick={handleClick}
         color={isFavorite ? 'gold' : 'white'}
-        disabled
       />
     </Tooltip>
   );

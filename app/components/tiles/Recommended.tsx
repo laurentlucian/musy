@@ -18,6 +18,7 @@ import type { Profile, RecommendedSongs, Track } from '@prisma/client';
 import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 import RecommendActions from './RecommendActions';
 import RecommendRatingForm from './RecommendRatingForm';
 import Tiles from './Tiles';
@@ -35,7 +36,7 @@ const Recommended = (props: {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
   const { isOpen, onClose, onToggle } = useDisclosure();
-  
+
   const tracks = props.recommended.map(({ track }) => track);
 
   return (
@@ -43,7 +44,7 @@ const Recommended = (props: {
       {show && (
         <Stack spacing={3}>
           <Tiles title="Recommended" scrollButtons={scrollButtons}>
-            {props.recommended.map((recommended) => {
+            {props.recommended.map((recommended, index) => {
               return (
                 <Stack key={recommended.id} direction="row">
                   <Stack>
@@ -76,10 +77,19 @@ const Recommended = (props: {
                         <>
                           <Tile
                             key={recommended.id}
-                            layoutKey="Recommend"
+                            layoutKey={'Recommend' + index}
                             track={recommended.track}
                             tracks={tracks}
                             profileId={id ?? ''}
+                            image={
+                              <TileImage
+                                src={recommended.track.image}
+                                index={index}
+                                layoutKey={'recommended' + index}
+                                track={recommended.track}
+                                tracks={tracks}
+                              />
+                            }
                           />
                         </>
                       </PopoverTrigger>

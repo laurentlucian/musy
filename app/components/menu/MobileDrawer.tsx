@@ -76,11 +76,11 @@ const MobileDrawer = () => {
           artist: track.album.artists[0].name,
           artistUri: track.artists[0].uri,
           explicit: track.explicit,
+          id: track.id,
           image: track.album.images[0].url,
           link: track.external_urls.spotify,
           name: track.name,
           preview_url: track.preview_url,
-          trackId: track.id,
           uri: track.uri,
         })),
       );

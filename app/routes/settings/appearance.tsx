@@ -41,7 +41,6 @@ export const action = async ({ request }: ActionArgs) => {
   const playerButtonPreference = data.get('playerButtonSide');
   if (playerButtonPreference) {
     const playerButtonRight = playerButtonPreference === 'true';
-    console.log(playerButtonRight ? playerButtonRight : playerButtonRight);
     await prisma.settings.upsert({
       create: { playerButtonRight, userId },
       update: { playerButtonRight },

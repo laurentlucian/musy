@@ -9,7 +9,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import { useDrawerActions } from '~/hooks/useDrawer';
-import { askDaVinci } from '~/services/ai.server';
+import { getAnalysis } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { redis } from '~/services/scheduler/redis.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -97,18 +97,12 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     );
   }
 
-  const {
-    name,
-    artists: [{ name: artist }],
-  } = track;
-
-  const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
-  const response = await askDaVinci(prompt);
+  const response = await getAnalysis(track);
 
   const data = { analysis: response, authorized: !!session, track };
 
-  // set cache for 1 month
-  await redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30);
+  // set cache for 6 months
+  await redis.set(cacheKey, JSON.stringify(data), 'EX', 60 * 60 * 24 * 30 * 6);
   return typedjson(data);
 };
 

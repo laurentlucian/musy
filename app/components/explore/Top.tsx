@@ -6,6 +6,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/explore/index';
 
 import Tile from '../Tile';
+import TileImage from '../TileImage';
 
 const Top = () => {
   const currentUser = useSessionUser();
@@ -29,6 +30,17 @@ const Top = () => {
           index={index}
           profileId={id ?? ''}
           list
+          image={
+            <TileImage
+              src={track.image}
+              index={index}
+              layoutKey={'ExploreTop'}
+              track={track}
+              tracks={top}
+              profileId={id}
+              size={'40px'}
+            />
+          }
         />
       ))}
     </>

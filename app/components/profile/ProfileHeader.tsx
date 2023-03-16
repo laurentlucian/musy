@@ -24,7 +24,8 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
-  const { currentUser, following, friendRecord, listened, user } = data;
+  const { currentUser, following, favRecord, friendRecord, listened, user } = data;
+
   const isOwnProfile = currentUser?.userId === user.userId;
   // const isFavorite = currentUser?.favoriteUsers
   //   ?.map((userId) => userId === currentUser.userId)
@@ -51,7 +52,7 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
         fontWeight="bold"
         textAlign="left"
       >
-        {user.name}
+        {!user.name.includes('cunt') ? user.name : 'healthycat'}
       </Heading>
       {isPrivate && (
         <Tooltip label="Private" placement="top" hasArrow>
@@ -161,7 +162,9 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const FollowButton =
     currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
 
-  const FavButton = !isOwnProfile ? <Favorite favorite={false} /> : null;
+  const FavButton = !isOwnProfile ? (
+    <Favorite favorite={!!favRecord} favId={favRecord?.favoriteId ?? ''} />
+  ) : null;
 
   const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;
   const AddFriendBttn = !isOwnProfile ? (
