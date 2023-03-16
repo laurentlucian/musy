@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
@@ -249,6 +249,57 @@ export const loader = async ({ request }: LoaderArgs) => {
     pendingFriends,
     users,
   });
+};
+
+export const action = async ({ request }: ActionArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session?.user ?? null;
+  const id = currentUser?.id;
+
+  const data = await request.formData();
+  const friendId = data.get('friendId');
+  const clickStatus = data.get('clickStatus');
+
+  console.log('in action pending friends: ' + typeof friendId + ' ' + clickStatus);
+  const test = clickStatus === 'rejected';
+  console.log(test);
+  //if the user clicks the accept button, update the status of the friend request to accepted
+  if (typeof friendId === 'string') {
+    if (clickStatus === 'accepted') {
+      console.log('in accept');
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          userId_friendId: {
+            friendId: id!,
+            userId: friendId,
+          },
+        },
+      });
+
+      await prisma.friends.create({
+        data: {
+          friendId: friendId!,
+          status: 'accepted'!,
+          userId: id!,
+        },
+      });
+    } else if (clickStatus === 'rejected') {
+      console.log('in reject');
+      await prisma.friends.delete({
+        where: {
+          userId_friendId: {
+            friendId: id!,
+            userId: friendId,
+          },
+        },
+      });
+    }
+  }
+
+  return null;
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
