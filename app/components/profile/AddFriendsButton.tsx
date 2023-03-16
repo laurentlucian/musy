@@ -20,26 +20,22 @@ const AddFriendsButton = ({ status }: { status: Friends['status'] | null }) => {
 
   const FriendsButtonText = () => {
     if (!friendStatus) {
-      console.log(' you are not friends');
       return <Text>Add Friend</Text>;
     }
     if (friendStatus === 'pending') {
-      console.log('you are pending friends');
       return <Text>Pending</Text>;
-    } else if (friendStatus === 'accepted') {
-      console.log('you are friends');
-      return <Text>Friends</Text>;
     }
     return null;
   };
 
-  return (
-    <Tooltip label="Add Friend ToolTip" placement="bottom-end" hasArrow>
+  if (friendStatus === 'accepted') return null;
+  else {
+    return (
       <Button colorScheme="whiteAlpha" size={'sm'} onClick={handleClick}>
         <FriendsButtonText></FriendsButtonText>
       </Button>
-    </Tooltip>
-  );
+    );
+  }
 };
 
 export default AddFriendsButton;
