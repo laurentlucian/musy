@@ -2,35 +2,23 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import {
-  Stack,
-  Tab,
-  Divider,
-  HStack,
-  Image,
-  Text,
-  Tabs,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from '@chakra-ui/react';
+import { Stack, TabPanel } from '@chakra-ui/react';
 
 import type { Friends as PrismaFriends } from '@prisma/client';
-import type { User } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PendingFriendsContainer from '~/components/friends/PendingFriendsContainer';
+import FriendsTabs from '~/components/FriendsTabs';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { Track } from '~/lib/types/types';
 import { notNull } from '~/lib/utils';
-import { authenticator, getAllUsers } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
-  const { currentFriends, currentUserId, pendingFriendProfiles, pendingFriends, users } =
-    useTypedLoaderData<typeof loader>();
+  const { currentUserId, pendingFriendProfiles, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const friends = users.filter((user) => user.userId !== currentUserId);
@@ -79,101 +67,53 @@ const Friends = () => {
     tracks.push(track);
   }
 
-  const friendsTabImg = currentFriends ? <Image boxSize="15px" src="/users.svg" /> : null;
-
-  const friendsTabText = currentFriends ? (
-    <Text fontSize="sm" fontWeight="400" color="white">
-      friends
-    </Text>
-  ) : null;
-
-  const friendsTabLength = currentFriends ? (
-    <Text fontSize="xs" fontWeight="300" color="white">
-      ~{currentFriends.length}
-    </Text>
-  ) : null;
-
-  const friendRequestsTabImg = pendingFriends ? <Image boxSize="15px" src="/users.svg" /> : null;
-
-  const friendRequestsTabText = pendingFriends ? (
-    <Text fontSize="sm" fontWeight="400" color="white">
-      requests
-    </Text>
-  ) : null;
-
-  const friendRequestsTabLength = pendingFriends ? (
-    <Text fontSize="xs" fontWeight="300" color="white">
-      ~{pendingFriends.length}
-    </Text>
-  ) : null;
-
   return (
-    <Stack pt={{ base: '60px', xl: 0 }} pb="100px" spacing={3} w="100%" h="100%" px={['4px', 0]}>
-      <HStack>
-        <Tabs colorScheme="white" variant="soft-rounded">
-          <TabList>
-            <Tab>
-              {friendsTabImg}
-              {friendsTabText}
-              {friendsTabLength}
-            </Tab>
-            <Tab>
-              {friendRequestsTabImg}
-              {friendRequestsTabText}
-              {friendRequestsTabLength}
-            </Tab>
-          </TabList>
-          <Divider bgColor="spotify.green" />
-          <TabPanels>
-            <TabPanel>
-              {' '}
-              {currentUserData && currentUserData.settings?.miniPlayer && (
-                <Stack w="100%" h="100%">
-                  {currentUserData.settings?.miniPlayer && (
-                    <PrismaMiniPlayer
-                      key={currentUserData.userId}
-                      layoutKey="MiniPlayer"
-                      user={currentUserData}
-                      currentUserId={currentUserId}
-                      tracks={null}
-                      friendsTracks={tracks}
-                      index={0}
-                    />
-                  )}
-                </Stack>
-              )}
-              {sortedFriends.map((user, index) => {
-                return (
-                  <PrismaMiniPlayer
-                    key={user.userId}
-                    layoutKey={'MiniPlayer' + index}
-                    user={user}
-                    currentUserId={currentUserId}
-                    tracks={tracks}
-                    friendsTracks={[]}
-                    index={index}
-                  />
-                );
-              })}
-            </TabPanel>
-            <TabPanel>
-              <Stack>
-                {pendingFriendProfiles.map((pendingFriend) => {
-                  return (
-                    <PendingFriendsContainer
-                      key={pendingFriend.userId}
-                      image={pendingFriend.image}
-                      name={pendingFriend.name}
-                      userId={pendingFriend.userId}
-                    />
-                  );
-                })}
-              </Stack>
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </HStack>
-    </Stack>
+    <FriendsTabs>
+      <TabPanel>
+        {currentUserData && currentUserData.settings?.miniPlayer && (
+          <Stack w="100%" h="100%">
+            {currentUserData.settings?.miniPlayer && (
+              <PrismaMiniPlayer
+                key={currentUserData.userId}
+                layoutKey="MiniPlayer"
+                user={currentUserData}
+                currentUserId={currentUserId}
+                tracks={null}
+                friendsTracks={tracks}
+                index={0}
+              />
+            )}
+          </Stack>
+        )}
+        {sortedFriends.map((user, index) => {
+          return (
+            <PrismaMiniPlayer
+              key={user.userId}
+              layoutKey={'MiniPlayer' + index}
+              user={user}
+              currentUserId={currentUserId}
+              tracks={tracks}
+              friendsTracks={[]}
+              index={index}
+            />
+          );
+        })}
+      </TabPanel>
+      <TabPanel>
+        <Stack>
+          {pendingFriendProfiles.map((pendingFriend) => {
+            return (
+              <PendingFriendsContainer
+                key={pendingFriend.userId}
+                image={pendingFriend.image}
+                name={pendingFriend.name}
+                userId={pendingFriend.userId}
+              />
+            );
+          })}
+        </Stack>
+      </TabPanel>
+    </FriendsTabs>
   );
 };
 
