@@ -18,21 +18,17 @@ const AddFriendsButton = ({ status }: { status: Friends['status'] | null }) => {
     setFriendStatus(status);
   };
 
-  const FriendsButtonText = () => {
-    if (!friendStatus) {
-      return <Text>Add Friend</Text>;
-    }
-    if (friendStatus === 'pending') {
-      return <Text>Pending</Text>;
-    }
-    return null;
-  };
+  const FriendsButtonText = !friendStatus ? (
+    <Text>Add Friend</Text>
+  ) : friendStatus === 'pending' ? (
+    <Text>Pending</Text>
+  ) : null;
 
   if (friendStatus === 'accepted') return null;
   else {
     return (
       <Button colorScheme="whiteAlpha" size={'sm'} onClick={handleClick}>
-        <FriendsButtonText></FriendsButtonText>
+        {FriendsButtonText}
       </Button>
     );
   }
