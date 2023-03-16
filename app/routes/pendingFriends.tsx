@@ -17,6 +17,7 @@ import { prisma } from '~/services/db.server';
 //load buttons to accept or decline friend requests
 
 //TODO: state of pending friends requests (update page when friend request comes in)
+//CREATE A TAB NEXT TO FRIENDS ON /HOME/FRIENDS THAT NAVIGATES TO THIS PAGE..
 
 const PendingFriends = () => {
   const { currentUser, friendProfiles, friendsList } = useTypedLoaderData<typeof loader>();
