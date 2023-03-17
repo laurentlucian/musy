@@ -7,6 +7,7 @@ import type { loader } from '~/routes/explore/index';
 
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 
 const Top = () => {
   const currentUser = useSessionUser();
@@ -26,19 +27,25 @@ const Top = () => {
           key={track.id}
           layoutKey="ExploreTop"
           track={track}
-          tracks={top}
-          index={index}
-          profileId={id ?? ''}
           list
           image={
             <TileImage
               src={track.image}
               index={index}
-              layoutKey={'ExploreTop'}
+              layoutKey="ExploreTop"
               track={track}
               tracks={top}
               profileId={id}
               size={'40px'}
+            />
+          }
+          info={
+            <TileInfo
+              index={index}
+              layoutKey="ExploreTop"
+              track={track}
+              tracks={top}
+              profileId={id}
             />
           }
         />

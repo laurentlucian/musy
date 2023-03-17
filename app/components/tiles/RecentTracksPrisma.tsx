@@ -8,6 +8,7 @@ import type { RecentSongs, Track } from '@prisma/client';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -40,10 +41,8 @@ const RecentTracksPrisma = ({
             return (
               <Tile
                 key={index}
-                index={index}
                 layoutKey={'RecentPrisma' + index}
                 track={track}
-                tracks={tracks}
                 image={
                   <TileImage
                     src={track.image}
@@ -51,6 +50,15 @@ const RecentTracksPrisma = ({
                     layoutKey={'RecentImage' + index}
                     track={track}
                     tracks={tracks}
+                  />
+                }
+                info={
+                  <TileInfo
+                    index={index}
+                    layoutKey={'RecentInfo' + index}
+                    track={track}
+                    tracks={tracks}
+                    profileId={id}
                   />
                 }
               />
@@ -76,8 +84,6 @@ const RecentTracksPrisma = ({
                     <Tile
                       layoutKey={'RecentPrismaExpanded' + index}
                       track={track}
-                      tracks={tracks}
-                      profileId={id ?? ''}
                       image={
                         <TileImage
                           src={track.image}
@@ -86,6 +92,15 @@ const RecentTracksPrisma = ({
                           track={track}
                           tracks={tracks}
                           size={['115px', '100px']}
+                        />
+                      }
+                      info={
+                        <TileInfo
+                          index={index}
+                          layoutKey={'RecentPrismaExpanded' + index}
+                          track={track}
+                          tracks={tracks}
+                          profileId={id}
                         />
                       }
                     />

@@ -64,8 +64,6 @@ const OldLikedSongs = ({
                 preview_url: track.preview_url,
                 uri: track.uri,
               }}
-              tracks={[]}
-              profileId={id ?? ''}
             />
           );
         })}

@@ -148,14 +148,8 @@ const MobileDrawer = () => {
               </InputGroup>
               <Tiles>
                 {search &&
-                  tracks.map((track, index) => (
-                    <Tile
-                      key={track.id}
-                      layoutKey="MobileDrawer"
-                      track={track}
-                      tracks={tracks}
-                      index={index}
-                    />
+                  tracks.map((track) => (
+                    <Tile key={track.id} layoutKey="MobileDrawer" track={track} />
                   ))}
               </Tiles>
             </Stack>

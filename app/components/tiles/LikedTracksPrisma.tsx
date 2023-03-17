@@ -11,6 +11,7 @@ import useIsVisible from '~/hooks/useIsVisible';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -76,9 +77,6 @@ const LikedTracksPrisma = ({
               }}
               key={track.id}
               track={track}
-              profileId={id ?? ''}
-              tracks={tracks}
-              index={index}
               image={
                 <TileImage
                   src={track.image}
@@ -86,6 +84,15 @@ const LikedTracksPrisma = ({
                   layoutKey={'LikedPrisma' + index}
                   track={track}
                   tracks={tracks}
+                />
+              }
+              info={
+                <TileInfo
+                  index={index}
+                  layoutKey={'LikedPrisma' + index}
+                  track={track}
+                  tracks={tracks}
+                  profileId={id}
                 />
               }
             />
@@ -111,9 +118,6 @@ const LikedTracksPrisma = ({
                   <Tile
                     layoutKey="LikedPrismaExpanded"
                     track={track}
-                    tracks={tracks}
-                    index={index}
-                    profileId={id ?? ''}
                     image={
                       <TileImage
                         src={track.image}
@@ -122,6 +126,15 @@ const LikedTracksPrisma = ({
                         track={track}
                         tracks={tracks}
                         size={['115px', '100px']}
+                      />
+                    }
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey={'LikedPrismaExpanded' + index}
+                        track={track}
+                        tracks={tracks}
+                        profileId={id}
                       />
                     }
                   />

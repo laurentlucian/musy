@@ -21,14 +21,12 @@ import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
 import SendModal from './SendModal';
 
 const QuickActions = ({
-  currentUserId,
   image,
   name,
   profileId,
   que,
   recommend,
 }: {
-  currentUserId: string | undefined;
   image: string;
   name: string;
   profileId: string;
@@ -127,7 +125,6 @@ const QuickActions = ({
         setTitle={setTitle}
         sendList={sendList}
         setSendList={setSendList}
-        currentUserId={currentUserId}
       />
     </>
   );

@@ -135,7 +135,7 @@ const LikedTracksVirtual = ({
         {...props}
       >
         <Box h="100%" w={`${rowVirtualizer.getTotalSize()}px`} pos="relative">
-          {virtualItems.map((virtualRow, index) => {
+          {virtualItems.map((virtualRow) => {
             const { track } = liked[virtualRow.index];
 
             return (
@@ -162,9 +162,6 @@ const LikedTracksVirtual = ({
                   preview_url: track.preview_url,
                   uri: track.uri,
                 }}
-                tracks={[]}
-                index={index}
-                profileId={id ?? ''}
               />
             );
           })}

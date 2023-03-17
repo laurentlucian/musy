@@ -28,12 +28,12 @@ import { Refresh } from 'iconsax-react';
 import Waver from '~/components/icons/Waver';
 import SendButton from '~/components/menu/actions/SendButton';
 import Tile from '~/components/Tile';
+import TileInfo from '~/components/TileInfo';
 import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 
 interface SendModalConfig {
-  currentUserId: string | undefined;
   isOpen: boolean;
   name: string;
   onClose: () => void;
@@ -45,7 +45,6 @@ interface SendModalConfig {
 }
 
 const SendModal = ({
-  currentUserId,
   isOpen,
   name,
   onClose,
@@ -213,10 +212,15 @@ const SendModal = ({
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
                     layoutKey="SendModal"
                     track={track}
-                    profileId={profileId}
-                    currentUserId={currentUserId}
-                    tracks={tracks}
-                    index={index}
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey="SendModal"
+                        track={track}
+                        tracks={tracks}
+                        profileId={profileId}
+                      />
+                    }
                   />
                 </Box>
               ))
@@ -267,10 +271,15 @@ const SendModal = ({
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
                     layoutKey="SendModal"
                     track={track}
-                    tracks={tracks}
-                    index={index}
-                    profileId={profileId}
-                    currentUserId={currentUserId}
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey="SendModal"
+                        track={track}
+                        tracks={tracks}
+                        profileId={profileId}
+                      />
+                    }
                   />
                 ))}
             </Tiles>

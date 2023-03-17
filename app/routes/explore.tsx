@@ -13,6 +13,7 @@ import SearchInput from '~/components/explore/SearchInput';
 import Tile from '~/components/Tile';
 // import UserTile from '~/components/UserTile';
 import TileImage from '~/components/TileImage';
+import TileInfo from '~/components/TileInfo';
 import { useExplore } from '~/hooks/useExplore';
 // import { getAllUsers } from '~/services/auth.server';
 
@@ -34,8 +35,6 @@ const Explore = () => {
                 key={track.id}
                 layoutKey={'Explore' + index}
                 track={track}
-                tracks={tracks}
-                index={index}
                 list
                 image={
                   <TileImage
@@ -45,6 +44,14 @@ const Explore = () => {
                     track={track}
                     tracks={tracks}
                     size={'40px'}
+                  />
+                }
+                info={
+                  <TileInfo
+                    index={index}
+                    layoutKey={'Explorei' + index}
+                    track={track}
+                    tracks={tracks}
                   />
                 }
               />

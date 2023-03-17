@@ -8,6 +8,7 @@ import type { Track } from '~/lib/types/types';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -64,16 +65,22 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               key={played_at}
               layoutKey="Recent"
               track={song}
-              profileId={id ?? ''}
-              tracks={tracks}
-              index={index}
               image={
                 <TileImage
                   src={track.album.images[1].url}
                   index={index}
-                  layoutKey={'RecentExpanded' + index}
+                  layoutKey={'Recent' + index}
                   track={song}
                   tracks={tracks}
+                />
+              }
+              info={
+                <TileInfo
+                  index={index}
+                  layoutKey={'Recent' + index}
+                  track={song}
+                  tracks={tracks}
+                  profileId={id}
                 />
               }
             />
@@ -113,9 +120,6 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                   <Tile
                     layoutKey="RecentExpanded"
                     track={song}
-                    tracks={tracks}
-                    index={index}
-                    profileId={id ?? ''}
                     image={
                       <TileImage
                         src={track.album.images[1].url}
@@ -124,6 +128,15 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                         track={song}
                         tracks={tracks}
                         size={['115px', '100px']}
+                      />
+                    }
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey={'RecentExpanded' + index}
+                        track={song}
+                        tracks={tracks}
+                        profileId={id}
                       />
                     }
                   />

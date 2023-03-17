@@ -9,7 +9,6 @@ import invariant from 'tiny-invariant';
 import SendButton from '~/components/menu/actions/SendButton';
 import Tile from '~/components/Tile';
 import Tiles from '~/components/tiles/Tiles';
-import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -17,7 +16,6 @@ import { spotifyApi } from '~/services/spotify.server';
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
   const tracks = results?.tracks?.items ?? [];
-  const currentUser = useSessionUser();
   const { id: profileId } = useParams();
 
   const songs: Track[] = [];
@@ -65,9 +63,6 @@ const Search = () => {
               action={<SendButton sendingToId={profileId} track={song} />} // refactor search to recommend and queue
               layoutKey="Search"
               track={song}
-              tracks={songs}
-              currentUser={currentUser}
-              profileId={profileId ?? ''}
             />
           );
         })}

@@ -9,6 +9,7 @@ import type { Track } from '~/lib/types/types';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -97,9 +98,6 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               key={track.id}
               layoutKey="LikedTracks"
               track={song}
-              profileId={id ?? ''}
-              tracks={tracks}
-              index={index}
               image={
                 <TileImage
                   src={song.image}
@@ -107,6 +105,15 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   layoutKey={'RecentExpanded' + index}
                   track={song}
                   tracks={tracks}
+                />
+              }
+              info={
+                <TileInfo
+                  index={index}
+                  layoutKey={'RecentExpanded' + index}
+                  track={song}
+                  tracks={tracks}
+                  profileId={id}
                 />
               }
             />
@@ -146,17 +153,23 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   <Tile
                     layoutKey="LikedExpanded"
                     track={song}
-                    profileId={id ?? ''}
-                    tracks={tracks}
-                    index={index}
                     image={
                       <TileImage
                         src={song.image}
                         index={index}
-                        layoutKey={'RecentExpanded' + index}
+                        layoutKey={'LikedExpanded' + index}
                         track={song}
                         tracks={tracks}
                         size={['115px', '100px']}
+                      />
+                    }
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey={'LikedExpanded' + index}
+                        track={song}
+                        tracks={tracks}
+                        profileId={id}
                       />
                     }
                   />

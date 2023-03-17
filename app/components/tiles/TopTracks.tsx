@@ -9,6 +9,7 @@ import type { Track } from '~/lib/types/types';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -104,9 +105,6 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               key={track.id}
               layoutKey="Top"
               track={song}
-              profileId={id ?? ''}
-              tracks={tracks}
-              index={index}
               image={
                 <TileImage
                   src={track.album.images[1].url}
@@ -115,6 +113,9 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   track={song}
                   tracks={tracks}
                 />
+              }
+              info={
+                <TileInfo index={index} layoutKey={'Topi' + index} track={song} tracks={tracks} />
               }
             />
           );
@@ -154,9 +155,6 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   <Tile
                     layoutKey="TopExpanded"
                     track={song}
-                    tracks={tracks}
-                    index={index}
-                    profileId={id ?? ''}
                     image={
                       <TileImage
                         src={song.image}
@@ -165,6 +163,14 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                         track={song}
                         tracks={tracks}
                         size={['115px', '100px']}
+                      />
+                    }
+                    info={
+                      <TileInfo
+                        index={index}
+                        layoutKey={'TopExpandedi' + index}
+                        track={song}
+                        tracks={tracks}
                       />
                     }
                   />

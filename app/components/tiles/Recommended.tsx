@@ -19,6 +19,7 @@ import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import RecommendActions from './RecommendActions';
 import RecommendRatingForm from './RecommendRatingForm';
 import Tiles from './Tiles';
@@ -31,7 +32,6 @@ const Recommended = (props: {
 }) => {
   const scrollButtons = props.recommended.length > 5;
   const show = props.recommended.length > 0;
-  const { id } = useParams();
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
@@ -79,13 +79,19 @@ const Recommended = (props: {
                             key={recommended.id}
                             layoutKey={'Recommend' + index}
                             track={recommended.track}
-                            tracks={tracks}
-                            profileId={id ?? ''}
                             image={
                               <TileImage
                                 src={recommended.track.image}
                                 index={index}
                                 layoutKey={'recommended' + index}
+                                track={recommended.track}
+                                tracks={tracks}
+                              />
+                            }
+                            info={
+                              <TileInfo
+                                index={index}
+                                layoutKey={'recommendedi' + index}
                                 track={recommended.track}
                                 tracks={tracks}
                               />
