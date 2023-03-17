@@ -7,7 +7,6 @@ import type { ChakraProps } from '@chakra-ui/react';
 import type { Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 
-import useIsMobile from '~/hooks/useIsMobile';
 import TileContext from '~/hooks/useTileContext';
 
 import SpotifyLogo from './icons/SpotifyLogo';
@@ -25,8 +24,6 @@ type TileProps = {
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
   ({ action, image, index, info, layoutKey, list, track, tracks, ...props }, ref) => {
-    const isSmallScreen = useIsMobile();
-
     return (
       <TileContext.Provider value={{ index, layoutKey, track, tracks }}>
         <Stack
@@ -40,7 +37,7 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
           {image}
           <Flex justify="space-between">
             {info}
-            <Stack>{action ? action : <SpotifyLogo icon mx="5px" white={isSmallScreen} />}</Stack>
+            <Stack>{action ? action : <SpotifyLogo icon mx="5px" />}</Stack>
           </Flex>
         </Stack>
       </TileContext.Provider>

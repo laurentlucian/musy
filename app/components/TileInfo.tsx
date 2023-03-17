@@ -4,7 +4,6 @@ import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
-import useIsMobile from '~/hooks/useIsMobile';
 import { useTileContext } from '~/hooks/useTileContext';
 
 import SpotifyLogo from './icons/SpotifyLogo';
@@ -17,7 +16,6 @@ type TrackInfo = {
 const TileInfo = ({ action, profileId }: TrackInfo) => {
   const { index, layoutKey, track, tracks } = useTileContext();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const isSmallScreen = useIsMobile();
   const { id } = useParams();
   const originId = profileId ?? id ?? null;
   return (
@@ -41,7 +39,7 @@ const TileInfo = ({ action, profileId }: TrackInfo) => {
                 {track.artist}
               </Text>
             </Stack>
-            {action ? <SpotifyLogo w="70px" h="21px" white={isSmallScreen} /> : null}
+            {action ? <SpotifyLogo w="70px" h="21px" /> : null}
           </Stack>
         </Flex>
       )}

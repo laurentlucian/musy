@@ -5,6 +5,7 @@ import spotify_icon_black from '~/assets/spotify_icon_black.png';
 import spotify_icon_white from '~/assets/spotify_icon_white.png';
 import Spotify_Logo_Black from '~/assets/Spotify_Logo_Black.png';
 import Spotify_Logo_White from '~/assets/Spotify_Logo_White.png';
+import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 
 type SpotifyLogoProps = {
@@ -23,12 +24,13 @@ const SpotifyLogo = ({
   white,
   ...props
 }: SpotifyLogoProps) => {
+  const isSmallScreen = useIsMobile();
   const spotifyIcon = useColorModeValue(
-    white ? spotify_icon_white : spotify_icon_black,
+    isSmallScreen || white ? spotify_icon_white : spotify_icon_black,
     spotify_icon_white,
   );
   const spotifyLogo = useColorModeValue(
-    white ? Spotify_Logo_White : Spotify_Logo_Black,
+    isSmallScreen || white ? Spotify_Logo_White : Spotify_Logo_Black,
     Spotify_Logo_White,
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
