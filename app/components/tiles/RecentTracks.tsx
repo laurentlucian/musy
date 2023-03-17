@@ -60,29 +60,20 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             preview_url: track.preview_url,
             uri: track.uri,
           };
+          const layoutKey = 'Recent' + index;
           return (
             <Tile
               key={played_at}
-              layoutKey="Recent"
-              track={song}
               image={
                 <TileImage
                   src={track.album.images[1].url}
                   index={index}
-                  layoutKey={'Recent' + index}
+                  layoutKey={'Recent11' + index}
                   track={song}
                   tracks={tracks}
                 />
               }
-              info={
-                <TileInfo
-                  index={index}
-                  layoutKey={'Recent' + index}
-                  track={song}
-                  tracks={tracks}
-                  profileId={id}
-                />
-              }
+              info={<TileInfo index={index} layoutKey={layoutKey} track={song} tracks={tracks} />}
             />
           );
         })}
@@ -115,29 +106,22 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                 preview_url: track.preview_url,
                 uri: track.uri,
               };
+              const layoutKey = 'RecentExpanded' + index;
               return (
                 <Box key={played_at}>
                   <Tile
-                    layoutKey="RecentExpanded"
-                    track={song}
                     image={
                       <TileImage
                         src={track.album.images[1].url}
                         index={index}
-                        layoutKey={'RecentExpanded' + index}
+                        layoutKey={layoutKey}
                         track={song}
                         tracks={tracks}
                         size={['115px', '100px']}
                       />
                     }
                     info={
-                      <TileInfo
-                        index={index}
-                        layoutKey={'RecentExpanded' + index}
-                        track={song}
-                        tracks={tracks}
-                        profileId={id}
-                      />
+                      <TileInfo index={index} layoutKey={layoutKey} track={song} tracks={tracks} />
                     }
                   />
                 </Box>
@@ -149,7 +133,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             return (
               <Card
                 key={played_at}
-                layoutKey="RecentCard"
+                layoutKey={'RecentCard' + index}
                 track={{
                   albumName: track.album.name,
                   albumUri: track.album.uri,

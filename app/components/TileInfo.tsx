@@ -23,7 +23,7 @@ const TileInfo = ({ action, index, layoutKey, profileId, track, tracks }: TrackI
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isSmallScreen = useIsMobile();
   const { id } = useParams();
-  const originId = profileId ?? id ?? '';
+  const originId = profileId ?? id ?? null;
   return (
     <Stack
       spacing={0}

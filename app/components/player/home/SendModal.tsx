@@ -210,8 +210,6 @@ const SendModal = ({
                 <Box minH="325px" key={track.id}>
                   <Tile
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
-                    layoutKey="SendModal"
-                    track={track}
                     info={
                       <TileInfo
                         index={index}
@@ -269,8 +267,6 @@ const SendModal = ({
                   <Tile
                     key={track.id}
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
-                    layoutKey="SendModal"
-                    track={track}
                     info={
                       <TileInfo
                         index={index}

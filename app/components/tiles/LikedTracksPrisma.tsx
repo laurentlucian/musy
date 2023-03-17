@@ -62,7 +62,8 @@ const LikedTracksPrisma = ({
   const title = 'Liked';
 
   const tracks = liked.map((data) => data.track);
-
+  const layoutKey = 'LikedPrisma';
+  const layoutKey2 = 'LikedPrismaExpanded';
   if (!liked.length) return null;
   return (
     <Stack spacing={3}>
@@ -71,30 +72,20 @@ const LikedTracksPrisma = ({
           const isLast = index === liked.length - 1;
           return (
             <Tile
-              layoutKey="LikedPrisma"
               ref={(node) => {
                 isLast && setRef(node);
               }}
               key={track.id}
-              track={track}
               image={
                 <TileImage
                   src={track.image}
                   index={index}
-                  layoutKey={'LikedPrisma' + index}
+                  layoutKey={layoutKey}
                   track={track}
                   tracks={tracks}
                 />
               }
-              info={
-                <TileInfo
-                  index={index}
-                  layoutKey={'LikedPrisma' + index}
-                  track={track}
-                  tracks={tracks}
-                  profileId={id}
-                />
-              }
+              info={<TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />}
             />
           );
         })}
@@ -116,13 +107,11 @@ const LikedTracksPrisma = ({
               return (
                 <Box key={index}>
                   <Tile
-                    layoutKey="LikedPrismaExpanded"
-                    track={track}
                     image={
                       <TileImage
                         src={track.image}
                         index={index}
-                        layoutKey={'LikedPrismaExpanded' + index}
+                        layoutKey={layoutKey2}
                         track={track}
                         tracks={tracks}
                         size={['115px', '100px']}
@@ -131,10 +120,9 @@ const LikedTracksPrisma = ({
                     info={
                       <TileInfo
                         index={index}
-                        layoutKey={'LikedPrismaExpanded' + index}
+                        layoutKey={layoutKey2}
                         track={track}
                         tracks={tracks}
-                        profileId={id}
                       />
                     }
                   />

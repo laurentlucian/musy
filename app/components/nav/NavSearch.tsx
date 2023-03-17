@@ -141,6 +141,8 @@ const NavSearch = () => {
     }
   }, [data]);
 
+  const layoutKey = 'NavSearch';
+
   return (
     <div ref={divRef}>
       <Popover
@@ -219,21 +221,19 @@ const NavSearch = () => {
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
-                    layoutKey="NavSearch"
-                    track={track}
                     list
                     image={
                       <TileImage
                         src={track.image}
                         index={index}
-                        layoutKey="NavSearch"
+                        layoutKey={layoutKey}
                         track={track}
                         tracks={tracks}
                         size={'40px'}
                       />
                     }
                     info={
-                      <TileInfo index={index} layoutKey="NavSearch" track={track} tracks={tracks} />
+                      <TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />
                     }
                   />
                 ))}

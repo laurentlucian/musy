@@ -28,35 +28,30 @@ const Explore = () => {
       <Stack w={['100%', ' 500px']} h={['89vh', '100%']} overflowY="scroll">
         {/* {!pathname.includes('/explore/') &&
           data?.users.map((user: Profile) => <UserTile key={user.id} profile={user} />)} */}
-        {tracks?.map(
-          (track, index) =>
+        {tracks?.map((track, index) => {
+          const layoutKey = 'Explore' + index;
+          return (
             !pathname.includes('/users') && (
               <Tile
                 key={track.id}
-                layoutKey={'Explore' + index}
-                track={track}
                 list
                 image={
                   <TileImage
                     src={track.image}
                     index={index}
-                    layoutKey={'Explore' + index}
+                    layoutKey={layoutKey}
                     track={track}
                     tracks={tracks}
                     size={'40px'}
                   />
                 }
                 info={
-                  <TileInfo
-                    index={index}
-                    layoutKey={'Explorei' + index}
-                    track={track}
-                    tracks={tracks}
-                  />
+                  <TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />
                 }
               />
-            ),
-        )}
+            )
+          );
+        })}
 
         {<Outlet />}
       </Stack>

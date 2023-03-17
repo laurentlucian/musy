@@ -1,4 +1,4 @@
-import { Link, useParams } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 
 import {
   Image,
@@ -45,6 +45,7 @@ const Recommended = (props: {
         <Stack spacing={3}>
           <Tiles title="Recommended" scrollButtons={scrollButtons}>
             {props.recommended.map((recommended, index) => {
+              const layoutKey = 'Recommend' + index;
               return (
                 <Stack key={recommended.id} direction="row">
                   <Stack>
@@ -77,13 +78,11 @@ const Recommended = (props: {
                         <>
                           <Tile
                             key={recommended.id}
-                            layoutKey={'Recommend' + index}
-                            track={recommended.track}
                             image={
                               <TileImage
                                 src={recommended.track.image}
                                 index={index}
-                                layoutKey={'recommended' + index}
+                                layoutKey={layoutKey}
                                 track={recommended.track}
                                 tracks={tracks}
                               />
@@ -91,7 +90,7 @@ const Recommended = (props: {
                             info={
                               <TileInfo
                                 index={index}
-                                layoutKey={'recommendedi' + index}
+                                layoutKey={layoutKey}
                                 track={recommended.track}
                                 tracks={tracks}
                               />

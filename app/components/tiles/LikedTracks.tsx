@@ -70,7 +70,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     };
     tracks.push(track);
   }
-
+  const layoutKey = 'LikedTracks';
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
@@ -90,32 +90,23 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
             preview_url: track.preview_url,
             uri: track.uri,
           };
+
           return (
             <Tile
               ref={(node) => {
                 isLast && setRef(node);
               }}
               key={track.id}
-              layoutKey="LikedTracks"
-              track={song}
               image={
                 <TileImage
                   src={song.image}
                   index={index}
-                  layoutKey={'RecentExpanded' + index}
+                  layoutKey={layoutKey}
                   track={song}
                   tracks={tracks}
                 />
               }
-              info={
-                <TileInfo
-                  index={index}
-                  layoutKey={'RecentExpanded' + index}
-                  track={song}
-                  tracks={tracks}
-                  profileId={id}
-                />
-              }
+              info={<TileInfo index={index} layoutKey={layoutKey} track={song} tracks={tracks} />}
             />
           );
         })}
@@ -151,13 +142,11 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               return (
                 <Box key={index}>
                   <Tile
-                    layoutKey="LikedExpanded"
-                    track={song}
                     image={
                       <TileImage
                         src={song.image}
                         index={index}
-                        layoutKey={'LikedExpanded' + index}
+                        layoutKey="LikedExpanded"
                         track={song}
                         tracks={tracks}
                         size={['115px', '100px']}
@@ -166,7 +155,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                     info={
                       <TileInfo
                         index={index}
-                        layoutKey={'LikedExpanded' + index}
+                        layoutKey="LikedExpanded"
                         track={song}
                         tracks={tracks}
                         profileId={id}

@@ -38,28 +38,21 @@ const RecentTracksPrisma = ({
       <Stack spacing={3}>
         <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
           {recent.map(({ track }, index) => {
+            const layoutKey = 'RecentPrisma' + index;
             return (
               <Tile
                 key={index}
-                layoutKey={'RecentPrisma' + index}
-                track={track}
                 image={
                   <TileImage
                     src={track.image}
                     index={index}
-                    layoutKey={'RecentImage' + index}
+                    layoutKey={'RecentPrisma11' + index}
                     track={track}
                     tracks={tracks}
                   />
                 }
                 info={
-                  <TileInfo
-                    index={index}
-                    layoutKey={'RecentInfo' + index}
-                    track={track}
-                    tracks={tracks}
-                    profileId={id}
-                  />
+                  <TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />
                 }
               />
             );
@@ -79,16 +72,15 @@ const RecentTracksPrisma = ({
               w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
             >
               {recent.map(({ track }, index) => {
+                const layoutKey = 'RecentPrismaExpanded' + index;
                 return (
                   <Box key={index}>
                     <Tile
-                      layoutKey={'RecentPrismaExpanded' + index}
-                      track={track}
                       image={
                         <TileImage
                           src={track.image}
                           index={index}
-                          layoutKey={'RecentPrismaExpanded' + index}
+                          layoutKey={layoutKey}
                           track={track}
                           tracks={tracks}
                           size={['115px', '100px']}
@@ -97,10 +89,9 @@ const RecentTracksPrisma = ({
                       info={
                         <TileInfo
                           index={index}
-                          layoutKey={'RecentPrismaExpanded' + index}
+                          layoutKey={layoutKey}
                           track={track}
                           tracks={tracks}
-                          profileId={id}
                         />
                       }
                     />

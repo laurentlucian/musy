@@ -5,25 +5,26 @@ import { useExplore } from '~/hooks/useExplore';
 
 const ExploreTracks = () => {
   const { data, search, setSearch, setTracks, tracks } = useExplore();
-  return tracks?.map((track, index) => (
-    <Tile
-      key={track.id}
-      layoutKey={'Explore' + index}
-      track={track}
-      list
-      image={
-        <TileImage
-          src={track.image}
-          index={index}
-          layoutKey={'Explore' + index}
-          track={track}
-          tracks={tracks}
-          size={'40px'}
-        />
-      }
-      info={<TileInfo index={index} layoutKey={'Explorei' + index} track={track} tracks={tracks} />}
-    />
-  ));
+  return tracks?.map((track, index) => {
+    const layoutKey = 'Explore' + index;
+    return (
+      <Tile
+        key={track.id}
+        list
+        image={
+          <TileImage
+            src={track.image}
+            index={index}
+            layoutKey={layoutKey}
+            track={track}
+            tracks={tracks}
+            size={'40px'}
+          />
+        }
+        info={<TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />}
+      />
+    );
+  });
 };
 
 export default ExploreTracks;

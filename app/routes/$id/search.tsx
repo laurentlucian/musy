@@ -61,8 +61,6 @@ const Search = () => {
             <Tile
               key={track.id}
               action={<SendButton sendingToId={profileId} track={song} />} // refactor search to recommend and queue
-              layoutKey="Search"
-              track={song}
             />
           );
         })}

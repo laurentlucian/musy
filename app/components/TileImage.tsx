@@ -6,6 +6,7 @@ import type { Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import { useClickDrag } from '~/hooks/useDrawer';
+import useSessionUser from '~/hooks/useSessionUser';
 
 import Tooltip from './Tooltip';
 type TileImageT = {
@@ -28,12 +29,15 @@ const TileImage = ({
 }: TileImageT) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
-  const originId = profileId ?? id ?? '';
+  const currentUser = useSessionUser();
+  const currentUserId = currentUser?.userId;
+  const originId = profileId ?? id ?? currentUserId ?? null;
+  const layoutId = track.id + layoutKey;
   return (
     <Tooltip label={track.albumName} placement="top-start">
       <Image
         as={motion.img}
-        layoutId={track.id + layoutKey}
+        layoutId={layoutId}
         boxSize={size}
         minW={size}
         minH={size}
