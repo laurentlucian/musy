@@ -2,24 +2,20 @@ import { useParams } from '@remix-run/react';
 
 import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
-
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import { useTileContext } from '~/hooks/useTileContext';
 
 import SpotifyLogo from './icons/SpotifyLogo';
 
 type TrackInfo = {
   action?: boolean;
-  index: number;
-  layoutKey: string;
   profileId?: string;
-  track: Track;
-  tracks: Track[];
 };
 
-const TileInfo = ({ action, index, layoutKey, profileId, track, tracks }: TrackInfo) => {
+const TileInfo = ({ action, profileId }: TrackInfo) => {
+  const { index, layoutKey, track, tracks } = useTileContext();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isSmallScreen = useIsMobile();
   const { id } = useParams();

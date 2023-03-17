@@ -2,22 +2,19 @@ import { useParams } from '@remix-run/react';
 
 import { Image } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import { useClickDrag } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
+import { useTileContext } from '~/hooks/useTileContext';
 
 import Tooltip from './Tooltip';
 type TileImageT = {
-  index: number;
-  layoutKey: string;
   profileId?: string;
   size?: string | string[];
-  track: Track;
-  tracks: Track[];
 };
-const TileImage = ({ index, layoutKey, profileId, size = '200px', track, tracks }: TileImageT) => {
+const TileImage = ({ profileId, size = '200px' }: TileImageT) => {
+  const { index, layoutKey, track, tracks } = useTileContext();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
   const currentUser = useSessionUser();

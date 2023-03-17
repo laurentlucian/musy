@@ -64,15 +64,12 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
           return (
             <Tile
               key={played_at}
-              image={
-                <TileImage
-                  index={index}
-                  layoutKey={'Recent11' + index}
-                  track={song}
-                  tracks={tracks}
-                />
-              }
-              info={<TileInfo index={index} layoutKey={layoutKey} track={song} tracks={tracks} />}
+              track={song}
+              tracks={tracks}
+              index={index}
+              layoutKey={layoutKey}
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -109,18 +106,12 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               return (
                 <Box key={played_at}>
                   <Tile
-                    image={
-                      <TileImage
-                        index={index}
-                        layoutKey={layoutKey}
-                        track={song}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
-                    info={
-                      <TileInfo index={index} layoutKey={layoutKey} track={song} tracks={tracks} />
-                    }
+                    track={song}
+                    tracks={tracks}
+                    index={index}
+                    layoutKey={layoutKey}
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );

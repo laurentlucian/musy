@@ -139,29 +139,30 @@ const LikedTracksVirtual = ({
             // const { track } = liked[virtualRow.index];
 
             return (
-              <Tile
-                pos="absolute"
-                top="0"
-                left="0"
-                height="100%"
-                width={`${virtualRow.size}px`}
-                transform={`translateX(${virtualRow.start}px)`}
-                key={virtualRow.index}
-                // track={{
-                //   albumName: track.album.name,
-                //   albumUri: track.album.uri,
-                //   artist: track.artists[0].name,
-                //   artistUri: track.artists[0].uri,
-                //   duration: track.duration_ms,
-                //   explicit: track.explicit,
-                //   id: track.id,
-                //   image: track.album.images[1].url,
-                //   link: track.external_urls.spotify,
-                //   name: track.name,
-                //   preview_url: track.preview_url,
-                //   uri: track.uri,
-                // }}
-              />
+              // <Tile
+              //   pos="absolute"
+              //   top="0"
+              //   left="0"
+              //   height="100%"
+              //   width={`${virtualRow.size}px`}
+              //   transform={`translateX(${virtualRow.start}px)`}
+              //   key={virtualRow.index}
+              //   // track={{
+              //   //   albumName: track.album.name,
+              //   //   albumUri: track.album.uri,
+              //   //   artist: track.artists[0].name,
+              //   //   artistUri: track.artists[0].uri,
+              //   //   duration: track.duration_ms,
+              //   //   explicit: track.explicit,
+              //   //   id: track.id,
+              //   //   image: track.album.images[1].url,
+              //   //   link: track.external_urls.spotify,
+              //   //   name: track.name,
+              //   //   preview_url: track.preview_url,
+              //   //   uri: track.uri,
+              //   // }}
+              // />
+              <></>
             );
           })}
         </Box>

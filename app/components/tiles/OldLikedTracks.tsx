@@ -47,23 +47,24 @@ const OldLikedSongs = ({
       <Tiles title="Old Liked" scrollButtons={true}>
         {liked.map(({ track }) => {
           return (
-            <Tile
-              key={track.id}
-              // track={{
-              //   albumName: track.album.name,
-              //   albumUri: track.album.uri,
-              //   artist: track.artists[0].name,
-              //   artistUri: track.artists[0].uri,
-              //   duration: track.duration_ms,
-              //   explicit: track.explicit,
-              //   id: track.id,
-              //   image: track.album.images[1].url,
-              //   link: track.external_urls.spotify,
-              //   name: track.name,
-              //   preview_url: track.preview_url,
-              //   uri: track.uri,
-              // }}
-            />
+            // <Tile
+            //   key={track.id}
+            //   // track={{
+            //   //   albumName: track.album.name,
+            //   //   albumUri: track.album.uri,
+            //   //   artist: track.artists[0].name,
+            //   //   artistUri: track.artists[0].uri,
+            //   //   duration: track.duration_ms,
+            //   //   explicit: track.explicit,
+            //   //   id: track.id,
+            //   //   image: track.album.images[1].url,
+            //   //   link: track.external_urls.spotify,
+            //   //   name: track.name,
+            //   //   preview_url: track.preview_url,
+            //   //   uri: track.uri,
+            //   // }}
+            // />
+            <></>
           );
         })}
         <div ref={ref} style={{ border: '100px solid', opacity: 0 }} />

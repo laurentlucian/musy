@@ -221,19 +221,13 @@ const NavSearch = () => {
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
+                    index={index}
+                    layoutKey={layoutKey}
+                    track={track}
+                    tracks={tracks}
+                    image={<TileImage size={'40px'} />}
+                    info={<TileInfo />}
                     list
-                    image={
-                      <TileImage
-                        index={index}
-                        layoutKey={layoutKey}
-                        track={track}
-                        tracks={tracks}
-                        size={'40px'}
-                      />
-                    }
-                    info={
-                      <TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />
-                    }
                   />
                 ))}
             </Stack>

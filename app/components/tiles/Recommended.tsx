@@ -78,22 +78,12 @@ const Recommended = (props: {
                         <>
                           <Tile
                             key={recommended.id}
-                            image={
-                              <TileImage
-                                index={index}
-                                layoutKey={layoutKey}
-                                track={recommended.track}
-                                tracks={tracks}
-                              />
-                            }
-                            info={
-                              <TileInfo
-                                index={index}
-                                layoutKey={layoutKey}
-                                track={recommended.track}
-                                tracks={tracks}
-                              />
-                            }
+                            track={recommended.track}
+                            tracks={tracks}
+                            index={index}
+                            layoutKey={layoutKey}
+                            image={<TileImage />}
+                            info={<TileInfo />}
                           />
                         </>
                       </PopoverTrigger>

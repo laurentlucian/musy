@@ -209,17 +209,12 @@ const SendModal = ({
               tracks.map((track, index) => (
                 <Box minH="325px" key={track.id}>
                   <Tile
+                    track={track}
+                    tracks={tracks}
+                    index={index}
+                    layoutKey="SendModal"
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
-                    info={
-                      <TileInfo
-                        index={index}
-                        layoutKey="SendModal"
-                        track={track}
-                        tracks={tracks}
-                        profileId={profileId}
-                        action
-                      />
-                    }
+                    info={<TileInfo profileId={profileId} action />}
                   />
                 </Box>
               ))
@@ -267,17 +262,12 @@ const SendModal = ({
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
+                    track={track}
+                    tracks={tracks}
+                    index={index}
+                    layoutKey="SendModal"
                     action={<SendButton sendType={title} sendingToId={profileId} track={track} />}
-                    info={
-                      <TileInfo
-                        index={index}
-                        layoutKey="SendModal"
-                        track={track}
-                        tracks={tracks}
-                        profileId={profileId}
-                        action
-                      />
-                    }
+                    info={<TileInfo profileId={profileId} action />}
                   />
                 ))}
             </Tiles>

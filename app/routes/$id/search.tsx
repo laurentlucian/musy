@@ -60,11 +60,13 @@ const Search = () => {
           return (
             <Tile
               key={track.id}
+              track={song}
+              tracks={songs}
+              index={index}
+              layoutKey="search"
               action={<SendButton track={song} />} // refactor search to recommend and queue
-              image={<TileImage track={song} index={index} layoutKey="search" tracks={songs} />}
-              info={
-                <TileInfo index={index} layoutKey="SendModal" track={song} tracks={songs} action />
-              }
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}

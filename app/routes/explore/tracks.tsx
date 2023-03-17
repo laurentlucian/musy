@@ -10,17 +10,13 @@ const ExploreTracks = () => {
     return (
       <Tile
         key={track.id}
+        track={track}
+        tracks={tracks}
+        index={index}
+        layoutKey={layoutKey}
+        image={<TileImage size={'40px'} />}
+        info={<TileInfo />}
         list
-        image={
-          <TileImage
-            index={index}
-            layoutKey={layoutKey}
-            track={track}
-            tracks={tracks}
-            size={'40px'}
-          />
-        }
-        info={<TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />}
       />
     );
   });

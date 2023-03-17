@@ -76,15 +76,12 @@ const LikedTracksPrisma = ({
                 isLast && setRef(node);
               }}
               key={track.id}
-              image={
-                <TileImage
-                  index={index}
-                  layoutKey={layoutKey}
-                  track={track}
-                  tracks={tracks}
-                />
-              }
-              info={<TileInfo index={index} layoutKey={layoutKey} track={track} tracks={tracks} />}
+              track={track}
+              tracks={tracks}
+              index={index}
+              layoutKey={layoutKey}
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -106,23 +103,12 @@ const LikedTracksPrisma = ({
               return (
                 <Box key={index}>
                   <Tile
-                    image={
-                      <TileImage
-                        index={index}
-                        layoutKey={layoutKey2}
-                        track={track}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
-                    info={
-                      <TileInfo
-                        index={index}
-                        layoutKey={layoutKey2}
-                        track={track}
-                        tracks={tracks}
-                      />
-                    }
+                    track={track}
+                    tracks={tracks}
+                    index={index}
+                    layoutKey={layoutKey2}
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );

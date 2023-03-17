@@ -23,17 +23,13 @@ const Top = () => {
         return (
           <Tile
             key={track.id}
+            track={track}
+            tracks={top}
+            index={index}
+            layoutKey={layoutKey}
+            image={<TileImage size={'40px'} />}
+            info={<TileInfo />}
             list
-            image={
-              <TileImage
-                index={index}
-                layoutKey={layoutKey}
-                track={track}
-                tracks={top}
-                size={'40px'}
-              />
-            }
-            info={<TileInfo index={index} layoutKey={layoutKey} track={track} tracks={top} />}
           />
         );
       })}

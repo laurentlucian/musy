@@ -103,15 +103,12 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
           return (
             <Tile
               key={track.id}
-              image={
-                <TileImage
-                  index={index}
-                  layoutKey="Top"
-                  track={song}
-                  tracks={tracks}
-                />
-              }
-              info={<TileInfo index={index} layoutKey="Top" track={song} tracks={tracks} />}
+              track={song}
+              tracks={tracks}
+              index={index}
+              layoutKey="Top"
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -148,23 +145,12 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               return (
                 <Box key={track.id}>
                   <Tile
-                    image={
-                      <TileImage
-                        index={index}
-                        layoutKey="TopExpanded"
-                        track={song}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
-                    info={
-                      <TileInfo
-                        index={index}
-                        layoutKey="TopExpanded"
-                        track={song}
-                        tracks={tracks}
-                      />
-                    }
+                    track={song}
+                    tracks={tracks}
+                    index={index}
+                    layoutKey="TopExpanded"
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );
