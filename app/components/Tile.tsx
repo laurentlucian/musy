@@ -47,11 +47,6 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
     },
     ref,
   ) => {
-    const decodeHtmlEntity = (str?: string) => {
-      return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
-        return String.fromCharCode(parseInt(dec, 16));
-      });
-    };
     const { onClick, onMouseDown, onMouseMove } = useClickDrag();
     const isSmallScreen = useIsMobile();
 
@@ -105,21 +100,15 @@ const Tile = forwardRef<HTMLDivElement, TileProps>(
               </Text>
               {track.artist && (
                 <Flex align="center">
-                  {track.artistUri ? (
-                    <Stack>
-                      <Stack direction="row">
-                        {track.explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
-                        <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                          {track.artist}
-                        </Text>
-                      </Stack>
-                      {action ? <SpotifyLogo w="70px" h="21px" white={isSmallScreen} /> : null}
+                  <Stack>
+                    <Stack direction="row">
+                      {track.explicit && <Image src={explicitImage} w="19px" mr="-3px" />}
+                      <Text fontSize="11px" opacity={0.8} noOfLines={2}>
+                        {track.artist}
+                      </Text>
                     </Stack>
-                  ) : (
-                    <Text fontSize="11px" opacity={0.8} noOfLines={2}>
-                      {decodeHtmlEntity(track.artist)}
-                    </Text>
-                  )}
+                    {action ? <SpotifyLogo w="70px" h="21px" white={isSmallScreen} /> : null}
+                  </Stack>
                 </Flex>
               )}
             </Stack>
