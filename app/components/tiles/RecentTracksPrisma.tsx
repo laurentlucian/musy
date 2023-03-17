@@ -44,7 +44,6 @@ const RecentTracksPrisma = ({
                 key={index}
                 image={
                   <TileImage
-                    src={track.image}
                     index={index}
                     layoutKey={'RecentPrisma11' + index}
                     track={track}
@@ -78,7 +77,6 @@ const RecentTracksPrisma = ({
                     <Tile
                       image={
                         <TileImage
-                          src={track.image}
                           index={index}
                           layoutKey={layoutKey}
                           track={track}

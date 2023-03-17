@@ -217,6 +217,7 @@ const SendModal = ({
                         track={track}
                         tracks={tracks}
                         profileId={profileId}
+                        action
                       />
                     }
                   />
@@ -274,6 +275,7 @@ const SendModal = ({
                         track={track}
                         tracks={tracks}
                         profileId={profileId}
+                        action
                       />
                     }
                   />

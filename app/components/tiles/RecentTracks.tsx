@@ -66,7 +66,6 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
               key={played_at}
               image={
                 <TileImage
-                  src={track.album.images[1].url}
                   index={index}
                   layoutKey={'Recent11' + index}
                   track={song}
@@ -112,7 +111,6 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                   <Tile
                     image={
                       <TileImage
-                        src={track.album.images[1].url}
                         index={index}
                         layoutKey={layoutKey}
                         track={song}

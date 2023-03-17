@@ -80,7 +80,6 @@ const Recommended = (props: {
                             key={recommended.id}
                             image={
                               <TileImage
-                                src={recommended.track.image}
                                 index={index}
                                 layoutKey={layoutKey}
                                 track={recommended.track}

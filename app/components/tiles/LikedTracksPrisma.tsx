@@ -78,7 +78,6 @@ const LikedTracksPrisma = ({
               key={track.id}
               image={
                 <TileImage
-                  src={track.image}
                   index={index}
                   layoutKey={layoutKey}
                   track={track}
@@ -109,7 +108,6 @@ const LikedTracksPrisma = ({
                   <Tile
                     image={
                       <TileImage
-                        src={track.image}
                         index={index}
                         layoutKey={layoutKey2}
                         track={track}

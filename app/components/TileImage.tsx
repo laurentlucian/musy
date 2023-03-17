@@ -14,19 +14,10 @@ type TileImageT = {
   layoutKey: string;
   profileId?: string;
   size?: string | string[];
-  src: string;
   track: Track;
   tracks: Track[];
 };
-const TileImage = ({
-  index,
-  layoutKey,
-  profileId,
-  size = '200px',
-  src,
-  track,
-  tracks,
-}: TileImageT) => {
+const TileImage = ({ index, layoutKey, profileId, size = '200px', track, tracks }: TileImageT) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
   const currentUser = useSessionUser();
@@ -42,7 +33,7 @@ const TileImage = ({
         minW={size}
         minH={size}
         objectFit="cover"
-        src={src}
+        src={track.image}
         draggable={false}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}

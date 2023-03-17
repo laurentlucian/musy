@@ -37,7 +37,6 @@ const Explore = () => {
                 list
                 image={
                   <TileImage
-                    src={track.image}
                     index={index}
                     layoutKey={layoutKey}
                     track={track}

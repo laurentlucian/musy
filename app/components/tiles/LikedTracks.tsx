@@ -99,7 +99,6 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               key={track.id}
               image={
                 <TileImage
-                  src={song.image}
                   index={index}
                   layoutKey={layoutKey}
                   track={song}
@@ -144,7 +143,6 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                   <Tile
                     image={
                       <TileImage
-                        src={song.image}
                         index={index}
                         layoutKey="LikedExpanded"
                         track={song}

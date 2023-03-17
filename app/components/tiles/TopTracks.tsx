@@ -105,7 +105,6 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
               key={track.id}
               image={
                 <TileImage
-                  src={track.album.images[1].url}
                   index={index}
                   layoutKey="Top"
                   track={song}
@@ -151,7 +150,6 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
                   <Tile
                     image={
                       <TileImage
-                        src={song.image}
                         index={index}
                         layoutKey="TopExpanded"
                         track={song}
