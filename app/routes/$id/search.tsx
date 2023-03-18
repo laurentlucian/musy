@@ -1,5 +1,4 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { useParams } from '@remix-run/react';
 
 import { Box } from '@chakra-ui/react';
 
@@ -8,8 +7,9 @@ import invariant from 'tiny-invariant';
 
 import SendButton from '~/components/menu/actions/SendButton';
 import Tile from '~/components/Tile';
+import TileImage from '~/components/TileImage';
+import TileInfo from '~/components/TileInfo';
 import Tiles from '~/components/tiles/Tiles';
-import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
@@ -17,8 +17,6 @@ import { spotifyApi } from '~/services/spotify.server';
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
   const tracks = results?.tracks?.items ?? [];
-  const currentUser = useSessionUser();
-  const { id: profileId } = useParams();
 
   const songs: Track[] = [];
   for (let i = 0; i < tracks.length; i++) {
@@ -44,7 +42,7 @@ const Search = () => {
   return (
     <Box h="60vh" zIndex={9}>
       <Tiles title="">
-        {tracks?.map((track) => {
+        {tracks?.map((track, index) => {
           const song = {
             albumName: track.album.name,
             albumUri: track.album.uri,
@@ -62,12 +60,13 @@ const Search = () => {
           return (
             <Tile
               key={track.id}
-              action={<SendButton sendingToId={profileId} track={song} />} // refactor search to recommend and queue
-              layoutKey="Search"
               track={song}
               tracks={songs}
-              currentUser={currentUser}
-              profileId={profileId ?? ''}
+              index={index}
+              layoutKey="search"
+              action={<SendButton track={song} />} // refactor search to recommend and queue
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}

@@ -9,6 +9,7 @@ import type { Track } from '~/lib/types/types';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -69,7 +70,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     };
     tracks.push(track);
   }
-
+  const layoutKey = 'LikedTracks';
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
@@ -89,26 +90,19 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
             preview_url: track.preview_url,
             uri: track.uri,
           };
+
           return (
             <Tile
               ref={(node) => {
                 isLast && setRef(node);
               }}
               key={track.id}
-              layoutKey="LikedTracks"
               track={song}
-              profileId={id ?? ''}
               tracks={tracks}
               index={index}
-              image={
-                <TileImage
-                  src={song.image}
-                  index={index}
-                  layoutKey={'RecentExpanded' + index}
-                  track={song}
-                  tracks={tracks}
-                />
-              }
+              layoutKey={layoutKey}
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -144,21 +138,12 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
               return (
                 <Box key={index}>
                   <Tile
-                    layoutKey="LikedExpanded"
                     track={song}
-                    profileId={id ?? ''}
                     tracks={tracks}
                     index={index}
-                    image={
-                      <TileImage
-                        src={song.image}
-                        index={index}
-                        layoutKey={'RecentExpanded' + index}
-                        track={song}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
+                    layoutKey="LikedExpanded"
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );

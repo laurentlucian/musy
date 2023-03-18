@@ -20,8 +20,8 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { Track } from '~/lib/types/types';
 
 import Waver from '../icons/Waver';
-import Tile from '../Tile';
-import Tiles from '../tiles/Tiles';
+// import Tile from '../Tile';
+// import Tiles from '../tiles/Tiles';
 
 const MobileDrawer = () => {
   const { isOpen } = useMobileDrawer();
@@ -146,18 +146,7 @@ const MobileDrawer = () => {
                   />
                 )}
               </InputGroup>
-              <Tiles>
-                {search &&
-                  tracks.map((track, index) => (
-                    <Tile
-                      key={track.id}
-                      layoutKey="MobileDrawer"
-                      track={track}
-                      tracks={tracks}
-                      index={index}
-                    />
-                  ))}
-              </Tiles>
+              {/* <Tiles>{search && tracks.map((track) => <Tile key={track.id} />)}</Tiles> */}
             </Stack>
           </DrawerBody>
         </DrawerContent>

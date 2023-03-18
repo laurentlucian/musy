@@ -27,6 +27,7 @@ import type { Track } from '~/lib/types/types';
 import Waver from '../icons/Waver';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import UserTile from '../UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -140,6 +141,8 @@ const NavSearch = () => {
     }
   }, [data]);
 
+  const layoutKey = 'NavSearch';
+
   return (
     <div ref={divRef}>
       <Popover
@@ -218,22 +221,13 @@ const NavSearch = () => {
                 tracks.map((track, index) => (
                   <Tile
                     key={track.id}
-                    layoutKey="NavSearch"
+                    index={index}
+                    layoutKey={layoutKey}
                     track={track}
                     tracks={tracks}
-                    index={index}
-                    profileId=""
+                    image={<TileImage size={'40px'} />}
+                    info={<TileInfo />}
                     list
-                    image={
-                      <TileImage
-                        src={track.image}
-                        index={index}
-                        layoutKey="NavSearch"
-                        track={track}
-                        tracks={tracks}
-                        size={'40px'}
-                      />
-                    }
                   />
                 ))}
             </Stack>

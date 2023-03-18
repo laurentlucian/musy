@@ -16,7 +16,7 @@ import {
 import { motion } from 'framer-motion';
 import { Heart, Play, Send2 } from 'iconsax-react';
 
-import { useClickDrag, useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useClickDrag, useDrawerTrack } from '~/hooks/useDrawer';
 import LikeIcon from '~/lib/icon/Like';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';

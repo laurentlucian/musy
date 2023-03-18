@@ -13,6 +13,7 @@ import SearchInput from '~/components/explore/SearchInput';
 import Tile from '~/components/Tile';
 // import UserTile from '~/components/UserTile';
 import TileImage from '~/components/TileImage';
+import TileInfo from '~/components/TileInfo';
 import { useExplore } from '~/hooks/useExplore';
 // import { getAllUsers } from '~/services/auth.server';
 
@@ -27,29 +28,23 @@ const Explore = () => {
       <Stack w={['100%', ' 500px']} h={['89vh', '100%']} overflowY="scroll">
         {/* {!pathname.includes('/explore/') &&
           data?.users.map((user: Profile) => <UserTile key={user.id} profile={user} />)} */}
-        {tracks?.map(
-          (track, index) =>
+        {tracks?.map((track, index) => {
+          const layoutKey = 'Explore' + index;
+          return (
             !pathname.includes('/users') && (
               <Tile
                 key={track.id}
-                layoutKey={'Explore' + index}
                 track={track}
                 tracks={tracks}
                 index={index}
+                layoutKey={layoutKey}
+                image={<TileImage size={'40px'} />}
+                info={<TileInfo />}
                 list
-                image={
-                  <TileImage
-                    src={track.image}
-                    index={index}
-                    layoutKey={'Explore' + index}
-                    track={track}
-                    tracks={tracks}
-                    size={'40px'}
-                  />
-                }
               />
-            ),
-        )}
+            )
+          );
+        })}
 
         {<Outlet />}
       </Stack>

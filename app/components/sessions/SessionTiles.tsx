@@ -257,9 +257,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                             {artist}
                           </Text>
                         </Stack>
-                        {isQueuing || isRecommending ? (
-                          <SpotifyLogo w="70px" h="21px" white={inDrawer} />
-                        ) : null}
+                        {isQueuing || isRecommending ? <SpotifyLogo w="70px" h="21px" /> : null}
                       </Stack>
                     ) : (
                       <Text fontSize="11px" opacity={0.8} noOfLines={2}>
@@ -283,7 +281,7 @@ const SessionTiles = forwardRef<HTMLDivElement, TileProps>(
                     }
                   />
                 ) : (
-                  <SpotifyLogo icon mx="5px" white={inDrawer} />
+                  <SpotifyLogo icon mx="5px" />
                 )}
               </Stack>
             </Flex>

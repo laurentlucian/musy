@@ -2,43 +2,35 @@ import { useParams } from '@remix-run/react';
 
 import { Image } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import { useClickDrag } from '~/hooks/useDrawer';
+import useSessionUser from '~/hooks/useSessionUser';
+import { useTileContext } from '~/hooks/useTileContext';
 
 import Tooltip from './Tooltip';
 type TileImageT = {
-  index: number;
-  layoutKey: string;
   profileId?: string;
   size?: string | string[];
-  src: string;
-  track: Track;
-  tracks: Track[];
 };
-const TileImage = ({
-  index,
-  layoutKey,
-  profileId,
-  size = '200px',
-  src,
-  track,
-  tracks,
-}: TileImageT) => {
+const TileImage = ({ profileId, size = '200px' }: TileImageT) => {
+  const { index, layoutKey, track, tracks } = useTileContext();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
-  const originId = profileId ?? id ?? '';
+  const currentUser = useSessionUser();
+  const currentUserId = currentUser?.userId;
+  const originId = profileId ?? id ?? currentUserId ?? null;
+  const layoutId = track.id + layoutKey;
   return (
     <Tooltip label={track.albumName} placement="top-start">
       <Image
         as={motion.img}
-        layoutId={track.id + layoutKey}
+        layoutId={layoutId}
         boxSize={size}
         minW={size}
         minH={size}
         objectFit="cover"
-        src={src}
+        src={track.image}
         draggable={false}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}

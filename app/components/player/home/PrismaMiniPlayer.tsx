@@ -111,7 +111,6 @@ const PrismaMiniPlayer = ({
           name={name}
           image={user.image}
           profileId={user.userId}
-          currentUserId={currentUserId}
           que={que}
           recommend={recommend}
         />

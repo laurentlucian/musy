@@ -8,6 +8,7 @@ import type { RecentSongs, Track } from '@prisma/client';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -37,22 +38,16 @@ const RecentTracksPrisma = ({
       <Stack spacing={3}>
         <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
           {recent.map(({ track }, index) => {
+            const layoutKey = 'RecentPrisma' + index;
             return (
               <Tile
                 key={index}
-                index={index}
-                layoutKey={'RecentPrisma' + index}
                 track={track}
                 tracks={tracks}
-                image={
-                  <TileImage
-                    src={track.image}
-                    index={index}
-                    layoutKey={'RecentImage' + index}
-                    track={track}
-                    tracks={tracks}
-                  />
-                }
+                index={index}
+                layoutKey={layoutKey}
+                image={<TileImage />}
+                info={<TileInfo />}
               />
             );
           })}
@@ -71,23 +66,16 @@ const RecentTracksPrisma = ({
               w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
             >
               {recent.map(({ track }, index) => {
+                const layoutKey = 'RecentPrismaExpanded' + index;
                 return (
                   <Box key={index}>
                     <Tile
-                      layoutKey={'RecentPrismaExpanded' + index}
                       track={track}
                       tracks={tracks}
-                      profileId={id ?? ''}
-                      image={
-                        <TileImage
-                          src={track.image}
-                          index={index}
-                          layoutKey={'RecentPrismaExpanded' + index}
-                          track={track}
-                          tracks={tracks}
-                          size={['115px', '100px']}
-                        />
-                      }
+                      index={index}
+                      layoutKey={layoutKey}
+                      image={<TileImage size={['115px', '100px']} />}
+                      info={<TileInfo />}
                     />
                   </Box>
                 );

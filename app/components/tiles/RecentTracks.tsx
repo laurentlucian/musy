@@ -8,6 +8,7 @@ import type { Track } from '~/lib/types/types';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -59,23 +60,16 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             preview_url: track.preview_url,
             uri: track.uri,
           };
+          const layoutKey = 'Recent' + index;
           return (
             <Tile
               key={played_at}
-              layoutKey="Recent"
               track={song}
-              profileId={id ?? ''}
               tracks={tracks}
               index={index}
-              image={
-                <TileImage
-                  src={track.album.images[1].url}
-                  index={index}
-                  layoutKey={'RecentExpanded' + index}
-                  track={song}
-                  tracks={tracks}
-                />
-              }
+              layoutKey={layoutKey}
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -108,24 +102,16 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
                 preview_url: track.preview_url,
                 uri: track.uri,
               };
+              const layoutKey = 'RecentExpanded' + index;
               return (
                 <Box key={played_at}>
                   <Tile
-                    layoutKey="RecentExpanded"
                     track={song}
                     tracks={tracks}
                     index={index}
-                    profileId={id ?? ''}
-                    image={
-                      <TileImage
-                        src={track.album.images[1].url}
-                        index={index}
-                        layoutKey={'RecentExpanded' + index}
-                        track={song}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
+                    layoutKey={layoutKey}
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );
@@ -136,7 +122,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             return (
               <Card
                 key={played_at}
-                layoutKey="RecentCard"
+                layoutKey={'RecentCard' + index}
                 track={{
                   albumName: track.album.name,
                   albumUri: track.album.uri,

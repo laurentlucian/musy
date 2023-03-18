@@ -11,6 +11,7 @@ import useIsVisible from '~/hooks/useIsVisible';
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
@@ -61,7 +62,8 @@ const LikedTracksPrisma = ({
   const title = 'Liked';
 
   const tracks = liked.map((data) => data.track);
-
+  const layoutKey = 'LikedPrisma';
+  const layoutKey2 = 'LikedPrismaExpanded';
   if (!liked.length) return null;
   return (
     <Stack spacing={3}>
@@ -70,24 +72,16 @@ const LikedTracksPrisma = ({
           const isLast = index === liked.length - 1;
           return (
             <Tile
-              layoutKey="LikedPrisma"
               ref={(node) => {
                 isLast && setRef(node);
               }}
               key={track.id}
               track={track}
-              profileId={id ?? ''}
               tracks={tracks}
               index={index}
-              image={
-                <TileImage
-                  src={track.image}
-                  index={index}
-                  layoutKey={'LikedPrisma' + index}
-                  track={track}
-                  tracks={tracks}
-                />
-              }
+              layoutKey={layoutKey}
+              image={<TileImage />}
+              info={<TileInfo />}
             />
           );
         })}
@@ -109,21 +103,12 @@ const LikedTracksPrisma = ({
               return (
                 <Box key={index}>
                   <Tile
-                    layoutKey="LikedPrismaExpanded"
                     track={track}
                     tracks={tracks}
                     index={index}
-                    profileId={id ?? ''}
-                    image={
-                      <TileImage
-                        src={track.image}
-                        index={index}
-                        layoutKey={'LikedPrismaExpanded' + index}
-                        track={track}
-                        tracks={tracks}
-                        size={['115px', '100px']}
-                      />
-                    }
+                    layoutKey={layoutKey2}
+                    image={<TileImage size={['115px', '100px']} />}
+                    info={<TileInfo />}
                   />
                 </Box>
               );

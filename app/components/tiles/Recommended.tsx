@@ -1,4 +1,4 @@
-import { Link, useParams } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 
 import {
   Image,
@@ -19,6 +19,7 @@ import { timeSince } from '~/lib/utils';
 
 import Tile from '../Tile';
 import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 import RecommendActions from './RecommendActions';
 import RecommendRatingForm from './RecommendRatingForm';
 import Tiles from './Tiles';
@@ -31,7 +32,6 @@ const Recommended = (props: {
 }) => {
   const scrollButtons = props.recommended.length > 5;
   const show = props.recommended.length > 0;
-  const { id } = useParams();
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
@@ -45,6 +45,7 @@ const Recommended = (props: {
         <Stack spacing={3}>
           <Tiles title="Recommended" scrollButtons={scrollButtons}>
             {props.recommended.map((recommended, index) => {
+              const layoutKey = 'Recommend' + index;
               return (
                 <Stack key={recommended.id} direction="row">
                   <Stack>
@@ -77,19 +78,12 @@ const Recommended = (props: {
                         <>
                           <Tile
                             key={recommended.id}
-                            layoutKey={'Recommend' + index}
                             track={recommended.track}
                             tracks={tracks}
-                            profileId={id ?? ''}
-                            image={
-                              <TileImage
-                                src={recommended.track.image}
-                                index={index}
-                                layoutKey={'recommended' + index}
-                                track={recommended.track}
-                                tracks={tracks}
-                              />
-                            }
+                            index={index}
+                            layoutKey={layoutKey}
+                            image={<TileImage />}
+                            info={<TileInfo />}
                           />
                         </>
                       </PopoverTrigger>
