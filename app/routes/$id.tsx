@@ -4,7 +4,7 @@ import { Link, Outlet, useCatch } from '@remix-run/react';
 
 import { Heading, Stack, Button, Box, useColorModeValue } from '@chakra-ui/react';
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData, useTypedRouteLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import PrivateProfile from '~/components/profile/PrivateProfile';
@@ -26,7 +26,7 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
-  const { user } = useTypedLoaderData<typeof loader>();
+  const { blockRecord, user } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
@@ -57,7 +57,13 @@ const Profile = () => {
         zIndex={1}
       >
         <ProfileHeader isPrivate={isPrivate} />
-        {isPrivate && !isOwnProfile && !isDev ? <PrivateProfile name={user.name} /> : <Outlet />}
+        {isPrivate && !isOwnProfile && !isDev ? (
+          <PrivateProfile name={user.name} />
+        ) : !blockRecord ? (
+          <Outlet />
+        ) : (
+          <>This user is blocked</>
+        )}
       </Stack>
     </>
   );
