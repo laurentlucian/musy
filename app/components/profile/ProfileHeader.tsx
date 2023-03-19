@@ -28,8 +28,6 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
 
   const isOwnProfile = currentUser?.userId === user.userId;
 
-  console.log(blockRecord, 'blockRecord', favRecord);
-
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image

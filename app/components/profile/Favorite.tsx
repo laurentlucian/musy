@@ -16,8 +16,6 @@ const Favorite = ({ favId, favorite }: FavoriteType) => {
   const [isFavorite, setFavorite] = useState(favorite);
   const submit = useSubmit();
 
-  console.log(favId, 'favId');
-
   const handleClick = () => {
     setFavorite(!isFavorite);
     submit({ favId: favId, favUser: String(!isFavorite) }, { method: 'post', replace: true });
