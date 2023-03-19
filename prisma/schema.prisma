@@ -76,6 +76,9 @@ model Profile {
   Sessions      Sessions[]
   favorite      Favorite[] @relation("favorite")
   favBy         Favorite[] @relation("favBy")
+  block         Block[] @relation("block")
+  blockBy       Block[] @relation("blockedBy")
+
 
 }
 
@@ -144,6 +147,15 @@ model Favorite {
   favoriteId    String
   favoritedBy   Profile  @relation("favBy",fields: [favoritedById], references: [userId])
   favoritedById String
+}
+
+model Block {
+  id            Int      @id @default(autoincrement())
+  favAt         DateTime @default(now())
+  block      Profile  @relation("block",fields: [blockId], references: [userId])
+  blockId    String
+  blockedBy   Profile  @relation("blockedBy",fields: [blockedById], references: [userId])
+  blockedById String
 }
 
 model RecommendedSongs {
