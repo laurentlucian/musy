@@ -4,7 +4,7 @@ import { Link, Outlet, useCatch } from '@remix-run/react';
 
 import { Heading, Stack, Button, Box, useColorModeValue } from '@chakra-ui/react';
 
-import { typedjson, useTypedLoaderData, useTypedRouteLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import PrivateProfile from '~/components/profile/PrivateProfile';

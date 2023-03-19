@@ -4,14 +4,11 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
   IconButton,
   Portal,
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
-
-import { VolumeMute } from 'iconsax-react';
 
 import { BlockUser } from './profileActions/BlockUser';
 import CopyLink from './profileActions/CopyLink';
