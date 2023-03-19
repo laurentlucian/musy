@@ -24,7 +24,16 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
-  const { blockRecord, currentUser, favRecord, following, friendRecord, listened, user } = data;
+  const {
+    blockRecord,
+    currentUser,
+    favRecord,
+    following,
+    friendRecord,
+    listened,
+    muteRecord,
+    user,
+  } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
 
@@ -164,7 +173,12 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   ) : null;
 
   const MenuBttn = !isOwnProfile ? (
-    <ProfileActions block={!!blockRecord} blockId={String(blockRecord?.id)} />
+    <ProfileActions
+      block={!!blockRecord}
+      blockId={String(blockRecord?.id)}
+      mute={!!muteRecord}
+      muteId={String(muteRecord?.id)}
+    />
   ) : null;
 
   const AddFriendBttn = !isOwnProfile ? (

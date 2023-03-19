@@ -208,6 +208,16 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     });
   }
 
+  let muteRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    muteRecord = await prisma.mute.findFirst({
+      where: {
+        muteId: id,
+        mutedById: currentUser.userId,
+      },
+    });
+  }
+
   return typedjson({
     blockRecord,
     currentUser,
@@ -215,6 +225,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     following: null,
     friendRecord,
     listened,
+    muteRecord,
     profileSong,
     user,
     users,
@@ -233,6 +244,8 @@ export const action = async ({ params, request }: ActionArgs) => {
   const favId = data.get('favId');
   const blockUser = data.get('blockUser');
   const blockId = data.get('blockId');
+  const muteUser = data.get('muteUser');
+  const muteId = data.get('muteId');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   const friendStatus = data.get('friendStatus');
@@ -358,6 +371,25 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.block.delete({
       where: {
         id: Number(blockId),
+      },
+    });
+  }
+
+  if (muteUser === 'true') {
+    await prisma.mute.create({
+      data: {
+        mute: {
+          connect: { userId: id },
+        },
+        mutedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (muteUser === 'false') {
+    await prisma.mute.delete({
+      where: {
+        id: Number(muteId),
       },
     });
   }

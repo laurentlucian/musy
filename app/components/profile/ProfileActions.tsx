@@ -1,6 +1,5 @@
 import { MoreHorizontal } from 'react-feather';
 
-import { LinkIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
@@ -16,13 +15,16 @@ import { VolumeMute } from 'iconsax-react';
 
 import { BlockUser } from './profileActions/BlockUser';
 import CopyLink from './profileActions/CopyLink';
+import MuteUser from './profileActions/MuteUser';
 
 type ProfileActionsTypes = {
   block: boolean;
   blockId: string;
+  mute: boolean;
+  muteId: string;
 };
 
-const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
+const ProfileActions = ({ block, blockId, mute, muteId }: ProfileActionsTypes) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
 
@@ -45,14 +47,7 @@ const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
         <Portal>
           <MenuList bg={bg}>
             <CopyLink color={color} bg={bg} />
-            <MenuItem
-              icon={<VolumeMute size="18px" />}
-              bg={bg}
-              color={color}
-              _hover={{ color: 'red' }}
-            >
-              mute user
-            </MenuItem>
+            <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
             <BlockUser color={color} bg={bg} block={block} blockId={blockId} />
           </MenuList>
         </Portal>
