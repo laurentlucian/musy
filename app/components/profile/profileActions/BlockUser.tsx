@@ -1,7 +1,8 @@
+import { useSubmit } from '@remix-run/react';
+import { useState } from 'react';
+
 import { NotAllowedIcon } from '@chakra-ui/icons';
 import { MenuItem, useColorModeValue } from '@chakra-ui/react';
-import { useSubmit } from '@remix-run/react';
-import React, { useState } from 'react';
 
 type BlockTypes = {
   block: boolean;

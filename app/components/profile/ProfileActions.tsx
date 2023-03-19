@@ -1,8 +1,6 @@
-import { useSubmit } from '@remix-run/react';
-import { useState } from 'react';
 import { MoreHorizontal } from 'react-feather';
 
-import { LinkIcon, NotAllowedIcon } from '@chakra-ui/icons';
+import { LinkIcon } from '@chakra-ui/icons';
 import {
   Menu,
   MenuButton,
