@@ -2,18 +2,18 @@ import { useSubmit } from '@remix-run/react';
 import { useState } from 'react';
 
 import { NotAllowedIcon } from '@chakra-ui/icons';
-import { MenuItem, useColorModeValue } from '@chakra-ui/react';
+import { MenuItem } from '@chakra-ui/react';
 
 type BlockTypes = {
+  bg: string;
   block: boolean;
   blockId: string;
+  color: string;
 };
 
-export const BlockUser = ({ block, blockId }: BlockTypes) => {
+export const BlockUser = ({ bg, block, blockId, color }: BlockTypes) => {
   const [isBlocked, setIsBlocked] = useState(block);
   const submit = useSubmit();
-  const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
 
   const handleClick = () => {
     setIsBlocked(!isBlocked);

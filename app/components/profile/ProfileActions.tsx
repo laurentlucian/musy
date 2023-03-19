@@ -15,6 +15,7 @@ import {
 import { VolumeMute } from 'iconsax-react';
 
 import { BlockUser } from './profileActions/BlockUser';
+import CopyLink from './profileActions/CopyLink';
 
 type ProfileActionsTypes = {
   block: boolean;
@@ -24,20 +25,6 @@ type ProfileActionsTypes = {
 const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
-
-  const handleCopyLinkClick = () => {
-    // Get the current page's URL
-    const currentUrl = window.location.href;
-    // Copy the URL to the clipboard
-    navigator.clipboard.writeText(currentUrl).then(
-      () => {
-        console.log('URL copied to clipboard!');
-      },
-      (err) => {
-        console.error('Failed to copy URL: ', err);
-      },
-    );
-  };
 
   return (
     <>
@@ -57,16 +44,7 @@ const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
         </Stack>
         <Portal>
           <MenuList bg={bg}>
-            <MenuItem
-              icon={<LinkIcon boxSize="18px" />}
-              bg={bg}
-              color={color}
-              _hover={{ color: 'grey' }}
-              onClick={handleCopyLinkClick}
-            >
-              copy link
-            </MenuItem>
-
+            <CopyLink color={color} bg={bg} />
             <MenuItem
               icon={<VolumeMute size="18px" />}
               bg={bg}
@@ -75,7 +53,7 @@ const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
             >
               mute user
             </MenuItem>
-            <BlockUser block={block} blockId={blockId} />
+            <BlockUser color={color} bg={bg} block={block} blockId={blockId} />
           </MenuList>
         </Portal>
       </Menu>
