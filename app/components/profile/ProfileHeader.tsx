@@ -24,12 +24,11 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
   const isSmallScreen = useIsMobile();
   if (!data) return null;
 
-  const { currentUser, favRecord, following, friendRecord, listened, user } = data;
+  const { blockRecord, currentUser, favRecord, following, friendRecord, listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
-  // const isFavorite = currentUser?.favoriteUsers
-  //   ?.map((userId) => userId === currentUser.userId)
-  //   .filter((value) => value);
+
+  console.log(blockRecord, 'blockRecord', favRecord);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -163,10 +162,13 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
     currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
 
   const FavButton = !isOwnProfile ? (
-    <Favorite favorite={!!favRecord} favId={favRecord?.favoriteId ?? ''} />
+    <Favorite favorite={!!favRecord} favId={String(favRecord?.id)} />
   ) : null;
 
-  const MenuBttn = !isOwnProfile ? <ProfileActions /> : null;
+  const MenuBttn = !isOwnProfile ? (
+    <ProfileActions block={!!blockRecord} blockId={String(blockRecord?.id)} />
+  ) : null;
+
   const AddFriendBttn = !isOwnProfile ? (
     <AddFriendsButton status={friendRecord ? friendRecord.status : null} />
   ) : null;

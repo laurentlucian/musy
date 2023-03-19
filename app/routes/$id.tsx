@@ -198,7 +198,18 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     });
   }
 
+  let blockRecord = null;
+  if (currentUser && currentUser.userId !== id) {
+    blockRecord = await prisma.block.findFirst({
+      where: {
+        blockId: id,
+        blockedById: currentUser.userId,
+      },
+    });
+  }
+
   return typedjson({
+    blockRecord,
     currentUser,
     favRecord,
     following: null,
@@ -220,10 +231,14 @@ export const action = async ({ params, request }: ActionArgs) => {
   const mood = data.get('mood');
   const favUser = data.get('favUser');
   const favId = data.get('favId');
+  const blockUser = data.get('blockUser');
+  const blockId = data.get('blockId');
   const easterEgg = data.get('component');
   const currentUser = await getCurrentUser(request);
   const friendStatus = data.get('friendStatus');
   invariant(currentUser, 'Missing current user');
+  // const profile = await prisma.profile.findUnique({ where: { userId: currentUser.userId } });
+  // invariant(profile, 'Profile not found');
   const { spotify } = await spotifyApi(currentUser.userId);
   invariant(spotify, 'Spotify API Error');
 
@@ -262,6 +277,29 @@ export const action = async ({ params, request }: ActionArgs) => {
         },
       });
     }
+  } else if (friendStatus === 'block') {
+    await prisma.friends.create({
+      data: {
+        friendId: id,
+        status: 'blocked',
+        userId: currentUser.userId,
+      },
+    });
+  } else if (friendStatus === 'unblock') {
+    const blockRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: currentUser.userId,
+        userId: id,
+      },
+    });
+    await prisma.friends.update({
+      data: {
+        status: 'unblocked',
+      },
+      where: {
+        id: blockRecord?.id,
+      },
+    });
   }
 
   if (follow === 'true') {
@@ -287,9 +325,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   }
 
   if (favUser === 'true') {
-    // Get the Profile instance for the currentUser
-    const profile = await prisma.profile.findUnique({ where: { userId: currentUser.userId } });
-    invariant(profile, 'Profile not found');
     await prisma.favorite.create({
       data: {
         favorite: {
@@ -304,6 +339,25 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.favorite.delete({
       where: {
         id: Number(favId),
+      },
+    });
+  }
+
+  if (blockUser === 'true') {
+    await prisma.block.create({
+      data: {
+        block: {
+          connect: { userId: id },
+        },
+        blockedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (blockUser === 'false') {
+    await prisma.block.delete({
+      where: {
+        id: Number(blockId),
       },
     });
   }

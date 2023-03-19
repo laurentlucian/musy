@@ -1,3 +1,5 @@
+import { useSubmit } from '@remix-run/react';
+import { useState } from 'react';
 import { MoreHorizontal } from 'react-feather';
 
 import { LinkIcon, NotAllowedIcon } from '@chakra-ui/icons';
@@ -14,7 +16,14 @@ import {
 
 import { VolumeMute } from 'iconsax-react';
 
-const ProfileActions = () => {
+import { BlockUser } from './profileActions/BlockUser';
+
+type ProfileActionsTypes = {
+  block: boolean;
+  blockId: string;
+};
+
+const ProfileActions = ({ block, blockId }: ProfileActionsTypes) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
 
@@ -68,14 +77,7 @@ const ProfileActions = () => {
             >
               mute user
             </MenuItem>
-            <MenuItem
-              icon={<NotAllowedIcon boxSize="18px" />}
-              bg={bg}
-              color={color}
-              _hover={{ color: 'red' }}
-            >
-              block user
-            </MenuItem>
+            <BlockUser block={block} blockId={blockId} />
           </MenuList>
         </Portal>
       </Menu>
