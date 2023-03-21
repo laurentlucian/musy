@@ -41,29 +41,16 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
       };
     });
   }, [recent]);
+
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {recent.map(({ played_at, track }, index) => {
-          const song = {
-            albumName: track.album.name,
-            albumUri: track.album.uri,
-            artist: track.artists[0].name,
-            artistUri: track.artists[0].uri,
-            duration: track.duration_ms,
-            explicit: track.explicit,
-            id: track.id,
-            image: track.album.images[1].url,
-            link: track.external_urls.spotify,
-            name: track.name,
-            preview_url: track.preview_url,
-            uri: track.uri,
-          };
+        {tracks.map((track, index) => {
           const layoutKey = 'Recent' + index;
           return (
             <Tile
-              key={played_at}
-              track={song}
+              key={index}
+              track={track}
               tracks={tracks}
               index={index}
               layoutKey={layoutKey}
@@ -86,26 +73,12 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {recent.map(({ played_at, track }, index) => {
-              const song = {
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              };
+            {tracks.map((track, index) => {
               const layoutKey = 'RecentExpanded' + index;
               return (
-                <Box key={played_at}>
+                <Box key={index}>
                   <Tile
-                    track={song}
+                    track={track}
                     tracks={tracks}
                     index={index}
                     layoutKey={layoutKey}
@@ -117,25 +90,12 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             })}
           </SimpleGrid>
         ) : (
-          recent.map(({ played_at, track }, index) => {
+          tracks.map((track, index) => {
             return (
               <Card
-                key={played_at}
+                key={index}
                 layoutKey={'RecentCard' + index}
-                track={{
-                  albumName: track.album.name,
-                  albumUri: track.album.uri,
-                  artist: track.artists[0].name,
-                  artistUri: track.artists[0].uri,
-                  duration: track.duration_ms,
-                  explicit: track.explicit,
-                  id: track.id,
-                  image: track.album.images[1].url,
-                  link: track.external_urls.spotify,
-                  name: track.name,
-                  preview_url: track.preview_url,
-                  uri: track.uri,
-                }}
+                track={track}
                 tracks={tracks}
                 index={index}
                 userId={id ?? ''}

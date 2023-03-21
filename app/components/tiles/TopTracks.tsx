@@ -85,25 +85,11 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   return (
     <Stack spacing={3} pb={top.length === 0 ? '250px' : '0px'}>
       <Tiles title={title} scrollButtons={scrollButtons} Filter={Filter} setShow={setShow}>
-        {top.map((track, index) => {
-          const song = {
-            albumName: track.album.name,
-            albumUri: track.album.uri,
-            artist: track.artists[0].name,
-            artistUri: track.artists[0].uri,
-            duration: track.duration_ms,
-            explicit: track.explicit,
-            id: track.id,
-            image: track.album.images[1].url,
-            link: track.external_urls.spotify,
-            name: track.name,
-            preview_url: track.preview_url,
-            uri: track.uri,
-          };
+        {tracks.map((track, index) => {
           return (
             <Tile
               key={track.id}
-              track={song}
+              track={track}
               tracks={tracks}
               index={index}
               layoutKey="Top"
@@ -127,25 +113,11 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {top.map((track, index) => {
-              const song = {
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              };
+            {tracks.map((track, index) => {
               return (
                 <Box key={track.id}>
                   <Tile
-                    track={song}
+                    track={track}
                     tracks={tracks}
                     index={index}
                     layoutKey="TopExpanded"
@@ -157,25 +129,12 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
             })}
           </SimpleGrid>
         ) : (
-          top.map((track, index) => {
+          tracks.map((track, index) => {
             return (
               <Card
                 key={track.id}
                 layoutKey="TopCard"
-                track={{
-                  albumName: track.album.name,
-                  albumUri: track.album.uri,
-                  artist: track.artists[0].name,
-                  artistUri: track.artists[0].uri,
-                  duration: track.duration_ms,
-                  explicit: track.explicit,
-                  id: track.id,
-                  image: track.album.images[1].url,
-                  link: track.external_urls.spotify,
-                  name: track.name,
-                  preview_url: track.preview_url,
-                  uri: track.uri,
-                }}
+                track={track}
                 tracks={tracks}
                 index={index}
                 userId={id ?? ''}

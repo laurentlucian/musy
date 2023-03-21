@@ -75,30 +75,15 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {liked.map(({ track }, index) => {
-          const isLast = index === liked.length - 1;
-          const song = {
-            albumName: track.album.name,
-            albumUri: track.album.uri,
-            artist: track.artists[0].name,
-            artistUri: track.artists[0].uri,
-            duration: track.duration_ms,
-            explicit: track.explicit,
-            id: track.id,
-            image: track.album.images[1].url,
-            link: track.external_urls.spotify,
-            name: track.name,
-            preview_url: track.preview_url,
-            uri: track.uri,
-          };
-
+        {tracks.map((track, index) => {
+          const isLast = index === tracks.length - 1;
           return (
             <Tile
               ref={(node) => {
                 isLast && setRef(node);
               }}
               key={track.id}
-              track={song}
+              track={track}
               tracks={tracks}
               index={index}
               layoutKey={layoutKey}
@@ -121,25 +106,11 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {liked.map(({ track }, index) => {
-              const song = {
-                albumName: track.album.name,
-                albumUri: track.album.uri,
-                artist: track.artists[0].name,
-                artistUri: track.artists[0].uri,
-                duration: track.duration_ms,
-                explicit: track.explicit,
-                id: track.id,
-                image: track.album.images[1].url,
-                link: track.external_urls.spotify,
-                name: track.name,
-                preview_url: track.preview_url,
-                uri: track.uri,
-              };
+            {tracks.map((track, index) => {
               return (
                 <Box key={index}>
                   <Tile
-                    track={song}
+                    track={track}
                     tracks={tracks}
                     index={index}
                     layoutKey="LikedExpanded"
@@ -151,8 +122,8 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
             })}
           </SimpleGrid>
         ) : (
-          liked.map(({ track }, index) => {
-            const isLast = index === liked.length - 1;
+          tracks.map((track, index) => {
+            const isLast = index === tracks.length - 1;
             return (
               <Card
                 ref={(node: HTMLDivElement | null) => {
@@ -160,20 +131,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
                 }}
                 key={track.id}
                 layoutKey="LikedCard"
-                track={{
-                  albumName: track.album.name,
-                  albumUri: track.album.uri,
-                  artist: track.artists[0].name,
-                  artistUri: track.artists[0].uri,
-                  duration: track.duration_ms,
-                  explicit: track.explicit,
-                  id: track.id,
-                  image: track.album.images[1].url,
-                  link: track.external_urls.spotify,
-                  name: track.name,
-                  preview_url: track.preview_url,
-                  uri: track.uri,
-                }}
+                track={track}
                 userId={id ?? ''}
                 tracks={tracks}
                 index={index}
