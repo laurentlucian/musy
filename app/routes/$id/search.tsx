@@ -1,4 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
+import { useMemo } from 'react';
 
 import { Box } from '@chakra-ui/react';
 
@@ -16,26 +17,28 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
-  const tracks = results?.tracks?.items ?? [];
+  const tracks = useMemo(() => {
+    return results?.tracks?.items ?? [];
+  }, [results?.tracks?.items]);
 
-  const songs: Track[] = [];
-  for (let i = 0; i < tracks.length; i++) {
-    const track = {
-      albumName: tracks[i].album.name,
-      albumUri: tracks[i].album.uri,
-      artist: tracks[i].artists[0].name,
-      artistUri: tracks[i].artists[0].uri,
-      duration: tracks[i].duration_ms,
-      explicit: tracks[i].explicit,
-      id: tracks[i].id,
-      image: tracks[i].album.images[0]?.url,
-      link: tracks[i].external_urls.spotify,
-      name: tracks[i].name,
-      preview_url: tracks[i].preview_url,
-      uri: tracks[i].uri,
-    };
-    songs.push(track);
-  }
+  const songs: Track[] = useMemo(() => {
+    return tracks.map((track) => {
+      return {
+        albumName: track.album.name,
+        albumUri: track.album.uri,
+        artist: track.artists[0].name,
+        artistUri: track.artists[0].uri,
+        duration: track.duration_ms,
+        explicit: track.explicit,
+        id: track.id,
+        image: track.album.images[1].url,
+        link: track.external_urls.spotify,
+        name: track.name,
+        preview_url: track.preview_url ?? '',
+        uri: track.uri,
+      };
+    });
+  }, [tracks]);
 
   if (tracks.length === 0) return <></>;
 

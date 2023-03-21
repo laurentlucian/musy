@@ -1,5 +1,5 @@
 import { Form, useSearchParams, useSubmit, useParams } from '@remix-run/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Box, HStack, SimpleGrid, Stack, useRadioGroup } from '@chakra-ui/react';
 
@@ -61,24 +61,24 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     setShow(false);
   }, [setShow]);
 
-  const tracks: Track[] = [];
-  for (let i = 0; i < top.length; i++) {
-    const track = {
-      albumName: top[i].album.name,
-      albumUri: top[i].album.uri,
-      artist: top[i].artists[0].name,
-      artistUri: top[i].artists[0].uri,
-      duration: top[i].duration_ms,
-      explicit: top[i].explicit,
-      id: top[i].id,
-      image: top[i].album.images[0]?.url,
-      link: top[i].external_urls.spotify,
-      name: top[i].name,
-      preview_url: top[i].preview_url,
-      uri: top[i].uri,
-    };
-    tracks.push(track);
-  }
+  const tracks: Track[] = useMemo(() => {
+    return top.map((track) => {
+      return {
+        albumName: track.album.name,
+        albumUri: track.album.uri,
+        artist: track.artists[0].name,
+        artistUri: track.artists[0].uri,
+        duration: track.duration_ms,
+        explicit: track.explicit,
+        id: track.id,
+        image: track.album.images[0].url,
+        link: track.external_urls.spotify,
+        name: track.name,
+        preview_url: track.preview_url ?? '',
+        uri: track.uri,
+      };
+    });
+  }, [top]);
 
   if (!top.length) return null;
 

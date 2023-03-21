@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
+import { useMemo } from 'react';
 
 import {
   Heading,
@@ -32,25 +33,24 @@ const Playlist = () => {
   const navigate = useNavigate();
   const isSmallScreen = useIsMobile();
 
-  // console.log(playlist);
-  const tracks: Tracks[] = [];
-  for (let i = 0; i < playlist.tracks.items.length; i++) {
-    const track = {
-      albumName: playlist.tracks.items[i].track?.album.name ?? 'No Tracks',
-      albumUri: playlist.tracks.items[i].track?.album.uri ?? '',
-      artist: playlist.tracks.items[i].track?.artists[0].name ?? '',
-      artistUri: playlist.tracks.items[i].track?.artists[0].uri ?? '',
-      duration: playlist.tracks.items[i].track?.duration_ms ?? 0,
-      explicit: playlist.tracks.items[i].track?.explicit ?? false,
-      id: playlist.tracks.items[i].track?.id ?? '',
-      image: playlist.tracks.items[i].track?.album.images[0]?.url ?? '',
-      link: playlist.tracks.items[i].track?.external_urls.spotify ?? '',
-      name: playlist.tracks.items[i].track?.name ?? '',
-      preview_url: playlist.tracks.items[i].track?.preview_url ?? '',
-      uri: playlist.tracks.items[i].track?.uri ?? '',
-    };
-    tracks.push(track);
-  }
+  const tracks: Tracks[] = useMemo(() => {
+    return playlist.tracks.items.map((track) => {
+      return {
+        albumName: track.track?.album.name ?? 'No Tracks',
+        albumUri: track.track?.album.uri ?? '',
+        artist: track.track?.artists[0].name ?? '',
+        artistUri: track.track?.artists[0].uri ?? '',
+        duration: track.track?.duration_ms ?? 0,
+        explicit: track.track?.explicit ?? false,
+        id: track.track?.id ?? '',
+        image: track.track?.album.images[0]?.url ?? '',
+        link: track.track?.external_urls.spotify ?? '',
+        name: track.track?.name ?? '',
+        preview_url: track.track?.preview_url ?? '',
+        uri: track.track?.uri ?? '',
+      };
+    });
+  }, [playlist.tracks.items]);
 
   return (
     <Stack zIndex={5}>

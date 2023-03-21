@@ -1,5 +1,5 @@
 import { useFetcher, useParams } from '@remix-run/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
@@ -48,28 +48,29 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     setShow(false);
   }, [setShow]);
 
+  const tracks: Track[] = useMemo(() => {
+    return liked.map((item) => {
+      return {
+        albumName: item.track.album.name,
+        albumUri: item.track.album.uri,
+        artist: item.track.artists[0].name,
+        artistUri: item.track.artists[0].uri,
+        duration: item.track.duration_ms,
+        explicit: item.track.explicit,
+        id: item.track.id,
+        image: item.track.album.images[0]?.url,
+        link: item.track.external_urls.spotify,
+        name: item.track.name,
+        preview_url: item.track.preview_url ?? '',
+        uri: item.track.uri,
+      };
+    });
+  }, [liked]);
+
   if (!liked) return null;
   const scrollButtons = liked.length > 5;
   const title = 'Liked';
 
-  const tracks: Track[] = [];
-  for (let i = 0; i < liked.length; i++) {
-    const track = {
-      albumName: liked[i].track.album.name,
-      albumUri: liked[i].track.album.uri,
-      artist: liked[i].track.artists[0].name,
-      artistUri: liked[i].track.artists[0].uri,
-      duration: liked[i].track.duration_ms,
-      explicit: liked[i].track.explicit,
-      id: liked[i].track.id,
-      image: liked[i].track.album.images[0]?.url,
-      link: liked[i].track.external_urls.spotify,
-      name: liked[i].track.name,
-      preview_url: liked[i].track.preview_url,
-      uri: liked[i].track.uri,
-    };
-    tracks.push(track);
-  }
   const layoutKey = 'LikedTracks';
   return (
     <Stack spacing={3}>

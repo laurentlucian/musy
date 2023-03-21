@@ -1,5 +1,6 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
+import { useMemo } from 'react';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
@@ -20,24 +21,24 @@ const Index = () => {
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
-  const tracks: Track[] = [];
-  for (let i = 0; i < activity.length; i++) {
-    const track = {
-      albumName: activity[i].track.albumName,
-      albumUri: activity[i].track.albumUri,
-      artist: activity[i].track.artist,
-      artistUri: activity[i].track.artistUri,
-      duration: 0,
-      explicit: activity[i].track.explicit,
-      id: activity[i].trackId,
-      image: activity[i].track.image,
-      link: activity[i].track.link,
-      name: activity[i].track.name,
-      preview_url: activity[i].track.preview_url ?? '',
-      uri: activity[i].track.uri,
-    };
-    tracks.push(track);
-  }
+  const tracks: Track[] = useMemo(() => {
+    return activity.map((item) => {
+      return {
+        albumName: item.track.albumName,
+        albumUri: item.track.albumUri,
+        artist: item.track.artist,
+        artistUri: item.track.artistUri,
+        duration: 0,
+        explicit: item.track.explicit,
+        id: item.trackId,
+        image: item.track.image,
+        link: item.track.link,
+        name: item.track.name,
+        preview_url: item.track.preview_url ?? '',
+        uri: item.track.uri,
+      };
+    });
+  }, [activity]);
 
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">

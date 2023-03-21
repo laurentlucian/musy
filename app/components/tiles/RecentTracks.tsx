@@ -1,5 +1,5 @@
 import { useParams } from '@remix-run/react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
@@ -23,25 +23,24 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   }, [setShow]);
   const title = 'Recent';
 
-  const tracks: Track[] = [];
-  for (let i = 0; i < recent.length; i++) {
-    const track = {
-      albumName: recent[i].track.album.name,
-      albumUri: recent[i].track.album.uri,
-      artist: recent[i].track.artists[0].name,
-      artistUri: recent[i].track.artists[0].uri,
-      duration: recent[i].track.duration_ms,
-      explicit: recent[i].track.explicit,
-      id: recent[i].track.id,
-      image: recent[i].track.album.images[0]?.url,
-      link: recent[i].track.external_urls.spotify,
-      name: recent[i].track.name,
-      preview_url: recent[i].track.preview_url,
-      uri: recent[i].track.uri,
-    };
-    tracks.push(track);
-  }
-
+  const tracks: Track[] = useMemo(() => {
+    return recent.map((item) => {
+      return {
+        albumName: item.track.album.name,
+        albumUri: item.track.album.uri,
+        artist: item.track.artists[0].name,
+        artistUri: item.track.artists[0].uri,
+        duration: item.track.duration_ms,
+        explicit: item.track.explicit,
+        id: item.track.id,
+        image: item.track.album.images[0].url,
+        link: item.track.external_urls.spotify,
+        name: item.track.name,
+        preview_url: item.track.preview_url ?? '',
+        uri: item.track.uri,
+      };
+    });
+  }, [recent]);
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
