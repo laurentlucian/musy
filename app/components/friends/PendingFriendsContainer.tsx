@@ -1,8 +1,6 @@
-import { User } from 'react-feather';
+import { Link as RouterLink } from 'react-router-dom';
 
-import { Heading, Stack, Image, Text, HStack } from '@chakra-ui/react';
-
-import type { Friends, Profile } from '@prisma/client';
+import { Flex, Image, Text, Box, Spacer, HStack, Link } from '@chakra-ui/react';
 
 import AcceptOrRejectFriendButton from './AcceptOrRejectFriendButton';
 
@@ -16,31 +14,51 @@ const PendingFriendsContainer = ({ image, name, userId }: PendingFriendsContaine
   //For each userId in friendsList, load their image, name, a button to accept or reject the friend request
   const ProfilePic = () => {
     return (
-      <Image
-        boxSize="50px"
-        borderRadius="100%"
-        minH="50px"
-        minW="50px"
-        src={image}
-        mr={[0, '10px']}
-      />
+      <>
+        <Link as={RouterLink} to={`/${userId}`}>
+          <Image
+            boxSize="50px"
+            borderRadius="100%"
+            minH="50px"
+            minW="50px"
+            src={image}
+            mr={[0, '10px']}
+          />
+        </Link>
+      </>
     );
   };
 
   const Username = () => {
     return (
-      <Text fontWeight="bold" fontSize={['15px', '20px']}>
-        {name}
-      </Text>
+      <>
+        <Link as={RouterLink} to={`/${userId}`}>
+          <Text fontWeight="bold" fontSize={['15px', '20px']} maxWidth="500px">
+            {name}
+          </Text>
+        </Link>
+      </>
     );
   };
 
+  //as={Link} to={`/${userId}`
+
   return (
-    <HStack>
-      <ProfilePic />
-      <AcceptOrRejectFriendButton userId={userId} accept={true} />
-      <AcceptOrRejectFriendButton userId={userId} accept={false} />
-    </HStack>
+    <>
+      <Flex padding="10px">
+        <Box>
+          <HStack>
+            <ProfilePic />
+            <Username />
+          </HStack>
+        </Box>
+        <Spacer />
+        <Box>
+          <AcceptOrRejectFriendButton userId={userId} accept={true} />
+          <AcceptOrRejectFriendButton userId={userId} accept={false} />
+        </Box>
+      </Flex>
+    </>
   );
 };
 

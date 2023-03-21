@@ -2,7 +2,7 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Stack, TabPanel } from '@chakra-ui/react';
+import { Flex, Stack, TabPanel } from '@chakra-ui/react';
 
 import type { Friends as PrismaFriends } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -100,7 +100,7 @@ const Friends = () => {
         })}
       </TabPanel>
       <TabPanel>
-        <Stack>
+        <Flex direction="column">
           {pendingFriendProfiles.map((pendingFriend) => {
             return (
               <PendingFriendsContainer
@@ -111,7 +111,7 @@ const Friends = () => {
               />
             );
           })}
-        </Stack>
+        </Flex>
       </TabPanel>
     </FriendsTabs>
   );

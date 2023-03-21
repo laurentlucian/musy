@@ -21,13 +21,13 @@ const AcceptOrRejectFriendButton = ({ accept, userId }: { accept: Boolean; userI
 
   if (accept) {
     return (
-      <Button colorScheme="green" onClick={SubmitClickAccept}>
+      <Button colorScheme="green" onClick={SubmitClickAccept} margin="5px">
         Accept
       </Button>
     );
   } else {
     return (
-      <Button colorScheme="red" onClick={SubmitClickReject}>
+      <Button colorScheme="red" onClick={SubmitClickReject} margin="5px">
         Reject
       </Button>
     );
