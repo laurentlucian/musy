@@ -23,6 +23,7 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
+import BlockedProfile from '~/components/profile/BlockedProfile';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
@@ -62,7 +63,7 @@ const Profile = () => {
         ) : !blockRecord ? (
           <Outlet />
         ) : (
-          <>This user is blocked</>
+          <BlockedProfile name={user.name} />
         )}
       </Stack>
     </>
