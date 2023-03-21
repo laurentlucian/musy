@@ -7,6 +7,7 @@ import { Heading, Stack, Button, Box, useColorModeValue } from '@chakra-ui/react
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
+import BlockedProfile from '~/components/profile/BlockedProfile';
 import PrivateProfile from '~/components/profile/PrivateProfile';
 import ProfileHeader from '~/components/profile/ProfileHeader';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -23,7 +24,6 @@ import {
 } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
-import BlockedProfile from '~/components/profile/BlockedProfile';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();

@@ -17,11 +17,10 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
-  const tracks = useMemo(() => {
-    return results?.tracks?.items ?? [];
-  }, [results?.tracks?.items]);
 
-  const songs: Track[] = useMemo(() => {
+  const tracks: Track[] = useMemo(() => {
+    const tracks = results?.tracks?.items ?? [];
+
     return tracks.map((track) => {
       return {
         albumName: track.album.name,
@@ -38,36 +37,22 @@ const Search = () => {
         uri: track.uri,
       };
     });
-  }, [tracks]);
+  }, [results?.tracks?.items]);
 
   if (tracks.length === 0) return <></>;
 
   return (
     <Box h="60vh" zIndex={9}>
       <Tiles title="">
-        {tracks?.map((track, index) => {
-          const song = {
-            albumName: track.album.name,
-            albumUri: track.album.uri,
-            artist: track.artists[0].name,
-            artistUri: track.artists[0].uri,
-            duration: track.duration_ms,
-            explicit: track.explicit,
-            id: track.id,
-            image: track.album.images[1].url,
-            link: track.external_urls.spotify,
-            name: track.name,
-            preview_url: track.preview_url,
-            uri: track.uri,
-          };
+        {tracks.map((track, index) => {
           return (
             <Tile
               key={track.id}
-              track={song}
-              tracks={songs}
+              track={track}
+              tracks={tracks}
               index={index}
               layoutKey="search"
-              action={<SendButton track={song} />} // refactor search to recommend and queue
+              action={<SendButton track={track} />} // refactor search to recommend and queue
               image={<TileImage />}
               info={<TileInfo />}
             />
