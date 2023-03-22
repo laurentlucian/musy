@@ -35,6 +35,7 @@ const Profile = () => {
   const bg = useColorModeValue(user.theme?.backgroundLight, user.theme?.backgroundDark);
   const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
   const gradient = user.theme?.gradient;
+  const amIBlocked = blockRecord?.blockId === currentUser?.userId;
 
   return (
     <>
@@ -63,7 +64,7 @@ const Profile = () => {
         ) : !blockRecord ? (
           <Outlet />
         ) : (
-          <BlockedProfile name={user.name} />
+          <BlockedProfile name={user.name} amIBlocked={amIBlocked} />
         )}
       </Stack>
     </>
