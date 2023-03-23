@@ -14,9 +14,16 @@ import type { loader } from '~/routes/$id';
 
 import Favorite from './Favorite';
 import ProfileActions from './ProfileActions';
+import { BlockUser } from './profileActions/BlockUser';
 import Search from './Search';
 
-const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
+const ProfileHeader = ({
+  amIBlocked,
+  isPrivate,
+}: {
+  amIBlocked?: boolean;
+  isPrivate?: boolean;
+}) => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
@@ -193,10 +200,18 @@ const ProfileHeader = ({ isPrivate }: { isPrivate?: boolean }) => {
           <HStack>{Username}</HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
             <HStack>
-              {FollowButton}
-              {FavButton}
+              {blockRecord && !amIBlocked ? (
+                <>
+                  <BlockUser header block={true} blockId={String(blockRecord?.id)} />
+                </>
+              ) : (
+                <>
+                  {FollowButton}
+                  {FavButton}
+                  {AddFriendBttn}
+                </>
+              )}
               {MenuBttn}
-              {AddFriendBttn}
             </HStack>
             {SubHeader}
           </VStack>

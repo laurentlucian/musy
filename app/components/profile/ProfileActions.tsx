@@ -45,7 +45,7 @@ const ProfileActions = ({ block, blockId, mute, muteId }: ProfileActionsTypes) =
           <MenuList bg={bg}>
             <CopyLink color={color} bg={bg} />
             <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
-            <BlockUser color={color} bg={bg} block={block} blockId={blockId} />
+            <BlockUser header={false} block={block} blockId={blockId} />
           </MenuList>
         </Portal>
       </Menu>

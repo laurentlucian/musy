@@ -58,7 +58,7 @@ const Profile = () => {
         px={isSmallScreen ? '5px' : 0}
         zIndex={1}
       >
-        <ProfileHeader isPrivate={isPrivate} />
+        <ProfileHeader amIBlocked={amIBlocked} isPrivate={isPrivate} />
         {isPrivate && !isOwnProfile && !isDev ? (
           <PrivateProfile name={user.name} />
         ) : !blockRecord ? (
