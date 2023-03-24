@@ -15,6 +15,8 @@ import type { Activity, Track } from '~/lib/types/types';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
+import { getFriends } from './friends';
+
 const Index = () => {
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
@@ -83,6 +85,29 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUser = session?.user ?? null;
   const users = await getAllUsers(!!currentUser);
 
+  const currentUserId = currentUser?.id;
+
+  const currentFriends = await prisma.friends.findMany({
+    include: { user: true },
+    where: { friendId: currentUser?.id, status: 'accepted' },
+  });
+
+  const friends = await getFriends(!!currentUser, currentFriends);
+
+  const pendingFriends = await prisma.friends.findMany({
+    where: { friendId: currentUser?.id, status: 'pending' },
+  });
+
+  const pendingFriendProfiles = await prisma.profile.findMany({
+    where: {
+      userId: {
+        in: pendingFriends.map((pendingFriend) => {
+          return pendingFriend.userId;
+        }),
+      },
+    },
+  });
+
   const liked = prisma.likedSongs
     .findMany({
       include: {
@@ -121,7 +146,16 @@ export const loader = async ({ request }: LoaderArgs) => {
     })
     .slice(0, 20) as Activity[];
 
-  return typedjson({ activity, users });
+  return typedjson({
+    activity,
+    currentFriends,
+    currentUserId,
+    friends,
+    now: Date.now(),
+    pendingFriendProfiles,
+    pendingFriends,
+    users,
+  });
 };
 
 export default Index;

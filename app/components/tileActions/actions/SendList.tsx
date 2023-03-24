@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 
 import AddQueue from '~/components/menu/actions/AddQueue';
 import Recommend from '~/components/menu/actions/Recommend';
+import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
-import useUsers from '~/hooks/useUsers';
 
 const SendList = ({
   setShow,
@@ -19,25 +19,27 @@ const SendList = ({
   trackId: string;
 }) => {
   const currentUser = useSessionUser();
-  const allUsers = useUsers();
+
+  const allFriends = useFriends();
+
   const queueableUsers = useMemo(() => {
-    return allUsers.filter((user) => {
+    return allFriends.filter((user) => {
       const isAllowed =
         user.settings === null ||
         user.settings.allowQueue === null ||
         user.settings.allowQueue === 'on';
       return user.userId !== currentUser?.userId && isAllowed;
     });
-  }, [allUsers, currentUser]);
+  }, [allFriends, currentUser]);
   const recommendableUsers = useMemo(() => {
-    return allUsers.filter((user) => {
+    return allFriends.filter((user) => {
       const isAllowed =
         user.settings === null ||
         user.settings.allowRecommend === null ||
         user.settings.allowRecommend === 'on';
       return user.userId !== currentUser?.userId && isAllowed;
     });
-  }, [allUsers, currentUser]);
+  }, [allFriends, currentUser]);
 
   const List = (
     <Box w={['100vw', '300px']} h="100%" overflow="hidden">
