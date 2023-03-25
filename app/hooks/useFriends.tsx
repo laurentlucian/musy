@@ -19,7 +19,7 @@ const useFriends = (): (Profile & {
 })[] => {
   const matches = useMatches();
 
-  // find first route with users in its data
+  // find first friends with users in its data
   const route = matches.find((match) => match.data?.friends);
   if (!route) return [];
 

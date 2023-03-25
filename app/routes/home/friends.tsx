@@ -6,6 +6,7 @@ import { Divider, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import { typedjson } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import useFriends from '~/hooks/useFriends';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
@@ -14,11 +15,26 @@ import type { Track } from '~/lib/types/types';
 
 const Friends = () => {
   const users = useUsers();
+  const friends = useFriends();
   const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
   const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
+
+  //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
+
+  // const sortedFriends = friends.sort((a, b) => {
+  //   // sort by playback status first
+  //   if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+  //     return 1;
+  //   } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+  //     return -1;
+  //   }
+  //   // then sort by name in alphabetical order
+  //   return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  // });
+
   const sortedFriends = otherUsers.sort((a, b) => {
     // sort by playback status first
     if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
