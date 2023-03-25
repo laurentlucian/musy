@@ -36,7 +36,7 @@ const NotificationBadge = ({ count }: { count: number }) => {
         top: '-20px',
         zIndex: 1,
       }}
-      animate={isFlashing ? { scale: [1, 1.2, 1], opacity: [1, 0.7, 1] } : {}}
+      animate={isFlashing ? { opacity: [1, 0.7, 1], scale: [1, 1.2, 1] } : {}}
       onAnimationComplete={() => toggleFlash()}
     >
       <Badge bg="red" borderRadius="full">
