@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { Flex, Stack, TabPanel } from '@chakra-ui/react';
 
-import type { Friends as PrismaFriends } from '@prisma/client';
+import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PendingFriendsContainer from '~/components/friends/PendingFriendsContainer';
@@ -145,6 +145,44 @@ export const getFriends = async (isAuthenticated = false, currentFriends: Prisma
       id: {
         in: currentFriends.map((currentFriend) => {
           return currentFriend.userId;
+        }),
+      },
+      revoked: false,
+      ...restrict,
+    },
+  });
+  const users = data.map((user) => user.user).filter(notNull);
+  return users;
+};
+
+export const getFavorites = async (isAuthenticated = false, currentFavorites: PrismaFavorite[]) => {
+  const restrict = !isAuthenticated
+    ? { user: { settings: { isNot: { isPrivate: true } } } }
+    : undefined;
+
+  const data = await prisma.user.findMany({
+    orderBy: { user: { playback: { updatedAt: 'desc' } } },
+    select: {
+      user: {
+        include: {
+          playback: {
+            include: {
+              track: {
+                include: {
+                  liked: { select: { user: true } },
+                  recent: { select: { user: true } },
+                },
+              },
+            },
+          },
+          settings: true,
+        },
+      },
+    },
+    where: {
+      id: {
+        in: currentFavorites.map((currentFavorites) => {
+          return currentFavorites.favoriteId;
         }),
       },
       revoked: false,

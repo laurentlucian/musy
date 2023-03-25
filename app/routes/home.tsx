@@ -15,7 +15,7 @@ import type { Activity, Track } from '~/lib/types/types';
 import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
-import { getFriends } from './friends';
+import { getFavorites, getFriends } from './friends';
 
 const Index = () => {
   const currentUser = useSessionUser();
@@ -92,7 +92,13 @@ export const loader = async ({ request }: LoaderArgs) => {
     where: { friendId: currentUser?.id, status: 'accepted' },
   });
 
+  const currentFavorites = await prisma.favorite.findMany({
+    include: { favorite: true },
+    where: { favoritedById: currentUser?.id },
+  });
   const friends = await getFriends(!!currentUser, currentFriends);
+
+  const favorites = await getFavorites(!!currentUser, currentFavorites);
 
   const pendingFriends = await prisma.friends.findMany({
     where: { friendId: currentUser?.id, status: 'pending' },
@@ -150,6 +156,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     activity,
     currentFriends,
     currentUserId,
+    favorites,
     friends,
     now: Date.now(),
     pendingFriendProfiles,
