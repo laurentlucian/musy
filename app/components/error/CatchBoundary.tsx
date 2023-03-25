@@ -1,6 +1,6 @@
-import { useCatch } from '@remix-run/react';
+import { useCatch, Link } from '@remix-run/react';
 
-import { Heading, Text } from '@chakra-ui/react';
+import { Button, Heading, Text } from '@chakra-ui/react';
 
 export const CatchBoundary = () => {
   let caught = useCatch();
@@ -26,6 +26,9 @@ export const CatchBoundary = () => {
         {caught.status}: {caught.statusText}
       </Heading>
       <Text fontSize="sm">{message}</Text>
+      <Button mt={4} as={Link} to="/">
+        Go home
+      </Button>
     </>
   );
 };
