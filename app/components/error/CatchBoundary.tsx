@@ -7,10 +7,10 @@ export const CatchBoundary = () => {
   let message;
   switch (caught.status) {
     case 401:
-      message = <Text>oops, you shouldn't be here (No access)</Text>;
+      message = <Text>oops, you shouldn&apos;t be here (No access)</Text>;
       break;
     case 404:
-      message = <Text>oops, you shouldn't be here (Page doesn't exist)</Text>;
+      message = <Text>oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
       break;
     case 429:
       message = <Text>oops, API suspended (too many requests)</Text>;
