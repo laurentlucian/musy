@@ -16,7 +16,7 @@ const $bs = cssVar('drawer-box-shadow');
 const baseStyleOverlay = defineStyle((props) => ({
   backdropFilter: 'blur(14px)',
   transition: 'all .2s',
-  zIndex: 'overlay',
+  zIndex: 0,
 }));
 
 const baseStyleDialogContainer = defineStyle((props) => ({
@@ -25,12 +25,12 @@ const baseStyleDialogContainer = defineStyle((props) => ({
   display: 'flex',
   justifyContent: 'center',
   transition: 'all .2s',
-  zIndex: 'modal',
+  zIndex: 0,
 }));
 
 const desktop = defineStyle({
-  dialog: { backdropFilter: 'blur(25px)', zIndex: 'modal' },
-  overlay: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
+  dialog: { backdropFilter: 'blur(25px)', zIndex: 0 },
+  overlay: { backdropFilter: 'blur(25px)', zIndex: 0 },
 });
 const colorPicker = defineStyle({
   dialog: { backdropFilter: 'blur(0px)', zIndex: 'modal' },
@@ -76,7 +76,7 @@ const baseStyleDialog = defineStyle((props) => {
     boxShadow: 'none',
     color: 'white',
     maxH: '100vh',
-    zIndex: 'modal',
+    zIndex: 0,
     [$bs.variable]: mode('music.900', `music.50`)(props),
     [$bg.variable]: mode('music.900', `music.50`)(props),
   };
@@ -89,7 +89,7 @@ const body = defineStyle({
   color: 'white',
   flex: '1',
   overflow: 'auto',
-  p: '0',
+  p: 0,
 });
 
 const baseStyle = definePartsStyle((props) => ({
