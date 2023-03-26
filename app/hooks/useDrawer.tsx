@@ -4,6 +4,8 @@ import type { Profile, Track } from '@prisma/client';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
+import { useSetExpandedStack } from './useOverlay';
+
 type DrawerTrack = Track & {
   liked?: {
     user: Profile;
@@ -71,6 +73,7 @@ export const useDrawerActions = () => useDrawerStore((state) => state.actions);
 
 export const useClickDrag = () => {
   const { onOpen } = useDrawerActions();
+  const { addToStack } = useSetExpandedStack();
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [isMouseDragged, setIsMouseDragged] = useState(false);
 
@@ -92,6 +95,7 @@ export const useClickDrag = () => {
     index: number,
   ) => {
     if (!isMouseDragged) {
+      addToStack(1);
       onOpen(track, fromId, layoutKey, tracks, index);
     }
     setIsMouseDown(false);

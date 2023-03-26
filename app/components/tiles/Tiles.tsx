@@ -4,6 +4,7 @@ import type { StackProps } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
+import { useSetExpandedStack } from '~/hooks/useOverlay';
 
 import ScrollButtons from './ScrollButtons';
 
@@ -26,8 +27,12 @@ const Tiles = ({
   ...ChakraProps
 }: TilesProps) => {
   const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
+  const { addToStack } = useSetExpandedStack();
   const onClick = () => {
-    if (setShow) setShow(true);
+    if (setShow) {
+      setShow(true);
+      addToStack(0);
+    }
   };
 
   return (
