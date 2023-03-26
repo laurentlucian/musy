@@ -9,9 +9,9 @@ import type { Track } from '@prisma/client';
 import useIsVisible from '~/hooks/useIsVisible';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
-import Tile from '../Tile';
-import TileImage from '../TileImage';
-import TileInfo from '../TileInfo';
+import Tile from '../tile/Tile';
+import TileImage from '../tile/TileImage';
+import TileInfo from '../tile/TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 

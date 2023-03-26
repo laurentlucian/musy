@@ -7,9 +7,9 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import SendButton from '~/components/menu/actions/SendButton';
-import Tile from '~/components/Tile';
-import TileImage from '~/components/TileImage';
-import TileInfo from '~/components/TileInfo';
+import Tile from '~/components/tile/Tile';
+import TileImage from '~/components/tile/TileImage';
+import TileInfo from '~/components/tile/TileInfo';
 import Tiles from '~/components/tiles/Tiles';
 import type { Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';

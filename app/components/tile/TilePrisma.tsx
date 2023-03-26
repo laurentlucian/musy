@@ -16,9 +16,9 @@ import { useClickDrag } from '~/hooks/useDrawer';
 import type { Track, User } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
-import SpotifyLogo from './icons/SpotifyLogo';
-import Waver from './icons/Waver';
-import Tooltip from './Tooltip';
+import SpotifyLogo from '../icons/SpotifyLogo';
+import Waver from '../icons/Waver';
+import Tooltip from '../Tooltip';
 
 type TileProps = {
   createdAt?: Date;

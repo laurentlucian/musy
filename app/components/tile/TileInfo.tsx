@@ -6,7 +6,7 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import { useTileContext } from '~/hooks/useTileContext';
 
-import SpotifyLogo from './icons/SpotifyLogo';
+import SpotifyLogo from '../icons/SpotifyLogo';
 
 type TrackInfo = {
   action?: boolean;

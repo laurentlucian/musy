@@ -1,6 +1,6 @@
-import Tile from '~/components/Tile';
-import TileImage from '~/components/TileImage';
-import TileInfo from '~/components/TileInfo';
+import Tile from '~/components/tile/Tile';
+import TileImage from '~/components/tile/TileImage';
+import TileInfo from '~/components/tile/TileInfo';
 import { useExplore } from '~/hooks/useExplore';
 
 const ExploreTracks = () => {

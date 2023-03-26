@@ -7,7 +7,7 @@ import type { Profile } from '@prisma/client';
 
 import useOldIsVisible from '~/hooks/useOldIsVisible';
 
-import Tile from '../Tile';
+import Tile from '../tile/Tile';
 import Tiles from './Tiles';
 
 const OldLikedSongs = ({

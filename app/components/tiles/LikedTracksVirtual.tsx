@@ -9,7 +9,7 @@ import { ArrowLeft2, ArrowRight2, Next, Previous } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 
-import Tile from '../Tile';
+import Tile from '../tile/Tile';
 
 const LikedTracksVirtual = ({
   liked: initialLiked,

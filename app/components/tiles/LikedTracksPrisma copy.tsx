@@ -8,7 +8,7 @@ import type { Track } from '@prisma/client';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
 
-import { MotionTile } from '../MotionTile';
+import { MotionTile } from '../tile/MotionTile';
 import Tiles from './Tiles';
 
 const LikedTracksPrismaTest = ({

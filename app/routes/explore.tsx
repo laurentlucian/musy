@@ -10,10 +10,10 @@ import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import SearchInput from '~/components/explore/SearchInput';
 // import SessionTile from '~/components/sessions/SessionTile';
-import Tile from '~/components/Tile';
+import Tile from '~/components/tile/Tile';
 // import UserTile from '~/components/UserTile';
-import TileImage from '~/components/TileImage';
-import TileInfo from '~/components/TileInfo';
+import TileImage from '~/components/tile/TileImage';
+import TileInfo from '~/components/tile/TileInfo';
 import { useExplore } from '~/hooks/useExplore';
 // import { getAllUsers } from '~/services/auth.server';
 

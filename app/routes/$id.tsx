@@ -1,8 +1,7 @@
 import type { MetaFunction, ActionArgs, LoaderArgs } from '@remix-run/node';
-import { Link, Outlet, useCatch } from '@remix-run/react';
-// import { useMemo } from 'react';
+import { Outlet } from '@remix-run/react';
 
-import { Heading, Stack, Button, Box, useColorModeValue } from '@chakra-ui/react';
+import { Stack, Box, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -15,13 +14,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
-import {
-  authenticator,
-  getAllUsers,
-  getCurrentUser,
-  // updateUserImage,
-  // updateUserName,
-} from '~/services/auth.server';
+import { authenticator, getAllUsers, getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
@@ -421,31 +414,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   return null;
 };
 
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  switch (caught.status) {
-    case 401:
-      break;
-    case 404:
-      break;
-    case 429:
-      break;
-
-    default:
-      throw new Error(caught.data || caught.statusText);
-  }
-
-  return (
-    <>
-      <Heading fontSize={['xl', 'xxl']}>
-        {caught.status} {caught.data}
-      </Heading>
-      <Button mt={4} as={Link} to="/">
-        Go home
-      </Button>
-    </>
-  );
-};
+export { CatchBoundary } from '~/components/error/CatchBoundary';
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 

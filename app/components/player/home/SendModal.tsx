@@ -27,8 +27,8 @@ import { Refresh } from 'iconsax-react';
 
 import Waver from '~/components/icons/Waver';
 import SendButton from '~/components/menu/actions/SendButton';
-import Tile from '~/components/Tile';
-import TileInfo from '~/components/TileInfo';
+import Tile from '~/components/tile/Tile';
+import TileInfo from '~/components/tile/TileInfo';
 import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';

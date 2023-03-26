@@ -8,7 +8,7 @@ import { useClickDrag } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useTileContext } from '~/hooks/useTileContext';
 
-import Tooltip from './Tooltip';
+import Tooltip from '../Tooltip';
 type TileImageT = {
   profileId?: string;
   size?: string | string[];

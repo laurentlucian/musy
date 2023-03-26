@@ -4,9 +4,9 @@ import { useTypedLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/routes/explore/index';
 
-import Tile from '../Tile';
-import TileImage from '../TileImage';
-import TileInfo from '../TileInfo';
+import Tile from '../tile/Tile';
+import TileImage from '../tile/TileImage';
+import TileInfo from '../tile/TileInfo';
 
 const Top = () => {
   const { top } = useTypedLoaderData<typeof loader>();
