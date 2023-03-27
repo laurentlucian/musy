@@ -25,8 +25,10 @@ import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from '../Tooltip';
 import PlayedBy from './PlayedBy';
 
-interface ActivityProps {
+type ActivityActionProps = {
   activity: Activity;
+};
+interface ActivityProps extends ActivityActionProps {
   index: number;
   layoutKey: string;
   tracks: Track[];
@@ -48,7 +50,7 @@ const UserIcon = ({ id, image, name }: UserIconProps) => {
   );
 };
 
-const ActivityAction = ({ activity }: ActivityProps) => {
+const ActivityAction = ({ activity }: ActivityActionProps) => {
   return (
     <HStack>
       {(() => {
@@ -150,14 +152,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
 
   return (
     <Stack>
-      <HStack>
-        <ActivityAction
-          activity={activity}
-          layoutKey={'Activity' + index}
-          tracks={tracks}
-          index={index}
-        />
-      </HStack>
+      <ActivityAction activity={activity} />
       <Flex
         justify="space-between"
         bgColor={bg}
