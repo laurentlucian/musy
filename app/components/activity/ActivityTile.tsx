@@ -32,104 +32,83 @@ interface ActivityProps {
   tracks: Track[];
 }
 
+type UserIconProps = {
+  id: string | undefined;
+  image: string | undefined;
+  name: string | undefined;
+};
+
+const UserIcon = ({ id, image, name }: UserIconProps) => {
+  return (
+    <Tooltip label={name}>
+      <Link to={`/${id}`}>
+        <Image minW="25px" maxW="25px" minH="25px" maxH="25px" borderRadius="100%" src={image} />
+      </Link>
+    </Tooltip>
+  );
+};
+
 const ActivityAction = ({ activity }: ActivityProps) => {
   return (
     <HStack>
-      <>
-        {(() => {
-          switch (activity.action) {
-            case 'liked':
-              return (
-                <>
-                  <Tooltip label={activity.user?.name}>
-                    <Link to={`/${activity.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                  <LikeIcon aria-checked boxSize="18px" />
-                </>
-              );
-            case 'send':
-              return (
-                <>
-                  <Tooltip label={activity.user?.name}>
-                    <Link to={`/${activity.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Tooltip label="sent">
-                    <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                  </Tooltip>
-                  <Tooltip label={activity.owner?.user?.name}>
-                    <Link to={`/${activity.owner?.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.owner?.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                </>
-              );
-            case 'add':
-              return (
-                <>
-                  <Tooltip label={activity.owner?.user?.name}>
-                    <Link to={`/${activity.owner?.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.owner?.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Tooltip label="played from">
-                    <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                  </Tooltip>
-                  {activity.user && (
-                    <Tooltip label={activity.user.name}>
-                      <Link to={`/${activity.user.userId}`}>
-                        <Image
-                          minW="25px"
-                          maxW="25px"
-                          minH="25px"
-                          maxH="25px"
-                          borderRadius="100%"
-                          src={activity.user.image}
-                        />
-                      </Link>
-                    </Tooltip>
-                  )}
-                </>
-              );
-            default:
-              return null;
-          }
-        })()}
-        <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
-          {timeSince(activity.createdAt)}
-        </Text>
-      </>
+      {(() => {
+        switch (activity.action) {
+          case 'liked':
+            return (
+              <>
+                <UserIcon
+                  id={activity.user?.userId}
+                  name={activity.user?.name}
+                  image={activity.user?.image}
+                />
+                <LikeIcon aria-checked boxSize="18px" />
+              </>
+            );
+          case 'send':
+            return (
+              <>
+                <UserIcon
+                  id={activity.user?.userId}
+                  name={activity.user?.name}
+                  image={activity.user?.image}
+                />
+                <Tooltip label="sent">
+                  <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                </Tooltip>
+                <UserIcon
+                  id={activity.owner?.user?.userId}
+                  name={activity.owner?.user?.name}
+                  image={activity.owner?.user?.image}
+                />
+              </>
+            );
+          case 'add':
+            return (
+              <>
+                <UserIcon
+                  id={activity.owner?.user?.userId}
+                  name={activity.owner?.user?.name}
+                  image={activity.owner?.user?.image}
+                />
+                <Tooltip label="played from">
+                  <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                </Tooltip>
+                {activity.user && (
+                  <UserIcon
+                    id={activity.user.userId}
+                    name={activity.user.name}
+                    image={activity.user.image}
+                  />
+                )}
+              </>
+            );
+          default:
+            return null;
+        }
+      })()}
+      <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
+        {timeSince(activity.createdAt)}
+      </Text>
     </HStack>
   );
 };
