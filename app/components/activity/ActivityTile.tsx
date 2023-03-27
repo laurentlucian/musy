@@ -41,7 +41,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
             case 'liked':
               return (
                 <>
-                  <Tooltip label={activity.user?.name} placement="top-start">
+                  <Tooltip label={activity.user?.name}>
                     <Link to={`/${activity.user?.userId}`}>
                       <Image
                         minW="25px"
@@ -59,7 +59,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
             case 'send':
               return (
                 <>
-                  <Tooltip label={activity.user?.name} placement="top-start">
+                  <Tooltip label={activity.user?.name}>
                     <Link to={`/${activity.user?.userId}`}>
                       <Image
                         minW="25px"
@@ -71,8 +71,10 @@ const ActivityAction = ({ activity }: ActivityProps) => {
                       />
                     </Link>
                   </Tooltip>
-                  <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                  <Tooltip label={activity.owner?.user?.name} placement="top-start">
+                  <Tooltip label="sent">
+                    <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                  </Tooltip>
+                  <Tooltip label={activity.owner?.user?.name}>
                     <Link to={`/${activity.owner?.user?.userId}`}>
                       <Image
                         minW="25px"
@@ -89,7 +91,7 @@ const ActivityAction = ({ activity }: ActivityProps) => {
             case 'add':
               return (
                 <>
-                  <Tooltip label={activity.owner?.user?.name} placement="top-start">
+                  <Tooltip label={activity.owner?.user?.name}>
                     <Link to={`/${activity.owner?.user?.userId}`}>
                       <Image
                         minW="25px"
@@ -101,9 +103,11 @@ const ActivityAction = ({ activity }: ActivityProps) => {
                       />
                     </Link>
                   </Tooltip>
-                  <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                  <Tooltip label="played from">
+                    <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                  </Tooltip>
                   {activity.user && (
-                    <Tooltip label={activity.user.name} placement="top-start">
+                    <Tooltip label={activity.user.name}>
                       <Link to={`/${activity.user.userId}`}>
                         <Image
                           minW="25px"
