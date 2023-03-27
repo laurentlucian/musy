@@ -7,8 +7,8 @@ import { Flex, Stack, TabPanel } from '@chakra-ui/react';
 import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PendingFriendsContainer from '~/components/friends/PendingFriendsContainer';
 import FriendsTabs from '~/components/friends/FriendsTabs';
+import PendingFriendsContainer from '~/components/friends/PendingFriendsContainer';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
