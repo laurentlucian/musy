@@ -185,7 +185,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
-          <Tooltip label={item.name} placement="top-start">
+          <Tooltip label={item.name.length > 17 ? item.name : undefined} placement="top-start">
             <Text
               fontSize={['12px', '13px']}
               noOfLines={1}
@@ -195,7 +195,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
               {item.name}
             </Text>
           </Tooltip>
-          <Tooltip label={item.artist} placement="top-start">
+          <Tooltip label={item.artist.length > 17 ? item.artist : undefined} placement="top-start">
             <Text fontSize={['9px', '10px']} opacity={0.6}>
               {item.artist}
             </Text>
@@ -227,7 +227,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
           </Flex>
         </Flex>
         <Box as={motion.div} layoutId={item.id + layoutKey} minW="100px">
-          <Tooltip label={item.name} placement="top-start">
+          <Tooltip label={item.albumName} placement="top-start">
             <Image boxSize="100px" objectFit="cover" src={item.image} />
           </Tooltip>
         </Box>
