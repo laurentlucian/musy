@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import {
   Divider,
   HStack,
-  Image,
   Stack,
   Tab,
   TabList,

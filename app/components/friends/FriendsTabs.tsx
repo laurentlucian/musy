@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import {
   Badge,
   Divider,
-  Image,
   Stack,
   Tab,
   TabList,
@@ -16,10 +15,10 @@ import {
 } from '@chakra-ui/react';
 
 import { motion, useCycle } from 'framer-motion';
+import { Profile2User } from 'iconsax-react';
 import { useTypedLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/routes/friends';
-import { Profile2User } from 'iconsax-react';
 
 const NotificationBadge = ({ count }: { count: number }) => {
   const [isFlashing, toggleFlash] = useCycle(false, true);
