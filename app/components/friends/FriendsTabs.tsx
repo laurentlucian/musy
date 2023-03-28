@@ -12,12 +12,14 @@ import {
   Tabs,
   Text,
   useColorModeValue,
+  Icon,
 } from '@chakra-ui/react';
 
 import { motion, useCycle } from 'framer-motion';
 import { useTypedLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/routes/friends';
+import { Profile2User } from 'iconsax-react';
 
 const NotificationBadge = ({ count }: { count: number }) => {
   const [isFlashing, toggleFlash] = useCycle(false, true);
@@ -67,7 +69,14 @@ const FriendsTabs = ({ children }: { children: ReactNode }) => {
     <Stack pt={{ base: '60px', xl: 0 }} pb="100px" spacing={3} w="100%" h="100%" px={['4px', 0]}>
       <Tabs align="start" colorScheme="green" variant="soft-rounded" size="sm">
         <TabList mb="5px">
-          <Image boxSize="15px" src="/users.svg" mr="20px" alignSelf="center" />
+          <Icon
+            as={Profile2User}
+            boxSize="18px"
+            color="spotify.green"
+            variant="Bold"
+            mr="20px"
+            alignSelf="center"
+          />
           <Tab color={color} bg={bg} mr="20px">
             friends {currentFriends.length ? currentFriends.length : ''}
           </Tab>

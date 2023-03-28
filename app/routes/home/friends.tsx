@@ -14,7 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { Star1 } from 'iconsax-react';
+import { Profile2User, Star1 } from 'iconsax-react';
 import { typedjson } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
@@ -121,7 +121,7 @@ const Friends = () => {
             <TabList>
               <Tab>
                 <HStack>
-                  <Image boxSize="15px" src="/users.svg" />
+                  <Profile2User size="18" color="#1DB954" variant="Bold" />
                   <Text fontSize="sm" fontWeight="400">
                     friends
                   </Text>
@@ -132,7 +132,7 @@ const Friends = () => {
               </Tab>
               <Tab>
                 <HStack>
-                  <Star1 size="18" color="yellow" variant="Outline" />
+                  <Star1 size="18" color="yellow" variant="Bold" />
                   <Text fontSize="sm" fontWeight="400">
                     favorites
                   </Text>
