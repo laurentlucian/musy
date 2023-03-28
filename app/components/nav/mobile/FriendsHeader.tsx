@@ -16,14 +16,16 @@ const FriendsHeader = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const users = useParentData('/friends') as ParentData | undefined;
 
-  const friendCount = (users?.users?.length ?? 1) - 1;
+  const friendCount = users?.users?.length;
+
+  console.log(users, 'users', friendCount, 'friendCount');
 
   return (
     <Stack w="100%" h="100%" bg={bg} pt="5px">
       <HStack w="100%" justifyContent="center">
         <HStack>
           <Heading fontSize="sm" pt="9px" pl="25px">
-            Friends
+            friends
           </Heading>
           <Text fontSize="xs" fontWeight="300" pt="10px">
             ~ {friendCount}
