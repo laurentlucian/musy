@@ -24,6 +24,8 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { Track } from '~/lib/types/types';
+import { FriendsTabs } from './tabs/FriendsTabs';
+import { FavoriteTab } from './tabs/FavoritesTab';
 
 const Friends = () => {
   const users = useUsers();
@@ -145,52 +147,12 @@ const Friends = () => {
           </Stack>
         )}
         <TabPanels>
-          <TabPanel
-            as={Stack}
-            pb="50px"
-            pt={{ base: 4, md: 0 }}
-            spacing={3}
-            w="100%"
-            h="100%"
-            px={['4px', 0]}
-          >
-            {sortedFriends.map((user, index) => {
-              return (
-                <PrismaMiniPlayer
-                  key={user.userId}
-                  layoutKey={'MiniPlayerF' + index}
-                  user={user}
-                  currentUserId={currentUser?.userId}
-                  tracks={tracks}
-                  friendsTracks={[]}
-                  index={index}
-                />
-              );
-            })}
-          </TabPanel>
-          <TabPanel
-            as={Stack}
-            pb="50px"
-            pt={{ base: 4, md: 0 }}
-            spacing={3}
-            w="100%"
-            h="100%"
-            px={['4px', 0]}
-          >
-            {sortedFavorites.map((user, index) => {
-              return (
-                <PrismaMiniPlayer
-                  key={user.userId}
-                  layoutKey={'MiniPlayerF' + index}
-                  user={user}
-                  currentUserId={currentUser?.userId}
-                  tracks={tracks}
-                  friendsTracks={[]}
-                  index={index}
-                />
-              );
-            })}
-          </TabPanel>
+          <FriendsTabs currentUser={currentUser} sortedFriends={sortedFriends} tracks={tracks} />
+          <FavoriteTab
+            currentUser={currentUser}
+            sortedFavorites={sortedFavorites}
+            tracks={tracks}
+          />
         </TabPanels>
       </Stack>
     </Tabs>
