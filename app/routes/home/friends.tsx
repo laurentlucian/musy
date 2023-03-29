@@ -1,18 +1,9 @@
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import {
-  Divider,
-  HStack,
-  Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
+import { Divider, HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson } from 'remix-typedjson';
 
@@ -24,7 +15,6 @@ import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import type { Track } from '~/lib/types/types';
 
 import { FavoriteTab } from './tabs/FavoritesTab';
 import { FriendsTabs } from './tabs/FriendsTabs';
@@ -40,10 +30,25 @@ const Friends = () => {
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
   const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
-  console.log(pendingFriends, 'pendingFriends');
-  //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
 
-  const sort = (array) => {
+  //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
+  const sort = (
+    array: (Profile & {
+      playback:
+        | (Playback & {
+            track: Track & {
+              liked: {
+                user: Profile;
+              }[];
+              recent: {
+                user: Profile;
+              }[];
+            };
+          })
+        | null;
+      settings: Settings | null;
+    })[],
+  ) => {
     return array.sort((a, b) => {
       // sort by playback status first
       if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
