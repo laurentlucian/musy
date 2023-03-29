@@ -50,7 +50,7 @@ const UserIcon = ({ id, image, name }: UserIconProps) => {
   );
 };
 
-const ActivityAction = ({ activity }: ActivityActionProps) => {
+export const ActivityAction = ({ activity }: ActivityActionProps) => {
   return (
     <HStack>
       {(() => {
@@ -137,7 +137,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
     uri: activity.track.uri,
   };
 
-  const liked = (activity.track.liked ?? []).filter(({ user }) => {
+  const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
     // return user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId;

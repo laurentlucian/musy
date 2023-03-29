@@ -1,5 +1,5 @@
 import { useParams, useTransition } from '@remix-run/react';
-import { type ChangeEvent, useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import { type ChangeEvent, useRef, useState, useEffect, useCallback } from 'react';
 
 import {
   Drawer,
@@ -121,24 +121,20 @@ const ActionDrawer = () => {
     setComment(event.target.value);
   };
 
-  const queueableUsers = useMemo(() => {
-    return allUsers.filter((user) => {
-      const isAllowed =
-        user.settings === null ||
-        user.settings.allowQueue === null ||
-        user.settings.allowQueue === 'on';
-      return user.userId !== currentUser?.userId && isAllowed;
-    });
-  }, [allUsers, currentUser]);
-  const recommendableUsers = useMemo(() => {
-    return allUsers.filter((user) => {
-      const isAllowed =
-        user.settings === null ||
-        user.settings.allowRecommend === null ||
-        user.settings.allowRecommend === 'on';
-      return user.userId !== currentUser?.userId && isAllowed;
-    });
-  }, [allUsers, currentUser]);
+  const queueableUsers = allUsers.filter((user) => {
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowQueue === null ||
+      user.settings.allowQueue === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
+  const recommendableUsers = allUsers.filter((user) => {
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowRecommend === null ||
+      user.settings.allowRecommend === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
 
   const SendTo = () => (
     <Button
@@ -327,7 +323,8 @@ const ActionDrawer = () => {
                             >
                               <LinkCircle size="20px" />
                             </Flex>
-                  track        </Text>
+                            track{' '}
+                          </Text>
                         </Stack>
                       </Link>
                     )}
@@ -348,7 +345,7 @@ const ActionDrawer = () => {
                       <AnalyzeTrack trackId={track.id} />
                       {track.link !== '' && <CopyLink link={track.link} />}
                       <PlayPreview preview_url={track.preview_url} />
-                      <ProfileSong/>
+                      <ProfileSong />
                       <AddQueue trackId={track.id} fromId={fromId} user={null} />
                     </>
                   )}

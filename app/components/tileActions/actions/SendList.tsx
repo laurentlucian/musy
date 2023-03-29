@@ -1,4 +1,4 @@
-import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 
 import { Box, Button, HStack } from '@chakra-ui/react';
 
@@ -22,24 +22,21 @@ const SendList = ({
 
   const allFriends = useFriends();
 
-  const queueableUsers = useMemo(() => {
-    return allFriends.filter((user) => {
-      const isAllowed =
-        user.settings === null ||
-        user.settings.allowQueue === null ||
-        user.settings.allowQueue === 'on';
-      return user.userId !== currentUser?.userId && isAllowed;
-    });
-  }, [allFriends, currentUser]);
-  const recommendableUsers = useMemo(() => {
-    return allFriends.filter((user) => {
-      const isAllowed =
-        user.settings === null ||
-        user.settings.allowRecommend === null ||
-        user.settings.allowRecommend === 'on';
-      return user.userId !== currentUser?.userId && isAllowed;
-    });
-  }, [allFriends, currentUser]);
+  const queueableUsers = allFriends.filter((user) => {
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowQueue === null ||
+      user.settings.allowQueue === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
+
+  const recommendableUsers = allFriends.filter((user) => {
+    const isAllowed =
+      user.settings === null ||
+      user.settings.allowRecommend === null ||
+      user.settings.allowRecommend === 'on';
+    return user.userId !== currentUser?.userId && isAllowed;
+  });
 
   const List = (
     <Box w={['100vw', '300px']} h="100%" overflow="hidden">

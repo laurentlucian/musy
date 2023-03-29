@@ -1,5 +1,5 @@
 import { useParams } from '@remix-run/react';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
@@ -23,8 +23,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   }, [setShow]);
   const title = 'Recent';
 
-  const tracks: Track[] = useMemo(() => {
-    return recent.map((item) => {
+  const tracks: Track[] =recent.map((item) => {
       return {
         albumName: item.track.album.name,
         albumUri: item.track.album.uri,
@@ -40,7 +39,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
         uri: item.track.uri,
       };
     });
-  }, [recent]);
+
 
   return (
     <Stack spacing={3}>

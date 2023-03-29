@@ -1,5 +1,3 @@
-import { Link } from '@remix-run/react';
-
 import {
   HStack,
   Image,
@@ -14,16 +12,15 @@ import {
 } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
-import { Heart, Play, Send2 } from 'iconsax-react';
+import { Heart } from 'iconsax-react';
 
 import { useClickDrag, useDrawerTrack } from '~/hooks/useDrawer';
-import LikeIcon from '~/lib/icon/Like';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 import Tooltip from '../Tooltip';
+import { ActivityAction } from './ActivityTile';
 import PlayedBy from './PlayedBy';
 
 interface ActivityProps {
@@ -32,107 +29,6 @@ interface ActivityProps {
   layoutKey: string;
   tracks: Track[];
 }
-
-const ActivityAction = ({ activity }: ActivityProps) => {
-  return (
-    <HStack>
-      <>
-        {(() => {
-          switch (activity.action) {
-            case 'liked':
-              return (
-                <>
-                  <Tooltip label={activity.user?.name} placement="top-start">
-                    <Link to={`/${activity.user?.userId}`}>
-                      <HStack>
-                        <Image
-                          minW="25px"
-                          maxW="25px"
-                          minH="25px"
-                          maxH="25px"
-                          borderRadius="100%"
-                          src={activity.user?.image}
-                        />
-                        <Text fontSize="14px">{activity.user?.name}</Text>
-                      </HStack>
-                    </Link>
-                  </Tooltip>
-                  <LikeIcon aria-checked boxSize="18px" />
-                </>
-              );
-            case 'send':
-              return (
-                <>
-                  <Tooltip label={activity.user?.name} placement="top-start">
-                    <Link to={`/${activity.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Icon as={Send2} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                  <Tooltip label={activity.owner?.user?.name} placement="top-start">
-                    <Link to={`/${activity.owner?.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.owner?.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                </>
-              );
-            case 'add':
-              return (
-                <>
-                  <Tooltip label={activity.owner?.user?.name} placement="top-start">
-                    <Link to={`/${activity.owner?.user?.userId}`}>
-                      <Image
-                        minW="25px"
-                        maxW="25px"
-                        minH="25px"
-                        maxH="25px"
-                        borderRadius="100%"
-                        src={activity.owner?.user?.image}
-                      />
-                    </Link>
-                  </Tooltip>
-                  <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                  {activity.user && (
-                    <Tooltip label={activity.user.name} placement="top-start">
-                      <Link to={`/${activity.user.userId}`}>
-                        <Image
-                          minW="25px"
-                          maxW="25px"
-                          minH="25px"
-                          maxH="25px"
-                          borderRadius="100%"
-                          src={activity.user.image}
-                        />
-                      </Link>
-                    </Tooltip>
-                  )}
-                </>
-              );
-            default:
-              return null;
-          }
-        })()}
-        <Text fontSize={['9px', '10px']} opacity={0.6} w="100%">
-          {timeSince(activity.createdAt)}
-        </Text>
-      </>
-    </HStack>
-  );
-};
 
 const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
@@ -157,29 +53,20 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
     uri: activity.track.uri,
   };
 
-  const liked = (activity.track.liked ?? []).filter(({ user }) => {
+  const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
-    // return user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId;
   });
 
   const played = activity.track.recent ?? [];
-  //   ?.filter(({ user }) => {
-  //   return (
-  //     user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
-  //   );
-  // });
 
   return (
     <Stack py="6px" overflowX="hidden" bg={bg}>
-      <HStack>
-        <ActivityAction activity={activity} layoutKey="Activity" tracks={tracks} index={index} />
-      </HStack>
+      <ActivityAction activity={activity} />
       <Flex
         justify="space-between"
         bgColor={bg}
         w="100%"
-        // pt="10px"
         onClick={() => onClick(item, activity.user.userId, layoutKey, tracks, index)}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}

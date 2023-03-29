@@ -15,10 +15,9 @@ import {
 
 import { Element3, TextalignJustifycenter } from 'iconsax-react';
 
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
-import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
 
 type TilesProps = {
   Filter?: ReactNode;
@@ -44,15 +43,9 @@ const ExpandedSongs = ({
   const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
-  const stack = useExpandedStack();
+
   const track = useDrawerTrack();
   const isOpen = track !== null ? true : false;
-  const { onClose: closeTile } = useDrawerActions();
-  const { removeFromStack } = useSetExpandedStack();
-  const onCloseTile = () => {
-    closeTile();
-    removeFromStack(1);
-  };
 
   useEffect(() => {
     if (show && !isOpen && !isSmallScreen) {
@@ -68,7 +61,7 @@ const ExpandedSongs = ({
       <Drawer
         size="full"
         isOpen={show}
-        onClose={stack?.includes(1) ? onCloseTile : onClose}
+        onClose={onClose}
         placement="bottom"
         preserveScrollBarGap
         lockFocusAcrossFrames

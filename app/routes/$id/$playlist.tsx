@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
-import { useMemo } from 'react';
 
 import {
   Heading,
@@ -33,8 +32,7 @@ const Playlist = () => {
   const navigate = useNavigate();
   const isSmallScreen = useIsMobile();
 
-  const tracks: Tracks[] = useMemo(() => {
-    return playlist.tracks.items.map((track) => {
+  const tracks: Tracks[] = playlist.tracks.items.map((track) => {
       return {
         albumName: track.track?.album.name ?? 'No Tracks',
         albumUri: track.track?.album.uri ?? '',
@@ -50,7 +48,6 @@ const Playlist = () => {
         uri: track.track?.uri ?? '',
       };
     });
-  }, [playlist.tracks.items]);
 
   return (
     <Stack zIndex={5}>

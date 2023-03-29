@@ -5,7 +5,8 @@ import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import type { RecentSongs, Track } from '@prisma/client';
 
-import { useSetExpandedStack } from '~/hooks/useOverlay';
+import { useDrawerActions } from '~/hooks/useDrawer';
+import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
 
 import ExpandedSongs from '../profile/ExpandedSongs';
 import Tile from '../tile/Tile';
@@ -26,11 +27,19 @@ const RecentTracksPrisma = ({
   const scrollButtons = recent.length > 5;
   const { id } = useParams();
   const { removeFromStack } = useSetExpandedStack();
+  const stack = useExpandedStack();
+  const { onClose: closeTile } = useDrawerActions();
+  console.log(stack);
 
   const onClose = useCallback(() => {
-    removeFromStack(0);
-    setShow(false);
-  }, [setShow, removeFromStack]);
+    if (stack?.includes(1)) {
+      closeTile();
+      removeFromStack(1);
+    } else {
+      removeFromStack(0);
+      setShow(false);
+    }
+  }, [setShow, closeTile, stack, removeFromStack]);
   const title = 'Recent';
 
   const tracks = recent.map((data) => data.track);

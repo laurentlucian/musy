@@ -1,8 +1,8 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { useMemo } from 'react';
 
 import { Box } from '@chakra-ui/react';
 
+import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -11,45 +11,40 @@ import Tile from '~/components/tile/Tile';
 import TileImage from '~/components/tile/TileImage';
 import TileInfo from '~/components/tile/TileInfo';
 import Tiles from '~/components/tiles/Tiles';
-import type { Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Search = () => {
   const { results } = useTypedLoaderData<typeof loader>();
-
-  const tracks: Track[] = useMemo(() => {
-    const tracks = results?.tracks?.items ?? [];
-
-    return tracks.map((track) => {
-      return {
-        albumName: track.album.name,
-        albumUri: track.album.uri,
-        artist: track.artists[0].name,
-        artistUri: track.artists[0].uri,
-        duration: track.duration_ms,
-        explicit: track.explicit,
-        id: track.id,
-        image: track.album.images[1].url,
-        link: track.external_urls.spotify,
-        name: track.name,
-        preview_url: track.preview_url ?? '',
-        uri: track.uri,
-      };
-    });
-  }, [results?.tracks?.items]);
+  const tracks = results?.tracks?.items ?? [];
+  const trackz: Track[] = tracks.map((track) => {
+    return {
+      albumName: track.album.name,
+      albumUri: track.album.uri,
+      artist: track.artists[0].name,
+      artistUri: track.artists[0].uri,
+      duration: track.duration_ms,
+      explicit: track.explicit,
+      id: track.id,
+      image: track.album.images[1].url,
+      link: track.external_urls.spotify,
+      name: track.name,
+      preview_url: track.preview_url ?? '',
+      uri: track.uri,
+    };
+  });
 
   if (tracks.length === 0) return <></>;
 
   return (
     <Box h="60vh" zIndex={9}>
       <Tiles title="">
-        {tracks.map((track, index) => {
+        {trackz.map((track, index) => {
           return (
             <Tile
               key={track.id}
               track={track}
-              tracks={tracks}
+              tracks={trackz}
               index={index}
               layoutKey="search"
               action={<SendButton track={track} />} // refactor search to recommend and queue

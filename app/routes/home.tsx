@@ -1,6 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
-import { useMemo } from 'react';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
@@ -23,8 +22,7 @@ const Index = () => {
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
-  const tracks: Track[] = useMemo(() => {
-    return activity.map((item) => {
+  const tracks: Track[] = activity.map((item) => {
       return {
         albumName: item.track.albumName,
         albumUri: item.track.albumUri,
@@ -40,7 +38,6 @@ const Index = () => {
         uri: item.track.uri,
       };
     });
-  }, [activity]);
 
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">

@@ -1,5 +1,5 @@
 import { Form, useSearchParams, useSubmit, useParams } from '@remix-run/react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Box, HStack, SimpleGrid, Stack, useRadioGroup } from '@chakra-ui/react';
 
@@ -61,8 +61,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     setShow(false);
   }, [setShow]);
 
-  const tracks: Track[] = useMemo(() => {
-    return top.map((track) => {
+  const tracks: Track[] = top.map((track) => {
       return {
         albumName: track.album.name,
         albumUri: track.album.uri,
@@ -78,7 +77,7 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
         uri: track.uri,
       };
     });
-  }, [top]);
+
 
   if (!top.length) return null;
 
