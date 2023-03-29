@@ -122,21 +122,6 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   // eslint-disable-next-line
   const dontRemoveThis = useDrawerTrack();
 
-  const item = {
-    albumName: activity.track.albumName,
-    albumUri: activity.track.albumUri,
-    artist: activity.track.artist,
-    artistUri: activity.track.artistUri,
-    duration: 0,
-    explicit: activity.track.explicit,
-    id: activity.trackId,
-    image: activity.track.image,
-    link: activity.track.link,
-    name: activity.track.name,
-    preview_url: activity.track.preview_url,
-    uri: activity.track.uri,
-  };
-
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
@@ -157,25 +142,31 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onClick(item, activity.user.userId, layoutKey, tracks, index)}
+        onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
-          <Tooltip label={item.name.length > 17 ? item.name : undefined} placement="top-start">
+          <Tooltip
+            label={tracks[index].name.length > 17 ? tracks[index].name : undefined}
+            placement="top-start"
+          >
             <Text
               fontSize={['12px', '13px']}
               noOfLines={1}
               whiteSpace="normal"
               wordBreak="break-word"
             >
-              {item.name}
+              {tracks[index].name}
             </Text>
           </Tooltip>
-          <Tooltip label={item.artist.length > 17 ? item.artist : undefined} placement="top-start">
+          <Tooltip
+            label={tracks[index].artist.length > 17 ? tracks[index].artist : undefined}
+            placement="top-start"
+          >
             <Text fontSize={['9px', '10px']} opacity={0.6}>
-              {item.artist}
+              {tracks[index].artist}
             </Text>
           </Tooltip>
 
@@ -204,9 +195,9 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
             </Stack>
           </Flex>
         </Flex>
-        <Box as={motion.div} layoutId={item.id + layoutKey} minW="100px">
-          <Tooltip label={item.albumName} placement="top-start">
-            <Image boxSize="100px" objectFit="cover" src={item.image} />
+        <Box as={motion.div} layoutId={tracks[index].id + layoutKey} minW="100px">
+          <Tooltip label={tracks[index].albumName} placement="top-start">
+            <Image boxSize="100px" objectFit="cover" src={tracks[index].image} />
           </Tooltip>
         </Box>
       </Flex>

@@ -38,21 +38,6 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
   // eslint-disable-next-line
   const dontRemoveThis = useDrawerTrack();
 
-  const item = {
-    albumName: activity.track.albumName,
-    albumUri: activity.track.albumUri,
-    artist: activity.track.artist,
-    artistUri: activity.track.artistUri,
-    duration: 0,
-    explicit: activity.track.explicit,
-    id: activity.trackId,
-    image: activity.track.image,
-    link: activity.track.link,
-    name: activity.track.name,
-    preview_url: activity.track.preview_url,
-    uri: activity.track.uri,
-  };
-
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
@@ -67,25 +52,25 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
         justify="space-between"
         bgColor={bg}
         w="100%"
-        onClick={() => onClick(item, activity.user.userId, layoutKey, tracks, index)}
+        onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         cursor="pointer"
       >
         <Flex direction="column" w="100%" px={2} py={1}>
-          <Tooltip label={item.name} placement="top-start">
+          <Tooltip label={tracks[index].name} placement="top-start">
             <Text
               fontSize={['12px', '13px']}
               noOfLines={1}
               whiteSpace="normal"
               wordBreak="break-word"
             >
-              {item.name}
+              {tracks[index].name}
             </Text>
           </Tooltip>
-          <Tooltip label={item.artist} placement="top-start">
+          <Tooltip label={tracks[index].artist} placement="top-start">
             <Text fontSize={['9px', '10px']} opacity={0.6}>
-              {item.artist}
+              {tracks[index].artist}
             </Text>
           </Tooltip>
 
@@ -116,10 +101,10 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
         </Flex>
         <Image
           as={motion.img}
-          layoutId={item.id + layoutKey}
+          layoutId={tracks[index].id + layoutKey}
           boxSize="100px"
           objectFit="cover"
-          src={item.image}
+          src={tracks[index].image}
         />
       </Flex>
       <Divider opacity={0.5} w="100vw" pt="12px" color={color} />

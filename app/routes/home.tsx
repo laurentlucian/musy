@@ -23,21 +23,21 @@ const Index = () => {
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   const tracks: Track[] = activity.map((item) => {
-      return {
-        albumName: item.track.albumName,
-        albumUri: item.track.albumUri,
-        artist: item.track.artist,
-        artistUri: item.track.artistUri,
-        duration: 0,
-        explicit: item.track.explicit,
-        id: item.trackId,
-        image: item.track.image,
-        link: item.track.link,
-        name: item.track.name,
-        preview_url: item.track.preview_url ?? '',
-        uri: item.track.uri,
-      };
-    });
+    return {
+      albumName: item.track.albumName,
+      albumUri: item.track.albumUri,
+      artist: item.track.artist,
+      artistUri: item.track.artistUri,
+      duration: 0,
+      explicit: item.track.explicit,
+      id: item.trackId,
+      image: item.track.image,
+      link: item.track.link,
+      name: item.track.name,
+      preview_url: item.track.preview_url ?? '',
+      uri: item.track.uri,
+    };
+  });
 
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
