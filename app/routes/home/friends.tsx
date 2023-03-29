@@ -24,8 +24,10 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { Track } from '~/lib/types/types';
-import { FriendsTabs } from './tabs/FriendsTabs';
+
 import { FavoriteTab } from './tabs/FavoritesTab';
+import { FriendsTabs } from './tabs/FriendsTabs';
+import { TempTab } from './tabs/TempTab';
 
 const Friends = () => {
   const users = useUsers();
@@ -39,16 +41,16 @@ const Friends = () => {
 
   //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
 
-  // const sortedFriends = friends.sort((a, b) => {
-  //   // sort by playback status first
-  //   if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-  //     return 1;
-  //   } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-  //     return -1;
-  //   }
-  //   // then sort by name in alphabetical order
-  //   return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  // });
+  const sortedFriends = friends.sort((a, b) => {
+    // sort by playback status first
+    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+      return 1;
+    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+      return -1;
+    }
+    // then sort by name in alphabetical order
+    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  });
 
   const sortedFavorites = favorites.sort((a, b) => {
     // sort by playback status first
@@ -61,7 +63,7 @@ const Friends = () => {
     return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
   });
 
-  const sortedFriends = otherUsers.sort((a, b) => {
+  const everyone = otherUsers.sort((a, b) => {
     // sort by playback status first
     if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
       return 1;
@@ -127,7 +129,7 @@ const Friends = () => {
                     friends
                   </Text>
                   <Text fontSize="xs" fontWeight="300">
-                    ~ {otherUsers.length}
+                    ~ {friends.length}
                   </Text>
                 </HStack>
               </Tab>
@@ -142,17 +144,25 @@ const Friends = () => {
                   </Text>
                 </HStack>
               </Tab>
+              <Tab>
+                <HStack>
+                  <Star1 size="18" color="yellow" variant="Bold" />
+                  <Text fontSize="sm" fontWeight="400">
+                    everyone
+                  </Text>
+                  <Text fontSize="xs" fontWeight="300">
+                    ~ {everyone.length}
+                  </Text>
+                </HStack>
+              </Tab>
             </TabList>
             <Divider bgColor="spotify.green" />
           </Stack>
         )}
         <TabPanels>
           <FriendsTabs currentUser={currentUser} sortedFriends={sortedFriends} tracks={tracks} />
-          <FavoriteTab
-            currentUser={currentUser}
-            sortedFavorites={sortedFavorites}
-            tracks={tracks}
-          />
+          <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
+          <TempTab currentUser={currentUser} everyone={everyone} />
         </TabPanels>
       </Stack>
     </Tabs>

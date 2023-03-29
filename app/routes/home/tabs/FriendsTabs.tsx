@@ -1,11 +1,12 @@
 import { Stack, TabPanel } from '@chakra-ui/react';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import type { Track } from '~/lib/types/types';
 
 type Props = {
   currentUser: any;
   sortedFriends: any;
-  tracks: any;
+  tracks: Track[];
 };
 export const FriendsTabs = ({ currentUser, sortedFriends, tracks }: Props) => {
   return (
