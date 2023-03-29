@@ -1,12 +1,41 @@
 import { Divider, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
+
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
-import type { Track } from '~/lib/types/types';
 
 type Props = {
-  currentUser: any;
-  sortedFriends: any;
-  sortedPendingFriends: any;
+  currentUser: Profile | null;
+  sortedFriends: (Profile & {
+    playback:
+      | (Playback & {
+          track: Track & {
+            liked: {
+              user: Profile;
+            }[];
+            recent: {
+              user: Profile;
+            }[];
+          };
+        })
+      | null;
+    settings: Settings | null;
+  })[];
+  sortedPendingFriends: (Profile & {
+    playback:
+      | (Playback & {
+          track: Track & {
+            liked: {
+              user: Profile;
+            }[];
+            recent: {
+              user: Profile;
+            }[];
+          };
+        })
+      | null;
+    settings: Settings | null;
+  })[];
   tracks: Track[];
 };
 export const FriendsTabs = ({

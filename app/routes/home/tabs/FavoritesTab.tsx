@@ -1,11 +1,26 @@
 import { Stack, TabPanel } from '@chakra-ui/react';
 
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
+
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
-import type { Track } from '~/lib/types/types';
 
 type Props = {
-  currentUser: any;
-  sortedFavorites: any;
+  currentUser: Profile | null;
+  sortedFavorites: (Profile & {
+    playback:
+      | (Playback & {
+          track: Track & {
+            liked: {
+              user: Profile;
+            }[];
+            recent: {
+              user: Profile;
+            }[];
+          };
+        })
+      | null;
+    settings: Settings | null;
+  })[];
 };
 export const FavoriteTab = ({ currentUser, sortedFavorites }: Props) => {
   const tracks: Track[] = [];
