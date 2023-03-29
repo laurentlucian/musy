@@ -13,12 +13,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { Profile2User, Star1 } from 'iconsax-react';
+import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useFriends from '~/hooks/useFriends';
+import usePending from '~/hooks/usePending';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
@@ -33,46 +34,35 @@ const Friends = () => {
   const users = useUsers();
   const friends = useFriends();
   const favorites = useFavorites();
+  const pendingFriends = usePending();
   const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
   const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
-
+  console.log(pendingFriends, 'pendingFriends');
   //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
 
-  const sortedFriends = friends.sort((a, b) => {
-    // sort by playback status first
-    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-      return 1;
-    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-      return -1;
-    }
-    // then sort by name in alphabetical order
-    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
+  const sort = (array) => {
+    return array.sort((a, b) => {
+      // sort by playback status first
+      if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+        return 1;
+      } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+        return -1;
+      }
+      // then sort by name in alphabetical order
+      return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+    });
+  };
 
-  const sortedFavorites = favorites.sort((a, b) => {
-    // sort by playback status first
-    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-      return 1;
-    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-      return -1;
-    }
-    // then sort by name in alphabetical order
-    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
+  const sortedFriends = sort(friends);
 
-  const everyone = otherUsers.sort((a, b) => {
-    // sort by playback status first
-    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-      return 1;
-    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-      return -1;
-    }
-    // then sort by name in alphabetical order
-    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
+  const sortedFavorites = sort(favorites);
+
+  const sortedPendingFriends = sort(pendingFriends);
+
+  const everyone = sort(otherUsers);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -146,7 +136,7 @@ const Friends = () => {
               </Tab>
               <Tab>
                 <HStack>
-                  <Star1 size="18" color="yellow" variant="Bold" />
+                  <ProfileCircle size="18" color="#BA68C8" variant="Bold" />
                   <Text fontSize="sm" fontWeight="400">
                     everyone
                   </Text>
@@ -160,7 +150,12 @@ const Friends = () => {
           </Stack>
         )}
         <TabPanels>
-          <FriendsTabs currentUser={currentUser} sortedFriends={sortedFriends} tracks={tracks} />
+          <FriendsTabs
+            currentUser={currentUser}
+            sortedFriends={sortedFriends}
+            tracks={tracks}
+            sortedPendingFriends={sortedPendingFriends}
+          />
           <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
           <TempTab currentUser={currentUser} everyone={everyone} />
         </TabPanels>
