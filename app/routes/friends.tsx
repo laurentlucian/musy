@@ -2,37 +2,67 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Flex, Stack, TabPanel } from '@chakra-ui/react';
+import { Divider, HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
+import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import FriendsTabs from '~/components/friends/FriendsTabs';
-import PendingFriendsContainer from '~/components/friends/PendingFriendsContainer';
+import { FavoriteTab } from '~/components/friends/tabs/FavoritesTab';
+import { FriendsTabs } from '~/components/friends/tabs/FriendsTabs';
+import { TempTab } from '~/components/friends/tabs/TempTab';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
+import useSessionUser from '~/hooks/useSessionUser';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import type { Track } from '~/lib/types/types';
 import { notNull } from '~/lib/utils';
-import { authenticator } from '~/services/auth.server';
+import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
-  const { currentUserId, pendingFriendProfiles, users } = useTypedLoaderData<typeof loader>();
+  const { currentUserId, favs, friends, pendingFriends, users } =
+    useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
+  const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-  const friends = users.filter((user) => user.userId !== currentUserId);
 
-  const sortedFriends = friends.sort((a, b) => {
-    // sort by playback status first
-    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-      return 1;
-    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-      return -1;
-    }
-    // then sort by name in alphabetical order
-    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
+  const sort = (
+    array: (Profile & {
+      playback:
+        | (Playback & {
+            track: Track & {
+              liked: {
+                user: Profile;
+              }[];
+              recent: {
+                user: Profile;
+              }[];
+            };
+          })
+        | null;
+      settings: Settings | null;
+    })[],
+  ) => {
+    return array.sort((a, b) => {
+      // sort by playback status first
+      if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+        return 1;
+      } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+        return -1;
+      }
+      // then sort by name in alphabetical order
+      return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+    });
+  };
+
+  const sortedFriends = sort(friends);
+
+  const sortedFavorites = sort(favs);
+
+  const sortedPendingFriends = sort(pendingFriends);
+
+  const everyone = sort(users);
 
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
@@ -68,52 +98,73 @@ const Friends = () => {
   }
 
   return (
-    <FriendsTabs>
-      <TabPanel>
-        {currentUserData && currentUserData.settings?.miniPlayer && (
-          <Stack w="100%" h="100%">
-            {currentUserData.settings?.miniPlayer && (
-              <PrismaMiniPlayer
-                key={currentUserData.userId}
-                layoutKey="MiniPlayer"
-                user={currentUserData}
-                currentUserId={currentUserId}
-                tracks={null}
-                friendsTracks={tracks}
-                index={0}
-              />
-            )}
-          </Stack>
-        )}
-        {sortedFriends.map((user, index) => {
-          return (
-            <PrismaMiniPlayer
-              key={user.userId}
-              layoutKey={'MiniPlayer' + index}
-              user={user}
-              currentUserId={currentUserId}
+    <Stack>
+      <Tabs colorScheme="green">
+        <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
+          {currentUserData && (
+            <Stack mt={7}>
+              {currentUserData.settings?.miniPlayer && (
+                <PrismaMiniPlayer
+                  key={currentUserData.userId}
+                  layoutKey="MiniPlayerS"
+                  user={currentUserData}
+                  currentUserId={currentUser?.userId}
+                  index={0}
+                  friendsTracks={tracks}
+                  tracks={null}
+                />
+              )}
+              <TabList>
+                <Tab>
+                  <HStack>
+                    <Profile2User size="18" color="#1DB954" variant="Bold" />
+                    <Text fontSize="sm" fontWeight="400">
+                      friends
+                    </Text>
+                    <Text fontSize="xs" fontWeight="300">
+                      ~ {friends.length}
+                    </Text>
+                  </HStack>
+                </Tab>
+                <Tab>
+                  <HStack>
+                    <Star1 size="18" color="yellow" variant="Bold" />
+                    <Text fontSize="sm" fontWeight="400">
+                      favorites
+                    </Text>
+                    <Text fontSize="xs" fontWeight="300">
+                      ~ {favs.length}
+                    </Text>
+                  </HStack>
+                </Tab>
+                <Tab>
+                  <HStack>
+                    <ProfileCircle size="18" color="#BA68C8" variant="Bold" />
+                    <Text fontSize="sm" fontWeight="400">
+                      everyone
+                    </Text>
+                    <Text fontSize="xs" fontWeight="300">
+                      ~ {everyone.length}
+                    </Text>
+                  </HStack>
+                </Tab>
+              </TabList>
+              <Divider bgColor="spotify.green" />
+            </Stack>
+          )}
+          <TabPanels>
+            <FriendsTabs
+              currentUser={currentUser}
+              sortedFriends={sortedFriends}
               tracks={tracks}
-              friendsTracks={[]}
-              index={index}
+              sortedPendingFriends={sortedPendingFriends}
             />
-          );
-        })}
-      </TabPanel>
-      <TabPanel>
-        <Flex direction="column">
-          {pendingFriendProfiles.map((pendingFriend) => {
-            return (
-              <PendingFriendsContainer
-                key={pendingFriend.userId}
-                image={pendingFriend.image}
-                name={pendingFriend.name}
-                userId={pendingFriend.userId}
-              />
-            );
-          })}
-        </Flex>
-      </TabPanel>
-    </FriendsTabs>
+            <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
+            <TempTab currentUser={currentUser} everyone={everyone} />
+          </TabPanels>
+        </Stack>
+      </Tabs>
+    </Stack>
   );
 };
 
@@ -197,13 +248,21 @@ export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
   const currentUserId = currentUser?.id;
+  const users = await getAllUsers(!!currentUser);
 
   const currentFriends = await prisma.friends.findMany({
     include: { user: true },
     where: { friendId: currentUser?.id, status: 'accepted' },
   });
 
-  const users = await getFriends(!!currentUser, currentFriends);
+  const currentFavorites = await prisma.favorite.findMany({
+    include: { favorite: true },
+    where: { favoritedById: currentUser?.id },
+  });
+
+  const friends = await getFriends(!!currentUser, currentFriends);
+
+  const favs = await getFavorites(!!currentUser, currentFavorites);
 
   const pendingFriends = await prisma.friends.findMany({
     where: { friendId: currentUser?.id, status: 'pending' },
@@ -222,6 +281,8 @@ export const loader = async ({ request }: LoaderArgs) => {
   return typedjson({
     currentFriends,
     currentUserId,
+    favs,
+    friends,
     now: Date.now(),
     pendingFriendProfiles,
     pendingFriends,

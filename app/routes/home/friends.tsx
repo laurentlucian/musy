@@ -16,9 +16,9 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 
-import { FavoriteTab } from './tabs/FavoritesTab';
-import { FriendsTabs } from './tabs/FriendsTabs';
-import { TempTab } from './tabs/TempTab';
+import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
+import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
+import { TempTab } from '../../components/friends/tabs/TempTab';
 
 const Friends = () => {
   const users = useUsers();
