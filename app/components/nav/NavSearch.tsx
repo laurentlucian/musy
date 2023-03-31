@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
+  useEventListener,
 } from '@chakra-ui/react';
 
 // import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -90,7 +91,11 @@ const NavSearch = () => {
     }, 600);
     clearTimeout(deleteParamDelay);
   };
-
+  useEventListener('keydown', (e) => {
+    if (e.code === 'Escape') {
+      handleCloseButton();
+    }
+  });
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
       if (search.trim().length > 0) {
