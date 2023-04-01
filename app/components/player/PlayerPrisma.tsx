@@ -46,7 +46,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
-  // const [playingFrom, setPlayingFrom] = useState(false);
+
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
   const [showPause, setShowPause] = useState(true);
@@ -65,7 +65,6 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
     theme?.playerColorLight + opaque ?? 'music.50',
     theme?.playerColorDark + opaque ?? '#10101066',
   );
-  // const userBg = useColorModeValue('#EEE6E2', '#050404');
   const color1 = useColorModeValue('music.800', 'music.200');
   const main = useColorModeValue(
     theme?.mainTextLight ?? '#161616',
@@ -73,10 +72,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   );
   const sub = useColorModeValue(theme?.subTextLight ?? '#161616', theme?.subTextDark ?? '#EEE6E2');
 
-  // const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
-  // const fetcher = useFetcher();
   const { revalidate } = useRevalidator();
-  // const busy = fetcher.submission?.formData.has('party') ?? false;
   const isSmallScreen = useIsMobile();
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -157,29 +153,8 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
     () => {
       revalidate();
     },
-    // -> checks if user started playing every minute
     playback ? null : 60000,
-    // -> refreshes every 30s regardless
-    // 30000,
   );
-  // const interval = useCallback(
-  //   () => setInterval(() => setPlayingFrom(!playingFrom), 6900),
-  //   [playingFrom],
-  // );
-
-  // useEffect(() => {
-  //   if (
-  //     track.album.album_type === 'single' &&
-  //     track.album.total_tracks === 1 &&
-  //     playback?.context?.type !== 'artist' &&
-  //     playback?.context?.type !== 'playlist'
-  //   ) {
-  //     clearInterval(interval());
-  //     setPlayingFrom(false);
-  //   } else {
-  //     interval();
-  //   }
-  // }, [playback.context, interval, track.album.album_type, track.album.type, track.album.total_tracks]);
 
   if (!playback) return null;
   const { track } = playback;
@@ -227,112 +202,30 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                       {track.artist}
                     </Text>
                   </Flex>
-                  {/* <Stack spacing={1} pos="absolute" pt="48px" lineHeight="shorter" w="100%">
-                      <Text
-                        fontSize="13px"
-                        fontWeight="normal"
-                        transition="opacity 1.69s ease-in-out"
-                        // opacity={playingFrom ? 0 : 1}
-                        opacity={1}
-                        noOfLines={1}
-                        w={['200px', '68%']}
-                      >
-                        Listening on
-                      </Text>
-                      <Text
-                        fontSize="15px"
-                        fontWeight="bold"
-                        transition="opacity 1.69s ease-in-out"
-                        // opacity={playingFrom ? 0 : 1}
-                        opacity={1}
-                        noOfLines={1}
-                        w={['200px', '68%']}
-                      >
-                        {playback.device.name.split(' ').slice(0, 2).join(' ')}
-                      </Text>
-                    </Stack> */}
                 </Stack>
                 <HStack>
                   <HStack mb="5px !important" mt="40px">
                     <SpotifyLogo icon={isSmallScreen} />
-                    {/* {party.length && (
-                        <AvatarGroup size="xs" spacing={-2} max={5}>
-                          {party.map((u) => {
-                            return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                          })}
-                        </AvatarGroup>
-                      )} */}
-                    {/* {!isOwnProfile && (
-                        <> */}
-                    {/* <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                        <fetcher.Form
-                          action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                          method="post"
-                          replace
-                        >
-                          <IconButton
-                            aria-label={isUserInParty ? 'Leave' : 'Join'}
-                            name="party"
-                            icon={<People size="24px" />}
-                            color={isUserInParty ? 'spotify.green' : undefined}
-                            _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
-                            variant="ghost"
-                            type="submit"
-                            cursor="pointer"
-                            isLoading={busy}
-                          />
-                        </fetcher.Form>
-                      </Tooltip> */}
-                    {isOwnProfile ? (
-                      <>{/* <PlayController fetcher={fetcher} playback={playback} id={id} /> */}</>
-                    ) : (
-                      <Tooltip
-                        label={hasPreview ? '' : 'song has no preview'}
-                        openDelay={hasPreview ? 200 : 0}
-                        // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
-                      >
-                        <IconButton
-                          onClick={handleMusicControls}
-                          icon={icon}
-                          variant="ghost"
-                          aria-label={playing ? 'pause' : 'play'}
-                          _hover={{ color: main }}
-                          _active={{ boxShadow: 'none' }}
-                          onMouseLeave={handleMouseLeavePreviewButton}
-                          onMouseEnter={handleMouseEnterPreviewButton}
-                          color={color1}
-                        />
-                      </Tooltip>
-                    )}
-
-                    {/* </>
-                      )} */}
+                    <Tooltip
+                      label={hasPreview ? '' : 'song has no preview'}
+                      openDelay={hasPreview ? 200 : 0}
+                    >
+                      <IconButton
+                        onClick={handleMusicControls}
+                        icon={icon}
+                        variant="ghost"
+                        aria-label={playing ? 'pause' : 'play'}
+                        _hover={{ color: main }}
+                        _active={{ boxShadow: 'none' }}
+                        onMouseLeave={handleMouseLeavePreviewButton}
+                        onMouseEnter={handleMouseEnterPreviewButton}
+                        color={color1}
+                      />
+                    </Tooltip>
                   </HStack>
                 </HStack>
               </Stack>
               <HStack spacing={1} align="end">
-                {/* {playback.context &&
-                            playback.context.name &&
-                            !isSmallScreen &&
-                            (playback.context.type === 'collection' ? (
-                              <Tooltip label={playback.context.name} placement="bottom-end">
-                                <Image
-                                  src={playback.context.image}
-                                  boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
-                                  transition="width 0.25s, height 0.25s"
-                                />
-                              </Tooltip>
-                            ) : (
-                              <Link href={playback.context?.uri} target="_blank">
-                                <Tooltip label={playback.context.name} placement="bottom-end">
-                                  <Image
-                                    src={playback.context.image}
-                                    boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
-                                    transition="width 0.25s, height 0.25s"
-                                  />
-                                </Tooltip>
-                              </Link>
-                            ))} */}
                 <Tooltip label={track.albumName} placement="bottom-end">
                   <Image
                     as={motion.img}
@@ -369,7 +262,6 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                 </Tooltip>
               </HStack>
             </Flex>
-            {/* <PlayerBar playback={playback} /> */}
           </Stack>
         </Box>
       </Stack>
