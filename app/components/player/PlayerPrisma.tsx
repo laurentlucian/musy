@@ -206,10 +206,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                 <HStack>
                   <HStack mb="5px !important" mt="40px">
                     <SpotifyLogo icon={isSmallScreen} />
-                    <Tooltip
-                      label={hasPreview ? '' : 'song has no preview'}
-                      openDelay={hasPreview ? 200 : 0}
-                    >
+                    {hasPreview && (
                       <IconButton
                         onClick={handleMusicControls}
                         icon={icon}
@@ -221,7 +218,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
                         onMouseEnter={handleMouseEnterPreviewButton}
                         color={color1}
                       />
-                    </Tooltip>
+                    )}
                   </HStack>
                 </HStack>
               </Stack>
