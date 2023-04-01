@@ -62,7 +62,7 @@ const Friends = () => {
 
   const sortedPendingFriends = sort(pendingFriends);
 
-  const everyone = sort(users);
+  const everyone = sort(users.filter((user) => user.userId !== currentUserId));
 
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
