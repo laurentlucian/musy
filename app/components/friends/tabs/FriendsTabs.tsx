@@ -54,7 +54,7 @@ export const FriendsTabs = ({
       h="100%"
       px={['4px', 0]}
     >
-      <Stack pt={{ base: '60px', xl: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
+      <Stack spacing={3} w="100%" h="100%">
         <Tabs align="start" colorScheme="green" variant="soft-rounded" size="sm">
           <TabList mb="5px">
             <Tab mr="20px">friends {sortedFriends.length}</Tab>
