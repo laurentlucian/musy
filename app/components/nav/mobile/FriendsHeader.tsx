@@ -15,10 +15,7 @@ const FriendsHeader = () => {
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const users = useParentData('/friends') as ParentData | undefined;
-
-  const friendCount = users?.users?.length;
-
-  console.log(users, 'users', friendCount, 'friendCount');
+  const friendCount = users?.friends?.length;
 
   return (
     <Stack w="100%" h="100%" bg={bg} pt="5px">
