@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 import { Button } from '@chakra-ui/react';
 
@@ -9,8 +9,15 @@ import { useDrawerActions } from '~/hooks/useDrawer';
 import AudioVisualizer from '../../icons/AudioVisualizer';
 import SpotifyLogo from '../../icons/SpotifyLogo';
 
-const PlayPreview = ({ preview_url }: { preview_url: string | null }) => {
-  const [playing, setPlaying] = useState(false);
+const PlayPreview = ({
+  playing,
+  preview_url,
+  setPlaying,
+}: {
+  playing: boolean;
+  preview_url: string | null;
+  setPlaying: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);

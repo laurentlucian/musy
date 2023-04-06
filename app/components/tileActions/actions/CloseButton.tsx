@@ -5,7 +5,13 @@ import { Button, useEventListener } from '@chakra-ui/react';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import { useSetExpandedStack } from '~/hooks/useOverlay';
 
-const CloseButton = ({ setPage }: { setPage: Dispatch<SetStateAction<[number, number]>> }) => {
+const CloseButton = ({
+  setPage,
+  setPlaying,
+}: {
+  setPage: Dispatch<SetStateAction<[number, number]>>;
+  setPlaying: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { onClose } = useDrawerActions();
   const { removeFromStack } = useSetExpandedStack();
   useEventListener('keydown', (e) => {
@@ -13,6 +19,7 @@ const CloseButton = ({ setPage }: { setPage: Dispatch<SetStateAction<[number, nu
       removeFromStack(1);
       onClose();
       setPage([0, 0]);
+      setPlaying(false);
     }
   });
 
@@ -20,6 +27,7 @@ const CloseButton = ({ setPage }: { setPage: Dispatch<SetStateAction<[number, nu
     onClose();
     removeFromStack(1);
     setPage([0, 0]);
+    setPlaying(false);
   };
 
   return (

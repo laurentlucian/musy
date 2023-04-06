@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -16,12 +16,20 @@ import RecommendTo from './actions/RecommendTo';
 import SendList from './actions/SendList';
 import SendTo from './actions/SendTo';
 
-const TileActions = ({ page }: { page: number }) => {
+const TileActions = ({
+  page,
+  playing,
+  setPlaying,
+}: {
+  page: number;
+  playing: boolean;
+  setPlaying: Dispatch<SetStateAction<boolean>>;
+}) => {
   const [show, setShow] = useState(0);
   const tracks = useDrawerTracks();
   const originalIndex = useDrawerTrackIndex();
   const index = wrap(0, tracks.length, page + originalIndex);
-  
+
   return (
     <AnimatePresence>
       <Stack
@@ -43,7 +51,11 @@ const TileActions = ({ page }: { page: number }) => {
               <SaveToLiked trackId={tracks[index].id} />
               <AnalyzeTrack trackId={tracks[index].id} />
               {tracks[index].link !== '' && <CopyLink link={tracks[index].link} />}
-              <PlayPreview preview_url={tracks[index].preview_url} />
+              <PlayPreview
+                playing={playing}
+                setPlaying={setPlaying}
+                preview_url={tracks[index].preview_url}
+              />
               <ProfileSong />
               <AddQueue trackId={tracks[index].id} user={null} />
               <SendTo setShow={setShow} />

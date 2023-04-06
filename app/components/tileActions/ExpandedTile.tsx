@@ -11,15 +11,16 @@ import Wrapper from './Wrapper';
 
 const ExpandedTile = () => {
   const [[page, direction], setPage] = useState([0, 0]);
+  const [playing, setPlaying] = useState(false);
 
   return (
     <AnimatePresence initial={false} custom={direction}>
       <Wrapper>
         <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" h="100%" overflow="hidden">
           <Track page={page} direction={direction} setPage={setPage} />
-          <Actions page={page} />
+          <Actions page={page} playing={playing} setPlaying={setPlaying} />
         </SimpleGrid>
-        <CloseButton setPage={setPage} />
+        <CloseButton setPlaying={setPlaying} setPage={setPage} />
       </Wrapper>
     </AnimatePresence>
   );
