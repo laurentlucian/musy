@@ -41,6 +41,7 @@ const CloseButton = ({
       pt={['20px', 0]}
       alignSelf="center"
       onClick={handleClick}
+      zIndex={1}
     >
       close
     </Button>

@@ -116,6 +116,9 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
           w="fit-content"
           _focus={{ boxShadow: 'none' }}
           pos="relative"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
         >
           <Flex dir="row">
             {tracks[index].explicit && <Image src={explicitImage} w="19px" mr="3px" />}
