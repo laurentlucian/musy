@@ -13,7 +13,7 @@ const CopyLink = ({ bg, color }: LinkTypes) => {
     // Copy the URL to the clipboard
     navigator.clipboard.writeText(currentUrl).then(
       () => {
-        console.log('URL copied to clipboard!');
+        // console.log('URL copied to clipboard!');
       },
       (err) => {
         console.error('Failed to copy URL: ', err);

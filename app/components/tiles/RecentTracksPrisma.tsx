@@ -29,7 +29,6 @@ const RecentTracksPrisma = ({
   const { removeFromStack } = useSetExpandedStack();
   const stack = useExpandedStack();
   const { onClose: closeTile } = useDrawerActions();
-  console.log(stack);
 
   const onClose = useCallback(() => {
     if (stack?.includes(1)) {
