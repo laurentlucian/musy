@@ -19,8 +19,6 @@ import {
 import useIsMobile from '~/hooks/useIsMobile';
 import { usePlaylistDrawerActions, usePlaylistDrawerStore } from '~/hooks/usePlaylistDrawer';
 
-import PlaylistTracks from './PlaylistTracks';
-
 const PlaylistDrawer = () => {
   const { onClose } = usePlaylistDrawerActions();
   const playlist = usePlaylistDrawerStore();
@@ -109,9 +107,6 @@ const PlaylistDrawer = () => {
                   )}
                 </Stack>
               )}
-              <Stack pl={['none', '40px !important']} mt={['none', '300px !important']}>
-                <PlaylistTracks />
-              </Stack>
             </Stack>
           </DrawerBody>
           <DrawerFooter>
