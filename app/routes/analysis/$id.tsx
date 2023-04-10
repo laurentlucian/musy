@@ -71,17 +71,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     return typedjson(data, { headers: { cached: 'true' } });
   }
 
-  // if (!session) {
-  //   return redirect('/auth/spotify?returnTo=/analysis');
-  // }
-
-  // const { user } = session;
-  // if (!user)
-  //   return typedjson(
-  //     { track: null, analysis: null, authorized: !!session },
-  //     { statusText: 'Failed to load session, try again', status: 401 },
-  //   );
-
   const { spotify } = await spotifyApi('1295028670');
   if (!spotify)
     return typedjson(

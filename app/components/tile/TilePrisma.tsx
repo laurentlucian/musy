@@ -38,7 +38,6 @@ type TileProps = {
   isRecommending?: boolean;
   layoutKey: string;
   list?: boolean;
-  playlist?: Boolean;
   profileId?: string;
   submit?: SubmitFunction;
   track: Track;
@@ -61,7 +60,6 @@ const TilePrisma = forwardRef<HTMLDivElement, TileProps>(
       layoutKey,
       list,
       profileId,
-      // playlist,
       submit,
       track,
       tracks,

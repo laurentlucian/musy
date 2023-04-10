@@ -51,18 +51,7 @@ const ToggleSetting = ({
 
   if (!currentUser) return null;
   return (
-    <FormControl
-      display="flex"
-      // alignItems="center"
-      // justifyContent="space-between"
-    >
-      {/* <HStack>
-        {isSmallScreen && (
-          <FormLabel fontSize={['sm', 'md']} htmlFor={title} mb="0" color={color}>
-            {title}
-          </FormLabel>
-        )}
-      </HStack> */}
+    <FormControl display="flex">
       <Tooltip label={label} hasArrow isDisabled={isSmallScreen} openDelay={300}>
         <IconButton
           aria-label={label}

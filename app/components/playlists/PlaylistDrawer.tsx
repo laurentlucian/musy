@@ -82,8 +82,6 @@ const PlaylistDrawer = () => {
                       <Link
                         href={playlist.uri}
                         _hover={{ textDecor: 'none' }}
-                        // onMouseEnter={() => setShow(true)}
-                        // onMouseLeave={() => setShow(false)}
                         _focus={{ boxShadow: 'none' }}
                       >
                         <Text
@@ -102,11 +100,8 @@ const PlaylistDrawer = () => {
                             left="-25px"
                             top="0"
                             bottom="0"
-                            // opacity={show ? 1 : 0}
                             transition="opacity .25s ease-in-out"
-                          >
-                            {/* <LinkCircle size="20px" /> */}
-                          </Flex>
+                          ></Flex>
                         </Text>
                       </Link>
                       <Text color="#BBB8B7">{playlist.description}</Text>

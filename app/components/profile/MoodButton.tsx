@@ -9,7 +9,6 @@ import { timeSince } from '~/lib/utils';
 
 import Waver from '../icons/Waver';
 import Tooltip from '../Tooltip';
-// import Waver from '../icons/Waver';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {
   const submit = useSubmit();

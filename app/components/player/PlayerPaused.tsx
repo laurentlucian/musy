@@ -27,7 +27,6 @@ import Tooltip from './../Tooltip';
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;
   layoutKey: string;
-  // profileSong: (Settings & { profileSong: Track | null }) | null;
   profileSong: any;
   userId: string;
   username: string;
@@ -204,7 +203,6 @@ const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProp
                     <Tooltip
                       label={hasPreview ? '' : 'song has no preview'}
                       openDelay={hasPreview ? 200 : 0}
-                      // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
                     >
                       <IconButton
                         onClick={onClick}

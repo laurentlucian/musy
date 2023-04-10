@@ -11,11 +11,9 @@ function runIfFn<T, U>(valueOrFn: T | ((...fnArgs: U[]) => T), ...args: U[]): T 
 }
 
 const $bg = cssVar('modal-bg');
-// const $bs = cssVar('modal-box-shadow');
 
 const baseStyleOverlay = defineStyle((props) => ({
   color: mode(`#E4DBD5`, '#111111')(props),
-  // backdropFilter: 'blur(14px)',
   transition: 'all .2s',
   zIndex: 'modal',
 }));

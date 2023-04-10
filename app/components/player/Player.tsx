@@ -47,7 +47,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
-  // const [playingFrom, setPlayingFrom] = useState(false);
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
   const [showPause, setShowPause] = useState(true);
@@ -166,26 +165,7 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
     // -> checks if user started playing every minute
     active ? null : 60000,
     // -> refreshes every 30s regardless
-    // 30000,
   );
-  // const interval = useCallback(
-  //   () => setInterval(() => setPlayingFrom(!playingFrom), 6900),
-  //   [playingFrom],
-  // );
-
-  // useEffect(() => {
-  //   if (
-  //     item.album.album_type === 'single' &&
-  //     item.album.total_tracks === 1 &&
-  //     playback?.context?.type !== 'artist' &&
-  //     playback?.context?.type !== 'playlist'
-  //   ) {
-  //     clearInterval(interval());
-  //     setPlayingFrom(false);
-  //   } else {
-  //     interval();
-  //   }
-  // }, [playback.context, interval, item.album.album_type, item.album.type, item.album.total_tracks]);
 
   if (!item) return null;
 
@@ -260,7 +240,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                             fontSize="15px"
                             fontWeight="bold"
                             transition="opacity 1.69s ease-in-out"
-                            // opacity={playingFrom ? 1 : 0}
                             opacity={0}
                             overflow="scroll"
                             whiteSpace="normal"
@@ -282,7 +261,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                         fontSize="13px"
                         fontWeight="normal"
                         transition="opacity 1.69s ease-in-out"
-                        // opacity={playingFrom ? 0 : 1}
                         opacity={1}
                         noOfLines={1}
                         w={['200px', '68%']}
@@ -293,7 +271,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                         fontSize="15px"
                         fontWeight="bold"
                         transition="opacity 1.69s ease-in-out"
-                        // opacity={playingFrom ? 0 : 1}
                         opacity={1}
                         noOfLines={1}
                         w={['200px', '68%']}
@@ -340,7 +317,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                             <Tooltip
                               label={hasPreview ? '' : 'song has no preview'}
                               openDelay={hasPreview ? 200 : 0}
-                              // closeOnClick <- does not work because the icon changes >:( so annoying!!!!
                             >
                               <IconButton
                                 onClick={handleMusicControls}
@@ -369,29 +345,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                 </Stack>
 
                 <HStack spacing={1} align="end">
-                  {/* {playback.context &&
-                            playback.context.name &&
-                            !isSmallScreen &&
-                            (playback.context.type === 'collection' ? (
-                              <Tooltip label={playback.context.name} placement="bottom-end">
-                                <Image
-                                  src={playback.context.image}
-                                  boxSize={{ base: '65px', sm: '75px', lg: '108px' }}
-                                  transition="width 0.25s, height 0.25s"
-                                />
-                              </Tooltip>
-                            ) : (
-                              <Link href={playback.context?.uri} target="_blank">
-                                <Tooltip label={playback.context.name} placement="bottom-end">
-                                  <Image
-                                    src={playback.context.image}
-                                    boxSize={{ base: '45px', sm: '75px', lg: '108px' }}
-                                    transition="width 0.25s, height 0.25s"
-                                  />
-                                </Tooltip>
-                              </Link>
-                            ))} */}
-                  {/* <Link href={albumLink ?? ''} target="_blank"> */}
                   <Tooltip label={item.album.name} placement="bottom-end">
                     <Image
                       src={item.album?.images[0].url}
@@ -426,7 +379,6 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                       cursor="pointer"
                     />
                   </Tooltip>
-                  {/* </Link> */}
                 </HStack>
               </Flex>
               <PlayerBar playback={playback} />

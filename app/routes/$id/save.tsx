@@ -1,4 +1,3 @@
-// import type { LikedSongs } from '@prisma/client';
 import type { ActionArgs } from '@remix-run/node';
 
 import type { Prisma } from '@prisma/client';

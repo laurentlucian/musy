@@ -18,7 +18,6 @@ import {
   useEventListener,
 } from '@chakra-ui/react';
 
-// import { useMouseScroll } from '~/hooks/useMouseScroll';
 import type { Profile } from '@prisma/client';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
@@ -47,8 +46,6 @@ const NavSearch = () => {
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
-  // const hoverBg = useColorModeValue('music.400', 'music.900');
-  // const { props, scrollRef } = useMouseScroll('reverse', false); // doesnt allow mouse wheel scroll
 
   const divRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -213,8 +210,6 @@ const NavSearch = () => {
           bg={bg}
           color={color}
           boxShadow="0px 0px 10px 2px rgba(117,117,117,0.39)"
-          //  ref={scrollRef} //these are buggy
-          //   {...props} // help! D:
         >
           <PopoverBody>
             <Stack>

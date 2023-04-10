@@ -125,15 +125,10 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
-    // return user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId;
+
   });
 
   const played = activity.track.recent ?? [];
-  //   ?.filter(({ user }) => {
-  //   return (
-  //     user?.userId !== activity.user?.userId || user?.userId !== activity.owner?.user?.userId
-  //   );
-  // });
 
   return (
     <Stack>

@@ -1,6 +1,3 @@
-// import { Form } from '@remix-run/react';
-// import { Upload } from 'react-feather';
-
 import {
   Box,
   Flex,
@@ -12,9 +9,6 @@ import {
   useColorModeValue,
   Collapse,
   useDisclosure,
-  // InputGroup,
-  // InputLeftElement,
-  // Input,
 } from '@chakra-ui/react';
 
 import type { Theme, Track } from '@prisma/client';
@@ -85,20 +79,6 @@ const SettingsPlayer = ({
                 </Stack>
                 <HStack>
                   <HStack mb="5px !important" mt="40px">
-                    {/* <Form method="post">
-                      <InputGroup>
-                        <InputLeftElement
-                          aria-label="upload image"
-                          borderRadius="full"
-                          children={<Upload />}
-                        />
-                        <Input
-                          type="file"
-                          accept="image/png, image/jpg, image/gif, image/jpeg"
-                          opacity={0}
-                        />
-                      </InputGroup>
-                    </Form> */}
                     <SpotifyLogo icon={isSmallScreen} />
                   </HStack>
                 </HStack>

@@ -11,18 +11,6 @@ const Filters = () => {
       <Link as={RemixLink} to="/explore">
         Tracks
       </Link>
-      {/* <Link as={RemixLink} to="/explore/users">
-        Artists
-      </Link>
-      <Link as={RemixLink} to="/explore/users">
-        Albums
-      </Link>
-      <Link as={RemixLink} to="/explore/users">
-        Playlists
-      </Link>
-      <Link as={RemixLink} to="/explore/users">
-        Moods
-      </Link> */}
     </Stack>
   );
 };

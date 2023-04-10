@@ -255,7 +255,6 @@ const ActionDrawer = () => {
                   <Stack align={['center', 'flex-start']} direction={['column']} maxW={510}>
                     {!isSmallScreen && <SpotifyLogo mt="10px" white />}
                     {isSmallScreen ? <Box h="90px" w="10px" /> : <Box h="6vh" w="10px" />}
-                    {/* <LikedBy /> */}
                     {isSmallScreen && <SpotifyLogo mt="10px" white />}
                     {track.albumUri && (
                       <Link href={track.albumUri} _focus={{ boxShadow: 'none' }}>
@@ -340,8 +339,6 @@ const ActionDrawer = () => {
                   {track && (
                     <>
                       <SaveToLiked trackId={track.id} />
-                      {/* <SaveToPlaylist  trackId={track.trackId} /> */}
-                      {/* <SaveTo currentUserId={currentUser?.userId}/> */} {/* WIP */}
                       <AnalyzeTrack trackId={track.id} />
                       {track.link !== '' && <CopyLink link={track.link} />}
                       <PlayPreview preview_url={track.preview_url} />
@@ -467,9 +464,6 @@ const ActionDrawer = () => {
                                 onChange={textOnChange}
                               />
                             </Collapse>
-                            {/* <Button w="100%" onClick={sendMenu.onClose}>
-                            {sendList ? 'send' : 'queue'}
-                          </Button> */}
                           </ModalFooter>
                         </ModalContent>
                       </Modal>

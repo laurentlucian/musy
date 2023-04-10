@@ -132,53 +132,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   );
 
   const currentUser = await getCurrentUser(request);
-  // implement following state in prisma and stop fetching from spotify on every request
-  // if (currentUser) {
-  //   const { spotify } = await spotifyApi(currentUser.userId);
-  //   invariant(spotify, 'Spotify API Error');
-  //   const {
-  //     body: [following],
-  //   } = await spotify.isFollowingUsers([id]).catch((e) => ({ body: [false] }));
 
-  //   // return defer({
-  //   //   user,
-  //   //   activity,
-  //   //   party,
-  //   //   playback,
-  //   //   currentUser,
-  //   //   following,
-  //   //   queue,
-  //   //   recommended,
-  //   //   users,
-  //   //   listened,
-  //   //   lazyMain,
-  //   // });
-
-  //   return typedjson({
-  //     activity,
-  //     currentUser,
-  //     following,
-  //     listened,
-  //     party,
-  //     profileSong,
-  //     user,
-  //     users,
-  //   });
-  // }
-
-  // return defer({
-  //   user,
-  //   activity,
-  //   party,
-  //   playback,
-  //   currentUser,
-  //   following: null,
-  //   queue,
-  //   recommended,
-  //   users,
-  //   listened,
-  //   lazyMain,
-  // });
   let friendRecord = null;
   if (currentUser && currentUser.userId !== id) {
     friendRecord = await prisma.friends.findFirst({
@@ -251,8 +205,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   const currentUser = await getCurrentUser(request);
   const friendStatus = data.get('friendStatus');
   invariant(currentUser, 'Missing current user');
-  // const profile = await prisma.profile.findUnique({ where: { userId: currentUser.userId } });
-  // invariant(profile, 'Profile not found');
   const { spotify } = await spotifyApi(currentUser.userId);
   invariant(spotify, 'Spotify API Error');
 

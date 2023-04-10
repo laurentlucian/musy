@@ -50,10 +50,7 @@ const NotificationBadge = ({ count }: { count: number }) => {
 const PendingFriendsNotification = ({ pendingFriends }: { pendingFriends?: number }) => {
   return (
     <div style={{ position: 'relative' }}>
-      <Text>
-        requests
-        {/* {pendingFriends.length ? pendingFriends.length : ''} */}
-      </Text>
+      <Text>requests</Text>
       {pendingFriends ? <NotificationBadge count={pendingFriends} /> : null}
     </div>
   );

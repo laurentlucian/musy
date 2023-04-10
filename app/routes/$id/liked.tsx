@@ -17,5 +17,4 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { body } = await spotify.getMySavedTracks({ limit: 50, offset });
   const data = body.items ?? [];
   return typedjson(data);
-  // throw typedjson({}, { status: 404 });
 };

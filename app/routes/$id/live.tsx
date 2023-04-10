@@ -121,25 +121,4 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   return typedjson({ main, party, playback, recommended, user });
 };
 
-// const LazyMain = () => {
-//   const data = useAsyncValue();
-//   console.log('data', data);
-
-//   return null;
-//   return (
-//     <>
-//       <RecentTracks recent={recent} />
-//       {liked.length && <LikedTracks liked={liked} />}
-//       <TopTracks top={top} />
-//       {playlists.length && <Playlists playlists={playlists} />}
-//     </>
-//   );
-// };
-
-// <Suspense fallback={<Waver />}>
-//  <Await resolve={lazyMain}>
-//    <LazyMain />
-//  </Await>
-// </Suspense>
-
 export default ProfileOutlet;

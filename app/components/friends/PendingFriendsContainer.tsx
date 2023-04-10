@@ -41,8 +41,6 @@ const PendingFriendsContainer = ({ image, name, userId }: PendingFriendsContaine
     );
   };
 
-  //as={Link} to={`/${userId}`
-
   return (
     <>
       <Flex padding="10px">

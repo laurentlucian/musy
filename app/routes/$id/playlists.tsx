@@ -20,5 +20,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
     .catch(() => []);
   return typedjson(data);
-  // throw typedjson({}, { status: 404 });
+
 };

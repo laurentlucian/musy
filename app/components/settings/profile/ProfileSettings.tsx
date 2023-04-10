@@ -18,22 +18,22 @@ const ProfileSettings = () => {
   const [picker, setPicker] = useState<number>(-1);
   const [theme, setTheme] = useState(
     currentUser?.theme ?? {
-      backgroundDark: '#090808', //
-      backgroundLight: '#EEE6E2', //
-      bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)', //
-      bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)', //
-      blur: true, //
+      backgroundDark: '#090808',
+      backgroundLight: '#EEE6E2',
+      bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
+      bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',
+      blur: true,
       customPlayer: null,
-      gradient: false, //
+      gradient: false,
       isPreset: true,
-      mainTextDark: '#EEE6E2', //
-      mainTextLight: '#161616', //
+      mainTextDark: '#EEE6E2',
+      mainTextLight: '#161616',
       musyLogo: 'musy',
-      opaque: false, //
-      playerColorDark: '#101010', //
-      playerColorLight: '#E7DFD9', //
-      subTextDark: '#EEE6E2', //
-      subTextLight: '#161616', //
+      opaque: false,
+      playerColorDark: '#101010',
+      playerColorLight: '#E7DFD9',
+      subTextDark: '#EEE6E2',
+      subTextLight: '#161616',
       userId: currentUser?.userId ?? '',
     },
   );
@@ -68,7 +68,7 @@ const ProfileSettings = () => {
             <ProfileHeader profile={currentUser} />
             <Player track={currentUser.settings?.profileSong} theme={theme} right={playerBtnSide} />
           </Box>
-            <ColorPickers setTheme={setTheme} theme={theme} setPicker={setPicker} picker={picker} />
+          <ColorPickers setTheme={setTheme} theme={theme} setPicker={setPicker} picker={picker} />
         </Stack>
         <Box h="300px" />
       </Stack>

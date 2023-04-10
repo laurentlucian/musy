@@ -10,11 +10,6 @@ import { Menu } from './components/Menu';
 import { Modal } from './components/Modal';
 import colors from './foundations/colors';
 
-// const isFunction = (value: any): value is Function => typeof value === 'function';
-// function runIfFn<T, U>(valueOrFn: T | ((...fnArgs: U[]) => T), ...args: U[]): T {
-//   return isFunction(valueOrFn) ? valueOrFn(...args) : valueOrFn;
-// }
-
 const styles = {
   global: (props: GlobalStyleProps) => ({
     '*::-webkit-scrollbar': {
@@ -30,9 +25,9 @@ const styles = {
     },
     body: {
       WebkitTapHighlightColor: '#0000 !important',
-      bg: mode('#EEE6E2', '#050404')(props), //<------------------------()
-      bgColor: mode('#EEE6E2', '#050404')(props), // but all other components do
-      color: mode('#161616', '#EEE6E2')(props), // these do not swap when mode switches
+      bg: mode('#EEE6E2', '#050404')(props),
+      bgColor: mode('#EEE6E2', '#050404')(props),
+      color: mode('#161616', '#EEE6E2')(props),
       lineHeight: 'base',
       userSelect: 'none !important',
     },

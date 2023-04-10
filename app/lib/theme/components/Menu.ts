@@ -32,8 +32,6 @@ const baseStyle = definePartsStyle((props) => ({
     color: mode('music.100', `music.800`)(props),
     maxW: 'max-content',
     minW: '200px',
-    // ml: 0,
-    // px: 0,
   },
 }));
 

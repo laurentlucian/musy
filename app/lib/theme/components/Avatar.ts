@@ -14,7 +14,6 @@ const baseStyle = definePartsStyle((props) => ({
   container: {
     border: mode('3px solid music.200', '3px solid music.900')(props),
     borderRadius: 'full',
-    // boxShadow: mode('0 0 10px music.900', '0 0 10px music.200')(props),
   },
   excessLabel: {
     bg: 'music.900',

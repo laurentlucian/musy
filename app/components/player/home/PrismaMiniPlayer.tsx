@@ -14,7 +14,6 @@ import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import QuickActions from './QuickActions';
 
-// import PlayerBarCSS from './PlayerBarCSS';
 interface Friends extends User {
   playback:
     | (Playback & {
@@ -75,11 +74,13 @@ const PrismaMiniPlayer = ({
       mr={[0, '10px']}
     />
   );
+
   const Username = (
     <Text fontWeight="bold" fontSize={['15px', '20px']}>
       {!name.includes('cunt') ? name : 'healthycat'}
     </Text>
   );
+
   const User = (
     <Stack justifySelf="left">
       <Stack direction="row" w="100%">
@@ -161,7 +162,6 @@ const PrismaMiniPlayer = ({
             maxW={track ? ['100px', '120px'] : '60px'}
             onClick={(e) => {
               e.preventDefault();
-              // e.stopPropagation();
               track &&
                 onOpen(track, user.userId, layoutKey, tracks ?? [track, ...friendsTracks], index);
             }}
@@ -198,7 +198,6 @@ const PrismaMiniPlayer = ({
       {User}
       {Activity}
     </Button>
-    /* {playback && <PlayerBarCSS playback={playback} />} */
   );
 };
 export default PrismaMiniPlayer;

@@ -26,7 +26,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             key={pathname}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }} // I dont think this is doing anything
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5 }}
           >
             {children}
@@ -36,7 +36,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             key={pathname}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }} // I dont think this is doing anything
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5 }}
           >
             <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>

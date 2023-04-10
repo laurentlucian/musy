@@ -11,8 +11,6 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { action } from '~/routes/$id/add';
 import type { action as actionB } from '~/routes/$id/recommend';
 
-// if send type is true you are queueing otherwise you are recommending
-
 const SendButton = ({
   sendType = 'queue',
   sendingToId,

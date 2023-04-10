@@ -26,7 +26,6 @@ const TileMotion = forwardRef<
       layoutId={track.id + layoutKey}
     >
       <Image
-        // as={motion.img}
         boxSize="200px"
         minW="200px"
         minH="200px"
@@ -35,14 +34,7 @@ const TileMotion = forwardRef<
         draggable={false}
         cursor="pointer"
       />
-      <Text
-        // as={motion.p}
-        fontSize="13px"
-        noOfLines={3}
-        whiteSpace="normal"
-        wordBreak="break-word"
-        mt="5px"
-      >
+      <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word" mt="5px">
         {track.name}
       </Text>
       <Flex as={motion.div} dir="row">

@@ -73,15 +73,9 @@ const ProfileHeader = ({
         </Tooltip>
       )}
       {user.settings?.founder === true && (
-        <>
-          <Tooltip label="Dev" placement="top" hasArrow>
-            <CodeCircle size="32" variant="Bulk" />
-          </Tooltip>
-          {/* Founder Icon if needed maybe a musy icon down the line for founders????????? */}
-          {/* <Tooltip label="Founder" placement="top" hasArrow>
-            <Nebulas size="32" variant="Bulk" />
-          </Tooltip> */}
-        </>
+        <Tooltip label="Dev" placement="top" hasArrow>
+          <CodeCircle size="32" variant="Bulk" />
+        </Tooltip>
       )}
     </HStack>
   );

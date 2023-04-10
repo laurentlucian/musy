@@ -9,14 +9,9 @@ import { prisma } from '~/services/db.server';
 export const action = async ({ params, request }: ActionArgs) => {
   const { id } = params;
   if (!id) throw redirect('/');
-  // const { spotify } = await spotifyApi(id);
-  // invariant(spotify, 'No access to API');
 
   const body = await request.formData();
   const trackId = body.get('trackId') as string;
-
-  // const { body: track } = await spotify.getTrack(trackId);
-  // const trackDb = createTrackModel(track);
 
   const data = {
     profileSong: {

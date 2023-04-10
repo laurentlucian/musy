@@ -28,7 +28,6 @@ import invariant from 'tiny-invariant';
 import explicitImage from '~/assets/explicit-solid.svg';
 import Tiles from '~/components/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
-// import { authenticator } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Analysis = () => {
@@ -153,17 +152,9 @@ const Analysis = () => {
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  // const session = await authenticator.isAuthenticated(request);
-
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson(null);
-  // if (!session) {
-  //   return redirect('/auth/spotify?returnTo=/analysis?spotify=' + searchURL);
-  // }
-
-  // const { user: currentUser } = session;
-  // invariant(currentUser, 'Missing user');
 
   const { spotify } = await spotifyApi('1295028670');
   invariant(spotify, 'No access to spotify API');

@@ -9,7 +9,6 @@ import type { Track } from '~/lib/types/types';
 type SendToProps = Track & {
   // @todo figure out a better way to require authentication on click;
   // after authentication redirect, add to queue isn't successful. user needs to click again
-  // user.name
   sendTo?: string;
   userId: string;
 };
@@ -51,10 +50,7 @@ const SendTo = ({
           <input type="hidden" name="name" value={name} />
           {artist && <input type="hidden" name="artist" value={artist} />}
           <input type="hidden" name="artistUri" value={artistUri ?? ''} />
-          {/* empty string is falsy */}
           <input type="hidden" name="explicit" value={explicit ? 'true' : ''} />
-          {/* sendTo: receiving song (id), sending song (userId) */}
-          {/* addTo: receiving song (userId), sending song indirectly (id; aka current opened profile) */}
           <input type="hidden" name="fromId" value={userId} />
           <input type="hidden" name="action" value={'send'} />
           <Button

@@ -1,4 +1,3 @@
-
 import { Link, useTransition } from '@remix-run/react';
 
 import {
@@ -24,7 +23,6 @@ import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
 
-// import PlayerBarCSS from './PlayerBarCSS';
 interface Friends extends User {
   playback:
     | (Playback & {
@@ -61,8 +59,6 @@ const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
 
   const playback = user.playback;
   const track = playback?.track;
-  // const que = user?.settings?.allowQueue;
-  // const recommend = user?.settings?.allowRecommend;
 
   const formattedTrack = track
     ? {
@@ -169,28 +165,6 @@ const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
             <Stack pt="10px" my="30px">
               <SpotifyLogo h="22px" w="70px" />
             </Stack>
-            {/* {track.liked.length ? (
-            <HStack>
-              <Icon as={Heart} />
-              <AvatarGroup size="xs" max={4}>
-                {track.liked
-                  // .filter(({ user: u }) => u?.userId !== user.userId)
-                  .map(({ user }, index) => (
-                    <Avatar
-                      minW="20px"
-                      maxW="20px"
-                      minH="20px"
-                      maxH="20px"
-                      key={index}
-                      name={user?.name}
-                      src={user?.image}
-                      size={['xs', null, 'sm']}
-                    />
-                  ))}
-              </AvatarGroup>
-            </HStack>
-          ) : null}
-          {track.recent.length ? <PlayedBy played={track.recent} /> : null} */}
           </Stack>
           <Tooltip label={<Text>{track.name}</Text>}>
             <LinkB
@@ -243,7 +217,6 @@ const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
       {User}
       {Activity}
     </Button>
-    /* {playback && <PlayerBarCSS playback={playback} />} */
   );
 };
 export default PrismaMiniPlayer;

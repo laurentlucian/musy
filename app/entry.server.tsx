@@ -14,7 +14,6 @@ require('better-logging')(console);
 
 void runSessionsQ();
 void addUsersToQueue();
-// clearActivityQOnDev();
 
 export default function handleRequest(
   request: Request,

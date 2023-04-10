@@ -14,7 +14,6 @@ import {
 import { HeartAdd, ArrowDown2, ArrowRight2 } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
-// import useIsMobile from '~/hooks/useIsMobile';
 import useIsVisible from '~/hooks/useIsVisible';
 import type { loader } from '~/routes/$id/playlists';
 
@@ -54,9 +53,6 @@ const SaveTo = ({ currentUserId }: { currentUserId: string | undefined }) => {
     }
   }, [fetcher.data]);
 
-  // const isSmallScreen = useIsMobile();
-
-  // const { onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const SaveSongTo = () => (
@@ -95,7 +91,6 @@ const SaveTo = ({ currentUserId }: { currentUserId: string | undefined }) => {
               <header>Save To:</header>
             </Stack>
             <Stack>
-              {/* <Input placeholder="find playlist" /> */}
               <Button
                 pos="relative"
                 variant="ghost"

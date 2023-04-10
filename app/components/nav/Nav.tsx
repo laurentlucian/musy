@@ -14,11 +14,9 @@ import {
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
 import Waver from '../icons/Waver';
 import NavSearch from './NavSearch';
 import UserMenu from './UserMenu';
-// import UserSearch from './UserSearch';
 
 const Nav = () => {
   const transition = useTransition();
@@ -58,7 +56,7 @@ const Nav = () => {
               bg={bg}
               color={color}
             >
-              Login{/*  with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} /> */}
+              Login
             </Button>
           </Form>
         ) : (

@@ -20,5 +20,4 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { body } = await spotify.getMyTopTracks({ limit: 50, time_range });
   const data = body.items ?? [];
   return typedjson(data);
-  // throw typedjson({}, { status: 404 });
 };

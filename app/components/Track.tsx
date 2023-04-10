@@ -9,7 +9,6 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
 
 import SpotifyLogo from './icons/SpotifyLogo';
-// import type { Profile } from '@prisma/client';
 
 const Track = (props: {
   addedAt: string;
