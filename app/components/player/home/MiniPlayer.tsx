@@ -21,6 +21,7 @@ import type { Playback } from '~/services/spotify.server';
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
 import PlayerBar from '../PlayerBar';
+import { shortenUsername } from '~/lib/utils';
 
 type PlayerProps = {
   layoutKey: string;
@@ -34,9 +35,7 @@ const MiniPlayer = ({ layoutKey, playback, user }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();
 
-  const [first, second = ''] = user.name.split(/[\s.]+/);
-  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
-
+  const name = shortenUsername(user.name);
   const track =
     playback?.currently_playing?.item?.type === 'track' ? playback?.currently_playing?.item : null;
   const artist = track?.album.artists[0].name;

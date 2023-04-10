@@ -98,3 +98,11 @@ export const iosSplashScreens = [
     rel: 'apple-touch-startup-image',
   },
 ];
+
+export const shortenUsername = (username?: string) => {
+  if (!username) return 'wut';
+  if (username.includes('cunt')) return 'healthycat';
+
+  const [first, second = ''] = username.split(/[\s.]+/);
+  return second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+};

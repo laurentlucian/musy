@@ -2,6 +2,7 @@ import { HStack, Stack, Text, Icon, AvatarGroup, Avatar } from '@chakra-ui/react
 
 import type { Profile } from '@prisma/client';
 import { Play } from 'iconsax-react';
+import { shortenUsername } from '~/lib/utils';
 
 import Tooltip from '../Tooltip';
 
@@ -32,9 +33,7 @@ const PlayedBy = ({
             )
               .sort((a, b) => b.count - a.count)
               .map(({ count, user }, index) => {
-                const [first, second = ''] = user.name.split(/[\s.]+/);
-                const name =
-                  second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+                const name = shortenUsername(user.name);
                 return (
                   <HStack key={index}>
                     <Avatar

@@ -13,6 +13,7 @@ import type { Track, User } from '~/lib/types/types';
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import QuickActions from './QuickActions';
+import { shortenUsername } from '~/lib/utils';
 
 interface Friends extends User {
   playback:
@@ -51,9 +52,7 @@ const PrismaMiniPlayer = ({
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();
-
-  const [first, second = ''] = user.name.split(/[\s.]+/);
-  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+  const name = shortenUsername(user.name);
   const loading = transition.location?.pathname.includes(user.userId);
 
   const playback = user.playback;
@@ -61,8 +60,7 @@ const PrismaMiniPlayer = ({
   const que = user?.settings?.allowQueue;
   const recommend = user?.settings?.allowRecommend;
 
-  // eslint-disable-next-line
-  const dontRemoveThis = useDrawerTrack();
+  useDrawerTrack();
 
   const ProfilePic = (
     <Image
@@ -77,7 +75,7 @@ const PrismaMiniPlayer = ({
 
   const Username = (
     <Text fontWeight="bold" fontSize={['15px', '20px']}>
-      {!name.includes('cunt') ? name : 'healthycat'}
+      {name}
     </Text>
   );
 

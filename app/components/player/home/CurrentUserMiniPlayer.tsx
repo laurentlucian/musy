@@ -22,6 +22,7 @@ import type { User } from '~/lib/types/types';
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
+import { shortenUsername } from '~/lib/utils';
 
 interface Friends extends User {
   playback:
@@ -53,8 +54,7 @@ const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
   const { onOpen } = useDrawerActions();
 
-  const [first, second = ''] = user.name.split(/[\s.]+/);
-  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
+  const name = shortenUsername(user.name);
   const loading = transition.location?.pathname.includes(user.userId);
 
   const playback = user.playback;

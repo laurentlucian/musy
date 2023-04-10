@@ -17,7 +17,7 @@ import {
 import { People, VolumeHigh } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
-import { timeSince } from '~/lib/utils';
+import { shortenUsername, timeSince } from '~/lib/utils';
 import type { SessionsWithData } from '~/routes/home/sessions';
 
 type SessionProps = {
@@ -27,9 +27,8 @@ type SessionProps = {
 const SessionModal = ({ children, session, ...chakraProps }: SessionProps) => {
   const { scrollRef } = useMouseScroll('natural', false);
   const user = session.user;
-  const [first, second = ''] = user.name.split(/[\s.]+/);
-  const name = second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 
+  const name = shortenUsername(user.name);
   if (session.songs.length === 0) return null;
 
   const mostPlayedArtists = session.songs.reduce((acc, song) => {
