@@ -9,11 +9,11 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track, User } from '~/lib/types/types';
+import { shortenUsername } from '~/lib/utils';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import QuickActions from './QuickActions';
-import { shortenUsername } from '~/lib/utils';
 
 interface Friends extends User {
   playback:

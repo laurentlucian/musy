@@ -125,7 +125,6 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
     return true;
-
   });
 
   const played = activity.track.recent ?? [];

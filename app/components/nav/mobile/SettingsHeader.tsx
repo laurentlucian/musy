@@ -12,7 +12,7 @@ const SettingsHeader = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
-  
+
   const handleClick = () => {
     if (disable) {
       showAlert();

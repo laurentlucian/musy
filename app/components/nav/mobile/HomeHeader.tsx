@@ -15,7 +15,7 @@ const HomeHeader = () => {
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#161616', '#EEE6E2');
   const currentUser = useSessionUser();
-  
+
   const authorized = !!currentUser;
 
   return (

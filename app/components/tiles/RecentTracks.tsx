@@ -23,23 +23,22 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   }, [setShow]);
   const title = 'Recent';
 
-  const tracks: Track[] =recent.map((item) => {
-      return {
-        albumName: item.track.album.name,
-        albumUri: item.track.album.uri,
-        artist: item.track.artists[0].name,
-        artistUri: item.track.artists[0].uri,
-        duration: item.track.duration_ms,
-        explicit: item.track.explicit,
-        id: item.track.id,
-        image: item.track.album.images[0].url,
-        link: item.track.external_urls.spotify,
-        name: item.track.name,
-        preview_url: item.track.preview_url ?? '',
-        uri: item.track.uri,
-      };
-    });
-
+  const tracks: Track[] = recent.map((item) => {
+    return {
+      albumName: item.track.album.name,
+      albumUri: item.track.album.uri,
+      artist: item.track.artists[0].name,
+      artistUri: item.track.artists[0].uri,
+      duration: item.track.duration_ms,
+      explicit: item.track.explicit,
+      id: item.track.id,
+      image: item.track.album.images[0].url,
+      link: item.track.external_urls.spotify,
+      name: item.track.name,
+      preview_url: item.track.preview_url ?? '',
+      uri: item.track.uri,
+    };
+  });
 
   return (
     <Stack spacing={3}>

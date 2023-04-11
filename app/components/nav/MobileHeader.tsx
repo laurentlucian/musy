@@ -14,7 +14,7 @@ import UserMenu from './UserMenu';
 const MobileHeader = () => {
   const { pathname } = useLocation();
   const currentUser = useSessionUser();
-  
+
   const Header = pathname.includes('home') ? (
     <HomeHeader />
   ) : pathname.includes('friends') ? (

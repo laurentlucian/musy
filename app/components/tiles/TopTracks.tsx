@@ -62,22 +62,21 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   }, [setShow]);
 
   const tracks: Track[] = top.map((track) => {
-      return {
-        albumName: track.album.name,
-        albumUri: track.album.uri,
-        artist: track.artists[0].name,
-        artistUri: track.artists[0].uri,
-        duration: track.duration_ms,
-        explicit: track.explicit,
-        id: track.id,
-        image: track.album.images[0].url,
-        link: track.external_urls.spotify,
-        name: track.name,
-        preview_url: track.preview_url ?? '',
-        uri: track.uri,
-      };
-    });
-
+    return {
+      albumName: track.album.name,
+      albumUri: track.album.uri,
+      artist: track.artists[0].name,
+      artistUri: track.artists[0].uri,
+      duration: track.duration_ms,
+      explicit: track.explicit,
+      id: track.id,
+      image: track.album.images[0].url,
+      link: track.external_urls.spotify,
+      name: track.name,
+      preview_url: track.preview_url ?? '',
+      uri: track.uri,
+    };
+  });
 
   if (!top.length) return null;
 

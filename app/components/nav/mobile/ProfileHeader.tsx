@@ -21,7 +21,7 @@ const ProfileHeader = () => {
     user?.theme?.backgroundLight ?? '#EEE6E2',
     user?.theme?.backgroundDark ?? '#050404',
   );
-  
+
   useEffect(() => {
     const checkScroll = () => {
       setShow(window.scrollY - 50);

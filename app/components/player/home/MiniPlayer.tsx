@@ -16,12 +16,12 @@ import type { Profile } from '@prisma/client';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
+import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
 
 import Waver from '../../icons/Waver';
 import Tooltip from '../../Tooltip';
 import PlayerBar from '../PlayerBar';
-import { shortenUsername } from '~/lib/utils';
 
 type PlayerProps = {
   layoutKey: string;
