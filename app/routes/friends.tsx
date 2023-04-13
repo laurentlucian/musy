@@ -21,7 +21,7 @@ import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
-  const { currentUserId, favs, friends, pendingFriends, users } =
+  const { currentUserId, favs, friends, pendingRequests, users } =
     useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
@@ -59,8 +59,6 @@ const Friends = () => {
   const sortedFriends = sort(friends);
 
   const sortedFavorites = sort(favs);
-
-  const sortedPendingFriends = sort(pendingFriends);
 
   const everyone = sort(users.filter((user) => user.userId !== currentUserId));
 
@@ -157,7 +155,7 @@ const Friends = () => {
               currentUser={currentUser}
               sortedFriends={sortedFriends}
               tracks={tracks}
-              sortedPendingFriends={sortedPendingFriends}
+              pendingRequests={pendingRequests}
             />
             <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
             <TempTab currentUser={currentUser} everyone={everyone} />
@@ -260,23 +258,16 @@ export const loader = async ({ request }: LoaderArgs) => {
     where: { favoritedById: currentUser?.id },
   });
 
+  const currentPending = await prisma.friends.findMany({
+    include: { user: true },
+    where: { friendId: currentUser?.id, status: 'pending' },
+  });
+
   const friends = await getFriends(!!currentUser, currentFriends);
 
   const favs = await getFavorites(!!currentUser, currentFavorites);
 
-  const pendingFriends = await prisma.friends.findMany({
-    where: { friendId: currentUser?.id, status: 'pending' },
-  });
-
-  const pendingFriendProfiles = await prisma.profile.findMany({
-    where: {
-      userId: {
-        in: pendingFriends.map((pendingFriend) => {
-          return pendingFriend.userId;
-        }),
-      },
-    },
-  });
+  const pendingRequests = await getFriends(!!currentUser, currentPending);
 
   return typedjson({
     currentFriends,
@@ -284,8 +275,7 @@ export const loader = async ({ request }: LoaderArgs) => {
     favs,
     friends,
     now: Date.now(),
-    pendingFriendProfiles,
-    pendingFriends,
+    pendingRequests,
     users,
   });
 };

@@ -6,7 +6,7 @@ import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 
 type Props = {
   currentUser: Profile | null;
-  sortedFriends: (Profile & {
+  pendingRequests: (Profile & {
     playback:
       | (Playback & {
           track: Track & {
@@ -21,7 +21,7 @@ type Props = {
       | null;
     settings: Settings | null;
   })[];
-  sortedPendingFriends: (Profile & {
+  sortedFriends: (Profile & {
     playback:
       | (Playback & {
           track: Track & {
@@ -38,12 +38,7 @@ type Props = {
   })[];
   tracks: Track[];
 };
-export const FriendsTabs = ({
-  currentUser,
-  sortedFriends,
-  sortedPendingFriends,
-  tracks,
-}: Props) => {
+export const FriendsTabs = ({ currentUser, pendingRequests, sortedFriends, tracks }: Props) => {
   return (
     <TabPanel
       as={Stack}
@@ -58,7 +53,7 @@ export const FriendsTabs = ({
         <Tabs align="start" colorScheme="green" variant="soft-rounded" size="sm">
           <TabList mb="5px">
             <Tab mr="20px">friends {sortedFriends.length}</Tab>
-            <Tab>requests {sortedPendingFriends.length ? sortedPendingFriends.length : ''}</Tab>
+            <Tab>requests {pendingRequests.length ? pendingRequests.length : ''}</Tab>
           </TabList>
           <Divider bgColor="spotify.green" />
           <TabPanels>
@@ -78,7 +73,7 @@ export const FriendsTabs = ({
               })}
             </TabPanel>
             <TabPanel>
-              {sortedPendingFriends.map((user, index) => {
+              {pendingRequests.map((user, index) => {
                 return (
                   <PrismaMiniPlayer
                     key={user.userId}

@@ -65,8 +65,6 @@ const Friends = () => {
 
   const sortedFavorites = sort(favorites);
 
-  const sortedPendingFriends = sort(pendingFriends);
-
   const everyone = sort(otherUsers);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
@@ -159,7 +157,7 @@ const Friends = () => {
             currentUser={currentUser}
             sortedFriends={sortedFriends}
             tracks={tracks}
-            sortedPendingFriends={sortedPendingFriends}
+            pendingRequests={pendingFriends}
           />
           <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
           <TempTab currentUser={currentUser} everyone={everyone} />
