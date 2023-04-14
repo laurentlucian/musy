@@ -187,14 +187,14 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const cachedVersion = await redis.get(themeVersionKey);
   let theme: Theme | null;
 
-  if (cachedTheme && cachedVersion === currentThemeVersion) {
+  if (cachedTheme && Number(cachedVersion) === currentThemeVersion) {
     theme = JSON.parse(cachedTheme);
   } else {
     theme = await prisma.theme.findUnique({
       where: { userId: id },
     });
 
-    await redis.set(themeVersionKey, JSON.stringify(themeVersionKey));
+    await redis.set(themeVersionKey, JSON.stringify(currentThemeVersion));
     await redis.set(cacheThemeKey, JSON.stringify(theme));
   }
 
