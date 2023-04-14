@@ -174,10 +174,12 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     });
   }
 
-  const currentThemeVersion = await prisma.profile.findUnique({
-    select: { theme: { select: { version: true } } },
-    where: { userId: id },
-  });
+  const currentThemeVersion = await prisma.profile
+    .findUnique({
+      select: { theme: { select: { version: true } } },
+      where: { userId: id },
+    })
+    .then((result) => result?.theme?.version ?? null);
 
   const cacheThemeKey = 'theme';
   const themeVersionKey = 'version';
@@ -191,6 +193,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     theme = await prisma.theme.findUnique({
       where: { userId: id },
     });
+
+    await redis.set(themeVersionKey, JSON.stringify(themeVersionKey));
+    await redis.set(cacheThemeKey, JSON.stringify(theme));
   }
 
   return typedjson({
