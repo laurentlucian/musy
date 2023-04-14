@@ -2,12 +2,15 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
 
+import type { Theme } from '@prisma/client';
+import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileSettings from '~/components/settings/profile/ProfileSettings';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { redis } from '~/services/scheduler/redis.server';
 
 const Appearance = () => {
   const currentUser = useSessionUser();
@@ -18,6 +21,39 @@ const Appearance = () => {
       <ProfileSettings />
     </Stack>
   );
+};
+
+export const loader = async ({ request }: ActionArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const userId = session?.user?.id;
+  invariant(userId, 'Unauthenticated');
+  const currentThemeVersion = await prisma.profile
+    .findUnique({
+      select: { theme: { select: { version: true } } },
+      where: { userId },
+    })
+    .then((result) => result?.theme?.version ?? null);
+
+  const cacheThemeKey = 'theme';
+  const themeVersionKey = 'version';
+  const cachedTheme = await redis.get(cacheThemeKey);
+  const cachedVersion = await redis.get(themeVersionKey);
+  let theme: Theme | null;
+
+  if (cachedTheme && cachedVersion === currentThemeVersion) {
+    theme = JSON.parse(cachedTheme);
+  } else {
+    theme = await prisma.theme.findUnique({
+      where: { userId },
+    });
+
+    await redis.set(themeVersionKey, JSON.stringify(themeVersionKey));
+    await redis.set(cacheThemeKey, JSON.stringify(theme));
+  }
+
+  return typedjson({
+    theme,
+  });
 };
 export const action = async ({ request }: ActionArgs) => {
   const session = await authenticator.isAuthenticated(request);

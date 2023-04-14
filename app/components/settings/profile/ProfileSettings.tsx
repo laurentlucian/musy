@@ -2,8 +2,11 @@ import { useRef, useState } from 'react';
 
 import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
+import type { Theme } from '@prisma/client';
+import { useTypedLoaderData } from 'remix-typedjson';
+
 import useSessionUser from '~/hooks/useSessionUser';
-import useSessionUsersTheme from '~/hooks/useSessionUsersTheme';
+import type { loader } from '~/routes/settings/appearance';
 
 import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
@@ -12,13 +15,13 @@ import SaveThemeButton from './theme/SaveThemeButton';
 import ToggleSettings from './theme/ToggleSettings';
 
 const ProfileSettings = () => {
-  const currentTheme = useSessionUsersTheme();
+  const { theme: currentTheme } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
   const [playerBtnSide, setPlayerBtnSide] = useState(
     currentUser?.settings?.playerButtonRight ? true : false,
   );
   const [picker, setPicker] = useState<number>(-1);
-  const [theme, setTheme] = useState(
+  const [theme, setTheme] = useState<Theme>(
     currentTheme ?? {
       backgroundDark: '#090808',
       backgroundLight: '#EEE6E2',
