@@ -6,6 +6,7 @@ import { Box, Divider, HStack, IconButton, Stack, Text, useColorModeValue } from
 import { ArrowLeft2 } from 'iconsax-react';
 
 import useParamUser from '~/hooks/useParamUser';
+import useParamUsersTheme from '~/hooks/useParamUsersTheme';
 
 import UserMenu from '../UserMenu';
 
@@ -15,11 +16,12 @@ const ProfileHeader = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const user = useParamUser();
+  const theme = useParamUsersTheme();
 
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue(
-    user?.theme?.backgroundLight ?? '#EEE6E2',
-    user?.theme?.backgroundDark ?? '#050404',
+    theme?.backgroundLight ?? '#EEE6E2',
+    theme?.backgroundDark ?? '#050404',
   );
 
   useEffect(() => {

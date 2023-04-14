@@ -1,13 +1,12 @@
 import { useMatches } from '@remix-run/react';
 
-import type { Friends, Profile, Settings, Theme, Track } from '@prisma/client';
+import type { Friends, Profile, Settings, Track } from '@prisma/client';
 
 const useSessionUser = ():
   | (Profile & {
       friends: Friends[];
       liked: { trackId: string }[];
       settings: (Settings & { profileSong: Track }) | null;
-      theme: Theme | null;
     })
   | null => {
   const matches = useMatches();

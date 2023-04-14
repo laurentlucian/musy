@@ -72,7 +72,7 @@ const SaveThemeButton = ({
     setPicker(-1);
     setSave(false);
     setTheme(
-      currentUser?.theme ?? {
+      theme ?? {
         backgroundDark: '#090808',
         backgroundLight: '#EEE6E2',
         bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',

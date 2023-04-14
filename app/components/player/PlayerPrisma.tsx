@@ -22,7 +22,7 @@ import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import useParamUser from '~/hooks/useParamUser';
+import useParamUsersTheme from '~/hooks/useParamUsersTheme';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
@@ -41,8 +41,7 @@ type PlayerProps = {
 
 const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
-  const user = useParamUser();
-  const theme = user?.theme;
+  const theme = useParamUsersTheme();
   const isOwnProfile = currentUser?.userId === id;
   const preview =
     currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;

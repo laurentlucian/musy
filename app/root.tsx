@@ -73,7 +73,6 @@ export const loader = async ({ request }: LoaderArgs) => {
       include: {
         liked: { select: { trackId: true } },
         settings: { include: { profileSong: true } },
-        theme: true,
       },
       where: { userId: session.user.id },
     });

@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 
 import useSessionUser from '~/hooks/useSessionUser';
+import useSessionUsersTheme from '~/hooks/useSessionUsersTheme';
 
 import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
@@ -11,13 +12,14 @@ import SaveThemeButton from './theme/SaveThemeButton';
 import ToggleSettings from './theme/ToggleSettings';
 
 const ProfileSettings = () => {
+  const currentTheme = useSessionUsersTheme();
   const currentUser = useSessionUser();
   const [playerBtnSide, setPlayerBtnSide] = useState(
     currentUser?.settings?.playerButtonRight ? true : false,
   );
   const [picker, setPicker] = useState<number>(-1);
   const [theme, setTheme] = useState(
-    currentUser?.theme ?? {
+    currentTheme ?? {
       backgroundDark: '#090808',
       backgroundLight: '#EEE6E2',
       bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
