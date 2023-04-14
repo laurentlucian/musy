@@ -108,46 +108,44 @@ const Friends = () => {
   }
 
   return (
-    <Stack>
-      <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
-        {currentUserData && currentUserData.settings?.miniPlayer && (
+    <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 0]}>
+      {currentUserData && currentUserData.settings?.miniPlayer && (
+        <PrismaMiniPlayer
+          key={currentUserData.userId}
+          layoutKey="MiniPlayerS"
+          user={currentUserData}
+          currentUserId={currentUser?.userId}
+          index={0}
+          friendsTracks={friendsTracks}
+          tracks={null}
+        />
+      )}
+      {favorites.map((user, index) => {
+        return (
           <PrismaMiniPlayer
-            key={currentUserData.userId}
-            layoutKey="MiniPlayerS"
-            user={currentUserData}
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
             currentUserId={currentUser?.userId}
-            index={0}
-            friendsTracks={friendsTracks}
-            tracks={null}
+            tracks={favsTracks}
+            friendsTracks={[]}
+            index={index}
           />
-        )}
-        {favorites.map((user, index) => {
-          return (
-            <PrismaMiniPlayer
-              key={user.userId}
-              layoutKey={'MiniPlayerF' + index}
-              user={user}
-              currentUserId={currentUser?.userId}
-              tracks={favsTracks}
-              friendsTracks={[]}
-              index={index}
-            />
-          );
-        })}
-        {sortedFriends.map((user, index) => {
-          return (
-            <PrismaMiniPlayer
-              key={user.userId}
-              layoutKey={'MiniPlayerF' + index}
-              user={user}
-              currentUserId={currentUser?.userId}
-              tracks={friendsTracks}
-              friendsTracks={[]}
-              index={index}
-            />
-          );
-        })}
-      </Stack>
+        );
+      })}
+      {sortedFriends.map((user, index) => {
+        return (
+          <PrismaMiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            currentUserId={currentUser?.userId}
+            tracks={friendsTracks}
+            friendsTracks={[]}
+            index={index}
+          />
+        );
+      })}
     </Stack>
   );
 };
