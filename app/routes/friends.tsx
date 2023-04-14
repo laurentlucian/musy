@@ -2,16 +2,12 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Divider, HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
-import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import { FavoriteTab } from '~/components/friends/tabs/FavoritesTab';
-import { FriendsTabs } from '~/components/friends/tabs/FriendsTabs';
-import { TempTab } from '~/components/friends/tabs/TempTab';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -21,8 +17,7 @@ import { authenticator, getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
-  const { currentUserId, favs, friends, pendingRequests, users } =
-    useTypedLoaderData<typeof loader>();
+  const { currentUserId, favs, friends, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
@@ -45,22 +40,18 @@ const Friends = () => {
     })[],
   ) => {
     return array.sort((a, b) => {
-      // sort by playback status first
       if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
         return 1;
       } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
         return -1;
       }
-      // then sort by name in alphabetical order
       return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
     });
   };
 
   const sortedFriends = sort(friends);
 
-  const sortedFavorites = sort(favs);
-
-  const everyone = sort(users.filter((user) => user.userId !== currentUserId));
+  const favorites = sort(favs);
 
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
@@ -73,7 +64,7 @@ const Friends = () => {
     }
   }, [shouldRevalidate, revalidate]);
 
-  const tracks: Track[] = [];
+  const friendsTracks: Track[] = [];
   for (let i = 0; i < sortedFriends.length; i++) {
     if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
       continue;
@@ -92,76 +83,71 @@ const Friends = () => {
       preview_url: sortedFriends[i].playback!.track.preview_url,
       uri: sortedFriends[i].playback!.track.uri,
     };
-    tracks.push(track);
+    friendsTracks.push(track);
+  }
+  const favsTracks: Track[] = [];
+  for (let i = 0; i < sortedFriends.length; i++) {
+    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
+      continue;
+    }
+    const track = {
+      albumName: sortedFriends[i].playback!.track.albumName,
+      albumUri: sortedFriends[i].playback!.track.albumUri,
+      artist: sortedFriends[i].playback!.track.artist,
+      artistUri: sortedFriends[i].playback!.track.artistUri,
+      duration: sortedFriends[i].playback!.track.duration,
+      explicit: sortedFriends[i].playback!.track.explicit,
+      id: sortedFriends[i].playback!.track.id,
+      image: sortedFriends[i].playback!.track.image,
+      link: sortedFriends[i].playback!.track.link,
+      name: sortedFriends[i].playback!.track.name,
+      preview_url: sortedFriends[i].playback!.track.preview_url,
+      uri: sortedFriends[i].playback!.track.uri,
+    };
+    friendsTracks.push(track);
   }
 
   return (
     <Stack>
-      <Tabs colorScheme="green">
-        <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
-          {currentUserData && (
-            <Stack mt={7}>
-              {currentUserData.settings?.miniPlayer && (
-                <PrismaMiniPlayer
-                  key={currentUserData.userId}
-                  layoutKey="MiniPlayerS"
-                  user={currentUserData}
-                  currentUserId={currentUser?.userId}
-                  index={0}
-                  friendsTracks={tracks}
-                  tracks={null}
-                />
-              )}
-              <TabList>
-                <Tab>
-                  <HStack>
-                    <Profile2User size="18" color="#1DB954" variant="Bold" />
-                    <Text fontSize="sm" fontWeight="400">
-                      friends
-                    </Text>
-                    <Text fontSize="xs" fontWeight="300">
-                      ~ {friends.length}
-                    </Text>
-                  </HStack>
-                </Tab>
-                <Tab>
-                  <HStack>
-                    <Star1 size="18" color="yellow" variant="Bold" />
-                    <Text fontSize="sm" fontWeight="400">
-                      favorites
-                    </Text>
-                    <Text fontSize="xs" fontWeight="300">
-                      ~ {favs.length}
-                    </Text>
-                  </HStack>
-                </Tab>
-                <Tab>
-                  <HStack>
-                    <ProfileCircle size="18" color="#BA68C8" variant="Bold" />
-                    <Text fontSize="sm" fontWeight="400">
-                      everyone
-                    </Text>
-                    <Text fontSize="xs" fontWeight="300">
-                      ~ {everyone.length}
-                    </Text>
-                  </HStack>
-                </Tab>
-              </TabList>
-              <Divider bgColor="spotify.green" />
-            </Stack>
-          )}
-          <TabPanels>
-            <FriendsTabs
-              currentUser={currentUser}
-              sortedFriends={sortedFriends}
-              tracks={tracks}
-              pendingRequests={pendingRequests}
+      <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
+        {currentUserData && currentUserData.settings?.miniPlayer && (
+          <PrismaMiniPlayer
+            key={currentUserData.userId}
+            layoutKey="MiniPlayerS"
+            user={currentUserData}
+            currentUserId={currentUser?.userId}
+            index={0}
+            friendsTracks={friendsTracks}
+            tracks={null}
+          />
+        )}
+        {favorites.map((user, index) => {
+          return (
+            <PrismaMiniPlayer
+              key={user.userId}
+              layoutKey={'MiniPlayerF' + index}
+              user={user}
+              currentUserId={currentUser?.userId}
+              tracks={favsTracks}
+              friendsTracks={[]}
+              index={index}
             />
-            <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
-            <TempTab currentUser={currentUser} everyone={everyone} />
-          </TabPanels>
-        </Stack>
-      </Tabs>
+          );
+        })}
+        {sortedFriends.map((user, index) => {
+          return (
+            <PrismaMiniPlayer
+              key={user.userId}
+              layoutKey={'MiniPlayerF' + index}
+              user={user}
+              currentUserId={currentUser?.userId}
+              tracks={friendsTracks}
+              friendsTracks={[]}
+              index={index}
+            />
+          );
+        })}
+      </Stack>
     </Stack>
   );
 };
