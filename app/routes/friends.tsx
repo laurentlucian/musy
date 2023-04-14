@@ -49,10 +49,15 @@ const Friends = () => {
     });
   };
 
-  const sortedFriends = sort(friends);
-
+  let sortedFriends = sort(friends);
   const favorites = sort(favs);
 
+  for (let fav of favorites) {
+    sortedFriends = sortedFriends.filter((friend) => {
+      return fav.userId !== friend.userId;
+    });
+  }
+  
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
@@ -106,6 +111,8 @@ const Friends = () => {
     };
     friendsTracks.push(track);
   }
+
+  console.log(sortedFriends);
 
   return (
     <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 0]}>
