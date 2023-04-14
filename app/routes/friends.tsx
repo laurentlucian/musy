@@ -2,7 +2,7 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
@@ -57,7 +57,7 @@ const Friends = () => {
       return fav.userId !== friend.userId;
     });
   }
-  
+
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
@@ -115,18 +115,7 @@ const Friends = () => {
   console.log(sortedFriends);
 
   return (
-    <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 0]}>
-      {currentUserData && currentUserData.settings?.miniPlayer && (
-        <PrismaMiniPlayer
-          key={currentUserData.userId}
-          layoutKey="MiniPlayerS"
-          user={currentUserData}
-          currentUserId={currentUser?.userId}
-          index={0}
-          friendsTracks={friendsTracks}
-          tracks={null}
-        />
-      )}
+    <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 'unset']}>
       {favorites.map((user, index) => {
         return (
           <PrismaMiniPlayer
@@ -153,6 +142,19 @@ const Friends = () => {
           />
         );
       })}
+      {currentUserData && currentUserData.settings?.miniPlayer && (
+        <Box position="fixed" bottom="100px" w="100%" pr={['8px', 'unset']}>
+          <PrismaMiniPlayer
+            key={currentUserData.userId}
+            layoutKey="MiniPlayerS"
+            user={currentUserData}
+            currentUserId={currentUser?.userId}
+            index={0}
+            friendsTracks={friendsTracks}
+            tracks={null}
+          />
+        </Box>
+      )}
     </Stack>
   );
 };
