@@ -55,6 +55,7 @@ const SaveThemeButton = ({
         playerColorLight: theme.playerColorLight,
         subTextDark: theme.subTextDark,
         subTextLight: theme.subTextLight,
+        version: String(theme.version++),
       },
 
       { method: 'post', replace: true },
@@ -89,6 +90,7 @@ const SaveThemeButton = ({
         subTextDark: '#EEE6E2',
         subTextLight: '#161616',
         userId: currentUser?.userId ?? '',
+        version: 0,
       },
     );
   };

@@ -27,27 +27,26 @@ model User {
   queue       Queue[] // sent
   recommended RecommendedSongs[]
 
-  friendsAdded Friends[] @relation("main")
+  friendsAdded   Friends[] @relation("main")
   friendsAddedMe Friends[] @relation("friends")
- }
+}
 
-  //The person who sent the request is the user and the person who received the request is the friend 
-  //The status of the request is pending until the friend accepts the request 
-  //The status of the request is accepted when the friend accepts the request, There will be 2 rows in the table, 
-  //one for each user
-  //The status of the request is rejected when the friend rejects the request, The row will be deleted from the table
-  
-  
- model Friends {
-  id        Int       @id @default(autoincrement())
-  user User @relation("main", fields: [userId], references: [id])
-  userId String
-  friend User @relation("friends", fields: [friendId], references: [id])
+//The person who sent the request is the user and the person who received the request is the friend 
+//The status of the request is pending until the friend accepts the request 
+//The status of the request is accepted when the friend accepts the request, There will be 2 rows in the table, 
+//one for each user
+//The status of the request is rejected when the friend rejects the request, The row will be deleted from the table
+
+model Friends {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation("main", fields: [userId], references: [id])
+  userId   String
+  friend   User   @relation("friends", fields: [friendId], references: [id])
   friendId String
-  status String
-  
+  status   String
+
   @@unique([userId, friendId])
- }
+}
 
 model Profile {
   id        Int      @id @default(autoincrement())
@@ -68,19 +67,18 @@ model Profile {
   recent      RecentSongs[]
   recommended RecommendedSongs[]
 
-  ai            AI?
-  settings      Settings?
-  theme         Theme?
-  playback      Playback?
-  ColorPreset   ColorPreset[]
-  Sessions      Sessions[]
-  favorite      Favorite[] @relation("favorite")
-  favBy         Favorite[] @relation("favBy")
-  block         Block[] @relation("block")
-  blockBy       Block[] @relation("blockedBy")
-  mute          Mute[] @relation("mute")
-  muteBy        Mute[] @relation("mutedBy")
-
+  ai          AI?
+  settings    Settings?
+  theme       Theme?
+  playback    Playback?
+  ColorPreset ColorPreset[]
+  Sessions    Sessions[]
+  favorite    Favorite[]    @relation("favorite")
+  favBy       Favorite[]    @relation("favBy")
+  block       Block[]       @relation("block")
+  blockBy     Block[]       @relation("blockedBy")
+  mute        Mute[]        @relation("mute")
+  muteBy      Mute[]        @relation("mutedBy")
 }
 
 model AI {
@@ -144,28 +142,28 @@ model LikedSongs {
 model Favorite {
   id            Int      @id @default(autoincrement())
   favAt         DateTime @default(now())
-  favorite      Profile  @relation("favorite",fields: [favoriteId], references: [userId])
+  favorite      Profile  @relation("favorite", fields: [favoriteId], references: [userId])
   favoriteId    String
-  favoritedBy   Profile  @relation("favBy",fields: [favoritedById], references: [userId])
+  favoritedBy   Profile  @relation("favBy", fields: [favoritedById], references: [userId])
   favoritedById String
 }
 
 model Block {
-  id            Int      @id @default(autoincrement())
-  favAt         DateTime @default(now())
-  block         Profile  @relation("block",fields: [blockId], references: [userId])
-  blockId       String
-  blockedBy     Profile  @relation("blockedBy",fields: [blockedById], references: [userId])
-  blockedById   String
+  id          Int      @id @default(autoincrement())
+  favAt       DateTime @default(now())
+  block       Profile  @relation("block", fields: [blockId], references: [userId])
+  blockId     String
+  blockedBy   Profile  @relation("blockedBy", fields: [blockedById], references: [userId])
+  blockedById String
 }
 
 model Mute {
-  id            Int      @id @default(autoincrement())
-  favAt         DateTime @default(now())
-  mute          Profile  @relation("mute",fields: [muteId], references: [userId])
-  muteId        String
-  mutedBy       Profile  @relation("mutedBy",fields: [mutedById], references: [userId])
-  mutedById     String
+  id        Int      @id @default(autoincrement())
+  favAt     DateTime @default(now())
+  mute      Profile  @relation("mute", fields: [muteId], references: [userId])
+  muteId    String
+  mutedBy   Profile  @relation("mutedBy", fields: [mutedById], references: [userId])
+  mutedById String
 }
 
 model RecommendedSongs {
@@ -234,6 +232,7 @@ model ColorPreset {
 model Theme {
   user             Profile       @relation(fields: [userId], references: [userId])
   userId           String        @id @unique
+  version          Int           @default(0)
   //
   colorPreset      ColorPreset[]
   //

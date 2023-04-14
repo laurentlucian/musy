@@ -17,8 +17,6 @@ const useThemeStore = create<ThemeStateConfig>((set) => ({
     blur: true,
     customPlayer: null,
     gradient: false,
-    gradientColorDark: '#fcbde2',
-    gradientColorLight: '#fcbde2',
     isPreset: true,
     mainTextDark: '#EEE6E2',
     mainTextLight: '#161616',
@@ -29,6 +27,7 @@ const useThemeStore = create<ThemeStateConfig>((set) => ({
     subTextDark: '#EEE6E2',
     subTextLight: '#161616',
     userId: '',
+    version: 0,
   },
 }));
 
