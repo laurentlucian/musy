@@ -112,9 +112,18 @@ export const updateUserName = async (id: string, name: string) => {
 export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
-  const id = session.user.id;
+  const userId = session.user.id;
   let data = await prisma.profile.findUnique({
-    where: { userId: id },
+    include: {
+      block: true,
+      favBy: true,
+      liked: { select: { trackId: true } },
+      mute: true,
+      settings: { include: { profileSong: true } },
+      user: { select: { friendsAdded: true, friendsAddedMe: true } },
+    },
+
+    where: { userId },
   });
   if (!data) return null;
   return data;

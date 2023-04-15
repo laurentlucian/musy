@@ -1,19 +1,7 @@
-import { useMatches } from '@remix-run/react';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-import type { Friends, Profile, Settings, Track } from '@prisma/client';
+import type { loader } from '~/root';
 
-const useSessionUser = ():
-  | (Profile & {
-      friends: Friends[];
-      liked: { trackId: string }[];
-      settings: (Settings & { profileSong: Track }) | null;
-    })
-  | null => {
-  const matches = useMatches();
-  const route = matches.find((match) => match.id === 'root');
-  if (!route) return null;
-
-  return route.data?.currentUser;
-};
+const useSessionUser = () => useTypedRouteLoaderData<typeof loader>('root')?.currentUser;
 
 export default useSessionUser;

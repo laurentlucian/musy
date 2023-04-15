@@ -3,9 +3,9 @@ import { Stack, TabPanel } from '@chakra-ui/react';
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type Props = {
-  currentUser: Profile | null;
   sortedFavorites: (Profile & {
     playback:
       | (Playback & {
@@ -22,7 +22,8 @@ type Props = {
     settings: Settings | null;
   })[];
 };
-export const FavoriteTab = ({ currentUser, sortedFavorites }: Props) => {
+export const FavoriteTab = ({ sortedFavorites }: Props) => {
+  const currentUser = useSessionUser();
   const tracks: Track[] = [];
   for (let i = 0; i < sortedFavorites.length; i++) {
     if (sortedFavorites[i].playback === null || sortedFavorites[i].playback?.track === undefined) {

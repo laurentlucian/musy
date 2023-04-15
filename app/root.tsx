@@ -24,7 +24,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
-import { authenticator } from '~/services/auth.server';
+import { authenticator, getCurrentUser } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
@@ -32,7 +32,6 @@ import useIsMobile from './hooks/useIsMobile';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
-import { prisma } from './services/db.server';
 
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
@@ -69,13 +68,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
 
   if (session && session.user) {
-    const currentUser = await prisma.profile.findUnique({
-      include: {
-        liked: { select: { trackId: true } },
-        settings: { include: { profileSong: true } },
-      },
-      where: { userId: session.user.id },
-    });
+    const currentUser = await getCurrentUser(request);
 
     return typedjson({ cookie, currentUser, isMobile });
   } else {

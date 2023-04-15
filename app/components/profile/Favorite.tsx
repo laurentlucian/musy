@@ -1,35 +1,35 @@
-import { useSubmit } from '@remix-run/react';
-import { useState } from 'react';
+import { useParams, useSubmit } from '@remix-run/react';
 
 import { IconButton } from '@chakra-ui/react';
 
 import { Star1 } from 'iconsax-react';
 
+import useSessionUser from '~/hooks/useSessionUser';
+
 import Tooltip from '../Tooltip';
 
-type FavoriteType = {
-  favId: string;
-  favorite: boolean;
-};
-
-const Favorite = ({ favId, favorite }: FavoriteType) => {
-  const [isFavorite, setFavorite] = useState(favorite);
+const Favorite = () => {
+  const currentUser = useSessionUser();
+  const { id } = useParams();
   const submit = useSubmit();
 
+  const isOwnProfile = currentUser?.userId === id;
+  if (isOwnProfile) return null;
+
+  const isFavorited = currentUser?.favBy.find((fav) => fav.favoriteId === id);
   const handleClick = () => {
-    setFavorite(!isFavorite);
-    submit({ favId: favId, favUser: String(!isFavorite) }, { method: 'post', replace: true });
+    submit({ isFavorited: isFavorited ? 'false' : 'true' }, { method: 'post', replace: true });
   };
 
   return (
-    <Tooltip label={isFavorite ? 'unfavorite' : 'favorite'}>
+    <Tooltip label={isFavorited ? 'unfavorite' : 'favorite'}>
       <IconButton
-        aria-label={isFavorite ? 'unfavorite' : 'favorite'}
-        icon={isFavorite ? <Star1 variant="Bold" /> : <Star1 />}
+        aria-label={isFavorited ? 'unfavorite' : 'favorite'}
+        icon={isFavorited ? <Star1 variant="Bold" /> : <Star1 />}
         variant="ghost"
         cursor="pointer"
         onClick={handleClick}
-        color={isFavorite ? 'gold' : 'white'}
+        color={isFavorited ? 'gold' : 'white'}
       />
     </Tooltip>
   );

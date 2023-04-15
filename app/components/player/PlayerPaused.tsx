@@ -34,7 +34,7 @@ type PlayerPausedProps = {
 
 const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProps) => {
   const currentUser = useSessionUser();
-  const preview = currentUser !== null && currentUser.settings?.allowPreview === true;
+  const preview = currentUser?.settings?.allowPreview === true;
   const [size, setSize] = useState<string>('Large');
   const [playing, setPlaying] = useState(preview);
   const [showPause, setShowPause] = useState(true);

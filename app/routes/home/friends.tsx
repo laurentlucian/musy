@@ -154,13 +154,12 @@ const Friends = () => {
         )}
         <TabPanels>
           <FriendsTabs
-            currentUser={currentUser}
             sortedFriends={sortedFriends}
             tracks={tracks}
             pendingRequests={pendingFriends}
           />
-          <FavoriteTab currentUser={currentUser} sortedFavorites={sortedFavorites} />
-          <TempTab currentUser={currentUser} everyone={everyone} />
+          <FavoriteTab sortedFavorites={sortedFavorites} />
+          <TempTab everyone={everyone} />
         </TabPanels>
       </Stack>
     </Tabs>

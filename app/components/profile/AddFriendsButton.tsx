@@ -1,37 +1,45 @@
-import { useSubmit } from '@remix-run/react';
-import { useEffect, useState } from 'react';
+import { useSubmit, useParams } from '@remix-run/react';
 
 import { Button, Text } from '@chakra-ui/react';
 
-import type { Friends } from '@prisma/client';
+import useSessionUser from '~/hooks/useSessionUser';
 
-const AddFriendsButton = ({ status }: { status: Friends['status'] | null }) => {
-  const [friendStatus, setFriendStatus] = useState(status);
+const AddFriendsButton = () => {
+  const currentUser = useSessionUser();
+  const { id } = useParams();
+  const isPending = currentUser?.user.friendsAdded.find(
+    (friend) => friend.friendId === id && friend.status === 'pending',
+  );
+  const isAcceptable = currentUser?.user.friendsAddedMe.find(
+    (friend) => friend.userId === id && friend.status === 'pending',
+  );
+  const isAccepted = currentUser?.user.friendsAdded.find(
+    (friend) => friend.friendId === id && friend.status === 'accepted',
+  );
+
   const submit = useSubmit();
 
-  useEffect(() => {
-    setFriendStatus(status);
-  });
-
-  const handleClick = async () => {
+  const handleClick = () => {
     submit({ friendStatus: 'requested' }, { method: 'post', replace: true });
-    setFriendStatus(status);
   };
 
-  const FriendsButtonText = !friendStatus ? (
-    <Text>Add Friend</Text>
-  ) : friendStatus === 'pending' ? (
+  const FriendsButtonText = isPending ? (
     <Text>Pending</Text>
-  ) : null;
+  ) : isAcceptable ? (
+    <Text>Accept</Text>
+  ) : (
+    <Text>Add Friend</Text>
+  );
 
-  if (friendStatus === 'accepted') return null;
-  else {
-    return (
-      <Button colorScheme="whiteAlpha" size={'sm'} onClick={handleClick}>
-        {FriendsButtonText}
-      </Button>
-    );
-  }
+  console.log({ currentUser });
+
+  if (isAccepted) return null;
+
+  return (
+    <Button colorScheme="whiteAlpha" size="sm" onClick={handleClick} isDisabled={!!isPending}>
+      {FriendsButtonText}
+    </Button>
+  );
 };
 
 export default AddFriendsButton;

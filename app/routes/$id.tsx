@@ -1,9 +1,8 @@
 import type { MetaFunction, LoaderArgs, ActionArgs } from '@remix-run/node';
-import { Outlet } from '@remix-run/react';
+import { Outlet, useParams } from '@remix-run/react';
 
 import { Stack, Box, useColorModeValue } from '@chakra-ui/react';
 
-import type { Theme } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -17,19 +16,20 @@ import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
 import { authenticator, getAllUsers, getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { redis } from '~/services/scheduler/redis.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
   const isSmallScreen = useIsMobile();
-  const { blockRecord, theme, user } = useTypedLoaderData<typeof loader>();
+  const { user } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
+  const { id } = useParams();
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
-  const bg = useColorModeValue(theme?.backgroundLight, theme?.backgroundDark);
-  const bgGradient = useColorModeValue(theme?.bgGradientLight, theme?.bgGradientDark);
-  const gradient = theme?.gradient;
+  const bg = useColorModeValue(user.theme?.backgroundLight, user.theme?.backgroundDark);
+  const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
+  const gradient = user.theme?.gradient;
+  const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
   const amIBlocked = blockRecord?.blockId === currentUser?.userId;
 
   return (
@@ -75,48 +75,23 @@ export const meta: MetaFunction = (props) => {
 export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
-  const session = await authenticator.isAuthenticated(request);
 
-  const user = await prisma.profile.findUnique({
-    include: { ai: true, settings: true, theme: false },
-    where: { userId: id },
-  });
+  const [session, users, user, recentDb] = await Promise.all([
+    authenticator.isAuthenticated(request),
+    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
+    prisma.profile.findUnique({
+      include: { ai: true, settings: { include: { profileSong: true } }, theme: true },
+      where: { userId: id },
+    }),
+    prisma.recentSongs.findMany({
+      orderBy: { playedAt: 'desc' },
+      select: { playedAt: true, track: { select: { duration: true } } },
+      where: { userId: id },
+    }),
+  ]);
 
   if (!user || (!session && user.settings?.isPrivate))
     throw new Response('Not found', { status: 404 });
-
-  const { spotify } = await spotifyApi(id).catch(async (e) => {
-    if (e instanceof Error && e.message.includes('revoked')) {
-      throw new Response('User Access Revoked', { status: 401 });
-    }
-    throw new Response('Failed to load Spotify', { status: 500 });
-  });
-  if (!spotify) {
-    throw new Response('Failed to load Spotify [2]', { status: 500 });
-  }
-
-  async function getProfileSong(id: string) {
-    const settings = await prisma.settings.findUnique({
-      include: { profileSong: true },
-      where: { userId: id },
-    });
-    if (settings) {
-      return settings.profileSong;
-    } else {
-      return null;
-    }
-  }
-
-  const [users, profileSong] = await Promise.all([
-    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
-    getProfileSong(id),
-  ]);
-
-  const recentDb = await prisma.recentSongs.findMany({
-    orderBy: { playedAt: 'desc' },
-    select: { playedAt: true, track: { select: { duration: true } } },
-    where: { userId: id },
-  });
 
   const { searchParams } = new URL(request.url);
   const listenedTimeframe = searchParams.get('listened');
@@ -125,7 +100,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     if (listenedTimeframe === 'week') {
       return lessThanAWeek(d);
     }
-
     return lessThanADay(d);
   });
 
@@ -133,62 +107,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     filteredRecent.map(({ track }) => track.duration).reduce((a, b) => a + b, 0),
   );
 
-  const currentUser = await getCurrentUser(request);
-
-  let friendRecord = null;
-  if (currentUser && currentUser.userId !== id) {
-    friendRecord = await prisma.friends.findFirst({
-      where: {
-        friendId: id,
-        userId: currentUser.userId,
-      },
-    });
-  }
-
-  let favRecord = null;
-  if (currentUser && currentUser.userId !== id) {
-    favRecord = await prisma.favorite.findFirst({
-      where: {
-        favoriteId: id,
-        favoritedById: currentUser.userId,
-      },
-    });
-  }
-
-  let blockRecord = null;
-  if (currentUser && currentUser.userId !== id) {
-    blockRecord = await prisma.block.findFirst({
-      where: {
-        blockId: id,
-        blockedById: currentUser.userId,
-      },
-    });
-  }
-
-  let muteRecord = null;
-  if (currentUser && currentUser.userId !== id) {
-    muteRecord = await prisma.mute.findFirst({
-      where: {
-        muteId: id,
-        mutedById: currentUser.userId,
-      },
-    });
-  }
-
-  const theme = await prisma.theme.findUnique({
-    where: { userId: id },
-  });
-
   return typedjson({
-    blockRecord,
-    currentUser,
-    favRecord,
     following: null,
-    friendRecord,
     listened,
-    muteRecord,
-    profileSong,
-    theme,
     user,
     users,
   });
@@ -201,8 +122,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const bio = data.get('bio');
   const follow = data.get('follow');
   const mood = data.get('mood');
-  const favUser = data.get('favUser');
-  const favId = data.get('favId');
+  const isFavorited = data.get('isFavorited');
   const blockUser = data.get('blockUser');
   const blockId = data.get('blockId');
   const muteUser = data.get('muteUser');
@@ -288,7 +208,8 @@ export const action = async ({ params, request }: ActionArgs) => {
       where: { userId: id },
     });
   }
-  if (favUser === 'true') {
+
+  if (isFavorited === 'true') {
     await prisma.favorite.create({
       data: {
         favorite: {
@@ -299,12 +220,16 @@ export const action = async ({ params, request }: ActionArgs) => {
         },
       },
     });
-  } else if (favUser === 'false') {
-    await prisma.favorite.delete({
-      where: {
-        id: Number(favId),
-      },
+  } else {
+    const fav = await prisma.favorite.findFirst({
+      select: { id: true },
+      where: { AND: [{ favoriteId: id, favoritedById: currentUser.userId }] },
     });
+    if (fav) {
+      await prisma.favorite.delete({
+        where: { id: fav.id },
+      });
+    }
   }
   if (blockUser === 'true') {
     await prisma.block.create({

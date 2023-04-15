@@ -27,7 +27,7 @@ const SettingsPlayer = ({
 }: {
   right: boolean;
   theme: Theme;
-  track: Track | undefined;
+  track?: Track | null;
 }) => {
   const song = track ?? {
     albumName: 'Album',

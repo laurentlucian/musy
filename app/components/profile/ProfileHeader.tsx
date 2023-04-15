@@ -1,4 +1,4 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { Form, useParams, useSearchParams, useSubmit } from '@remix-run/react';
 
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
@@ -10,6 +10,7 @@ import Following from '~/components/profile/Following';
 import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
 
 import Favorite from './Favorite';
@@ -27,22 +28,17 @@ const ProfileHeader = ({
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
-
+  const { id } = useParams();
   const isSmallScreen = useIsMobile();
+  const currentUser = useSessionUser();
   if (!data) return null;
 
-  const {
-    blockRecord,
-    currentUser,
-    favRecord,
-    following,
-    friendRecord,
-    listened,
-    muteRecord,
-    user,
-  } = data;
+  const { following, listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
+
+  const isBlocked = currentUser?.block.find((block) => block.blockId === id);
+  const isMuted = currentUser?.mute.find((mute) => mute.muteId === id);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -169,22 +165,15 @@ const ProfileHeader = ({
   const FollowButton =
     currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
 
-  const FavButton = !isOwnProfile ? (
-    <Favorite favorite={!!favRecord} favId={String(favRecord?.id)} />
-  ) : null;
-
   const MenuBttn = !isOwnProfile ? (
     <ProfileActions
-      block={!!blockRecord}
-      blockId={String(blockRecord?.id)}
-      mute={!!muteRecord}
-      muteId={String(muteRecord?.id)}
+      block={!!isBlocked}
+      blockId={String(isBlocked?.id)}
+      mute={!!isMuted}
+      muteId={String(isMuted?.id)}
     />
   ) : null;
-
-  const AddFriendBttn = !isOwnProfile ? (
-    <AddFriendsButton status={friendRecord ? friendRecord.status : null} />
-  ) : null;
+  const AddFriendBttn = !isOwnProfile ? <AddFriendsButton /> : null;
 
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
@@ -194,14 +183,12 @@ const ProfileHeader = ({
           <HStack>{Username}</HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
             <HStack>
-              {blockRecord && !amIBlocked ? (
-                <>
-                  <BlockUser header block={true} blockId={String(blockRecord?.id)} />
-                </>
+              {isBlocked && !amIBlocked ? (
+                <BlockUser header block={true} blockId={String(isBlocked.id)} />
               ) : (
                 <>
                   {FollowButton}
-                  {FavButton}
+                  <Favorite />
                   {AddFriendBttn}
                 </>
               )}
@@ -212,7 +199,7 @@ const ProfileHeader = ({
         </VStack>
       </HStack>
       {Bio}
-      {!isOwnProfile && !blockRecord && (
+      {!isOwnProfile && !isBlocked && (
         <Stack w="97%" pos="relative" top="30px" pb="20px">
           <Search />
         </Stack>

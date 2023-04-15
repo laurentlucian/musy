@@ -3,9 +3,9 @@ import { Divider, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type Props = {
-  currentUser: Profile | null;
   pendingRequests: (Profile & {
     playback:
       | (Playback & {
@@ -38,7 +38,8 @@ type Props = {
   })[];
   tracks: Track[];
 };
-export const FriendsTabs = ({ currentUser, pendingRequests, sortedFriends, tracks }: Props) => {
+export const FriendsTabs = ({ pendingRequests, sortedFriends, tracks }: Props) => {
+  const currentUser = useSessionUser();
   return (
     <TabPanel
       as={Stack}

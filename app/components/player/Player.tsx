@@ -45,8 +45,7 @@ type PlayerProps = {
 const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
-  const preview =
-    currentUser !== null && currentUser.settings?.allowPreview === true && !isOwnProfile;
+  const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;
   const [hasPreview, setHasPreview] = useState<boolean>();
   const [playing, setPlaying] = useState(preview);
   const [showPause, setShowPause] = useState(true);
