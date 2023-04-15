@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderArgs } from '@remix-run/node';
+import type { MetaFunction, LoaderArgs, ActionArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack, Box, useColorModeValue } from '@chakra-ui/react';
@@ -14,6 +14,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
+import { getMood } from '~/services/ai.server';
 import { authenticator, getAllUsers, getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { redis } from '~/services/scheduler/redis.server';
@@ -174,29 +175,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     });
   }
 
-  const currentThemeVersion = await prisma.profile
-    .findUnique({
-      select: { theme: { select: { version: true } } },
-      where: { userId: id },
-    })
-    .then((result) => result?.theme?.version ?? null);
-
-  const cacheThemeKey = 'theme';
-  const themeVersionKey = 'version';
-  const cachedTheme = await redis.get(cacheThemeKey);
-  const cachedVersion = await redis.get(themeVersionKey);
-  let theme: Theme | null;
-
-  if (cachedTheme && Number(cachedVersion) === currentThemeVersion) {
-    theme = JSON.parse(cachedTheme);
-  } else {
-    theme = await prisma.theme.findUnique({
-      where: { userId: id },
-    });
-
-    await redis.set(themeVersionKey, JSON.stringify(currentThemeVersion));
-    await redis.set(cacheThemeKey, JSON.stringify(theme));
-  }
+  const theme = await prisma.theme.findUnique({
+    where: { userId: id },
+  });
 
   return typedjson({
     blockRecord,
@@ -211,6 +192,172 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     user,
     users,
   });
+};
+
+export const action = async ({ params, request }: ActionArgs) => {
+  const id = params.id;
+  invariant(id, 'Missing params Id');
+  const data = await request.formData();
+  const bio = data.get('bio');
+  const follow = data.get('follow');
+  const mood = data.get('mood');
+  const favUser = data.get('favUser');
+  const favId = data.get('favId');
+  const blockUser = data.get('blockUser');
+  const blockId = data.get('blockId');
+  const muteUser = data.get('muteUser');
+  const muteId = data.get('muteId');
+  const easterEgg = data.get('component');
+  const currentUser = await getCurrentUser(request);
+  const friendStatus = data.get('friendStatus');
+  invariant(currentUser, 'Missing current user');
+  const { spotify } = await spotifyApi(currentUser.userId);
+  invariant(spotify, 'Spotify API Error');
+  if (friendStatus === 'requested') {
+    const newFriendRecord = await prisma.friends.create({
+      data: {
+        friendId: id,
+        status: 'pending',
+        userId: currentUser.userId,
+      },
+    });
+    const friendRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: currentUser.userId,
+        userId: id,
+      },
+    });
+    if (friendRecord && friendRecord.status === 'pending') {
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: friendRecord.id,
+        },
+      });
+      await prisma.friends.update({
+        data: {
+          status: 'accepted',
+        },
+        where: {
+          id: newFriendRecord.id,
+        },
+      });
+    }
+  } else if (friendStatus === 'block') {
+    await prisma.friends.create({
+      data: {
+        friendId: id,
+        status: 'blocked',
+        userId: currentUser.userId,
+      },
+    });
+  } else if (friendStatus === 'unblock') {
+    const blockRecord = await prisma.friends.findFirst({
+      where: {
+        friendId: currentUser.userId,
+        userId: id,
+      },
+    });
+    await prisma.friends.update({
+      data: {
+        status: 'unblocked',
+      },
+      where: {
+        id: blockRecord?.id,
+      },
+    });
+  }
+  if (follow === 'true') {
+    await spotify.followUsers([id]);
+  } else if (follow === 'false') {
+    await spotify.unfollowUsers([id]);
+  }
+  if (typeof bio === 'string') {
+    await prisma.profile.update({ data: { bio }, where: { userId: id } });
+  }
+  if (typeof mood === 'string') {
+    const { spotify } = await spotifyApi(id);
+    invariant(spotify, 'Spotify API Error');
+    const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+    const response = await getMood(recent.body);
+    await prisma.aI.upsert({
+      create: { mood: response, userId: id },
+      update: { mood: response },
+      where: { userId: id },
+    });
+  }
+  if (favUser === 'true') {
+    await prisma.favorite.create({
+      data: {
+        favorite: {
+          connect: { userId: id },
+        },
+        favoritedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (favUser === 'false') {
+    await prisma.favorite.delete({
+      where: {
+        id: Number(favId),
+      },
+    });
+  }
+  if (blockUser === 'true') {
+    await prisma.block.create({
+      data: {
+        block: {
+          connect: { userId: id },
+        },
+        blockedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (blockUser === 'false') {
+    await prisma.block.delete({
+      where: {
+        id: Number(blockId),
+      },
+    });
+  }
+  if (muteUser === 'true') {
+    await prisma.mute.create({
+      data: {
+        mute: {
+          connect: { userId: id },
+        },
+        mutedBy: {
+          connect: { userId: currentUser.userId },
+        },
+      },
+    });
+  } else if (muteUser === 'false') {
+    await prisma.mute.delete({
+      where: {
+        id: Number(muteId),
+      },
+    });
+  }
+  if (typeof easterEgg === 'string') {
+    if (easterEgg === '69') {
+      await prisma.settings.upsert({
+        create: { easterEgg: true, userId: id },
+        update: { easterEgg: true },
+        where: { userId: id },
+      });
+    } else {
+      await prisma.settings.upsert({
+        create: { easterEgg: false, userId: id },
+        update: { easterEgg: false },
+        where: { userId: id },
+      });
+    }
+  }
+  return null;
 };
 
 export { CatchBoundary } from '~/components/error/CatchBoundary';
