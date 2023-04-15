@@ -21,17 +21,15 @@ const MuteUser = ({ bg, color, mute, muteId }: MuteTypes) => {
     submit({ muteId: muteId, muteUser: String(!isMuted) }, { method: 'post', replace: true });
   };
   return (
-    <>
-      <MenuItem
-        icon={<VolumeMute size="18px" />}
-        bg={bg}
-        color={color}
-        _hover={isMuted ? { color: 'yellow.300' } : { color: 'red' }}
-        onClick={handleClick}
-      >
-        {isMuted ? 'unmute user' : 'mute user'}
-      </MenuItem>
-    </>
+    <MenuItem
+      icon={<VolumeMute size="18px" />}
+      bg={bg}
+      color={color}
+      _hover={isMuted ? { color: 'yellow.300' } : { color: 'red' }}
+      onClick={handleClick}
+    >
+      {isMuted ? 'unmute' : 'mute'}
+    </MenuItem>
   );
 };
 

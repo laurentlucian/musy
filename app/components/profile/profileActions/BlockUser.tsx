@@ -37,7 +37,7 @@ export const BlockUser = ({ block, blockId, header }: BlockTypes) => {
             _hover={isBlocked ? { color: 'green.300' } : { color: 'red' }}
             onClick={handleClick}
           >
-            {isBlocked ? 'unblock user' : 'block user'}
+            {isBlocked ? 'unblock' : 'block'}
           </MenuItem>
         </>
       )}
