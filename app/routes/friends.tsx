@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { Box, Stack } from '@chakra-ui/react';
 
-import type { Playback, Profile, Settings, Track } from '@prisma/client';
+import type { Playback, Profile, Track } from '@prisma/client';
 import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -26,17 +26,10 @@ const Friends = () => {
     array: (Profile & {
       playback:
         | (Playback & {
-            track: Track & {
-              liked: {
-                user: Profile;
-              }[];
-              recent: {
-                user: Profile;
-              }[];
-            };
+            track: Track;
           })
         | null;
-      settings: Settings | null;
+      settings: { allowQueue: string; allowRecommend: string } | null;
     })[],
   ) => {
     return array.sort((a, b) => {
@@ -112,8 +105,6 @@ const Friends = () => {
     friendsTracks.push(track);
   }
 
-  console.log(sortedFriends);
-
   return (
     <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 'unset']}>
       {favorites.map((user, index) => {
@@ -171,15 +162,10 @@ export const getFriends = async (isAuthenticated = false, currentFriends: Prisma
         include: {
           playback: {
             include: {
-              track: {
-                include: {
-                  liked: { select: { user: true } },
-                  recent: { select: { user: true } },
-                },
-              },
+              track: true,
             },
           },
-          settings: true,
+          settings: { select: { allowQueue: true, allowRecommend: true } },
         },
       },
     },
@@ -209,15 +195,10 @@ export const getFavorites = async (isAuthenticated = false, currentFavorites: Pr
         include: {
           playback: {
             include: {
-              track: {
-                include: {
-                  liked: { select: { user: true } },
-                  recent: { select: { user: true } },
-                },
-              },
+              track: true,
             },
           },
-          settings: true,
+          settings: { select: { allowQueue: true, allowRecommend: true } },
         },
       },
     },
@@ -239,35 +220,33 @@ export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
   const currentUserId = currentUser?.id;
-  const users = await getAllUsers(!!currentUser);
 
-  const currentFriends = await prisma.friends.findMany({
-    include: { user: true },
-    where: { friendId: currentUser?.id, status: 'accepted' },
-  });
-
-  const currentFavorites = await prisma.favorite.findMany({
-    include: { favorite: true },
-    where: { favoritedById: currentUser?.id },
-  });
-
-  const currentPending = await prisma.friends.findMany({
-    include: { user: true },
-    where: { friendId: currentUser?.id, status: 'pending' },
-  });
-
-  const friends = await getFriends(!!currentUser, currentFriends);
-
-  const favs = await getFavorites(!!currentUser, currentFavorites);
-
-  const pendingRequests = await getFriends(!!currentUser, currentPending);
+  const [users, friends, favs, pendingRequests] = await Promise.all([
+    getAllUsers(!!currentUser),
+    prisma.friends
+      .findMany({
+        include: { user: true },
+        where: { friendId: currentUser?.id, status: 'accepted' },
+      })
+      .then((friends) => getFriends(!!currentUser, friends)),
+    prisma.favorite
+      .findMany({
+        include: { favorite: true },
+        where: { favoritedById: currentUser?.id },
+      })
+      .then((fav) => getFavorites(!!currentUser, fav)),
+    prisma.friends
+      .findMany({
+        include: { user: true },
+        where: { friendId: currentUser?.id, status: 'pending' },
+      })
+      .then((pending) => getFriends(!!currentUser, pending)),
+  ]);
 
   return typedjson({
-    currentFriends,
     currentUserId,
     favs,
     friends,
-    now: Date.now(),
     pendingRequests,
     users,
   });
@@ -282,13 +261,9 @@ export const action = async ({ request }: ActionArgs) => {
   const friendId = data.get('friendId');
   const clickStatus = data.get('clickStatus');
 
-  console.log('in action pending friends: ' + typeof friendId + ' ' + clickStatus);
-  const test = clickStatus === 'rejected';
-  console.log(test);
   //if the user clicks the accept button, update the status of the friend request to accepted
   if (typeof friendId === 'string') {
     if (clickStatus === 'accepted') {
-      console.log('in accept');
       await prisma.friends.update({
         data: {
           status: 'accepted',
@@ -309,7 +284,6 @@ export const action = async ({ request }: ActionArgs) => {
         },
       });
     } else if (clickStatus === 'rejected') {
-      console.log('in reject');
       await prisma.friends.delete({
         where: {
           userId_friendId: {

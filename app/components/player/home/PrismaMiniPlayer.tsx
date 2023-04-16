@@ -8,34 +8,30 @@ import { motion } from 'framer-motion';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import type { Track, User } from '~/lib/types/types';
+import type { Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
 import Waver from '../../icons/Waver';
 import QuickActions from './QuickActions';
 
-interface Friends extends User {
-  playback:
-    | (Playback & {
-        track: Track & {
-          liked: {
-            user: Profile;
-          }[];
-          recent: {
-            user: Profile;
-          }[];
-        };
-      })
-    | null;
-}
 type PlayerProps = {
   currentUserId: string | undefined;
   friendsTracks: Track[];
   index: number;
   layoutKey: string;
   tracks: Track[] | null;
-  user: Friends;
+  user: Profile & {
+    playback:
+      | (Playback & {
+          track: Track;
+        })
+      | null;
+    settings: {
+      allowQueue: string;
+      allowRecommend: string;
+    } | null;
+  };
 };
 
 const PrismaMiniPlayer = ({

@@ -24,7 +24,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
-import { authenticator, getCurrentUser } from '~/services/auth.server';
+import { getCurrentUser } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';

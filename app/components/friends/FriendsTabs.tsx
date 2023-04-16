@@ -23,7 +23,6 @@ import type { loader } from '~/routes/friends';
 const NotificationBadge = ({ count }: { count: number }) => {
   const [isFlashing, toggleFlash] = useCycle(false, true);
 
-  // Restart the animation on mount
   useEffect(() => {
     toggleFlash();
   }, [toggleFlash]);
@@ -57,7 +56,7 @@ const PendingFriendsNotification = ({ pendingRequests }: { pendingRequests?: num
 };
 
 const FriendsTabs = ({ children }: { children: ReactNode }) => {
-  const { currentFriends, pendingRequests } = useTypedLoaderData<typeof loader>();
+  const { friends, pendingRequests } = useTypedLoaderData<typeof loader>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
@@ -74,7 +73,7 @@ const FriendsTabs = ({ children }: { children: ReactNode }) => {
             alignSelf="center"
           />
           <Tab color={color} bg={bg} mr="20px">
-            friends {currentFriends.length ? currentFriends.length : ''}
+            friends {friends.length ? friends.length : ''}
           </Tab>
           <Tab color={color} bg={bg}>
             <PendingFriendsNotification pendingRequests={pendingRequests.length} />
