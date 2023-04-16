@@ -45,11 +45,9 @@ const Friends = () => {
   let sortedFriends = sort(friends);
   const favorites = sort(favs);
 
-  for (let fav of favorites) {
-    sortedFriends = sortedFriends.filter((friend) => {
-      return fav.userId !== friend.userId;
-    });
-  }
+  sortedFriends = sortedFriends.filter((friend) => {
+    return !favorites.some((favorite) => favorite.userId === friend.userId);
+  });
 
   const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
 
