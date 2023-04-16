@@ -63,17 +63,11 @@ const App = () => {
 };
 
 export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
   const cookie = request.headers.get('cookie') ?? '';
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
+  const currentUser = await getCurrentUser(request);
 
-  if (session && session.user) {
-    const currentUser = await getCurrentUser(request);
-
-    return typedjson({ cookie, currentUser, isMobile });
-  } else {
-    return typedjson({ cookie, currentUser: null, isMobile });
-  }
+  return typedjson({ cookie, currentUser, isMobile });
 };
 
 export const meta: MetaFunction = () => {
