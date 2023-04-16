@@ -2,13 +2,12 @@ import { Link, useTransition } from '@remix-run/react';
 
 import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
-import type { Playback, Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import type { Track } from '~/lib/types/types';
+import type { FriendCard, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 import SpotifyLogo from '../../icons/SpotifyLogo';
@@ -21,17 +20,7 @@ type PlayerProps = {
   index: number;
   layoutKey: string;
   tracks: Track[] | null;
-  user: Profile & {
-    playback:
-      | (Playback & {
-          track: Track;
-        })
-      | null;
-    settings: {
-      allowQueue: string;
-      allowRecommend: string;
-    } | null;
-  };
+  user: FriendCard;
 };
 
 const PrismaMiniPlayer = ({

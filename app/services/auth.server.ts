@@ -1,4 +1,5 @@
 import type { Prisma } from '@prisma/client';
+import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
 import { Authenticator } from 'remix-auth';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
@@ -154,6 +155,76 @@ export const getAllUsers = async (isAuthenticated = false) => {
       },
     },
     where: { revoked: false, ...restrict },
+  });
+  const users = data.map((user) => user.user).filter(notNull);
+  return users;
+};
+
+export const getFriends = async (isAuthenticated = false, currentFriends: PrismaFriends[]) => {
+  const restrict = !isAuthenticated
+    ? { user: { settings: { isNot: { isPrivate: true } } } }
+    : undefined;
+
+  const data = await prisma.user.findMany({
+    orderBy: { user: { playback: { updatedAt: 'desc' } } },
+    select: {
+      user: {
+        include: {
+          playback: {
+            include: {
+              track: true,
+            },
+          },
+          settings: { select: { allowQueue: true, allowRecommend: true } },
+        },
+      },
+    },
+    where: {
+      id: {
+        in: currentFriends.map((currentFriend) => {
+          return currentFriend.userId;
+        }),
+      },
+      revoked: false,
+      ...restrict,
+    },
+  });
+  const users = data.map((user) => user.user).filter(notNull);
+  return users;
+};
+
+export const getFavorites = async (isAuthenticated = false, currentFavorites: PrismaFavorite[]) => {
+  const restrict = !isAuthenticated
+    ? { user: { settings: { isNot: { isPrivate: true } } } }
+    : undefined;
+
+  const data = await prisma.user.findMany({
+    orderBy: { user: { playback: { updatedAt: 'desc' } } },
+    select: {
+      user: {
+        select: {
+          bio: true,
+          image: true,
+          name: true,
+          playback: {
+            include: {
+              track: true,
+            },
+          },
+          settings: { select: { allowQueue: true, allowRecommend: true } },
+          userId: true,
+        },
+      },
+    },
+    where: {
+      id: {
+        in: currentFavorites.map((currentFavorites) => {
+          return currentFavorites.favoriteId;
+        }),
+      },
+      revoked: false,
+      ...restrict,
+    },
   });
   const users = data.map((user) => user.user).filter(notNull);
   return users;

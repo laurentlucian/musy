@@ -4,16 +4,15 @@ import { useEffect } from 'react';
 
 import { Box, Stack } from '@chakra-ui/react';
 
-import type { Playback, Profile, Track } from '@prisma/client';
-import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
+import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import { notNull } from '~/lib/utils';
-import { authenticator, getAllUsers } from '~/services/auth.server';
+import type { FriendCard } from '~/lib/types/types';
+import { authenticator, getAllUsers, getFavorites, getFriends } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
@@ -22,16 +21,7 @@ const Friends = () => {
   const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
 
-  const sort = (
-    array: (Profile & {
-      playback:
-        | (Playback & {
-            track: Track;
-          })
-        | null;
-      settings: { allowQueue: string; allowRecommend: string } | null;
-    })[],
-  ) => {
+  const sort = (array: FriendCard[]) => {
     return array.sort((a, b) => {
       if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
         return 1;
@@ -146,72 +136,6 @@ const Friends = () => {
       )}
     </Stack>
   );
-};
-
-export const getFriends = async (isAuthenticated = false, currentFriends: PrismaFriends[]) => {
-  const restrict = !isAuthenticated
-    ? { user: { settings: { isNot: { isPrivate: true } } } }
-    : undefined;
-
-  const data = await prisma.user.findMany({
-    orderBy: { user: { playback: { updatedAt: 'desc' } } },
-    select: {
-      user: {
-        include: {
-          playback: {
-            include: {
-              track: true,
-            },
-          },
-          settings: { select: { allowQueue: true, allowRecommend: true } },
-        },
-      },
-    },
-    where: {
-      id: {
-        in: currentFriends.map((currentFriend) => {
-          return currentFriend.userId;
-        }),
-      },
-      revoked: false,
-      ...restrict,
-    },
-  });
-  const users = data.map((user) => user.user).filter(notNull);
-  return users;
-};
-
-export const getFavorites = async (isAuthenticated = false, currentFavorites: PrismaFavorite[]) => {
-  const restrict = !isAuthenticated
-    ? { user: { settings: { isNot: { isPrivate: true } } } }
-    : undefined;
-
-  const data = await prisma.user.findMany({
-    orderBy: { user: { playback: { updatedAt: 'desc' } } },
-    select: {
-      user: {
-        include: {
-          playback: {
-            include: {
-              track: true,
-            },
-          },
-          settings: { select: { allowQueue: true, allowRecommend: true } },
-        },
-      },
-    },
-    where: {
-      id: {
-        in: currentFavorites.map((currentFavorites) => {
-          return currentFavorites.favoriteId;
-        }),
-      },
-      revoked: false,
-      ...restrict,
-    },
-  });
-  const users = data.map((user) => user.user).filter(notNull);
-  return users;
 };
 
 export const loader = async ({ request }: LoaderArgs) => {

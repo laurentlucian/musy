@@ -3,22 +3,14 @@ import { Link, useTransition } from '@remix-run/react';
 import { Button, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import type { PendingCard } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 import Waver from '../icons/Waver';
 
 type PlayerProps = {
-  user: {
-    bio: string | null;
-    image: string;
-    name: string;
-    userId: string;
-  } | null;
+  user: PendingCard | null;
 };
-/*
-name, bio, image, userId
-actions
-*/
 
 const ProfileCard = ({ user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');

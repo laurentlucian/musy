@@ -1,4 +1,4 @@
-import type { Profile, Settings } from '@prisma/client';
+import type { Playback, Profile, Settings, Track } from '@prisma/client';
 
 export type { Track } from '@prisma/client';
 export type Activity = {
@@ -44,3 +44,19 @@ export interface User extends Profile {
   }[];
   settings: Settings | null;
 }
+
+export type PendingCard = {
+  bio: string | null;
+  image: string;
+  name: string;
+  userId: string;
+};
+
+export type FriendCard = PendingCard & {
+  playback:
+    | (Playback & {
+        track: Track;
+      })
+    | null;
+  settings: { allowQueue: string; allowRecommend: string } | null;
+};

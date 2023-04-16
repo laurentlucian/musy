@@ -11,10 +11,8 @@ import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Activity, Track } from '~/lib/types/types';
-import { authenticator, getAllUsers } from '~/services/auth.server';
+import { authenticator, getAllUsers, getFavorites, getFriends } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-
-import { getFavorites, getFriends } from './friends';
 
 const Index = () => {
   const currentUser = useSessionUser();
