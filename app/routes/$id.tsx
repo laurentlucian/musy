@@ -30,7 +30,6 @@ const Profile = () => {
   const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
   const gradient = user.theme?.gradient;
   const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
-  const amIBlocked = blockRecord?.blockId === currentUser?.userId;
 
   return (
     <>
@@ -53,13 +52,13 @@ const Profile = () => {
         px={isSmallScreen ? '5px' : 0}
         zIndex={1}
       >
-        <ProfileHeader amIBlocked={amIBlocked} isPrivate={isPrivate} />
+        <ProfileHeader isPrivate={isPrivate} />
         {isPrivate && !isOwnProfile && !isDev ? (
           <PrivateProfile name={user.name} />
         ) : !blockRecord ? (
           <Outlet />
         ) : (
-          <BlockedProfile name={user.name} amIBlocked={amIBlocked} />
+          <BlockedProfile name={user.name} />
         )}
       </Stack>
     </>

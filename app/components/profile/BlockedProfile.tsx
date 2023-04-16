@@ -1,9 +1,17 @@
+import { useParams } from '@remix-run/react';
+
 import { Button, HStack, Stack, Text } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 import { Forbidden } from 'iconsax-react';
 
-const BlockedProfile = ({ amIBlocked, name }: { amIBlocked: boolean; name: string }) => {
+import useSessionUser from '~/hooks/useSessionUser';
+
+const BlockedProfile = ({ name }: { name: string }) => {
+  const currentUser = useSessionUser();
+  const { id } = useParams();
+  const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
+  const amIBlocked = blockRecord?.blockId === currentUser?.userId;
   const block = (
     <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
       <Forbidden size="30" color="red" />
