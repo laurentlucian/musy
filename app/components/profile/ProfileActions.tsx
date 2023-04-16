@@ -13,6 +13,7 @@ import {
 import { BlockUser } from './profileActions/BlockUser';
 import CopyLink from './profileActions/CopyLink';
 import MuteUser from './profileActions/MuteUser';
+import RemoveFriend from './profileActions/RemoveFriend';
 
 type ProfileActionsTypes = {
   block: boolean;
@@ -44,6 +45,7 @@ const ProfileActions = ({ block, blockId, mute, muteId }: ProfileActionsTypes) =
         <Portal>
           <MenuList bg={bg}>
             <CopyLink color={color} bg={bg} />
+            <RemoveFriend />
             <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
             <BlockUser header={false} block={block} blockId={blockId} />
           </MenuList>

@@ -117,6 +117,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 export const action = async ({ params, request }: ActionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
+  const currentUser = await getCurrentUser(request);
+  invariant(currentUser, 'Missing current user');
+
   const data = await request.formData();
   const bio = data.get('bio');
   const follow = data.get('follow');
@@ -127,11 +130,9 @@ export const action = async ({ params, request }: ActionArgs) => {
   const muteUser = data.get('muteUser');
   const muteId = data.get('muteId');
   const easterEgg = data.get('component');
-  const currentUser = await getCurrentUser(request);
   const friendStatus = data.get('friendStatus');
-  invariant(currentUser, 'Missing current user');
-  const { spotify } = await spotifyApi(currentUser.userId);
-  invariant(spotify, 'Spotify API Error');
+  const isFriend = data.get('isFriend');
+
   if (friendStatus === 'requested') {
     const newFriendRecord = await prisma.friends.create({
       data: {
@@ -189,8 +190,12 @@ export const action = async ({ params, request }: ActionArgs) => {
     });
   }
   if (follow === 'true') {
+    const { spotify } = await spotifyApi(currentUser.userId);
+    invariant(spotify, 'Spotify API Error');
     await spotify.followUsers([id]);
   } else if (follow === 'false') {
+    const { spotify } = await spotifyApi(currentUser.userId);
+    invariant(spotify, 'Spotify API Error');
     await spotify.unfollowUsers([id]);
   }
   if (typeof bio === 'string') {
@@ -206,6 +211,26 @@ export const action = async ({ params, request }: ActionArgs) => {
       update: { mood: response },
       where: { userId: id },
     });
+  }
+
+  if (isFriend === 'true') {
+    const friendRecord = await prisma.friends.findUnique({
+      select: { id: true },
+      where: { userId_friendId: { friendId: id, userId: currentUser.userId } },
+    });
+    const secondFriendRecord = await prisma.friends.findUnique({
+      select: { id: true },
+      where: { userId_friendId: { friendId: currentUser.userId, userId: id } },
+    });
+    if (friendRecord && secondFriendRecord) {
+      console.log('deleted friend');
+      await prisma.friends.delete({
+        where: { id: friendRecord.id },
+      });
+      await prisma.friends.delete({
+        where: { id: secondFriendRecord.id },
+      });
+    }
   }
 
   if (isFavorited === 'true') {

@@ -31,8 +31,6 @@ const AddFriendsButton = () => {
     <Text>Add Friend</Text>
   );
 
-  console.log({ currentUser });
-
   if (isAccepted) return null;
 
   return (
