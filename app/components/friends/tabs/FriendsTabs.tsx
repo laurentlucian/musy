@@ -3,24 +3,12 @@ import { Divider, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra
 import type { Playback, Profile, Settings, Track } from '@prisma/client';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import usePending from '~/hooks/usePending';
 import useSessionUser from '~/hooks/useSessionUser';
 
+import ProfileCard from '../ProfileCard';
+
 type Props = {
-  pendingRequests: (Profile & {
-    playback:
-      | (Playback & {
-          track: Track & {
-            liked: {
-              user: Profile;
-            }[];
-            recent: {
-              user: Profile;
-            }[];
-          };
-        })
-      | null;
-    settings: Settings | null;
-  })[];
   sortedFriends: (Profile & {
     playback:
       | (Playback & {
@@ -38,8 +26,9 @@ type Props = {
   })[];
   tracks: Track[];
 };
-export const FriendsTabs = ({ pendingRequests, sortedFriends, tracks }: Props) => {
+export const FriendsTabs = ({ sortedFriends, tracks }: Props) => {
   const currentUser = useSessionUser();
+  const pendingFriends = usePending();
   return (
     <TabPanel
       as={Stack}
@@ -54,7 +43,7 @@ export const FriendsTabs = ({ pendingRequests, sortedFriends, tracks }: Props) =
         <Tabs align="start" colorScheme="green" variant="soft-rounded" size="sm">
           <TabList mb="5px">
             <Tab mr="20px">friends {sortedFriends.length}</Tab>
-            <Tab>requests {pendingRequests.length ? pendingRequests.length : ''}</Tab>
+            <Tab>requests {pendingFriends.length ? pendingFriends.length : ''}</Tab>
           </TabList>
           <Divider bgColor="spotify.green" />
           <TabPanels>
@@ -74,18 +63,8 @@ export const FriendsTabs = ({ pendingRequests, sortedFriends, tracks }: Props) =
               })}
             </TabPanel>
             <TabPanel>
-              {pendingRequests.map((user, index) => {
-                return (
-                  <PrismaMiniPlayer
-                    key={user.userId}
-                    layoutKey={'MiniPlayerF' + index}
-                    user={user}
-                    currentUserId={currentUser?.userId}
-                    tracks={tracks}
-                    friendsTracks={[]}
-                    index={index}
-                  />
-                );
+              {pendingFriends.map(({ user: { user } }) => {
+                return <ProfileCard key={user?.userId} user={user} />;
               })}
             </TabPanel>
           </TabPanels>

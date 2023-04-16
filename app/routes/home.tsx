@@ -98,17 +98,10 @@ export const loader = async ({ request }: LoaderArgs) => {
   const favorites = await getFavorites(!!currentUser, currentFavorites);
 
   const pendingFriends = await prisma.friends.findMany({
-    where: { friendId: currentUser?.id, status: 'pending' },
-  });
-
-  const pendingFriendProfiles = await prisma.profile.findMany({
-    where: {
-      userId: {
-        in: pendingFriends.map((pendingFriend) => {
-          return pendingFriend.userId;
-        }),
-      },
+    select: {
+      user: { select: { user: { select: { bio: true, image: true, name: true, userId: true } } } },
     },
+    where: { friendId: currentUser?.id, status: 'pending' },
   });
 
   const liked = prisma.likedSongs
@@ -156,7 +149,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     favorites,
     friends,
     now: Date.now(),
-    pendingFriendProfiles,
     pendingFriends,
     users,
   });

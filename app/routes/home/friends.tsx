@@ -10,7 +10,6 @@ import { typedjson } from 'remix-typedjson';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useFriends from '~/hooks/useFriends';
-import usePending from '~/hooks/usePending';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
@@ -24,7 +23,7 @@ const Friends = () => {
   const users = useUsers();
   const friends = useFriends();
   const favorites = useFavorites();
-  const pendingFriends = usePending();
+
   const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
@@ -153,11 +152,7 @@ const Friends = () => {
           </Stack>
         )}
         <TabPanels>
-          <FriendsTabs
-            sortedFriends={sortedFriends}
-            tracks={tracks}
-            pendingRequests={pendingFriends}
-          />
+          <FriendsTabs sortedFriends={sortedFriends} tracks={tracks} />
           <FavoriteTab sortedFavorites={sortedFavorites} />
           <TempTab everyone={everyone} />
         </TabPanels>
