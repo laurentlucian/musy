@@ -232,7 +232,6 @@ model ColorPreset {
 model Theme {
   user             Profile       @relation(fields: [userId], references: [userId])
   userId           String        @id @unique
-  version          Int           @default(0)
   //
   colorPreset      ColorPreset[]
   //

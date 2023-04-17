@@ -40,7 +40,6 @@ const ProfileSettings = () => {
       subTextDark: '#EEE6E2',
       subTextLight: '#161616',
       userId: currentUser?.userId ?? '',
-      version: 0,
     },
   );
 
