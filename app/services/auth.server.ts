@@ -230,6 +230,23 @@ export const getFavorites = async (isAuthenticated = false, currentFavorites: Pr
   return users;
 };
 
+export const upsertField = async (
+  field: string,
+  data: FormDataEntryValue | null,
+  userId: string,
+  isToggle = false,
+) => {
+  if (!data) return;
+
+  const value = isToggle ? data === 'true' : data;
+
+  await prisma.theme.upsert({
+    create: { [field]: value, userId },
+    update: { [field]: value },
+    where: { userId },
+  });
+};
+
 const callbackURL = process.env.SPOTIFY_CALLBACK_URL;
 // const callbackURL = 'http://192.168.0.105:3000/auth/spotify/callback';
 

@@ -67,7 +67,16 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const { playback } = user;
 
-  const [recommended, recent, liked, party] = await Promise.all([
+  const url = new URL(request.url);
+  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
+    | 'medium_term'
+    | 'long_term'
+    | 'short_term';
+
+  const cacheKeyTop = 'profile_top_' + topFilter + '_' + id;
+  const cacheKeyPlaylist = 'profile_playlist_' + id;
+
+  const [recommended, recent, liked, party, cachedDataTop, cachedDataPlaylist] = await Promise.all([
     prisma.recommendedSongs.findMany({
       include: { sender: true, track: true },
       orderBy: { createdAt: 'desc' },
@@ -96,18 +105,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       })
       .catch(() => []),
     prisma.party.findMany({ where: { ownerId: id } }),
+    redis.get(cacheKeyTop),
+    redis.get(cacheKeyPlaylist),
   ]);
-
-  const url = new URL(request.url);
-  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
-    | 'medium_term'
-    | 'long_term'
-    | 'short_term';
-
-  const cacheKeyTop = 'profile_top_' + topFilter + '_' + id;
-  const cacheKeyPlaylist = 'profile_playlist_' + id;
-  const cachedDataTop = await redis.get(cacheKeyTop);
-  const cachedDataPlaylist = await redis.get(cacheKeyPlaylist);
 
   let top = [] as SpotifyApi.TrackObjectFull[];
   let playlists = [] as SpotifyApi.PlaylistObjectSimplified[];
@@ -115,24 +115,26 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   if (cachedDataPlaylist) {
     playlists = JSON.parse(cachedDataPlaylist) as SpotifyApi.PlaylistObjectSimplified[];
   } else {
-    playlists = await spotify
-      .getUserPlaylists(user.userId, { limit: 50 })
-      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
-      .catch(() => []);
-
-    // set cache for 30 minutes
-    await redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30);
+    [playlists] = await Promise.all([
+      spotify
+        .getUserPlaylists(user.userId, { limit: 50 })
+        .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+        .catch(() => []),
+      // set cache for 30 minutes
+      redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30),
+    ]);
   }
 
   if (cachedDataTop) {
     top = JSON.parse(cachedDataTop) as SpotifyApi.TrackObjectFull[];
   } else {
-    top = await spotify
-      .getMyTopTracks({ limit: 50, time_range: topFilter })
-      .then((data) => data.body.items)
-      .catch(() => []);
-
-    await redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24);
+    [top] = await Promise.all([
+      spotify
+        .getMyTopTracks({ limit: 50, time_range: topFilter })
+        .then((data) => data.body.items)
+        .catch(() => []),
+      redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24),
+    ]);
   }
 
   return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });

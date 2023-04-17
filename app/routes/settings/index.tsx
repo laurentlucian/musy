@@ -26,8 +26,7 @@ import invariant from 'tiny-invariant';
 import QueueSettings from '~/components/settings/QueueSettings';
 import RecommendSettings from '~/components/settings/RecommendSettings';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
+import { authenticator, upsertField } from '~/services/auth.server';
 
 const Account = () => {
   const bg = useColorModeValue('music.100', 'music.800');
@@ -214,78 +213,25 @@ const Account = () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const session = await authenticator.isAuthenticated(request);
+  const [session, data] = await Promise.all([
+    authenticator.isAuthenticated(request),
+    request.formData(),
+  ]);
+
   const userId = session?.user?.id;
   invariant(userId, 'Unauthenticated');
 
-  const data = await request.formData();
-  const autoscroll = data.get('autoscroll');
-  if (autoscroll) {
-    const isChecked = autoscroll === 'true';
+  const promises = [
+    upsertField('autoscroll', data.get('autoscroll'), userId, true),
+    upsertField('allowPreview', data.get('allowPreview'), userId, true),
+    upsertField('allowRecommend', data.get('allow-recommend'), userId),
+    upsertField('allowQueue', data.get('allow-queue'), userId),
+    upsertField('miniPlayer', data.get('miniPlayer'), userId, true),
+    upsertField('dev', data.get('dev-mode'), userId, true),
+    upsertField('isPrivate', data.get('private-profile'), userId, true),
+  ];
 
-    await prisma.settings.upsert({
-      create: { autoscroll: isChecked, userId },
-      update: { autoscroll: isChecked },
-      where: { userId },
-    });
-  }
-
-  const allowPreview = data.get('allowPreview');
-  if (allowPreview) {
-    const isChecked = allowPreview === 'true';
-
-    await prisma.settings.upsert({
-      create: { allowPreview: isChecked, userId },
-      update: { allowPreview: isChecked },
-      where: { userId },
-    });
-  }
-
-  const privateProfile = data.get('private-profile');
-  if (privateProfile) {
-    const isPrivate = privateProfile === 'true';
-
-    await prisma.settings.upsert({
-      create: { isPrivate, userId },
-      update: { isPrivate },
-      where: { userId },
-    });
-  }
-
-  const devMode = data.get('dev-mode');
-  if (devMode) {
-    const isChecked = devMode === 'true';
-
-    await prisma.settings.update({
-      data: { dev: isChecked },
-      where: { userId },
-    });
-  }
-
-  const miniPlayer = data.get('miniplayer');
-  if (miniPlayer) {
-    const isChecked = miniPlayer === 'true';
-
-    await prisma.settings.update({
-      data: { miniPlayer: isChecked },
-      where: { userId },
-    });
-  }
-
-  const queuePreference = data.get('allow-queue');
-  if (typeof queuePreference === 'string') {
-    await prisma.settings.update({
-      data: { allowQueue: queuePreference },
-      where: { userId },
-    });
-  }
-  const recommendPreference = data.get('allow-recommend');
-  if (typeof recommendPreference === 'string') {
-    await prisma.settings.update({
-      data: { allowRecommend: recommendPreference },
-      where: { userId },
-    });
-  }
+  await Promise.all(promises);
   return null;
 };
 

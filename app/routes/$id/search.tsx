@@ -68,9 +68,11 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson({ results: null });
 
-  const { body: results } = await spotify.searchTracks(searchURL);
+  const [{ body: results }, users] = await Promise.all([
+    spotify.searchTracks(searchURL),
+    prisma.profile.findMany({ where: { name: { startsWith: searchURL } } }),
+  ]);
 
-  const users = await prisma.profile.findMany({ where: { name: { startsWith: searchURL } } });
   return typedjson({ results, users });
 };
 

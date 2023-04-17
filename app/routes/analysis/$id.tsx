@@ -55,14 +55,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const cacheKey = 'track_analysis_' + id;
-  const cachedData = await redis.get(cacheKey);
-  const session = await authenticator.isAuthenticated(request);
+  const [cachedData, session] = await Promise.all([
+    redis.get(cacheKey),
+    authenticator.isAuthenticated(request),
+  ]);
 
   const url = new URL(request.url);
   const shouldRefresh = url.searchParams.get('refresh') && session ? true : false;
 
   if (cachedData && !shouldRefresh) {
-    console.log('Cache hit');
     const data = { ...JSON.parse(cachedData), authorized: !!session } as {
       analysis: string;
       authorized: boolean;
