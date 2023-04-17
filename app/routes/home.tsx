@@ -78,62 +78,57 @@ const Index = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
-  const users = await getAllUsers(!!currentUser);
-
   const currentUserId = currentUser?.id;
 
-  const currentFriends = await prisma.friends.findMany({
-    include: { user: true },
-    where: { friendId: currentUser?.id, status: 'accepted' },
-  });
-
-  const currentFavorites = await prisma.favorite.findMany({
-    include: { favorite: true },
-    where: { favoritedById: currentUser?.id },
-  });
-  const friends = await getFriends(!!currentUser, currentFriends);
-
-  const favorites = await getFavorites(!!currentUser, currentFavorites);
-
-  const pendingFriends = await prisma.friends.findMany({
-    select: {
-      user: { select: { user: { select: { bio: true, image: true, name: true, userId: true } } } },
-    },
-    where: { friendId: currentUser?.id, status: 'pending' },
-  });
-
-  const liked = prisma.likedSongs
-    .findMany({
-      include: {
-        track: {
-          include: {
-            liked: { orderBy: { likedAt: 'asc' }, select: { user: true } },
-            recent: { select: { user: true } },
+  const [users, friends, favs, pendingRequests, like, queue] = await Promise.all([
+    getAllUsers(!!currentUser),
+    prisma.friends
+      .findMany({
+        include: { user: true },
+        where: { friendId: currentUserId, status: 'accepted' },
+      })
+      .then((friends) => getFriends(!!currentUser, friends)),
+    prisma.favorite
+      .findMany({
+        include: { favorite: true },
+        where: { favoritedById: currentUser?.id },
+      })
+      .then((fav) => getFavorites(!!currentUser, fav)),
+    prisma.friends
+      .findMany({
+        include: { user: true },
+        where: { friendId: currentUserId, status: 'pending' },
+      })
+      .then((pending) => getFriends(!!currentUser, pending)),
+    prisma.likedSongs
+      .findMany({
+        include: {
+          track: {
+            include: {
+              liked: { orderBy: { likedAt: 'asc' }, select: { user: true } },
+              recent: { select: { user: true } },
+            },
           },
+          user: true,
+        },
+        orderBy: { likedAt: 'desc' },
+        take: 20,
+      })
+      .then((data) => data.map((data) => ({ ...data, createdAt: data.likedAt }))),
+    prisma.queue.findMany({
+      include: {
+        owner: { select: { accessToken: false, user: true } },
+        track: {
+          include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
         },
         user: true,
       },
-      orderBy: { likedAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 20,
-    })
-    .then((data) => data.map((data) => ({ ...data, createdAt: data.likedAt })));
+    }),
+  ]);
 
-  const queued = prisma.queue.findMany({
-    include: {
-      owner: { select: { accessToken: false, user: true } },
-      track: {
-        include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
-      },
-      user: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 20,
-  });
-
-  const songs = await Promise.all([liked, queued]);
-
-  const activity = songs
-    .flat()
+  const activity = [...like, ...queue]
     .sort((a, b) => {
       if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
       return 0;
@@ -142,12 +137,10 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   return typedjson({
     activity,
-    currentFriends,
     currentUserId,
-    favorites,
+    favs,
     friends,
-    now: Date.now(),
-    pendingFriends,
+    pendingRequests,
     users,
   });
 };
