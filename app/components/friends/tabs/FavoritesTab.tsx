@@ -1,26 +1,13 @@
 import { Stack, TabPanel } from '@chakra-ui/react';
 
-import type { Playback, Profile, Settings, Track } from '@prisma/client';
+import type { Track } from '@prisma/client';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { FriendCard } from '~/lib/types/types';
 
 type Props = {
-  sortedFavorites: (Profile & {
-    playback:
-      | (Playback & {
-          track: Track & {
-            liked: {
-              user: Profile;
-            }[];
-            recent: {
-              user: Profile;
-            }[];
-          };
-        })
-      | null;
-    settings: Settings | null;
-  })[];
+  sortedFavorites: FriendCard[];
 };
 export const FavoriteTab = ({ sortedFavorites }: Props) => {
   const currentUser = useSessionUser();

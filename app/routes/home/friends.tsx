@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import { Divider, HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
-import type { Playback, Profile, Settings, Track } from '@prisma/client';
+import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson } from 'remix-typedjson';
 
@@ -18,6 +18,7 @@ import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
 import { TempTab } from '../../components/friends/tabs/TempTab';
+import { sort } from '../friends';
 
 const Friends = () => {
   const users = useUsers();
@@ -29,36 +30,6 @@ const Friends = () => {
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
   const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
-
-  //  code below is when we are ready to just showcase freinds onl;y uncomment when ready
-  const sort = (
-    array: (Profile & {
-      playback:
-        | (Playback & {
-            track: Track & {
-              liked: {
-                user: Profile;
-              }[];
-              recent: {
-                user: Profile;
-              }[];
-            };
-          })
-        | null;
-      settings: Settings | null;
-    })[],
-  ) => {
-    return array.sort((a, b) => {
-      // sort by playback status first
-      if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-        return 1;
-      } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-        return -1;
-      }
-      // then sort by name in alphabetical order
-      return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-    });
-  };
 
   const sortedFriends = sort(friends);
 
