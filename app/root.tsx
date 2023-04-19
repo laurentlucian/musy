@@ -28,7 +28,6 @@ import { getCurrentUser } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
-import useIsMobile from './hooks/useIsMobile';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
@@ -36,7 +35,6 @@ import { iosSplashScreens } from './lib/utils';
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
-  const isSmallScreen = useIsMobile();
 
   return (
     <Document>
@@ -55,7 +53,7 @@ const App = () => {
             </Layout>
           </AnimatePresence>
           <ExpandedTile />
-          {isSmallScreen && <MobileNavBar />}
+         <MobileNavBar />
         </ColorModeProvider>
       </ChakraProvider>
     </Document>

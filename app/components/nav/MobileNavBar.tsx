@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion';
 import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
+import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 
@@ -48,6 +49,9 @@ const MobileNavBar = () => {
       setActive(4);
     }
   }, [pathname, currentUser?.userId]);
+
+  const isSmallScreen = useIsMobile();
+  if (!isSmallScreen) return null;
 
   const profileIcon = <Image src={currentUser?.image} borderRadius="full" boxSize="30px" />;
   const logInIcon = <Image src={'/favicon-32x32.png'} borderRadius="full" boxSize="30px" />;
