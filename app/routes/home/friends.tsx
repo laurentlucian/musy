@@ -110,9 +110,6 @@ const Friends = () => {
                   <Text fontSize="sm" fontWeight="400">
                     everyone
                   </Text>
-                  <Text fontSize="xs" fontWeight="300">
-                    ~ {everyone.length}
-                  </Text>
                 </HStack>
               </Tab>
             </TabList>
