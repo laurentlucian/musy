@@ -29,13 +29,10 @@ const Friends = () => {
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
-  const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
 
   const sortedFriends = sort(friends);
 
   const sortedFavorites = sort(favorites);
-
-  const everyone = sort(otherUsers);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -125,7 +122,7 @@ const Friends = () => {
         <TabPanels>
           <FriendsTabs sortedFriends={sortedFriends} tracks={tracks} />
           <FavoriteTab sortedFavorites={sortedFavorites} />
-          <TempTab everyone={everyone} />
+          <TempTab />
         </TabPanels>
       </Stack>
     </Tabs>

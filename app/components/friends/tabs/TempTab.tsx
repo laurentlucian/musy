@@ -4,13 +4,14 @@ import type { Track } from '@prisma/client';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { FriendCard } from '~/lib/types/types';
+import useUsers from '~/hooks/useUsers';
+import { sort } from '~/routes/friends';
 
-type Props = {
-  everyone: FriendCard[];
-};
-export const TempTab = ({ everyone }: Props) => {
+export const TempTab = () => {
+  const users = useUsers();
   const currentUser = useSessionUser();
+  const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
+  const everyone = sort(otherUsers);
   const tracks: Track[] = [];
   for (let i = 0; i < everyone.length; i++) {
     if (everyone[i].playback === null || everyone[i].playback?.track === undefined) {
