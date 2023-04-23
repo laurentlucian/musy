@@ -11,6 +11,22 @@ const SendTo = ({ setShow }: { setShow: Dispatch<SetStateAction<number>> }) => {
   const handleClick = () => {
     setShow(1);
   };
+  
+  if (currentUser?.user.friendsAdded.length === 0)
+    return (
+      <Button
+        leftIcon={<Send2 />}
+        pos="relative"
+        variant="ghost"
+        mx="25px"
+        w={['100vw', '100%']}
+        justifyContent="left"
+        _hover={{}}
+        disabled
+      >
+        Add Friends to Queue to
+      </Button>
+    );
 
   const AddToFriendsQueue = (
     <>
