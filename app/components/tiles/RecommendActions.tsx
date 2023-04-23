@@ -1,14 +1,7 @@
 import { useParams } from '@remix-run/react';
 import { BarChart, MoreHorizontal } from 'react-feather';
 
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, useColorModeValue, Button } from '@chakra-ui/react';
 
 import { Archive } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
@@ -29,7 +22,7 @@ const RecommendActions = ({ onToggle, trackId }: { onToggle: () => void; trackId
   const Desktop = (
     <Menu placement="bottom-end">
       <MenuButton
-        as={IconButton}
+        as={Button}
         aria-label="open options"
         rightIcon={<MoreHorizontal />}
         _hover={{ color: 'spotify.green' }}
