@@ -1,7 +1,7 @@
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
-import { Divider, HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
+import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
@@ -82,7 +82,7 @@ const Friends = () => {
               />
             )}
             <TabList>
-              <Tab>
+              {friends.length > 0 && <Tab>
                 <HStack>
                   <Profile2User size="18" color="#1DB954" variant="Bold" />
                   <Text fontSize="sm" fontWeight="400">
@@ -92,8 +92,8 @@ const Friends = () => {
                     ~ {friends.length}
                   </Text>
                 </HStack>
-              </Tab>
-              <Tab>
+              </Tab>}
+              {favorites.length > 0 && <Tab>
                 <HStack>
                   <Star1 size="18" color="yellow" variant="Bold" />
                   <Text fontSize="sm" fontWeight="400">
@@ -103,7 +103,7 @@ const Friends = () => {
                     ~ {favorites.length}
                   </Text>
                 </HStack>
-              </Tab>
+              </Tab>}
               <Tab>
                 <HStack>
                   <ProfileCircle size="18" color="#BA68C8" variant="Bold" />
@@ -113,7 +113,6 @@ const Friends = () => {
                 </HStack>
               </Tab>
             </TabList>
-            <Divider bgColor="spotify.green" />
           </Stack>
         )}
         <TabPanels>

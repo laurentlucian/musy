@@ -1,4 +1,4 @@
-import { Divider, Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 
@@ -29,10 +29,13 @@ export const FriendsTabs = ({ sortedFriends, tracks }: Props) => {
       <Stack spacing={3} w="100%" h="100%">
         <Tabs align="start" colorScheme="green" variant="soft-rounded" size="sm">
           <TabList mb="5px">
-            <Tab mr="20px">friends {sortedFriends.length}</Tab>
-            <Tab>requests {pendingFriends.length ? pendingFriends.length : ''}</Tab>
+            {pendingFriends.length > 0 && (
+              <>
+                <Tab mr="20px">friends {sortedFriends.length}</Tab>
+                <Tab>requests</Tab>
+              </>
+            )}
           </TabList>
-          <Divider bgColor="spotify.green" />
           <TabPanels>
             <TabPanel>
               {sortedFriends.map((user, index) => {
