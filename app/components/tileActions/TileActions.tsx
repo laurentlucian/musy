@@ -47,7 +47,7 @@ const TileActions = ({
             exit={{ opacity: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Stack w="250px">
+            <Stack w="275px">
               <SaveToLiked trackId={tracks[index].id} />
               <AnalyzeTrack trackId={tracks[index].id} />
               {tracks[index].link !== '' && <CopyLink link={tracks[index].link} />}

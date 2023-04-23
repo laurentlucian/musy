@@ -26,6 +26,7 @@ const AddQueue = ({ trackId, user }: AddQueueProps) => {
     trackId,
     userId: user?.userId,
   });
+
   const qText = isSending ? user?.name.split(/[ .]/)[0] : 'Add to Your Queue';
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
@@ -39,7 +40,7 @@ const AddQueue = ({ trackId, user }: AddQueueProps) => {
       fontSize="18px"
       color="music.200"
       py="30px"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       mt="10px"
     >
       <Image src={user?.image} borderRadius="full" boxSize="50px" minW="50px" mb={1} mr="10px" />
@@ -53,19 +54,19 @@ const AddQueue = ({ trackId, user }: AddQueueProps) => {
       variant="ghost"
       justifyContent="left"
       fontSize="14px"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
     >
       {isAdding ? <Waver /> : text}
     </Button>
   ) : (
-    <Button // button to add to your own queue
+    <Button // placeholder button for logged out people
       leftIcon={icon}
       variant="ghost"
       justifyContent="left"
       fontSize="14px"
-      w={['100vw', '550px']}
+      w={['100vw', '100%']}
       color="music.200"
       _hover={{ color: 'white' }}
       disabled
