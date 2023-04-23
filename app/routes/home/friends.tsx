@@ -82,28 +82,32 @@ const Friends = () => {
               />
             )}
             <TabList>
-              {friends.length > 0 && <Tab>
-                <HStack>
-                  <Profile2User size="18" color="#1DB954" variant="Bold" />
-                  <Text fontSize="sm" fontWeight="400">
-                    friends
-                  </Text>
-                  <Text fontSize="xs" fontWeight="300">
-                    ~ {friends.length}
-                  </Text>
-                </HStack>
-              </Tab>}
-              {favorites.length > 0 && <Tab>
-                <HStack>
-                  <Star1 size="18" color="yellow" variant="Bold" />
-                  <Text fontSize="sm" fontWeight="400">
-                    favorites
-                  </Text>
-                  <Text fontSize="xs" fontWeight="300">
-                    ~ {favorites.length}
-                  </Text>
-                </HStack>
-              </Tab>}
+              {friends.length > 0 && (
+                <Tab>
+                  <HStack>
+                    <Profile2User size="18" color="#1DB954" variant="Bold" />
+                    <Text fontSize="sm" fontWeight="400">
+                      friends
+                    </Text>
+                    <Text fontSize="xs" fontWeight="300">
+                      ~ {friends.length}
+                    </Text>
+                  </HStack>
+                </Tab>
+              )}
+              {favorites.length > 0 && (
+                <Tab>
+                  <HStack>
+                    <Star1 size="18" color="yellow" variant="Bold" />
+                    <Text fontSize="sm" fontWeight="400">
+                      favorites
+                    </Text>
+                    <Text fontSize="xs" fontWeight="300">
+                      ~ {favorites.length}
+                    </Text>
+                  </HStack>
+                </Tab>
+              )}
               <Tab>
                 <HStack>
                   <ProfileCircle size="18" color="#BA68C8" variant="Bold" />
@@ -116,8 +120,8 @@ const Friends = () => {
           </Stack>
         )}
         <TabPanels>
-          <FriendsTabs sortedFriends={sortedFriends} tracks={tracks} />
-          <FavoriteTab sortedFavorites={sortedFavorites} />
+          {friends.length > 0 && <FriendsTabs sortedFriends={sortedFriends} tracks={tracks} />}
+          {favorites.length > 0 && <FavoriteTab sortedFavorites={sortedFavorites} />}
           <TempTab />
         </TabPanels>
       </Stack>
