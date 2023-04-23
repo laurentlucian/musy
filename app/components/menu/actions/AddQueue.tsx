@@ -30,56 +30,48 @@ const AddQueue = ({ trackId, user }: AddQueueProps) => {
 
   const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
 
-  return (
-    <>
-      {user ? (
-        <Button // button to add to your friend's queue
-          onClick={addToQueue}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="ghost"
-          justifyContent="left"
-          fontSize="18px"
-          py="30px"
-          w={['100vw', '550px']}
-          mt="10px"
-        >
-          <Image
-            src={user?.image}
-            borderRadius="full"
-            boxSize="50px"
-            minW="50px"
-            mb={1}
-            mr="10px"
-          />
-          {isAdding ? <Waver /> : text}
-        </Button>
-      ) : currentUser ? (
-        <Button // button to add to your own queue
-          onClick={addToQueue}
-          leftIcon={icon}
-          isDisabled={!!isDone || !!isError || !!isAdding}
-          variant="ghost"
-          justifyContent="left"
-          fontSize="14px"
-          w={['100vw', '550px']}
-          _hover={{ color: 'white' }}
-        >
-          {isAdding ? <Waver /> : text}
-        </Button>
-      ) : (
-        <Button // button to add to your own queue
-          leftIcon={icon}
-          variant="ghost"
-          justifyContent="left"
-          fontSize="14px"
-          w={['100vw', '550px']}
-          _hover={{ color: 'white' }}
-          disabled
-        >
-          Log in to Add to Your Queue
-        </Button>
-      )}
-    </>
+  return user ? (
+    <Button // button to add to your friend's queue
+      onClick={addToQueue}
+      isDisabled={!!isDone || !!isError || !!isAdding}
+      variant="ghost"
+      justifyContent="left"
+      fontSize="18px"
+      color="music.200"
+      py="30px"
+      w={['100vw', '550px']}
+      mt="10px"
+    >
+      <Image src={user?.image} borderRadius="full" boxSize="50px" minW="50px" mb={1} mr="10px" />
+      {isAdding ? <Waver /> : text}
+    </Button>
+  ) : currentUser ? (
+    <Button // button to add to your own queue
+      onClick={addToQueue}
+      leftIcon={icon}
+      isDisabled={!!isDone || !!isError || !!isAdding}
+      variant="ghost"
+      justifyContent="left"
+      fontSize="14px"
+      w={['100vw', '550px']}
+      color="music.200"
+      _hover={{ color: 'white' }}
+    >
+      {isAdding ? <Waver /> : text}
+    </Button>
+  ) : (
+    <Button // button to add to your own queue
+      leftIcon={icon}
+      variant="ghost"
+      justifyContent="left"
+      fontSize="14px"
+      w={['100vw', '550px']}
+      color="music.200"
+      _hover={{ color: 'white' }}
+      disabled
+    >
+      Log in to Add to Your Queue
+    </Button>
   );
 };
 

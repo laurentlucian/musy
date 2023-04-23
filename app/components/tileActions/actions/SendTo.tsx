@@ -21,6 +21,7 @@ const SendTo = ({ setShow }: { setShow: Dispatch<SetStateAction<number>> }) => {
         variant="ghost"
         mx="25px"
         w={['100vw', '100%']}
+        color="music.200"
         justifyContent="left"
         _hover={{ color: 'white' }}
         disabled={!currentUser}
