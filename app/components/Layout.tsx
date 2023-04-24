@@ -6,6 +6,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import { useTheme } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
 import Nav from './nav/Nav';
@@ -15,13 +16,26 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
-  const isProfile = pathname.includes('home' || 'friends' || 'sessions' || 'explore');
+  const isNotProfile = pathname.includes(
+    'home' || 'friends' || 'sessions' || 'explore' || 'settings',
+  );
+  const { bgGradient, gradient, profileBg } = useTheme();
 
   return (
-    <Flex justify="center" color={color} w="100%" h="100%" bg={bg}>
-      <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }} h="100%">
+    <Flex
+      justify="center"
+      color={color}
+      w="100%"
+      h="100%"
+      bg={isNotProfile ? bg : profileBg}
+      bgGradient={gradient ? bgGradient : undefined}
+      bgAttachment="fixed"
+      overflowY="scroll"
+      css={{ '::-webkit-scrollbar': { display: 'none' } }}
+    >
+      <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
         {isSmallScreen ? <MobileHeader /> : <Nav />}
-        {!isProfile ? (
+        {!isNotProfile ? (
           <motion.div
             key={pathname}
             initial={{ opacity: 0, scale: 0.9 }}

@@ -24,7 +24,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
-import { getCurrentUser } from '~/services/auth.server';
+import { getCurrentUser, getTheme } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
@@ -53,19 +53,20 @@ const App = () => {
             </Layout>
           </AnimatePresence>
           <ExpandedTile />
-         <MobileNavBar />
+          <MobileNavBar />
         </ColorModeProvider>
       </ChakraProvider>
     </Document>
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderArgs) => {
   const cookie = request.headers.get('cookie') ?? '';
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
-  const currentUser = await getCurrentUser(request);
+  const { id } = params;
+  const [currentUser, theme] = await Promise.all([getCurrentUser(request), getTheme(id)]);
 
-  return typedjson({ cookie, currentUser, isMobile });
+  return typedjson({ cookie, currentUser, isMobile, theme });
 };
 
 export const meta: MetaFunction = () => {

@@ -28,9 +28,11 @@ const styles = {
       bg: mode('#EEE6E2', '#050404')(props),
       bgColor: mode('#EEE6E2', '#050404')(props),
       color: mode('#161616', '#EEE6E2')(props),
+      height: '100vh',
       lineHeight: 'base',
       userSelect: 'none !important',
     },
+    
   }),
 };
 

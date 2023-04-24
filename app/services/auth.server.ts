@@ -247,6 +247,20 @@ export const upsertField = async (
   });
 };
 
+export const getTheme = async (id?: string) => {
+  if (!id) return null;
+  return await prisma.theme.findUnique({
+    select: {
+      backgroundDark: true,
+      backgroundLight: true,
+      bgGradientDark: true,
+      bgGradientLight: true,
+      gradient: true,
+    },
+    where: { userId: id },
+  });
+};
+
 const callbackURL = process.env.SPOTIFY_CALLBACK_URL;
 // const callbackURL = 'http://192.168.0.105:3000/auth/spotify/callback';
 

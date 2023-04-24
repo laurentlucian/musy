@@ -1,34 +1,18 @@
-import type { Theme } from '@prisma/client';
-import { create } from 'zustand';
+import { useColorModeValue } from '@chakra-ui/system';
 
-interface ThemeStateConfig {
-  setTheme: (updateTheme: (prevTheme: Theme) => Theme) => void;
-  theme: Theme;
-}
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-const useThemeStore = create<ThemeStateConfig>((set) => ({
-  setTheme: (updateTheme: (prevTheme: Theme) => Theme) =>
-    set((state) => ({ theme: updateTheme(state.theme) })),
-  theme: {
-    backgroundDark: '#090808',
-    backgroundLight: '#EEE6E2',
-    bgGradientDark: 'linear(to-t, #090808 50%, #fcbde2 110%)',
-    bgGradientLight: 'linear(to-t, #EEE6E2 50%, #fcbde2 110%)',
-    blur: true,
-    customPlayer: null,
-    gradient: false,
-    isPreset: true,
-    mainTextDark: '#EEE6E2',
-    mainTextLight: '#161616',
-    musyLogo: 'musy',
-    opaque: false,
-    playerColorDark: '#101010',
-    playerColorLight: '#E7DFD9',
-    subTextDark: '#EEE6E2',
-    subTextLight: '#161616',
-    userId: '',
-    version: 0,
-  },
-}));
+import type { loader } from '~/routes/$id';
 
-export default useThemeStore;
+export const useTheme = () => {
+  const profileData = useTypedRouteLoaderData<typeof loader>('routes/$id');
+  const theme = profileData?.user.theme;
+  const profileBg = useColorModeValue(
+    theme?.backgroundLight ?? '#EEE6E2',
+    theme?.backgroundDark ?? '#050404',
+  );
+  const bgGradient = useColorModeValue(theme?.bgGradientLight, theme?.bgGradientDark);
+  const gradient = theme?.gradient ?? false;
+
+  return { bgGradient, gradient, profileBg };
+};

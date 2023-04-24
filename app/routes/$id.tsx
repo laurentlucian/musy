@@ -1,7 +1,7 @@
 import type { MetaFunction, LoaderArgs, ActionArgs } from '@remix-run/node';
 import { Outlet, useParams } from '@remix-run/react';
 
-import { Stack, Box, useColorModeValue } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -26,42 +26,26 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
-  const bg = useColorModeValue(user.theme?.backgroundLight, user.theme?.backgroundDark);
-  const bgGradient = useColorModeValue(user.theme?.bgGradientLight, user.theme?.bgGradientDark);
-  const gradient = user.theme?.gradient;
   const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
 
   return (
-    <>
-      <Box
-        pos="absolute"
-        top={0}
-        left={0}
-        w="100%"
-        h="100%"
-        bg={bg}
-        bgGradient={gradient ? bgGradient : undefined}
-        zIndex={0}
-        bgAttachment="fixed"
-      />
-      <Stack
-        spacing={5}
-        pb={['110px', 5]}
-        pt={['44px', 5]}
-        h="max-content"
-        px={isSmallScreen ? '5px' : 0}
-        zIndex={1}
-      >
-        <ProfileHeader isPrivate={isPrivate} />
-        {isPrivate && !isOwnProfile && !isDev ? (
-          <PrivateProfile name={user.name} />
-        ) : !blockRecord ? (
-          <Outlet />
-        ) : (
-          <BlockedProfile name={user.name} />
-        )}
-      </Stack>
-    </>
+    <Stack
+      spacing={5}
+      pb={['110px', 5]}
+      pt={['44px', 5]}
+      h="max-content"
+      px={isSmallScreen ? '5px' : 0}
+      zIndex={1}
+    >
+      <ProfileHeader isPrivate={isPrivate} />
+      {isPrivate && !isOwnProfile && !isDev ? (
+        <PrivateProfile name={user.name} />
+      ) : !blockRecord ? (
+        <Outlet />
+      ) : (
+        <BlockedProfile name={user.name} />
+      )}
+    </Stack>
   );
 };
 
