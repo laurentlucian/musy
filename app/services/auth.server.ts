@@ -230,7 +230,7 @@ export const getFavorites = async (isAuthenticated = false, currentFavorites: Pr
   return users;
 };
 
-export const upsertField = async (
+export const upsertThemeField = async (
   field: string,
   data: FormDataEntryValue | null,
   userId: string,
@@ -241,6 +241,23 @@ export const upsertField = async (
   const value = isToggle ? data === 'true' : data;
 
   await prisma.theme.upsert({
+    create: { [field]: value, userId },
+    update: { [field]: value },
+    where: { userId },
+  });
+};
+
+export const upsertSettingsField = async (
+  field: string,
+  data: FormDataEntryValue | null,
+  userId: string,
+  isToggle = false,
+) => {
+  if (!data) return;
+
+  const value = isToggle ? data === 'true' : data;
+
+  await prisma.settings.upsert({
     create: { [field]: value, userId },
     update: { [field]: value },
     where: { userId },

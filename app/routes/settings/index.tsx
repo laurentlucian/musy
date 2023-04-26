@@ -26,7 +26,7 @@ import invariant from 'tiny-invariant';
 import QueueSettings from '~/components/settings/QueueSettings';
 import RecommendSettings from '~/components/settings/RecommendSettings';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, upsertField } from '~/services/auth.server';
+import { authenticator, upsertSettingsField } from '~/services/auth.server';
 
 const Account = () => {
   const bg = useColorModeValue('music.100', 'music.800');
@@ -222,13 +222,13 @@ export const action = async ({ request }: ActionArgs) => {
   invariant(userId, 'Unauthenticated');
 
   const promises = [
-    upsertField('autoscroll', data.get('autoscroll'), userId, true),
-    upsertField('allowPreview', data.get('allowPreview'), userId, true),
-    upsertField('allowRecommend', data.get('allow-recommend'), userId),
-    upsertField('allowQueue', data.get('allow-queue'), userId),
-    upsertField('miniPlayer', data.get('miniPlayer'), userId, true),
-    upsertField('dev', data.get('dev-mode'), userId, true),
-    upsertField('isPrivate', data.get('private-profile'), userId, true),
+    upsertSettingsField('autoscroll', data.get('autoscroll'), userId, true),
+    upsertSettingsField('allowPreview', data.get('allowPreview'), userId, true),
+    upsertSettingsField('allowRecommend', data.get('allow-recommend'), userId),
+    upsertSettingsField('allowQueue', data.get('allow-queue'), userId),
+    upsertSettingsField('miniPlayer', data.get('miniPlayer'), userId, true),
+    upsertSettingsField('dev', data.get('dev-mode'), userId, true),
+    upsertSettingsField('isPrivate', data.get('private-profile'), userId, true),
   ];
 
   await Promise.all(promises);

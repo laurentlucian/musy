@@ -7,7 +7,7 @@ import invariant from 'tiny-invariant';
 
 import ProfileSettings from '~/components/settings/profile/ProfileSettings';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, upsertField } from '~/services/auth.server';
+import { authenticator, upsertSettingsField, upsertThemeField } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Appearance = () => {
@@ -42,20 +42,20 @@ export const action = async ({ request }: ActionArgs) => {
   const data = await request.formData();
 
   const promises = [
-    upsertField('playerButtonRight', data.get('playerButtonSide'), userId, true),
-    upsertField('gradient', data.get('gradient'), userId, true),
-    upsertField('opaque', data.get('opaque'), userId, true),
-    upsertField('blur', data.get('blur'), userId, true),
-    upsertField('backgroundDark', data.get('backgroundDark'), userId),
-    upsertField('backgroundLight', data.get('backgroundLight'), userId),
-    upsertField('bgGradientDark', data.get('bgGradientDark'), userId),
-    upsertField('bgGradientLight', data.get('bgGradientLight'), userId),
-    upsertField('playerColorDark', data.get('playerColorDark'), userId),
-    upsertField('playerColorLight', data.get('playerColorLight'), userId),
-    upsertField('mainTextDark', data.get('mainTextDark'), userId),
-    upsertField('mainTextLight', data.get('mainTextLight'), userId),
-    upsertField('subTextDark', data.get('subTextDark'), userId),
-    upsertField('subTextLight', data.get('subTextLight'), userId),
+    upsertSettingsField('playerButtonRight', data.get('playerButtonSide'), userId, true),
+    upsertThemeField('gradient', data.get('gradient'), userId, true),
+    upsertThemeField('opaque', data.get('opaque'), userId, true),
+    upsertThemeField('blur', data.get('blur'), userId, true),
+    upsertThemeField('backgroundDark', data.get('backgroundDark'), userId),
+    upsertThemeField('backgroundLight', data.get('backgroundLight'), userId),
+    upsertThemeField('bgGradientDark', data.get('bgGradientDark'), userId),
+    upsertThemeField('bgGradientLight', data.get('bgGradientLight'), userId),
+    upsertThemeField('playerColorDark', data.get('playerColorDark'), userId),
+    upsertThemeField('playerColorLight', data.get('playerColorLight'), userId),
+    upsertThemeField('mainTextDark', data.get('mainTextDark'), userId),
+    upsertThemeField('mainTextLight', data.get('mainTextLight'), userId),
+    upsertThemeField('subTextDark', data.get('subTextDark'), userId),
+    upsertThemeField('subTextLight', data.get('subTextLight'), userId),
   ];
 
   await Promise.all(promises);
