@@ -22,8 +22,8 @@ import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useDrawerIsPlaying, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
-import useParamUsersTheme from '~/hooks/useParamUsersTheme';
 import useSessionUser from '~/hooks/useSessionUser';
+import { useThemePlayer } from '~/hooks/useTheme';
 
 import AudioVisualizer from '../icons/AudioVisualizer';
 import SpotifyLogo from '../icons/SpotifyLogo';
@@ -41,7 +41,7 @@ type PlayerProps = {
 
 const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
-  const theme = useParamUsersTheme();
+  const { bg, blurPlayer, main, sub } = useThemePlayer();
   const isOwnProfile = currentUser?.userId === id;
   const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;
 
@@ -58,17 +58,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   // eslint-disable-next-line
   const dontRemoveThis = useDrawerTrack();
 
-  const opaque = theme?.opaque ? '' : '66';
-  const bg = useColorModeValue(
-    theme?.playerColorLight + opaque ?? 'music.50',
-    theme?.playerColorDark + opaque ?? '#10101066',
-  );
   const color1 = useColorModeValue('music.800', 'music.200');
-  const main = useColorModeValue(
-    theme?.mainTextLight ?? '#161616',
-    theme?.mainTextDark ?? '#EEE6E2',
-  );
-  const sub = useColorModeValue(theme?.subTextLight ?? '#161616', theme?.subTextDark ?? '#EEE6E2');
 
   const { revalidate } = useRevalidator();
   const isSmallScreen = useIsMobile();
@@ -160,7 +150,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   return (
     <Stack pos="sticky" top={isOpen ? ['47px', 0] : ['42px', 0]} zIndex={1} spacing={0}>
       <Stack
-        backdropFilter={(theme?.blur || theme === null) && blur ? 'blur(27px)' : 'none'}
+        backdropFilter={blurPlayer && blur ? 'blur(27px)' : 'none'}
         borderRadius={size === 'small' ? 0 : 5}
         h="100%"
       >
@@ -168,9 +158,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
           <Stack
             spacing={0}
             bg={bg}
-            backdropFilter={
-              (theme?.blur || theme === null) && blur && isSmallScreen ? 'blur(27px)' : 'none'
-            }
+            backdropFilter={blurPlayer && blur && isSmallScreen ? 'blur(27px)' : 'none'}
           >
             <Flex h="135px" px="2px" py="2px" justify="space-between">
               <Stack pl="7px" spacing={1} flexGrow={1}>
@@ -265,7 +253,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
         bg={bg}
         borderRadius="0px 0px 3px 3px"
         zIndex={-1}
-        backdropFilter={(theme?.blur || theme === null) && !isSmallScreen ? 'blur(27px)' : 'none'}
+        backdropFilter={blurPlayer && !isSmallScreen ? 'blur(27px)' : 'none'}
         alignSelf={currentUser?.settings?.playerButtonRight ? 'end' : 'unset'}
       >
         <IconButton

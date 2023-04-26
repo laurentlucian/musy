@@ -6,7 +6,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import { useTheme } from '~/hooks/useTheme';
+import { useThemeBg } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
 import Nav from './nav/Nav';
@@ -19,7 +19,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const isNotProfile = pathname.includes(
     'home' || 'friends' || 'sessions' || 'explore' || 'settings',
   );
-  const { bgGradient, gradient, profileBg } = useTheme();
+  const { bgGradient, gradient, profileBg } = useThemeBg();
 
   return (
     <Flex
