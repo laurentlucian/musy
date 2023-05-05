@@ -5,13 +5,14 @@ import type { Track } from '@prisma/client';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-import { sort } from '~/routes/friends';
+// import { sort } from '~/routes/friends';
 
 export const TempTab = () => {
   const users = useUsers();
   const currentUser = useSessionUser();
   const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
-  const everyone = sort(otherUsers);
+  console.log(users);
+  const everyone = otherUsers;
   const tracks: Track[] = [];
   for (let i = 0; i < everyone.length; i++) {
     if (everyone[i].playback === null || everyone[i].playback?.track === undefined) {

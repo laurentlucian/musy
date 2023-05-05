@@ -9,7 +9,7 @@ const FriendsHeader = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   // const users = useParentData('/friends') as User;
   const currentUser = useSessionUser();
-  const friendCount = currentUser?.user?.friendsAdded?.length;
+  const friendCount = currentUser?.friendsList.length;
 
   return (
     <Stack w="100%" h="100%" bg={bg} pt="5px">

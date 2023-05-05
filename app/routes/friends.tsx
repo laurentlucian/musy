@@ -11,20 +11,8 @@ import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import type { FriendCard } from '~/lib/types/types';
-import { authenticator, getFavorites, getFriends } from '~/services/auth.server';
+import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-
-export const sort = (array: FriendCard[]) => {
-  return array.sort((a, b) => {
-    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-      return 1;
-    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-      return -1;
-    }
-    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-  });
-};
 
 const Friends = () => {
   const { favs, friends } = useTypedLoaderData<typeof loader>();
@@ -32,11 +20,8 @@ const Friends = () => {
   const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
 
-  let sortedFriends = sort(friends);
-  const favorites = sort(favs);
-
-  sortedFriends = sortedFriends.filter((friend) => {
-    return !favorites.some((favorite) => favorite.userId === friend.userId);
+  const friendsList = friends?.filter(({ friend }) => {
+    return !favs?.some(({ favorite }) => favorite.userId === friend.userId);
   });
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
@@ -48,70 +33,79 @@ const Friends = () => {
     }
   }, [shouldRevalidate, revalidate]);
 
+  if (!friendsList) return null;
+
   const friendsTracks: Track[] = [];
-  for (let i = 0; i < sortedFriends.length; i++) {
-    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
+  for (let i = 0; i < friendsList.length; i++) {
+    if (
+      friendsList[i].friend.playback === null ||
+      friendsList[i].friend.playback?.track === undefined
+    ) {
       continue;
     }
     const track = {
-      albumName: sortedFriends[i].playback!.track.albumName,
-      albumUri: sortedFriends[i].playback!.track.albumUri,
-      artist: sortedFriends[i].playback!.track.artist,
-      artistUri: sortedFriends[i].playback!.track.artistUri,
-      duration: sortedFriends[i].playback!.track.duration,
-      explicit: sortedFriends[i].playback!.track.explicit,
-      id: sortedFriends[i].playback!.track.id,
-      image: sortedFriends[i].playback!.track.image,
-      link: sortedFriends[i].playback!.track.link,
-      name: sortedFriends[i].playback!.track.name,
-      preview_url: sortedFriends[i].playback!.track.preview_url,
-      uri: sortedFriends[i].playback!.track.uri,
+      albumName: friendsList[i].friend.playback!.track.albumName,
+      albumUri: friendsList[i].friend.playback!.track.albumUri,
+      artist: friendsList[i].friend.playback!.track.artist,
+      artistUri: friendsList[i].friend.playback!.track.artistUri,
+      duration: friendsList[i].friend.playback!.track.duration,
+      explicit: friendsList[i].friend.playback!.track.explicit,
+      id: friendsList[i].friend.playback!.track.id,
+      image: friendsList[i].friend.playback!.track.image,
+      link: friendsList[i].friend.playback!.track.link,
+      name: friendsList[i].friend.playback!.track.name,
+      preview_url: friendsList[i].friend.playback!.track.preview_url,
+      uri: friendsList[i].friend.playback!.track.uri,
     };
     friendsTracks.push(track);
   }
   const favsTracks: Track[] = [];
-  for (let i = 0; i < sortedFriends.length; i++) {
-    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
+  for (let i = 0; i < friendsList.length; i++) {
+    if (
+      friendsList[i].friend.playback === null ||
+      friendsList[i].friend.playback?.track === undefined
+    ) {
       continue;
     }
     const track = {
-      albumName: sortedFriends[i].playback!.track.albumName,
-      albumUri: sortedFriends[i].playback!.track.albumUri,
-      artist: sortedFriends[i].playback!.track.artist,
-      artistUri: sortedFriends[i].playback!.track.artistUri,
-      duration: sortedFriends[i].playback!.track.duration,
-      explicit: sortedFriends[i].playback!.track.explicit,
-      id: sortedFriends[i].playback!.track.id,
-      image: sortedFriends[i].playback!.track.image,
-      link: sortedFriends[i].playback!.track.link,
-      name: sortedFriends[i].playback!.track.name,
-      preview_url: sortedFriends[i].playback!.track.preview_url,
-      uri: sortedFriends[i].playback!.track.uri,
+      albumName: friendsList[i].friend.playback!.track.albumName,
+      albumUri: friendsList[i].friend.playback!.track.albumUri,
+      artist: friendsList[i].friend.playback!.track.artist,
+      artistUri: friendsList[i].friend.playback!.track.artistUri,
+      duration: friendsList[i].friend.playback!.track.duration,
+      explicit: friendsList[i].friend.playback!.track.explicit,
+      id: friendsList[i].friend.playback!.track.id,
+      image: friendsList[i].friend.playback!.track.image,
+      link: friendsList[i].friend.playback!.track.link,
+      name: friendsList[i].friend.playback!.track.name,
+      preview_url: friendsList[i].friend.playback!.track.preview_url,
+      uri: friendsList[i].friend.playback!.track.uri,
     };
     friendsTracks.push(track);
   }
 
   return (
     <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 'unset']}>
-      {favorites.map((user, index) => {
+      {favs &&
+        favs.map(({ favorite }, index) => {
+          return (
+            <PrismaMiniPlayer
+              key={favorite.userId}
+              layoutKey={'MiniPlayerF' + index}
+              user={favorite}
+              currentUserId={currentUser?.userId}
+              tracks={favsTracks}
+              friendsTracks={[]}
+              index={index}
+            />
+          );
+        })}
+      {friendsList.map(({ friend }, index) => {
         return (
           <PrismaMiniPlayer
-            key={user.userId}
+            key={friend.userId}
             layoutKey={'MiniPlayerF' + index}
-            user={user}
-            currentUserId={currentUser?.userId}
-            tracks={favsTracks}
-            friendsTracks={[]}
-            index={index}
-          />
-        );
-      })}
-      {sortedFriends.map((user, index) => {
-        return (
-          <PrismaMiniPlayer
-            key={user.userId}
-            layoutKey={'MiniPlayerF' + index}
-            user={user}
+            user={friend}
             currentUserId={currentUser?.userId}
             tracks={friendsTracks}
             friendsTracks={[]}
@@ -141,32 +135,17 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUser = session?.user ?? null;
   const currentUserId = currentUser?.id;
 
-  const [friends, favs, pendingRequests] = await Promise.all([
-    prisma.friends
-      .findMany({
-        include: { user: true },
-        where: { friendId: currentUser?.id, status: 'accepted' },
-      })
-      .then((friends) => getFriends(!!currentUser, friends)),
-    prisma.favorite
-      .findMany({
-        include: { favorite: true },
-        where: { favoritedById: currentUser?.id },
-      })
-      .then((fav) => getFavorites(!!currentUser, fav)),
-    prisma.friends
-      .findMany({
-        include: { user: true },
-        where: { friendId: currentUser?.id, status: 'pending' },
-      })
-      .then((pending) => getFriends(!!currentUser, pending)),
+  const [friends, favs, pendingFriends] = await Promise.all([
+    getFriends(currentUserId),
+    getFavorites(currentUserId),
+    getPending(currentUserId),
   ]);
 
   return typedjson({
     currentUserId,
     favs,
     friends,
-    pendingRequests,
+    pendingFriends,
   });
 };
 
@@ -182,27 +161,21 @@ export const action = async ({ request }: ActionArgs) => {
   //if the user clicks the accept button, update the status of the friend request to accepted
   if (typeof friendId === 'string') {
     if (clickStatus === 'accepted') {
-      await prisma.friends.update({
+      await prisma.friend.create({
         data: {
-          status: 'accepted',
-        },
-        where: {
-          userId_friendId: {
-            friendId: id!,
-            userId: friendId,
-          },
+          friendId: id!,
+          userId: friendId,
         },
       });
 
-      await prisma.friends.create({
+      await prisma.friend.create({
         data: {
           friendId: friendId!,
-          status: 'accepted'!,
           userId: id!,
         },
       });
     } else if (clickStatus === 'rejected') {
-      await prisma.friends.delete({
+      await prisma.friend.delete({
         where: {
           userId_friendId: {
             friendId: id!,

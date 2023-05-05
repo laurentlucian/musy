@@ -26,7 +26,7 @@ const Profile = () => {
   const isPrivate = user?.settings?.isPrivate;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isDev = currentUser?.settings?.dev === true;
-  const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
+  const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
 
   return (
     <Stack
@@ -116,59 +116,38 @@ export const action = async ({ params, request }: ActionArgs) => {
   const isFriend = data.get('isFriend');
 
   if (friendStatus === 'requested') {
-    const newFriendRecord = await prisma.friends.create({
-      data: {
-        friendId: id,
-        status: 'pending',
-        userId: currentUser.userId,
-      },
-    });
-    const friendRecord = await prisma.friends.findFirst({
+    const isPending = await prisma.pendingFriend.findFirst({
       where: {
-        friendId: currentUser.userId,
+        pendingFriendId: currentUser.userId,
         userId: id,
       },
     });
-    if (friendRecord && friendRecord.status === 'pending') {
-      await prisma.friends.update({
-        data: {
-          status: 'accepted',
-        },
-        where: {
-          id: friendRecord.id,
-        },
+
+    await prisma.pendingFriend.create({
+      data: {
+        pendingFriendId: id,
+        userId: currentUser.userId,
+      },
+    });
+
+    if (isPending) {
+      await prisma.friend.create({
+        data: { friendId: currentUser.userId, userId: id },
       });
-      await prisma.friends.update({
-        data: {
-          status: 'accepted',
-        },
-        where: {
-          id: newFriendRecord.id,
-        },
+      await prisma.friend.create({
+        data: { friendId: id, userId: currentUser.userId },
       });
     }
   } else if (friendStatus === 'block') {
-    await prisma.friends.create({
+    await prisma.block.create({
       data: {
-        friendId: id,
-        status: 'blocked',
+        blockedId: id,
         userId: currentUser.userId,
       },
     });
   } else if (friendStatus === 'unblock') {
-    const blockRecord = await prisma.friends.findFirst({
-      where: {
-        friendId: currentUser.userId,
-        userId: id,
-      },
-    });
-    await prisma.friends.update({
-      data: {
-        status: 'unblocked',
-      },
-      where: {
-        id: blockRecord?.id,
-      },
+    await prisma.block.delete({
+      where: { userId_blockedId: { blockedId: id, userId: currentUser.userId } },
     });
   }
   if (follow === 'true') {
@@ -196,20 +175,20 @@ export const action = async ({ params, request }: ActionArgs) => {
   }
 
   if (isFriend === 'true') {
-    const friendRecord = await prisma.friends.findUnique({
+    const friendRecord = await prisma.friend.findUnique({
       select: { id: true },
       where: { userId_friendId: { friendId: id, userId: currentUser.userId } },
     });
-    const secondFriendRecord = await prisma.friends.findUnique({
+    const secondFriendRecord = await prisma.friend.findUnique({
       select: { id: true },
       where: { userId_friendId: { friendId: currentUser.userId, userId: id } },
     });
     if (friendRecord && secondFriendRecord) {
       console.log('deleted friend');
-      await prisma.friends.delete({
+      await prisma.friend.delete({
         where: { id: friendRecord.id },
       });
-      await prisma.friends.delete({
+      await prisma.friend.delete({
         where: { id: secondFriendRecord.id },
       });
     }
@@ -219,17 +198,17 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.favorite.create({
       data: {
         favorite: {
-          connect: { userId: id },
-        },
-        favoritedBy: {
           connect: { userId: currentUser.userId },
+        },
+        user: {
+          connect: { userId: id },
         },
       },
     });
   } else {
     const fav = await prisma.favorite.findFirst({
       select: { id: true },
-      where: { AND: [{ favoriteId: id, favoritedById: currentUser.userId }] },
+      where: { AND: [{ favoriteId: id, userId: currentUser.userId }] },
     });
     if (fav) {
       await prisma.favorite.delete({
@@ -240,10 +219,10 @@ export const action = async ({ params, request }: ActionArgs) => {
   if (blockUser === 'true') {
     await prisma.block.create({
       data: {
-        block: {
+        blocked: {
           connect: { userId: id },
         },
-        blockedBy: {
+        user: {
           connect: { userId: currentUser.userId },
         },
       },
@@ -258,10 +237,10 @@ export const action = async ({ params, request }: ActionArgs) => {
   if (muteUser === 'true') {
     await prisma.mute.create({
       data: {
-        mute: {
+        muted: {
           connect: { userId: id },
         },
-        mutedBy: {
+        user: {
           connect: { userId: currentUser.userId },
         },
       },

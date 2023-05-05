@@ -1,10 +1,9 @@
-import type { Playback, Prisma, Profile, Settings, Track } from '@prisma/client';
-import type { Friends as PrismaFriends, Favorite as PrismaFavorite } from '@prisma/client';
+import type { Playback, Prisma, Profile, Settings, Track, PendingFriend } from '@prisma/client';
 import { Authenticator } from 'remix-auth';
 import type { Session } from 'remix-auth-spotify';
 import { SpotifyStrategy } from 'remix-auth-spotify';
 
-import { notNull } from '~/lib/utils';
+import type { Favorite, FriendsList } from '~/lib/types/types';
 import { sessionStorage } from '~/services/session.server';
 
 import { prisma } from './db.server';
@@ -118,11 +117,14 @@ export const getCurrentUser = async (request: Request) => {
     include: {
       block: true,
       favBy: true,
+      friendsList: true,
+      friendsListUserIsOn: true,
       liked: { select: { trackId: true } },
       mute: true,
+      pendingList: true,
+      pendingListUserIsOn: true,
       playback: { include: { track: true } },
       settings: { include: { profileSong: true } },
-      user: { select: { friendsAdded: true, friendsAddedMe: true } },
     },
 
     where: { userId },
@@ -171,9 +173,10 @@ export const getAllUsers = async (
         },
         settings: true,
       },
-      orderBy: { playback: { updatedAt: 'desc' } },
+      orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
       where: { user: { revoked: false, ...restrict, NOT: { id } } },
     });
+    // console.log('ALL USERS: ', allUsers);
     return allUsers;
   } else {
     allUsers = await prisma.profile.findMany({
@@ -190,55 +193,39 @@ export const getAllUsers = async (
         },
         settings: true,
       },
-      orderBy: { playback: { updatedAt: 'desc' } },
+      // orderBy: [{  }],
       where: { user: { revoked: false, ...restrict } },
     });
     return allUsers;
   }
 };
 
-export const getFriends = async (isAuthenticated = false, currentFriends: PrismaFriends[]) => {
-  const restrict = !isAuthenticated
-    ? { user: { settings: { isNot: { isPrivate: true } } } }
-    : undefined;
-
-  const data = await prisma.user.findMany({
-    orderBy: { user: { playback: { updatedAt: 'desc' } } },
+export const getFriends = async (userId?: string): Promise<FriendsList[] | null> => {
+  if (!userId) return null;
+  const friends = await prisma.friend.findMany({
     select: {
-      user: {
-        include: {
-          playback: {
-            include: {
-              track: true,
-            },
-          },
+      friend: {
+        select: {
+          bio: true,
+          image: true,
+          name: true,
+          playback: { include: { track: true } },
           settings: { select: { allowQueue: true, allowRecommend: true } },
+          userId: true,
         },
       },
     },
-    where: {
-      id: {
-        in: currentFriends.map((currentFriend) => {
-          return currentFriend.userId;
-        }),
-      },
-      revoked: false,
-      ...restrict,
-    },
+    where: { userId },
   });
-  const users = data.map((user) => user.user).filter(notNull);
-  return users;
+  return friends;
 };
 
-export const getFavorites = async (isAuthenticated = false, currentFavorites: PrismaFavorite[]) => {
-  const restrict = !isAuthenticated
-    ? { user: { settings: { isNot: { isPrivate: true } } } }
-    : undefined;
+export const getFavorites = async (userId?: string): Promise<Favorite[] | null> => {
+  if (!userId) return null;
 
-  const data = await prisma.user.findMany({
-    orderBy: { user: { playback: { updatedAt: 'desc' } } },
+  const favorites = await prisma.favorite.findMany({
     select: {
-      user: {
+      favorite: {
         select: {
           bio: true,
           image: true,
@@ -253,18 +240,28 @@ export const getFavorites = async (isAuthenticated = false, currentFavorites: Pr
         },
       },
     },
-    where: {
-      id: {
-        in: currentFavorites.map((currentFavorites) => {
-          return currentFavorites.favoriteId;
-        }),
-      },
-      revoked: false,
-      ...restrict,
-    },
+    where: { favoriteId: userId },
   });
-  const users = data.map((user) => user.user).filter(notNull);
-  return users;
+  return favorites;
+};
+
+export const getPending = async (userId?: string): Promise<PendingFriend[] | null> => {
+  if (!userId) return null;
+
+  const pendingList = await prisma.pendingFriend.findMany({
+    include: {
+      pendingFriend: {
+        select: {
+          bio: true,
+          image: true,
+          name: true,
+          userId: true,
+        },
+      },
+    },
+    where: { userId },
+  });
+  return pendingList;
 };
 
 export const upsertThemeField = async (

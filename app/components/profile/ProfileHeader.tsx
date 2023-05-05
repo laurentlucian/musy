@@ -37,8 +37,8 @@ const ProfileHeader = ({
 
   const isOwnProfile = currentUser?.userId === user.userId;
 
-  const isBlocked = currentUser?.block.find((block) => block.blockId === id);
-  const isMuted = currentUser?.mute.find((mute) => mute.muteId === id);
+  const isBlocked = currentUser?.block.find((block) => block.blockedId === id);
+  const isMuted = currentUser?.mute.find((mute) => mute.mutedId === id);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>

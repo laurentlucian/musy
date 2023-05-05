@@ -46,17 +46,17 @@ const NotificationBadge = ({ count }: { count: number }) => {
   );
 };
 
-const PendingFriendsNotification = ({ pendingRequests }: { pendingRequests?: number }) => {
+const PendingFriendsNotification = ({ pendingFriends }: { pendingFriends?: number }) => {
   return (
     <div style={{ position: 'relative' }}>
       <Text>requests</Text>
-      {pendingRequests ? <NotificationBadge count={pendingRequests} /> : null}
+      {pendingFriends ? <NotificationBadge count={pendingFriends} /> : null}
     </div>
   );
 };
 
 const FriendsTabs = ({ children }: { children: ReactNode }) => {
-  const { friends, pendingRequests } = useTypedLoaderData<typeof loader>();
+  const { friends, pendingFriends } = useTypedLoaderData<typeof loader>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
@@ -73,10 +73,10 @@ const FriendsTabs = ({ children }: { children: ReactNode }) => {
             alignSelf="center"
           />
           <Tab color={color} bg={bg} mr="20px">
-            friends {friends.length ? friends.length : ''}
+            friends {friends?.length ? friends.length : ''}
           </Tab>
           <Tab color={color} bg={bg}>
-            <PendingFriendsNotification pendingRequests={pendingRequests.length} />
+            <PendingFriendsNotification pendingFriends={pendingFriends?.length} />
           </Tab>
         </TabList>
         <Divider bgColor="spotify.green" />

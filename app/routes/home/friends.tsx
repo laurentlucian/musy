@@ -15,12 +15,10 @@ import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getFriends } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
 
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
 import { TempTab } from '../../components/friends/tabs/TempTab';
-import { sort } from '../friends';
 
 const Friends = () => {
   const users = useUsers();
@@ -30,10 +28,6 @@ const Friends = () => {
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
-
-  const sortedFriends = sort(friends);
-
-  const sortedFavorites = sort(favorites);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -45,25 +39,27 @@ const Friends = () => {
   }, [shouldRevalidate, revalidate]);
 
   const tracks: Track[] = [];
-  for (let i = 0; i < sortedFriends.length; i++) {
-    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
-      continue;
+  if (friends) {
+    for (let i = 0; i < friends.length; i++) {
+      if (friends[i].friend.playback === null || friends[i].friend.playback?.track === undefined) {
+        continue;
+      }
+      const track = {
+        albumName: friends[i].friend.playback!.track.albumName,
+        albumUri: friends[i].friend.playback!.track.albumUri,
+        artist: friends[i].friend.playback!.track.artist,
+        artistUri: friends[i].friend.playback!.track.artistUri,
+        duration: friends[i].friend.playback!.track.duration,
+        explicit: friends[i].friend.playback!.track.explicit,
+        id: friends[i].friend.playback!.track.id,
+        image: friends[i].friend.playback!.track.image,
+        link: friends[i].friend.playback!.track.link,
+        name: friends[i].friend.playback!.track.name,
+        preview_url: friends[i].friend.playback!.track.preview_url,
+        uri: friends[i].friend.playback!.track.uri,
+      };
+      tracks.push(track);
     }
-    const track = {
-      albumName: sortedFriends[i].playback!.track.albumName,
-      albumUri: sortedFriends[i].playback!.track.albumUri,
-      artist: sortedFriends[i].playback!.track.artist,
-      artistUri: sortedFriends[i].playback!.track.artistUri,
-      duration: sortedFriends[i].playback!.track.duration,
-      explicit: sortedFriends[i].playback!.track.explicit,
-      id: sortedFriends[i].playback!.track.id,
-      image: sortedFriends[i].playback!.track.image,
-      link: sortedFriends[i].playback!.track.link,
-      name: sortedFriends[i].playback!.track.name,
-      preview_url: sortedFriends[i].playback!.track.preview_url,
-      uri: sortedFriends[i].playback!.track.uri,
-    };
-    tracks.push(track);
   }
 
   return (
@@ -83,7 +79,7 @@ const Friends = () => {
               />
             )}
             <TabList>
-              {friends.length > 0 && (
+              {friends && friends.length > 0 && (
                 <Tab>
                   <HStack>
                     <Profile2User size="18" color="#1DB954" variant="Bold" />
@@ -121,8 +117,8 @@ const Friends = () => {
           </Stack>
         )}
         <TabPanels>
-          {friends.length > 0 && <FriendsTabs sortedFriends={sortedFriends} tracks={tracks} />}
-          {favorites.length > 0 && <FavoriteTab sortedFavorites={sortedFavorites} />}
+          {friends && friends.length > 0 && <FriendsTabs friends={friends} tracks={tracks} />}
+          {favorites.length > 0 && <FavoriteTab favorites={favorites} />}
           <TempTab />
         </TabPanels>
       </Stack>
@@ -133,12 +129,7 @@ const Friends = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
-  const friends = await prisma.friends
-    .findMany({
-      include: { user: true },
-      where: { friendId: currentUser?.id, status: 'accepted' },
-    })
-    .then((friends) => getFriends(!!currentUser, friends));
+  const friends = await getFriends(currentUser?.id);
   return typedjson({
     friends,
   });

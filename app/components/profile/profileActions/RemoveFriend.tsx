@@ -11,7 +11,7 @@ const RemoveFriend = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
 
-  const isFriend = currentUser?.user.friendsAdded.find((friend) => friend.friendId === id);
+  const isFriend = currentUser?.friendsList.find((friend) => friend.friendId === id);
   if (!isFriend) return null;
 
   const handleClick = () => {

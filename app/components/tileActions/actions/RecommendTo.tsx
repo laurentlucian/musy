@@ -12,7 +12,7 @@ const RecommendTo = ({ setShow }: { setShow: Dispatch<SetStateAction<number>> })
     setShow(2);
   };
 
-  if (currentUser?.user.friendsAdded.length === 0)
+  if (currentUser?.friendsList.length === 0)
     return (
       <Button
         leftIcon={<Send2 variant="Bold" />}

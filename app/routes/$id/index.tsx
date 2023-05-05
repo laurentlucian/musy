@@ -136,7 +136,8 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24),
     ]);
   }
-
+  console.log('AAAAAAAAAAAAAA', { top });
+  console.log('heeeey');
   return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });
 };
 

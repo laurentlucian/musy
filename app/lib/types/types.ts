@@ -60,3 +60,24 @@ export type FriendCard = PendingCard & {
     | null;
   settings: { allowQueue: string; allowRecommend: string } | null;
 };
+
+export type Friend = {
+  bio: string | null;
+  image: string;
+  name: string;
+  playback:
+    | (Playback & {
+        track: Track;
+      })
+    | null;
+  settings: { allowQueue: string; allowRecommend: string } | null;
+  userId: string;
+};
+
+export type FriendsList = {
+  friend: Friend;
+};
+
+export type Favorite = {
+  favorite: Friend;
+};

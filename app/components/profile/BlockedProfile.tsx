@@ -10,8 +10,8 @@ import useSessionUser from '~/hooks/useSessionUser';
 const BlockedProfile = ({ name }: { name: string }) => {
   const currentUser = useSessionUser();
   const { id } = useParams();
-  const blockRecord = currentUser?.block.find((blocked) => blocked.blockId === id);
-  const amIBlocked = blockRecord?.blockId === currentUser?.userId;
+  const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
+  const amIBlocked = blockRecord?.blockedId === currentUser?.userId;
   const block = (
     <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
       <Forbidden size="30" color="red" />

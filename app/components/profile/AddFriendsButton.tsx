@@ -7,15 +7,11 @@ import useSessionUser from '~/hooks/useSessionUser';
 const AddFriendsButton = () => {
   const currentUser = useSessionUser();
   const { id } = useParams();
-  const isPending = currentUser?.user.friendsAdded.find(
-    (friend) => friend.friendId === id && friend.status === 'pending',
-  );
-  const isAcceptable = currentUser?.user.friendsAddedMe.find(
-    (friend) => friend.userId === id && friend.status === 'pending',
-  );
-  const isAccepted = currentUser?.user.friendsAdded.find(
-    (friend) => friend.friendId === id && friend.status === 'accepted',
-  );
+  const isPending = currentUser?.pendingList.find((user) => id === user.pendingFriendId);
+  const isAcceptable = currentUser?.pendingListUserIsOn.find((item) => {
+    return id === item.pendingFriendId; // someone double check this I am sleepy (will check later tho)
+  });
+  const isAccepted = currentUser?.friendsList.find((friend) => id === friend.friendId);
 
   const submit = useSubmit();
 

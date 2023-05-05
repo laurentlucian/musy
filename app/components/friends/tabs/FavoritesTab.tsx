@@ -7,28 +7,28 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { FriendCard } from '~/lib/types/types';
 
 type Props = {
-  sortedFavorites: FriendCard[];
+  favorites: FriendCard[];
 };
-export const FavoriteTab = ({ sortedFavorites }: Props) => {
+export const FavoriteTab = ({ favorites }: Props) => {
   const currentUser = useSessionUser();
   const tracks: Track[] = [];
-  for (let i = 0; i < sortedFavorites.length; i++) {
-    if (sortedFavorites[i].playback === null || sortedFavorites[i].playback?.track === undefined) {
+  for (let i = 0; i < favorites.length; i++) {
+    if (favorites[i].playback === null || favorites[i].playback?.track === undefined) {
       continue;
     }
     const track = {
-      albumName: sortedFavorites[i].playback!.track.albumName,
-      albumUri: sortedFavorites[i].playback!.track.albumUri,
-      artist: sortedFavorites[i].playback!.track.artist,
-      artistUri: sortedFavorites[i].playback!.track.artistUri,
-      duration: sortedFavorites[i].playback!.track.duration,
-      explicit: sortedFavorites[i].playback!.track.explicit,
-      id: sortedFavorites[i].playback!.track.id,
-      image: sortedFavorites[i].playback!.track.image,
-      link: sortedFavorites[i].playback!.track.link,
-      name: sortedFavorites[i].playback!.track.name,
-      preview_url: sortedFavorites[i].playback!.track.preview_url,
-      uri: sortedFavorites[i].playback!.track.uri,
+      albumName: favorites[i].playback!.track.albumName,
+      albumUri: favorites[i].playback!.track.albumUri,
+      artist: favorites[i].playback!.track.artist,
+      artistUri: favorites[i].playback!.track.artistUri,
+      duration: favorites[i].playback!.track.duration,
+      explicit: favorites[i].playback!.track.explicit,
+      id: favorites[i].playback!.track.id,
+      image: favorites[i].playback!.track.image,
+      link: favorites[i].playback!.track.link,
+      name: favorites[i].playback!.track.name,
+      preview_url: favorites[i].playback!.track.preview_url,
+      uri: favorites[i].playback!.track.uri,
     };
     tracks.push(track);
   }
@@ -42,7 +42,7 @@ export const FavoriteTab = ({ sortedFavorites }: Props) => {
       h="100%"
       px={['4px', 0]}
     >
-      {sortedFavorites.map((user, index) => {
+      {favorites.map((user, index) => {
         return (
           <PrismaMiniPlayer
             key={user.userId}

@@ -5,15 +5,15 @@ import type { Track } from '@prisma/client';
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import usePending from '~/hooks/usePending';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { FriendCard } from '~/lib/types/types';
+import type { FriendsList } from '~/lib/types/types';
 
 import ProfileCard from '../ProfileCard';
 
 type Props = {
-  sortedFriends: FriendCard[];
+  friends: FriendsList[];
   tracks: Track[];
 };
-export const FriendsTabs = ({ sortedFriends, tracks }: Props) => {
+export const FriendsTabs = ({ friends, tracks }: Props) => {
   const currentUser = useSessionUser();
   const pendingFriends = usePending();
   return (
@@ -31,19 +31,19 @@ export const FriendsTabs = ({ sortedFriends, tracks }: Props) => {
           <TabList mb="5px">
             {pendingFriends.length > 0 && (
               <>
-                <Tab mr="20px">friends {sortedFriends.length}</Tab>
+                <Tab mr="20px">friends {friends.length}</Tab>
                 <Tab>requests</Tab>
               </>
             )}
           </TabList>
           <TabPanels>
             <TabPanel>
-              {sortedFriends.map((user, index) => {
+              {friends.map(({ friend }, index) => {
                 return (
                   <PrismaMiniPlayer
-                    key={user.userId}
+                    key={friend.userId}
                     layoutKey={'MiniPlayerF' + index}
-                    user={user}
+                    user={friend}
                     currentUserId={currentUser?.userId}
                     tracks={tracks}
                     friendsTracks={[]}
