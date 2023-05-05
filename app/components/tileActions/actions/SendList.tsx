@@ -4,7 +4,7 @@ import { Box, Button, HStack } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
-import AddQueue from '~/components/menu/actions/AddQueue';
+import QueueToFriend from '~/components/menu/actions/QueuetoFriend';
 import Recommend from '~/components/menu/actions/Recommend';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
@@ -49,7 +49,13 @@ const SendList = ({
           w={['100vw', '300px']}
         >
           {queueableUsers.map((user) => (
-            <AddQueue key={user.userId} trackId={trackId} user={user} />
+            <QueueToFriend
+              key={user.userId}
+              trackId={trackId}
+              userId={user.userId}
+              userImage={user.image}
+              username={user.name}
+            />
           ))}
         </Box>
       ) : (

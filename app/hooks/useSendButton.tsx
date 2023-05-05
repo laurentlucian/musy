@@ -3,8 +3,11 @@ import { AlertCircle, Check } from 'react-feather';
 import type { Track } from '@prisma/client';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import type { TypedFetcherWithComponents } from 'remix-typedjson';
+import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/components/icons/Waver';
+import type { action as addAction } from '~/routes/api/add';
+import type { action as sendAction } from '~/routes/api/send';
 
 import { useDrawerFromId } from './useDrawer';
 import useSessionUser from './useSessionUser';
@@ -18,11 +21,7 @@ type SendButton = {
   trackId: string;
   userId?: string;
 };
-type QueueData = {
-  fetcher: TypedFetcherWithComponents<string>;
-  trackId: string;
-  userId?: string;
-};
+
 export const useSendData = ({
   fetcher,
   fromUserId,
@@ -85,27 +84,25 @@ export const useSendData = ({
   return { handleSendButton, icon, isAdding, isDone, isError };
 };
 
-export const useQueueData = ({ fetcher, trackId, userId }: QueueData) => {
-  const currentUser = useSessionUser();
-  const fromId = useDrawerFromId();
-  const id = userId || fromId;
-  const isSending = !!userId;
-  const fromUserId = isSending ? currentUser?.userId : id;
-  const sendToUserId = isSending ? id : currentUser?.userId;
-  const action = isSending
-    ? `/${id ?? currentUser?.userId}/add`
-    : `/${currentUser?.userId ?? id}/add`;
+type SelfQueueData = {
+  trackId: string;
+};
+
+export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
+  const currentUserId = useSessionUser()?.userId ?? '';
+  const fromId = useDrawerFromId() ?? '';
 
   const data = {
-    action: isSending ? 'send' : 'add',
-
-    fromId: fromUserId ?? '',
-    toId: sendToUserId ?? '',
+    action: 'add',
+    fromId,
+    toId: currentUserId,
     trackId,
   };
 
-  const addToQueue = () => {
-    fetcher.submit(data, { action, method: 'post', replace: true });
+  const fetcher = useTypedFetcher<typeof addAction>();
+
+  const addToSelfQueue = () => {
+    fetcher.submit(data, { action: 'api/add', method: 'post', replace: true });
   };
   const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
 
@@ -120,11 +117,60 @@ export const useQueueData = ({ fetcher, trackId, userId }: QueueData) => {
     <TickSquare size="25px" />
   ) : isError ? (
     <CloseSquare size="25px" />
-  ) : isSending ? (
-    <Send2 />
   ) : (
     <AddSquare />
   );
 
-  return { addToQueue, icon, isAdding, isDone, isError };
+  const text = isDone
+    ? typeof fetcher.data === 'string'
+      ? fetcher.data
+      : 'Authenticated'
+    : 'Add to Your Queue';
+
+  return { addToSelfQueue, icon, isAdding, isDone, isError, text };
+};
+
+type SendData = {
+  trackId: string;
+  userId: string;
+  username: string;
+};
+
+export const useQueueToFriendData = ({ trackId, userId: toId, username }: SendData) => {
+  const currentUserId = useSessionUser()?.userId ?? '';
+
+  const data = {
+    action: 'send',
+    fromId: currentUserId,
+    toId: toId ?? '',
+    toUsername: username,
+    trackId,
+  };
+
+  const fetcher = useTypedFetcher<typeof sendAction>();
+
+  const addToFriendsQueue = () => {
+    fetcher.submit(data, { action: 'api/send', method: 'post', replace: true });
+  };
+  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
+
+  const isDone = fetcher.type === 'done';
+  const isError =
+    typeof fetcher.data === 'string'
+      ? fetcher.data.includes('Error')
+        ? fetcher.data
+        : null
+      : null;
+  const icon = isDone ? (
+    <TickSquare size="25px" />
+  ) : isError ? (
+    <CloseSquare size="25px" />
+  ) : (
+    <Send2 />
+  );
+
+  const qText = username.split(/[ .]/)[0];
+  const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
+
+  return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };

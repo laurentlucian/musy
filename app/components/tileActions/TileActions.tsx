@@ -6,11 +6,11 @@ import { AnimatePresence, motion, wrap } from 'framer-motion';
 
 import { useDrawerTrackIndex, useDrawerTracks } from '~/hooks/useDrawer';
 
-import AddQueue from '../menu/actions/AddQueue';
 import AnalyzeTrack from '../menu/actions/AnalyzeTrack';
 import CopyLink from '../menu/actions/CopyLink';
 import PlayPreview from '../menu/actions/PlayPreview';
 import ProfileSong from '../menu/actions/ProfileSong';
+import QueueToSelf from '../menu/actions/QueueToSelf';
 import SaveToLiked from '../menu/actions/SaveToLiked';
 import RecommendTo from './actions/RecommendTo';
 import SendList from './actions/SendList';
@@ -57,7 +57,7 @@ const TileActions = ({
                 preview_url={tracks[index].preview_url}
               />
               <ProfileSong />
-              <AddQueue trackId={tracks[index].id} user={null} />
+              <QueueToSelf trackId={tracks[index].id} />
               <SendTo setShow={setShow} />
               <RecommendTo setShow={setShow} />
             </Stack>
