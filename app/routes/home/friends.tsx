@@ -1,33 +1,29 @@
 import { useRevalidator } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
 import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
-import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
-import { authenticator, getFriends } from '~/services/auth.server';
 
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
 import { TempTab } from '../../components/friends/tabs/TempTab';
+import type { loader } from '../home';
 
 const Friends = () => {
-  const users = useUsers();
   const favorites = useFavorites();
   const { friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-  const currentUserData = users.filter((user) => user.userId === currentUser?.userId)[0];
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -65,14 +61,14 @@ const Friends = () => {
   return (
     <Tabs colorScheme="green">
       <Stack pb="50px" pt={{ base: 4, md: 0 }} spacing={3} w="100%" h="100%" px={['4px', 0]}>
-        {currentUserData && (
+        {currentUser && (
           <Stack mt={7}>
-            {currentUserData.settings?.miniPlayer && (
+            {currentUser.settings?.miniPlayer && (
               <PrismaMiniPlayer
-                key={currentUserData.userId}
+                key={currentUser.userId}
                 layoutKey="MiniPlayerS"
-                user={currentUserData}
-                currentUserId={currentUser?.userId}
+                user={currentUser}
+                currentUserId={currentUser.userId}
                 index={0}
                 friendsTracks={tracks}
                 tracks={null}
@@ -124,15 +120,6 @@ const Friends = () => {
       </Stack>
     </Tabs>
   );
-};
-
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const friends = await getFriends(currentUser?.id);
-  return typedjson({
-    friends,
-  });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';

@@ -35,7 +35,7 @@ const Explore = () => {
           );
         })}
 
-        {<Outlet />}
+        <Outlet />
       </Stack>
     </Stack>
   );
