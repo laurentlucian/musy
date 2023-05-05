@@ -35,9 +35,9 @@ const Account = () => {
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const spotifyGreen = '#1DB954';
   const cancelRef = useRef<HTMLButtonElement>(null);
   if (!currentUser) return null;
+  const spotifyGreen = '#1DB954';
 
   return (
     <>

@@ -61,7 +61,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const [session, users, user, recentDb] = await Promise.all([
     authenticator.isAuthenticated(request),
-    getAllUsers().then((user) => user.filter((user) => user.userId !== id)),
+    getAllUsers(false, id),
     prisma.profile.findUnique({
       include: { ai: true, settings: { include: { profileSong: true } }, theme: true },
       where: { userId: id },

@@ -18,8 +18,7 @@ const Users = () => {
   const { revalidate } = useRevalidator();
   const search = useSearch();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-  const friends = users.filter((user) => user.userId !== currentUserId);
-  const sortedFriends = friends.sort((a, b) => {
+  const sortedFriends = users.sort((a, b) => {
     if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
       return 1;
     } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
@@ -89,8 +88,8 @@ const Users = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
-  const users = await getAllUsers(!!currentUser);
   const currentUserId = currentUser?.id;
+  const users = await getAllUsers(!!currentUser, currentUserId);
 
   return typedjson({ currentUserId, now: Date.now(), users });
 };
