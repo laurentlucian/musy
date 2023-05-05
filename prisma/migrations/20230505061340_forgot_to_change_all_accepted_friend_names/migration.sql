@@ -14,7 +14,7 @@ CREATE TABLE "new_Friend" (
     CONSTRAINT "Friend_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Friend_friendId_fkey" FOREIGN KEY ("friendId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Friend" ("id", "userId") SELECT "id", "userId" FROM "Friend";
+INSERT INTO "new_Friend" ("id", "userId", "friendId") SELECT "id", "userId", "acceptedFriendId" FROM "Friend";
 DROP TABLE "Friend";
 ALTER TABLE "new_Friend" RENAME TO "Friend";
 CREATE UNIQUE INDEX "Friend_userId_friendId_key" ON "Friend"("userId", "friendId");

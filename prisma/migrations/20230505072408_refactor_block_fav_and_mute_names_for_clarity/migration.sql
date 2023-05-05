@@ -23,7 +23,7 @@ CREATE TABLE "new_Block" (
     CONSTRAINT "Block_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Block_blockedId_fkey" FOREIGN KEY ("blockedId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Block" ("favAt", "id") SELECT "favAt", "id" FROM "Block";
+INSERT INTO "new_Block" ("favAt", "id", "userId", "blockedId") SELECT "favAt", "id", "blockId", "blockedById" FROM "Block";
 DROP TABLE "Block";
 ALTER TABLE "new_Block" RENAME TO "Block";
 CREATE UNIQUE INDEX "Block_userId_blockedId_key" ON "Block"("userId", "blockedId");
@@ -35,7 +35,7 @@ CREATE TABLE "new_Mute" (
     CONSTRAINT "Mute_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Mute_mutedId_fkey" FOREIGN KEY ("mutedId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Mute" ("favAt", "id") SELECT "favAt", "id" FROM "Mute";
+INSERT INTO "new_Mute" ("favAt", "id", "userId", "mutedId") SELECT "favAt", "id", "userId", "mutedById" FROM "Mute";
 DROP TABLE "Mute";
 ALTER TABLE "new_Mute" RENAME TO "Mute";
 CREATE UNIQUE INDEX "Mute_userId_mutedId_key" ON "Mute"("userId", "mutedId");
@@ -47,7 +47,7 @@ CREATE TABLE "new_Favorite" (
     CONSTRAINT "Favorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Favorite_favoriteId_fkey" FOREIGN KEY ("favoriteId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Favorite" ("favAt", "favoriteId", "id") SELECT "favAt", "favoriteId", "id" FROM "Favorite";
+INSERT INTO "new_Favorite" ("favAt", "favoriteId", "id", "userId", "favoriteId") SELECT "favAt", "favoriteId", "id", "favoriteId", "favoritedById" FROM "Favorite";
 DROP TABLE "Favorite";
 ALTER TABLE "new_Favorite" RENAME TO "Favorite";
 CREATE UNIQUE INDEX "Favorite_userId_favoriteId_key" ON "Favorite"("userId", "favoriteId");
