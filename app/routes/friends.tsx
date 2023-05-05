@@ -33,55 +33,56 @@ const Friends = () => {
     }
   }, [shouldRevalidate, revalidate]);
 
-  if (!friendsList) return null;
-
   const friendsTracks: Track[] = [];
-  for (let i = 0; i < friendsList.length; i++) {
-    if (
-      friendsList[i].friend.playback === null ||
-      friendsList[i].friend.playback?.track === undefined
-    ) {
-      continue;
+  if (friendsList) {
+    for (let i = 0; i < friendsList.length; i++) {
+      if (
+        friendsList[i].friend.playback === null ||
+        friendsList[i].friend.playback?.track === undefined
+      ) {
+        continue;
+      }
+      const track = {
+        albumName: friendsList[i].friend.playback!.track.albumName,
+        albumUri: friendsList[i].friend.playback!.track.albumUri,
+        artist: friendsList[i].friend.playback!.track.artist,
+        artistUri: friendsList[i].friend.playback!.track.artistUri,
+        duration: friendsList[i].friend.playback!.track.duration,
+        explicit: friendsList[i].friend.playback!.track.explicit,
+        id: friendsList[i].friend.playback!.track.id,
+        image: friendsList[i].friend.playback!.track.image,
+        link: friendsList[i].friend.playback!.track.link,
+        name: friendsList[i].friend.playback!.track.name,
+        preview_url: friendsList[i].friend.playback!.track.preview_url,
+        uri: friendsList[i].friend.playback!.track.uri,
+      };
+      friendsTracks.push(track);
     }
-    const track = {
-      albumName: friendsList[i].friend.playback!.track.albumName,
-      albumUri: friendsList[i].friend.playback!.track.albumUri,
-      artist: friendsList[i].friend.playback!.track.artist,
-      artistUri: friendsList[i].friend.playback!.track.artistUri,
-      duration: friendsList[i].friend.playback!.track.duration,
-      explicit: friendsList[i].friend.playback!.track.explicit,
-      id: friendsList[i].friend.playback!.track.id,
-      image: friendsList[i].friend.playback!.track.image,
-      link: friendsList[i].friend.playback!.track.link,
-      name: friendsList[i].friend.playback!.track.name,
-      preview_url: friendsList[i].friend.playback!.track.preview_url,
-      uri: friendsList[i].friend.playback!.track.uri,
-    };
-    friendsTracks.push(track);
   }
+
   const favsTracks: Track[] = [];
-  for (let i = 0; i < friendsList.length; i++) {
-    if (
-      friendsList[i].friend.playback === null ||
-      friendsList[i].friend.playback?.track === undefined
-    ) {
-      continue;
+
+  if (favs) {
+    for (let i = 0; i < favs.length; i++) {
+      if (favs[i].favorite.playback === null || favs[i].favorite.playback?.track === undefined) {
+        continue;
+      }
+      const track = {
+        albumName: favs[i].favorite.playback!.track.albumName,
+        albumUri: favs[i].favorite.playback!.track.albumUri,
+        artist: favs[i].favorite.playback!.track.artist,
+        artistUri: favs[i].favorite.playback!.track.artistUri,
+        duration: favs[i].favorite.playback!.track.duration,
+        explicit: favs[i].favorite.playback!.track.explicit,
+        id: favs[i].favorite.playback!.track.id,
+        image: favs[i].favorite.playback!.track.image,
+        link: favs[i].favorite.playback!.track.link,
+        name: favs[i].favorite.playback!.track.name,
+        preview_url: favs[i].favorite.playback!.track.preview_url,
+        uri: favs[i].favorite.playback!.track.uri,
+      };
+      favsTracks.push(track);
     }
-    const track = {
-      albumName: friendsList[i].friend.playback!.track.albumName,
-      albumUri: friendsList[i].friend.playback!.track.albumUri,
-      artist: friendsList[i].friend.playback!.track.artist,
-      artistUri: friendsList[i].friend.playback!.track.artistUri,
-      duration: friendsList[i].friend.playback!.track.duration,
-      explicit: friendsList[i].friend.playback!.track.explicit,
-      id: friendsList[i].friend.playback!.track.id,
-      image: friendsList[i].friend.playback!.track.image,
-      link: friendsList[i].friend.playback!.track.link,
-      name: friendsList[i].friend.playback!.track.name,
-      preview_url: friendsList[i].friend.playback!.track.preview_url,
-      uri: friendsList[i].friend.playback!.track.uri,
-    };
-    friendsTracks.push(track);
   }
 
   return (
@@ -100,7 +101,7 @@ const Friends = () => {
             />
           );
         })}
-      {friendsList.map(({ friend }, index) => {
+      {friendsList?.map(({ friend }, index) => {
         return (
           <PrismaMiniPlayer
             key={friend.userId}
@@ -132,8 +133,7 @@ const Friends = () => {
 
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const currentUserId = currentUser?.id;
+  const currentUserId = session?.user?.id;
 
   const [friends, favs, pendingFriends] = await Promise.all([
     getFriends(currentUserId),
@@ -151,34 +151,35 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 export const action = async ({ request }: ActionArgs) => {
   const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const id = currentUser?.id;
+  const currentUserId = session?.user?.id;
+
+  if (!currentUserId) return null;
 
   const data = await request.formData();
   const friendId = data.get('friendId');
   const clickStatus = data.get('clickStatus');
 
-  //if the user clicks the accept button, update the status of the friend request to accepted
   if (typeof friendId === 'string') {
     if (clickStatus === 'accepted') {
       await prisma.friend.create({
         data: {
-          friendId: id!,
+          friendId: currentUserId,
           userId: friendId,
         },
       });
 
       await prisma.friend.create({
         data: {
-          friendId: friendId!,
-          userId: id!,
+          friendId,
+          userId: currentUserId,
         },
       });
+
     } else if (clickStatus === 'rejected') {
       await prisma.friend.delete({
         where: {
           userId_friendId: {
-            friendId: id!,
+            friendId: currentUserId,
             userId: friendId,
           },
         },
