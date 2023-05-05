@@ -47,7 +47,7 @@ CREATE TABLE "new_Favorite" (
     CONSTRAINT "Favorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Favorite_favoriteId_fkey" FOREIGN KEY ("favoriteId") REFERENCES "Profile" ("userId") ON DELETE RESTRICT ON UPDATE CASCADE
 );
-INSERT INTO "new_Favorite" ("favAt", "favoriteId", "id", "userId", "favoriteId") SELECT "favAt", "favoriteId", "id", "favoriteId", "favoritedById" FROM "Favorite";
+INSERT INTO "new_Favorite" ("favAt", "favoriteId", "id", "userId") SELECT "favAt", "favoritedById", "id", "favoriteId" FROM "Favorite";
 DROP TABLE "Favorite";
 ALTER TABLE "new_Favorite" RENAME TO "Favorite";
 CREATE UNIQUE INDEX "Favorite_userId_favoriteId_key" ON "Favorite"("userId", "favoriteId");
