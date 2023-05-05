@@ -24,7 +24,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
   },
   plugins: [
-    'import',
+    // 'import',
     'sort-keys',
     'sort-destructure-keys',
     'typescript-sort-keys',

@@ -14,7 +14,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
-import { authenticator, getAllUsers, getCurrentUser } from '~/services/auth.server';
+import { authenticator, getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
@@ -59,9 +59,8 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
-  const [session, users, user, recentDb] = await Promise.all([
+  const [session, user, recentDb] = await Promise.all([
     authenticator.isAuthenticated(request),
-    getAllUsers(false, id),
     prisma.profile.findUnique({
       include: { ai: true, settings: { include: { profileSong: true } }, theme: true },
       where: { userId: id },
@@ -94,7 +93,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     following: null,
     listened,
     user,
-    users,
   });
 };
 

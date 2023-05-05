@@ -120,6 +120,7 @@ export const getCurrentUser = async (request: Request) => {
       favBy: true,
       liked: { select: { trackId: true } },
       mute: true,
+      playback: { include: { track: true } },
       settings: { include: { profileSong: true } },
       user: { select: { friendsAdded: true, friendsAddedMe: true } },
     },

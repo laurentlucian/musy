@@ -1,19 +1,21 @@
 import { useRevalidator } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
 import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
-import { typedjson } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
-import useFriends from '~/hooks/useFriends';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
+import { authenticator, getFriends } from '~/services/auth.server';
+import { prisma } from '~/services/db.server';
 
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
@@ -22,9 +24,8 @@ import { sort } from '../friends';
 
 const Friends = () => {
   const users = useUsers();
-  const friends = useFriends();
   const favorites = useFavorites();
-
+  const { friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
   const { revalidate } = useRevalidator();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
@@ -129,9 +130,17 @@ const Friends = () => {
   );
 };
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session?.user ?? null;
+  const friends = await prisma.friends
+    .findMany({
+      include: { user: true },
+      where: { friendId: currentUser?.id, status: 'accepted' },
+    })
+    .then((friends) => getFriends(!!currentUser, friends));
   return typedjson({
-    headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' },
+    friends,
   });
 };
 

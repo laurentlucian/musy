@@ -11,7 +11,7 @@ import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Activity, Track } from '~/lib/types/types';
-import { authenticator, getAllUsers, getFavorites, getFriends } from '~/services/auth.server';
+import { authenticator, getFavorites, getFriends } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
@@ -80,8 +80,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUser = session?.user ?? null;
   const currentUserId = currentUser?.id;
 
-  const [users, friends, favs, pendingRequests, like, queue] = await Promise.all([
-    getAllUsers(!!currentUser),
+  const [friends, favs, pendingRequests, like, queue] = await Promise.all([
     prisma.friends
       .findMany({
         include: { user: true },
@@ -141,7 +140,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     favs,
     friends,
     pendingRequests,
-    users,
   });
 };
 

@@ -1,21 +1,20 @@
-import type { LoaderArgs } from '@remix-run/node';
 import { useRevalidator } from '@remix-run/react';
 import { useEffect } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import { useSearch } from '~/hooks/useSearchStore';
+import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { Track } from '~/lib/types/types';
-import { authenticator, getAllUsers } from '~/services/auth.server';
 
 const Users = () => {
-  const { currentUserId, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
+  const currentUser = useSessionUser();
+  const users = useUsers();
   const search = useSearch();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const sortedFriends = users.sort((a, b) => {
@@ -74,7 +73,7 @@ const Users = () => {
             key={user.userId}
             layoutKey={'MiniPlayer' + index}
             user={user}
-            currentUserId={currentUserId}
+            currentUserId={currentUser?.userId}
             tracks={tracks}
             friendsTracks={[]}
             index={index}
@@ -83,15 +82,6 @@ const Users = () => {
       })}
     </Stack>
   );
-};
-
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const currentUserId = currentUser?.id;
-  const users = await getAllUsers(!!currentUser, currentUserId);
-
-  return typedjson({ currentUserId, now: Date.now(), users });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';

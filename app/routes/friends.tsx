@@ -12,7 +12,7 @@ import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { FriendCard } from '~/lib/types/types';
-import { authenticator, getAllUsers, getFavorites, getFriends } from '~/services/auth.server';
+import { authenticator, getFavorites, getFriends } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 export const sort = (array: FriendCard[]) => {
@@ -27,7 +27,7 @@ export const sort = (array: FriendCard[]) => {
 };
 
 const Friends = () => {
-  const { currentUserId, favs, friends, users } = useTypedLoaderData<typeof loader>();
+  const { favs, friends } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
@@ -38,8 +38,6 @@ const Friends = () => {
   sortedFriends = sortedFriends.filter((friend) => {
     return !favorites.some((favorite) => favorite.userId === friend.userId);
   });
-
-  const currentUserData = users.find((user) => user.userId === currentUserId);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
@@ -121,12 +119,12 @@ const Friends = () => {
           />
         );
       })}
-      {currentUserData && currentUserData.settings?.miniPlayer && (
+      {currentUser?.settings?.miniPlayer && (
         <Box position="fixed" bottom="100px" w="100%" pr={['8px', 'unset']}>
           <PrismaMiniPlayer
-            key={currentUserData.userId}
+            key={currentUser.userId}
             layoutKey="MiniPlayerS"
-            user={currentUserData}
+            user={currentUser}
             currentUserId={currentUser?.userId}
             index={0}
             friendsTracks={friendsTracks}
@@ -143,8 +141,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUser = session?.user ?? null;
   const currentUserId = currentUser?.id;
 
-  const [users, friends, favs, pendingRequests] = await Promise.all([
-    getAllUsers(!!currentUser),
+  const [friends, favs, pendingRequests] = await Promise.all([
     prisma.friends
       .findMany({
         include: { user: true },
@@ -170,7 +167,6 @@ export const loader = async ({ request }: LoaderArgs) => {
     favs,
     friends,
     pendingRequests,
-    users,
   });
 };
 

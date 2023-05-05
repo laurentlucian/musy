@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 
 import AddQueue from '~/components/menu/actions/AddQueue';
 import Recommend from '~/components/menu/actions/Recommend';
-import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 
 const SendList = ({
   setShow,
@@ -19,10 +19,9 @@ const SendList = ({
   trackId: string;
 }) => {
   const currentUser = useSessionUser();
+  const users = useUsers();
 
-  const allFriends = useFriends();
-
-  const queueableUsers = allFriends.filter((user) => {
+  const queueableUsers = users.filter((user) => {
     const isAllowed =
       user.settings === null ||
       user.settings.allowQueue === null ||
@@ -30,7 +29,7 @@ const SendList = ({
     return user.userId !== currentUser?.userId && isAllowed;
   });
 
-  const recommendableUsers = allFriends.filter((user) => {
+  const recommendableUsers = users.filter((user) => {
     const isAllowed =
       user.settings === null ||
       user.settings.allowRecommend === null ||
