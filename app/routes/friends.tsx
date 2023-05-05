@@ -14,25 +14,23 @@ import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { FriendCard } from '~/lib/types/types';
 import { authenticator, getAllUsers, getFavorites, getFriends } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-   
+
 export const sort = (array: FriendCard[]) => {
-    return array.sort((a, b) => {
-      if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
-        return 1;
-      } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
-        return -1;
-      }
-      return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-    });
-  };
+  return array.sort((a, b) => {
+    if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
+      return 1;
+    } else if (!!a.playback?.updatedAt && !b.playback?.updatedAt) {
+      return -1;
+    }
+    return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+  });
+};
 
 const Friends = () => {
   const { currentUserId, favs, friends, users } = useTypedLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
   const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-
-
 
   let sortedFriends = sort(friends);
   const favorites = sort(favs);
@@ -41,7 +39,7 @@ const Friends = () => {
     return !favorites.some((favorite) => favorite.userId === friend.userId);
   });
 
-  const currentUserData = users.filter((user) => user.userId === currentUserId)[0];
+  const currentUserData = users.find((user) => user.userId === currentUserId);
 
   useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
 
