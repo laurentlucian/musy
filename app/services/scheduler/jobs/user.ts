@@ -109,7 +109,7 @@ export const userQ = Queue<{ userId: string }>(
       const data: Prisma.LikedSongsCreateInput = {
         action: 'liked',
 
-        likedAt: new Date(added_at),
+        createdAt: new Date(added_at),
 
         track: {
           connectOrCreate: {

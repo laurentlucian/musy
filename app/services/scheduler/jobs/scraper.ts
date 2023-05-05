@@ -23,7 +23,7 @@ export const libraryQ = Queue<{ pages: number; userId: string }>('user-library',
       const trackDb = createTrackModel(track);
       const data: Prisma.LikedSongsCreateInput = {
         action: 'liked',
-        likedAt: new Date(added_at),
+        createdAt: new Date(added_at),
         track: {
           connectOrCreate: {
             create: trackDb,

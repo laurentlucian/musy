@@ -98,7 +98,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       .findMany({
         include: { track: true },
         orderBy: {
-          likedAt: 'desc',
+          createdAt: 'desc',
         },
         take: 50,
         where: { userId: id },

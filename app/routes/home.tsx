@@ -20,22 +20,25 @@ const Index = () => {
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
-  const tracks: Track[] = activity.map((item) => {
-    return {
-      albumName: item.track.albumName,
-      albumUri: item.track.albumUri,
-      artist: item.track.artist,
-      artistUri: item.track.artistUri,
+  if (!activity) return null;
+  let tracks: Track[] = [];
+
+  for (let i = 0; i < activity.length; i++) {
+    tracks.push({
+      albumName: activity[i].track.albumName,
+      albumUri: activity[i].track.albumUri,
+      artist: activity[i].track.artist,
+      artistUri: activity[i].track.artistUri,
       duration: 0,
-      explicit: item.track.explicit,
-      id: item.trackId,
-      image: item.track.image,
-      link: item.track.link,
-      name: item.track.name,
-      preview_url: item.track.preview_url ?? '',
-      uri: item.track.uri,
-    };
-  });
+      explicit: activity[i].track.explicit,
+      id: activity[i].trackId,
+      image: activity[i].track.image,
+      link: activity[i].track.link,
+      name: activity[i].track.name,
+      preview_url: activity[i].track.preview_url ?? '',
+      uri: activity[i].track.uri,
+    });
+  }
 
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
@@ -75,30 +78,21 @@ const Index = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUser = session?.user ?? null;
-  const currentUserId = currentUser?.id;
-
-  const [friends, favs, pendingFriends, like, queue] = await Promise.all([
-    getFriends(currentUserId),
-    getFavorites(currentUserId),
-    getPending(currentUserId),
-    prisma.likedSongs
-      .findMany({
-        include: {
-          track: {
-            include: {
-              liked: { orderBy: { likedAt: 'asc' }, select: { user: true } },
-              recent: { select: { user: true } },
-            },
+const getActivity = async (): Promise<Activity[] | null> => {
+  const [like, queue] = await Promise.all([
+    prisma.likedSongs.findMany({
+      include: {
+        track: {
+          include: {
+            liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+            recent: { select: { user: true } },
           },
-          user: true,
         },
-        orderBy: { likedAt: 'desc' },
-        take: 20,
-      })
-      .then((data) => data.map((data) => ({ ...data, createdAt: data.likedAt }))),
+        user: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    }),
     prisma.queue.findMany({
       include: {
         owner: { select: { accessToken: false, user: true } },
@@ -111,13 +105,27 @@ export const loader = async ({ request }: LoaderArgs) => {
       take: 20,
     }),
   ]);
+  if (like || queue) {
+    return [...like, ...queue]
+      .sort((a, b) => {
+        if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
+        return 0;
+      })
+      .slice(0, 20) as Activity[];
+  }
+  return null;
+};
 
-  const activity = [...like, ...queue]
-    .sort((a, b) => {
-      if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
-      return 0;
-    })
-    .slice(0, 20) as Activity[];
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUserId = session?.user?.id;
+
+  const [friends, favs, pendingFriends, activity] = await Promise.all([
+    getFriends(currentUserId),
+    getFavorites(currentUserId),
+    getPending(currentUserId),
+    getActivity(),
+  ]);
 
   return typedjson({
     activity,

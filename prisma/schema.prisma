@@ -161,8 +161,8 @@ model Queue {
 }
 
 model LikedSongs {
-  id      Int      @id @default(autoincrement())
-  likedAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
 
   track   Track  @relation(fields: [trackId], references: [id])
   trackId String

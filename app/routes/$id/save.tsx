@@ -29,7 +29,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const trackDb = createTrackModel(track);
   const data: Prisma.LikedSongsCreateInput = {
     action: 'liked',
-    likedAt: new Date(),
+    createdAt: new Date(),
     track: {
       connectOrCreate: {
         create: trackDb,
