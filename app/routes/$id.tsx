@@ -11,7 +11,6 @@ import PrivateProfile from '~/components/profile/PrivateProfile';
 import ProfileHeader from '~/components/profile/ProfileHeader';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
-import { lessThanADay, lessThanAWeek } from '~/lib/utils';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
 import { authenticator, getCurrentUser } from '~/services/auth.server';
@@ -58,6 +57,22 @@ export const meta: MetaFunction = (props) => {
 export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
+  const { searchParams } = new URL(request.url);
+  const listenedTimeframe = searchParams.get('listened');
+
+  const week = (): Date => {
+    const aWeekAgo = new Date();
+    aWeekAgo.setDate(aWeekAgo.getDate() - 7);
+    return aWeekAgo;
+  };
+
+  const day = (): Date => {
+    const aDayAgo = new Date();
+    aDayAgo.setDate(aDayAgo.getDate() - 7);
+    return aDayAgo;
+  };
+
+  const dateToCompare = listenedTimeframe === 'week' ? week() : day();
 
   const [session, user, recentDb] = await Promise.all([
     authenticator.isAuthenticated(request),
@@ -68,25 +83,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     prisma.recentSongs.findMany({
       orderBy: { playedAt: 'desc' },
       select: { playedAt: true, track: { select: { duration: true } } },
-      where: { userId: id },
+      where: { playedAt: { gt: dateToCompare }, userId: id },
     }),
   ]);
 
   if (!user || (!session && user.settings?.isPrivate))
     throw new Response('Not found', { status: 404 });
 
-  const { searchParams } = new URL(request.url);
-  const listenedTimeframe = searchParams.get('listened');
-  const filteredRecent = recentDb.filter(({ playedAt }) => {
-    const d = new Date(playedAt);
-    if (listenedTimeframe === 'week') {
-      return lessThanAWeek(d);
-    }
-    return lessThanADay(d);
-  });
-
   const listened = msToString(
-    filteredRecent.map(({ track }) => track.duration).reduce((a, b) => a + b, 0),
+    recentDb.map(({ track }) => track.duration).reduce((a, b) => a + b, 0),
   );
 
   return typedjson({
