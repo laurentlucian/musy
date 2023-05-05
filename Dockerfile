@@ -15,8 +15,9 @@ FROM base as deps
 RUN mkdir /app
 WORKDIR /app
 
-ADD package.json yarn.lock ./
-RUN yarn install --production=false
+COPY .yarn ./.yarn
+COPY .yarnrc.yml package.json yarn.lock* ./
+RUN yarn install
 
 # Setup production node_modules
 FROM base as production-deps
@@ -25,8 +26,10 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY --from=deps /app/node_modules /app/node_modules
-ADD package.json yarn.lock ./
-RUN yarn install --production=true
+COPY .yarn ./.yarn
+COPY .yarnrc.yml package.json yarn.lock* ./
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production
 
 # Build the app
 FROM base as build
