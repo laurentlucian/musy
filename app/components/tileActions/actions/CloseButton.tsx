@@ -40,6 +40,8 @@ const CloseButton = ({
       pb={['60px', 0]}
       pt={['20px', 0]}
       alignSelf="center"
+      color="music.200"
+      _hover={{ color: 'white' }}
       onClick={handleClick}
       zIndex={1}
     >
