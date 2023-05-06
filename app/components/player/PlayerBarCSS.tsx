@@ -1,12 +1,10 @@
-import { useColorModeValue, keyframes, Box, useTimeout } from '@chakra-ui/react';
+import { useColorModeValue, keyframes, Box } from '@chakra-ui/react';
 
 import type { Playback, Track } from '@prisma/client';
 
 import useNow from '~/hooks/useNow';
-import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 
 const PlayerBarCSS = ({ playback }: { playback: Playback & { track: Track } }) => {
-  const setShouldRevalidate = useRevalidatorStore((state) => state.setShouldRevalidate);
   const color = useColorModeValue('music.900', 'music.50');
   const now = useNow();
 
@@ -16,7 +14,7 @@ const PlayerBarCSS = ({ playback }: { playback: Playback & { track: Track } }) =
   const percentage = (progress / duration) * 100;
   const remaining = duration - progress;
 
-  useTimeout(() => setShouldRevalidate({ userId: playback.userId }), remaining + 1500);
+  // useTimeout(() => setShouldRevalidate({ userId: playback.userId }), remaining + 1500);
 
   const bar = keyframes`
   0% {
