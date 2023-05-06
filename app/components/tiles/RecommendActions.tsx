@@ -5,7 +5,7 @@ import { Menu, MenuButton, MenuList, MenuItem, useColorModeValue, Button } from 
 import { Archive } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
-import type { action } from '~/routes/api/removeRecommend';
+import type { action } from '~/routes/api/recommend/remove';
 
 const RecommendActions = ({ onToggle, trackId }: { onToggle: () => void; trackId: string }) => {
   const fetcher = useTypedFetcher<typeof action>();

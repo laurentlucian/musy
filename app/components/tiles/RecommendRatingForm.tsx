@@ -3,7 +3,7 @@ import { FormControl, FormLabel, useRadioGroup, HStack, useColorModeValue } from
 import { useTypedFetcher } from 'remix-typedjson';
 
 import { RadioButtons } from '~/lib/theme/components/RatingRadio';
-import type { action } from '~/routes/api/rateRecommend';
+import type { action } from '~/routes/api/recommend/rate';
 
 const options = [
   { name: '1', value: '1' },

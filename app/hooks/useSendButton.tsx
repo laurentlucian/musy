@@ -4,9 +4,9 @@ import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/components/icons/Waver';
-import type { action as addAction } from '~/routes/api/add';
-import type { action as recommendAction } from '~/routes/api/recommend';
-import type { action as sendAction } from '~/routes/api/send';
+import type { action as addAction } from '~/routes/api/queue/add';
+import type { action as sendAction } from '~/routes/api/queue/send';
+import type { action as recommendAction } from '~/routes/api/recommend/send';
 
 import { useDrawerFromId } from './useDrawer';
 import useSessionUser from './useSessionUser';
@@ -33,7 +33,7 @@ export const useRecommendData = ({ trackId, userId }: SendData) => {
   };
 
   const handleRecommend = (): void => {
-    fetcher.submit(data, { action: `/api/recommend`, method: 'post', replace: true });
+    fetcher.submit(data, { action: '/api/recommend', method: 'post', replace: true });
   };
 
   const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
