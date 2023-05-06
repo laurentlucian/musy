@@ -7,6 +7,12 @@ import { Layer } from 'iconsax-react';
 
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 
+  const options = [
+    { name: 'off', value: 'off' },
+    { name: 'on', value: 'on' },
+    { name: 'link only', value: 'link' },
+  ];
+
 const RecommendSettings = ({
   allowRecommend,
   submit,
@@ -17,11 +23,7 @@ const RecommendSettings = ({
   const onChange = (value: string) => {
     submit({ 'allow-recommend': value }, { method: 'post', replace: true });
   };
-  const options = [
-    { name: 'off', value: 'off' },
-    { name: 'on', value: 'on' },
-    { name: 'link only', value: 'link' },
-  ];
+
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue: allowRecommend,
     name: 'allow-recommend',

@@ -7,15 +7,17 @@ import { Layer } from 'iconsax-react';
 
 import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 
+const options = [
+  { name: 'off', value: 'off' },
+  { name: 'on', value: 'on' },
+  { name: 'link only', value: 'link' },
+];
+
 const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: SubmitFunction }) => {
   const onChange = (value: string) => {
     submit({ 'allow-queue': value }, { method: 'post', replace: true });
   };
-  const options = [
-    { name: 'off', value: 'off' },
-    { name: 'on', value: 'on' },
-    { name: 'link only', value: 'link' },
-  ];
+
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue: allowQueue,
     name: 'allow-queue',

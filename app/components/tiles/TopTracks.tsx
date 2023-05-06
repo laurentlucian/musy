@@ -13,6 +13,12 @@ import TileInfo from '../tile/TileInfo';
 import Card from './Card';
 import Tiles from './Tiles';
 
+const options = [
+  { name: 'All', value: 'long_term' },
+  { name: '6 mo', value: 'medium_term' },
+  { name: '1 mo', value: 'short_term' },
+];
+
 const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
@@ -20,12 +26,6 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
   const [params] = useSearchParams();
   const { id } = useParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
-
-  const options = [
-    { name: 'All', value: 'long_term' },
-    { name: '6 mo', value: 'medium_term' },
-    { name: '1 mo', value: 'short_term' },
-  ];
 
   const { getRadioProps, getRootProps } = useRadioGroup({
     defaultValue: topFilter,
