@@ -2,36 +2,21 @@ import { useSubmit } from '@remix-run/react';
 
 import { Button } from '@chakra-ui/react';
 
-const AcceptOrRejectFriendButton = ({ accept, userId }: { accept: Boolean; userId: String }) => {
+const AcceptOrRejectFriendButton = ({ accept, userId }: { accept: boolean; userId: string }) => {
   const submit = useSubmit();
 
-  const SubmitClickAccept = async () => {
+  const handleSubmit = () => {
     submit(
-      { clickStatus: 'accepted', friendId: String(userId) },
+      { clickStatus: accept ? 'accepted' : 'rejected', friendId: String(userId) },
       { method: 'post', replace: true },
     );
   };
 
-  const SubmitClickReject = async () => {
-    submit(
-      { clickStatus: 'rejected', friendId: String(userId) },
-      { method: 'post', replace: true },
-    );
-  };
-
-  if (accept) {
-    return (
-      <Button colorScheme="green" onClick={SubmitClickAccept} margin="5px">
-        Accept
-      </Button>
-    );
-  } else {
-    return (
-      <Button colorScheme="red" onClick={SubmitClickReject} margin="5px">
-        Reject
-      </Button>
-    );
-  }
+  return (
+    <Button colorScheme={accept ? 'green' : 'red'} onClick={handleSubmit} margin="5px">
+      {accept ? 'Accept' : 'Reject'}
+    </Button>
+  );
 };
 
 export default AcceptOrRejectFriendButton;
