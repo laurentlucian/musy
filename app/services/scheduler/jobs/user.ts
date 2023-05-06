@@ -87,11 +87,11 @@ export const userQ = Queue<{ userId: string }>(
       await prisma.recentSongs.deleteMany({
         where: {
           // only if it is within 10 minutes of the current song
-          playedAt: {
-            gte: new Date(playedAt.getTime() - minutesToMs(10)),
-            lte: new Date(playedAt.getTime() + minutesToMs(10)),
-          },
-          trackId: track.id,
+          // playedAt: {
+          //   gte: new Date(playedAt.getTime() - minutesToMs(10)),
+          //   lte: new Date(playedAt.getTime() + minutesToMs(10)),
+          // },
+          // trackId: track.id,
           userId,
           verifiedFromSpotify: false,
         },
