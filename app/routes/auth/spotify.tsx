@@ -1,11 +1,11 @@
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
 
-export const loader: LoaderFunction = ({ request }) => authenticate(request);
+export const loader = ({ request }: LoaderArgs) => authenticate(request);
 
-export const action: ActionFunction = ({ request }) => authenticate(request);
+export const action = ({ request }: ActionArgs) => authenticate(request);
 
 const authenticate = async (request: Request) => {
   const url = new URL(request.url);

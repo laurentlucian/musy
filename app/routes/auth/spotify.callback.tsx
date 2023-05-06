@@ -1,4 +1,4 @@
-import type { LoaderFunction } from '@remix-run/node';
+import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useCatch } from '@remix-run/react';
@@ -10,7 +10,7 @@ import { commitSession, getSession, returnToCookie } from '~/services/session.se
 
 export default () => null;
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderArgs) => {
   const returnTo: string = (await returnToCookie.parse(request.headers.get('Cookie'))) ?? '/';
   const session = await authenticator.authenticate('spotify', request).catch(async (e) => {
     if (e instanceof Response) {

@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import type { Prisma } from '@prisma/client';
@@ -85,6 +85,6 @@ export const action = async ({ request }: ActionArgs) => {
   return typedjson('Queued');
 };
 
-export const loader: LoaderFunction = () => {
+export const loader = () => {
   throw json({}, { status: 404 });
 };

@@ -1,4 +1,4 @@
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { useCatch } from '@remix-run/react';
@@ -10,11 +10,11 @@ import { prisma } from '~/services/db.server';
 import { ownerQ } from '~/services/scheduler/jobs/party';
 import { spotifyApi } from '~/services/spotify.server';
 
-export const loader: LoaderFunction = ({ params }) => {
+export const loader = ({ params }: LoaderArgs) => {
   return redirect('/' + params.id);
 };
 
-export const action: ActionFunction = async ({ params, request }) => {
+export const action = async ({ params, request }: ActionArgs) => {
   // - create party relationship
   // - play owner's currentTrack
   console.log('Joining party...');

@@ -33,21 +33,21 @@ const Playlist = () => {
   const isSmallScreen = useIsMobile();
 
   const tracks: Tracks[] = playlist.tracks.items.map((track) => {
-      return {
-        albumName: track.track?.album.name ?? 'No Tracks',
-        albumUri: track.track?.album.uri ?? '',
-        artist: track.track?.artists[0].name ?? '',
-        artistUri: track.track?.artists[0].uri ?? '',
-        duration: track.track?.duration_ms ?? 0,
-        explicit: track.track?.explicit ?? false,
-        id: track.track?.id ?? '',
-        image: track.track?.album.images[0]?.url ?? '',
-        link: track.track?.external_urls.spotify ?? '',
-        name: track.track?.name ?? '',
-        preview_url: track.track?.preview_url ?? '',
-        uri: track.track?.uri ?? '',
-      };
-    });
+    return {
+      albumName: track.track?.album.name ?? 'No Tracks',
+      albumUri: track.track?.album.uri ?? '',
+      artist: track.track?.artists[0].name ?? '',
+      artistUri: track.track?.artists[0].uri ?? '',
+      duration: track.track?.duration_ms ?? 0,
+      explicit: track.track?.explicit ?? false,
+      id: track.track?.id ?? '',
+      image: track.track?.album.images[0]?.url ?? '',
+      link: track.track?.external_urls.spotify ?? '',
+      name: track.track?.name ?? '',
+      preview_url: track.track?.preview_url ?? '',
+      uri: track.track?.uri ?? '',
+    };
+  });
 
   return (
     <Stack zIndex={5}>
@@ -106,8 +106,8 @@ const Playlist = () => {
 
 export const loader = async ({ params }: LoaderArgs) => {
   const id = params.id;
-  const playlistId = params.playlist;
   invariant(id, 'Missing params id');
+  const playlistId = params.playlist;
   invariant(playlistId, 'Missing params playlistId');
 
   const { spotify } = await spotifyApi(id).catch(async (e) => {

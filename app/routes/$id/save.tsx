@@ -29,7 +29,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   const trackDb = createTrackModel(track);
   const data: Prisma.LikedSongsCreateInput = {
     action: 'liked',
-    createdAt: new Date(),
     track: {
       connectOrCreate: {
         create: trackDb,
@@ -48,9 +47,7 @@ export const action = async ({ params, request }: ActionArgs) => {
   const [isSavedCheck] = await getSavedStatus(id, trackId);
   if (isSavedCheck !== isSaved) {
     if (isSavedCheck) {
-      await prisma.likedSongs.create({
-        data: data,
-      });
+      await prisma.likedSongs.create({ data });
     } else {
       await prisma.likedSongs.delete({
         where: {

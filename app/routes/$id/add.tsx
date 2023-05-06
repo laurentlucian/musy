@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderFunction } from '@remix-run/node';
+import type { ActionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 
@@ -95,6 +95,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   }
 };
 
-export const loader: LoaderFunction = () => {
+export const loader = () => {
   throw json({}, { status: 404 });
 };
