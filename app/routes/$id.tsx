@@ -60,15 +60,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { searchParams } = new URL(request.url);
   const listenedTimeframe = searchParams.get('listened');
 
-  const week = (): Date => {
+  const week = () => {
     const aWeekAgo = new Date();
     aWeekAgo.setDate(aWeekAgo.getDate() - 7);
     return aWeekAgo;
   };
 
-  const day = (): Date => {
+  const day = () => {
     const aDayAgo = new Date();
-    aDayAgo.setDate(aDayAgo.getDate() - 7);
+    aDayAgo.setDate(aDayAgo.getDate() - 1);
     return aDayAgo;
   };
 
