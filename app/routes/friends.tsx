@@ -1,6 +1,4 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
-import { useRevalidator } from '@remix-run/react';
-import { useEffect } from 'react';
 
 import { Box, Stack } from '@chakra-ui/react';
 
@@ -8,30 +6,17 @@ import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
-import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
-import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Friends = () => {
   const { favs, friends } = useTypedLoaderData<typeof loader>();
-  const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
-  const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
 
   const friendsList = friends?.filter(({ friend }) => {
     return !favs?.some(({ favorite }) => favorite.userId === friend.userId);
   });
-
-  useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
-
-  useEffect(() => {
-    if (shouldRevalidate) {
-      console.log('shouldRevalidate', shouldRevalidate);
-      // revalidate();
-    }
-  }, [shouldRevalidate, revalidate]);
 
   const friendsTracks: Track[] = [];
   if (friendsList) {
@@ -174,7 +159,6 @@ export const action = async ({ request }: ActionArgs) => {
           userId: currentUserId,
         },
       });
-
     } else if (clickStatus === 'rejected') {
       await prisma.friend.delete({
         where: {

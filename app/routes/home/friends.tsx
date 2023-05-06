@@ -1,6 +1,4 @@
-import { useRevalidator } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
-import { useEffect } from 'react';
 
 import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
@@ -10,9 +8,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
-import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
-import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { authenticator, getFriends } from '~/services/auth.server';
 
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
@@ -23,17 +19,6 @@ const Friends = () => {
   const favorites = useFavorites();
   const { friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
-  const { revalidate } = useRevalidator();
-  const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
-
-  useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
-
-  useEffect(() => {
-    if (shouldRevalidate) {
-      console.log('shouldRevalidate', shouldRevalidate);
-      // revalidate();
-    }
-  }, [shouldRevalidate, revalidate]);
 
   const tracks: Track[] = [];
   if (friends) {

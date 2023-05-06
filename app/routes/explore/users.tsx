@@ -1,22 +1,15 @@
-import { useRevalidator } from '@remix-run/react';
-import { useEffect } from 'react';
-
 import { Stack } from '@chakra-ui/react';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
-import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import { useSearch } from '~/hooks/useSearchStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-import useVisibilityChange from '~/hooks/useVisibilityChange';
 import type { Track } from '~/lib/types/types';
 
 const Users = () => {
-  const { revalidate } = useRevalidator();
   const currentUser = useSessionUser();
   const users = useUsers();
   const search = useSearch();
-  const shouldRevalidate = useRevalidatorStore((state) => state.shouldRevalidate);
   const sortedFriends = users.sort((a, b) => {
     if (!!b.playback?.updatedAt && !a.playback?.updatedAt) {
       return 1;
@@ -33,15 +26,6 @@ const Users = () => {
       return user.name.toLowerCase().includes(search.toLowerCase());
     }
   });
-
-  useVisibilityChange((isVisible) => isVisible === true && !shouldRevalidate && revalidate());
-
-  useEffect(() => {
-    if (shouldRevalidate) {
-      console.log('shouldRevalidate', shouldRevalidate);
-      // revalidate();
-    }
-  }, [shouldRevalidate, revalidate]);
 
   const tracks: Track[] = [];
   for (let i = 0; i < sortedFriends.length; i++) {

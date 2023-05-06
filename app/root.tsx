@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
+  useRevalidator,
 } from '@remix-run/react';
 import { useContext, useEffect } from 'react';
 
@@ -28,6 +29,7 @@ import { getAllUsers, getCurrentUser, getTheme } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
+import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
@@ -35,6 +37,9 @@ import { iosSplashScreens } from './lib/utils';
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
+  const { revalidate } = useRevalidator();
+
+  useVisibilityChange((isVisible) => isVisible && revalidate());
 
   return (
     <Document>
