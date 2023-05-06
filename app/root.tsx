@@ -25,7 +25,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
-import { getAllUsers, getCurrentUser, getTheme } from '~/services/auth.server';
+import { authenticator, getAllUsers, getCurrentUser, getTheme } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/tileActions/ExpandedTile';
@@ -66,13 +66,13 @@ const App = () => {
 };
 
 export const loader = async ({ params, request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
   const cookie = request.headers.get('cookie') ?? '';
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
-  const { id } = params;
   const [currentUser, theme, users] = await Promise.all([
     getCurrentUser(request),
-    getTheme(id),
-    getAllUsers(!!cookie),
+    getTheme(params.id),
+    getAllUsers(!!cookie, session?.user?.id),
   ]);
 
   return typedjson({ cookie, currentUser, isMobile, theme, users });
