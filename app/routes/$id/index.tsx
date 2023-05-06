@@ -115,29 +115,23 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   if (cachedDataPlaylist) {
     playlists = JSON.parse(cachedDataPlaylist) as SpotifyApi.PlaylistObjectSimplified[];
   } else {
-    [playlists] = await Promise.all([
-      spotify
-        .getUserPlaylists(user.userId, { limit: 50 })
-        .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
-        .catch(() => []),
-      // set cache for 30 minutes
-      redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30),
-    ]);
+    playlists = await spotify
+      .getUserPlaylists(user.userId, { limit: 50 })
+      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === id))
+      .catch(() => []);
+    await redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30);
   }
 
   if (cachedDataTop) {
     top = JSON.parse(cachedDataTop) as SpotifyApi.TrackObjectFull[];
   } else {
-    [top] = await Promise.all([
-      spotify
-        .getMyTopTracks({ limit: 50, time_range: topFilter })
-        .then((data) => data.body.items)
-        .catch(() => []),
-      redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24),
-    ]);
+    top = await spotify
+      .getMyTopTracks({ limit: 50, time_range: topFilter })
+      .then((data) => data.body.items)
+      .catch(() => []);
+    await redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24);
   }
-  console.log('AAAAAAAAAAAAAA', { top });
-  console.log('heeeey');
+
   return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });
 };
 
