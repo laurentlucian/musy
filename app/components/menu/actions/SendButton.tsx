@@ -2,50 +2,62 @@ import { useParams } from '@remix-run/react';
 
 import { IconButton, useColorModeValue } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
-import { useTypedFetcher } from 'remix-typedjson';
-
 import useIsMobile from '~/hooks/useIsMobile';
-import { useSendData } from '~/hooks/useSendButton';
-import useSessionUser from '~/hooks/useSessionUser';
-import type { action } from '~/routes/$id/add';
-import type { action as actionB } from '~/routes/$id/recommend';
+import type { SendData } from '~/hooks/useSendButton';
+import { useQueueToFriendData, useRecommendData } from '~/hooks/useSendButton';
 
-const SendButton = ({
-  sendType = 'queue',
-  sendingToId,
-  track,
-}: {
-  sendType?: 'queue' | 'recommend';
-  sendingToId?: string;
-  track: Track;
-}) => {
-  const fetcherQ = useTypedFetcher<typeof action>();
-  const fetcherR = useTypedFetcher<typeof actionB>();
+const RecommendButton = ({ trackId, userId }: SendData) => {
   const isSmallScreen = useIsMobile();
-  const currentUser = useSessionUser();
-  const { id } = useParams();
-  const profileId = id ?? sendingToId ?? '';
+  const { handleRecommend, icon } = useRecommendData({ trackId, userId });
   const color = useColorModeValue(`${isSmallScreen ? 'music.200' : 'music.800'}`, 'music.200');
-  const { handleSendButton, icon } = useSendData({
-    fetcher: sendType === 'queue' ? fetcherQ : fetcherR,
-    fromUserId: currentUser?.userId,
-    profileId,
-    sendType,
-    track,
-    trackId: track.id,
-  });
 
   return (
     <IconButton
-      onClick={handleSendButton}
+      onClick={handleRecommend}
       pos="relative"
       variant="ghost"
       color={color}
       icon={icon}
       _hover={{ color: 'white' }}
-      aria-label={sendType ? 'add to this friends queue' : 'recommend to this friend'}
+      aria-label="recommend to this friend"
     />
+  );
+};
+
+const QueueButton = ({ trackId, userId }: SendData) => {
+  const isSmallScreen = useIsMobile();
+  const { addToFriendsQueue, icon } = useQueueToFriendData({ trackId, userId });
+  const color = useColorModeValue(`${isSmallScreen ? 'music.200' : 'music.800'}`, 'music.200');
+
+  return (
+    <IconButton
+      onClick={addToFriendsQueue}
+      pos="relative"
+      variant="ghost"
+      color={color}
+      icon={icon}
+      _hover={{ color: 'white' }}
+      aria-label="add to this friends queue"
+    />
+  );
+};
+
+const SendButton = ({
+  sendType = 'queue',
+  sendingToId,
+  trackId,
+}: {
+  sendType?: 'queue' | 'recommend';
+  sendingToId?: string;
+  trackId: string;
+}) => {
+  const { id } = useParams();
+  const toId = sendingToId ?? id ?? '';
+
+  return sendType === 'queue' ? (
+    <QueueButton trackId={trackId} userId={toId} />
+  ) : (
+    <RecommendButton trackId={trackId} userId={toId} />
   );
 };
 

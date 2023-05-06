@@ -47,7 +47,7 @@ const Search = () => {
               tracks={trackz}
               index={index}
               layoutKey="search"
-              action={<SendButton track={track} />} // refactor search to recommend and queue
+              action={<SendButton trackId={track.id} />} // refactor search to recommend and queue
               image={<TileImage />}
               info={<TileInfo />}
             />

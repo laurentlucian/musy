@@ -7,7 +7,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { action } from '~/routes/$id/recommend';
+import type { action } from '~/routes/api/recommend';
 
 import Waver from '../../icons/Waver';
 
