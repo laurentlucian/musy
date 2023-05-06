@@ -81,7 +81,6 @@ const Friends = () => {
               user={favorite}
               currentUserId={currentUser?.userId}
               tracks={favsTracks}
-              friendsTracks={[]}
               index={index}
             />
           );
@@ -94,7 +93,6 @@ const Friends = () => {
             user={friend}
             currentUserId={currentUser?.userId}
             tracks={friendsTracks}
-            friendsTracks={[]}
             index={index}
           />
         );
@@ -107,8 +105,7 @@ const Friends = () => {
             user={currentUser}
             currentUserId={currentUser?.userId}
             index={0}
-            friendsTracks={friendsTracks}
-            tracks={null}
+            tracks={friendsTracks}
           />
         </Box>
       )}

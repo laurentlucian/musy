@@ -17,8 +17,8 @@ export const askGPT = async (content: string) => {
 
 export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
   const {
-    name,
     artists: [{ name: artist }],
+    name,
   } = track;
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
 
@@ -40,8 +40,8 @@ export const getMood = async (recent: SpotifyApi.UsersRecentlyPlayedTracksRespon
 
 export const getStory = async (track: SpotifyApi.SingleTrackResponse) => {
   const {
-    name,
     artists: [{ name: artist }],
+    name,
   } = track;
 
   const prompt = `Based on the song ${name} by ${artist}, craft me a scenario. The scenario should be atmospheric, vivid, and transport the reader to a specific place and vibe. 

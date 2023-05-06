@@ -59,7 +59,6 @@ const Users = () => {
             user={user}
             currentUserId={currentUser?.userId}
             tracks={tracks}
-            friendsTracks={[]}
             index={index}
           />
         );

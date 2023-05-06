@@ -50,7 +50,6 @@ export const FavoriteTab = ({ favorites }: Props) => {
             user={user}
             currentUserId={currentUser?.userId}
             tracks={tracks}
-            friendsTracks={[]}
             index={index}
           />
         );

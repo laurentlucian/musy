@@ -3,9 +3,12 @@ import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
 
-export const loader = ({ request }: LoaderArgs) => authenticate(request);
+const isRedirect = (response: Response) => {
+  if (response.status < 300 || response.status >= 400) return false;
+  return response.headers.has('Location');
+};
 
-export const action = ({ request }: ActionArgs) => authenticate(request);
+export default () => null;
 
 const authenticate = async (request: Request) => {
   const url = new URL(request.url);
@@ -25,7 +28,6 @@ const authenticate = async (request: Request) => {
   }
 };
 
-const isRedirect = (response: Response) => {
-  if (response.status < 300 || response.status >= 400) return false;
-  return response.headers.has('Location');
-};
+export const loader = ({ request }: LoaderArgs) => authenticate(request);
+
+export const action = ({ request }: ActionArgs) => authenticate(request);

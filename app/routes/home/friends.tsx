@@ -56,8 +56,7 @@ const Friends = () => {
                 user={currentUser}
                 currentUserId={currentUser.userId}
                 index={0}
-                friendsTracks={tracks}
-                tracks={null}
+                tracks={tracks}
               />
             )}
             <TabList>

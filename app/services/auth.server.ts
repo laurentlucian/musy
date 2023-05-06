@@ -133,7 +133,7 @@ export const getCurrentUser = async (request: Request) => {
   return data;
 };
 
-type AllUsers = (Profile & {
+export type AllUsers = (Profile & {
   playback:
     | (Playback & {
         track: Track & {
@@ -149,18 +149,17 @@ type AllUsers = (Profile & {
   settings: Settings | null;
 })[];
 
-export const getAllUsers = async (
-  isAuthenticated = false,
-  id: string | null = null,
-): Promise<AllUsers> => {
+export const getAllUsers = async (isAuthenticated = false, id: string | null = null) => {
   const restrict = !isAuthenticated
     ? { user: { settings: { isNot: { isPrivate: true } } } }
     : undefined;
-  let allUsers: AllUsers;
 
   if (id) {
-    allUsers = await prisma.profile.findMany({
+    return prisma.profile.findMany({
       include: {
+        friendsList: {
+          where: { friendId: id },
+        },
         playback: {
           include: {
             track: {
@@ -176,27 +175,18 @@ export const getAllUsers = async (
       orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
       where: { user: { revoked: false, ...restrict, NOT: { id } } },
     });
-    // console.log('ALL USERS: ', allUsers);
-    return allUsers;
   } else {
-    allUsers = await prisma.profile.findMany({
+    return prisma.profile.findMany({
       include: {
         playback: {
           include: {
-            track: {
-              include: {
-                liked: { select: { user: true } },
-                recent: { select: { user: true } },
-              },
-            },
+            track: true,
           },
         },
         settings: true,
       },
-      // orderBy: [{  }],
       where: { user: { revoked: false, ...restrict } },
     });
-    return allUsers;
   }
 };
 

@@ -46,7 +46,6 @@ export const FriendsTabs = ({ friends, tracks }: Props) => {
                     user={friend}
                     currentUserId={currentUser?.userId}
                     tracks={tracks}
-                    friendsTracks={[]}
                     index={index}
                   />
                 );
