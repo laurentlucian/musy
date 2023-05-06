@@ -1,16 +1,8 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
-
 import { redirect } from 'remix-typedjson';
 
-const Index = () => {
-  // @todo landing page
-  return null;
-};
+const Index = () => null; // @todo landing page
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
-  return redirect(isMobile ? '/home' : '/home/friends');
-};
+export const loader = () => redirect('/home');
 
 export default Index;
 

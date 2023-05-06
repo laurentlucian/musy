@@ -1,28 +1,29 @@
-import { Outlet } from '@remix-run/react';
-
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
 import MobileActivityTile from '~/components/activity/MobileActivityTile';
+import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import useUsers from '~/hooks/useUsers';
 import type { Activity, Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
+  const users = useUsers();
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   if (!activity) return null;
-  let tracks: Track[] = [];
+  let activities: Track[] = [];
 
   for (let i = 0; i < activity.length; i++) {
-    tracks.push({
+    activities.push({
       albumName: activity[i].track.albumName,
       albumUri: activity[i].track.albumUri,
       artist: activity[i].track.artist,
@@ -38,6 +39,30 @@ const Index = () => {
     });
   }
 
+  let playbacks: Track[] = [];
+
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].playback === null || users[i].playback?.track === undefined) {
+      continue;
+    }
+    const track = {
+      albumName: users[i].playback!.track.albumName,
+      albumUri: users[i].playback!.track.albumUri,
+      artist: users[i].playback!.track.artist,
+      artistUri: users[i].playback!.track.artistUri,
+      duration: 0,
+      explicit: users[i].playback!.track.explicit,
+      id: users[i].playback!.trackId,
+      image: users[i].playback!.track.image,
+      link: users[i].playback!.track.link,
+
+      name: users[i].playback!.track.name,
+      preview_url: users[i].playback!.track.preview_url ?? '',
+      uri: users[i].playback!.track.uri,
+    };
+    playbacks.push(track);
+  }
+
   return (
     <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
       <Stack px={['5px', 0]}>
@@ -49,29 +74,40 @@ const Index = () => {
                   key={item.id}
                   layoutKey={'mActivity' + index}
                   activity={item}
-                  tracks={tracks}
+                  tracks={activities}
                   index={index}
                 />
               );
             })}
           </Stack>
         ) : (
-          <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
-            {activity.map((item, index) => {
-              return (
-                <ActivityTile
-                  key={item.id}
-                  layoutKey={'mActivity' + index}
-                  activity={item}
-                  tracks={tracks}
-                  index={index}
-                />
-              );
-            })}
-          </Tiles>
+          <>
+            <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
+              {activity.map((item, index) => {
+                return (
+                  <ActivityTile
+                    key={item.id}
+                    layoutKey={'mActivity' + index}
+                    activity={item}
+                    tracks={activities}
+                    index={index}
+                  />
+                );
+              })}
+            </Tiles>
+            {users.map((user, index) => (
+              <PrismaMiniPlayer
+                key={user.userId}
+                layoutKey={'MiniPlayerF' + index}
+                user={user}
+                currentUserId={currentUser?.userId}
+                tracks={playbacks}
+                index={index}
+              />
+            ))}
+          </>
         )}
       </Stack>
-      <Outlet />
     </Stack>
   );
 };

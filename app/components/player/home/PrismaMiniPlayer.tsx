@@ -1,10 +1,21 @@
 import { Link, useTransition } from '@remix-run/react';
 
-import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  HStack,
+  Image,
+  Stack,
+  Text,
+  useColorModeValue,
+  Box,
+  Spacer,
+} from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
+import AddFriendsButton from '~/components/profile/AddFriendsButton';
 import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Friend, Track } from '~/lib/types/types';
@@ -16,21 +27,13 @@ import QuickActions from './QuickActions';
 
 type PlayerProps = {
   currentUserId: string | undefined;
-  friendsTracks: Track[];
   index: number;
   layoutKey: string;
-  tracks: Track[] | null;
+  tracks: Track[];
   user: Friend;
 };
 
-const PrismaMiniPlayer = ({
-  currentUserId,
-  friendsTracks,
-  index,
-  layoutKey,
-  tracks,
-  user,
-}: PlayerProps) => {
+const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -44,6 +47,8 @@ const PrismaMiniPlayer = ({
   const track = playback?.track;
   const que = user?.settings?.allowQueue;
   const recommend = user?.settings?.allowRecommend;
+
+  const isOwnProfile = currentUserId === user.userId;
 
   useDrawerTrack();
 
@@ -64,11 +69,25 @@ const PrismaMiniPlayer = ({
     </Text>
   );
 
+  const Actions = (
+    <Flex justify={track ? 'start' : 'end'} align="baseline" w="100%" pr="15px">
+      {!isOwnProfile && <AddFriendsButton id={user.userId} />}
+      <QuickActions
+        name={name}
+        image={user.image}
+        profileId={user.userId}
+        que={que}
+        recommend={recommend}
+      />
+      {!isSmallScreen && loading && <Waver />}
+    </Flex>
+  );
+
   const User = (
-    <Stack justifySelf="left">
-      <Stack direction="row" w="100%">
+    <Stack w="100%" justifySelf="left">
+      <HStack width="100%">
         {ProfilePic}
-        <HStack>
+        <Flex>
           <Stack>
             {isSmallScreen && !user.bio && loading && track ? (
               <Stack ml="8px">
@@ -87,18 +106,10 @@ const PrismaMiniPlayer = ({
               </Stack>
             ) : null}
           </Stack>
-          {!isSmallScreen && loading && <Waver />}
-        </HStack>
-      </Stack>
-      {track && currentUserId !== user.userId ? (
-        <QuickActions
-          name={name}
-          image={user.image}
-          profileId={user.userId}
-          que={que}
-          recommend={recommend}
-        />
-      ) : null}
+        </Flex>
+        {!track && Actions}
+      </HStack>
+      {track && Actions}
     </Stack>
   );
   const Activity = (
@@ -145,8 +156,7 @@ const PrismaMiniPlayer = ({
             maxW={track ? ['100px', '120px'] : '60px'}
             onClick={(e) => {
               e.preventDefault();
-              track &&
-                onOpen(track, user.userId, layoutKey, tracks ?? [track, ...friendsTracks], index);
+              track && onOpen(track, user.userId, layoutKey, tracks, index);
             }}
           />
         </HStack>

@@ -198,7 +198,7 @@ const SendModal = ({
       <ModalOverlay />
       <ModalContent w={['300px', '800px']} bg={bg} color={color}>
         <ModalHeader>
-          {title} to {name}
+          {title} {/* to {name} */}
           <ModalCloseButton mt="8px" />
           {CycleButton}
         </ModalHeader>

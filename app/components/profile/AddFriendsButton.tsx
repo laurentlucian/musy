@@ -1,12 +1,18 @@
 import { useSubmit, useParams } from '@remix-run/react';
 
-import { Button, Text } from '@chakra-ui/react';
+import { Button, IconButton, Text, useColorModeValue } from '@chakra-ui/react';
+
+import { UserAdd, UserMinus, UserTick } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
-const AddFriendsButton = () => {
+import Tooltip from '../Tooltip';
+
+const AddFriendsButton = (props: { id?: string }) => {
+  const color = useColorModeValue('#161616', '#EEE6E2');
   const currentUser = useSessionUser();
-  const { id } = useParams();
+  const params = useParams();
+  const id = props.id || params.id;
   const isPending = currentUser?.pendingList.find((user) => id === user.pendingFriendId);
   const isAcceptable = currentUser?.pendingListUserIsOn.find((item) => {
     return id === item.pendingFriendId; // someone double check this I am sleepy (will check later tho)
@@ -15,24 +21,42 @@ const AddFriendsButton = () => {
 
   const submit = useSubmit();
 
-  const handleClick = () => {
-    submit({ friendStatus: 'requested' }, { method: 'post', replace: true });
-  };
+  const statusText = isAccepted
+    ? 'friends'
+    : isPending
+    ? 'pending'
+    : isAcceptable
+    ? 'accept'
+    : 'add friend';
 
-  const FriendsButtonText = isPending ? (
-    <Text>Pending</Text>
+  const icon = isAccepted ? (
+    <UserTick />
+  ) : isPending ? (
+    <UserMinus />
   ) : isAcceptable ? (
-    <Text>Accept</Text>
+    <UserAdd />
   ) : (
-    <Text>Add Friend</Text>
+    <UserAdd />
   );
 
-  if (isAccepted) return null;
-
   return (
-    <Button colorScheme="whiteAlpha" size="sm" onClick={handleClick} isDisabled={!!isPending}>
-      {FriendsButtonText}
-    </Button>
+    <Tooltip label={statusText}>
+      <IconButton
+        aria-label={isAcceptable ? 'accept' : 'add friend'}
+        variant="ghost"
+        icon={icon}
+        color={isAccepted ? 'spotify.green' : color}
+        _hover={{ color: 'spotify.green' }}
+        onClick={(e) => {
+          e.preventDefault();
+          submit(
+            { friendStatus: 'requested' },
+            { action: `/${id}`, method: 'post', replace: true },
+          );
+        }}
+        isDisabled={!!isPending || !!isAccepted}
+      />
+    </Tooltip>
   );
 };
 
