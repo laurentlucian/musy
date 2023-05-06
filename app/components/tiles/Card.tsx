@@ -1,5 +1,3 @@
-import { useParams } from '@remix-run/react';
-
 import { Image, Stack, Text, Button } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
@@ -9,7 +7,7 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
-import type { action } from '~/routes/$id/removeRecommend';
+import type { action } from '~/routes/api/removeRecommend';
 
 import SpotifyLogo from '../icons/SpotifyLogo';
 
@@ -28,17 +26,19 @@ const Card = ({ index, layoutKey, recommend, track, tracks, userId }: CardProps)
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const drawerTrack = track;
   const fetcher = useTypedFetcher<typeof action>();
-  const { id: profileId } = useParams();
-  const id = track.id;
   const removeFromRecommended = () => {
-    const action = `/${profileId}/removeRecommend`;
-    fetcher.submit({ id }, { action, method: 'post', replace: true });
+    fetcher.submit(
+      { trackId: track.id },
+      { action: '/api/removeRecommend', method: 'post', replace: true },
+    );
   };
+
   const SongTitle = (
     <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
       {track.name}
     </Text>
   );
+
   const SongImage = (
     <Image
       boxSize={['85px', '100px']}
@@ -50,6 +50,7 @@ const Card = ({ index, layoutKey, recommend, track, tracks, userId }: CardProps)
       onClick={() => onClick(drawerTrack, userId, layoutKey, tracks, index)}
     />
   );
+
   const ArtistName = (
     <Stack direction="row">
       {track.explicit && <Image src={explicitImage} mr={-1} w="19px" />}
@@ -58,11 +59,13 @@ const Card = ({ index, layoutKey, recommend, track, tracks, userId }: CardProps)
       </Text>
     </Stack>
   );
+
   const AlbumName = (
     <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
       {track.albumName}
     </Text>
   );
+
   const TitleArtistAlbumName = (
     <Stack>
       {SongTitle}
@@ -74,24 +77,22 @@ const Card = ({ index, layoutKey, recommend, track, tracks, userId }: CardProps)
   );
 
   return (
-    <>
-      <Stack
-        flex="0 0 200px"
-        cursor="pointer"
-        direction="row"
-        w={['100vw', '450px', '750px', '1100px']}
-        py="5px"
-        pl="5px"
-        justify="space-between"
-      >
-        <Stack direction="row">
-          {SongImage}
-          {TitleArtistAlbumName}
-        </Stack>
-        {recommend && <Button onClick={removeFromRecommended}>-</Button>}
-        <SpotifyLogo icon={isSmallScreen} alignSelf={['end', 'unset']} />
+    <Stack
+      flex="0 0 200px"
+      cursor="pointer"
+      direction="row"
+      w={['100vw', '450px', '750px', '1100px']}
+      py="5px"
+      pl="5px"
+      justify="space-between"
+    >
+      <Stack direction="row">
+        {SongImage}
+        {TitleArtistAlbumName}
       </Stack>
-    </>
+      {recommend && <Button onClick={removeFromRecommended}>-</Button>}
+      <SpotifyLogo icon={isSmallScreen} alignSelf={['end', 'unset']} />
+    </Stack>
   );
 };
 

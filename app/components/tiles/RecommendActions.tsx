@@ -1,4 +1,3 @@
-import { useParams } from '@remix-run/react';
 import { BarChart, MoreHorizontal } from 'react-feather';
 
 import { Menu, MenuButton, MenuList, MenuItem, useColorModeValue, Button } from '@chakra-ui/react';
@@ -6,16 +5,15 @@ import { Menu, MenuButton, MenuList, MenuItem, useColorModeValue, Button } from 
 import { Archive } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
-import type { action } from '~/routes/$id/removeRecommend';
+import type { action } from '~/routes/api/removeRecommend';
 
 const RecommendActions = ({ onToggle, trackId }: { onToggle: () => void; trackId: string }) => {
-  const { id } = useParams();
   const fetcher = useTypedFetcher<typeof action>();
 
   const archiveRecommend = () => {
-    const action = `/${id}/removeRecommend`;
-    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
+    fetcher.submit({ trackId }, { action: '/api/removeRecommend', method: 'post', replace: true });
   };
+
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.700');
 
