@@ -68,7 +68,12 @@ const SendList = ({
           w={['100vw', '300px']}
         >
           {recommendableUsers.map((user) => (
-            <Recommend key={user.userId} user={user} />
+            <Recommend
+              key={user.userId}
+              userId={user.userId}
+              userImage={user.image}
+              username={user.name}
+            />
           ))}
         </Box>
       )}

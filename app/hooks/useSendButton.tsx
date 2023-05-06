@@ -21,7 +21,7 @@ export type SendData = {
   username?: string;
 };
 
-export const useRecommendData = ({ trackId, userId }: SendData) => {
+export const useRecommendData = ({ trackId, userId, username }: SendData) => {
   const currentUserId = useSessionUser()?.userId ?? '';
   const fetcher = useTypedFetcher<typeof recommendAction>();
 
@@ -50,7 +50,11 @@ export const useRecommendData = ({ trackId, userId }: SendData) => {
     <Send2 variant="Bold" />
   );
 
-  return { handleRecommend, icon, isAdding, isDone, isError };
+  const qText = username?.split(/[ .]/)[0];
+
+  const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
+
+  return { Text, handleRecommend, icon, isAdding, isDone, isError, text };
 };
 
 export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
