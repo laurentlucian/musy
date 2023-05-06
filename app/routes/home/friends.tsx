@@ -1,22 +1,23 @@
 import { useRevalidator } from '@remix-run/react';
+import type { LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
 import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
-import { useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import { useRevalidatorStore } from '~/hooks/useRevalidatorStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useVisibilityChange from '~/hooks/useVisibilityChange';
+import { authenticator, getFriends } from '~/services/auth.server';
 
 import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
 import { TempTab } from '../../components/friends/tabs/TempTab';
-import type { loader } from '../home';
 
 const Friends = () => {
   const favorites = useFavorites();
@@ -120,6 +121,15 @@ const Friends = () => {
       </Stack>
     </Tabs>
   );
+};
+
+export const loader = async ({ request }: LoaderArgs) => {
+  const session = await authenticator.isAuthenticated(request);
+  const currentUser = session?.user ?? null;
+  const friends = await getFriends(currentUser?.id);
+  return typedjson({
+    friends,
+  });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';

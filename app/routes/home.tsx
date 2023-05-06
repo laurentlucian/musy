@@ -1,4 +1,3 @@
-import type { LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack, useColorModeValue } from '@chakra-ui/react';
@@ -11,7 +10,6 @@ import Tiles from '~/components/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { Activity, Track } from '~/lib/types/types';
-import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
@@ -116,23 +114,11 @@ const getActivity = async (): Promise<Activity[] | null> => {
   return null;
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUserId = session?.user?.id;
-
-  const [friends, favs, pendingFriends, activity] = await Promise.all([
-    getFriends(currentUserId),
-    getFavorites(currentUserId),
-    getPending(currentUserId),
-    getActivity(),
-  ]);
+export const loader = async () => {
+  const activity = await getActivity();
 
   return typedjson({
     activity,
-    currentUserId,
-    favs,
-    friends,
-    pendingFriends,
   });
 };
 
