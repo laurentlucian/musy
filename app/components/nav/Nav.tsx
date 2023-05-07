@@ -11,7 +11,7 @@ import {
   Link as ChakraLink,
 } from '@chakra-ui/react';
 
-import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 

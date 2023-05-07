@@ -20,7 +20,7 @@ import {
 
 import type { Profile } from '@prisma/client';
 
-import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 import type { Track } from '~/lib/types/types';

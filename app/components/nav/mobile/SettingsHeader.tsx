@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { Button, Divider, Heading, HStack, Stack, useColorModeValue } from '@chakra-ui/react';
 
-import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 
 const SettingsHeader = () => {
   const [show, setShow] = useState(0);

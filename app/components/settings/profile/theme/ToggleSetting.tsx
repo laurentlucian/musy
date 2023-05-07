@@ -6,7 +6,7 @@ import type { Theme } from '@prisma/client';
 
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useSetShowSave } from '~/hooks/useSave';
+import { useSetShowSave } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const ToggleSetting = ({

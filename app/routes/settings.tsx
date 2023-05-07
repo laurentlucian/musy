@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react';
 import { Link, Stack, useColorModeValue, Divider, Box } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
+import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 
 const Settings = () => {
   const isSmallScreen = useIsMobile();

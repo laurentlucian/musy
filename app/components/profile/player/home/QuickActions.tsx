@@ -16,8 +16,6 @@ import {
 
 import { Send2 } from 'iconsax-react';
 
-import { useMobileDrawerActions } from '~/hooks/useMobileDrawer';
-
 import SendModal from './SendModal';
 
 const QuickActions = ({
@@ -38,15 +36,9 @@ const QuickActions = ({
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('music.200', 'music.900');
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { hideButton, showButton } = useMobileDrawerActions();
   const onClickMenuItem = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     onOpen();
-    hideButton();
-  };
-  const onCloseSendModal = () => {
-    onClose();
-    showButton();
   };
 
   return (
@@ -118,7 +110,7 @@ const QuickActions = ({
       </Menu>
       <SendModal
         isOpen={isOpen}
-        onClose={onCloseSendModal}
+        onClose={onClose}
         profileId={profileId}
         name={name}
         title={title}

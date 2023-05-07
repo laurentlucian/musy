@@ -8,7 +8,7 @@ import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chak
 import type { Theme } from '@prisma/client';
 import { motion, useDragControls } from 'framer-motion';
 
-import { useSetShowSave } from '~/hooks/useSave';
+import { useSetShowSave } from '~/hooks/useSaveTheme';
 
 import ColorPicker from './ColorPicker';
 

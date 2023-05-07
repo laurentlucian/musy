@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { Box, Divider, HStack, IconButton, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { ArrowLeft2 } from 'iconsax-react';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-import useParamUser from '~/hooks/useParamUser';
-import useParamUsersTheme from '~/hooks/useParamUsersTheme';
+import { useThemeBg } from '~/hooks/useTheme';
+import type { loader } from '~/routes/$id';
 
 import UserMenu from '../UserMenu';
 
@@ -15,14 +16,10 @@ const ProfileHeader = () => {
   const [show, setShow] = useState(0);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const user = useParamUser();
-  const theme = useParamUsersTheme();
+  const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
+  const { profileBg } = useThemeBg();
 
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue(
-    theme?.backgroundLight ?? '#EEE6E2',
-    theme?.backgroundDark ?? '#050404',
-  );
 
   useEffect(() => {
     const checkScroll = () => {
@@ -33,10 +30,20 @@ const ProfileHeader = () => {
     return () => window.removeEventListener('scroll', checkScroll);
   }, []);
 
+  if (!data) return null;
+  const { user } = data;
+
   return (
     <Stack>
       <HStack opacity={1} mb="-8px">
-        <HStack w="100vw" h="41px" bg={bg} opacity={show / 90} overflow="clip" textAlign="center">
+        <HStack
+          w="100vw"
+          h="41px"
+          bg={profileBg}
+          opacity={show / 90}
+          overflow="clip"
+          textAlign="center"
+        >
           <Stack w="100vw" h="74px">
             {show <= 84 ? <Box h={show <= 84 ? `${104 - show}px` : '16px'} /> : <Box h="16px" />}
             <Text h="37px" alignSelf="center" opacity={show / 90} w="100vw">

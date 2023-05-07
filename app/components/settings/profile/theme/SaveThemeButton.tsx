@@ -8,7 +8,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import Waver from '~/lib/icons/Waver';
 import useIsMobile from '~/hooks/useIsMobile';
-import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSave';
+import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
 
 const SaveThemeButton = ({
