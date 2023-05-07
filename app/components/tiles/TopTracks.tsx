@@ -61,8 +61,11 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
     setShow(false);
   }, [setShow]);
 
-  const tracks: Track[] = top.map((track) => {
-    return {
+  let tracks: Track[] = [];
+
+  for (const track of top) {
+    if (!track.name) continue;
+    tracks.push({
       albumName: track.album.name,
       albumUri: track.album.uri,
       artist: track.artists[0].name,
@@ -75,8 +78,8 @@ const TopTracks = ({ top }: { top: SpotifyApi.TrackObjectFull[] }) => {
       name: track.name,
       preview_url: track.preview_url ?? '',
       uri: track.uri,
-    };
-  });
+    });
+  }
 
   if (!top.length) return null;
 
