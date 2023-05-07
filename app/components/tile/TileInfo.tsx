@@ -17,7 +17,11 @@ const TileInfo = ({ action, profileId }: TrackInfo) => {
   const { index, layoutKey, track, tracks } = useTileContext();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
+
+  if (track.name === '' || !track.name) return null;
+
   const originId = profileId ?? id ?? null;
+
   return (
     <Stack
       spacing={0}

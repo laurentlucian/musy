@@ -18,6 +18,9 @@ const TileImage = ({ profileId, size = '200px' }: TileImageT) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const { id } = useParams();
   const currentUser = useSessionUser();
+
+  if (!track.image) return null;
+  
   const currentUserId = currentUser?.userId;
   const originId = profileId ?? id ?? currentUserId ?? null;
   const layoutId = track.id + layoutKey;
