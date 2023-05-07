@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
-import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
+import { Flex, Image, Link, Stack, Text, useEventListener } from '@chakra-ui/react';
 
 import { motion, wrap } from 'framer-motion';
 
@@ -52,6 +52,11 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
   const layoutKey = useExpandedLayoutKey();
   const tracks = useExpandedTiles();
   const index = wrap(0, tracks.length, page + originalIndex);
+
+  useEventListener('keydown', (e) => {
+    if (e.code === 'ArrowRight') paginate(1);
+    if (e.code === 'ArrowLeft') paginate(-1);
+  });
 
   return (
     <Stack
