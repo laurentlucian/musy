@@ -13,9 +13,9 @@ import {
 
 import type { Profile } from '@prisma/client';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
 

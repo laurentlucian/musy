@@ -15,10 +15,10 @@ import {
 
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useExpandedActions, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 
 import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
 import SpotifyLogo from '../../../lib/icons/SpotifyLogo';

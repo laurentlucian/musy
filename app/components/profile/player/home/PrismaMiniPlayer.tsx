@@ -4,10 +4,10 @@ import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from
 
 import { motion } from 'framer-motion';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
 import { useExpandedActions, useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import type { Friend, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 

@@ -10,8 +10,8 @@ import type { Profile } from '@prisma/client';
 import { Send2 } from 'iconsax-react';
 import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import type { Track, User } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 

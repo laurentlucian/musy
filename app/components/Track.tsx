@@ -2,10 +2,10 @@ import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
-import explicitImage from '~/assets/explicit-solid.svg';
-import musyIcon from '~/assets/musySquareIcon.png';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
+import musyIcon from '~/lib/assets/musySquareIcon.png';
 import type { Track as Tracks } from '~/lib/types/types';
 
 import SpotifyLogo from '../lib/icons/SpotifyLogo';

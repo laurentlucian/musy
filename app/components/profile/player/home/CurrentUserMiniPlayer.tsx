@@ -14,9 +14,9 @@ import {
 
 import type { Playback, Profile, Track } from '@prisma/client';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import type { User } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 

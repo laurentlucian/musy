@@ -14,9 +14,9 @@ import {
 import type { Theme, Track } from '@prisma/client';
 import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 
-import explicitImage from '~/assets/explicit-solid.svg';
-import musyIcon from '~/assets/musySquareIcon.png';
 import useIsMobile from '~/hooks/useIsMobile';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
+import musyIcon from '~/lib/assets/musySquareIcon.png';
 
 import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 

@@ -2,9 +2,9 @@ import { useParams } from '@remix-run/react';
 
 import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import { useTileContext } from '~/hooks/useTileContext';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 
 import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
 

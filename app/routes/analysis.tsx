@@ -25,9 +25,9 @@ import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import Tiles from '~/components/profile/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Analysis = () => {

@@ -21,10 +21,10 @@ import {
 import type { Party } from '@prisma/client';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import { useClickDrag, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 import AudioVisualizer from '../../../lib/icons/AudioVisualizer';

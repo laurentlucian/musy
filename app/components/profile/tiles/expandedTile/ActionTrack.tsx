@@ -5,12 +5,12 @@ import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
 
 import { motion, wrap } from 'framer-motion';
 
-import explicitImage from '~/assets/explicit-solid.svg';
 import {
   useExpandedLayoutKey,
   useExpandedTileIndex,
   useExpandedTiles,
 } from '~/hooks/useExpandedTileState';
+import explicitImage from '~/lib/assets/explicit-solid.svg';
 
 type ActionTrackProps = {
   direction: number;
