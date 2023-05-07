@@ -28,7 +28,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         w="100vw"
-        h="100vh"
+        h="100dvh"
         pos="fixed"
         top={0}
         left={0}

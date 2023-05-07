@@ -34,10 +34,9 @@ const ExpandedActions = ({
     <AnimatePresence>
       <Stack
         alignSelf={['unset', 'center']}
-        justifyContent="center"
         px={['12px', '75px']}
+        py={['15px']}
         w="100%"
-        h="100%"
         overflowX="hidden"
       >
         {show === 0 ? (
@@ -47,7 +46,7 @@ const ExpandedActions = ({
             exit={{ opacity: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Stack w="275px">
+            <Stack>
               <SaveToLiked trackId={tracks[index].id} />
               <AnalyzeTrack trackId={tracks[index].id} />
               {tracks[index].link !== '' && <CopyLink link={tracks[index].link} />}
