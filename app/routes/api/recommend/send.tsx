@@ -11,7 +11,11 @@ import { spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
-  const fromId = body.get('fromId') as string;
+  const fromId = body.get('fromId');
+  const toId = body.get('toId');
+
+  if (typeof fromId !== 'string' || typeof toId !== 'string') return typedjson('invalid form data');
+
   const { spotify } = await spotifyApi(fromId);
   invariant(spotify, 'No access to API');
 
@@ -25,7 +29,7 @@ export const action = async ({ request }: ActionArgs) => {
     action,
     owner: {
       connect: {
-        id: fromId,
+        id: toId,
       },
     },
     sender: {
