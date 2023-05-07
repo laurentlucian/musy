@@ -5,8 +5,7 @@ import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import { useTileContext } from '~/hooks/useTileContext';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
-
-import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 type TrackInfo = {
   action?: boolean;

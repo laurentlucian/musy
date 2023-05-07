@@ -15,14 +15,13 @@ import {
 
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { useExpandedActions, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
-
-import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
-import Tooltip from '../../Tooltip';
+import AudioVisualizer from '~/lib/icons/AudioVisualizer';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 type PlayerPausedProps = {
   item: SpotifyApi.TrackObjectFull;

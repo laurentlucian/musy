@@ -17,8 +17,7 @@ import { ArrowDown2, ArrowUp2 } from 'iconsax-react';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import musyIcon from '~/lib/assets/musySquareIcon.png';
-
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 const SettingsPlayer = ({
   right,

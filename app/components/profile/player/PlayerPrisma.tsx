@@ -19,15 +19,14 @@ import type { Party, Playback, Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedIsPlaying, useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useThemePlayer } from '~/hooks/useTheme';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
-
-import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
-import Tooltip from '../../Tooltip';
+import AudioVisualizer from '~/lib/icons/AudioVisualizer';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 type PlayerProps = {
   id: string;

@@ -3,10 +3,9 @@ import { Link, useTransition } from '@remix-run/react';
 import { Button, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import Waver from '~/lib/icons/Waver';
 import type { PendingCard } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
-
-import Waver from '../../../lib/icons/Waver';
 
 type PlayerProps = {
   user: PendingCard | null;

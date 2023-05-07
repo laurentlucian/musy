@@ -14,15 +14,14 @@ import {
 
 import type { Playback, Profile, Track } from '@prisma/client';
 
+import Tooltip from '~/components/Tooltip';
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
+import Waver from '~/lib/icons/Waver';
 import type { User } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
-
-import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
-import Waver from '../../../../lib/icons/Waver';
-import Tooltip from '../../../Tooltip';
 
 interface Friends extends User {
   playback:

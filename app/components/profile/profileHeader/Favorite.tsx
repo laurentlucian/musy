@@ -4,9 +4,8 @@ import { IconButton } from '@chakra-ui/react';
 
 import { Star1 } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
-
-import Tooltip from '../../Tooltip';
 
 const Favorite = () => {
   const currentUser = useSessionUser();

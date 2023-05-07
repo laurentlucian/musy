@@ -6,9 +6,8 @@ import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import musyIcon from '~/lib/assets/musySquareIcon.png';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Track as Tracks } from '~/lib/types/types';
-
-import SpotifyLogo from '../lib/icons/SpotifyLogo';
 
 const Track = (props: {
   addedAt: string;

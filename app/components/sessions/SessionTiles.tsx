@@ -12,11 +12,11 @@ import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedj
 
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
+import Waver from '~/lib/icons/Waver';
 import type { Track, User } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
-import SpotifyLogo from '../../lib/icons/SpotifyLogo';
-import Waver from '../../lib/icons/Waver';
 import Tooltip from '../Tooltip';
 
 type TileProps = Track & {

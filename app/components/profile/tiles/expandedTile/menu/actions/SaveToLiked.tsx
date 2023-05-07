@@ -4,11 +4,10 @@ import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
+import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
 import LikeIcon from '~/lib/icons/Like';
-
-import Tooltip from '../../../../../Tooltip';
 
 type SaveToLikedProps = {
   iconOnly?: boolean;

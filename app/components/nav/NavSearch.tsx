@@ -22,9 +22,9 @@ import type { Profile } from '@prisma/client';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
+import Waver from '~/lib/icons/Waver';
 import type { Track } from '~/lib/types/types';
 
-import Waver from '../../lib/icons/Waver';
 import Tile from '../profile/tiles/tile/Tile';
 import TileImage from '../profile/tiles/tile/TileImage';
 import TileInfo from '../profile/tiles/tile/TileInfo';

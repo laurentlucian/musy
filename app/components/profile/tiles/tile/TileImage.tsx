@@ -4,11 +4,11 @@ import { Image } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
+import Tooltip from '~/components/Tooltip';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useTileContext } from '~/hooks/useTileContext';
 
-import Tooltip from '../../../Tooltip';
 type TileImageT = {
   profileId?: string;
   size?: string | string[];

@@ -3,9 +3,8 @@ import { HStack, Stack, Text, Icon, AvatarGroup, Avatar } from '@chakra-ui/react
 import type { Profile } from '@prisma/client';
 import { Play } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { shortenUsername } from '~/lib/utils';
-
-import Tooltip from '../../Tooltip';
 
 const PlayedBy = ({
   played,

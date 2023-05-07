@@ -4,9 +4,9 @@ import { HStack, IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import { Next, Pause, Play, Previous } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
-import Tooltip from '../../Tooltip';
 import SaveToLiked from '../tiles/expandedTile/menu/actions/SaveToLiked';
 
 type PlayControllerProps = {

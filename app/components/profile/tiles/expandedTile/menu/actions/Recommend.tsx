@@ -2,8 +2,7 @@ import { Button, Image } from '@chakra-ui/react';
 
 import { useExpandedTile } from '~/hooks/useExpandedTileState';
 import { useRecommendData } from '~/hooks/useSendButton';
-
-import Waver from '../../../../../../lib/icons/Waver';
+import Waver from '~/lib/icons/Waver';
 
 type RecommendProps = {
   userId: string;

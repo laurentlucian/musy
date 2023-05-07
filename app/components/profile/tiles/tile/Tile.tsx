@@ -8,8 +8,7 @@ import type { Track } from '@prisma/client';
 import { motion } from 'framer-motion';
 
 import TileContext from '~/hooks/useTileContext';
-
-import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 type TileProps = {
   action?: ReactNode;

@@ -13,14 +13,14 @@ import {
 
 import type { Profile } from '@prisma/client';
 
+import Tooltip from '~/components/Tooltip';
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import Waver from '~/lib/icons/Waver';
 import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
 
-import Waver from '../../../../lib/icons/Waver';
-import Tooltip from '../../../Tooltip';
 import PlayerBar from '../PlayerBar';
 
 type PlayerProps = {

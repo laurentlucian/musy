@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { Box, Flex, Image, Stack, Text } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import Tooltip from '../../../Tooltip';
+import Tooltip from '~/components/Tooltip';
 
 export const decodeHtmlEntity = (str?: string) => {
   return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {

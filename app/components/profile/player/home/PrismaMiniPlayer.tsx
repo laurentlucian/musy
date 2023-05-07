@@ -8,11 +8,11 @@ import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButto
 import { useExpandedActions, useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
+import Waver from '~/lib/icons/Waver';
 import type { Friend, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
-import Waver from '../../../../lib/icons/Waver';
 import QuickActions from './QuickActions';
 
 type PlayerProps = {

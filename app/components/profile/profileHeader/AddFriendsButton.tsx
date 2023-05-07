@@ -4,9 +4,8 @@ import { IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import { UserAdd, UserMinus, UserTick } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
-
-import Tooltip from '../../Tooltip';
 
 const AddFriendsButton = (props: { id?: string }) => {
   const color = useColorModeValue('#161616', '#EEE6E2');

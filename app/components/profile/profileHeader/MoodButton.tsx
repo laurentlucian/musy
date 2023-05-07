@@ -4,11 +4,10 @@ import { Button, Stack, Text } from '@chakra-ui/react';
 
 import { Smileys } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
+import Waver from '~/lib/icons/Waver';
 import { timeSince } from '~/lib/utils';
-
-import Waver from '../../../lib/icons/Waver';
-import Tooltip from '../../Tooltip';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {
   const submit = useSubmit();

@@ -6,10 +6,9 @@ import { useTypedFetcher } from 'remix-typedjson';
 import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/api/recommend/remove';
-
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 
 type CardProps = {
   index: number;

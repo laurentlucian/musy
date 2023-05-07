@@ -16,13 +16,13 @@ import {
 import { motion } from 'framer-motion';
 import { Heart, Play, Send2 } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
 import LikeIcon from '~/lib/icons/Like';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity, Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
-import Tooltip from '../../Tooltip';
 import PlayedBy from './PlayedBy';
 
 type ActivityActionProps = {

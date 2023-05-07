@@ -5,9 +5,8 @@ import { Button } from '@chakra-ui/react';
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
-
-import AudioVisualizer from '../../../../../../lib/icons/AudioVisualizer';
-import SpotifyLogo from '../../../../../../lib/icons/SpotifyLogo';
+import AudioVisualizer from '~/lib/icons/AudioVisualizer';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
 const PlayPreview = ({
   playing,

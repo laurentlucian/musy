@@ -14,12 +14,12 @@ import {
 import { motion } from 'framer-motion';
 import { Heart } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';
 
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
-import Tooltip from '../../Tooltip';
 import { ActivityAction } from './ActivityTile';
 import PlayedBy from './PlayedBy';
 

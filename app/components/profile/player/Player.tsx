@@ -21,15 +21,15 @@ import {
 import type { Party } from '@prisma/client';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
+import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import AudioVisualizer from '~/lib/icons/AudioVisualizer';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
-import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
-import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
-import Tooltip from '../../Tooltip';
 import PlayController from './PlayController';
 import PlayerBar from './PlayerBar';
 import PlayingFromTooltip from './PlayingFromTooltip';
