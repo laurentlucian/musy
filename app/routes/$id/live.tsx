@@ -5,12 +5,12 @@ import { Stack } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import Player from '~/components/player/Player';
-import LikedTracks from '~/components/tiles/LikedTracks';
-import Playlists from '~/components/tiles/Playlists';
-import RecentTracks from '~/components/tiles/RecentTracks';
-import Recommended from '~/components/tiles/Recommended';
-import TopTracks from '~/components/tiles/TopTracks';
+import Player from '~/components/profile/player/Player';
+import LikedTracks from '~/components/profile/tiles/LikedTracks';
+import Playlists from '~/components/profile/tiles/playlists/Playlists';
+import RecentTracks from '~/components/profile/tiles/RecentTracks';
+import Recommended from '~/components/profile/tiles/recommend/Recommended';
+import TopTracks from '~/components/profile/tiles/TopTracks';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';

@@ -26,7 +26,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import Tiles from '~/components/tiles/Tiles';
+import Tiles from '~/components/profile/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
 import { spotifyApi } from '~/services/spotify.server';
 

@@ -28,7 +28,7 @@ import { theme } from '~/lib/theme';
 import { authenticator, getAllUsers, getCurrentUser, getTheme } from '~/services/auth.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
-import ExpandedTile from './components/tileActions/ExpandedTile';
+import ExpandedTile from './components/profile/tiles/expandedTile/ExpandedTile';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';

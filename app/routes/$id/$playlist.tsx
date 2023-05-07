@@ -20,7 +20,7 @@ import { ArrowLeft2 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import { decodeHtmlEntity } from '~/components/playlists/PlaylistTile';
+import { decodeHtmlEntity } from '~/components/profile/tiles/playlists/PlaylistTile';
 import Track from '~/components/Track';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';

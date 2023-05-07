@@ -6,11 +6,11 @@ import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import SendButton from '~/components/menu/actions/SendButton';
-import Tile from '~/components/tile/Tile';
-import TileImage from '~/components/tile/TileImage';
-import TileInfo from '~/components/tile/TileInfo';
-import Tiles from '~/components/tiles/Tiles';
+import SendButton from '~/components/profile/tiles/expandedTile/menu/actions/SendButton';
+import Tile from '~/components/profile/tiles/tile/Tile';
+import TileImage from '~/components/profile/tiles/tile/TileImage';
+import TileInfo from '~/components/profile/tiles/tile/TileInfo';
+import Tiles from '~/components/profile/tiles/Tiles';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 

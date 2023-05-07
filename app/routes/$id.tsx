@@ -6,9 +6,9 @@ import { Stack } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import BlockedProfile from '~/components/profile/BlockedProfile';
-import PrivateProfile from '~/components/profile/PrivateProfile';
-import ProfileHeader from '~/components/profile/ProfileHeader';
+import BlockedProfile from '~/components/profile/profileHeader/BlockedProfile';
+import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
+import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
 import useSessionUser from '~/hooks/useSessionUser';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';

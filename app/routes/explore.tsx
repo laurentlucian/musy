@@ -3,9 +3,9 @@ import { Outlet, useLocation } from '@remix-run/react';
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import SearchInput from '~/components/explore/SearchInput';
-import Tile from '~/components/tile/Tile';
-import TileImage from '~/components/tile/TileImage';
-import TileInfo from '~/components/tile/TileInfo';
+import Tile from '~/components/profile/tiles/tile/Tile';
+import TileImage from '~/components/profile/tiles/tile/TileImage';
+import TileInfo from '~/components/profile/tiles/tile/TileInfo';
 import { useExplore } from '~/hooks/useExplore';
 
 const Explore = () => {

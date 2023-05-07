@@ -6,14 +6,14 @@ import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator, getFriends } from '~/services/auth.server';
 
-import { FavoriteTab } from '../../components/friends/tabs/FavoritesTab';
-import { FriendsTabs } from '../../components/friends/tabs/FriendsTabs';
-import { TempTab } from '../../components/friends/tabs/TempTab';
+import { FavoriteTab } from '../../components/home/friends/tabs/FavoritesTab';
+import { FriendsTabs } from '../../components/home/friends/tabs/FriendsTabs';
+import { TempTab } from '../../components/home/friends/tabs/TempTab';
 
 const Friends = () => {
   const favorites = useFavorites();
