@@ -28,7 +28,7 @@ import type { Track } from '~/lib/types/types';
 import Tile from '../profile/tiles/tile/Tile';
 import TileImage from '../profile/tiles/tile/TileImage';
 import TileInfo from '../profile/tiles/tile/TileInfo';
-import UserTile from '../UserTile';
+import UserTile from './UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(false);

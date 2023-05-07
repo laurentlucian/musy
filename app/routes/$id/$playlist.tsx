@@ -21,7 +21,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import { decodeHtmlEntity } from '~/components/profile/tiles/playlists/PlaylistTile';
-import Track from '~/components/Track';
+import Track from '~/components/profile/tiles/playlists/Track';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
 import { spotifyApi } from '~/services/spotify.server';
