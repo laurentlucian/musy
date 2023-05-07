@@ -14,7 +14,7 @@ import {
 import type { Profile } from '@prisma/client';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
@@ -33,7 +33,7 @@ const MiniPlayer = ({ layoutKey, playback, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useDrawerActions();
+  const { onOpen } = useExpandedActions();
 
   const name = shortenUsername(user.name);
   const track =

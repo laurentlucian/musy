@@ -8,7 +8,7 @@ import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import { getAnalysis } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { redis } from '~/services/scheduler/redis.server';
@@ -17,7 +17,7 @@ import { spotifyApi } from '~/services/spotify.server';
 const TrackAnalysis = () => {
   const { analysis, authorized, track } = useTypedLoaderData<typeof loader>();
   const transition = useTransition();
-  const { onClose } = useDrawerActions();
+  const { onClose } = useExpandedActions();
 
   useEffect(() => {
     onClose();

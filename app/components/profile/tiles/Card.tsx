@@ -4,7 +4,7 @@ import type { ChakraProps } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useClickDrag } from '~/hooks/useDrawer';
+import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/api/recommend/remove';

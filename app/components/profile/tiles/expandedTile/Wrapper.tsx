@@ -4,10 +4,10 @@ import { Box, Flex } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import { useExpandedTile } from '~/hooks/useExpandedTileState';
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
-  const track = useDrawerTrack();
+  const track = useExpandedTile();
 
   useEffect(() => {
     if (track) {

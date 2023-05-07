@@ -6,7 +6,11 @@ import { Flex, Image, Link, Stack, Text } from '@chakra-ui/react';
 import { motion, wrap } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerLayoutKey, useDrawerTrackIndex, useDrawerTracks } from '~/hooks/useDrawer';
+import {
+  useExpandedLayoutKey,
+  useExpandedTileIndex,
+  useExpandedTiles,
+} from '~/hooks/useExpandedTileState';
 
 type ActionTrackProps = {
   direction: number;
@@ -44,9 +48,9 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
   };
-  const originalIndex = useDrawerTrackIndex();
-  const layoutKey = useDrawerLayoutKey();
-  const tracks = useDrawerTracks();
+  const originalIndex = useExpandedTileIndex();
+  const layoutKey = useExpandedLayoutKey();
+  const tracks = useExpandedTiles();
   const index = wrap(0, tracks.length, page + originalIndex);
 
   return (

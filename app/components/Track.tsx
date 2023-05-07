@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import musyIcon from '~/assets/musySquareIcon.png';
-import { useClickDrag } from '~/hooks/useDrawer';
+import { useClickDrag } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
 

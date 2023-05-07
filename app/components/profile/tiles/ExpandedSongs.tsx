@@ -15,7 +15,7 @@ import {
 
 import { Element3, TextalignJustifycenter } from 'iconsax-react';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import { useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 
@@ -44,7 +44,7 @@ const ExpandedSongs = ({
   const btnRef = useRef<HTMLButtonElement>(null);
   const isSmallScreen = useIsMobile();
 
-  const track = useDrawerTrack();
+  const track = useExpandedTile();
   const isOpen = track !== null ? true : false;
 
   useEffect(() => {

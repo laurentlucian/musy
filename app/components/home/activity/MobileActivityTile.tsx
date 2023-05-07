@@ -14,7 +14,7 @@ import {
 import { motion } from 'framer-motion';
 import { Heart } from 'iconsax-react';
 
-import { useClickDrag, useDrawerTrack } from '~/hooks/useDrawer';
+import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';
 
@@ -36,7 +36,7 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   // eslint-disable-next-line
-  const dontRemoveThis = useDrawerTrack();
+  const dontRemoveThis = useExpandedTile();
 
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;

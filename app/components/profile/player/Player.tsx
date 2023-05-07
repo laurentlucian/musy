@@ -22,7 +22,7 @@ import type { Party } from '@prisma/client';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useClickDrag, useDrawerIsPlaying } from '~/hooks/useDrawer';
+import { useClickDrag, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
@@ -55,7 +55,7 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const isPlaying = useDrawerIsPlaying();
+  const isPlaying = useExpandedIsPlaying();
 
   const bg = useColorModeValue('music.50', '#10101066');
   const color = useColorModeValue('#10101066', 'music.50');

@@ -15,7 +15,7 @@ import {
 import type { Playback, Profile, Track } from '@prisma/client';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { User } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
@@ -52,7 +52,7 @@ const PrismaMiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const color = useColorModeValue('music.900', 'music.200');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useDrawerActions();
+  const { onOpen } = useExpandedActions();
 
   const name = shortenUsername(user.name);
   const loading = transition.location?.pathname.includes(user.userId);

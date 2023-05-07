@@ -1,22 +1,12 @@
 import { Link, useTransition } from '@remix-run/react';
 
-import {
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Stack,
-  Text,
-  useColorModeValue,
-  Box,
-  Spacer,
-} from '@chakra-ui/react';
+import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
 import explicitImage from '~/assets/explicit-solid.svg';
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
-import { useDrawerActions, useDrawerTrack } from '~/hooks/useDrawer';
+import { useExpandedActions, useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Friend, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
@@ -39,7 +29,7 @@ const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: Pla
   const color = useColorModeValue('music.900', 'music.200');
   const transition = useTransition();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useDrawerActions();
+  const { onOpen } = useExpandedActions();
   const name = shortenUsername(user.name);
   const loading = transition.location?.pathname.includes(user.userId);
 
@@ -50,7 +40,7 @@ const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: Pla
 
   const isOwnProfile = currentUserId === user.userId;
 
-  useDrawerTrack();
+  useExpandedTile();
 
   const ProfilePic = (
     <Image

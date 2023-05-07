@@ -4,7 +4,7 @@ import { Stack } from '@chakra-ui/react';
 
 import { AnimatePresence, motion, wrap } from 'framer-motion';
 
-import { useDrawerTrackIndex, useDrawerTracks } from '~/hooks/useDrawer';
+import { useExpandedTileIndex, useExpandedTiles } from '~/hooks/useExpandedTileState';
 
 import AnalyzeTrack from './actions/AnalyzeTrack';
 import CopyLink from './actions/CopyLink';
@@ -26,8 +26,8 @@ const ExpandedActions = ({
   setPlaying: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [show, setShow] = useState(0);
-  const tracks = useDrawerTracks();
-  const originalIndex = useDrawerTrackIndex();
+  const tracks = useExpandedTiles();
+  const originalIndex = useExpandedTileIndex();
   const index = wrap(0, tracks.length, page + originalIndex);
 
   return (

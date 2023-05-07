@@ -8,7 +8,7 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/send';
 
-import { useDrawerFromId } from './useDrawer';
+import { useExpandedFromId } from './useExpandedTileState';
 import useSessionUser from './useSessionUser';
 
 type SelfQueueData = {
@@ -59,7 +59,7 @@ export const useRecommendData = ({ trackId, userId, username }: SendData) => {
 
 export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
   const currentUserId = useSessionUser()?.userId ?? '';
-  const fromId = useDrawerFromId() ?? '';
+  const fromId = useExpandedFromId() ?? '';
 
   const data = {
     action: 'add',

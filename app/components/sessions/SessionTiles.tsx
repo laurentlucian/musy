@@ -11,7 +11,7 @@ import { Send2 } from 'iconsax-react';
 import type { TypedFetcherWithComponents, TypedJsonResponse } from 'remix-typedjson';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useClickDrag } from '~/hooks/useDrawer';
+import { useClickDrag } from '~/hooks/useExpandedTileState';
 import type { Track, User } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 

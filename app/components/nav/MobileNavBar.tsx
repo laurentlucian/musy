@@ -6,7 +6,7 @@ import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 import { AnimatePresence } from 'framer-motion';
 import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import { useExpandedTile } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -27,7 +27,7 @@ const MobileNavBar = () => {
       ? 4
       : 5,
   );
-  const track = useDrawerTrack();
+  const track = useExpandedTile();
 
   const profile = currentUser?.userId;
   const { show } = useMobileKeyboard();

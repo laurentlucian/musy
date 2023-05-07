@@ -4,7 +4,7 @@ import { Button } from '@chakra-ui/react';
 
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 
-import { useDrawerActions } from '~/hooks/useDrawer';
+import { useExpandedActions } from '~/hooks/useExpandedTileState';
 
 import AudioVisualizer from '../../../../../../lib/icons/AudioVisualizer';
 import SpotifyLogo from '../../../../../../lib/icons/SpotifyLogo';
@@ -21,7 +21,7 @@ const PlayPreview = ({
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { setIsPlaying } = useDrawerActions();
+  const { setIsPlaying } = useExpandedActions();
 
   const onClick = () => {
     if (audioRef.current && !playing) {

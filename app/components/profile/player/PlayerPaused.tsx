@@ -16,7 +16,7 @@ import {
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
 import explicitImage from '~/assets/explicit-solid.svg';
-import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
+import { useExpandedActions, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 
@@ -45,8 +45,8 @@ const PlayerPaused = ({ item, layoutKey, profileSong, userId }: PlayerPausedProp
   const [artist, setArtist] = useState(profileSong ? profileSong.artist : song.artists[0].name);
   const { isOpen, onToggle } = useDisclosure();
   const [blur, setBlur] = useState(true);
-  const { onOpen } = useDrawerActions();
-  const isPlaying = useDrawerIsPlaying();
+  const { onOpen } = useExpandedActions();
+  const isPlaying = useExpandedIsPlaying();
   const bg = useColorModeValue('music.50', '#10101066');
   const explicit = song.explicit;
   const name = song.name;

@@ -1,6 +1,6 @@
 import { Button, Image } from '@chakra-ui/react';
 
-import { useDrawerTrack } from '~/hooks/useDrawer';
+import { useExpandedTile } from '~/hooks/useExpandedTileState';
 import { useRecommendData } from '~/hooks/useSendButton';
 
 import Waver from '../../../../../../lib/icons/Waver';
@@ -12,7 +12,7 @@ type RecommendProps = {
 };
 
 const Recommend = ({ userId, userImage, username }: RecommendProps) => {
-  const track = useDrawerTrack();
+  const track = useExpandedTile();
 
   const { handleRecommend, isAdding, isDone, isError, text } = useRecommendData({
     trackId: track?.id ?? '',
