@@ -1,44 +1,38 @@
-import { Form, useParams, useSearchParams, useSubmit } from '@remix-run/react';
+import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
-import { CodeCircle, LockCircle } from 'iconsax-react';
+import { CodeCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import AddFriendsButton from '~/components/profile/AddFriendsButton';
-import Following from '~/components/profile/Following';
 import MoodButton from '~/components/profile/MoodButton';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
 
+import PrivateBadge from './badges/PrivateBadge';
 import Favorite from './Favorite';
 import ProfileActions from './ProfileActions';
 import { BlockUser } from './profileActions/BlockUser';
 import Search from './Search';
 
-const ProfileHeader = ({
-  amIBlocked,
-  isPrivate,
-}: {
-  amIBlocked?: boolean;
-  isPrivate?: boolean;
-}) => {
+const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
   const submit = useSubmit();
-  const { id } = useParams();
   const isSmallScreen = useIsMobile();
   const currentUser = useSessionUser();
+
   if (!data) return null;
 
-  const { following, listened, user } = data;
+  const { listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
 
-  const isBlocked = currentUser?.block.find((block) => block.blockedId === id);
-  const isMuted = currentUser?.mute.find((mute) => mute.mutedId === id);
+  const isBlocked = currentUser?.block.find((block) => block.blockedId === user.userId);
+  const isMuted = currentUser?.mute.find((mute) => mute.mutedId === user.userId);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -54,6 +48,7 @@ const ProfileHeader = ({
       />
     </Tooltip>
   );
+  
   const Username = (
     <HStack>
       <Heading
@@ -63,11 +58,7 @@ const ProfileHeader = ({
       >
         {!user.name.includes('cunt') ? user.name : 'healthycat'}
       </Heading>
-      {isPrivate && (
-        <Tooltip label="Private" placement="top" hasArrow>
-          <LockCircle size="32" variant="Bulk" />
-        </Tooltip>
-      )}
+      <PrivateBadge />
       {user.settings?.founder === true && (
         <Tooltip label="Dev" placement="top" hasArrow>
           <CodeCircle size="32" variant="Bulk" />
@@ -162,9 +153,6 @@ const ProfileHeader = ({
     </HStack>
   );
 
-  const FollowButton =
-    currentUser && following !== null && !isOwnProfile ? <Following following={following} /> : null;
-
   const MenuBttn = !isOwnProfile ? (
     <ProfileActions
       block={!!isBlocked}
@@ -183,11 +171,10 @@ const ProfileHeader = ({
           <HStack>{Username}</HStack>
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
             <HStack>
-              {isBlocked && !amIBlocked ? (
+              {isBlocked ? (
                 <BlockUser header block={true} blockId={String(isBlocked.id)} />
               ) : (
                 <>
-                  {FollowButton}
                   <Favorite />
                   {AddFriendBttn}
                 </>

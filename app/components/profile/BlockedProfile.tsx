@@ -7,16 +7,18 @@ import { Forbidden } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
+const block = (
+  <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
+    <Forbidden size="30" color="red" />
+  </motion.div>
+);
+
 const BlockedProfile = ({ name }: { name: string }) => {
   const currentUser = useSessionUser();
   const { id } = useParams();
   const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
   const amIBlocked = blockRecord?.blockedId === currentUser?.userId;
-  const block = (
-    <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
-      <Forbidden size="30" color="red" />
-    </motion.div>
-  );
+
   return (
     <Stack spacing={5} px={5}>
       <HStack>

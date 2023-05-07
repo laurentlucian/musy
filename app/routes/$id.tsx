@@ -1,5 +1,5 @@
 import type { MetaFunction, LoaderArgs, ActionArgs } from '@remix-run/node';
-import { Outlet, useParams } from '@remix-run/react';
+import { Outlet } from '@remix-run/react';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -9,7 +9,6 @@ import invariant from 'tiny-invariant';
 import BlockedProfile from '~/components/profile/BlockedProfile';
 import PrivateProfile from '~/components/profile/PrivateProfile';
 import ProfileHeader from '~/components/profile/ProfileHeader';
-import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
@@ -18,14 +17,21 @@ import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {
-  const isSmallScreen = useIsMobile();
   const { user } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
-  const { id } = useParams();
-  const isPrivate = user?.settings?.isPrivate;
-  const isOwnProfile = currentUser?.userId === user.userId;
+
   const isDev = currentUser?.settings?.dev === true;
-  const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
+  const isOwnProfile = currentUser?.userId === user.userId;
+  const isPrivate = user.settings?.isPrivate && !isOwnProfile && !isDev;
+  const youAreBlocked = currentUser?.block.find((blocked) => blocked.blockedId === user.userId);
+
+  const Profile = isPrivate ? (
+    <PrivateProfile name={user.name} />
+  ) : youAreBlocked ? (
+    <BlockedProfile name={user.name} />
+  ) : (
+    <Outlet />
+  );
 
   return (
     <Stack
@@ -33,17 +39,11 @@ const Profile = () => {
       pb={['110px', 5]}
       pt={['44px', 5]}
       h="max-content"
-      px={isSmallScreen ? '5px' : 0}
+      px={['5px', 0]}
       zIndex={1}
     >
-      <ProfileHeader isPrivate={isPrivate} />
-      {isPrivate && !isOwnProfile && !isDev ? (
-        <PrivateProfile name={user.name} />
-      ) : !blockRecord ? (
-        <Outlet />
-      ) : (
-        <BlockedProfile name={user.name} />
-      )}
+      <ProfileHeader />
+      {Profile}
     </Stack>
   );
 };
@@ -54,23 +54,23 @@ export const meta: MetaFunction = (props) => {
   };
 };
 
+const week = () => {
+  const aWeekAgo = new Date();
+  aWeekAgo.setDate(aWeekAgo.getDate() - 7);
+  return aWeekAgo;
+};
+
+const day = () => {
+  const aDayAgo = new Date();
+  aDayAgo.setDate(aDayAgo.getDate() - 1);
+  return aDayAgo;
+};
+
 export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const { searchParams } = new URL(request.url);
   const listenedTimeframe = searchParams.get('listened');
-
-  const week = () => {
-    const aWeekAgo = new Date();
-    aWeekAgo.setDate(aWeekAgo.getDate() - 7);
-    return aWeekAgo;
-  };
-
-  const day = () => {
-    const aDayAgo = new Date();
-    aDayAgo.setDate(aDayAgo.getDate() - 1);
-    return aDayAgo;
-  };
 
   const dateToCompare = listenedTimeframe === 'week' ? week() : day();
 
@@ -87,15 +87,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     }),
   ]);
 
-  if (!user || (!session && user.settings?.isPrivate))
+  if (!user || (!session && user.settings?.isPrivate)) {
     throw new Response('Not found', { status: 404 });
+  }
 
   const listened = msToString(
     recentDb.map(({ track }) => track.duration).reduce((a, b) => a + b, 0),
   );
 
   return typedjson({
-    following: null,
     listened,
     user,
   });
@@ -276,7 +276,6 @@ export const action = async ({ params, request }: ActionArgs) => {
 };
 
 export { CatchBoundary } from '~/components/error/CatchBoundary';
-
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 
 export default Profile;
