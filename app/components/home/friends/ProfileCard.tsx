@@ -6,7 +6,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { PendingCard } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import Waver from '../../icons/Waver';
+import Waver from '../../../lib/icons/Waver';
 
 type PlayerProps = {
   user: PendingCard | null;

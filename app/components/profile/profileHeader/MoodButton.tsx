@@ -7,7 +7,7 @@ import { Smileys } from 'iconsax-react';
 import useIsMobile from '~/hooks/useIsMobile';
 import { timeSince } from '~/lib/utils';
 
-import Waver from '../../icons/Waver';
+import Waver from '../../../lib/icons/Waver';
 import Tooltip from '../../Tooltip';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {

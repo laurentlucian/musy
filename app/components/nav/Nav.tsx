@@ -14,7 +14,7 @@ import {
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import Waver from '../icons/Waver';
+import Waver from '../../lib/icons/Waver';
 import NavSearch from './NavSearch';
 import UserMenu from './UserMenu';
 

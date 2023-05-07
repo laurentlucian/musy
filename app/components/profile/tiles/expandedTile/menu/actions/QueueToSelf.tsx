@@ -3,7 +3,7 @@ import { Button } from '@chakra-ui/react';
 import { useQueueToSelfData } from '~/hooks/useSendButton';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import Waver from '../../../../../icons/Waver';
+import Waver from '../../../../../../lib/icons/Waver';
 
 type QueueToSelfProps = {
   trackId: string;

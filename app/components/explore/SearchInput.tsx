@@ -19,7 +19,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import { useSearch, useSetSearch } from '~/hooks/useSearchStore';
 
-import Waver from '../icons/Waver';
+import Waver from '../../lib/icons/Waver';
 import UserMenu from '../nav/UserMenu';
 import Filters from './Filters';
 

@@ -6,7 +6,7 @@ import { Button, HStack, Text } from '@chakra-ui/react';
 import type { Theme } from '@prisma/client';
 import { AnimatePresence } from 'framer-motion';
 
-import Waver from '~/components/icons/Waver';
+import Waver from '~/lib/icons/Waver';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';

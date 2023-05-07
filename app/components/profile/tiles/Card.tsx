@@ -9,7 +9,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Track } from '~/lib/types/types';
 import type { action } from '~/routes/api/recommend/remove';
 
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 
 type CardProps = {
   index: number;

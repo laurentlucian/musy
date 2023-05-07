@@ -18,7 +18,7 @@ import explicitImage from '~/assets/explicit-solid.svg';
 import musyIcon from '~/assets/musySquareIcon.png';
 import useIsMobile from '~/hooks/useIsMobile';
 
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 
 const SettingsPlayer = ({
   right,

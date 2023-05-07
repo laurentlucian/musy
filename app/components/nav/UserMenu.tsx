@@ -32,8 +32,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSave';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import SpotifyLogo from '../icons/SpotifyLogo';
-import Waver from '../icons/Waver';
+import SpotifyLogo from '../../lib/icons/SpotifyLogo';
+import Waver from '../../lib/icons/Waver';
 
 const UserMenu = () => {
   const currentUser = useSessionUser();

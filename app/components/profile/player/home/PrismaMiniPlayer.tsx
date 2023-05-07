@@ -21,8 +21,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Friend, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import SpotifyLogo from '../../../icons/SpotifyLogo';
-import Waver from '../../../icons/Waver';
+import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
+import Waver from '../../../../lib/icons/Waver';
 import QuickActions from './QuickActions';
 
 type PlayerProps = {

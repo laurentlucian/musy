@@ -27,8 +27,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
-import AudioVisualizer from '../../icons/AudioVisualizer';
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 import Tooltip from '../../Tooltip';
 import PlayController from './PlayController';
 import PlayerBar from './PlayerBar';

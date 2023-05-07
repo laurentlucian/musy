@@ -19,7 +19,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
 
-import Waver from '../../../icons/Waver';
+import Waver from '../../../../lib/icons/Waver';
 import Tooltip from '../../../Tooltip';
 import PlayerBar from '../PlayerBar';
 

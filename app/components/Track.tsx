@@ -8,7 +8,7 @@ import { useClickDrag } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
 
-import SpotifyLogo from './icons/SpotifyLogo';
+import SpotifyLogo from '../lib/icons/SpotifyLogo';
 
 const Track = (props: {
   addedAt: string;

@@ -4,7 +4,7 @@ import { Button } from '@chakra-ui/react';
 
 import { DocumentText } from 'iconsax-react';
 
-import Waver from '../../../../../icons/Waver';
+import Waver from '../../../../../../lib/icons/Waver';
 
 const AnalyzeTrack = ({ trackId }: { trackId: string }) => {
   const navigate = useNavigate();

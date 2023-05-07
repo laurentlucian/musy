@@ -5,10 +5,10 @@ import { Button } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
+import LikeIcon from '~/lib/icons/Like';
 import useSessionUser from '~/hooks/useSessionUser';
-import LikeIcon from '~/lib/icon/Like';
 
-import Waver from '../../../../../icons/Waver';
+import Waver from '../../../../../../lib/icons/Waver';
 
 type SaveToPlaylistProps = {
   trackId: string;

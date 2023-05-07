@@ -20,8 +20,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { User } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import SpotifyLogo from '../../../icons/SpotifyLogo';
-import Waver from '../../../icons/Waver';
+import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
+import Waver from '../../../../lib/icons/Waver';
 import Tooltip from '../../../Tooltip';
 
 interface Friends extends User {

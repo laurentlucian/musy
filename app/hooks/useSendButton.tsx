@@ -3,7 +3,7 @@ import { AlertCircle, Check } from 'react-feather';
 import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
-import Waver from '~/components/icons/Waver';
+import Waver from '~/lib/icons/Waver';
 import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/send';

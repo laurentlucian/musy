@@ -25,7 +25,7 @@ import {
 
 import { Refresh } from 'iconsax-react';
 
-import Waver from '~/components/icons/Waver';
+import Waver from '~/lib/icons/Waver';
 import SendButton from '~/components/profile/tiles/expandedTile/menu/actions/SendButton';
 import Tile from '~/components/profile/tiles/tile/Tile';
 import TileInfo from '~/components/profile/tiles/tile/TileInfo';

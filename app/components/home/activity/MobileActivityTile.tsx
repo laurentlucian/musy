@@ -18,7 +18,7 @@ import { useClickDrag, useDrawerTrack } from '~/hooks/useDrawer';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';
 
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 import Tooltip from '../../Tooltip';
 import { ActivityAction } from './ActivityTile';
 import PlayedBy from './PlayedBy';

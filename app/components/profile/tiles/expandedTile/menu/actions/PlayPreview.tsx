@@ -6,8 +6,8 @@ import { PauseCircle, PlayCircle } from 'iconsax-react';
 
 import { useDrawerActions } from '~/hooks/useDrawer';
 
-import AudioVisualizer from '../../../../../icons/AudioVisualizer';
-import SpotifyLogo from '../../../../../icons/SpotifyLogo';
+import AudioVisualizer from '../../../../../../lib/icons/AudioVisualizer';
+import SpotifyLogo from '../../../../../../lib/icons/SpotifyLogo';
 
 const PlayPreview = ({
   playing,

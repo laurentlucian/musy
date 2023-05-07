@@ -25,8 +25,8 @@ import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useThemePlayer } from '~/hooks/useTheme';
 
-import AudioVisualizer from '../../icons/AudioVisualizer';
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 import Tooltip from '../../Tooltip';
 
 type PlayerProps = {

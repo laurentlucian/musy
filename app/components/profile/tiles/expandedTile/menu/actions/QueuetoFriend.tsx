@@ -2,7 +2,7 @@ import { Button, Image } from '@chakra-ui/react';
 
 import { useQueueToFriendData } from '~/hooks/useSendButton';
 
-import Waver from '../../../../../icons/Waver';
+import Waver from '../../../../../../lib/icons/Waver';
 
 type QueueToFriendProps = {
   trackId: string;

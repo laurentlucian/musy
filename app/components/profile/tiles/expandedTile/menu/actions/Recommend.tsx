@@ -3,7 +3,7 @@ import { Button, Image } from '@chakra-ui/react';
 import { useDrawerTrack } from '~/hooks/useDrawer';
 import { useRecommendData } from '~/hooks/useSendButton';
 
-import Waver from '../../../../../icons/Waver';
+import Waver from '../../../../../../lib/icons/Waver';
 
 type RecommendProps = {
   userId: string;

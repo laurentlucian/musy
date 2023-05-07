@@ -20,8 +20,8 @@ import { useDrawerActions, useDrawerIsPlaying } from '~/hooks/useDrawer';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 
-import AudioVisualizer from '../../icons/AudioVisualizer';
-import SpotifyLogo from '../../icons/SpotifyLogo';
+import AudioVisualizer from '../../../lib/icons/AudioVisualizer';
+import SpotifyLogo from '../../../lib/icons/SpotifyLogo';
 import Tooltip from '../../Tooltip';
 
 type PlayerPausedProps = {

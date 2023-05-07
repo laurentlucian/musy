@@ -4,7 +4,7 @@ import { Divider, HStack, IconButton, Image, Stack, useColorModeValue } from '@c
 
 import { LoginCurve } from 'iconsax-react';
 
-import Waver from '~/components/icons/Waver';
+import Waver from '~/lib/icons/Waver';
 import useSessionUser from '~/hooks/useSessionUser';
 
 import UserMenu from '../UserMenu';

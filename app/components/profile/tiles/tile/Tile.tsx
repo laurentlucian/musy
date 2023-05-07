@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 
 import TileContext from '~/hooks/useTileContext';
 
-import SpotifyLogo from '../../../icons/SpotifyLogo';
+import SpotifyLogo from '../../../../lib/icons/SpotifyLogo';
 
 type TileProps = {
   action?: ReactNode;

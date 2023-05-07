@@ -6,7 +6,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import useSessionUser from '~/hooks/useSessionUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
-import LikeIcon from '~/lib/icon/Like';
+import LikeIcon from '~/lib/icons/Like';
 
 import Tooltip from '../../../../../Tooltip';
 
