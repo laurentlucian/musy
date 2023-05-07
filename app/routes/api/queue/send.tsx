@@ -36,7 +36,7 @@ export const action = async ({ request }: ActionArgs) => {
     action,
     owner: {
       connect: {
-        id: fromId,
+        id: toId,
       },
     },
 
@@ -53,7 +53,7 @@ export const action = async ({ request }: ActionArgs) => {
 
     user: {
       connect: {
-        userId: toId,
+        userId: fromId,
       },
     },
   };
