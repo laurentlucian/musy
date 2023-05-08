@@ -2,7 +2,7 @@ import { Stack, TabPanel } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 
-import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
 // import { sort } from '~/routes/friends';

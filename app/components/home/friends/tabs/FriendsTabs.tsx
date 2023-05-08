@@ -2,7 +2,7 @@ import { Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react
 
 import type { Track } from '@prisma/client';
 
-import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import usePending from '~/hooks/usePending';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { FriendsList } from '~/lib/types/types';

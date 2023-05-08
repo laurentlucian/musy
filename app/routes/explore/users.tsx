@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 
-import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import { useSearch } from '~/hooks/useSearchStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';

@@ -5,7 +5,7 @@ import { Box, Stack } from '@chakra-ui/react';
 import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';

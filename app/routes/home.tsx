@@ -4,7 +4,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/home/activity/ActivityTile';
 import MobileActivityTile from '~/components/home/activity/MobileActivityTile';
-import PrismaMiniPlayer from '~/components/profile/player/home/PrismaMiniPlayer';
+import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import Tiles from '~/components/profile/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';

@@ -21,7 +21,7 @@ import Waver from '~/lib/icons/Waver';
 import { shortenUsername } from '~/lib/utils';
 import type { Playback } from '~/services/spotify.server';
 
-import PlayerBar from '../PlayerBar';
+import PlayerBar from '../../../profile/player/PlayerBar';
 
 type PlayerProps = {
   layoutKey: string;
