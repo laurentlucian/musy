@@ -185,6 +185,7 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
         },
         settings: true,
       },
+      orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
       where: { user: { revoked: false, ...restrict } },
     });
   }
@@ -338,7 +339,7 @@ export const spotifyStrategy = new SpotifyStrategy(
       return response;
     }
 
-    const user = {
+    const newUser = {
       accessToken: response.accessToken,
       expiresAt: response.expiresAt,
       id: response.user.id,
@@ -353,7 +354,8 @@ export const spotifyStrategy = new SpotifyStrategy(
       },
     };
 
-    await createUser(user);
+    const user = await createUser(newUser);
+    await userQ.add('update-liked', { userId: user.id });
 
     return response;
   },
