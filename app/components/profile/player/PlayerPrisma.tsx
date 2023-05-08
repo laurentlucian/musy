@@ -54,8 +54,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const { isOpen, onToggle } = useDisclosure();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useExpandedIsPlaying();
-  // eslint-disable-next-line
-  const dontRemoveThis = useExpandedTile();
+  useExpandedTile();
 
   const color1 = useColorModeValue('music.800', 'music.200');
 

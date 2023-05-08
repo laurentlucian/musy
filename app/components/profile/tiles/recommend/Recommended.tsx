@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link, useParams } from '@remix-run/react';
 
 import {
   Image,
@@ -15,6 +15,7 @@ import {
 
 import type { Profile, RecommendedSongs, Track } from '@prisma/client';
 
+import useSessionUser from '~/hooks/useSessionUser';
 import { timeSince } from '~/lib/utils';
 
 import Tile from '../tile/Tile';
@@ -30,6 +31,9 @@ const Recommended = (props: {
     track: Track;
   })[];
 }) => {
+  const currentUser = useSessionUser();
+  const { id } = useParams();
+  const isOwnProfile = currentUser?.userId === id;
   const scrollButtons = props.recommended.length > 5;
   const show = props.recommended.length > 0;
 
@@ -39,6 +43,7 @@ const Recommended = (props: {
 
   const tracks = props.recommended.map(({ track }) => track);
 
+  if (isOwnProfile) return null;
   return (
     <>
       {show && (

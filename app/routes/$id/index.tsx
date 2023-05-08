@@ -11,7 +11,6 @@ import Playlists from '~/components/profile/tiles/playlists/Playlists';
 import RecentTracksPrisma from '~/components/profile/tiles/RecentTracksPrisma';
 import Recommended from '~/components/profile/tiles/recommend/Recommended';
 import TopTracks from '~/components/profile/tiles/TopTracks';
-import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { redis } from '~/services/scheduler/redis.server';
@@ -20,8 +19,6 @@ import { spotifyApi } from '~/services/spotify.server';
 const ProfilePrismaOutlet = () => {
   const { liked, party, playback, playlists, recent, recommended, top, user } =
     useTypedLoaderData<typeof loader>();
-  const currentUser = useSessionUser();
-  const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
     <Stack spacing={5} pos="relative" top={playback ? '-30px' : 0}>
@@ -34,7 +31,7 @@ const ProfilePrismaOutlet = () => {
           name={user.name}
         />
       )}
-      {isOwnProfile && <Recommended recommended={recommended} />}
+      <Recommended recommended={recommended} />
       <RecentTracksPrisma recent={recent} />
       <LikedTracksPrisma liked={liked} />
       <TopTracks top={top} />
