@@ -1,4 +1,5 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/server-runtime';
+import type { ActionArgs } from '@remix-run/server-runtime';
+import { redirect } from 'react-router';
 
 import { authenticator } from '~/services/auth.server';
 import { returnToCookie } from '~/services/session.server';
@@ -10,7 +11,9 @@ const isRedirect = (response: Response) => {
 
 export default () => null;
 
-const authenticate = async (request: Request) => {
+export const loader = () => redirect('/');
+
+export const action = async ({ request }: ActionArgs) => {
   const url = new URL(request.url);
   const returnTo = url.searchParams.get('returnTo') as string | null;
 
@@ -27,7 +30,3 @@ const authenticate = async (request: Request) => {
     throw error;
   }
 };
-
-export const loader = ({ request }: LoaderArgs) => authenticate(request);
-
-export const action = ({ request }: ActionArgs) => authenticate(request);
