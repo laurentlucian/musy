@@ -230,7 +230,7 @@ export const getFavorites = async (userId?: string): Promise<Favorite[] | null> 
         },
       },
     },
-    where: { favoriteId: userId },
+    where: { userId },
   });
   return favorites;
 };
