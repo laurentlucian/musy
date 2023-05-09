@@ -5,32 +5,29 @@ import type { Track } from '@prisma/client';
 import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-// import { sort } from '~/routes/friends';
 
 export const TempTab = () => {
   const users = useUsers();
   const currentUser = useSessionUser();
-  const otherUsers = users.filter((user) => user.userId !== currentUser?.userId);
-  console.log(users);
-  const everyone = otherUsers;
+
   const tracks: Track[] = [];
-  for (let i = 0; i < everyone.length; i++) {
-    if (everyone[i].playback === null || everyone[i].playback?.track === undefined) {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].playback === null || users[i].playback?.track === undefined) {
       continue;
     }
     const track = {
-      albumName: everyone[i].playback!.track.albumName,
-      albumUri: everyone[i].playback!.track.albumUri,
-      artist: everyone[i].playback!.track.artist,
-      artistUri: everyone[i].playback!.track.artistUri,
-      duration: everyone[i].playback!.track.duration,
-      explicit: everyone[i].playback!.track.explicit,
-      id: everyone[i].playback!.track.id,
-      image: everyone[i].playback!.track.image,
-      link: everyone[i].playback!.track.link,
-      name: everyone[i].playback!.track.name,
-      preview_url: everyone[i].playback!.track.preview_url,
-      uri: everyone[i].playback!.track.uri,
+      albumName: users[i].playback!.track.albumName,
+      albumUri: users[i].playback!.track.albumUri,
+      artist: users[i].playback!.track.artist,
+      artistUri: users[i].playback!.track.artistUri,
+      duration: users[i].playback!.track.duration,
+      explicit: users[i].playback!.track.explicit,
+      id: users[i].playback!.track.id,
+      image: users[i].playback!.track.image,
+      link: users[i].playback!.track.link,
+      name: users[i].playback!.track.name,
+      preview_url: users[i].playback!.track.preview_url,
+      uri: users[i].playback!.track.uri,
     };
     tracks.push(track);
   }
@@ -44,7 +41,7 @@ export const TempTab = () => {
       h="100%"
       px={['4px', 0]}
     >
-      {everyone.map((user, index) => {
+      {users.map((user, index) => {
         return (
           <PrismaMiniPlayer
             key={user.userId}
