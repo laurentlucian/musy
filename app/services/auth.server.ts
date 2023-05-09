@@ -191,6 +191,64 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
   }
 };
 
+export const getQueueableUsers = async (id: string | null = null) => {
+  if (id) {
+    return prisma.profile.findMany({
+      orderBy: { name: 'asc' },
+      select: {
+        friendsList: {
+          where: { friendId: id },
+        },
+        image: true,
+        name: true,
+        settings: { select: { allowQueue: true } },
+        userId: true,
+      },
+      where: { user: { NOT: { id }, revoked: false } },
+    });
+  } else {
+    return prisma.profile.findMany({
+      orderBy: { name: 'asc' },
+      select: {
+        image: true,
+        name: true,
+        settings: { select: { allowQueue: true } },
+        userId: true,
+      },
+      where: { user: { revoked: false } },
+    });
+  }
+};
+
+export const getRecommendableUsers = async (id: string | null = null) => {
+  if (id) {
+    return prisma.profile.findMany({
+      orderBy: { name: 'asc' },
+      select: {
+        friendsList: {
+          where: { friendId: id },
+        },
+        image: true,
+        name: true,
+        settings: { select: { allowQueue: true } },
+        userId: true,
+      },
+      where: { user: { NOT: { id }, revoked: false } },
+    });
+  } else {
+    return prisma.profile.findMany({
+      orderBy: { name: 'asc' },
+      select: {
+        image: true,
+        name: true,
+        settings: { select: { allowQueue: true } },
+        userId: true,
+      },
+      where: { user: { revoked: false } },
+    });
+  }
+};
+
 export const getFriends = async (userId?: string): Promise<FriendsList[] | null> => {
   if (!userId) return null;
   const friends = await prisma.friend.findMany({

@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 
 import QueueToFriend from '~/components/profile/tiles/expandedTile/menu/actions/QueuetoFriend';
 import Recommend from '~/components/profile/tiles/expandedTile/menu/actions/Recommend';
-import useSessionUser from '~/hooks/useSessionUser';
-import useUsers from '~/hooks/useUsers';
+import { useQueueableUsers, useRecommendableUsers } from '~/hooks/useUsers';
 
 const SendList = ({
   setShow,
@@ -18,24 +17,8 @@ const SendList = ({
   show: number;
   trackId: string;
 }) => {
-  const currentUser = useSessionUser();
-  const users = useUsers();
-
-  const queueableUsers = users.filter((user) => {
-    const isAllowed =
-      user.settings === null ||
-      user.settings.allowQueue === null ||
-      user.settings.allowQueue === 'on';
-    return user.userId !== currentUser?.userId && isAllowed;
-  });
-
-  const recommendableUsers = users.filter((user) => {
-    const isAllowed =
-      user.settings === null ||
-      user.settings.allowRecommend === null ||
-      user.settings.allowRecommend === 'on';
-    return user.userId !== currentUser?.userId && isAllowed;
-  });
+  const queueableUsers = useQueueableUsers();
+  const recommendableUsers = useRecommendableUsers();
 
   const List = (
     <Box w={['100vw', '300px']} h="100%" overflow="hidden">
@@ -79,6 +62,7 @@ const SendList = ({
       )}
     </Box>
   );
+  
   const BackButton = (
     <Button
       variant="ghost"
