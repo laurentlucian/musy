@@ -12,7 +12,7 @@ import PlayPreview from './actions/PlayPreview';
 import ProfileSong from './actions/ProfileSong';
 import QueueToSelf from './actions/QueueToSelf';
 import SaveToLiked from './actions/SaveToLiked';
-import SendList from './SendList';
+import SendList from './actions/sendlist/SendList';
 import ToggleQueueList from './ToggleQueueList';
 import ToggleRecommendList from './ToggleRecommendList';
 
