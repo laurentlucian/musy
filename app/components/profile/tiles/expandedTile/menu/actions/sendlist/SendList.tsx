@@ -72,6 +72,7 @@ const SendList = ({
       w="120px"
       alignSelf="start"
       mr="18px !important"
+      color="#BBB8B7"
     >
       back
     </Button>

@@ -115,6 +115,7 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
             w="fit-content"
             wordBreak="break-word"
             pos="relative"
+            color="#BBB8B7"
           >
             {tracks[index].name}
           </Text>
