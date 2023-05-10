@@ -79,7 +79,7 @@ const MobileNavBar = () => {
           pos="fixed"
           bg={bg}
           w="100vw"
-          h="90px"
+          h="75px"
           borderRadius="20px"
           borderBottomRadius={0}
           color={color}
