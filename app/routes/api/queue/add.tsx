@@ -6,7 +6,7 @@ import { typedjson } from 'remix-typedjson';
 
 import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
-import { activityQ } from '~/services/scheduler/jobs/activity';
+import { activityQ } from '~/services/scheduler/jobs/activity.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {

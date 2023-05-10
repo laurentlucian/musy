@@ -7,7 +7,7 @@ import { Heading, Text } from '@chakra-ui/react';
 
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { ownerQ } from '~/services/scheduler/jobs/party';
+import { ownerQ } from '~/services/scheduler/jobs/party.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const loader = ({ params }: LoaderArgs) => {

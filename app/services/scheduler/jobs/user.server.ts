@@ -7,8 +7,8 @@ import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-import { playbackCreator, playbackQ } from './playback';
-import { libraryQ } from './scraper';
+import { playbackCreator, playbackQ } from './playback.server';
+import { libraryQ } from './scraper.server';
 
 export const userQ = Queue<{ userId: string }>(
   'update_tracks',

@@ -7,7 +7,7 @@ import type { Favorite, FriendsList } from '~/lib/types/types';
 import { sessionStorage } from '~/services/session.server';
 
 import { prisma } from './db.server';
-import { userQ } from './scheduler/jobs/user';
+import { userQ } from './scheduler/jobs/user.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
