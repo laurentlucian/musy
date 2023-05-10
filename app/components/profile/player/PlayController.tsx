@@ -25,7 +25,8 @@ const PlayController = ({ fetcher, id, playback }: PlayControllerProps) => {
   return (
     <HStack>
       <Tooltip label="previous" placement="top">
-        <fetcher.Form action={`/${id}/prev`} method="post" replace>
+        <fetcher.Form action={`/api/controls/prev`} method="post" replace>
+          <input type="hidden" name="userId" value={id} />
           <IconButton
             name="prev"
             aria-label="Prev"
@@ -42,10 +43,11 @@ const PlayController = ({ fetcher, id, playback }: PlayControllerProps) => {
       </Tooltip>
       <Tooltip label={playback.is_playing ? 'pause' : 'play'} placement="top">
         <fetcher.Form
-          action={playback.is_playing ? `/${id}/pause` : `/${id}/play`}
+          action={playback.is_playing ? `/api/controls/pause` : `/api/controls/play`}
           method="post"
           replace
         >
+          <input type="hidden" name="userId" value={id} />
           <IconButton
             name="play"
             aria-label={playback.is_playing ? 'pause' : 'play'}
@@ -61,7 +63,8 @@ const PlayController = ({ fetcher, id, playback }: PlayControllerProps) => {
         </fetcher.Form>
       </Tooltip>
       <Tooltip label="next" placement="top">
-        <fetcher.Form action={`/${id}/next`} method="post" replace>
+        <fetcher.Form action={`/api/controls/next`} method="post" replace>
+          <input type="hidden" name="userId" value={id} />
           <IconButton
             name="next"
             aria-label="next"

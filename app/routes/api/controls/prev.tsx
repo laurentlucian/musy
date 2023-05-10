@@ -5,13 +5,13 @@ import invariant from 'tiny-invariant';
 
 import { spotifyApi } from '~/services/spotify.server';
 
-export const action = async ({ params }: ActionArgs) => {
-  const id = params.id;
-  invariant(id, 'Missing params Id');
-  const { spotify } = await spotifyApi(id);
+export const action = async ({ request }: ActionArgs) => {
+  const data = await request.formData();
+  const userId = data.get('userId') as string;
+  const { spotify } = await spotifyApi(userId);
   invariant(spotify, 'Spotify is null');
 
-  await spotify.skipToNext();
+  await spotify.skipToPrevious();
   return null;
 };
 
