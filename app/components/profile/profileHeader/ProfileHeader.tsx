@@ -160,7 +160,6 @@ const ProfileHeader = () => {
       muteId={String(isMuted?.id)}
     />
   ) : null;
-  const AddFriendBttn = !isOwnProfile ? <AddFriendsButton /> : null;
 
   return (
     <VStack mb="40px" alignItems="baseline" ml={['0px', '20px']} pl={['15px', 0]} w="100%">
@@ -175,7 +174,7 @@ const ProfileHeader = () => {
               ) : (
                 <>
                   <Favorite />
-                  {AddFriendBttn}
+                  {!isOwnProfile && <AddFriendsButton />}
                 </>
               )}
               {MenuBttn}

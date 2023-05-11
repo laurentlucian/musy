@@ -1,4 +1,4 @@
-import { Link, useTransition } from '@remix-run/react';
+import { Link, useNavigation } from '@remix-run/react';
 
 import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from '@chakra-ui/react';
 
@@ -27,11 +27,11 @@ const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: Pla
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
-  const transition = useTransition();
+  const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useExpandedActions();
   const name = shortenUsername(user.name);
-  const loading = transition.location?.pathname.includes(user.userId);
+  const loading = navigation.location?.pathname.includes(user.userId);
 
   const playback = user.playback;
   const track = playback?.track;

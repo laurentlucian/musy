@@ -33,7 +33,7 @@ export const sessionsQ = Queue<{}>('sessions', async () => {
     return;
   }
 
-  console.info('sessionsQ -> found song without session', songWithoutSession.id);
+  // console.info('sessionsQ -> found song without session', songWithoutSession.id);
   // Find sessions that have songs that were played within 30 minutes of the song we found above
   const session = await prisma.sessions.findFirst({
     orderBy: {

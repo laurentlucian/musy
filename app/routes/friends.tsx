@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 
-import { Box, Stack } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -14,8 +14,9 @@ const Friends = () => {
   const { favs, friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
 
-  const friendsList = friends?.filter(({ friend }) => {
-    return !favs?.some(({ favorite }) => favorite.userId === friend.userId);
+  const friendsList = friends?.sort(({ friend }, { friend: prevFriend }) => {
+    if (prevFriend.playback !== null && friend.playback === null) return 0;
+    return favs?.some(({ favorite }) => favorite.userId === friend.userId) ? -1 : 1;
   });
 
   const friendsTracks: Track[] = [];
@@ -45,46 +46,8 @@ const Friends = () => {
     }
   }
 
-  const favsTracks: Track[] = [];
-
-  if (favs) {
-    for (let i = 0; i < favs.length; i++) {
-      if (favs[i].favorite.playback === null || favs[i].favorite.playback?.track === undefined) {
-        continue;
-      }
-      const track = {
-        albumName: favs[i].favorite.playback!.track.albumName,
-        albumUri: favs[i].favorite.playback!.track.albumUri,
-        artist: favs[i].favorite.playback!.track.artist,
-        artistUri: favs[i].favorite.playback!.track.artistUri,
-        duration: favs[i].favorite.playback!.track.duration,
-        explicit: favs[i].favorite.playback!.track.explicit,
-        id: favs[i].favorite.playback!.track.id,
-        image: favs[i].favorite.playback!.track.image,
-        link: favs[i].favorite.playback!.track.link,
-        name: favs[i].favorite.playback!.track.name,
-        preview_url: favs[i].favorite.playback!.track.preview_url,
-        uri: favs[i].favorite.playback!.track.uri,
-      };
-      favsTracks.push(track);
-    }
-  }
-
   return (
-    <Stack pt="50px" pb="100px" spacing={3} w="100%" px={['4px', 'unset']}>
-      {favs &&
-        favs.map(({ favorite }, index) => {
-          return (
-            <PrismaMiniPlayer
-              key={favorite.userId}
-              layoutKey={'MiniPlayerF' + index}
-              user={favorite}
-              currentUserId={currentUser?.userId}
-              tracks={favsTracks}
-              index={index}
-            />
-          );
-        })}
+    <Stack pt={['50px', 'unset']} h="50vh" spacing={3} w="100%" px={['4px', 'unset']}>
       {friendsList?.map(({ friend }, index) => {
         return (
           <PrismaMiniPlayer
@@ -97,18 +60,6 @@ const Friends = () => {
           />
         );
       })}
-      {currentUser?.settings?.miniPlayer && (
-        <Box position="fixed" bottom="100px" w="100%" pr={['8px', 'unset']}>
-          <PrismaMiniPlayer
-            key={currentUser.userId}
-            layoutKey="MiniPlayerS"
-            user={currentUser}
-            currentUserId={currentUser?.userId}
-            index={0}
-            tracks={friendsTracks}
-          />
-        </Box>
-      )}
     </Stack>
   );
 };

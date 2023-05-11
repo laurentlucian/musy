@@ -252,6 +252,7 @@ export const getRecommendableUsers = async (id: string | null = null) => {
 export const getFriends = async (userId?: string): Promise<FriendsList[] | null> => {
   if (!userId) return null;
   const friends = await prisma.friend.findMany({
+    orderBy: [{ friend: { playback: { updatedAt: 'desc' } } }],
     select: {
       friend: {
         select: {

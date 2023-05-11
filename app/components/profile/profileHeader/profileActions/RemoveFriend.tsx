@@ -2,6 +2,8 @@ import { useParams, useSubmit } from '@remix-run/react';
 
 import { MenuItem, useColorModeValue } from '@chakra-ui/react';
 
+import { UserMinus } from 'iconsax-react';
+
 import useSessionUser from '~/hooks/useSessionUser';
 
 const RemoveFriend = () => {
@@ -19,8 +21,8 @@ const RemoveFriend = () => {
   };
 
   return (
-    <MenuItem color={color} bg={bg} onClick={handleClick}>
-      Remove Friend
+    <MenuItem icon={<UserMinus size="18px" />} color={color} bg={bg} onClick={handleClick}>
+      unfriend
     </MenuItem>
   );
 };
