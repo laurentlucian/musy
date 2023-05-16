@@ -1,25 +1,24 @@
+import { useFetcher } from '@remix-run/react';
+
 import { Button } from '@chakra-ui/react';
 
 import { Music } from 'iconsax-react';
-import { useTypedFetcher } from 'remix-typedjson';
 
 import { useExpandedTile } from '~/hooks/useExpandedTileState';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { action } from '~/routes/$id/profileSong';
 
 const ProfileSong = () => {
   const currentUser = useSessionUser();
-  const fetcher = useTypedFetcher<typeof action>();
+  const fetcher = useFetcher();
   const track = useExpandedTile();
 
   const setAsProfileSong = () => {
-    const id = currentUser?.userId;
-    const action = `/${id}/profileSong`;
     const data = {
       trackId: track?.id ?? '',
+      userId: currentUser?.userId ?? '',
     };
 
-    fetcher.submit(data, { action, method: 'post', replace: true });
+    fetcher.submit(data, { action: 'api/track/profile', method: 'post', replace: true });
   };
 
   return currentUser ? (

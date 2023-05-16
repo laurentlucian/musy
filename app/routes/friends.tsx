@@ -5,7 +5,7 @@ import { Stack } from '@chakra-ui/react';
 import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -50,7 +50,7 @@ const Friends = () => {
     <Stack pt={['50px', 'unset']} h="50vh" spacing={3} w="100%" px={['4px', 'unset']}>
       {friendsList?.map(({ friend }, index) => {
         return (
-          <PrismaMiniPlayer
+          <MiniPlayer
             key={friend.userId}
             layoutKey={'MiniPlayerF' + index}
             user={friend}

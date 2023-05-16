@@ -1,9 +1,6 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { useCatch } from '@remix-run/react';
-
-import { Heading, Text } from '@chakra-ui/react';
 
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -14,12 +11,13 @@ export const loader = ({ params }: LoaderArgs) => {
   return redirect('/' + params.id);
 };
 
-export const action = async ({ params, request }: ActionArgs) => {
+export const action = async ({ request }: ActionArgs) => {
   // - create party relationship
   // - play owner's currentTrack
   console.log('Joining party...');
-  const ownerId = params.id;
-  if (!ownerId) throw redirect('/');
+  const body = await request.formData();
+  const ownerId = body.get('userId');
+  if (typeof ownerId !== 'string') throw redirect('/');
 
   const session = await spotifyStrategy.getSession(request);
 
@@ -142,38 +140,4 @@ export const action = async ({ params, request }: ActionArgs) => {
     console.log('Party join failed ->', e);
     return null;
   }
-};
-
-export const ErrorBoundary = ({ error }: any) => {
-  console.log('error', error);
-  return (
-    <Text fontSize="14px" color="white">
-      Only authorized users while in development {`:(`}
-    </Text>
-  );
-};
-
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  let message;
-  switch (caught.status) {
-    case 401:
-      message = <Text>Oops, you shouldn&apos;t be here (No access)</Text>;
-      break;
-    case 404:
-      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
-      break;
-
-    default:
-      throw new Error(caught.data || caught.statusText);
-  }
-
-  return (
-    <>
-      <Heading fontSize={['xl', 'xxl']}>
-        {caught.status}: {caught.statusText}
-      </Heading>
-      <Text fontSize="md">{message}</Text>
-    </>
-  );
 };

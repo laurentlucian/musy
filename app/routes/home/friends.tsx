@@ -6,10 +6,9 @@ import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
 import { FavoriteTab } from '~/components/home/friends/tabs/FavoritesTab';
 import { FriendsTabs } from '~/components/home/friends/tabs/FriendsTabs';
-import { TempTab } from '~/components/home/friends/tabs/TempTab';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator, getFriends } from '~/services/auth.server';
@@ -49,7 +48,7 @@ const Friends = () => {
         {currentUser && (
           <Stack mt={7}>
             {currentUser.settings?.miniPlayer && (
-              <PrismaMiniPlayer
+              <MiniPlayer
                 key={currentUser.userId}
                 layoutKey="MiniPlayerS"
                 user={currentUser}
@@ -99,7 +98,6 @@ const Friends = () => {
         <TabPanels>
           {friends && friends.length > 0 && <FriendsTabs friends={friends} tracks={tracks} />}
           {favorites.length > 0 && <FavoriteTab favorites={favorites} />}
-          <TempTab />
         </TabPanels>
       </Stack>
     </Tabs>

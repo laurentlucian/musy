@@ -24,10 +24,14 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
 
   const saveSong = () => {
     toggleSave(trackId);
+    if (!userId) {
+      return fetcher.submit({}, { action: '/auth/spotify?returnTo=' + pathname + search });
+    }
 
-    const action = userId ? `/${userId}/save` : '/auth/spotify?returnTo=' + pathname + search;
-
-    fetcher.submit({ state: `${isSaved}`, trackId }, { action, method: 'post', replace: true });
+    fetcher.submit(
+      { state: `${isSaved}`, trackId, userId },
+      { action: 'api/track/save', method: 'post', replace: true },
+    );
   };
 
   if (iconOnly)

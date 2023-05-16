@@ -28,7 +28,7 @@ const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObje
     if (isVisible && !hasFetched.current) {
       const newOffset = offsetRef.current + 50;
       offsetRef.current = newOffset;
-      fetcher.load(`/${id}/liked?offset=${newOffset}`);
+      fetcher.load(`/api/scroll/${id}/liked?offset=${newOffset}`);
       hasFetched.current = true;
     }
   }, [isVisible, fetcher, id]);

@@ -295,23 +295,27 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                         {!isOwnProfile && (
                           <>
                             <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                              <fetcher.Form
-                                action={isUserInParty ? `/${id}/leave` : `/${id}/join`}
-                                method="post"
-                                replace
-                              >
-                                <IconButton
-                                  aria-label={isUserInParty ? 'Leave' : 'Join'}
-                                  name="party"
-                                  icon={<People size="24px" />}
-                                  color={isUserInParty ? 'spotify.green' : undefined}
-                                  _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
-                                  variant="ghost"
-                                  type="submit"
-                                  cursor="pointer"
-                                  isLoading={busy}
-                                />
-                              </fetcher.Form>
+                              <IconButton
+                                aria-label={isUserInParty ? 'Leave' : 'Join'}
+                                name="party"
+                                icon={<People size="24px" />}
+                                color={isUserInParty ? 'spotify.green' : undefined}
+                                _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
+                                variant="ghost"
+                                type="submit"
+                                cursor="pointer"
+                                isLoading={busy}
+                                onClick={() => {
+                                  fetcher.submit(
+                                    { userId: id },
+                                    {
+                                      action: isUserInParty ? 'api/party/leave' : 'api/party/join',
+                                      method: 'post',
+                                      replace: true,
+                                    },
+                                  );
+                                }}
+                              />
                             </Tooltip>
                             <Tooltip
                               label={hasPreview ? '' : 'song has no preview'}

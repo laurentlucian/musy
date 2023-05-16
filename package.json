@@ -18,7 +18,8 @@
     "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version major && git push origin && git push origin --tags",
     "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version minor && git push origin && git push origin --tags",
     "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version patch && git push origin && git push origin --tags",
-    "prod:db": "fly ssh console -C database-cli"
+    "prod:db": "fly ssh console -C database-cli",
+    "find-deadcode": "yarn ts-prune --ignore 'app/routes|app/services|app/lib|app/root|app/context|app/entry.server.tsx|app/createEmotionCache'"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,cjs,mjs}": [
@@ -98,6 +99,7 @@
     "lint-staged": "^13.0.4",
     "prettier": "^2.8.8",
     "prisma": "^3.15.2",
+    "ts-prune": "^0.10.3",
     "typescript": "^5.0.4"
   },
   "peerDependencies": {

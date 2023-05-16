@@ -13,7 +13,7 @@ import Waver from '~/lib/icons/Waver';
 import type { Friend, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import QuickActions from './QuickActions';
+import QuickActions from '../../home/friends/friendsPlayer/QuickActions';
 
 type PlayerProps = {
   currentUserId: string | undefined;
@@ -23,7 +23,7 @@ type PlayerProps = {
   user: Friend;
 };
 
-const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
+const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
   const bg = useColorModeValue('music.200', 'music.900');
   const hoverBg = useColorModeValue('music.50', '#5F5B59');
   const color = useColorModeValue('music.900', 'music.200');
@@ -183,4 +183,4 @@ const PrismaMiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: Pla
     </Button>
   );
 };
-export default PrismaMiniPlayer;
+export default MiniPlayer;

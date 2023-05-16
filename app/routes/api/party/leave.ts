@@ -4,10 +4,11 @@ import { json, redirect } from '@remix-run/node';
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
-export const action = async ({ params, request }: ActionArgs) => {
-  const ownerId = params.id;
+export const action = async ({ request }: ActionArgs) => {
+  const body = await request.formData();
+  const ownerId = body.get('userId');
   console.log('Leaving party...');
-  if (!ownerId) {
+  if (typeof ownerId !== 'string') {
     console.log('Leave failed -> missing ownerId parameter');
     throw redirect('/');
   }

@@ -6,18 +6,19 @@ import invariant from 'tiny-invariant';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const loader = async ({ params, request }: LoaderArgs) => {
-  const id = params.id;
-  invariant(id, 'Missing params Id');
+  const userId = params.id;
+  console.log('userId', userId);
+
+  if (typeof userId !== 'string') {
+    return typedjson('Request Error');
+  }
 
   const url = new URL(request.url);
-  const time_range = (url.searchParams.get('top-filter') ?? 'medium_term') as
-    | 'medium_term'
-    | 'long_term'
-    | 'short_term';
+  const offset = Number(url.searchParams.get('offset')) || 0;
 
-  const { spotify } = await spotifyApi(id);
+  const { spotify } = await spotifyApi(userId);
   invariant(spotify, 'Missing spotify');
-  const { body } = await spotify.getMyTopTracks({ limit: 50, time_range });
+  const { body } = await spotify.getMySavedTracks({ limit: 50, offset });
   const data = body.items ?? [];
   return typedjson(data);
 };

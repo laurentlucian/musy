@@ -2,7 +2,7 @@ import { Stack, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react
 
 import type { Track } from '@prisma/client';
 
-import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import usePending from '~/hooks/usePending';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { FriendsList } from '~/lib/types/types';
@@ -40,7 +40,7 @@ export const FriendsTabs = ({ friends, tracks }: Props) => {
             <TabPanel>
               {friends.map(({ friend }, index) => {
                 return (
-                  <PrismaMiniPlayer
+                  <MiniPlayer
                     key={friend.userId}
                     layoutKey={'MiniPlayerF' + index}
                     user={friend}

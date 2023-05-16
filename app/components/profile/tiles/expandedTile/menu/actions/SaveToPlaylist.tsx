@@ -22,11 +22,14 @@ const SaveToPlaylist = ({ trackId }: SaveToPlaylistProps) => {
 
   const saveSong = () => {
     setIsSaved(!isSaved);
-    const action = userId
-      ? `/${userId}/saveToPlaylist`
-      : '/auth/spotify?returnTo=' + pathname + search;
+    if (!userId) {
+      return fetcher.submit({}, { action: '/auth/spotify?returnTo=' + pathname + search });
+    }
 
-    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
+    fetcher.submit(
+      { trackId, userId },
+      { action: 'api/playlist/save', method: 'post', replace: true },
+    );
   };
 
   const isAdding = fetcher.submission?.formData.get('trackId') === trackId;

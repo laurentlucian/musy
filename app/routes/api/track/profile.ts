@@ -1,17 +1,18 @@
 import type { ActionArgs } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
 
-export const action = async ({ params, request }: ActionArgs) => {
-  const { id } = params;
-  if (!id) throw redirect('/');
-
+export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
-  const trackId = body.get('trackId') as string;
+  const id = body.get('userId');
+  const trackId = body.get('trackId');
+
+  if (typeof id !== 'string' || typeof trackId !== 'string') {
+    return typedjson('Request Error');
+  }
 
   const data = {
     profileSong: {

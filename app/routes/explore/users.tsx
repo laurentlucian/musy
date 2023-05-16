@@ -1,6 +1,6 @@
 import { Stack } from '@chakra-ui/react';
 
-import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import { useSearch } from '~/hooks/useSearchStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
@@ -53,7 +53,7 @@ const Users = () => {
     <Stack pt={0} pb="100px" spacing={3} w="100%" h="100%" px={['4px', 0]}>
       {searchedUsers.map((user, index) => {
         return (
-          <PrismaMiniPlayer
+          <MiniPlayer
             key={user.userId}
             layoutKey={'MiniPlayer' + index}
             user={user}

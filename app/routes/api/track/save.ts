@@ -2,23 +2,20 @@ import type { ActionArgs } from '@remix-run/node';
 
 import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
-import invariant from 'tiny-invariant';
 
 import { createTrackModel } from '~/lib/utils';
 import { getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
 
-export const action = async ({ params, request }: ActionArgs) => {
-  const id = params.id;
-  invariant(id, 'Missing params Id');
-
+export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
+  const id = form.get('userId');
   const trackId = form.get('trackId');
   const isSaved = form.get('state') === 'true';
   const currentUser = await getCurrentUser(request);
 
-  if (typeof trackId !== 'string' || !currentUser) {
+  if (typeof trackId !== 'string' || !currentUser || typeof id !== 'string') {
     return typedjson('Request Error');
   }
 

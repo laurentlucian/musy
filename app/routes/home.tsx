@@ -4,7 +4,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/home/activity/ActivityTile';
 import MobileActivityTile from '~/components/home/activity/MobileActivityTile';
-import PrismaMiniPlayer from '~/components/home/friends/friendsPlayer/PrismaMiniPlayer';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import Tiles from '~/components/profile/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -96,7 +96,7 @@ const Index = () => {
               })}
             </Tiles>
             {users.map((user, index) => (
-              <PrismaMiniPlayer
+              <MiniPlayer
                 key={user.userId}
                 layoutKey={'MiniPlayerF' + index}
                 user={user}
