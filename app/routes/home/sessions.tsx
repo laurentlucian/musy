@@ -7,7 +7,7 @@ import SessionModal from '~/components/sessions/SessionModal';
 import SessionT from '~/components/sessions/SessionTile';
 import { prisma } from '~/services/db.server';
 
-const Friends = () => {
+const Sessions = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
@@ -49,6 +49,7 @@ export function getSessions() {
         orderBy: {
           playedAt: 'desc',
         },
+        take: 50,
       },
       user: {
         include: {
@@ -68,12 +69,9 @@ export type SessionsWithData = Prisma.PromiseReturnType<typeof getSessions>;
 export const loader = async () => {
   const sessions = await getSessions();
 
-  return typedjson(
-    { sessions },
-    { headers: { 'Cache-Control': 'private, maxage=10, stale-while-revalidate=0' } },
-  );
+  return typedjson({ sessions });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export { CatchBoundary } from '~/components/error/CatchBoundary';
-export default Friends;
+export default Sessions;
