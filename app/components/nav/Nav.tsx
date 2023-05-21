@@ -37,9 +37,11 @@ const Nav = () => {
 
   return (
     <Flex w="100%" as="header" py={5} justify="space-between" px={0} zIndex={1}>
-      <HStack as={Link} to="/" spacing="8px" zIndex={1} onClick={handleClick}>
-        <Image src="/favicon-32x32.png" />
-        <Heading size="sm">musy</Heading>
+      <HStack spacing="8px" zIndex={1} onClick={handleClick}>
+        <HStack as={Link} to="/">
+          <Image src="/musylogo1.svg" boxSize="28px" />
+          <Heading size="sm">musy</Heading>
+        </HStack>
         <ChakraLink as={Link} to="/sessions" fontSize="sm">
           sessions
         </ChakraLink>
