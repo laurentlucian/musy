@@ -67,7 +67,7 @@ const Search = () => {
   };
   const handleBlur = () => {
     showMenu();
-    if (search === '' && !isSearching) {
+    if (search === '' && isSearching) {
       navigate(-1);
       searchParams.delete('spotify');
       setSearchParams(searchParams, {
