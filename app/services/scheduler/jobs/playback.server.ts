@@ -54,30 +54,42 @@ const upsertPlayback = async (
 
   const endedAt = new Date(timestamp + track.duration_ms);
 
-  const recentSongs: Prisma.RecentSongsCreateInput = {
-    action: 'played',
-    playedAt: endedAt,
-    track: {
-      connectOrCreate: {
-        create: createTrackModel(track),
-        where: {
-          id: track.id,
+  const recentlyAdded = await prisma.recentSongs.findFirst({
+    where: {
+      playedAt: {
+        gte: new Date(endedAt.getTime() - 1000 * 60 * 2),
+        lte: new Date(endedAt.getTime() + 1000 * 60 * 2),
+      },
+      trackId: track.id,
+    },
+  });
+
+  if (!recentlyAdded) {
+    const recentSongs: Prisma.RecentSongsCreateInput = {
+      action: 'played',
+      playedAt: endedAt,
+      track: {
+        connectOrCreate: {
+          create: trackDb,
+          where: {
+            id: track.id,
+          },
         },
       },
-    },
-    user: {
-      connect: {
-        userId,
+      user: {
+        connect: {
+          userId,
+        },
       },
-    },
-    verifiedFromSpotify: false,
-  };
+      verifiedFromSpotify: false,
+    };
 
-  await prisma.recentSongs.upsert({
-    create: recentSongs,
-    update: recentSongs,
-    where: { playedAt_userId: { playedAt: endedAt, userId } },
-  });
+    await prisma.recentSongs.upsert({
+      create: recentSongs,
+      update: recentSongs,
+      where: { playedAt_userId: { playedAt: endedAt, userId } },
+    });
+  }
 
   console.log('playbackQ -> prisma updated', userId);
 };
