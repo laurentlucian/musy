@@ -1,4 +1,4 @@
-import { useSubmit, useTransition } from '@remix-run/react';
+import { useSubmit, useNavigation } from '@remix-run/react';
 
 import { Button, Stack, Text } from '@chakra-ui/react';
 
@@ -11,8 +11,8 @@ import { timeSince } from '~/lib/utils';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {
   const submit = useSubmit();
-  const transition = useTransition();
-  const isLoading = transition.submission?.formData.get('mood') === 'true';
+  const transition = useNavigation();
+  const isLoading = transition.formData?.get('mood') === 'true';
   const label = mood ? 'refresh mood' : 'get mood ;)';
   const icon = mood ? undefined : <Smileys />;
   const text = mood ? mood : 'get mood';

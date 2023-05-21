@@ -26,7 +26,7 @@ const Recommend = ({ userId, userImage, username }: RecommendProps) => {
       variant="ghost"
       justifyContent="left"
       fontSize="18px"
-      color="music.200"
+      color="musy.200"
       py="30px"
       w={['100vw', '550px']}
       mt="10px"

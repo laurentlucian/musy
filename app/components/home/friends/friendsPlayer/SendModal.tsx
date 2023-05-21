@@ -65,7 +65,7 @@ const SendModal = ({
   const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.900');
 
   const onInputMount = (input: HTMLInputElement | null) => {
     if (input && isOpen) {

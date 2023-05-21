@@ -69,16 +69,16 @@ const baseStyleDialog = defineStyle((props) => {
   return {
     ...(isFullHeight && { height: '100vh' }),
     _dark: {
-      [$bg.variable]: mode('music.900', `music.50`)(props),
-      [$bs.variable]: mode('music.900', `music.50`)(props),
+      [$bg.variable]: mode('musy.900', `music.50`)(props),
+      [$bs.variable]: mode('musy.900', `music.50`)(props),
     },
     bg: $bg.reference,
     boxShadow: 'none',
     color: 'white',
     maxH: '100vh',
     zIndex: 0,
-    [$bs.variable]: mode('music.900', `music.50`)(props),
-    [$bg.variable]: mode('music.900', `music.50`)(props),
+    [$bs.variable]: mode('musy.900', `music.50`)(props),
+    [$bg.variable]: mode('musy.900', `music.50`)(props),
   };
 });
 const closeButton = defineStyle({

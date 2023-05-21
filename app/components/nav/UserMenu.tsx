@@ -1,4 +1,4 @@
-import { Form, useLocation, useNavigate, useTransition } from '@remix-run/react';
+import { Form, useLocation, useNavigate, useNavigation } from '@remix-run/react';
 import { useRef } from 'react';
 import { LogOut, MoreHorizontal } from 'react-feather';
 
@@ -41,11 +41,11 @@ const UserMenu = () => {
   const isSmallScreen = useIsMobile();
   const { colorMode, toggleColorMode } = useColorMode();
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.700');
-  const hoverBg = useColorModeValue('music.400', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.700');
+  const hoverBg = useColorModeValue('musy.400', 'musy.900');
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const transition = useTransition();
+  const transition = useNavigation();
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
   const handleClick = () => {
@@ -253,7 +253,7 @@ const UserMenu = () => {
                         type="submit"
                         variant="login"
                         spinner={<Waver />}
-                        isLoading={transition.submission?.action.includes('auth')}
+                        isLoading={transition.formAction?.includes('auth')}
                         bg={bg}
                         color={color}
                       >

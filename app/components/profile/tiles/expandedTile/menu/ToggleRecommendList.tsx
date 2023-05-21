@@ -20,7 +20,7 @@ const ToggleRecommendList = ({ setShow }: { setShow: Dispatch<SetStateAction<num
         variant="ghost"
         mx="25px"
         w={['100vw', '100%']}
-        color="music.200"
+        color="musy.200"
         justifyContent="left"
         _hover={{ color: 'white' }}
         disabled
@@ -37,7 +37,7 @@ const ToggleRecommendList = ({ setShow }: { setShow: Dispatch<SetStateAction<num
       variant="ghost"
       mx="25px"
       w={['100vw', '100%']}
-      color="music.200"
+      color="musy.200"
       justifyContent="left"
       _hover={{ color: 'white' }}
       disabled={!currentUser}

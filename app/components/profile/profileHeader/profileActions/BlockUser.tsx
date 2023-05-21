@@ -12,7 +12,7 @@ type BlockTypes = {
 
 export const BlockUser = ({ block, blockId, header }: BlockTypes) => {
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.900');
   const [isBlocked, setIsBlocked] = useState(block);
   const submit = useSubmit();
 

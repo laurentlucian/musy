@@ -1,5 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { Form, useCatch, useSearchParams, useSubmit, useTransition } from '@remix-run/react';
+import { Form, useCatch, useSearchParams, useSubmit, useNavigation } from '@remix-run/react';
 import { Link } from '@remix-run/react';
 import { Outlet } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
@@ -37,8 +37,8 @@ const Analysis = () => {
   const [search, setSearch] = useState(searchDefault ?? '');
   const ref = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
-  const transition = useTransition();
-  const busy = transition.submission?.formData.has('spotify') ?? false;
+  const transition = useNavigation();
+  const busy = transition.formData?.has('spotify') ?? false;
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {

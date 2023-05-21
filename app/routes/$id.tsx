@@ -120,7 +120,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   const friendStatus = data.get('friendStatus');
   const isFriend = data.get('isFriend');
 
-  console.log('friendStatus', friendStatus);
   if (friendStatus === 'requested') {
     const isPending = await prisma.pendingFriend.findFirst({
       where: {
@@ -204,23 +203,17 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.favorite.create({
       data: {
         favorite: {
-          connect: { userId: currentUser.userId },
+          connect: { userId: id },
         },
         user: {
-          connect: { userId: id },
+          connect: { userId: currentUser.userId },
         },
       },
     });
   } else if (isFavorited === 'false') {
-    const fav = await prisma.favorite.findFirst({
-      select: { id: true },
-      where: { AND: [{ favoriteId: id, userId: currentUser.userId }] },
+    await prisma.favorite.delete({
+      where: { userId_favoriteId: { favoriteId: id, userId: currentUser.userId } },
     });
-    if (fav) {
-      await prisma.favorite.delete({
-        where: { id: fav.id },
-      });
-    }
   }
   if (blockUser === 'true') {
     await prisma.block.create({

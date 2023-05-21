@@ -1,4 +1,4 @@
-import { Form, Link, useLocation, useTransition } from '@remix-run/react';
+import { Form, Link, useLocation, useNavigation } from '@remix-run/react';
 import type { MouseEvent } from 'react';
 
 import {
@@ -19,10 +19,10 @@ import NavSearch from './NavSearch';
 import UserMenu from './UserMenu';
 
 const Nav = () => {
-  const transition = useTransition();
+  const transition = useNavigation();
   const { pathname, search } = useLocation();
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.900');
   const currentUser = useSessionUser();
   const authorized = !!currentUser;
   const disable = useSaveState();
@@ -52,7 +52,7 @@ const Nav = () => {
               type="submit"
               variant="login"
               spinner={<Waver />}
-              isLoading={transition.submission?.action.includes('auth')}
+              isLoading={transition.formAction?.includes('auth')}
               bg={bg}
               color={color}
             >

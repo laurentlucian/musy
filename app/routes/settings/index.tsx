@@ -29,9 +29,9 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator, upsertSettingsField } from '~/services/auth.server';
 
 const Account = () => {
-  const bg = useColorModeValue('music.100', 'music.800');
-  const cancelBg = useColorModeValue('white', 'music.400');
-  const color = useColorModeValue('music.800', 'white');
+  const bg = useColorModeValue('musy.100', 'musy.800');
+  const cancelBg = useColorModeValue('white', 'musy.400');
+  const color = useColorModeValue('musy.800', 'white');
   const currentUser = useSessionUser();
   const submit = useSubmit();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -189,7 +189,7 @@ const Account = () => {
                   onClick={onClose}
                   bg={bg}
                   color={color}
-                  _hover={{ bg: cancelBg, color: 'music.800' }}
+                  _hover={{ bg: cancelBg, color: 'musy.800' }}
                 >
                   cancel
                 </Button>

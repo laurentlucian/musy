@@ -14,7 +14,7 @@ const Explore = () => {
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
   return (
-    <Stack bg={bg} alignItems="center" h="100%">
+    <Stack bg={bg} alignItems="center" h="100%" px="5px">
       <SearchInput search={search} setSearch={setSearch} setTracks={setTracks} />
       <Stack w={['100%', ' 500px']} h={['89vh', '100%']} overflowY="scroll">
         {tracks?.map((track, index) => {

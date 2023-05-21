@@ -1,5 +1,5 @@
 const colors = {
-  music: {
+  musy: {
     100: '#E4DBD5',
     200: '#DFD7D1',
     250: '#D7D0CC',

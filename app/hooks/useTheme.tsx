@@ -22,7 +22,7 @@ export const useThemePlayer = () => {
   const theme = profileData?.user.theme;
   const opaque = theme?.opaque ? '' : '66';
   const bg = useColorModeValue(
-    theme?.playerColorLight + opaque ?? 'music.50',
+    theme?.playerColorLight + opaque ?? 'musy.50',
     theme?.playerColorDark + opaque ?? '#10101066',
   );
   const main = useColorModeValue(

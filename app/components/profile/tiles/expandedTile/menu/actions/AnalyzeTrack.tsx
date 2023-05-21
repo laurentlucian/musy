@@ -1,4 +1,4 @@
-import { useNavigate, useTransition } from '@remix-run/react';
+import { useNavigate, useNavigation } from '@remix-run/react';
 
 import { Button } from '@chakra-ui/react';
 
@@ -8,7 +8,7 @@ import Waver from '~/lib/icons/Waver';
 
 const AnalyzeTrack = ({ trackId }: { trackId: string }) => {
   const navigate = useNavigate();
-  const transition = useTransition();
+  const transition = useNavigation();
   const isLoading = transition.location?.pathname.includes('analysis');
 
   return (
@@ -18,7 +18,7 @@ const AnalyzeTrack = ({ trackId }: { trackId: string }) => {
       variant="ghost"
       justifyContent="left"
       w={['100vw', '100%']}
-      color="music.200"
+      color="musy.200"
       _hover={{ color: 'white' }}
     >
       {isLoading ? <Waver /> : 'Analyze'}

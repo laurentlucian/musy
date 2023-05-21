@@ -24,7 +24,7 @@ const QueueToSelf = ({ trackId }: QueueToSelfProps) => {
       justifyContent="left"
       fontSize="14px"
       w={['100vw', '100%']}
-      color="music.200"
+      color="musy.200"
       _hover={{ color: 'white' }}
     >
       {isAdding ? <Waver /> : text}
@@ -36,7 +36,7 @@ const QueueToSelf = ({ trackId }: QueueToSelfProps) => {
       justifyContent="left"
       fontSize="14px"
       w={['100vw', '100%']}
-      color="music.200"
+      color="musy.200"
       _hover={{ color: 'white' }}
       disabled
     >

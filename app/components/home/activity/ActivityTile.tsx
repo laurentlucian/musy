@@ -116,7 +116,7 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
 };
 
 const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.900');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   // eslint-disable-next-line
@@ -136,7 +136,6 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
         justify="space-between"
         bgColor={bg}
         w="250px"
-        onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         cursor="pointer"
@@ -189,7 +188,12 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
             </Stack>
           </Flex>
         </Flex>
-        <Box as={motion.div} layoutId={tracks[index].id + layoutKey} minW="100px">
+        <Box
+          as={motion.div}
+          layoutId={tracks[index].id + layoutKey}
+          minW="100px"
+          onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
+        >
           <Tooltip label={tracks[index].albumName} placement="top-start">
             <Image boxSize="100px" objectFit="cover" src={tracks[index].image} />
           </Tooltip>

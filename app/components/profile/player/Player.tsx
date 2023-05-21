@@ -57,9 +57,9 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   const isPlaying = useExpandedIsPlaying();
 
-  const bg = useColorModeValue('music.50', '#10101066');
-  const color = useColorModeValue('#10101066', 'music.50');
-  const color1 = useColorModeValue('music.800', 'music.200');
+  const bg = useColorModeValue('musy.50', '#10101066');
+  const color = useColorModeValue('#10101066', 'musy.50');
+  const color1 = useColorModeValue('musy.800', 'musy.200');
 
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();

@@ -27,7 +27,7 @@ const accessibleColorMap: { [key: string]: AccessibleColor } = {
 
 const baseStyle = defineStyle((props) => ({
   borderRadius: 'sm',
-  color: mode('music.200', 'music.800')(props),
+  color: mode('musy.200', 'musy.800')(props),
 }));
 
 const variantMusic: SystemStyleFunction = (props) => {
@@ -64,7 +64,7 @@ const variantGhost = defineStyle((props) => {
       _hover: {
         bg: mode(`whiteAlpha.200`, `gray.100`)(props),
       },
-      color: mode('music.200', 'music.800')(props),
+      color: mode('musy.200', 'musy.800')(props),
     };
   }
 
@@ -95,10 +95,10 @@ const login = defineStyle((props) => ({
   },
   _hover: { backfaceVisibility: 'none !important', boxShadow: 'none !important' },
   backfaceVisibility: 'none !important',
-  bg: mode('music.200', 'music.700')(props),
+  bg: mode('musy.200', 'musy.700')(props),
   borderRadius: '7px',
   boxShadow: 'none !important',
-  color: mode('music.700', 'white')(props),
+  color: mode('musy.700', 'white')(props),
   h: '39px',
   userSelect: 'none !important',
   w: '200px',
@@ -126,12 +126,12 @@ const searchCircle = defineStyle((props) => ({
   },
   _hover: { backfaceVisibility: 'none !important', boxShadow: 'none !important' },
   backfaceVisibility: 'none !important',
-  bg: mode('music.200', 'music.700')(props),
+  bg: mode('musy.200', 'musy.700')(props),
   borderRadius: 'full',
 
   boxShadow: 'none !important',
   boxSize: '50px',
-  color: mode('music.700', 'music.200')(props),
+  color: mode('musy.700', 'musy.200')(props),
   fontSize: '40px',
   fontWeight: 'hairline',
   perspective: 1000,
@@ -154,7 +154,7 @@ const close = defineStyle((props) => ({
   _hover: { backfaceVisibility: 'none !important', boxShadow: 'none !important' },
   backfaceVisibility: 'none !important',
   boxShadow: 'none !important',
-  color: mode('music.700', 'white')(props),
+  color: mode('musy.700', 'white')(props),
   fontSize: '20px',
   fontWeight: 'light',
   perspective: 1000,

@@ -1,4 +1,4 @@
-import { Form, Link, useCatch, useTransition } from '@remix-run/react';
+import { Form, Link, useCatch, useNavigation } from '@remix-run/react';
 import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
@@ -16,7 +16,7 @@ import { spotifyApi } from '~/services/spotify.server';
 
 const TrackAnalysis = () => {
   const { analysis, authorized, track } = useTypedLoaderData<typeof loader>();
-  const transition = useTransition();
+  const transition = useNavigation();
   const { onClose } = useExpandedActions();
 
   useEffect(() => {

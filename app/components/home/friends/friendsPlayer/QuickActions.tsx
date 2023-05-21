@@ -34,7 +34,7 @@ const QuickActions = ({
   const [title, setTitle] = useState<'queue' | 'recommend'>('queue');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.900');
+  const bg = useColorModeValue('musy.200', 'musy.900');
   const { isOpen, onClose, onOpen } = useDisclosure();
   const onClickMenuItem = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -55,11 +55,10 @@ const QuickActions = ({
             _hover={{ color: 'spotify.green' }}
             _active={{ boxShadow: 'none' }}
             _focus={{ boxShadow: 'none' }}
-            pl={['14px', '10px']}
           />
         </Stack>
         <Portal>
-          <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)">
+          <MenuList bg={bg} boxShadow="0px 0px 10px 2px rgba(117,117,117,0.79)" zIndex={99}>
             {que !== 'off' && (
               <MenuItem
                 icon={<Send2 />}

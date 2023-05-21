@@ -34,7 +34,7 @@ const SearchInput = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const bg = useColorModeValue('#EEE6E2', '#050404');
-  const color = useColorModeValue('music.800', 'music.200');
+  const color = useColorModeValue('musy.800', 'musy.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const inputRef = useRef<HTMLInputElement>(null);
   const isSmallScreen = useIsMobile();
@@ -127,7 +127,7 @@ const SearchInput = ({
           />
         )}
       </InputGroup>
-      <Filters />
+      {/* <Filters /> */}
       {isSmallScreen && <UserMenu />}
     </Stack>
   );

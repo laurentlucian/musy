@@ -3,7 +3,7 @@ import {
   useNavigate,
   useSearchParams,
   useSubmit,
-  useTransition,
+  useNavigation,
   useLocation,
 } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
@@ -33,12 +33,12 @@ const Search = () => {
   const ref = useRef<HTMLFormElement>(null);
   const divRef = useRef<HTMLInputElement>(null);
   const submit = useSubmit();
-  const transition = useTransition();
+  const transition = useNavigation();
   const { pathname } = useLocation();
   const isSearching = pathname.includes('search');
-  const busy = transition.submission?.formData.has('spotify') ?? false;
+  const busy = transition.formData?.has('spotify') ?? false;
   const navigate = useNavigate();
-  const color = useColorModeValue('music.800', 'music.200');
+  const color = useColorModeValue('musy.800', 'musy.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const currentUser = useSessionUser();
   const authorized = !!currentUser;

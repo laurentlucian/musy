@@ -38,12 +38,12 @@ const Recommended = (props: {
   const show = props.recommended.length > 0;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.700');
+  const bg = useColorModeValue('musy.200', 'musy.700');
   const { isOpen, onClose, onToggle } = useDisclosure();
 
   const tracks = props.recommended.map(({ track }) => track);
 
-  if (isOwnProfile) return null;
+  if (!isOwnProfile) return null;
   return (
     <>
       {show && (

@@ -1,4 +1,4 @@
-import { Form, useLocation, useTransition } from '@remix-run/react';
+import { Form, useLocation, useNavigation } from '@remix-run/react';
 
 import { Divider, HStack, IconButton, Image, Stack, useColorModeValue } from '@chakra-ui/react';
 
@@ -10,7 +10,7 @@ import Waver from '~/lib/icons/Waver';
 import UserMenu from '../UserMenu';
 
 const HomeHeader = () => {
-  const transition = useTransition();
+  const transition = useNavigation();
   const { pathname } = useLocation();
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -30,7 +30,7 @@ const HomeHeader = () => {
               type="submit"
               variant="ghost"
               spinner={<Waver />}
-              isLoading={transition.submission?.action.includes('auth')}
+              isLoading={transition.formAction?.includes('auth')}
               color={color}
               pos="fixed"
               top={2}

@@ -45,7 +45,7 @@ const NavSearch = () => {
   const busy = state === 'loading' ?? false;
 
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('music.200', 'music.700');
+  const bg = useColorModeValue('musy.200', 'musy.700');
 
   const divRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

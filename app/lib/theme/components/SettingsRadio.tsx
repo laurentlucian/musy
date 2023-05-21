@@ -1,8 +1,8 @@
 import { Box, useColorModeValue, useRadio } from '@chakra-ui/react';
 
 export const RadioButtons = (props: any) => {
-  const bg = useColorModeValue('white', 'music.800');
-  const color = useColorModeValue('music.800', 'white');
+  const bg = useColorModeValue('white', 'musy.800');
+  const color = useColorModeValue('musy.800', 'white');
 
   const { getCheckboxProps, getInputProps } = useRadio(props);
 

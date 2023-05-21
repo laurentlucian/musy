@@ -56,7 +56,7 @@ const PlayerPrisma = ({ id, layoutKey, playback }: PlayerProps) => {
   const isPlaying = useExpandedIsPlaying();
   useExpandedTile();
 
-  const color1 = useColorModeValue('music.800', 'music.200');
+  const color1 = useColorModeValue('musy.800', 'musy.200');
 
   const { revalidate } = useRevalidator();
   const isSmallScreen = useIsMobile();

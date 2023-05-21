@@ -1,4 +1,3 @@
-
 import { Stack, useColorModeValue } from '@chakra-ui/react';
 
 import type { Prisma } from '@prisma/client';

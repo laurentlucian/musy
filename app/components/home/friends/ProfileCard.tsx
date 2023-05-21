@@ -1,4 +1,4 @@
-import { Link, useTransition } from '@remix-run/react';
+import { Link, useNavigation } from '@remix-run/react';
 
 import { Button, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
@@ -12,10 +12,10 @@ type PlayerProps = {
 };
 
 const ProfileCard = ({ user }: PlayerProps) => {
-  const bg = useColorModeValue('music.200', 'music.900');
-  const hoverBg = useColorModeValue('music.50', '#5F5B59');
-  const color = useColorModeValue('music.900', 'music.200');
-  const transition = useTransition();
+  const bg = useColorModeValue('musy.200', 'musy.900');
+  const hoverBg = useColorModeValue('musy.50', '#5F5B59');
+  const color = useColorModeValue('musy.900', 'musy.200');
+  const transition = useNavigation();
   const isSmallScreen = useIsMobile();
 
   if (!user) return null;

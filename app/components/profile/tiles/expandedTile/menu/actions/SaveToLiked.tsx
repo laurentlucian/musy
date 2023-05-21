@@ -63,7 +63,7 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
       variant="ghost"
       justifyContent="left"
       w={['100vw', '100%']}
-      color="music.200"
+      color="musy.200"
       _hover={{ color: 'white' }}
       disabled={!currentUser}
     >

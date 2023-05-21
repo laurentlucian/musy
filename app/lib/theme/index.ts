@@ -32,7 +32,6 @@ const styles = {
       lineHeight: 'base',
       userSelect: 'none !important',
     },
-    
   }),
 };
 

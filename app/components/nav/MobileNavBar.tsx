@@ -33,8 +33,8 @@ const MobileNavBar = () => {
   const { show } = useMobileKeyboard();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
 
-  const bg = useColorModeValue('music.200', 'music.500');
-  const color = useColorModeValue('music.500', 'music.200');
+  const bg = useColorModeValue('musy.200', 'musy.500');
+  const color = useColorModeValue('musy.500', 'musy.200');
 
   useEffect(() => {
     if (pathname.includes('home')) {
@@ -91,7 +91,7 @@ const MobileNavBar = () => {
           overflow="hidden"
           zIndex={11}
         >
-          <Link to="/home" prefetch="render" onClick={onClickHome}>
+          <Link to="/home" onClick={onClickHome}>
             <IconButton
               aria-label="home"
               icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
@@ -102,7 +102,7 @@ const MobileNavBar = () => {
               pt="12px"
             />
           </Link>
-          <Link to="/friends" prefetch="render" onClick={onClickFriends}>
+          {/* <Link to="/friends" onClick={onClickFriends}>
             <IconButton
               aria-label="friends"
               icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
@@ -112,8 +112,8 @@ const MobileNavBar = () => {
               opacity={active === 1 ? 1 : 0.4}
               pt="12px"
             />
-          </Link>
-          <Link to="/sessions" prefetch="render" onClick={onClickSessions}>
+          </Link> */}
+          <Link to="/sessions" onClick={onClickSessions}>
             <IconButton
               aria-label="sessions"
               icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
@@ -124,7 +124,7 @@ const MobileNavBar = () => {
               pt="12px"
             />
           </Link>
-          <Link to="/explore" prefetch="render" onClick={onClickExplore}>
+          <Link to="/explore" onClick={onClickExplore}>
             <IconButton
               aria-label="search"
               icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
@@ -136,7 +136,7 @@ const MobileNavBar = () => {
             />
           </Link>
           {currentUser ? (
-            <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
+            <Link to={`${profile}`} onClick={onClickUser}>
               <IconButton
                 aria-label="profile"
                 icon={profileIcon}

@@ -31,12 +31,11 @@ interface ActivityProps {
 }
 
 const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
-  const bg = useColorModeValue('music.200', 'music.900');
-  const color = useColorModeValue('music.900', 'music.200');
+  const bg = useColorModeValue('musy.200', 'musy.900');
+  const color = useColorModeValue('musy.900', 'musy.200');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  // eslint-disable-next-line
-  const dontRemoveThis = useExpandedTile();
+  useExpandedTile();
 
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
@@ -46,7 +45,7 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
   const played = activity.track.recent ?? [];
 
   return (
-    <Stack py="6px" overflowX="hidden" bg={bg}>
+    <Stack pb="6px" overflowX="hidden" bg={bg}>
       <ActivityAction activity={activity} />
       <Flex
         justify="space-between"

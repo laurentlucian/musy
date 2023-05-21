@@ -1,4 +1,4 @@
-import { useSubmit, useTransition } from '@remix-run/react';
+import { useSubmit, useNavigation } from '@remix-run/react';
 import { useState, type Dispatch, type SetStateAction } from 'react';
 
 import { Button, HStack, Text } from '@chakra-ui/react';
@@ -6,10 +6,10 @@ import { Button, HStack, Text } from '@chakra-ui/react';
 import type { Theme } from '@prisma/client';
 import { AnimatePresence } from 'framer-motion';
 
-import Waver from '~/lib/icons/Waver';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
+import Waver from '~/lib/icons/Waver';
 
 const SaveThemeButton = ({
   color,
@@ -27,9 +27,9 @@ const SaveThemeButton = ({
   const [text, setText] = useState('Save');
   const currentUser = useSessionUser();
   const submit = useSubmit();
-  const transition = useTransition();
+  const transition = useNavigation();
   const isSmallScreen = useIsMobile();
-  const isLoading = transition.submission?.action.includes('/settings/appearance');
+  const isLoading = transition.formAction?.includes('/settings/appearance');
   const alert = useAlertState();
   const bg = '#313338';
   const setSave = useSetShowSave();

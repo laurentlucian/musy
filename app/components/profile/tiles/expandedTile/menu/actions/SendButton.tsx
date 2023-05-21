@@ -9,7 +9,7 @@ import { useQueueToFriendData, useRecommendData } from '~/hooks/useSendButton';
 const RecommendButton = ({ trackId, userId }: SendData) => {
   const isSmallScreen = useIsMobile();
   const { handleRecommend, icon } = useRecommendData({ trackId, userId });
-  const color = useColorModeValue(`${isSmallScreen ? 'music.200' : 'music.800'}`, 'music.200');
+  const color = useColorModeValue(`${isSmallScreen ? 'musy.200' : 'musy.800'}`, 'musy.200');
 
   return (
     <IconButton
@@ -27,7 +27,7 @@ const RecommendButton = ({ trackId, userId }: SendData) => {
 const QueueButton = ({ trackId, userId }: SendData) => {
   const isSmallScreen = useIsMobile();
   const { addToFriendsQueue, icon } = useQueueToFriendData({ trackId, userId });
-  const color = useColorModeValue(`${isSmallScreen ? 'music.200' : 'music.800'}`, 'music.200');
+  const color = useColorModeValue(`${isSmallScreen ? 'musy.200' : 'musy.800'}`, 'musy.200');
 
   return (
     <IconButton

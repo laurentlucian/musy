@@ -28,8 +28,8 @@ const ToggleSetting = ({
   title: string;
   value?: boolean;
 }) => {
-  const bg = useColorModeValue('music.200', 'music.800');
-  const color = useColorModeValue('music.800', 'music.200');
+  const bg = useColorModeValue('musy.200', 'musy.800');
+  const color = useColorModeValue('musy.800', 'musy.200');
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
   const setSave = useSetShowSave();
