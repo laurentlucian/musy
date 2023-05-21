@@ -115,14 +115,13 @@ export const getCurrentUser = async (request: Request) => {
   const userId = session.user.id;
   let data = await prisma.profile.findUnique({
     include: {
-      block: true,
-      favBy: true,
-      friendsList: true,
-      friendsListUserIsOn: true,
+      block: { select: { blockedId: true } },
+      favorite: { select: { favoriteId: true } },
+      friendsList: { select: { friendId: true } },
       liked: { select: { trackId: true } },
       mute: true,
       pendingList: true,
-      pendingListUserIsOn: true,
+      pendingListUserIsOn: { select: { userId: true } },
       playback: { include: { track: true } },
       settings: { include: { profileSong: true } },
     },
@@ -132,6 +131,8 @@ export const getCurrentUser = async (request: Request) => {
   if (!data) return null;
   return data;
 };
+
+export type CurrentUser = Prisma.PromiseReturnType<typeof getCurrentUser>;
 
 export type AllUsers = (Profile & {
   playback:

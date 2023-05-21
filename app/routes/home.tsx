@@ -1,21 +1,20 @@
-import { Stack, useColorModeValue } from '@chakra-ui/react';
+import { Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/home/activity/ActivityTile';
-import MobileActivityTile from '~/components/home/activity/MobileActivityTile';
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import Tiles from '~/components/profile/tiles/Tiles';
-import useIsMobile from '~/hooks/useIsMobile';
+import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
-import useUsers from '~/hooks/useUsers';
+import { useRestOfUsers } from '~/hooks/useUsers';
 import type { Activity, Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
-  const isSmallScreen = useIsMobile();
-  const users = useUsers();
+  const friends = useFriends();
+  const restOfUsers = useRestOfUsers();
   const { activity } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
@@ -39,74 +38,94 @@ const Index = () => {
     });
   }
 
-  let playbacks: Track[] = [];
-
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].playback === null || users[i].playback?.track === undefined) {
+  let friendsPlaybacks: Track[] = [];
+  for (let i = 0; i < friends.length; i++) {
+    if (friends[i].playback === null || friends[i].playback?.track === undefined) {
       continue;
     }
     const track = {
-      albumName: users[i].playback!.track.albumName,
-      albumUri: users[i].playback!.track.albumUri,
-      artist: users[i].playback!.track.artist,
-      artistUri: users[i].playback!.track.artistUri,
+      albumName: friends[i].playback!.track.albumName,
+      albumUri: friends[i].playback!.track.albumUri,
+      artist: friends[i].playback!.track.artist,
+      artistUri: friends[i].playback!.track.artistUri,
       duration: 0,
-      explicit: users[i].playback!.track.explicit,
-      id: users[i].playback!.trackId,
-      image: users[i].playback!.track.image,
-      link: users[i].playback!.track.link,
+      explicit: friends[i].playback!.track.explicit,
+      id: friends[i].playback!.trackId,
+      image: friends[i].playback!.track.image,
+      link: friends[i].playback!.track.link,
 
-      name: users[i].playback!.track.name,
-      preview_url: users[i].playback!.track.preview_url ?? '',
-      uri: users[i].playback!.track.uri,
+      name: friends[i].playback!.track.name,
+      preview_url: friends[i].playback!.track.preview_url ?? '',
+      uri: friends[i].playback!.track.uri,
     };
-    playbacks.push(track);
+    friendsPlaybacks.push(track);
+  }
+
+  let everyonePlaybacks: Track[] = [];
+  for (let i = 0; i < restOfUsers.length; i++) {
+    if (restOfUsers[i].playback === null || restOfUsers[i].playback?.track === undefined) {
+      continue;
+    }
+    const track = {
+      albumName: restOfUsers[i].playback!.track.albumName,
+      albumUri: restOfUsers[i].playback!.track.albumUri,
+      artist: restOfUsers[i].playback!.track.artist,
+      artistUri: restOfUsers[i].playback!.track.artistUri,
+      duration: 0,
+      explicit: restOfUsers[i].playback!.track.explicit,
+      id: restOfUsers[i].playback!.trackId,
+      image: restOfUsers[i].playback!.track.image,
+      link: restOfUsers[i].playback!.track.link,
+
+      name: restOfUsers[i].playback!.track.name,
+      preview_url: restOfUsers[i].playback!.track.preview_url ?? '',
+      uri: restOfUsers[i].playback!.track.uri,
+    };
+    everyonePlaybacks.push(track);
   }
 
   return (
-    <Stack pb="50px" pt={{ base: '60px', xl: 0 }} bg={bg} h="100%">
+    <Stack pb="50px" pt={{ base: '15px', xl: 0 }} bg={bg} h="100%">
       <Stack px={['5px', 0]}>
-        {isSmallScreen ? (
-          <Stack bg={bg} mb="100px">
-            {activity.map((item, index) => {
-              return (
-                <MobileActivityTile
-                  key={item.id}
-                  layoutKey={'mActivity' + index}
-                  activity={item}
-                  tracks={activities}
-                  index={index}
-                />
-              );
-            })}
-          </Stack>
-        ) : (
-          <>
-            <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
-              {activity.map((item, index) => {
-                return (
-                  <ActivityTile
-                    key={item.id}
-                    layoutKey={'mActivity' + index}
-                    activity={item}
-                    tracks={activities}
-                    index={index}
-                  />
-                );
-              })}
-            </Tiles>
-            {users.map((user, index) => (
-              <MiniPlayer
-                key={user.userId}
-                layoutKey={'MiniPlayerF' + index}
-                user={user}
-                currentUserId={currentUser?.userId}
-                tracks={playbacks}
+        <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
+          {activity.map((item, index) => {
+            return (
+              <ActivityTile
+                key={item.id}
+                layoutKey={'mActivity' + index}
+                activity={item}
+                tracks={activities}
                 index={index}
               />
-            ))}
-          </>
-        )}
+            );
+          })}
+        </Tiles>
+        <Text pt="10px" fontSize="12px" fontWeight="bold" color="#1f1f1f">
+          FRIENDS
+        </Text>
+        {friends.map((user, index) => (
+          <MiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            currentUserId={currentUser?.userId}
+            tracks={friendsPlaybacks}
+            index={index}
+          />
+        ))}
+        <Text pt="10px" fontSize="12px" fontWeight="bold" color="#1f1f1f">
+          EVERYONE
+        </Text>
+        {restOfUsers.map((user, index) => (
+          <MiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            currentUserId={currentUser?.userId}
+            tracks={everyonePlaybacks}
+            index={index}
+          />
+        ))}
       </Stack>
     </Stack>
   );

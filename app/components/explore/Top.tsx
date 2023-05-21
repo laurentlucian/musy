@@ -13,7 +13,7 @@ const Top = () => {
   const layoutKey = 'ExploreTop';
   return (
     <>
-      <HStack align="center">
+      <HStack align="center" mt="15px">
         <Text>Top</Text>
         <Text fontSize={['9px', '10px']} opacity={0.6} pt="2px">
           7d

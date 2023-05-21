@@ -16,6 +16,16 @@ export const loader = async () => {
   });
 
   const top = await prisma.track.findMany({
+    include: {
+      _count: {
+        select: { recent: true },
+      },
+      liked: {
+        include: {
+          user: true,
+        },
+      },
+    },
     where: { id: { in: trackIds.map((t) => t.trackId) } },
   });
 

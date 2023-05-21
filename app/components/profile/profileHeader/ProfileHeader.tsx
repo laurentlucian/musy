@@ -13,7 +13,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
-import Favorite from './Favorite';
+import FavoriteButton from './FavoriteButton';
 import { BlockUser } from './profileActions/BlockUser';
 import ProfileActions from './profileActions/ProfileActions';
 import Search from './Search';
@@ -155,7 +155,7 @@ const ProfileHeader = () => {
   const MenuBttn = !isOwnProfile ? (
     <ProfileActions
       block={!!isBlocked}
-      blockId={String(isBlocked?.id)}
+      blockId={String(isBlocked?.blockedId)}
       mute={!!isMuted}
       muteId={String(isMuted?.id)}
     />
@@ -170,10 +170,10 @@ const ProfileHeader = () => {
           <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
             <HStack>
               {isBlocked ? (
-                <BlockUser header block={true} blockId={String(isBlocked.id)} />
+                <BlockUser header block={true} blockId={String(isBlocked.blockedId)} />
               ) : (
                 <>
-                  <Favorite />
+                  <FavoriteButton />
                   {!isOwnProfile && <AddFriendsButton />}
                 </>
               )}

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { HStack, Stack, Text, Icon, AvatarGroup, Avatar } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
@@ -13,10 +15,16 @@ const PlayedBy = ({
     user: Profile | null;
   }[];
 }) => {
+  const [isLabelOpen, setIsLabelOpen] = useState(false);
   return (
-    <HStack>
+    <HStack
+      onMouseEnter={() => setIsLabelOpen(true)}
+      onMouseLeave={() => setIsLabelOpen(false)}
+      onClick={() => setIsLabelOpen(!isLabelOpen)}
+    >
       <Icon as={Play} />
       <Tooltip
+        isOpen={isLabelOpen}
         label={
           <Stack py="2px">
             {Object.values(

@@ -1,29 +1,14 @@
-import { useMatches } from '@remix-run/react';
+import useSessionUser from './useSessionUser';
+import useUsers from './useUsers';
 
-import type { Playback, Profile, Settings, Track } from '@prisma/client';
+const useFavorites = () => {
+  const currentUser = useSessionUser();
+  const allUsers = useUsers();
 
-const useFavorites = (): (Profile & {
-  playback:
-    | (Playback & {
-        track: Track & {
-          liked: {
-            user: Profile;
-          }[];
-          recent: {
-            user: Profile;
-          }[];
-        };
-      })
-    | null;
-  settings: Settings | null;
-})[] => {
-  const matches = useMatches();
-
-  // find first friends with users in its data
-  const route = matches.find((match) => match.data?.favorites);
-  if (!route) return [];
-
-  return route.data.favorites;
+  const favorites = allUsers.filter((user) => {
+    return currentUser?.favorite.some((friend) => friend.favoriteId === user.userId);
+  });
+  return favorites;
 };
 
 export default useFavorites;
