@@ -5,7 +5,7 @@ import { hydrate } from 'react-dom';
 import { CacheProvider } from '@emotion/react';
 
 import { ClientStyleContext } from '~/lib/emotion/context';
-import { createEmotionCache } from '~/lib/emotion/createEmotionCache';
+import createEmotionCache from '~/lib/emotion/createEmotionCache';
 
 interface ClientCacheProviderProps {
   children: React.ReactNode;
