@@ -2,7 +2,6 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 
-import { getCurrentUser } from '~/services/auth.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
@@ -10,14 +9,8 @@ export const action = async ({ request }: ActionArgs) => {
   const userId = data.get('userId');
   const trackId = data.get('trackId');
   const playlistId = data.get('playlistId');
-  const currentUser = await getCurrentUser(request);
 
-  if (
-    typeof trackId !== 'string' ||
-    typeof playlistId !== 'string' ||
-    !currentUser ||
-    typeof userId !== 'string'
-  ) {
+  if (typeof trackId !== 'string' || typeof playlistId !== 'string' || typeof userId !== 'string') {
     return typedjson('Request Error');
   }
 

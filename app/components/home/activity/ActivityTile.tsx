@@ -129,8 +129,8 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
             <SpotifyLogo alignSelf="end" icon w="21px" h="21px" />
 
             <Stack spacing="2px">
-              {activity.track.liked && <LikedBy liked={activity.track.liked} />}
-              {activity.track.recent && <PlayedBy played={activity.track.recent} />}
+              {activity.track.liked?.length && <LikedBy liked={activity.track.liked} />}
+              {activity.track.recent?.length && <PlayedBy played={activity.track.recent} />}
             </Stack>
           </Flex>
         </Flex>

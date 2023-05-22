@@ -10,6 +10,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import type { Activity, Track } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
+import { getActivity } from '~/services/prisma/tracks.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
@@ -133,47 +134,6 @@ const Index = () => {
       </Stack>
     </Stack>
   );
-};
-
-const getActivity = async (): Promise<Activity[] | null> => {
-  const [like, queue] = await Promise.all([
-    prisma.likedSongs.findMany({
-      include: {
-        track: {
-          include: {
-            liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-            recent: { select: { user: true } },
-          },
-        },
-        user: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 20,
-    }),
-    prisma.queue.findMany({
-      include: {
-        owner: { select: { accessToken: false, user: true } },
-        track: {
-          include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
-        },
-        user: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 20,
-      where: {
-        action: 'send',
-      },
-    }),
-  ]);
-  if (like || queue) {
-    return [...like, ...queue]
-      .sort((a, b) => {
-        if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
-        return 0;
-      })
-      .slice(0, 20) as Activity[];
-  }
-  return null;
 };
 
 export const loader = async () => {

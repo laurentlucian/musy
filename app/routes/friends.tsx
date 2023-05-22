@@ -7,8 +7,9 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, getFavorites, getFriends, getPending } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { getFavorites, getFriends, getPending } from '~/services/prisma/users.server';
 
 const Friends = () => {
   const { favs, friends } = useTypedLoaderData<typeof loader>();

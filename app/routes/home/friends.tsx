@@ -11,7 +11,8 @@ import { FriendsTabs } from '~/components/home/friends/tabs/FriendsTabs';
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, getFriends } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
+import { getFriends } from '~/services/prisma/users.server';
 
 const Friends = () => {
   const favorites = useFavorites();

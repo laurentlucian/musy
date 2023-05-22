@@ -7,8 +7,9 @@ import invariant from 'tiny-invariant';
 
 import ProfileSettings from '~/components/settings/profile/ProfileSettings';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, upsertSettingsField, upsertThemeField } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { upsertSettingsField, upsertThemeField } from '~/services/prisma/theme.server';
 
 const Appearance = () => {
   const currentUser = useSessionUser();

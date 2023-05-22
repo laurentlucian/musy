@@ -2,7 +2,7 @@ import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 
-import { getUser, updateToken } from './auth.server';
+import { getUser, updateToken } from './prisma/users.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');

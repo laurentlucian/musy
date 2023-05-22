@@ -2,8 +2,8 @@ import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
 import { createTrackModel, notNull } from '~/lib/utils';
-import { getAllUsers } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { getAllUsers } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { spotifyApi } from '~/services/spotify.server';
 

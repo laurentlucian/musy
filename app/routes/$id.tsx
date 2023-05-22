@@ -12,8 +12,9 @@ import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
 import useSessionUser from '~/hooks/useSessionUser';
 import { msToString } from '~/lib/utils';
 import { getMood } from '~/services/ai.server';
-import { authenticator, getCurrentUser } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { getCurrentUser } from '~/services/prisma/users.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 const Profile = () => {

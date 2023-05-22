@@ -4,8 +4,8 @@ import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 
 import { createTrackModel } from '~/lib/utils';
-import { getCurrentUser } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { getCurrentUser } from '~/services/prisma/users.server';
 import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {

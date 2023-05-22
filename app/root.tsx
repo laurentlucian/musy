@@ -25,14 +25,13 @@ import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
+import { authenticator } from '~/services/auth.server';
 import {
-  authenticator,
   getAllUsers,
   getCurrentUser,
   getQueueableUsers,
   getRecommendableUsers,
-  getTheme,
-} from '~/services/auth.server';
+} from '~/services/prisma/users.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
 import ExpandedTile from './components/profile/tiles/expandedTile/ExpandedTile';
@@ -40,6 +39,7 @@ import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
+import { getTheme } from './services/prisma/theme.server';
 
 const App = () => {
   const { cookie, currentUser } = useTypedLoaderData<typeof loader>();

@@ -26,7 +26,8 @@ import invariant from 'tiny-invariant';
 import QueueSettings from '~/components/settings/QueueSettings';
 import RecommendSettings from '~/components/settings/RecommendSettings';
 import useSessionUser from '~/hooks/useSessionUser';
-import { authenticator, upsertSettingsField } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
+import { upsertSettingsField } from '~/services/prisma/theme.server';
 
 const Account = () => {
   const bg = useColorModeValue('musy.100', 'musy.800');
