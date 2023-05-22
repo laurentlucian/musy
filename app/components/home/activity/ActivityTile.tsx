@@ -1,20 +1,9 @@
 import { Link } from '@remix-run/react';
 
-import {
-  HStack,
-  Image,
-  Stack,
-  Text,
-  useColorModeValue,
-  Icon,
-  AvatarGroup,
-  Avatar,
-  Flex,
-  Box,
-} from '@chakra-ui/react';
+import { HStack, Image, Stack, Text, useColorModeValue, Icon, Flex, Box } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
-import { Heart, Play, Send2 } from 'iconsax-react';
+import { Play, Send2 } from 'iconsax-react';
 
 import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
@@ -23,6 +12,7 @@ import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity, Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
+import LikedBy from './LikedBy';
 import PlayedBy from './PlayedBy';
 
 type ActivityActionProps = {
@@ -84,26 +74,6 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
                 />
               </>
             );
-          case 'add':
-            return (
-              <>
-                <UserIcon
-                  id={activity.owner?.user?.userId}
-                  name={activity.owner?.user?.name}
-                  image={activity.owner?.user?.image}
-                />
-                <Tooltip label="played from">
-                  <Icon as={Play} boxSize="20px" fill="spotify.green" color="spotify.black" />
-                </Tooltip>
-                {activity.user && (
-                  <UserIcon
-                    id={activity.user.userId}
-                    name={activity.user.name}
-                    image={activity.user.image}
-                  />
-                )}
-              </>
-            );
           default:
             return null;
         }
@@ -119,15 +89,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   const bg = useColorModeValue('musy.200', 'musy.900');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  // eslint-disable-next-line
-  const dontRemoveThis = useExpandedTile();
-
-  const liked = (activity.track.liked ?? []).filter(() => {
-    if (activity.track.liked?.length === 1) return false;
-    return true;
-  });
-
-  const played = activity.track.recent ?? [];
+  useExpandedTile();
 
   return (
     <Stack>
@@ -165,26 +127,10 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
 
           <Flex justify="space-between" mt="auto">
             <SpotifyLogo alignSelf="end" icon w="21px" h="21px" />
+
             <Stack spacing="2px">
-              {liked.length ? (
-                <HStack>
-                  <Icon as={Heart} />
-                  <AvatarGroup size="xs" max={5} spacing="-9px">
-                    {liked.map(({ user }) => (
-                      <Avatar
-                        minW="20px"
-                        maxW="20px"
-                        minH="20px"
-                        maxH="20px"
-                        key={user?.userId}
-                        name={user?.name}
-                        src={user?.image}
-                      />
-                    ))}
-                  </AvatarGroup>
-                </HStack>
-              ) : null}
-              {played.length ? <PlayedBy played={played} /> : null}
+              {activity.track.liked && <LikedBy liked={activity.track.liked} />}
+              {activity.track.recent && <PlayedBy played={activity.track.recent} />}
             </Stack>
           </Flex>
         </Flex>
