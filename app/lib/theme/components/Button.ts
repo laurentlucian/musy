@@ -27,17 +27,17 @@ const accessibleColorMap: { [key: string]: AccessibleColor } = {
 
 const baseStyle = defineStyle((props) => ({
   borderRadius: 'sm',
-  color: mode('musy.200', 'musy.800')(props),
+  color: mode('musy.800', 'musy.200')(props),
 }));
 
-const variantMusic: SystemStyleFunction = (props) => {
+const variantMusy: SystemStyleFunction = (props) => {
   const { colorScheme: c } = props;
 
   const {
+    activeBg = `${c}.700`,
     bg = `${c}.500`,
     color = 'white',
     hoverBg = `${c}.600`,
-    activeBg = `${c}.700`,
   } = accessibleColorMap[c] ?? {};
 
   const background = mode(bg, `${c}.100`)(props);
@@ -79,7 +79,7 @@ const variantGhost = defineStyle((props) => {
       bg: mode(darkHoverBg, `${c}.50`)(props),
     },
     bg: 'transparent',
-    color: mode(`music.200`, `music.800`)(props),
+    color: mode(`musy.200`, `musy.800`)(props),
   };
 });
 
@@ -183,9 +183,9 @@ const mobileNav = defineStyle({
 export const Button = defineStyleConfig({
   baseStyle,
   defaultProps: {
-    colorScheme: 'music',
+    colorScheme: 'musy',
     size: 'sm',
-    variant: 'music',
+    variant: 'musy',
   },
   variants: {
     close,
@@ -193,7 +193,7 @@ export const Button = defineStyleConfig({
     ghost: variantGhost,
     login,
     mobileNav,
-    music: variantMusic,
+    musy: variantMusy,
     searchCircle,
   },
 });

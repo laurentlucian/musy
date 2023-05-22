@@ -41,7 +41,7 @@ const UserMenu = () => {
   const isSmallScreen = useIsMobile();
   const { colorMode, toggleColorMode } = useColorMode();
   const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('musy.200', 'musy.700');
+  const bg = useColorModeValue('musy.200', 'musy.900');
   const hoverBg = useColorModeValue('musy.400', 'musy.900');
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();

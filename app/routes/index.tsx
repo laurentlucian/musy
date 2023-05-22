@@ -1,13 +1,14 @@
-import { Form } from '@remix-run/react';
+import { Form, useNavigation } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
-import { Button, Flex, Heading, Stack, Text } from '@chakra-ui/react';
+import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 
 import { redirect } from 'remix-typedjson';
 
 import { authenticator } from '~/services/auth.server';
 
 const Index = () => {
+  const navigation = useNavigation();
   return (
     <Flex direction="column" align="center">
       <Stack mt="55px" spacing="15px" align="center" justify="center">
@@ -21,11 +22,19 @@ const Index = () => {
       <Stack align="center">
         <Heading>See what your friends are listening to</Heading>
       </Stack> */}
-      <Form action="/auth/spotify" method="post">
-        <Button type="submit" mt="70px" maxW="300px" variant="musy" h="40px">
-          Enter with Spotify
-        </Button>
-      </Form>
+      <Flex direction="column" align="center" mt="30px">
+        <Image src="/musylogo1.svg" w="300px" mb="-40px" ml="-14px" />
+        <Form action="/auth/spotify" method="post">
+          <Button
+            type="submit"
+            isLoading={navigation.state === 'submitting'}
+            variant="musy"
+            size="lg"
+          >
+            Enter with Spotify
+          </Button>
+        </Form>
+      </Flex>
     </Flex>
   );
 };
@@ -33,7 +42,6 @@ const Index = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
-  if (!session && url.pathname !== '/') return redirect('/');
   if (session && url.pathname === '/') return redirect('/home');
   return null;
 };

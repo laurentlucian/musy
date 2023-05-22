@@ -79,7 +79,8 @@ const App = () => {
 export const loader = async ({ params, request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
-  if (!session && url.pathname !== '/') return redirect('/');
+  if (!session && url.pathname !== '/' && !url.pathname.includes('/auth/spotify/callback'))
+    return redirect('/');
 
   const id = session?.user?.id;
   const cookie = request.headers.get('cookie') ?? '';
