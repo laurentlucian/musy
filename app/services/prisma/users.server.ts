@@ -111,6 +111,31 @@ export const getCurrentUser = async (request: Request) => {
 
 export type CurrentUser = Prisma.PromiseReturnType<typeof getCurrentUser>;
 
+export const getUserProfile = async (userId: string) => {
+  const user = await prisma.profile.findUnique({
+    include: {
+      ai: true,
+      playback: {
+        include: {
+          track: {
+            include: {
+              liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+              recent: { select: { user: true } },
+            },
+          },
+        },
+      },
+      settings: true,
+    },
+    where: { userId },
+  });
+
+  if (!user /* || (!session && user.settings?.isPrivate) */)
+    throw new Response('Not found', { status: 404 });
+
+  return user;
+};
+
 export type AllUsers = (Profile & {
   playback:
     | (Playback & {
@@ -232,7 +257,7 @@ export const getRecommendableUsers = async (id: string | null = null) => {
   }
 };
 
-export const getFriends = async (userId?: string): Promise<FriendsList[] | null> => {
+export const getFriends = async (userId?: string) => {
   if (!userId) return null;
   const friends = await prisma.friend.findMany({
     orderBy: [{ friend: { playback: { updatedAt: 'desc' } } }],
@@ -262,7 +287,7 @@ export const getFriends = async (userId?: string): Promise<FriendsList[] | null>
   return friends;
 };
 
-export const getFavorites = async (userId?: string): Promise<Favorite[] | null> => {
+export const getFavorites = async (userId?: string) => {
   if (!userId) return null;
 
   const favorites = await prisma.favorite.findMany({
@@ -292,7 +317,7 @@ export const getFavorites = async (userId?: string): Promise<Favorite[] | null> 
   return favorites;
 };
 
-export const getPending = async (userId?: string): Promise<PendingFriend[] | null> => {
+export const getPending = async (userId?: string) => {
   if (!userId) return null;
 
   const pendingList = await prisma.pendingFriend.findMany({

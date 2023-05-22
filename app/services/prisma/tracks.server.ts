@@ -44,6 +44,57 @@ export const getActivity = async () => {
   return null;
 };
 
+export const getUserRecommended = async (userId?: string) =>
+  prisma.recommendedSongs.findMany({
+    include: {
+      sender: true,
+      track: {
+        include: {
+          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+          recent: { select: { user: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+    where: { AND: [{ ownerId: userId }, { action: 'recommend' }] },
+  });
+
+export const getUserRecent = async (userId?: string) =>
+  prisma.recentSongs.findMany({
+    include: {
+      track: {
+        include: {
+          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+          recent: { select: { user: true } },
+        },
+      },
+    },
+    orderBy: {
+      playedAt: 'desc',
+    },
+    take: 50,
+    where: {
+      userId,
+    },
+  });
+
+export const getUserLiked = async (userId?: string) =>
+  prisma.likedSongs.findMany({
+    include: {
+      track: {
+        include: {
+          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+          recent: { select: { user: true } },
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 50,
+    where: { userId },
+  });
+
 export const getTopLeaderboard = async () => {
   const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
   const trackIds = await prisma.recentSongs.groupBy({

@@ -3,6 +3,7 @@ import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 
 import { getUser, updateToken } from './prisma/users.server';
+import { redis } from './scheduler/redis.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -83,6 +84,19 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
   return { spotify: spotifyClient, token: newToken, user: data.user };
 };
 
+export const getUserSpotify = async (id: string) => {
+  const instance = await spotifyApi(id).catch(async (e) => {
+    if (e instanceof Error && e.message.includes('revoked')) {
+      throw new Response('User Access Revoked', { status: 401 });
+    }
+    throw new Response('Failed to load Spotify', { status: 500 });
+  });
+
+  if (!instance || !instance.spotify) {
+    throw new Response('Failed to load Spotify [2]', { status: 500 });
+  }
+  return instance;
+};
 export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'type'> {
   description?: string;
   image?: string;
@@ -209,4 +223,46 @@ export const getSavedStatus = async (id: string, trackId: string) => {
   const data = await response.json();
 
   return data;
+};
+
+export const getUserPlaylists = async (userId: string) => {
+  const { spotify } = await getUserSpotify(userId);
+  const cacheKeyPlaylist = 'profile_playlist_' + userId;
+  const cachedDataPlaylist = await redis.get(cacheKeyPlaylist);
+  let playlists = [] as SpotifyApi.PlaylistObjectSimplified[];
+
+  if (cachedDataPlaylist) {
+    playlists = JSON.parse(cachedDataPlaylist) as SpotifyApi.PlaylistObjectSimplified[];
+  } else {
+    playlists = await spotify
+      .getUserPlaylists(userId, { limit: 50 })
+      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === userId))
+      .catch(() => []);
+    await redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30);
+  }
+
+  return playlists;
+};
+
+export const getUserTop = async (userId: string, url: URL) => {
+  const { spotify } = await getUserSpotify(userId);
+  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
+    | 'medium_term'
+    | 'long_term'
+    | 'short_term';
+
+  const cacheKeyTop = 'profile_top_' + topFilter + '_' + userId;
+  const cachedDataTop = await redis.get(cacheKeyTop);
+  let top = [] as SpotifyApi.TrackObjectFull[];
+
+  if (cachedDataTop) {
+    top = JSON.parse(cachedDataTop) as SpotifyApi.TrackObjectFull[];
+  } else {
+    top = await spotify
+      .getMyTopTracks({ limit: 50, time_range: topFilter })
+      .then((data) => data.body.items)
+      .catch(() => []);
+    await redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24);
+  }
+  return top;
 };
