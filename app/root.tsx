@@ -124,24 +124,10 @@ export const meta: MetaFunction = () => {
 export let links: LinksFunction = () => {
   return [
     { as: 'style', href: loading, rel: 'stylesheet' },
-    { as: 'preconnect', href: 'https://fonts.googleapis.com', rel: 'preconnect' },
     { as: 'preconnect', href: 'https://fonts.gstaticom', rel: 'preconnect' },
     {
       as: 'font',
-      href: 'https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap',
-      media: 'all',
-      rel: 'stylesheet',
-    },
-    {
-      as: 'font',
-      href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap',
-      media: 'all',
-      rel: 'stylesheet',
-    },
-    {
-      as: 'font',
       href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
-      media: 'all',
       rel: 'stylesheet',
     },
     {

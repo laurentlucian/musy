@@ -51,8 +51,8 @@ export const theme = extendTheme({
     useSystemColorMode: false,
   },
   fonts: {
-    body: 'Montserrat, Poppins, Roboto Mono, sans-serif',
-    heading: 'Montserrat, Poppins, Roboto Mono, serif',
+    body: 'Montserrat, sans-serif',
+    heading: 'Montserrat, serif',
   },
   styles,
 });
