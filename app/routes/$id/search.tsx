@@ -14,7 +14,7 @@ import Tiles from '~/components/profile/tiles/Tiles';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
-const Search = () => {
+const SearchOutlet = () => {
   const { results } = useTypedLoaderData<typeof loader>();
   const tracks = results?.tracks?.items ?? [];
   const trackz: Track[] = tracks.map((track) => {
@@ -76,4 +76,4 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   return typedjson({ results, users });
 };
 
-export default Search;
+export default SearchOutlet;

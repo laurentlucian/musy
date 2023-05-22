@@ -26,7 +26,7 @@ import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
 import { spotifyApi } from '~/services/spotify.server';
 
-const Playlist = () => {
+const PlaylistOutlet = () => {
   const { playlist } = useTypedLoaderData<typeof loader>();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -125,4 +125,4 @@ export const loader = async ({ params }: LoaderArgs) => {
   return typedjson({ playlist });
 };
 
-export default Playlist;
+export default PlaylistOutlet;

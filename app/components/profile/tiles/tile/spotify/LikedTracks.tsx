@@ -3,49 +3,40 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
-import type { LikedSongs } from '@prisma/client';
-import type { Track } from '@prisma/client';
-
 import useIsVisible from '~/hooks/useIsVisible';
+import type { Track } from '~/lib/types/types';
 
-import Card from './Card';
-import ExpandedSongs from './ExpandedSongs';
-import Tile from './tile/Tile';
-import TileImage from './tile/TileImage';
-import TileInfo from './tile/TileInfo';
-import Tiles from './Tiles';
+import Card from '../../Card';
+import ExpandedSongs from '../../ExpandedSongs';
+import Tiles from '../../Tiles';
+import Tile from '../Tile';
+import TileImage from '../TileImage';
+import TileInfo from '../TileInfo';
 
-const LikedTracksPrisma = ({
-  liked: initialLiked,
-}: {
-  liked: (LikedSongs & {
-    track: Track & {};
-  })[];
-}) => {
+const LikedTracks = ({ liked: initialLiked }: { liked: SpotifyApi.SavedTrackObject[] }) => {
   const [liked, setLiked] = useState(initialLiked);
   const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const { id } = useParams();
 
   const fetcher = useFetcher();
-  // const offsetRef = useRef(0);
+  const offsetRef = useRef(0);
   const [setRef, isVisible] = useIsVisible();
   const hasFetched = useRef(false);
 
   useEffect(() => {
-    // @todo implement infinite scroll with prisma
     if (isVisible && !hasFetched.current) {
-      // const newOffset = offsetRef.current + 50;
-      // offsetRef.current = newOffset;
-      // fetcher.load(`/${id}/liked?offset=${newOffset}`);
-      // hasFetched.current = true;
+      const newOffset = offsetRef.current + 50;
+      offsetRef.current = newOffset;
+      fetcher.load(`/api/scroll/${id}/liked?offset=${newOffset}`);
+      hasFetched.current = true;
     }
   }, [isVisible, fetcher, id]);
 
   useEffect(() => {
     if (fetcher.data) {
-      // setLiked((prev) => [...prev, ...fetcher.data]);
-      // hasFetched.current = false;
+      setLiked((prev) => [...prev, ...fetcher.data]);
+      hasFetched.current = false;
     }
   }, [fetcher.data]);
 
@@ -57,19 +48,33 @@ const LikedTracksPrisma = ({
     setShow(false);
   }, [setShow]);
 
+  const tracks: Track[] = liked.map((item) => {
+    return {
+      albumName: item.track.album.name,
+      albumUri: item.track.album.uri,
+      artist: item.track.artists[0].name,
+      artistUri: item.track.artists[0].uri,
+      duration: item.track.duration_ms,
+      explicit: item.track.explicit,
+      id: item.track.id,
+      image: item.track.album.images[0]?.url,
+      link: item.track.external_urls.spotify,
+      name: item.track.name,
+      preview_url: item.track.preview_url ?? '',
+      uri: item.track.uri,
+    };
+  });
+
   if (!liked) return null;
   const scrollButtons = liked.length > 5;
   const title = 'Liked';
 
-  const tracks = liked.map((data) => data.track);
-  const layoutKey = 'LikedPrisma';
-  const layoutKey2 = 'LikedPrismaExpanded';
-  if (!liked.length) return null;
+  const layoutKey = 'LikedTracks';
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
-        {liked.map(({ track }, index) => {
-          const isLast = index === liked.length - 1;
+        {tracks.map((track, index) => {
+          const isLast = index === tracks.length - 1;
           return (
             <Tile
               ref={(node) => {
@@ -99,14 +104,14 @@ const LikedTracksPrisma = ({
             spacing="10px"
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
-            {liked.map(({ track }, index) => {
+            {tracks.map((track, index) => {
               return (
                 <Box key={index}>
                   <Tile
                     track={track}
                     tracks={tracks}
                     index={index}
-                    layoutKey={layoutKey2}
+                    layoutKey="LikedExpanded"
                     image={<TileImage size={['115px', '100px']} />}
                     info={<TileInfo />}
                   />
@@ -115,19 +120,19 @@ const LikedTracksPrisma = ({
             })}
           </SimpleGrid>
         ) : (
-          liked.map(({ track }, index) => {
-            const isLast = index === liked.length - 1;
+          tracks.map((track, index) => {
+            const isLast = index === tracks.length - 1;
             return (
               <Card
                 ref={(node: HTMLDivElement | null) => {
                   isLast && setRef(node);
                 }}
                 key={track.id}
-                layoutKey="LikedPrismaCard"
+                layoutKey="LikedCard"
                 track={track}
+                userId={id ?? ''}
                 tracks={tracks}
                 index={index}
-                userId={id ?? ''}
               />
             );
           })
@@ -137,4 +142,4 @@ const LikedTracksPrisma = ({
   );
 };
 
-export default LikedTracksPrisma;
+export default LikedTracks;

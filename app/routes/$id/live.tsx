@@ -5,40 +5,20 @@ import { Stack } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import Player from '~/components/profile/player/Player';
-import LikedTracks from '~/components/profile/tiles/LikedTracks';
+import Player from '~/components/profile/player/spotify/Player';
 import Playlists from '~/components/profile/tiles/playlists/Playlists';
-import RecentTracks from '~/components/profile/tiles/RecentTracks';
 import Recommended from '~/components/profile/tiles/recommend/Recommended';
+import LikedTracks from '~/components/profile/tiles/tile/spotify/LikedTracks';
+import RecentTracks from '~/components/profile/tiles/tile/spotify/RecentTracks';
 import TopTracks from '~/components/profile/tiles/TopTracks';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getUserQueue, spotifyApi } from '~/services/spotify.server';
 
-const ProfileMain = ({
-  main,
-}: {
-  main: [
-    SpotifyApi.PlayHistoryObject[],
-    SpotifyApi.SavedTrackObject[],
-    SpotifyApi.TrackObjectFull[],
-    SpotifyApi.PlaylistObjectSimplified[],
-  ];
-}) => {
-  const [recent, liked, top, playlists] = main;
-  return (
-    <>
-      <RecentTracks recent={recent} />
-      <LikedTracks liked={liked} />
-      <TopTracks top={top} />
-      <Playlists playlists={playlists} />
-    </>
-  );
-};
-
-const ProfileOutlet = () => {
+const ProfileSpotifyOutlet = () => {
   const { main, party, playback, recommended, user } = useTypedLoaderData<typeof loader>();
+  const [recent, liked, top, playlists] = main;
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === user.userId;
 
@@ -54,7 +34,10 @@ const ProfileOutlet = () => {
         />
       )}
       {isOwnProfile && <Recommended recommended={recommended} />}
-      <ProfileMain main={main} />
+      <RecentTracks recent={recent} />
+      <LikedTracks liked={liked} />
+      <TopTracks top={top} />
+      <Playlists playlists={playlists} />
     </Stack>
   );
 };
@@ -121,4 +104,4 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   return typedjson({ main, party, playback, recommended, user });
 };
 
-export default ProfileOutlet;
+export default ProfileSpotifyOutlet;

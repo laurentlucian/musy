@@ -8,8 +8,7 @@ import Tiles from '~/components/profile/tiles/Tiles';
 import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useRestOfUsers } from '~/hooks/useUsers';
-import type { Activity, Track } from '~/lib/types/types';
-import { prisma } from '~/services/db.server';
+import type { Track } from '~/lib/types/types';
 import { getActivity } from '~/services/prisma/tracks.server';
 
 const Index = () => {
