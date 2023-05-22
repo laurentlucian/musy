@@ -100,9 +100,11 @@ const Index = () => {
             );
           })}
         </Tiles>
-        <Text pt="10px" fontSize="12px" fontWeight="bold" color="#1f1f1f">
-          FRIENDS
-        </Text>
+        {friends.length && (
+          <Text pt="10px" fontSize="11px" fontWeight="bolder">
+            FRIENDS
+          </Text>
+        )}
         {friends.map((user, index) => (
           <MiniPlayer
             key={user.userId}
@@ -113,9 +115,11 @@ const Index = () => {
             index={index}
           />
         ))}
-        <Text pt="10px" fontSize="12px" fontWeight="bold" color="#1f1f1f">
-          EVERYONE
-        </Text>
+        {friends.length && (
+          <Text pt="10px" fontSize="11px" fontWeight="bolder">
+            EVERYONE
+          </Text>
+        )}
         {restOfUsers.map((user, index) => (
           <MiniPlayer
             key={user.userId}

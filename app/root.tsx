@@ -21,7 +21,7 @@ import {
 
 import { withEmotionCache } from '@emotion/react';
 import { AnimatePresence } from 'framer-motion';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
@@ -42,11 +42,11 @@ import loading from './lib/styles/loading.css';
 import { iosSplashScreens } from './lib/utils';
 
 const App = () => {
-  const { cookie } = useTypedLoaderData<typeof loader>();
+  const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
   const colorModeManager = cookieStorageManagerSSR(cookie);
   const { revalidate } = useRevalidator();
 
-  useVisibilityChange((isVisible) => isVisible && revalidate());
+  useVisibilityChange((isVisible) => isVisible && currentUser && revalidate());
 
   return (
     <Document>
@@ -64,8 +64,12 @@ const App = () => {
               <Outlet />
             </Layout>
           </AnimatePresence>
-          <ExpandedTile />
-          <MobileNavBar />
+          {currentUser && (
+            <>
+              <ExpandedTile />
+              <MobileNavBar />
+            </>
+          )}
         </ColorModeProvider>
       </ChakraProvider>
     </Document>
@@ -74,9 +78,24 @@ const App = () => {
 
 export const loader = async ({ params, request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
+  const url = new URL(request.url);
+  if (!session && url.pathname !== '/') return redirect('/');
+
   const id = session?.user?.id;
   const cookie = request.headers.get('cookie') ?? '';
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
+
+  if (!session)
+    return typedjson({
+      cookie: '',
+      currentUser: null,
+      isMobile,
+      queueableUsers: [],
+      recommendableUsers: [],
+      theme: null,
+      users: [],
+    });
+
   const [currentUser, theme, users, queueableUsers, recommendableUsers] = await Promise.all([
     getCurrentUser(request),
     getTheme(params.id),
