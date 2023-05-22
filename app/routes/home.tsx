@@ -160,6 +160,9 @@ const getActivity = async (): Promise<Activity[] | null> => {
       },
       orderBy: { createdAt: 'desc' },
       take: 20,
+      where: {
+        action: 'send',
+      },
     }),
   ]);
   if (like || queue) {
