@@ -17,7 +17,7 @@ WORKDIR /app
 
 COPY .yarn ./.yarn
 COPY .yarnrc.yml package.json yarn.lock* ./
-RUN yarn install
+RUN yarn install && rm -rf ./.yarn/cache
 
 # Setup production node_modules
 FROM base as production-deps
@@ -29,7 +29,7 @@ COPY --from=deps /app/node_modules /app/node_modules
 COPY .yarn ./.yarn
 COPY .yarnrc.yml package.json yarn.lock* ./
 RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
+RUN yarn workspaces focus --production && rm -rf ./.yarn/cache
 
 # Build the app
 FROM base as build
@@ -43,7 +43,7 @@ ADD prisma .
 RUN npx prisma generate
 
 ADD . .
-RUN yarn build
+RUN yarn build && rm -rf ./.yarn
 
 # Finally, build the production image with minimal footprint
 FROM base
