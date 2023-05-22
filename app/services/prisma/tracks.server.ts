@@ -130,5 +130,3 @@ export const getTopLeaderboard = async () => {
   });
   return top;
 };
-
-export type LeaderboardTracks = Prisma.PromiseReturnType<typeof getTopLeaderboard>;

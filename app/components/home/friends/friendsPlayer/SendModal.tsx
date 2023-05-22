@@ -27,7 +27,7 @@ import { Refresh } from 'iconsax-react';
 
 import SendButton from '~/components/profile/tiles/expandedTile/menu/actions/SendButton';
 import Tile from '~/components/profile/tiles/tile/Tile';
-import TileInfo from '~/components/profile/tiles/tile/TileInfo';
+import TileInfoAction from '~/components/profile/tiles/tile/TileInfoAction';
 import Tiles from '~/components/profile/tiles/Tiles';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '~/lib/icons/Waver';
@@ -216,7 +216,7 @@ const SendModal = ({
                     action={
                       <SendButton sendType={title} sendingToId={profileId} trackId={track.id} />
                     }
-                    info={<TileInfo profileId={profileId} action />}
+                    info={<TileInfoAction profileId={profileId} action />}
                   />
                 </Box>
               ))
@@ -271,7 +271,7 @@ const SendModal = ({
                     action={
                       <SendButton sendType={title} sendingToId={profileId} trackId={track.id} />
                     }
-                    info={<TileInfo profileId={profileId} action />}
+                    info={<TileInfoAction profileId={profileId} action />}
                   />
                 ))}
             </Tiles>

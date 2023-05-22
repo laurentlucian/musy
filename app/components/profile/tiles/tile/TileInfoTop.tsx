@@ -1,9 +1,16 @@
 import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 
+import LikedBy from '~/components/home/activity/LikedBy';
+import PlayedBy from '~/components/home/activity/PlayedBy';
 import { useTileContext } from '~/hooks/useTileContext';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
-const TileInfo = () => {
+type TrackInfo = {
+  action?: boolean;
+};
+
+const TileInfoTop = ({ action }: TrackInfo) => {
   const { track } = useTileContext();
 
   if (track.name === '' || !track.name) return null;
@@ -23,12 +30,17 @@ const TileInfo = () => {
                   {track.artist}
                 </Text>
               </Stack>
+              {action && <SpotifyLogo w="70px" h="21px" />}
             </Stack>
           </Flex>
         )}
+      </Stack>
+      <Stack spacing={1}>
+        {track.liked?.length && <LikedBy liked={track.liked} />}
+        {track.recent?.length && <PlayedBy played={track.recent} />}
       </Stack>
     </Flex>
   );
 };
 
-export default TileInfo;
+export default TileInfoTop;

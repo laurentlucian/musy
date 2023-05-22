@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 
 import TileContext from '~/hooks/useTileContext';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
+import type { TrackWithUsers } from '~/lib/types/types';
 
 type TileProps = {
   action?: ReactNode;
@@ -17,7 +18,7 @@ type TileProps = {
   info?: ReactNode;
   layoutKey: string;
   list?: boolean;
-  track: Track;
+  track: TrackWithUsers;
   tracks: Track[];
 } & ChakraProps;
 

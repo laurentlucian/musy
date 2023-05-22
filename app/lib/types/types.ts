@@ -1,4 +1,6 @@
-import type { Playback, Profile, Settings, Track } from '@prisma/client';
+import type { LikedSongs, Playback, Prisma, Profile, RecentSongs, Track } from '@prisma/client';
+
+import type { getCurrentUser } from '~/services/prisma/users.server';
 
 export type { Track } from '@prisma/client';
 export type Activity = {
@@ -38,12 +40,27 @@ export interface PlaylistTrack {
   userId?: string;
 }
 
-export interface User extends Profile {
-  liked?: {
-    trackId: string;
-  }[];
-  settings: Settings | null;
-}
+export type CurrentUser = Prisma.PromiseReturnType<typeof getCurrentUser>;
+
+export type User = Prisma.ProfileGetPayload<{
+  include: {
+    liked: {
+      select: {
+        trackId: true;
+      };
+    };
+    settings: true;
+  };
+}>;
+
+export type TrackWithUsers = Track & {
+  liked?: (LikedSongs & {
+    user: Profile;
+  })[];
+  recent?: (RecentSongs & {
+    user: Profile;
+  })[];
+};
 
 export type PendingCard = {
   bio: string | null;

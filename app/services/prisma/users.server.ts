@@ -1,6 +1,5 @@
-import type { Playback, Prisma, Profile, Settings, Track, PendingFriend } from '@prisma/client';
+import type { Playback, Prisma, Profile, Settings, Track } from '@prisma/client';
 
-import type { Favorite, FriendsList } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 import { userQ } from '~/services/scheduler/jobs/user.server';
 
@@ -108,8 +107,6 @@ export const getCurrentUser = async (request: Request) => {
   if (!data) return null;
   return data;
 };
-
-export type CurrentUser = Prisma.PromiseReturnType<typeof getCurrentUser>;
 
 export const getUserProfile = async (userId: string) => {
   const user = await prisma.profile.findUnique({

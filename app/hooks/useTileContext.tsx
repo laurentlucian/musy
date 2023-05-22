@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react';
 
-import type { Track } from '@prisma/client';
+import type { TrackWithUsers } from '~/lib/types/types';
 
 const TileContext = createContext<{
   index: number;
   layoutKey: string;
-  track: Track;
-  tracks: Track[];
+  track: TrackWithUsers;
+  tracks: TrackWithUsers[];
 } | null>(null);
 
 export function useTileContext() {
