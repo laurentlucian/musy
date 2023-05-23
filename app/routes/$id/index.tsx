@@ -47,9 +47,9 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { playback, ...user } = await getUserProfile(id);
 
   const [recommended, recent, liked, party, top, playlists] = await Promise.all([
-    getUserRecommended().catch(() => []),
-    getUserRecent().catch(() => []),
-    getUserLiked().catch(() => []),
+    getUserRecommended(id).catch(() => []),
+    getUserRecent(id).catch(() => []),
+    getUserLiked(id).catch(() => []),
     prisma.party.findMany({ where: { ownerId: id } }),
     getUserTop(id, new URL(request.url)),
     getUserPlaylists(id),

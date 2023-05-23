@@ -3,8 +3,9 @@ import { Link } from '@remix-run/react';
 import { HStack, Image, Stack, Text, useColorModeValue, Icon, Flex, Box } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
-import { Play, Send2 } from 'iconsax-react';
+import { Send2, Star1 } from 'iconsax-react';
 
+import QueueToSelf from '~/components/profile/tiles/expandedTile/menu/actions/QueueToSelf';
 import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
 import LikeIcon from '~/lib/icons/Like';
@@ -14,6 +15,7 @@ import { timeSince } from '~/lib/utils';
 
 import LikedBy from './LikedBy';
 import PlayedBy from './PlayedBy';
+import QueuedBy from './QueuedBy';
 
 type ActivityActionProps = {
   activity: Activity;
@@ -74,6 +76,19 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
                 />
               </>
             );
+          case 'recommend':
+            return (
+              <>
+                <UserIcon
+                  id={activity.user?.userId}
+                  name={activity.user?.name}
+                  image={activity.user?.image}
+                />
+                <Tooltip label="recommended">
+                  <Icon as={Star1} boxSize="20px" fill="spotify.green" color="spotify.black" />
+                </Tooltip>
+              </>
+            );
           default:
             return null;
         }
@@ -86,7 +101,7 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
 };
 
 const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
-  const bg = useColorModeValue('musy.200', 'musy.900');
+  const bg = useColorModeValue('musy.200', 'musy.800');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
   useExpandedTile();
@@ -94,56 +109,68 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   return (
     <Stack>
       <ActivityAction activity={activity} />
-      <Flex
-        justify="space-between"
-        bgColor={bg}
-        w="250px"
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        cursor="pointer"
-      >
-        <Flex direction="column" w="100%" px={2} py={1}>
-          <Tooltip
-            label={tracks[index].name.length > 17 ? tracks[index].name : undefined}
-            placement="top-start"
-          >
-            <Text
-              fontSize={['12px', '13px']}
-              noOfLines={1}
-              whiteSpace="normal"
-              wordBreak="break-word"
+      <Flex bgColor={bg} pb="5px">
+        <Stack spacing="5px">
+          <Flex>
+            <Box
+              as={motion.div}
+              w="120px"
+              layoutId={tracks[index].id + layoutKey}
+              onMouseDown={onMouseDown}
+              onMouseMove={onMouseMove}
+              onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
             >
-              {tracks[index].name}
-            </Text>
-          </Tooltip>
-          <Tooltip
-            label={tracks[index].artist.length > 17 ? tracks[index].artist : undefined}
-            placement="top-start"
-          >
-            <Text fontSize={['9px', '10px']} opacity={0.6}>
-              {tracks[index].artist}
-            </Text>
-          </Tooltip>
-
-          <Flex justify="space-between" mt="auto">
-            <SpotifyLogo alignSelf="end" icon w="21px" h="21px" />
-
-            <Stack spacing="2px">
-              {activity.track.liked?.length && <LikedBy liked={activity.track.liked} />}
-              {activity.track.recent?.length && <PlayedBy played={activity.track.recent} />}
-            </Stack>
+              <Tooltip label={tracks[index].albumName} placement="top-start">
+                <Image w="100%" objectFit="cover" src={tracks[index].image} />
+              </Tooltip>
+            </Box>
+            <Flex direction="column" px={['5px', '15px']} justify="space-between">
+              <QueueToSelf
+                trackId={tracks[index].id}
+                variant="musy"
+                size="xs"
+                fontSize="11px"
+                display="flex"
+                justifyContent="center"
+                minW="95px"
+                mt={['10px', '15px']}
+              />
+              <Stack spacing={1}>
+                {activity.track.liked?.length && <LikedBy liked={activity.track.liked} />}
+                {activity.track.queue?.length && <QueuedBy queued={activity.track.queue} />}
+                {activity.track.recent?.length && <PlayedBy played={activity.track.recent} />}
+              </Stack>
+            </Flex>
           </Flex>
-        </Flex>
-        <Box
-          as={motion.div}
-          layoutId={tracks[index].id + layoutKey}
-          minW="100px"
-          onClick={() => onClick(tracks[index], activity.user.userId, layoutKey, tracks, index)}
-        >
-          <Tooltip label={tracks[index].albumName} placement="top-start">
-            <Image boxSize="100px" objectFit="cover" src={tracks[index].image} />
-          </Tooltip>
-        </Box>
+
+          <Flex justify="space-between" align="center" px={'5px'}>
+            <Flex direction="column">
+              <Tooltip
+                label={tracks[index].name.length > 17 ? tracks[index].name : undefined}
+                placement="top-start"
+              >
+                <Text
+                  fontSize={['12px', '13px']}
+                  noOfLines={1}
+                  whiteSpace="normal"
+                  wordBreak="break-word"
+                >
+                  {tracks[index].name}
+                </Text>
+              </Tooltip>
+              <Tooltip
+                label={tracks[index].artist.length > 17 ? tracks[index].artist : undefined}
+                placement="top-start"
+              >
+                <Text fontSize={['9px', '10px']} opacity={0.6}>
+                  {tracks[index].artist}
+                </Text>
+              </Tooltip>
+            </Flex>
+
+            <SpotifyLogo icon w="21px" h="21px" />
+          </Flex>
+        </Stack>
       </Flex>
     </Stack>
   );

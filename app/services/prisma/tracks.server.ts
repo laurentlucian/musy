@@ -1,15 +1,14 @@
-import type { Prisma } from '@prisma/client';
-
 import type { Activity } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
 export const getActivity = async () => {
-  const [like, queue] = await Promise.all([
+  const [like, queue, recommended] = await Promise.all([
     prisma.likedSongs.findMany({
       include: {
         track: {
           include: {
             liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
             recent: { select: { user: true } },
           },
         },
@@ -22,7 +21,11 @@ export const getActivity = async () => {
       include: {
         owner: { select: { accessToken: false, user: true } },
         track: {
-          include: { liked: { select: { user: true } }, recent: { select: { user: true } } },
+          include: {
+            liked: { select: { user: true } },
+            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+            recent: { select: { user: true } },
+          },
         },
         user: true,
       },
@@ -32,9 +35,23 @@ export const getActivity = async () => {
         action: 'send',
       },
     }),
+    prisma.recommended.findMany({
+      include: {
+        track: {
+          include: {
+            liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)
+            recent: { select: { user: true } },
+          },
+        },
+        user: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    }),
   ]);
   if (like || queue) {
-    return [...like, ...queue]
+    return [...like, ...queue, ...recommended]
       .sort((a, b) => {
         if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
         return 0;
@@ -44,10 +61,9 @@ export const getActivity = async () => {
   return null;
 };
 
-export const getUserRecommended = async (userId?: string) =>
-  prisma.recommendedSongs.findMany({
+export const getUserRecommended = async (userId: string) =>
+  prisma.recommended.findMany({
     include: {
-      sender: true,
       track: {
         include: {
           liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
@@ -56,10 +72,10 @@ export const getUserRecommended = async (userId?: string) =>
       },
     },
     orderBy: { createdAt: 'desc' },
-    where: { AND: [{ ownerId: userId }, { action: 'recommend' }] },
+    where: { userId },
   });
 
-export const getUserRecent = async (userId?: string) =>
+export const getUserRecent = async (userId: string) =>
   prisma.recentSongs.findMany({
     include: {
       track: {
@@ -78,7 +94,7 @@ export const getUserRecent = async (userId?: string) =>
     },
   });
 
-export const getUserLiked = async (userId?: string) =>
+export const getUserLiked = async (userId: string) =>
   prisma.likedSongs.findMany({
     include: {
       track: {

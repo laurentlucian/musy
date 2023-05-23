@@ -24,7 +24,6 @@ import { Code1, Ghost, Logout, MusicPlay, PlayCricle, Scroll } from 'iconsax-rea
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
-import RecommendSettings from '~/components/settings/RecommendSettings';
 import useSessionUser from '~/hooks/useSessionUser';
 import { authenticator } from '~/services/auth.server';
 import { upsertSettingsField } from '~/services/prisma/theme.server';
@@ -65,10 +64,6 @@ const Account = () => {
           />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
-        <RecommendSettings
-          allowRecommend={currentUser.settings?.allowRecommend ?? 'on'}
-          submit={submit}
-        />
         <FormControl display="flex" alignItems="center" justifyContent="space-between">
           <HStack>
             <Scroll size="24" color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />

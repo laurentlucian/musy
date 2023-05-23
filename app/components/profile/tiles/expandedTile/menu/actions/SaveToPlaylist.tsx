@@ -32,8 +32,8 @@ const SaveToPlaylist = ({ trackId }: SaveToPlaylistProps) => {
     );
   };
 
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-  const isDone = fetcher.type === 'done';
+  const isAdding = fetcher.formData?.get('trackId') === trackId;
+  const isDone = fetcher.state === 'idle' && fetcher.data != null;
   const isError =
     typeof fetcher.data === 'string'
       ? fetcher.data.includes('Error')

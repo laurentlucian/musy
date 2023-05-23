@@ -14,13 +14,9 @@ export const action = async ({ request }: ActionArgs) => {
   const trackId = body.get('trackId');
   const fromId = body.get('fromId');
   const toId = body.get('toId');
-  const action = body.get('action');
 
   const invalidFormData =
-    typeof trackId !== 'string' ||
-    typeof toId !== 'string' ||
-    typeof fromId !== 'string' ||
-    typeof action !== 'string';
+    typeof trackId !== 'string' || typeof toId !== 'string' || typeof fromId !== 'string';
 
   if (invalidFormData) return typedjson('Request Error');
 
@@ -33,14 +29,14 @@ export const action = async ({ request }: ActionArgs) => {
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
 
   const data: Prisma.QueueCreateInput = {
-    action,
+    action: 'send',
     owner: {
       connect: {
         id: toId,
       },
     },
 
-    pending: !!playback.is_playing,
+    pending: !playback.is_playing,
 
     track: {
       connectOrCreate: {

@@ -7,6 +7,7 @@ import type { RecentSongs, Track } from '@prisma/client';
 
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
+import type { TrackWithUsers } from '~/lib/types/types';
 
 import Card from './Card';
 import ExpandedSongs from './ExpandedSongs';
@@ -19,7 +20,7 @@ const RecentTracks = ({
   recent,
 }: {
   recent: (RecentSongs & {
-    track: Track & {};
+    track: TrackWithUsers;
   })[];
 }) => {
   const [layout, setLayout] = useState(true);

@@ -21,6 +21,7 @@ import {
   Box,
   DrawerCloseButton,
   useColorModeValue,
+  Text,
 } from '@chakra-ui/react';
 
 import { Refresh } from 'iconsax-react';
@@ -40,20 +41,9 @@ interface SendModalConfig {
   profileId: string;
   sendList: boolean | undefined;
   setSendList: Dispatch<SetStateAction<boolean | undefined>>;
-  setTitle: Dispatch<SetStateAction<'queue' | 'recommend'>>;
-  title: 'queue' | 'recommend';
 }
 
-const SendModal = ({
-  isOpen,
-  name,
-  onClose,
-  profileId,
-  sendList,
-  setSendList,
-  setTitle,
-  title,
-}: SendModalConfig) => {
+const SendModal = ({ isOpen, onClose, profileId, sendList, setSendList }: SendModalConfig) => {
   const isSmallScreen = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -142,10 +132,6 @@ const SendModal = ({
     }
   }, [data]);
 
-  useEffect(() => {
-    sendList ? setTitle('queue') : setTitle('recommend');
-  }, [sendList, setTitle]);
-
   const CycleButton = (
     <IconButton
       variant="ghost"
@@ -198,7 +184,7 @@ const SendModal = ({
       <ModalOverlay />
       <ModalContent w={['300px', '800px']} bg={bg} color={color}>
         <ModalHeader>
-          {title} {/* to {name} */}
+          <Text>queue</Text>
           <ModalCloseButton mt="8px" />
           {CycleButton}
         </ModalHeader>
@@ -213,9 +199,7 @@ const SendModal = ({
                     tracks={tracks}
                     index={index}
                     layoutKey="SendModal"
-                    action={
-                      <SendButton sendType={title} sendingToId={profileId} trackId={track.id} />
-                    }
+                    action={<SendButton sendingToId={profileId} trackId={track.id} />}
                     info={<TileInfoAction profileId={profileId} action />}
                   />
                 </Box>
@@ -253,7 +237,7 @@ const SendModal = ({
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader>
-            {title} to {name}
+            <Text>Queue</Text>
             <DrawerCloseButton mt="8px" />
             {CycleButton}
           </DrawerHeader>
@@ -268,9 +252,7 @@ const SendModal = ({
                     tracks={tracks}
                     index={index}
                     layoutKey="SendModal"
-                    action={
-                      <SendButton sendType={title} sendingToId={profileId} trackId={track.id} />
-                    }
+                    action={<SendButton sendingToId={profileId} trackId={track.id} />}
                     info={<TileInfoAction profileId={profileId} action />}
                   />
                 ))}

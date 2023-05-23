@@ -16,7 +16,7 @@ const ExpandedTile = () => {
   return (
     <AnimatePresence initial={false} custom={direction}>
       <Wrapper>
-        <SimpleGrid columns={[1, 2]} justifyItems="end" w="100%" h="100%" overflow="hidden">
+        <SimpleGrid columns={[1, 2]} w="100%" h="100%" overflow="hidden">
           <Track page={page} direction={direction} setPage={setPage} />
           <Actions page={page} playing={playing} setPlaying={setPlaying} />
         </SimpleGrid>

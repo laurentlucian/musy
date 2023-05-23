@@ -9,12 +9,11 @@ import { useExpandedTileIndex, useExpandedTiles } from '~/hooks/useExpandedTileS
 import AnalyzeTrack from './actions/AnalyzeTrack';
 import CopyLink from './actions/CopyLink';
 import PlayPreview from './actions/PlayPreview';
-import ProfileSong from './actions/ProfileSong';
 import QueueToSelf from './actions/QueueToSelf';
+import Recommend from './actions/Recommend';
 import SaveToLiked from './actions/SaveToLiked';
 import SendList from './actions/sendlist/SendList';
 import ToggleQueueList from './ToggleQueueList';
-import ToggleRecommendList from './ToggleRecommendList';
 
 const ExpandedActions = ({
   page,
@@ -25,7 +24,7 @@ const ExpandedActions = ({
   playing: boolean;
   setPlaying: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [show, setShow] = useState(0);
+  const [showList, setShowList] = useState(false);
   const tracks = useExpandedTiles();
   const originalIndex = useExpandedTileIndex();
   const index = wrap(0, tracks.length, page + originalIndex);
@@ -39,7 +38,7 @@ const ExpandedActions = ({
         w="100%"
         overflowX="hidden"
       >
-        {show === 0 ? (
+        {!showList ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -48,6 +47,18 @@ const ExpandedActions = ({
           >
             <Stack>
               <SaveToLiked trackId={tracks[index].id} />
+              <Recommend />
+              <QueueToSelf
+                withIcon
+                trackId={tracks[index].id}
+                variant="ghost"
+                fontSize="14px"
+                w={['100vw', '100%']}
+                color="musy.200"
+                _hover={{ color: 'white' }}
+              />
+              <ToggleQueueList setShow={setShowList} />
+
               <AnalyzeTrack trackId={tracks[index].id} />
               {tracks[index].link !== '' && <CopyLink link={tracks[index].link} />}
               <PlayPreview
@@ -55,14 +66,11 @@ const ExpandedActions = ({
                 setPlaying={setPlaying}
                 preview_url={tracks[index].preview_url}
               />
-              <ProfileSong />
-              <QueueToSelf trackId={tracks[index].id} />
-              <ToggleQueueList setShow={setShow} />
-              <ToggleRecommendList setShow={setShow} />
+              {/* <ProfileSong /> */}
             </Stack>
           </motion.div>
         ) : (
-          <SendList trackId={tracks[index].id} setShow={setShow} show={show} />
+          <SendList trackId={tracks[index].id} setShow={setShowList} />
         )}
       </Stack>
     </AnimatePresence>

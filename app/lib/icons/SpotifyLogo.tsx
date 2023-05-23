@@ -2,7 +2,6 @@ import type { ChakraProps } from '@chakra-ui/react';
 import { Image, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
 import spotify_icon_black from '~/lib/assets/spotify_icon_black.png';
 import spotify_icon_white from '~/lib/assets/spotify_icon_white.png';
 import Spotify_Logo_Black from '~/lib/assets/Spotify_Logo_Black.png';
@@ -34,27 +33,23 @@ const SpotifyLogo = ({
     Spotify_Logo_White,
   );
   const spotify = icon ? spotifyIcon : spotifyLogo;
-  const currentUser = useSessionUser();
 
   return (
     <>
-      {!currentUser?.settings?.easterEgg ||
-        (currentUser?.settings?.dev && (
-          <Image
-            minH={h}
-            maxH={h}
-            minW={w}
-            maxW={w}
-            src={spotify}
-            {...props}
-            onClick={(e) => {
-              if (link) {
-                e.preventDefault();
-                window.open('https://open.spotify.com');
-              }
-            }}
-          />
-        ))}
+      <Image
+        minH={h}
+        maxH={h}
+        minW={w}
+        maxW={w}
+        src={spotify}
+        {...props}
+        onClick={(e) => {
+          if (link) {
+            e.preventDefault();
+            window.open('https://open.spotify.com');
+          }
+        }}
+      />
     </>
   );
 };

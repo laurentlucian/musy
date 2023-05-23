@@ -23,7 +23,6 @@ const QuickActions = ({
   name,
   profileId,
   que,
-  recommend,
 }: {
   image: string;
   name: string;
@@ -31,7 +30,6 @@ const QuickActions = ({
   que?: string;
   recommend?: string;
 }) => {
-  const [title, setTitle] = useState<'queue' | 'recommend'>('queue');
   const [sendList, setSendList] = useState<boolean>();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('musy.200', 'musy.900');
@@ -66,25 +64,10 @@ const QuickActions = ({
                 color={color}
                 onClick={(e) => {
                   onClickMenuItem(e);
-                  setTitle(`queue`);
                   setSendList(true);
                 }}
               >
                 queue
-              </MenuItem>
-            )}
-            {recommend !== 'off' && (
-              <MenuItem
-                icon={<Send2 variant="Bold" />}
-                bg={bg}
-                color={color}
-                onClick={(e) => {
-                  onClickMenuItem(e);
-                  setTitle(`recommend`);
-                  setSendList(false);
-                }}
-              >
-                recommend
               </MenuItem>
             )}
             <MenuItem
@@ -104,8 +87,6 @@ const QuickActions = ({
         onClose={onClose}
         profileId={profileId}
         name={name}
-        title={title}
-        setTitle={setTitle}
         sendList={sendList}
         setSendList={setSendList}
       />

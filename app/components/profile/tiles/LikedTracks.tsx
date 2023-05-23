@@ -4,9 +4,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import type { LikedSongs } from '@prisma/client';
-import type { Track } from '@prisma/client';
 
 import useIsVisible from '~/hooks/useIsVisible';
+import type { TrackWithUsers } from '~/lib/types/types';
 
 import Card from './Card';
 import ExpandedSongs from './ExpandedSongs';
@@ -19,7 +19,7 @@ const LikedTracks = ({
   liked: initialLiked,
 }: {
   liked: (LikedSongs & {
-    track: Track & {};
+    track: TrackWithUsers;
   })[];
 }) => {
   const [liked, setLiked] = useState(initialLiked);

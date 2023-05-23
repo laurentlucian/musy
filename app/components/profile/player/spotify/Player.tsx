@@ -64,7 +64,7 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const isUserInParty = party.some((e) => e.userId === currentUser?.userId);
   const fetcher = useFetcher();
   const { revalidate } = useRevalidator();
-  const busy = fetcher.submission?.formData.has('party') ?? false;
+  const busy = fetcher.formData?.has('party') ?? false;
   const isSmallScreen = useIsMobile();
 
   const audioRef = useRef<HTMLAudioElement>(null);

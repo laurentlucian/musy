@@ -54,7 +54,7 @@ const ProfileHeader = () => {
         <IconButton
           aria-label="back"
           icon={<ArrowLeft2 />}
-          variant="ghost"
+          variant="unstyled"
           onClick={() => {
             searchParams.delete('spotify');
             setSearchParams(searchParams, {

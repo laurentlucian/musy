@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { Flex, Image, Link, Stack, Text, useEventListener } from '@chakra-ui/react';
 
 import { motion, wrap } from 'framer-motion';
+import { Box } from 'iconsax-react';
 
+import LikedBy from '~/components/home/activity/LikedBy';
+import PlayedBy from '~/components/home/activity/PlayedBy';
 import {
   useExpandedLayoutKey,
   useExpandedTileIndex,
@@ -52,6 +55,7 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
   const layoutKey = useExpandedLayoutKey();
   const tracks = useExpandedTiles();
   const index = wrap(0, tracks.length, page + originalIndex);
+  const track = tracks[index];
 
   useEventListener('keydown', (e) => {
     if (e.code === 'ArrowRight') paginate(1);
@@ -59,13 +63,7 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
   });
 
   return (
-    <Stack
-      as={motion.div}
-      layoutId={tracks[originalIndex].id + layoutKey}
-      w={['93%', '369px', 500]}
-      alignSelf="end"
-      onPointerDown={() => setDragging(true)}
-    >
+    <Stack w={['93%', '369px', 500]} mt="35px" mx="auto" onPointerDown={() => setDragging(true)}>
       <motion.div
         key={page}
         custom={direction}
@@ -93,48 +91,51 @@ const ActionTrack = ({ direction, page, setPage }: ActionTrackProps) => {
           setDragging(false);
         }}
       >
-        <Image
-          boxSize={['93%', '369px', 500]}
-          minW={['93%', '369px', 500]}
-          minH={['93%', '369px', 500]}
-          objectFit="cover"
-          src={tracks[index].image}
-          draggable={false}
-          cursor="pointer"
-          zIndex={10}
-        />
-        <Link
-          href={tracks[index].uri}
-          _hover={{ textDecor: 'none' }}
-          _focus={{ boxShadow: 'none' }}
-        >
-          <Text
-            fontSize={['xl', '5xl']}
-            fontWeight="bold"
-            textAlign="left"
-            w="fit-content"
-            wordBreak="break-word"
-            pos="relative"
-            color="#BBB8B7"
-          >
-            {tracks[index].name}
-          </Text>
-        </Link>
-        <Link
-          href={tracks[index].artistUri}
-          _hover={{ textDecor: 'none' }}
-          w="fit-content"
-          _focus={{ boxShadow: 'none' }}
-          pos="relative"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <Flex dir="row">
-            {tracks[index].explicit && <Image src={explicitImage} w="19px" mr="3px" />}
-            <Text color="#BBB8B7">{tracks[index].artist}</Text>
-          </Flex>
-        </Link>
+        <motion.div layoutId={tracks[originalIndex].id + layoutKey}>
+          <Image
+            objectFit="cover"
+            src={track.image}
+            draggable={false}
+            cursor="pointer"
+            zIndex={10}
+          />
+        </motion.div>
+        <Flex justify="space-between">
+          <Stack spacing={0} flex={1}>
+            <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
+              <Text
+                fontSize={['xl', '5xl']}
+                fontWeight="bold"
+                textAlign="left"
+                w="fit-content"
+                wordBreak="break-word"
+                pos="relative"
+                color="#BBB8B7"
+              >
+                {track.name}
+              </Text>
+            </Link>
+            <Flex align="center">
+              {track.explicit && <Image src={explicitImage} w="20px" mr="3px" />}
+              <Link
+                href={track.artistUri}
+                _hover={{ textDecor: 'none' }}
+                w="fit-content"
+                _focus={{ boxShadow: 'none' }}
+                pos="relative"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Text color="#BBB8B7">{track.artist}</Text>
+              </Link>
+            </Flex>
+          </Stack>
+          <Stack mt={['5px', '15px']}>
+            {track.liked?.length && <LikedBy liked={track.liked} />}
+            {track.recent?.length && <PlayedBy played={track.recent} />}
+          </Stack>
+        </Flex>
       </motion.div>
     </Stack>
   );

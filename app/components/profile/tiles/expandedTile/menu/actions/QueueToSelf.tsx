@@ -1,46 +1,29 @@
+import type { ButtonProps } from '@chakra-ui/react';
 import { Button } from '@chakra-ui/react';
 
 import { useQueueToSelfData } from '~/hooks/useSendButton';
-import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 
 type QueueToSelfProps = {
   trackId: string;
-};
+  withIcon?: boolean;
+} & ButtonProps;
 
-const QueueToSelf = ({ trackId }: QueueToSelfProps) => {
-  const currentUser = useSessionUser();
-
+const QueueToSelf = ({ trackId, withIcon, ...props }: QueueToSelfProps) => {
   const { addToSelfQueue, icon, isAdding, isDone, isError, text } = useQueueToSelfData({
     trackId,
   });
 
-  return currentUser ? (
-    <Button // button to add to your own queue
+  return (
+    <Button
       onClick={addToSelfQueue}
-      leftIcon={icon}
+      leftIcon={withIcon ? icon : undefined}
       isDisabled={!!isDone || !!isError || !!isAdding}
       variant="ghost"
       justifyContent="left"
-      fontSize="14px"
-      w={['100vw', '100%']}
-      color="musy.200"
-      _hover={{ color: 'white' }}
+      {...props}
     >
       {isAdding ? <Waver /> : text}
-    </Button>
-  ) : (
-    <Button // placeholder button for logged out people
-      leftIcon={icon}
-      variant="ghost"
-      justifyContent="left"
-      fontSize="14px"
-      w={['100vw', '100%']}
-      color="musy.200"
-      _hover={{ color: 'white' }}
-      disabled
-    >
-      Log in to Add to Your Queue
     </Button>
   );
 };

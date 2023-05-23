@@ -10,7 +10,7 @@ export const action = async ({ request }: ActionArgs) => {
   const trackId = body.get('trackId') as string;
 
   try {
-    await prisma.recommendedSongs.updateMany({
+    await prisma.recommended.updateMany({
       data: {
         action: 'history',
       },

@@ -6,37 +6,25 @@ import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import { createTrackModel } from '~/lib/utils';
+import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { spotifyApi } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
+  const session = await authenticator.isAuthenticated(request);
   const body = await request.formData();
-  const fromId = body.get('fromId');
-  const toId = body.get('toId');
 
-  if (typeof fromId !== 'string' || typeof toId !== 'string') return typedjson('invalid form data');
+  if (!session || !session.user) return typedjson('Unauthorized', { status: 401 });
 
-  const { spotify } = await spotifyApi(fromId);
+  const { spotify } = await spotifyApi(session.user.id);
   invariant(spotify, 'No access to API');
 
   const trackId = body.get('trackId') as string;
-  const action = body.get('action') as string;
 
   const { body: track } = await spotify.getTrack(trackId);
   const trackDb = createTrackModel(track);
 
-  const data: Prisma.RecommendedSongsCreateInput = {
-    action,
-    owner: {
-      connect: {
-        id: toId,
-      },
-    },
-    sender: {
-      connect: {
-        userId: fromId,
-      },
-    },
+  const data: Prisma.RecommendedCreateInput = {
     track: {
       connectOrCreate: {
         create: trackDb,
@@ -45,15 +33,20 @@ export const action = async ({ request }: ActionArgs) => {
         },
       },
     },
+    user: {
+      connect: {
+        userId: session.user.id,
+      },
+    },
   };
 
   try {
-    await prisma.recommendedSongs.create({ data });
+    await prisma.recommended.create({ data });
   } catch (error) {
     console.log('recommend -> error', error);
-    return typedjson('failed to send');
+    return typedjson('failed to add');
   }
-  return typedjson('Recommended');
+  return typedjson('recommended');
 };
 
 export const loader = () => {

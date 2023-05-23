@@ -37,7 +37,6 @@ const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerPro
   const playback = user.playback;
   const track = playback?.track;
   const que = user?.settings?.allowQueue;
-  const recommend = user?.settings?.allowRecommend;
 
   const isOwnProfile = currentUserId === user.userId;
 
@@ -64,13 +63,7 @@ const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerPro
     <HStack justify={track ? 'start' : 'end'} align="baseline" w="100%">
       {!isOwnProfile && <FavoriteButton id={user.userId} />}
       {!isOwnProfile && <AddFriendsButton id={user.userId} />}
-      <QuickActions
-        name={name}
-        image={user.image}
-        profileId={user.userId}
-        que={que}
-        recommend={recommend}
-      />
+      <QuickActions name={name} image={user.image} profileId={user.userId} que={que} />
     </HStack>
   );
 

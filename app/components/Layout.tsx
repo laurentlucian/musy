@@ -6,6 +6,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 import { useThemeBg } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
@@ -13,6 +14,7 @@ import Nav from './nav/Nav';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { pathname } = useLocation();
+  const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
@@ -20,6 +22,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
     'home' || 'friends' || 'sessions' || 'explore' || 'settings',
   );
   const { bgGradient, gradient, profileBg } = useThemeBg();
+
+  if (!currentUser) return <>{children}</>;
 
   return (
     <Flex

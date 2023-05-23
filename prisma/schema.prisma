@@ -18,33 +18,32 @@ model User {
   expiresAt    Int
   tokenType    String
   revoked      Boolean  @default(false)
-
-  user  Profile?
-  party Party[]
-
-  queue       Queue[]
-  recommended RecommendedSongs[]
+  //
+  user         Profile?
+  party        Party[]
+  //
+  queue        Queue[]
 }
 
 model Profile {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+  id                  Int             @id @default(autoincrement())
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @default(now()) @updatedAt
+  user                User            @relation(fields: [userId], references: [id])
   // should've been the @id
-  userId    String   @unique
-
-  name        String
-  bio         String?
-  email       String
-  image       String
-  party       Party?
-  queue       Queue[]
-  liked       LikedSongs[]
+  userId              String          @unique
+  //
+  name                String
+  bio                 String?
+  email               String
+  image               String
+  party               Party?
+  queue               Queue[]
+  liked               LikedSongs[]
   // received
-  recent      RecentSongs[]
-  recommended RecommendedSongs[]
-
+  recent              RecentSongs[]
+  recommended         Recommended[]
+  //
   ai                  AI?
   settings            Settings?
   theme               Theme?
@@ -150,44 +149,41 @@ model Queue {
   ownerId   String
   createdAt DateTime @default(now())
   pending   Boolean  @default(false)
-
-  track   Track  @relation(fields: [trackId], references: [id])
-  trackId String
-
+  //
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
   // can be anonymous
-  user   Profile? @relation(fields: [userId], references: [userId])
-  userId String?
-  action String   @default("add")
+  user      Profile? @relation(fields: [userId], references: [userId])
+  userId    String?
+  action    String   @default("add")
 }
 
 model LikedSongs {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-
-  track   Track  @relation(fields: [trackId], references: [id])
-  trackId String
-
-  user   Profile @relation(fields: [userId], references: [userId])
-  userId String
-  action String  @default("liked")
-
-  @@unique([trackId, userId])
-}
-
-model RecommendedSongs {
-  id        Int      @id @default(autoincrement())
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String
-  createdAt DateTime @default(now())
-  pending   Boolean  @default(false)
-  comment   String?
-  rating    Int?
   //
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
   //
-  sender    Profile  @relation(fields: [senderId], references: [userId])
-  senderId  String
+  user      Profile  @relation(fields: [userId], references: [userId])
+  userId    String
+  action    String   @default("liked")
+
+  @@unique([trackId, userId])
+}
+
+model Recommended {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  //
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
+  //
+  user      Profile  @relation(fields: [userId], references: [userId])
+  userId    String
+  //
+  caption   String?
   action    String   @default("recommend")
 }
 
@@ -202,7 +198,6 @@ model Settings {
   autoscroll        Boolean  @default(true)
   isPrivate         Boolean  @default(false)
   allowQueue        String   @default("on")
-  allowRecommend    String   @default("on")
   allowPreview      Boolean  @default(false)
   profileSong       Track?   @relation(fields: [profileSongId], references: [id])
   profileSongId     String?
@@ -264,7 +259,7 @@ model Theme {
 }
 
 model Track {
-  id          String             @id @unique
+  id          String        @id @unique
   uri         String
   name        String
   image       String
@@ -280,9 +275,9 @@ model Track {
   queue       Queue[]
   liked       LikedSongs[]
   recent      RecentSongs[]
-  recommended RecommendedSongs[]
   playback    Playback[]
   Settings    Settings[]
+  recommended Recommended[]
 }
 
 model Playback {

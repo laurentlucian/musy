@@ -58,11 +58,11 @@ const PlayPreview = ({
   }, []);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener('ended', () => setPlaying(false));
+    const ref = audioRef.current;
+    if (ref) {
+      ref.addEventListener('ended', () => setPlaying(false));
       return () => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
+        ref.removeEventListener('ended', () => setPlaying(false));
       };
     }
   }, [audioRef]);
@@ -82,8 +82,8 @@ const PlayPreview = ({
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseEnter}
         >
-          {text} Preview from &nbsp;
-          <SpotifyLogo link={false} white />
+          {text} Preview &nbsp;
+          <SpotifyLogo link={false} white icon />
         </Button>
       )}
       {preview_url && <audio ref={audioRef} src={preview_url} />}

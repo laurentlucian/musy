@@ -71,10 +71,10 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     | 'short_term';
 
   const [recommended, { currently_playing: playback }, party, ...main] = await Promise.all([
-    prisma.recommendedSongs.findMany({
-      include: { sender: true, track: true },
+    prisma.recommended.findMany({
+      include: { track: true },
       orderBy: { createdAt: 'desc' },
-      where: { AND: [{ ownerId: id }, { action: 'recommend' }] },
+      where: { userId: id },
     }),
     getUserQueue(id).catch(() => {
       return {

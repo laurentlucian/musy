@@ -21,7 +21,6 @@ import { useSearch, useSetSearch } from '~/hooks/useSearchStore';
 import Waver from '~/lib/icons/Waver';
 
 import UserMenu from '../nav/UserMenu';
-import Filters from './Filters';
 
 const SearchInput = ({
   search,
@@ -127,7 +126,6 @@ const SearchInput = ({
           />
         )}
       </InputGroup>
-      {/* <Filters /> */}
       {isSmallScreen && <UserMenu />}
     </Stack>
   );

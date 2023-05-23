@@ -4,6 +4,8 @@ import type { Profile, Track } from '@prisma/client';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
+import type { TrackWithUsers } from '~/lib/types/types';
+
 import { useSetExpandedStack } from './useOverlay';
 
 type ExpandedTile = Track & {
@@ -31,7 +33,7 @@ interface ExpandedStateConfig {
   isPlaying?: boolean;
   layoutKey: string | null;
   track: ExpandedTile | null;
-  tracks: Track[] | [];
+  tracks: TrackWithUsers[] | [];
 }
 
 const useExpandedStore = create<ExpandedStateConfig>()((set) => ({

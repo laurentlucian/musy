@@ -1,4 +1,4 @@
-import type { LikedSongs, Playback, Prisma, Profile, RecentSongs, Track } from '@prisma/client';
+import type { Playback, Prisma, Profile, Track } from '@prisma/client';
 
 import type { getCurrentUser } from '~/services/prisma/users.server';
 
@@ -20,6 +20,7 @@ export type Activity = {
     link: string;
     name: string;
     preview_url: string | null;
+    queue?: { user: Profile | null }[];
     recent?: { user: Profile | null }[];
     uri: string;
   };
@@ -54,12 +55,12 @@ export type User = Prisma.ProfileGetPayload<{
 }>;
 
 export type TrackWithUsers = Track & {
-  liked?: (LikedSongs & {
+  liked?: {
     user: Profile;
-  })[];
-  recent?: (RecentSongs & {
+  }[];
+  recent?: {
     user: Profile;
-  })[];
+  }[];
 };
 
 export type PendingCard = {
@@ -75,7 +76,7 @@ export type FriendCard = PendingCard & {
         track: Track;
       })
     | null;
-  settings: { allowQueue: string; allowRecommend: string } | null;
+  settings: { allowQueue: string } | null;
 };
 
 export type Friend = {
@@ -87,7 +88,7 @@ export type Friend = {
         track: Track;
       })
     | null;
-  settings: { allowQueue: string; allowRecommend: string } | null;
+  settings: { allowQueue: string } | null;
   userId: string;
 };
 

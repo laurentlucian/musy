@@ -11,10 +11,6 @@ export const useQueueableUsers = () => {
   return useTypedRouteLoaderData<typeof loader>('root')?.queueableUsers ?? [];
 };
 
-export const useRecommendableUsers = () => {
-  return useTypedRouteLoaderData<typeof loader>('root')?.recommendableUsers ?? [];
-};
-
 export const useRestOfUsers = () => {
   const users = useUsers();
   const friends = useFriends();

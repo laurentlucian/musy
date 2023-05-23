@@ -1,12 +1,12 @@
 import { AlertCircle, Check } from 'react-feather';
 
-import { AddSquare, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { DirectInbox, CloseSquare, Send2, TickSquare } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/lib/icons/Waver';
 import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
-import type { action as recommendAction } from '~/routes/api/recommend/send';
+import type { action as recommendAction } from '~/routes/api/recommend/add';
 
 import { useExpandedFromId } from './useExpandedTileState';
 import useSessionUser from './useSessionUser';
@@ -21,23 +21,20 @@ export type SendData = {
   username?: string;
 };
 
-export const useRecommendData = ({ trackId, userId, username }: SendData) => {
-  const currentUserId = useSessionUser()?.userId ?? '';
+export const useRecommendData = ({ trackId }: { trackId: string }) => {
   const fetcher = useTypedFetcher<typeof recommendAction>();
 
-  const data = {
-    action: 'recommend',
-    fromId: currentUserId,
-    toId: userId ?? '',
-    trackId,
-  };
-
   const handleRecommend = (): void => {
-    fetcher.submit(data, { action: '/api/recommend/send', method: 'post', replace: true });
+    fetcher.submit(
+      {
+        trackId,
+      },
+      { action: '/api/recommend/add', method: 'post', replace: true },
+    );
   };
 
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
-  const isDone = fetcher.type === 'done';
+  const isAdding = fetcher.formData?.get('trackId') === trackId;
+  const isDone = fetcher.state === 'idle' && fetcher.data != null;
   const isError = fetcher.data?.includes('Error') ? fetcher.data : null;
 
   const icon = isAdding ? (
@@ -50,11 +47,9 @@ export const useRecommendData = ({ trackId, userId, username }: SendData) => {
     <Send2 variant="Bold" />
   );
 
-  const qText = username?.split(/[ .]/)[0];
+  const text = fetcher.data ? fetcher.data : 'Recommend';
 
-  const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
-
-  return { Text, handleRecommend, icon, isAdding, isDone, isError, text };
+  return { handleRecommend, icon, isAdding, isDone, isError, text };
 };
 
 export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
@@ -73,28 +68,19 @@ export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
   const addToSelfQueue = () => {
     fetcher.submit(data, { action: '/api/queue/add', method: 'post', replace: true });
   };
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
+  const isAdding = fetcher.formData?.get('trackId') === trackId;
 
-  const isDone = fetcher.type === 'done';
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
+  const isDone = fetcher.state === 'idle' && fetcher.data != null;
+  const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
   const icon = isDone ? (
     <TickSquare size="25px" />
   ) : isError ? (
     <CloseSquare size="25px" />
   ) : (
-    <AddSquare />
+    <DirectInbox />
   );
 
-  const text = isDone
-    ? typeof fetcher.data === 'string'
-      ? fetcher.data
-      : 'Authenticated'
-    : 'Add to Your Queue';
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to queue';
 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };
@@ -103,9 +89,8 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   const currentUserId = useSessionUser()?.userId ?? '';
 
   const data = {
-    action: 'send',
     fromId: currentUserId,
-    toId: toId ?? '',
+    toId: toId,
     toUsername: username,
     trackId,
   };
@@ -115,16 +100,11 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   const addToFriendsQueue = () => {
     fetcher.submit(data, { action: '/api/queue/send', method: 'post', replace: true });
   };
-  const isAdding = fetcher.submission?.formData.get('trackId') === trackId;
+  const isAdding = fetcher.formData?.get('trackId') === trackId;
 
-  const isDone = fetcher.type === 'done';
+  const isDone = fetcher.state === 'idle' && fetcher.data != null;
 
-  const isError =
-    typeof fetcher.data === 'string'
-      ? fetcher.data.includes('Error')
-        ? fetcher.data
-        : null
-      : null;
+  const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
 
   const icon = isDone ? (
     <TickSquare size="25px" />
@@ -135,7 +115,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   );
 
   const qText = username.split(/[ .]/)[0];
-  const text = isDone ? (typeof fetcher.data === 'string' ? fetcher.data : 'Authenticated') : qText;
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : qText;
 
   return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };

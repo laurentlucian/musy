@@ -16,9 +16,9 @@ type PlayControllerProps = {
 };
 
 const PlayController = ({ fetcher, id, playback }: PlayControllerProps) => {
-  const loading = fetcher.submission?.formData.has('play') ?? false;
-  const prevSong = fetcher.submission?.formData.has('prev') ?? false;
-  const nextSong = fetcher.submission?.formData.has('next') ?? false;
+  const loading = fetcher.formData?.has('play') ?? false;
+  const prevSong = fetcher.formData?.has('prev') ?? false;
+  const nextSong = fetcher.formData?.has('next') ?? false;
   const trackId = playback.item?.id;
   const color = useColorModeValue('#161616', '#EEE6E2');
 
