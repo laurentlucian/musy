@@ -5,7 +5,7 @@ import { redirect } from '@remix-run/node';
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { ownerQ } from '~/services/scheduler/jobs/party.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const loader = ({ params }: LoaderArgs) => {
   return redirect('/' + params.id);
@@ -37,7 +37,7 @@ export const action = async ({ request }: ActionArgs) => {
     await prisma.party.delete({ where: { userId } });
   }
 
-  const { spotify: owner_spotify } = await spotifyApi(ownerId);
+  const { spotify: owner_spotify } = await getSpotifyClient(ownerId);
   if (!owner_spotify) {
     console.log('Party join failed -> no spotify API');
     return redirect('/' + ownerId);
@@ -50,7 +50,7 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   try {
-    const { spotify: listener_spotify } = await spotifyApi(userId);
+    const { spotify: listener_spotify } = await getSpotifyClient(userId);
     if (!listener_spotify) {
       console.log('Party join failed -> no spotify API');
       return redirect('/' + ownerId);

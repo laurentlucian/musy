@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import type { Profile, Track } from '@prisma/client';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
@@ -8,22 +7,14 @@ import type { TrackWithUsers } from '~/lib/types/types';
 
 import { useSetExpandedStack } from './useOverlay';
 
-type ExpandedTile = Track & {
-  liked?: {
-    user: Profile;
-  }[];
-  recent?: {
-    user: Profile;
-  }[];
-};
 interface ExpandedStateConfig {
   actions: {
     onClose: () => void;
     onOpen: (
-      by: ExpandedTile,
+      by: TrackWithUsers,
       fromId: string | null,
       layoutKey: string | null,
-      tracks: Track[],
+      tracks: TrackWithUsers[],
       index: number,
     ) => void;
     setIsPlaying: (by: boolean) => void;
@@ -32,7 +23,7 @@ interface ExpandedStateConfig {
   index: number;
   isPlaying?: boolean;
   layoutKey: string | null;
-  track: ExpandedTile | null;
+  track: TrackWithUsers | null;
   tracks: TrackWithUsers[] | [];
 }
 
@@ -90,10 +81,10 @@ export const useClickDrag = () => {
   };
 
   const handleClick = (
-    track: Track,
+    track: TrackWithUsers,
     fromId: string | null,
     layoutKey: string,
-    tracks: Track[] | [],
+    tracks: TrackWithUsers[] | [],
     index: number,
   ) => {
     if (!isMouseDragged) {

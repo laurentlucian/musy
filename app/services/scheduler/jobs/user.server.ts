@@ -1,11 +1,12 @@
 import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
-import { createTrackModel, isProduction, minutesToMs } from '~/lib/utils';
+import { isProduction, minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
+import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getAllUsers, updateUserImage, updateUserName } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 import { playbackCreator, playbackQ } from './playback.server';
 import { libraryQ } from './scraper.server';
@@ -22,7 +23,7 @@ export const userQ = Queue<{ userId: string }>(
       where: { id: userId },
     });
 
-    const { spotify } = await spotifyApi(userId);
+    const { spotify } = await getSpotifyClient(userId);
 
     if (!profile || !profile.user || !spotify) {
       console.log(`userQ ${userId} removed -> user not found`);
@@ -319,7 +320,7 @@ export const addUsersToQueue = async () => {
 // ------------------------------------------------------------- SCRIPTS
 
 export const addMissingTracks = async () => {
-  const { spotify } = await spotifyApi('1295028670');
+  const { spotify } = await getSpotifyClient('1295028670');
   invariant(spotify, 'spotify api not found');
   const missingLiked = await prisma.$queryRaw<{ id: number; trackId: string; userId: string }[]>`
     SELECT trackId, id, userId

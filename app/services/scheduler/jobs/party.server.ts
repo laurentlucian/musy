@@ -1,6 +1,6 @@
 import { prisma } from '~/services/db.server';
 import { Queue, registeredQueues } from '~/services/scheduler/queue.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 // - get all existing parties
 // - delete related parties if owner has paused @todo only after 10 minutes of pause
@@ -33,7 +33,7 @@ export const listenerQ = Queue<{
   const { currentTrack, repeat, userId } = job.data;
 
   try {
-    const { spotify } = await spotifyApi(userId);
+    const { spotify } = await getSpotifyClient(userId);
     if (!spotify) {
       console.log('listenerQ -> failed: spotify null');
       throw 'spotifyApi null';
@@ -74,7 +74,7 @@ export const ownerQ = Queue<{ ownerId: string; userId: string }>('update_track',
       return 'ownerQ -> no active parties';
     }
 
-    const { spotify } = await spotifyApi(ownerId);
+    const { spotify } = await getSpotifyClient(ownerId);
     if (!spotify) {
       console.log('ownerQ -> no spotify API');
       return 'ownerQ -> no spotify API';

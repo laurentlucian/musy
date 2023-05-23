@@ -3,7 +3,7 @@ import type { LoaderArgs } from '@remix-run/server-runtime';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const loader = async ({ params, request }: LoaderArgs) => {
   const userId = params.id;
@@ -15,7 +15,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const url = new URL(request.url);
   const offset = Number(url.searchParams.get('offset')) || 0;
 
-  const { spotify } = await spotifyApi(userId);
+  const { spotify } = await getSpotifyClient(userId);
   invariant(spotify, 'Missing spotify');
 
   const data = await spotify

@@ -12,7 +12,7 @@ import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import { getAnalysis } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { redis } from '~/services/scheduler/redis.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 const TrackAnalysis = () => {
   const { analysis, authorized, track } = useTypedLoaderData<typeof loader>();
@@ -72,7 +72,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     return typedjson(data, { headers: { cached: 'true' } });
   }
 
-  const { spotify } = await spotifyApi('1295028670');
+  const { spotify } = await getSpotifyClient('1295028670');
   if (!spotify)
     return typedjson(
       { analysis: null, authorized: !!session, track: null },

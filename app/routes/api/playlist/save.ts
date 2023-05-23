@@ -2,7 +2,7 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
   const data = await request.formData();
@@ -14,7 +14,7 @@ export const action = async ({ request }: ActionArgs) => {
     return typedjson('Request Error');
   }
 
-  const { spotify } = await spotifyApi(userId);
+  const { spotify } = await getSpotifyClient(userId);
   if (!spotify) return typedjson('Error: no access to API');
 
   try {

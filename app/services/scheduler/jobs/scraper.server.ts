@@ -1,15 +1,15 @@
 import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
-import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
+import { createTrackModel } from '~/services/prisma/spotify.server';
 import { Queue } from '~/services/scheduler/queue.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const libraryQ = Queue<{ pages: number; userId: string }>('user-library', async (job) => {
   const { pages, userId } = job.data;
   const limit = 50;
-  const { spotify } = await spotifyApi(userId);
+  const { spotify } = await getSpotifyClient(userId);
   invariant(spotify, 'libraryQ -> spotify api not found');
 
   // loop through pages backwards; cases where user has too many liked songs;

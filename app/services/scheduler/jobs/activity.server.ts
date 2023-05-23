@@ -1,6 +1,6 @@
 import { prisma } from '~/services/db.server';
 import { Queue } from '~/services/scheduler/queue.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const activityQ = Queue<{ activityId: number }>('pending_activity', async (job) => {
   console.log('activityQ -> pending job starting...');
@@ -36,7 +36,7 @@ export const activityQ = Queue<{ activityId: number }>('pending_activity', async
   };
 
   try {
-    const { spotify } = await spotifyApi(pendingTrack.ownerId);
+    const { spotify } = await getSpotifyClient(pendingTrack.ownerId);
     if (!spotify) return null;
 
     const { body: playback } = await spotify.getMyCurrentPlaybackState();

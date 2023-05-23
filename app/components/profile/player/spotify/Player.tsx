@@ -9,7 +9,6 @@ import {
   HStack,
   IconButton,
   Image,
-  Link,
   Stack,
   Text,
   useColorModeValue,
@@ -28,21 +27,18 @@ import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
 
 import PlayController from '../PlayController';
-import PlayingFromTooltip from '../PlayingFromTooltip';
 import PlayerBar from './PlayerBar';
 
 type PlayerProps = {
   id: string;
-  item: SpotifyApi.TrackObjectFull;
   layoutKey: string;
   party: Party[];
-  playback: CurrentlyPlayingObjectCustom;
+  playback: SpotifyApi.CurrentlyPlayingResponse;
 };
 
-const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
+const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;
@@ -68,13 +64,13 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   const isSmallScreen = useIsMobile();
 
   const audioRef = useRef<HTMLAudioElement>(null);
-
+  const item = playback.item as SpotifyApi.TrackObjectFull;
   const track = {
     albumName: item.album.name,
     albumUri: item.album.uri,
     artist: item.artists[0].name,
     artistUri: item.artists[0].uri,
-    duration: 0,
+    duration: item.duration_ms,
     explicit: item.explicit,
     id: item.id,
     image: item.album?.images[0].url,
@@ -114,32 +110,34 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
   };
 
   useEffect(() => {
+    const ref = audioRef.current;
     if (isPlaying) {
-      audioRef.current?.pause();
+      ref?.pause();
     } else if (playing) {
-      void audioRef.current?.play();
+      void ref?.play();
       setPlaying(true);
     }
   }, [isPlaying, playing]);
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.05;
+    const ref = audioRef.current;
+    if (ref) {
+      ref.volume = 0.05;
       setHasPreview(true);
-      audioRef.current.addEventListener('ended', () => setPlaying(false));
+      ref.addEventListener('ended', () => setPlaying(false));
       return () => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        audioRef?.current?.removeEventListener('ended', () => setPlaying(false));
+        ref.removeEventListener('ended', () => setPlaying(false));
       };
     } else {
       setPlaying(false);
       setHasPreview(false);
     }
-  }, [audioRef]);
+  }, []);
 
   useEffect(() => {
-    if (audioRef.current?.paused && playing) {
-      void audioRef.current.play();
+    const ref = audioRef.current;
+    if (ref && ref.paused && playing) {
+      void ref.play();
     }
   }, [playing]);
 
@@ -156,106 +154,55 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
     return () => window.removeEventListener('scroll', checkStick);
   }, []);
 
-  const active = playback.is_playing;
   useInterval(
     () => {
       revalidate();
     },
     // -> checks if user started playing every minute
-    active ? null : 60000,
+    playback.is_playing ? null : 60000,
     // -> refreshes every 30s regardless
   );
-
-  if (!item) return null;
+  if (!track) return null;
 
   return (
-    <>
-      <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflowY={['scroll', 'visible']}>
-        <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
-          <Collapse in={!isOpen} animateOpacity>
-            <Stack
-              spacing={0}
-              bg={bg}
-              borderRadius={size === 'small' ? 0 : 5}
-              backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
-            >
-              <Flex h="135px" px="2px" py="2px" justify="space-between">
-                <Stack pl="7px" spacing={1} flexGrow={1}>
-                  <Stack direction="column" spacing={0.5}>
-                    <Text
-                      noOfLines={1}
-                      onMouseDown={onMouseDown}
-                      onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id, layoutKey, [], 0)}
-                      cursor="pointer"
-                      w={['200px', '68%']}
-                      overflow="hidden"
-                      whiteSpace="nowrap"
-                    >
-                      {item.name}
+    <Stack pos="sticky" top={0} zIndex={1} spacing={-1} overflowY={['scroll', 'visible']}>
+      <Stack backdropFilter="blur(27px)" borderRadius={size === 'small' ? 0 : 5}>
+        <Collapse in={!isOpen} animateOpacity>
+          <Stack
+            spacing={0}
+            bg={bg}
+            borderRadius={size === 'small' ? 0 : 5}
+            backdropFilter={blur && isSmallScreen ? 'blur(27px)' : 'none'}
+          >
+            <Flex h="135px" px="2px" py="2px" justify="space-between">
+              <Flex direction="column" justify="space-between" pl="7px">
+                <Stack direction="column" spacing={0.5}>
+                  <Text
+                    noOfLines={1}
+                    onMouseDown={onMouseDown}
+                    onMouseMove={onMouseMove}
+                    onClick={() => onClick(track, id, layoutKey, [], 0)}
+                    cursor="pointer"
+                    w={['200px', '68%']}
+                    overflow="hidden"
+                    whiteSpace="nowrap"
+                  >
+                    {track.name}
+                  </Text>
+                  <Flex
+                    onMouseDown={onMouseDown}
+                    onMouseMove={onMouseMove}
+                    onClick={() => onClick(track, id, layoutKey, [], 0)}
+                    cursor="pointer"
+                    w={['200px', '68%']}
+                  >
+                    {track.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+                    <Text opacity={0.8} fontSize="13px" noOfLines={1}>
+                      {track.artist}
                     </Text>
-                    <Flex
-                      onMouseDown={onMouseDown}
-                      onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id, layoutKey, [], 0)}
-                      cursor="pointer"
-                      w={['200px', '68%']}
-                    >
-                      {item.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                      <Text opacity={0.8} fontSize="13px" noOfLines={1}>
-                        {item.album?.artists[0].name}
-                      </Text>
-                    </Flex>
-                    {playback.context && (
-                      <>
-                        <Text
-                          fontSize="13px"
-                          transition="opacity 1.69s ease-in-out"
-                          // opacity={playingFrom ? 1 : 0}
-                          opacity={0}
-                          w={['200px', '68%']}
-                          noOfLines={1}
-                        >
-                          Playing From{' '}
-                          {item.album.album_type === 'single' &&
-                          playback.context.type === 'album' &&
-                          item.album.total_tracks !== 1
-                            ? 'EP'
-                            : playback.context.type.charAt(0).toUpperCase() +
-                              playback.context.type.slice(1)}
-                        </Text>
-                        <Tooltip
-                          label={
-                            <PlayingFromTooltip // tooltip does not show properly when playing from artist
-                              name={playback.context.name}
-                              description={playback.context.description}
-                              image={playback.context.image}
-                            />
-                          }
-                          placement="bottom-start"
-                        >
-                          <Link
-                            href={playback.context.uri}
-                            fontSize="15px"
-                            fontWeight="bold"
-                            transition="opacity 1.69s ease-in-out"
-                            opacity={0}
-                            overflow="scroll"
-                            whiteSpace="normal"
-                            wordBreak="break-word"
-                            noOfLines={1}
-                            w={['200px', '68%']}
-                          >
-                            {playback.context.name
-                              ? playback.context.name
-                              : playback.context.type === 'artist'
-                              ? item.artists[0].name
-                              : item.album.name}
-                          </Link>
-                        </Tooltip>
-                      </>
-                    )}
-                    <Stack spacing={1} pos="absolute" pt="48px" lineHeight="shorter" w="100%">
+                  </Flex>
+                  {playback.device && (
+                    <Stack spacing={1} pt="48px" lineHeight="shorter" w="100%">
                       <Text
                         fontSize="13px"
                         fontWeight="normal"
@@ -277,142 +224,129 @@ const Player = ({ id, item, layoutKey, party, playback }: PlayerProps) => {
                         {playback.device.name.split(' ').slice(0, 2).join(' ')}
                       </Text>
                     </Stack>
-                  </Stack>
-                  <HStack>
-                    {active ? (
-                      <HStack mb="5px !important" mt={!playback.context ? '46px' : 0}>
-                        <SpotifyLogo icon={isSmallScreen} />
-                        {isOwnProfile && (
-                          <PlayController fetcher={fetcher} playback={playback} id={id} />
-                        )}
-                        {party.length && (
-                          <AvatarGroup size="xs" spacing={-2} max={5}>
-                            {party.map((u) => {
-                              return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
-                            })}
-                          </AvatarGroup>
-                        )}
-                        {!isOwnProfile && (
-                          <>
-                            <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
-                              <IconButton
-                                aria-label={isUserInParty ? 'Leave' : 'Join'}
-                                name="party"
-                                icon={<People size="24px" />}
-                                color={isUserInParty ? 'spotify.green' : undefined}
-                                _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
-                                variant="ghost"
-                                type="submit"
-                                cursor="pointer"
-                                isLoading={busy}
-                                onClick={() => {
-                                  fetcher.submit(
-                                    { userId: id },
-                                    {
-                                      action: isUserInParty ? 'api/party/leave' : 'api/party/join',
-                                      method: 'post',
-                                      replace: true,
-                                    },
-                                  );
-                                }}
-                              />
-                            </Tooltip>
-                            <Tooltip
-                              label={hasPreview ? '' : 'song has no preview'}
-                              openDelay={hasPreview ? 200 : 0}
-                            >
-                              <IconButton
-                                onClick={handleMusicControls}
-                                icon={icon}
-                                variant="ghost"
-                                aria-label={playing ? 'pause' : 'play'}
-                                _hover={{ color: 'spotify.green' }}
-                                _active={{ boxShadow: 'none' }}
-                                onMouseLeave={handleMouseLeavePreviewButton}
-                                onMouseEnter={handleMouseEnterPreviewButton}
-                                color={color1}
-                              />
-                            </Tooltip>
-                          </>
-                        )}
-                      </HStack>
-                    ) : (
-                      <HStack>
-                        <SpotifyLogo />
-                        {isOwnProfile && (
-                          <PlayController fetcher={fetcher} playback={playback} id={id} />
-                        )}
-                      </HStack>
-                    )}
-                  </HStack>
+                  )}
                 </Stack>
-
-                <HStack spacing={1} align="end">
-                  <Tooltip label={item.album.name} placement="bottom-end">
-                    <Image
-                      src={item.album?.images[0].url}
-                      mt={
-                        size === 'large'
-                          ? [0, -47, -47, -47, -200]
-                          : size === 'medium'
-                          ? [0, -47, -47, -47, '-86px']
-                          : 0
-                      }
-                      boxSize={
-                        size === 'large'
-                          ? [135, 160, 160, 200, 334]
-                          : size === 'medium'
-                          ? [135, 160, 160, 200, 221]
-                          : 135
-                      }
-                      minW={
-                        size === 'large'
-                          ? [135, 160, 160, 200, 334]
-                          : size === 'medium'
-                          ? [135, 160, 160, 200, 221]
-                          : 135
-                      }
-                      transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
-                      pos="absolute"
-                      right={0}
-                      top={0}
-                      onMouseDown={onMouseDown}
-                      onMouseMove={onMouseMove}
-                      onClick={() => onClick(track, id, layoutKey, [], 0)}
-                      cursor="pointer"
-                    />
-                  </Tooltip>
+                <HStack>
+                  <SpotifyLogo icon={isSmallScreen} />
+                  {isOwnProfile && <PlayController fetcher={fetcher} playback={playback} id={id} />}
+                  {party.length && (
+                    <AvatarGroup size="xs" spacing={-2} max={5}>
+                      {party.map((u) => {
+                        return <Avatar key={u.userId} name={u.userName} src={u.userImage} />;
+                      })}
+                    </AvatarGroup>
+                  )}
+                  {!isOwnProfile && (
+                    <>
+                      <Tooltip label={isUserInParty ? 'Leave session' : 'Join session'}>
+                        <IconButton
+                          aria-label={isUserInParty ? 'Leave' : 'Join'}
+                          name="party"
+                          icon={<People size="24px" />}
+                          color={isUserInParty ? 'spotify.green' : undefined}
+                          _hover={{ color: isUserInParty ? 'red.600' : 'spotify.green' }}
+                          variant="ghost"
+                          type="submit"
+                          cursor="pointer"
+                          isLoading={busy}
+                          onClick={() => {
+                            fetcher.submit(
+                              { userId: id },
+                              {
+                                action: isUserInParty ? 'api/party/leave' : 'api/party/join',
+                                method: 'post',
+                                replace: true,
+                              },
+                            );
+                          }}
+                        />
+                      </Tooltip>
+                      <Tooltip
+                        label={hasPreview ? '' : 'song has no preview'}
+                        openDelay={hasPreview ? 200 : 0}
+                      >
+                        <IconButton
+                          onClick={handleMusicControls}
+                          icon={icon}
+                          variant="ghost"
+                          aria-label={playing ? 'pause' : 'play'}
+                          _hover={{ color: 'spotify.green' }}
+                          _active={{ boxShadow: 'none' }}
+                          onMouseLeave={handleMouseLeavePreviewButton}
+                          onMouseEnter={handleMouseEnterPreviewButton}
+                          color={color1}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                 </HStack>
               </Flex>
-              <PlayerBar playback={playback} />
-            </Stack>
-          </Collapse>
-        </Stack>
-        <Box
-          w="-webkit-fit-content"
-          bg={bg}
-          borderRadius="0px 0px 3px 3px"
-          zIndex={-1}
-          backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
-        >
-          <IconButton
-            icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
-            variant="ghost"
-            onClick={() => {
-              onToggle();
-              setBlur(true);
-            }}
-            aria-label={isOpen ? 'open player' : 'close player'}
-            _hover={{ color: 'spotify.green', opacity: 1 }}
-            opacity={isSmallScreen ? 1 : 0.5}
-            _active={{ boxShadow: 'none' }}
-            boxShadow="none"
-            color={color}
-          />
-        </Box>
-        {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}
+
+              <HStack spacing={1} align="end">
+                <Tooltip label={item.album.name} placement="bottom-end">
+                  <Image
+                    src={item.album?.images[0].url}
+                    mt={
+                      size === 'large'
+                        ? [0, -47, -47, -47, -200]
+                        : size === 'medium'
+                        ? [0, -47, -47, -47, '-86px']
+                        : 0
+                    }
+                    boxSize={
+                      size === 'large'
+                        ? [135, 160, 160, 200, 334]
+                        : size === 'medium'
+                        ? [135, 160, 160, 200, 221]
+                        : 135
+                    }
+                    minW={
+                      size === 'large'
+                        ? [135, 160, 160, 200, 334]
+                        : size === 'medium'
+                        ? [135, 160, 160, 200, 221]
+                        : 135
+                    }
+                    transition="width 0.25s, height 0.25s, margin-top 0.25s, min-width 0.25s"
+                    pos="absolute"
+                    right={0}
+                    top={0}
+                    onMouseDown={onMouseDown}
+                    onMouseMove={onMouseMove}
+                    onClick={() => onClick(track, id, layoutKey, [], 0)}
+                    cursor="pointer"
+                  />
+                </Tooltip>
+              </HStack>
+            </Flex>
+            <PlayerBar playback={playback} />
+          </Stack>
+        </Collapse>
       </Stack>
-    </>
+      <Box
+        w="-webkit-fit-content"
+        bg={bg}
+        borderRadius="0px 0px 3px 3px"
+        zIndex={-1}
+        backdropFilter={!isSmallScreen ? 'blur(27px)' : 'none'}
+      >
+        <IconButton
+          icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
+          variant="ghost"
+          onClick={() => {
+            onToggle();
+            setBlur(true);
+          }}
+          aria-label={isOpen ? 'open player' : 'close player'}
+          _hover={{ color: 'spotify.green', opacity: 1 }}
+          opacity={isSmallScreen ? 1 : 0.5}
+          _active={{ boxShadow: 'none' }}
+          boxShadow="none"
+          color={color}
+        />
+      </Box>
+      {item.preview_url && <audio autoPlay={preview} ref={audioRef} src={item.preview_url} />}
+    </Stack>
   );
 };
 export default Player;

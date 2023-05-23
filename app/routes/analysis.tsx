@@ -28,7 +28,7 @@ import invariant from 'tiny-invariant';
 import Tiles from '~/components/profile/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 const Analysis = () => {
   const results = useTypedLoaderData<typeof loader>();
@@ -156,7 +156,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson(null);
 
-  const { spotify } = await spotifyApi('1295028670');
+  const { spotify } = await getSpotifyClient('1295028670');
   invariant(spotify, 'No access to spotify API');
 
   const {

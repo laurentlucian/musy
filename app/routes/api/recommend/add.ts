@@ -5,10 +5,10 @@ import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import { createTrackModel } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { createTrackModel } from '~/services/prisma/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
   const session = await authenticator.isAuthenticated(request);
@@ -16,7 +16,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (!session || !session.user) return typedjson('Unauthorized', { status: 401 });
 
-  const { spotify } = await spotifyApi(session.user.id);
+  const { spotify } = await getSpotifyClient(session.user.id);
   invariant(spotify, 'No access to API');
 
   const trackId = body.get('trackId') as string;

@@ -3,10 +3,10 @@ import type { ActionArgs } from '@remix-run/node';
 import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 
-import { createTrackModel } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
+import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
-import { getSavedStatus, spotifyApi } from '~/services/spotify.server';
+import { getSavedStatus, getSpotifyClient } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
   const form = await request.formData();
@@ -19,7 +19,7 @@ export const action = async ({ request }: ActionArgs) => {
     return typedjson('Request Error');
   }
 
-  const { spotify } = await spotifyApi(id);
+  const { spotify } = await getSpotifyClient(id);
   if (!spotify) return typedjson('Error: no access to API');
 
   const { body: track } = await spotify.getTrack(trackId);

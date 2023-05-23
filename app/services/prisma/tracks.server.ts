@@ -61,8 +61,8 @@ export const getActivity = async () => {
   return null;
 };
 
-export const getUserRecommended = async (userId: string) =>
-  prisma.recommended.findMany({
+export const getUserRecommended = async (userId: string) => {
+  const recommended = await prisma.recommended.findMany({
     include: {
       track: {
         include: {
@@ -75,8 +75,11 @@ export const getUserRecommended = async (userId: string) =>
     where: { userId },
   });
 
-export const getUserRecent = async (userId: string) =>
-  prisma.recentSongs.findMany({
+  return recommended.map((t) => t.track);
+};
+
+export const getUserRecent = async (userId: string) => {
+  const recent = await prisma.recentSongs.findMany({
     include: {
       track: {
         include: {
@@ -94,8 +97,11 @@ export const getUserRecent = async (userId: string) =>
     },
   });
 
-export const getUserLiked = async (userId: string) =>
-  prisma.likedSongs.findMany({
+  return recent.map((t) => t.track);
+};
+
+export const getUserLiked = async (userId: string) => {
+  const liked = await prisma.likedSongs.findMany({
     include: {
       track: {
         include: {
@@ -110,6 +116,9 @@ export const getUserLiked = async (userId: string) =>
     take: 50,
     where: { userId },
   });
+
+  return liked.map((t) => t.track);
+};
 
 export const getTopLeaderboard = async () => {
   const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);

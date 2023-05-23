@@ -24,7 +24,7 @@ import { decodeHtmlEntity } from '~/components/profile/tiles/playlists/PlaylistT
 import Track from '~/components/profile/tiles/playlists/Track';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 const PlaylistOutlet = () => {
   const { playlist } = useTypedLoaderData<typeof loader>();
@@ -110,7 +110,7 @@ export const loader = async ({ params }: LoaderArgs) => {
   const playlistId = params.playlist;
   invariant(playlistId, 'Missing params playlistId');
 
-  const { spotify } = await spotifyApi(id).catch(async (e) => {
+  const { spotify } = await getSpotifyClient(id).catch(async (e) => {
     if (e instanceof Error && e.message.includes('revoked')) {
       throw new Response('User Access Revoked', { status: 401 });
     }

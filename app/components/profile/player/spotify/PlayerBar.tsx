@@ -2,13 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Box, useColorModeValue } from '@chakra-ui/react';
 
-import type { CurrentlyPlayingObjectCustom } from '~/services/spotify.server';
-
-const PlayerBar = ({
-  playback,
-}: {
-  playback: CurrentlyPlayingObjectCustom | SpotifyApi.CurrentlyPlayingResponse;
-}) => {
+const PlayerBar = ({ playback }: { playback: SpotifyApi.CurrentlyPlayingResponse }) => {
   const color = useColorModeValue('musy.900', 'musy.50');
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);

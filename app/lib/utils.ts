@@ -63,21 +63,6 @@ export const msToString = (ms: number) => {
   }
 };
 
-export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
-  albumName: track.album.name,
-  albumUri: track.album.uri,
-  artist: track.artists[0].name,
-  artistUri: track.artists[0].uri,
-  duration: track.duration_ms,
-  explicit: track.explicit,
-  id: track.id,
-  image: track.album.images[0].url,
-  link: track.external_urls.spotify,
-  name: track.name,
-  preview_url: track.preview_url,
-  uri: track.uri,
-});
-
 export const iosSplashScreens = [
   {
     href: '/splash_screens/iPhone_14_Pro_Max_landscape.png',

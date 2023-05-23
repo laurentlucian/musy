@@ -3,48 +3,43 @@ import { useState, useCallback } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
-import type { Track } from '~/lib/types/types';
+import { useExpandedActions } from '~/hooks/useExpandedTileState';
+import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
+import type { TrackWithUsers } from '~/lib/types/types';
 
-import Card from '../../Card';
-import ExpandedSongs from '../../ExpandedSongs';
-import Tiles from '../../Tiles';
-import Tile from '../Tile';
-import TileImage from '../TileImage';
-import TileInfo from '../TileInfo';
+import Card from './Card';
+import ExpandedSongs from './ExpandedSongs';
+import Tile from './tile/Tile';
+import TileImage from './tile/TileImage';
+import TileInfo from './tile/TileInfo';
+import Tiles from './Tiles';
 
-const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) => {
+const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithUsers[] }) => {
   const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
-  const scrollButtons = recent.length > 5;
+  const scrollButtons = tracks.length > 5;
   const { id } = useParams();
+  const { removeFromStack } = useSetExpandedStack();
+  const stack = useExpandedStack();
+  const { onClose: closeTile } = useExpandedActions();
 
   const onClose = useCallback(() => {
-    setShow(false);
-  }, [setShow]);
-  const title = 'Recent';
+    if (stack?.includes(1)) {
+      closeTile();
+      removeFromStack(1);
+    } else {
+      removeFromStack(0);
+      setShow(false);
+    }
+  }, [setShow, closeTile, stack, removeFromStack]);
 
-  const tracks: Track[] = recent.map((item) => {
-    return {
-      albumName: item.track.album.name,
-      albumUri: item.track.album.uri,
-      artist: item.track.artists[0].name,
-      artistUri: item.track.artists[0].uri,
-      duration: item.track.duration_ms,
-      explicit: item.track.explicit,
-      id: item.track.id,
-      image: item.track.album.images[0].url,
-      link: item.track.external_urls.spotify,
-      name: item.track.name,
-      preview_url: item.track.preview_url ?? '',
-      uri: item.track.uri,
-    };
-  });
+  if (!tracks.length) return null;
 
   return (
     <Stack spacing={3}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {tracks.map((track, index) => {
-          const layoutKey = 'Recent' + index;
+          const layoutKey = title + index;
           return (
             <Tile
               key={index}
@@ -72,7 +67,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           >
             {tracks.map((track, index) => {
-              const layoutKey = 'RecentExpanded' + index;
+              const layoutKey = title + 'Expanded' + index;
               return (
                 <Box key={index}>
                   <Tile
@@ -92,7 +87,7 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
             return (
               <Card
                 key={index}
-                layoutKey={'RecentCard' + index}
+                layoutKey={title + 'Card' + index}
                 track={track}
                 tracks={tracks}
                 index={index}
@@ -106,4 +101,4 @@ const RecentTracks = ({ recent }: { recent: SpotifyApi.PlayHistoryObject[] }) =>
   );
 };
 
-export default RecentTracks;
+export default TrackTiles;

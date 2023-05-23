@@ -12,7 +12,7 @@ import TileImage from '~/components/profile/tiles/tile/TileImage';
 import TileInfo from '~/components/profile/tiles/tile/TileInfo';
 import Tiles from '~/components/profile/tiles/Tiles';
 import { prisma } from '~/services/db.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 const SearchOutlet = () => {
   const { results } = useTypedLoaderData<typeof loader>();
@@ -62,7 +62,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { id } = params;
   invariant(id, 'Missing param Id');
 
-  const { spotify } = await spotifyApi(id);
+  const { spotify } = await getSpotifyClient(id);
   invariant(spotify, 'No access to spotify API');
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');

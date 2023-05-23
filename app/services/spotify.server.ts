@@ -1,4 +1,3 @@
-import type { Profile } from '@prisma/client';
 import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 
@@ -40,19 +39,7 @@ const createSpotifyClient = () => {
   });
 };
 
-export type SpotifyApiWithUser =
-  | {
-      spotify: null;
-      token?: undefined;
-      user: null;
-    }
-  | {
-      spotify: SpotifyWebApi;
-      token: string;
-      user: Profile;
-    };
-
-export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
+export const getSpotifyClient = async (id: string) => {
   const data = await getUser(id);
 
   let spotifyClient: SpotifyWebApi;
@@ -63,7 +50,6 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
     registeredSpotifyClients[id] = spotifyClient;
   }
 
-  // @todo(type-fix) data.user should never be null if data exists
   if (!data || !data.user) return { spotify: null, user: null };
   spotifyClient.setAccessToken(data.accessToken);
 
@@ -85,7 +71,7 @@ export const spotifyApi = async (id: string): Promise<SpotifyApiWithUser> => {
 };
 
 export const getUserSpotify = async (id: string) => {
-  const instance = await spotifyApi(id).catch(async (e) => {
+  const instance = await getSpotifyClient(id).catch(async (e) => {
     if (e instanceof Error && e.message.includes('revoked')) {
       throw new Response('User Access Revoked', { status: 401 });
     }
@@ -97,123 +83,9 @@ export const getUserSpotify = async (id: string) => {
   }
   return instance;
 };
-export interface ContextObjectCustom extends Omit<SpotifyApi.ContextObject, 'type'> {
-  description?: string;
-  image?: string;
-  name?: string;
-  type: 'collection' | SpotifyApi.ContextObject['type'];
-}
-
-export interface CurrentlyPlayingObjectCustom
-  extends Omit<SpotifyApi.CurrentlyPlayingObject, 'context'> {
-  context: ContextObjectCustom | null;
-}
-
-export interface Playback {
-  currently_playing: CurrentlyPlayingObjectCustom | null;
-  queue: SpotifyApi.TrackObjectFull[];
-  userId: string;
-}
-
-export const getUserQueue = async (id: string) => {
-  const { token } = await spotifyApi(id);
-  if (!token)
-    return {
-      currently_playing: null,
-      queue: [],
-    };
-
-  const calls = [
-    fetch('https://api.spotify.com/v1/me/player/queue', {
-      headers: { Authorization: `Bearer ${token}` },
-    }),
-    fetch('https://api.spotify.com/v1/me/player', {
-      headers: { Authorization: `Bearer ${token}` },
-    }),
-    // fetch('https://api.spotify.com/v1/me/player/devices', {
-    //   headers: { Authorization: `Bearer ${token}` },
-    // }),
-  ];
-  const [call1, call2] = await Promise.all(calls);
-
-  const { queue } = await call1.json();
-  const currently_playing = call2.status === 200 ? await call2.json() : null;
-  // const [device] =
-  //   call3.status === 200
-  //     ? await call3.json().then((v) => {
-  //         console.log('v', v);
-  //         return v.devices.filter((d: any) => d.is_active === true);
-  //       })
-  //     : null;
-  // currently_playing.device = device;
-
-  if (currently_playing?.context) {
-    switch (currently_playing.context.type) {
-      case 'playlist': {
-        const res = await fetch(
-          'https://api.spotify.com/v1/playlists/' +
-            currently_playing.context.href.match(/playlists\/(.*)/)?.[1] ?? '',
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        if (!res || res.status !== 200) break;
-        const playlist = await res.json();
-
-        currently_playing.context.description = playlist.description;
-        currently_playing.context.name = playlist.name;
-        currently_playing.context.image = playlist.images[0].url;
-        break;
-      }
-      case 'collection':
-        currently_playing.context.name = 'Liked Songs';
-        currently_playing.context.image =
-          'https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png';
-        break;
-    }
-  }
-
-  const isEpisode = currently_playing?.currently_playing_type === 'episode';
-  const data = {
-    currently_playing: isEpisode ? null : currently_playing,
-    queue: isEpisode ? [] : queue,
-    userId: id,
-  };
-
-  if (data) {
-    return data as Playback;
-  } else
-    return {
-      currently_playing: null,
-      queue: [],
-      userId: id,
-    };
-};
-
-export const getUserLikedSongs = async (id: string) => {
-  const { spotify } = await spotifyApi(id);
-  if (!spotify) return [];
-
-  const {
-    body: { items },
-  } = await spotify.getMySavedTracks();
-
-  return items;
-};
-
-export const getUSerPlaylistSongs = async (id: string, playlistID: string) => {
-  const { token } = await spotifyApi(id);
-  invariant(token, 'missing token');
-
-  const res = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  return data;
-};
 
 export const getSavedStatus = async (id: string, trackId: string) => {
-  const { token } = await spotifyApi(id);
+  const { token } = await getSpotifyClient(id);
   invariant(token, 'missing token');
 
   const response = await fetch(`https://api.spotify.com/v1/me/tracks/contains?ids=${trackId}`, {
@@ -242,27 +114,4 @@ export const getUserPlaylists = async (userId: string) => {
   }
 
   return playlists;
-};
-
-export const getUserTop = async (userId: string, url: URL) => {
-  const { spotify } = await getUserSpotify(userId);
-  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
-    | 'medium_term'
-    | 'long_term'
-    | 'short_term';
-
-  const cacheKeyTop = 'profile_top_' + topFilter + '_' + userId;
-  const cachedDataTop = await redis.get(cacheKeyTop);
-  let top = [] as SpotifyApi.TrackObjectFull[];
-
-  if (cachedDataTop) {
-    top = JSON.parse(cachedDataTop) as SpotifyApi.TrackObjectFull[];
-  } else {
-    top = await spotify
-      .getMyTopTracks({ limit: 50, time_range: topFilter })
-      .then((data) => data.body.items)
-      .catch(() => []);
-    await redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24);
-  }
-  return top;
 };

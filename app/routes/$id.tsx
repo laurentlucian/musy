@@ -15,7 +15,7 @@ import { getMood } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
-import { spotifyApi } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
@@ -157,11 +157,11 @@ export const action = async ({ params, request }: ActionArgs) => {
     });
   }
   if (follow === 'true') {
-    const { spotify } = await spotifyApi(currentUser.userId);
+    const { spotify } = await getSpotifyClient(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     await spotify.followUsers([id]);
   } else if (follow === 'false') {
-    const { spotify } = await spotifyApi(currentUser.userId);
+    const { spotify } = await getSpotifyClient(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     await spotify.unfollowUsers([id]);
   }
@@ -169,7 +169,7 @@ export const action = async ({ params, request }: ActionArgs) => {
     await prisma.profile.update({ data: { bio }, where: { userId: id } });
   }
   if (typeof mood === 'string') {
-    const { spotify } = await spotifyApi(id);
+    const { spotify } = await getSpotifyClient(id);
     invariant(spotify, 'Spotify API Error');
     const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
     const response = await getMood(recent.body);
