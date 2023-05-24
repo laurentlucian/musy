@@ -102,7 +102,7 @@ const MobileNavBar = () => {
               pt="12px"
             />
           </Link>
-          {/* <Link to="/friends" onClick={onClickFriends}>
+          <Link to="/friends" onClick={onClickFriends}>
             <IconButton
               aria-label="friends"
               icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
@@ -112,7 +112,7 @@ const MobileNavBar = () => {
               opacity={active === 1 ? 1 : 0.4}
               pt="12px"
             />
-          </Link> */}
+          </Link>
           <Link to="/sessions" onClick={onClickSessions}>
             <IconButton
               aria-label="sessions"

@@ -1,67 +1,66 @@
-import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import type { ActionArgs } from '@remix-run/node';
 
-import { Stack } from '@chakra-ui/react';
-
-import type { Track } from '@prisma/client';
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { Stack, Text } from '@chakra-ui/react';
 
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
+import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
+import { useRestOfUsers } from '~/hooks/useUsers';
 import type { TrackWithInfo } from '~/lib/types/types';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { getFavorites, getFriends, getPending } from '~/services/prisma/users.server';
 
 const Friends = () => {
-  const { favs, friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
-
-  const friendsList =
-    friends?.sort(({ friend }, { friend: prevFriend }) => {
-      if (prevFriend.playback !== null && friend.playback === null) return 0;
-      return favs?.some(({ favorite }) => favorite.userId === friend.userId) ? -1 : 1;
-    }) ?? [];
+  const friends = useFriends();
+  const restOfUsers = useRestOfUsers();
 
   const friendTracks = [] as TrackWithInfo[];
-  for (const friend of friendsList) {
-    if (!friend.friend.playback || !friend.friend.playback) continue;
-    friendTracks.push(friend.friend.playback.track);
+  for (const friend of friends) {
+    if (!friend.playback || !friend.playback) continue;
+    friendTracks.push(friend.playback.track);
+  }
+
+  const everyoneTracks = [] as TrackWithInfo[];
+  for (const user of restOfUsers) {
+    if (!user.playback || !user.playback) continue;
+    everyoneTracks.push(user.playback.track);
   }
 
   return (
     <Stack pt={['50px', 'unset']} h="50vh" spacing={3} w="100%" px={['4px', 'unset']}>
-      {friendsList?.map(({ friend }, index) => {
-        return (
-          <MiniPlayer
-            key={friend.userId}
-            layoutKey={'MiniPlayerF' + index}
-            user={friend}
-            currentUserId={currentUser?.userId}
-            tracks={friendTracks}
-            index={index}
-          />
-        );
-      })}
+      {friends.length && (
+        <Text pt="10px" fontSize="11px" fontWeight="bolder">
+          FRIENDS
+        </Text>
+      )}
+      {friends.map((user, index) => (
+        <MiniPlayer
+          key={user.userId}
+          layoutKey={'MiniPlayerF' + index}
+          user={user}
+          currentUserId={currentUser?.userId}
+          tracks={friendTracks}
+          index={index}
+        />
+      ))}
+      {friends.length && (
+        <Text pt="10px" fontSize="11px" fontWeight="bolder">
+          EVERYONE
+        </Text>
+      )}
+      {restOfUsers.map((user, index) => (
+        <MiniPlayer
+          key={user.userId}
+          layoutKey={'MiniPlayerF' + index}
+          user={user}
+          currentUserId={currentUser?.userId}
+          tracks={everyoneTracks}
+          index={index}
+        />
+      ))}
     </Stack>
   );
-};
-
-export const loader = async ({ request }: LoaderArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const currentUserId = session?.user?.id;
-
-  const [friends, favs, pendingFriends] = await Promise.all([
-    getFriends(currentUserId),
-    getFavorites(currentUserId),
-    getPending(currentUserId),
-  ]);
-
-  return typedjson({
-    currentUserId,
-    favs,
-    friends,
-    pendingFriends,
-  });
 };
 
 export const action = async ({ request }: ActionArgs) => {

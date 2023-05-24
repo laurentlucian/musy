@@ -9,6 +9,7 @@ import {
   Image,
   useColorModeValue,
   Link as ChakraLink,
+  Spacer,
 } from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
@@ -42,6 +43,13 @@ const Nav = () => {
           <Image src="/musylogo1.svg" boxSize="28px" />
           <Heading size="sm">musy</Heading>
         </HStack>
+        <Spacer />
+        <ChakraLink as={Link} to="/friends" fontSize="sm">
+          friends
+        </ChakraLink>
+        <ChakraLink as={Link} to="/explore" fontSize="sm">
+          explore
+        </ChakraLink>
         <ChakraLink as={Link} to="/sessions" fontSize="sm">
           sessions
         </ChakraLink>

@@ -25,7 +25,6 @@ const PlayedBy = ({
       <Icon as={Play} />
       <Tooltip
         isOpen={isLabelOpen}
-        placement="bottom"
         label={
           <Stack py="2px">
             {Object.values(
