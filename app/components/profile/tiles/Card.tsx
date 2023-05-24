@@ -3,7 +3,7 @@ import type { ChakraProps } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
-import { useClickDrag } from '~/hooks/useExpandedTileState';
+import { useClickDrag } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';

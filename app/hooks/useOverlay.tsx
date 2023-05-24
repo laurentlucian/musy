@@ -10,7 +10,7 @@ type expandedStore = {
   stack: number[] | null;
 };
 
-const useExpandedStore = create<expandedStore>()((set) => ({
+const useFullscreenStore = create<expandedStore>()((set) => ({
   actions: {
     addToStack: (by) => set(({ stack }) => ({ stack: stack ? [...stack, by] : [by] })),
     removeFromStack: (by) => set(({ stack }) => ({ stack: stack?.filter((el) => el !== by) })),
@@ -18,5 +18,5 @@ const useExpandedStore = create<expandedStore>()((set) => ({
   stack: null,
 }));
 
-export const useExpandedStack = () => useExpandedStore((state) => state.stack, shallow);
-export const useSetExpandedStack = () => useExpandedStore((state) => state.actions);
+export const useFullscreenStack = () => useFullscreenStore((state) => state.stack, shallow);
+export const useSetExpandedStack = () => useFullscreenStore((state) => state.actions);

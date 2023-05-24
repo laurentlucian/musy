@@ -1,13 +1,13 @@
 import { useLocation } from '@remix-run/react';
 import { useState } from 'react';
 
-import { Button } from '@chakra-ui/react';
-
 import { useTypedFetcher } from 'remix-typedjson';
 
 import useSessionUser from '~/hooks/useSessionUser';
 import LikeIcon from '~/lib/icons/Like';
 import Waver from '~/lib/icons/Waver';
+
+import ActionButton from './shared/ActionButton';
 
 type SaveToPlaylistProps = {
   trackId: string;
@@ -43,17 +43,13 @@ const SaveToPlaylist = ({ trackId }: SaveToPlaylistProps) => {
 
   return (
     <>
-      <Button
+      <ActionButton
         onClick={saveSong}
         leftIcon={<LikeIcon aria-checked={isSaved} />}
         isDisabled={!!isDone || !!isError || !!isAdding}
-        mr="0px"
-        variant="ghost"
-        justifyContent="left"
-        w={['100vw', '550px']}
       >
         {isAdding ? <Waver /> : fetcher.data ? fetcher.data : 'Save'}
-      </Button>
+      </ActionButton>
     </>
   );
 };

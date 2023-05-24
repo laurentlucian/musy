@@ -8,7 +8,7 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/add';
 
-import { useExpandedFromId } from './useExpandedTileState';
+import { useFullscreenFromId } from './useFullscreenTileStore';
 import useSessionUser from './useSessionUser';
 
 type SelfQueueData = {
@@ -54,7 +54,7 @@ export const useRecommendData = ({ trackId }: { trackId: string }) => {
 
 export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
   const currentUserId = useSessionUser()?.userId ?? '';
-  const fromId = useExpandedFromId() ?? '';
+  const fromId = useFullscreenFromId() ?? '';
 
   const data = {
     action: 'add',

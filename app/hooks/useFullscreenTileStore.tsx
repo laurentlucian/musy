@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { wrap } from 'framer-motion';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
@@ -27,7 +28,7 @@ interface ExpandedStateConfig {
   tracks: TrackWithInfo[] | [];
 }
 
-const useExpandedStore = create<ExpandedStateConfig>()((set) => ({
+const useFullscreenStore = create<ExpandedStateConfig>()((set) => ({
   actions: {
     onClose: () => set({ isPlaying: false, track: null }),
     onOpen: (track, fromId, layoutKey, tracks, index) =>
@@ -48,24 +49,34 @@ const useExpandedStore = create<ExpandedStateConfig>()((set) => ({
   tracks: [],
 }));
 
-export const useExpandedTile = () =>
-  useExpandedStore(
+export const useFullscreenTileStore = () =>
+  useFullscreenStore(
     (state) => state.track,
     // by default, zustand checks if state changes with a strict equality check
     // this means that if you have an object in state, it would always be considered changed
     // a shallow comparison is used for objects
     shallow,
   );
-export const useExpandedTiles = () => useExpandedStore((state) => state.tracks, shallow);
-export const useExpandedIsPlaying = () => useExpandedStore((state) => state.isPlaying, shallow);
-export const useExpandedFromId = () => useExpandedStore((state) => state.fromId, shallow);
-export const useExpandedLayoutKey = () => useExpandedStore((state) => state.layoutKey, shallow);
-export const useExpandedTileIndex = () => useExpandedStore((state) => state.index, shallow);
 
-export const useExpandedActions = () => useExpandedStore((state) => state.actions);
+export const useFullscreenTiles = () => useFullscreenStore((state) => state.tracks, shallow);
+export const useFullscreenIsPlaying = () => useFullscreenStore((state) => state.isPlaying, shallow);
+export const useFullscreenFromId = () => useFullscreenStore((state) => state.fromId, shallow);
+export const useFullscreenLayoutKey = () => useFullscreenStore((state) => state.layoutKey, shallow);
+export const useFullscreenTileIndex = () => useFullscreenStore((state) => state.index, shallow);
+
+export const useFullscreenTileTrack = (page: number) => {
+  const tracks = useFullscreenTiles();
+  const originalIndex = useFullscreenTileIndex();
+  const index = wrap(0, tracks.length, page + originalIndex);
+  const track = tracks[index];
+
+  return track;
+};
+
+export const useFullscreenActions = () => useFullscreenStore((state) => state.actions);
 
 export const useClickDrag = () => {
-  const { onOpen } = useExpandedActions();
+  const { onOpen } = useFullscreenActions();
   const { addToStack } = useSetExpandedStack();
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [isMouseDragged, setIsMouseDragged] = useState(false);

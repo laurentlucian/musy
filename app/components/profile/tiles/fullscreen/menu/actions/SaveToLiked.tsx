@@ -1,6 +1,6 @@
 import { useLocation } from '@remix-run/react';
 
-import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
+import { IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
@@ -8,6 +8,8 @@ import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
 import LikeIcon from '~/lib/icons/Like';
+
+import ActionButton from './shared/ActionButton';
 
 type SaveToLikedProps = {
   iconOnly?: boolean;
@@ -56,19 +58,13 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
     );
 
   return (
-    <Button
+    <ActionButton
       onClick={saveSong}
       leftIcon={<LikeIcon aria-checked={isSaved} />}
-      mr="0px"
-      variant="ghost"
-      justifyContent="left"
-      w={['100vw', '100%']}
-      color="musy.200"
-      _hover={{ color: 'white' }}
       disabled={!currentUser}
     >
-      {currentUser ? (isSaved ? 'Remove' : 'Save') : 'Log in to Save'}
-    </Button>
+      {isSaved ? 'Unlike' : 'Like'}
+    </ActionButton>
   );
 };
 

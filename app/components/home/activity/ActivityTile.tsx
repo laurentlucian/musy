@@ -5,9 +5,9 @@ import { HStack, Image, Stack, Text, useColorModeValue, Icon, Flex, Box } from '
 import { motion } from 'framer-motion';
 import { Send2, Star1 } from 'iconsax-react';
 
-import QueueToSelf from '~/components/profile/tiles/expandedTile/menu/actions/QueueToSelf';
+import QueueToSelf from '~/components/profile/tiles/fullscreen/menu/actions/queue/AddToSelf';
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
+import { useClickDrag, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import LikeIcon from '~/lib/icons/Like';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity, Track } from '~/lib/types/types';
@@ -104,7 +104,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
   const bg = useColorModeValue('musy.200', 'musy.800');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  useExpandedTile();
+  useFullscreenTileStore();
 
   return (
     <Stack>

@@ -1,12 +1,12 @@
 import { useRef, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
-import { Button } from '@chakra-ui/react';
-
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 
-import { useExpandedActions } from '~/hooks/useExpandedTileState';
+import { useFullscreenActions } from '~/hooks/useFullscreenTileStore';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
+
+import ActionButton from './shared/ActionButton';
 
 const PlayPreview = ({
   playing,
@@ -20,7 +20,7 @@ const PlayPreview = ({
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { setIsPlaying } = useExpandedActions();
+  const { setIsPlaying } = useFullscreenActions();
 
   const onClick = () => {
     if (audioRef.current && !playing) {
@@ -34,7 +34,7 @@ const PlayPreview = ({
       setIsPlaying(false);
     }
   };
-  const text = playing ? 'Pause' : 'Play';
+  const text = playing ? 'Stop' : 'Listen';
   const icon =
     playing && !showPause ? (
       <AudioVisualizer />
@@ -70,21 +70,15 @@ const PlayPreview = ({
   return (
     <>
       {preview_url !== '' && preview_url && (
-        <Button
+        <ActionButton
           onClick={onClick}
           leftIcon={icon}
-          mr="0px"
-          variant="ghost"
-          justifyContent="left"
-          w={['100vw', '100%']}
-          color="musy.200"
-          _hover={{ color: 'white' }}
           onMouseLeave={onMouseLeave}
           onMouseEnter={onMouseEnter}
         >
-          {text} Preview &nbsp;
+          {text} preview &nbsp;
           <SpotifyLogo link={false} white icon />
-        </Button>
+        </ActionButton>
       )}
       {preview_url && <audio ref={audioRef} src={preview_url} />}
     </>

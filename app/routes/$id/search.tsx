@@ -6,7 +6,7 @@ import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import SendButton from '~/components/profile/tiles/expandedTile/menu/actions/SendButton';
+import SendButton from '~/components/profile/tiles/fullscreen/menu/actions/SendButton';
 import Tile from '~/components/profile/tiles/tile/Tile';
 import TileImage from '~/components/profile/tiles/tile/TileImage';
 import TileInfo from '~/components/profile/tiles/tile/TileInfo';

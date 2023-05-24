@@ -46,7 +46,7 @@ export const action = async ({ request }: ActionArgs) => {
     console.log('recommend -> error', error);
     return typedjson('failed to add');
   }
-  return typedjson('recommended');
+  return typedjson('Recommended');
 };
 
 export const loader = () => {

@@ -20,7 +20,11 @@ import { motion } from 'framer-motion';
 import { ArrowDown2, ArrowUp2, PauseCircle, PlayCircle } from 'iconsax-react';
 
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag, useExpandedIsPlaying, useExpandedTile } from '~/hooks/useExpandedTileState';
+import {
+  useClickDrag,
+  useFullscreenIsPlaying,
+  useFullscreenTileStore,
+} from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useThemePlayer } from '~/hooks/useTheme';
@@ -53,8 +57,8 @@ const Player = ({ id, layoutKey, playback }: PlayerProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const isPlaying = useExpandedIsPlaying();
-  useExpandedTile();
+  const isPlaying = useFullscreenIsPlaying();
+  useFullscreenTileStore();
 
   const color1 = useColorModeValue('musy.800', 'musy.200');
 

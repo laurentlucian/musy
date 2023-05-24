@@ -3,8 +3,8 @@ import { useState, useCallback } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
-import { useExpandedActions } from '~/hooks/useExpandedTileState';
-import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
+import { useFullscreenActions } from '~/hooks/useFullscreenTileStore';
+import { useFullscreenStack, useSetExpandedStack } from '~/hooks/useOverlay';
 import type { TrackWithInfo } from '~/lib/types/types';
 
 import Card from './Card';
@@ -20,8 +20,8 @@ const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithInfo[] 
   const scrollButtons = tracks.length > 5;
   const { id } = useParams();
   const { removeFromStack } = useSetExpandedStack();
-  const stack = useExpandedStack();
-  const { onClose: closeTile } = useExpandedActions();
+  const stack = useFullscreenStack();
+  const { onClose: closeTile } = useFullscreenActions();
 
   const onClose = useCallback(() => {
     if (stack?.includes(1)) {

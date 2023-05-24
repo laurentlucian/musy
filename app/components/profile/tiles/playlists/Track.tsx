@@ -2,7 +2,7 @@ import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
-import { useClickDrag } from '~/hooks/useExpandedTileState';
+import { useClickDrag } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import musyIcon from '~/lib/assets/musySquareIcon.png';

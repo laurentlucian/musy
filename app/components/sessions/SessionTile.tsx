@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Flex, Image } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import { useClickDrag } from '~/hooks/useExpandedTileState';
+import { useClickDrag } from '~/hooks/useFullscreenTileStore';
 import type { Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 

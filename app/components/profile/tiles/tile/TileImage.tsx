@@ -5,7 +5,7 @@ import { Image } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag } from '~/hooks/useExpandedTileState';
+import { useClickDrag } from '~/hooks/useFullscreenTileStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useTileContext } from '~/hooks/useTileContext';
 

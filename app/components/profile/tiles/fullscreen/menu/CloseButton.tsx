@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { Button, useEventListener } from '@chakra-ui/react';
 
-import { useExpandedActions } from '~/hooks/useExpandedTileState';
+import { useFullscreenActions } from '~/hooks/useFullscreenTileStore';
 import { useSetExpandedStack } from '~/hooks/useOverlay';
 
 const CloseButton = ({
@@ -12,7 +12,7 @@ const CloseButton = ({
   setPage: Dispatch<SetStateAction<[number, number]>>;
   setPlaying: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { onClose } = useExpandedActions();
+  const { onClose } = useFullscreenActions();
   const { removeFromStack } = useSetExpandedStack();
   useEventListener('keydown', (e) => {
     if (e.code === 'Escape') {
@@ -45,7 +45,7 @@ const CloseButton = ({
       onClick={handleClick}
       zIndex={1}
     >
-      close
+      Close
     </Button>
   );
 };

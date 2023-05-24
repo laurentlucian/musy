@@ -1,7 +1,9 @@
-import { Button, Image } from '@chakra-ui/react';
+import { Image } from '@chakra-ui/react';
 
 import { useQueueToFriendData } from '~/hooks/useSendButton';
 import Waver from '~/lib/icons/Waver';
+
+import ActionButton from '../shared/ActionButton';
 
 type QueueToFriendProps = {
   trackId: string;
@@ -10,7 +12,7 @@ type QueueToFriendProps = {
   username: string;
 };
 
-const QueueToFriend = ({ trackId, userId, userImage, username }: QueueToFriendProps) => {
+const FriendButton = ({ trackId, userId, userImage, username }: QueueToFriendProps) => {
   const { addToFriendsQueue, isAdding, isDone, isError, text } = useQueueToFriendData({
     trackId,
     userId,
@@ -18,21 +20,15 @@ const QueueToFriend = ({ trackId, userId, userImage, username }: QueueToFriendPr
   });
 
   return (
-    <Button
+    <ActionButton
+      leftIcon={<Image src={userImage} borderRadius="full" boxSize="50px" minW="50px" />}
+      py="35px"
       onClick={addToFriendsQueue}
       isDisabled={!!isDone || !!isError || !!isAdding}
-      variant="ghost"
-      justifyContent="left"
-      fontSize="18px"
-      color="musy.200"
-      py="30px"
-      w={['100vw', '100%']}
-      mt="10px"
     >
-      <Image src={userImage} borderRadius="full" boxSize="50px" minW="50px" mb={1} mr="10px" />
       {isAdding ? <Waver /> : text}
-    </Button>
+    </ActionButton>
   );
 };
 
-export default QueueToFriend;
+export default FriendButton;

@@ -21,7 +21,7 @@ import type { Party } from '@prisma/client';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag, useExpandedIsPlaying } from '~/hooks/useExpandedTileState';
+import { useClickDrag, useFullscreenIsPlaying } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
@@ -51,7 +51,7 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const isPlaying = useExpandedIsPlaying();
+  const isPlaying = useFullscreenIsPlaying();
 
   const bg = useColorModeValue('musy.50', '#10101066');
   const color = useColorModeValue('#10101066', 'musy.50');

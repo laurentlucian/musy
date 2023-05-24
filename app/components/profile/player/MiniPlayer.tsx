@@ -5,7 +5,7 @@ import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from
 import { motion } from 'framer-motion';
 
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
-import { useExpandedActions, useExpandedTile } from '~/hooks/useExpandedTileState';
+import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
@@ -30,7 +30,7 @@ const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerPro
   const color = useColorModeValue('musy.900', 'musy.200');
   const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useExpandedActions();
+  const { onOpen } = useFullscreenActions();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
 
@@ -40,7 +40,7 @@ const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerPro
 
   const isOwnProfile = currentUserId === user.userId;
 
-  useExpandedTile();
+  useFullscreenTileStore();
 
   const ProfilePic = (
     <Image

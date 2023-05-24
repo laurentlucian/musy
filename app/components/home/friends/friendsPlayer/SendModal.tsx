@@ -26,7 +26,7 @@ import {
 
 import { Refresh } from 'iconsax-react';
 
-import SendButton from '~/components/profile/tiles/expandedTile/menu/actions/SendButton';
+import SendButton from '~/components/profile/tiles/fullscreen/menu/actions/SendButton';
 import Tile from '~/components/profile/tiles/tile/Tile';
 import TileInfoAction from '~/components/profile/tiles/tile/TileInfoAction';
 import Tiles from '~/components/profile/tiles/Tiles';

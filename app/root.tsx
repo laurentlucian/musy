@@ -34,7 +34,7 @@ import {
 } from '~/services/prisma/users.server';
 
 import MobileNavBar from './components/nav/MobileNavBar';
-import ExpandedTile from './components/profile/tiles/expandedTile/ExpandedTile';
+import FullscreenTile from './components/profile/tiles/fullscreen/FullscreenTile';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import loading from './lib/styles/loading.css';
@@ -66,7 +66,7 @@ const App = () => {
           </AnimatePresence>
           {currentUser && (
             <>
-              <ExpandedTile />
+              <FullscreenTile />
               <MobileNavBar />
             </>
           )}

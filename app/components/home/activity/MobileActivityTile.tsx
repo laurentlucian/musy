@@ -15,7 +15,7 @@ import { motion } from 'framer-motion';
 import { Heart } from 'iconsax-react';
 
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag, useExpandedTile } from '~/hooks/useExpandedTileState';
+import { useClickDrag, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity } from '~/lib/types/types';
 import type { Track } from '~/lib/types/types';
@@ -35,7 +35,7 @@ const MobileActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProp
   const color = useColorModeValue('musy.900', 'musy.200');
 
   const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  useExpandedTile();
+  useFullscreenTileStore();
 
   const liked = (activity.track.liked ?? []).filter(() => {
     if (activity.track.liked?.length === 1) return false;
