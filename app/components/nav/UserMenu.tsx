@@ -96,10 +96,6 @@ const UserMenu = () => {
     navigate(`/settings`);
     onClose();
   };
-  const onClickFriends = () => {
-    navigate(`/friends`);
-    onClose();
-  };
   let reloadTimeout: NodeJS.Timeout;
   const onClickToggleTheme = () => {
     toggleColorMode();
@@ -120,11 +116,11 @@ const UserMenu = () => {
             icon={<MoreHorizontal />}
             bg="#0000 !important"
             boxShadow="none"
-            pos="fixed"
-            top={2}
-            right="0"
             color={customColor}
+            pos="absolute"
+            right="10px"
           />
+
           <Drawer
             isOpen={isOpen}
             placement="top"
@@ -154,25 +150,6 @@ const UserMenu = () => {
                     _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
                   >
                     {currentUser?.name}
-                  </Button>
-                  <Button
-                    leftIcon={<Profile2User variant="Bold" size="30px" />}
-                    iconSpacing="30px"
-                    onClick={() => {
-                      navigate(`/home/friends`);
-                      onClose();
-                    }}
-                    bg="#0000"
-                    size="20px"
-                    pl="25px"
-                    w="100%"
-                    h="45px"
-                    justifyContent="flex-start"
-                    color={color}
-                    opacity={0.8}
-                    _hover={{ bg: hoverBg, boxShadow: 'none', opacity: 1 }}
-                  >
-                    friends
                   </Button>
                   <Divider
                     border={`solid white 1px`}
@@ -294,14 +271,6 @@ const UserMenu = () => {
                 color={color}
               >
                 {currentUser?.name}
-              </MenuItem>
-              <MenuItem
-                icon={<Profile2User variant="Bold" />}
-                onClick={onClickFriends}
-                bg={bg}
-                color={color}
-              >
-                friends
               </MenuItem>
               <MenuDivider
                 border={`solid ${color} 1px`}

@@ -17,20 +17,18 @@ const Index = () => {
   }
 
   return (
-    <Stack pb="50px" pt={{ base: '15px', xl: 0 }} bg={bg} h="100%">
-      <Stack spacing={[2, 10]} px={['5px', 0]}>
-        {activities.map((activity, index) => {
-          return (
-            <ActivityTile
-              key={activity.id}
-              layoutKey={'mActivity' + index}
-              activity={activity}
-              tracks={activityTracks}
-              index={index}
-            />
-          );
-        })}
-      </Stack>
+    <Stack spacing={[2, 10]} px={['5px', 0]} bg={bg}>
+      {activities.map((activity, index) => {
+        return (
+          <ActivityTile
+            key={activity.id}
+            layoutKey={'mActivity' + index}
+            activity={activity}
+            tracks={activityTracks}
+            index={index}
+          />
+        );
+      })}
     </Stack>
   );
 };

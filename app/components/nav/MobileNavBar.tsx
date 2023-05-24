@@ -33,7 +33,7 @@ const MobileNavBar = () => {
   const { show } = useMobileKeyboard();
   const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
 
-  const bg = useColorModeValue('musy.200', 'musy.500');
+  const border = useColorModeValue('musy.400', 'musy.700');
   const color = useColorModeValue('musy.500', 'musy.200');
 
   useEffect(() => {
@@ -76,19 +76,14 @@ const MobileNavBar = () => {
     <AnimatePresence>
       {!hideButton && (
         <Box
-          pos="fixed"
-          bg={bg}
-          w="100vw"
-          h="75px"
-          borderRadius="20px"
-          borderBottomRadius={0}
+          as="header"
+          h="90px"
           color={color}
-          aria-label="search song"
-          bottom="0%"
           display="flex"
+          borderTop="0.5px solid"
+          borderColor={border}
           justifyContent="space-around"
           transition="bottom 0.25s ease-out"
-          overflow="hidden"
           zIndex={11}
         >
           <Link to="/home" onClick={onClickHome}>
@@ -96,7 +91,6 @@ const MobileNavBar = () => {
               aria-label="home"
               icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
-              bg={bg}
               color={color}
               opacity={active === 0 ? 1 : 0.4}
               pt="12px"
@@ -107,7 +101,6 @@ const MobileNavBar = () => {
               aria-label="friends"
               icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
-              bg={bg}
               color={color}
               opacity={active === 1 ? 1 : 0.4}
               pt="12px"
@@ -118,7 +111,6 @@ const MobileNavBar = () => {
               aria-label="sessions"
               icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
-              bg={bg}
               color={color}
               opacity={active === 2 ? 1 : 0.4}
               pt="12px"
@@ -129,7 +121,6 @@ const MobileNavBar = () => {
               aria-label="search"
               icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
               variant="mobileNav"
-              bg={bg}
               color={color}
               opacity={active === 3 ? 1 : 0.4}
               pt="12px"

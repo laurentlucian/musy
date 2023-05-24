@@ -33,7 +33,6 @@ import {
   getRecommendableUsers,
 } from '~/services/prisma/users.server';
 
-import MobileNavBar from './components/nav/MobileNavBar';
 import FullscreenTile from './components/profile/tiles/fullscreen/FullscreenTile';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
@@ -64,12 +63,7 @@ const App = () => {
               <Outlet />
             </Layout>
           </AnimatePresence>
-          {currentUser && (
-            <>
-              <FullscreenTile />
-              <MobileNavBar />
-            </>
-          )}
+          {currentUser && <FullscreenTile />}
         </ColorModeProvider>
       </ChakraProvider>
     </Document>

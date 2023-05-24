@@ -28,7 +28,7 @@ const Friends = () => {
   }
 
   return (
-    <Stack pt={['50px', 'unset']} h="50vh" spacing={3} w="100%" px={['4px', 'unset']}>
+    <Stack spacing={3} px={['4px', 'unset']} overflowX="hidden">
       {friends.length && (
         <Text pt="10px" fontSize="11px" fontWeight="bolder">
           FRIENDS

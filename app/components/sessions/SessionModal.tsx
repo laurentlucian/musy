@@ -18,7 +18,7 @@ import { People, VolumeHigh } from 'iconsax-react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import { shortenUsername, timeSince } from '~/lib/utils';
-import type { SessionsWithData } from '~/routes/home/sessions';
+import type { SessionsWithData } from '~/routes/sessions';
 
 type SessionProps = {
   session: SessionsWithData[0];

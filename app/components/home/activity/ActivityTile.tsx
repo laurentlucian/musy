@@ -28,7 +28,7 @@ interface ActivityProps extends ActivityActionProps {
 
 const UserInfo = ({ user }: { user: Profile }) => {
   return (
-    <Link to={`/${user.id}`}>
+    <Link to={`/${user.userId}`}>
       <HStack>
         <Image
           minW="35px"

@@ -1,4 +1,3 @@
-import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 
 import Top from '~/components/explore/Top';

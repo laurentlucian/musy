@@ -10,6 +10,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { useThemeBg } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
+import MobileNavBar from './nav/MobileNavBar';
 import Nav from './nav/Nav';
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -18,7 +19,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');
-  const isNotProfile = pathname.includes(
+  const isProfile = !pathname.includes(
     'home' || 'friends' || 'sessions' || 'explore' || 'settings',
   );
   const { bgGradient, gradient, profileBg } = useThemeBg();
@@ -28,33 +29,36 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <Flex
       justify="center"
+      as="main"
       color={color}
-      w="100%"
-      h="100%"
-      bg={isNotProfile ? bg : profileBg}
+      bg={isProfile ? profileBg : bg}
       bgGradient={gradient ? bgGradient : undefined}
       bgAttachment="fixed"
-      overflowY="scroll"
+      overflow={['hidden', 'unset']}
       css={{ '::-webkit-scrollbar': { display: 'none' } }}
     >
-      <Box w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}>
+      <Flex
+        as="section"
+        direction="column"
+        w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+        overflow={['hidden', 'unset']}
+      >
         {isSmallScreen ? <MobileHeader /> : <Nav />}
-        <motion.div
+        <Box
+          py="10px"
+          as={motion.div}
           key={pathname}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          h={'84.2dvh'} // @todo make scroll work without this
+          overflowX={['hidden', 'unset']}
+          //transition={{ duration: 0.8 }}
         >
-          {!isNotProfile ? (
-            children
-          ) : (
-            <Box h={['87vh', '100%']} mt={['40px', 0]} overflowY={['scroll', 'unset']}>
-              {children}
-            </Box>
-          )}
-        </motion.div>
-      </Box>
+          {children}
+        </Box>
+        <MobileNavBar />
+      </Flex>
     </Flex>
   );
 };

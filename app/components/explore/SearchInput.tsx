@@ -1,5 +1,5 @@
 import { useFetcher, useSearchParams } from '@remix-run/react';
-import { type ChangeEvent, type Dispatch, type SetStateAction, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
 import {
@@ -9,34 +9,20 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
-
-import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
-import { useSearch, useSetSearch } from '~/hooks/useSearchStore';
+import { useExplore, useSearch, useSetSearch } from '~/hooks/useSearchStore';
 import Waver from '~/lib/icons/Waver';
 
-import UserMenu from '../nav/UserMenu';
-
-const SearchInput = ({
-  search,
-  setSearch,
-  setTracks,
-}: {
-  search: string;
-  setSearch: Dispatch<SetStateAction<string>>;
-  setTracks: Dispatch<SetStateAction<Track[]>>;
-}) => {
+const SearchInput = () => {
+  const { search, setSearch, setTracks } = useExplore();
   const [searchParams, setSearchParams] = useSearchParams();
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('musy.800', 'musy.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const inputRef = useRef<HTMLInputElement>(null);
-  const isSmallScreen = useIsMobile();
   const { state } = useFetcher();
   const busy = state === 'loading' ?? false;
   const setUserSearch = useSetSearch();
@@ -70,64 +56,51 @@ const SearchInput = ({
   };
 
   return (
-    <Stack direction={['row', 'column']} justifyContent="space-between" overflow="hidden">
-      <InputGroup
-        w={['90vw', '500px']}
-        mr={['27px', 0]}
-        mt={['-5px', 0]}
-        pos={['fixed', 'relative']}
-        top={[2, 0]}
-        left={0}
-        bg={bg}
-        zIndex={1}
-        overflowY="hidden"
-      >
-        <InputLeftElement
-          pointerEvents="all"
+    <InputGroup w={['70vw', '500px']} bg={bg} zIndex={1} overflowY="hidden">
+      <InputLeftElement
+        pointerEvents="all"
+        children={
+          <IconButton
+            aria-label="search"
+            icon={<SearchIcon boxSize="16px" />}
+            variant="unstyled"
+            color={color}
+            cursor="pointer"
+          />
+        }
+      />
+      <Input
+        ref={inputRef}
+        name="spotify"
+        value={search || userSearch}
+        placeholder="search"
+        autoComplete="off"
+        onChange={onChange}
+        onBlur={showMenu}
+        transition="all 0.5s ease-in-out"
+        _placeholder={{ color: '#414040' }}
+        focusBorderColor={color}
+        onFocus={hideMenu}
+      />
+      {(search || userSearch) && (
+        <InputRightElement
+          justifyContent="end"
+          w="69px"
           children={
-            <IconButton
-              aria-label="search"
-              icon={<SearchIcon boxSize="16px" />}
-              variant="unstyled"
-              color={color}
-              cursor="pointer"
-            />
+            <>
+              {busy && <Waver />}
+              <IconButton
+                aria-label="close"
+                variant="unstyled"
+                borderRadius={8}
+                onClick={onClose}
+                icon={<CloseButton />}
+              />
+            </>
           }
         />
-        <Input
-          ref={inputRef}
-          name="spotify"
-          value={search || userSearch}
-          placeholder="search"
-          autoComplete="off"
-          onChange={onChange}
-          onBlur={showMenu}
-          transition="all 0.5s ease-in-out"
-          _placeholder={{ color: '#414040' }}
-          focusBorderColor={color}
-          onFocus={hideMenu}
-        />
-        {(search || userSearch) && (
-          <InputRightElement
-            justifyContent="end"
-            w="69px"
-            children={
-              <>
-                {busy && <Waver />}
-                <IconButton
-                  aria-label="close"
-                  variant="unstyled"
-                  borderRadius={8}
-                  onClick={onClose}
-                  icon={<CloseButton />}
-                />
-              </>
-            }
-          />
-        )}
-      </InputGroup>
-      {isSmallScreen && <UserMenu />}
-    </Stack>
+      )}
+    </InputGroup>
   );
 };
 

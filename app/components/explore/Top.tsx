@@ -13,9 +13,7 @@ const Top = () => {
   const layoutKey = 'ExploreTop';
   return (
     <>
-      <Text fontSize="15px" mt="40px">
-        Top of the week
-      </Text>
+      <Text fontSize="15px">Top of the week</Text>
       <Stack spacing="10px">
         {top.map((track, index) => {
           return (
