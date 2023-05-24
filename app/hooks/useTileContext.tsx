@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react';
 
-import type { TrackWithUsers } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 
 const TileContext = createContext<{
   index: number;
   layoutKey: string;
-  track: TrackWithUsers;
-  tracks: TrackWithUsers[];
+  track: TrackWithInfo;
+  tracks: TrackWithInfo[];
 } | null>(null);
 
 export function useTileContext() {

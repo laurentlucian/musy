@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
-import type { TrackWithUsers } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 
 import { useSetExpandedStack } from './useOverlay';
 
@@ -11,10 +11,10 @@ interface ExpandedStateConfig {
   actions: {
     onClose: () => void;
     onOpen: (
-      by: TrackWithUsers,
+      by: TrackWithInfo,
       fromId: string | null,
       layoutKey: string | null,
-      tracks: TrackWithUsers[],
+      tracks: TrackWithInfo[],
       index: number,
     ) => void;
     setIsPlaying: (by: boolean) => void;
@@ -23,8 +23,8 @@ interface ExpandedStateConfig {
   index: number;
   isPlaying?: boolean;
   layoutKey: string | null;
-  track: TrackWithUsers | null;
-  tracks: TrackWithUsers[] | [];
+  track: TrackWithInfo | null;
+  tracks: TrackWithInfo[] | [];
 }
 
 const useExpandedStore = create<ExpandedStateConfig>()((set) => ({
@@ -81,10 +81,10 @@ export const useClickDrag = () => {
   };
 
   const handleClick = (
-    track: TrackWithUsers,
+    track: TrackWithInfo,
     fromId: string | null,
     layoutKey: string,
-    tracks: TrackWithUsers[] | [],
+    tracks: TrackWithInfo[] | [],
     index: number,
   ) => {
     if (!isMouseDragged) {

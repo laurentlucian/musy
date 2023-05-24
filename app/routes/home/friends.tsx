@@ -2,7 +2,6 @@ import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { HStack, Stack, Tab, TabList, TabPanels, Tabs, Text } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
 import { Profile2User, ProfileCircle, Star1 } from 'iconsax-react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
@@ -11,6 +10,7 @@ import { FriendsTabs } from '~/components/home/friends/tabs/FriendsTabs';
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useFavorites from '~/hooks/useFavorites';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { TrackWithInfo } from '~/lib/types/types';
 import { authenticator } from '~/services/auth.server';
 import { getFriends } from '~/services/prisma/users.server';
 
@@ -19,28 +19,10 @@ const Friends = () => {
   const { friends } = useTypedLoaderData<typeof loader>();
   const currentUser = useSessionUser();
 
-  const tracks: Track[] = [];
-  if (friends) {
-    for (let i = 0; i < friends.length; i++) {
-      if (friends[i].friend.playback === null || friends[i].friend.playback?.track === undefined) {
-        continue;
-      }
-      const track = {
-        albumName: friends[i].friend.playback!.track.albumName,
-        albumUri: friends[i].friend.playback!.track.albumUri,
-        artist: friends[i].friend.playback!.track.artist,
-        artistUri: friends[i].friend.playback!.track.artistUri,
-        duration: friends[i].friend.playback!.track.duration,
-        explicit: friends[i].friend.playback!.track.explicit,
-        id: friends[i].friend.playback!.track.id,
-        image: friends[i].friend.playback!.track.image,
-        link: friends[i].friend.playback!.track.link,
-        name: friends[i].friend.playback!.track.name,
-        preview_url: friends[i].friend.playback!.track.preview_url,
-        uri: friends[i].friend.playback!.track.uri,
-      };
-      tracks.push(track);
-    }
+  const tracks = [] as TrackWithInfo[];
+  for (const { friend } of friends) {
+    if (!friend.playback || !friend.playback) continue;
+    tracks.push(friend.playback.track);
   }
 
   return (
@@ -108,7 +90,7 @@ const Friends = () => {
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const currentUser = session?.user ?? null;
-  const friends = await getFriends(currentUser?.id);
+  const friends = (await getFriends(currentUser?.id)) ?? [];
   return typedjson({
     friends,
   });

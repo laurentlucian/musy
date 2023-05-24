@@ -9,21 +9,7 @@ export type Activity = {
   id: number;
   likedBy?: Profile[];
   owner?: { user: Profile | null };
-  track: {
-    albumName: string;
-    albumUri: string;
-    artist: string;
-    artistUri: string;
-    explicit: boolean;
-    image: string;
-    liked?: { user: Profile | null }[];
-    link: string;
-    name: string;
-    preview_url: string | null;
-    queue?: { user: Profile | null }[];
-    recent?: { user: Profile | null }[];
-    uri: string;
-  };
+  track: TrackWithInfo;
   trackId: string;
   user: Profile;
   userId: string;
@@ -54,8 +40,11 @@ export type User = Prisma.ProfileGetPayload<{
   };
 }>;
 
-export type TrackWithUsers = Track & {
+export type TrackWithInfo = Track & {
   liked?: {
+    user: Profile;
+  }[];
+  queue?: {
     user: Profile;
   }[];
   recent?: {

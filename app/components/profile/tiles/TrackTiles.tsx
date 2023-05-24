@@ -5,7 +5,7 @@ import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
 import { useExpandedActions } from '~/hooks/useExpandedTileState';
 import { useExpandedStack, useSetExpandedStack } from '~/hooks/useOverlay';
-import type { TrackWithUsers } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 
 import Card from './Card';
 import ExpandedSongs from './ExpandedSongs';
@@ -14,7 +14,7 @@ import TileImage from './tile/TileImage';
 import TileInfo from './tile/TileInfo';
 import Tiles from './Tiles';
 
-const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithUsers[] }) => {
+const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithInfo[] }) => {
   const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const scrollButtons = tracks.length > 5;

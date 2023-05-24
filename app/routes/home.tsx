@@ -8,93 +8,45 @@ import Tiles from '~/components/profile/tiles/Tiles';
 import useFriends from '~/hooks/useFriends';
 import useSessionUser from '~/hooks/useSessionUser';
 import { useRestOfUsers } from '~/hooks/useUsers';
-import type { Track } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 import { getActivity } from '~/services/prisma/tracks.server';
 
 const Index = () => {
   const currentUser = useSessionUser();
   const friends = useFriends();
   const restOfUsers = useRestOfUsers();
-  const { activity } = useTypedLoaderData<typeof loader>();
+  const { activities } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
-  if (!activity) return null;
-  let activities: Track[] = [];
-
-  for (let i = 0; i < activity.length; i++) {
-    activities.push({
-      albumName: activity[i].track.albumName,
-      albumUri: activity[i].track.albumUri,
-      artist: activity[i].track.artist,
-      artistUri: activity[i].track.artistUri,
-      duration: 0,
-      explicit: activity[i].track.explicit,
-      id: activity[i].trackId,
-      image: activity[i].track.image,
-      link: activity[i].track.link,
-      name: activity[i].track.name,
-      preview_url: activity[i].track.preview_url ?? '',
-      uri: activity[i].track.uri,
-    });
+  const activityTracks = [] as TrackWithInfo[];
+  for (const activity of activities) {
+    if (!activity.track) continue;
+    activityTracks.push(activity.track);
   }
 
-  let friendsPlaybacks: Track[] = [];
-  for (let i = 0; i < friends.length; i++) {
-    if (friends[i].playback === null || friends[i].playback?.track === undefined) {
-      continue;
-    }
-    const track = {
-      albumName: friends[i].playback!.track.albumName,
-      albumUri: friends[i].playback!.track.albumUri,
-      artist: friends[i].playback!.track.artist,
-      artistUri: friends[i].playback!.track.artistUri,
-      duration: 0,
-      explicit: friends[i].playback!.track.explicit,
-      id: friends[i].playback!.trackId,
-      image: friends[i].playback!.track.image,
-      link: friends[i].playback!.track.link,
-
-      name: friends[i].playback!.track.name,
-      preview_url: friends[i].playback!.track.preview_url ?? '',
-      uri: friends[i].playback!.track.uri,
-    };
-    friendsPlaybacks.push(track);
+  const friendTracks = [] as TrackWithInfo[];
+  for (const friend of friends) {
+    if (!friend.playback || !friend.playback) continue;
+    friendTracks.push(friend.playback.track);
   }
 
-  let everyonePlaybacks: Track[] = [];
-  for (let i = 0; i < restOfUsers.length; i++) {
-    if (restOfUsers[i].playback === null || restOfUsers[i].playback?.track === undefined) {
-      continue;
-    }
-    const track = {
-      albumName: restOfUsers[i].playback!.track.albumName,
-      albumUri: restOfUsers[i].playback!.track.albumUri,
-      artist: restOfUsers[i].playback!.track.artist,
-      artistUri: restOfUsers[i].playback!.track.artistUri,
-      duration: 0,
-      explicit: restOfUsers[i].playback!.track.explicit,
-      id: restOfUsers[i].playback!.trackId,
-      image: restOfUsers[i].playback!.track.image,
-      link: restOfUsers[i].playback!.track.link,
-
-      name: restOfUsers[i].playback!.track.name,
-      preview_url: restOfUsers[i].playback!.track.preview_url ?? '',
-      uri: restOfUsers[i].playback!.track.uri,
-    };
-    everyonePlaybacks.push(track);
+  const everyoneTracks = [] as TrackWithInfo[];
+  for (const user of restOfUsers) {
+    if (!user.playback || !user.playback) continue;
+    everyoneTracks.push(user.playback.track);
   }
 
   return (
     <Stack pb="50px" pt={{ base: '15px', xl: 0 }} bg={bg} h="100%">
       <Stack px={['5px', 0]}>
         <Tiles spacing="15px" autoScroll={currentUser?.settings?.autoscroll ?? false}>
-          {activity.map((item, index) => {
+          {activities.map((activity, index) => {
             return (
               <ActivityTile
-                key={item.id}
+                key={activity.id}
                 layoutKey={'mActivity' + index}
-                activity={item}
-                tracks={activities}
+                activity={activity}
+                tracks={activityTracks}
                 index={index}
               />
             );
@@ -111,7 +63,7 @@ const Index = () => {
             layoutKey={'MiniPlayerF' + index}
             user={user}
             currentUserId={currentUser?.userId}
-            tracks={friendsPlaybacks}
+            tracks={friendTracks}
             index={index}
           />
         ))}
@@ -126,7 +78,7 @@ const Index = () => {
             layoutKey={'MiniPlayerF' + index}
             user={user}
             currentUserId={currentUser?.userId}
-            tracks={everyonePlaybacks}
+            tracks={everyoneTracks}
             index={index}
           />
         ))}
@@ -136,10 +88,10 @@ const Index = () => {
 };
 
 export const loader = async () => {
-  const activity = await getActivity();
+  const activities = await getActivity();
 
   return typedjson({
-    activity,
+    activities,
   });
 };
 

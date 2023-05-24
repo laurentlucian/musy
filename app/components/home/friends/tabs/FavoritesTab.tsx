@@ -4,34 +4,20 @@ import type { Track } from '@prisma/client';
 
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import useSessionUser from '~/hooks/useSessionUser';
-import type { FriendCard } from '~/lib/types/types';
+import type { FriendCard, TrackWithInfo } from '~/lib/types/types';
 
 type Props = {
   favorites: FriendCard[];
 };
 export const FavoriteTab = ({ favorites }: Props) => {
   const currentUser = useSessionUser();
-  const tracks: Track[] = [];
-  for (let i = 0; i < favorites.length; i++) {
-    if (favorites[i].playback === null || favorites[i].playback?.track === undefined) {
-      continue;
-    }
-    const track = {
-      albumName: favorites[i].playback!.track.albumName,
-      albumUri: favorites[i].playback!.track.albumUri,
-      artist: favorites[i].playback!.track.artist,
-      artistUri: favorites[i].playback!.track.artistUri,
-      duration: favorites[i].playback!.track.duration,
-      explicit: favorites[i].playback!.track.explicit,
-      id: favorites[i].playback!.track.id,
-      image: favorites[i].playback!.track.image,
-      link: favorites[i].playback!.track.link,
-      name: favorites[i].playback!.track.name,
-      preview_url: favorites[i].playback!.track.preview_url,
-      uri: favorites[i].playback!.track.uri,
-    };
-    tracks.push(track);
+
+  const tracks = [] as TrackWithInfo[];
+  for (const track of favorites) {
+    if (!track.playback || !track.playback) continue;
+    tracks.push(track.playback.track);
   }
+
   return (
     <TabPanel
       as={Stack}

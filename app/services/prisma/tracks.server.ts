@@ -50,15 +50,12 @@ export const getActivity = async () => {
       take: 20,
     }),
   ]);
-  if (like || queue) {
-    return [...like, ...queue, ...recommended]
-      .sort((a, b) => {
-        if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
-        return 0;
-      })
-      .slice(0, 20) as Activity[];
-  }
-  return null;
+  return [...like, ...queue, ...recommended]
+    .sort((a, b) => {
+      if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
+      return 0;
+    })
+    .slice(0, 20) as Activity[];
 };
 
 export const getUserRecommended = async (userId: string) => {

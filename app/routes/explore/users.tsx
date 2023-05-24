@@ -4,7 +4,7 @@ import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import { useSearch } from '~/hooks/useSearchStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-import type { Track } from '~/lib/types/types';
+import type { Track, TrackWithInfo } from '~/lib/types/types';
 
 const Users = () => {
   const currentUser = useSessionUser();
@@ -27,26 +27,10 @@ const Users = () => {
     }
   });
 
-  const tracks: Track[] = [];
-  for (let i = 0; i < sortedFriends.length; i++) {
-    if (sortedFriends[i].playback === null || sortedFriends[i].playback?.track === undefined) {
-      continue;
-    }
-    const track = {
-      albumName: sortedFriends[i].playback!.track.albumName,
-      albumUri: sortedFriends[i].playback!.track.albumUri,
-      artist: sortedFriends[i].playback!.track.artist,
-      artistUri: sortedFriends[i].playback!.track.artistUri,
-      duration: sortedFriends[i].playback!.track.duration,
-      explicit: sortedFriends[i].playback!.track.explicit,
-      id: sortedFriends[i].playback!.track.id,
-      image: sortedFriends[i].playback!.track.image,
-      link: sortedFriends[i].playback!.track.link,
-      name: sortedFriends[i].playback!.track.name,
-      preview_url: sortedFriends[i].playback!.track.preview_url,
-      uri: sortedFriends[i].playback!.track.uri,
-    };
-    tracks.push(track);
+  const tracks = [] as TrackWithInfo[];
+  for (const friend of sortedFriends) {
+    if (!friend.playback || !friend.playback) continue;
+    tracks.push(friend.playback.track);
   }
 
   return (
