@@ -29,7 +29,7 @@ const Users = () => {
 
   const tracks = [] as TrackWithInfo[];
   for (const friend of sortedFriends) {
-    if (!friend.playback || !friend.playback) continue;
+    if (!friend.playback) continue;
     tracks.push(friend.playback.track);
   }
 

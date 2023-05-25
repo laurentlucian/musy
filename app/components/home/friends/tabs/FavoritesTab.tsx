@@ -14,7 +14,7 @@ export const FavoriteTab = ({ favorites }: Props) => {
 
   const tracks = [] as TrackWithInfo[];
   for (const track of favorites) {
-    if (!track.playback || !track.playback) continue;
+    if (!track.playback) continue;
     tracks.push(track.playback.track);
   }
 

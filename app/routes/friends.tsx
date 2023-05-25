@@ -17,13 +17,13 @@ const Friends = () => {
 
   const friendTracks = [] as TrackWithInfo[];
   for (const friend of friends) {
-    if (!friend.playback || !friend.playback) continue;
+    if (!friend.playback) continue;
     friendTracks.push(friend.playback.track);
   }
 
   const everyoneTracks = [] as TrackWithInfo[];
   for (const user of restOfUsers) {
-    if (!user.playback || !user.playback) continue;
+    if (!user.playback) continue;
     everyoneTracks.push(user.playback.track);
   }
 
