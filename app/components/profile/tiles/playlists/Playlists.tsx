@@ -24,12 +24,12 @@ const Playlists = ({
 
   if (!playlists) return null;
   const scrollButtons = playlists.length > 5;
-  const title = playlists.length > 1 ? 'Playlists' : 'Playlist';
+  const title = playlists.length > 1 ? 'PLAYLISTS' : 'PLAYLIST';
 
   if (!playlists.length) return null;
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={1}>
       <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
         {playlists.map((list, index) => {
           const isLast = index === playlists.length - 1;

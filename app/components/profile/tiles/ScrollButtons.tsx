@@ -92,7 +92,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToStart}
           variant="ghost"
-          icon={<ChevronsLeft size="18px" />}
+          icon={<ChevronsLeft size="14px" />}
           aria-label="to start"
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
@@ -103,7 +103,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToPrevPage}
           variant="ghost"
-          icon={<ChevronLeft size="18px" />}
+          icon={<ChevronLeft size="14px" />}
           aria-label="previous page"
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
@@ -116,7 +116,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToNextPage}
           variant="ghost"
-          icon={<ChevronRight size="18px" />}
+          icon={<ChevronRight size="14px" />}
           aria-label="next page"
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}
@@ -127,7 +127,7 @@ const ScrollButtons = ({
         <IconButton
           onClick={scrollToEnd}
           variant="ghost"
-          icon={<ChevronsRight size="18px" />}
+          icon={<ChevronsRight size="14px" />}
           aria-label="to end"
           _hover={{ color: 'spotify.green', opacity: 1 }}
           opacity={0.5}

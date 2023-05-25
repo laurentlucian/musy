@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 
 import type { StackProps } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { HStack, Heading } from '@chakra-ui/react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
@@ -9,7 +11,7 @@ import { useSetExpandedStack } from '~/hooks/useOverlay';
 import ScrollButtons from './ScrollButtons';
 
 type TilesProps = {
-  Filter?: ReactNode;
+  action?: ReactNode;
   autoScroll?: boolean;
   children: ReactNode;
   scrollButtons?: boolean;
@@ -18,7 +20,7 @@ type TilesProps = {
 } & StackProps;
 
 const Tiles = ({
-  Filter = null,
+  action = null,
   autoScroll,
   children,
   scrollButtons,
@@ -37,23 +39,21 @@ const Tiles = ({
 
   return (
     <>
-      <HStack spacing={5} align="center">
+      <Flex align="center" minH="35px">
         {title && (
-          <Heading fontSize={['xs', 'sm']} onClick={onClick} cursor="pointer">
+          <Text fontSize="11px" onClick={onClick} cursor="pointer" fontWeight="bolder">
             {title}
-          </Heading>
+          </Text>
         )}
 
-        {Filter}
-
+        {action}
         {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
-      </HStack>
+      </Flex>
       <HStack
         ref={scrollRef}
         className="scrollbar"
         overflow="auto"
         align="flex-start"
-        pb={2}
         {...props}
         {...ChakraProps}
       >

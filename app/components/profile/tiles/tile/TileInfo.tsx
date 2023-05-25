@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react';
+
 import { Flex, Image, Stack, Text } from '@chakra-ui/react';
 
 import { useTileContext } from '~/hooks/useTileContext';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 
-const TileInfo = () => {
+const TileInfo = ({ children }: { children?: ReactNode }) => {
   const { track } = useTileContext();
 
   if (track.name === '' || !track.name) return null;
@@ -27,6 +29,7 @@ const TileInfo = () => {
           </Flex>
         )}
       </Stack>
+      {children}
     </Flex>
   );
 };

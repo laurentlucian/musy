@@ -119,7 +119,7 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
           </Flex>
 
           <Flex justify="space-between" align="start" px="5px">
-            <Stack spacing={1}>
+            <Stack spacing={0}>
               <Text
                 fontSize={['12px', '13px']}
                 noOfLines={1}

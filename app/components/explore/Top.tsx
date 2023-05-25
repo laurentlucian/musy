@@ -4,9 +4,11 @@ import { useTypedLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/routes/explore/index';
 
+import LikedBy from '../home/activity/LikedBy';
+import PlayedBy from '../home/activity/PlayedBy';
 import Tile from '../profile/tiles/tile/Tile';
 import TileImage from '../profile/tiles/tile/TileImage';
-import TileInfoTop from '../profile/tiles/tile/TileInfoTop';
+import TileInfo from '../profile/tiles/tile/TileInfo';
 
 const Top = () => {
   const { top } = useTypedLoaderData<typeof loader>();
@@ -24,7 +26,14 @@ const Top = () => {
                 index={index}
                 layoutKey={layoutKey}
                 image={<TileImage size={'120px'} />}
-                info={<TileInfoTop />}
+                info={
+                  <TileInfo>
+                    <Stack spacing={1}>
+                      {track.liked?.length && <LikedBy liked={track.liked} />}
+                      {track.recent?.length && <PlayedBy played={track.recent} />}
+                    </Stack>
+                  </TileInfo>
+                }
                 list
               />
             </Box>

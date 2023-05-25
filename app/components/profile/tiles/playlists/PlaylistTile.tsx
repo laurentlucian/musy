@@ -19,7 +19,7 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props
 
   return (
     <>
-      <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer">
+      <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer" pb={2}>
         <Link to={`/${id}/${playlist.id}`}>
           <Flex direction="column">
             <Tooltip label={playlist.name} placement="top-start">
@@ -54,6 +54,6 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props
   );
 });
 
-PlaylistTile.displayName = 'Tile';
+PlaylistTile.displayName = 'PlaylistTile';
 
 export default PlaylistTile;

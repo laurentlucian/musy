@@ -1,5 +1,5 @@
 import { useParams } from '@remix-run/react';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Box, SimpleGrid, Stack } from '@chakra-ui/react';
 
@@ -14,7 +14,15 @@ import TileImage from './tile/TileImage';
 import TileInfo from './tile/TileInfo';
 import Tiles from './Tiles';
 
-const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithInfo[] }) => {
+const TrackTiles = ({
+  actions,
+  title,
+  tracks,
+}: {
+  actions?: { tile?: React.ReactNode; tiles?: React.ReactNode };
+  title: string;
+  tracks: TrackWithInfo[];
+}) => {
   const [layout, setLayout] = useState(true);
   const [show, setShow] = useState(false);
   const scrollButtons = tracks.length > 5;
@@ -36,8 +44,8 @@ const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithInfo[] 
   if (!tracks.length) return null;
 
   return (
-    <Stack spacing={3}>
-      <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow}>
+    <Stack spacing={1}>
+      <Tiles title={title} scrollButtons={scrollButtons} setShow={setShow} action={actions?.tiles}>
         {tracks.map((track, index) => {
           const layoutKey = title + index;
           return (
@@ -49,6 +57,7 @@ const TrackTiles = ({ title, tracks }: { title: string; tracks: TrackWithInfo[] 
               layoutKey={layoutKey}
               image={<TileImage />}
               info={<TileInfo />}
+              action={actions?.tile}
             />
           );
         })}
