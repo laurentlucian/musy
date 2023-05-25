@@ -6,7 +6,6 @@ import type { Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { Send2, Star1 } from 'iconsax-react';
 
-import Tooltip from '~/components/Tooltip';
 import { useClickDrag, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import LikeIcon from '~/lib/icons/Like';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
@@ -53,21 +52,33 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
   return (
     <Flex justify="space-between" align="center">
       <UserInfo user={activity.user} />
-      {activity.action === 'liked' && <LikeIcon aria-checked boxSize="20px" />}
+
+      {activity.action === 'liked' && (
+        <HStack align="center">
+          <Text fontSize="10px" fontWeight="bolder">
+            LIKED
+          </Text>
+          <LikeIcon aria-checked boxSize="20px" />
+        </HStack>
+      )}
 
       {activity.action === 'send' && (
-        <HStack>
-          <Tooltip label="sent">
-            <Icon as={Send2} boxSize="20px" fill="white" />
-          </Tooltip>
+        <HStack align="center">
+          <Text fontSize="10px" fontWeight="bolder">
+            SENT
+          </Text>
+          <Icon as={Send2} boxSize="20px" fill="white" />
           {activity.owner?.user && <UserInfo user={activity.owner.user} />}
         </HStack>
       )}
 
       {activity.action === 'recommend' && (
-        <Tooltip label="recommended">
+        <HStack align="center">
+          <Text fontSize="10px" fontWeight="bolder">
+            RECOMMENDED
+          </Text>
           <Icon as={Star1} boxSize="20px" fill="white" />
-        </Tooltip>
+        </HStack>
       )}
     </Flex>
   );
@@ -90,11 +101,10 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
               layoutId={track.id + layoutKey}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
+              cursor="pointer"
               onClick={() => onClick(track, activity.user.userId, layoutKey, tracks, index)}
             >
-              <Tooltip label={track.albumName} placement="top-start">
-                <Image borderRadius="1px" w="100%" objectFit="cover" src={track.image} />
-              </Tooltip>
+              <Image borderRadius="1px" w="100%" objectFit="cover" src={track.image} />
             </Box>
           </Flex>
 
@@ -118,12 +128,15 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
               >
                 {track.name}
               </Text>
-              <Text fontSize={['9px', '10px']} opacity={0.6}>
-                {track.artist}
-              </Text>
-              <Text fontSize={['9px', '10px']} opacity={0.6}>
-                {track.albumName}
-              </Text>
+              <HStack spacing={1}>
+                <Text fontSize={['9px', '10px']} opacity={0.6}>
+                  {track.artist}
+                </Text>
+                <Box opacity={0.6}>•</Box>
+                <Text fontSize={['9px', '10px']} opacity={0.6}>
+                  {track.albumName}
+                </Text>
+              </HStack>
               <Text fontSize={['8px', '9px']} opacity={0.6} w="100%">
                 {timeSince(activity.createdAt)}
               </Text>

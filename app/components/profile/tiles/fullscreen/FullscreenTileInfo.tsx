@@ -1,13 +1,14 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 
-import { Flex, HStack, Image, Link, Stack, Text, useEventListener } from '@chakra-ui/react';
+import { Box, Flex, HStack, Image, Link, Stack, Text, useEventListener } from '@chakra-ui/react';
 
 import { motion, wrap } from 'framer-motion';
 
 import LikedBy from '~/components/home/activity/LikedBy';
 import PlayedBy from '~/components/home/activity/PlayedBy';
 import { useFullscreenTileIndex, useFullscreenTiles } from '~/hooks/useFullscreenTileStore';
+import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 
 type ActionTrackProps = {
@@ -46,6 +47,7 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection]);
   };
+  const isSmallScreen = useIsMobile();
   const originalIndex = useFullscreenTileIndex();
   // const layoutKey = useFullscreenLayoutKey();
   const tracks = useFullscreenTiles();
@@ -93,13 +95,7 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
       >
         <Stack w="65%" spacing={['10px']}>
           {/* <motion.div layoutId={tracks[originalIndex].id + layoutKey}> */}
-          <Image
-            objectFit="cover"
-            src={track.image}
-            draggable={false}
-            cursor="pointer"
-            zIndex={10}
-          />
+          <Image objectFit="cover" src={track.image} draggable={false} zIndex={10} />
           {/* </motion.div> */}
           <HStack mt={['5px', '15px']}>
             {track.liked?.length && <LikedBy liked={track.liked} />}
@@ -107,12 +103,12 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
           </HStack>
         </Stack>
 
-        <Stack spacing={0} flex={1} align={['center', 'start']}>
+        <Flex direction="column" flex={1} align={['center', 'start']}>
           <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
             <Text
-              fontSize={['xl', '5xl']}
+              fontSize={['xl', '3xl']}
               fontWeight="bold"
-              textAlign="center"
+              textAlign={['center', 'left']}
               w="fit-content"
               wordBreak="break-word"
               pos="relative"
@@ -120,10 +116,27 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
               {track.name}
             </Text>
           </Link>
-          <Flex align="center">
-            {track.explicit && <Image src={explicitImage} w="15px" mr="3px" />}
+          <Stack direction={['row', 'column']} align={['center', 'start']}>
+            <Flex align="center">
+              {track.explicit && <Image src={explicitImage} w="15px" mr="3px" />}
+              <Link
+                href={track.artistUri}
+                _hover={{ textDecor: 'none' }}
+                w="fit-content"
+                _focus={{ boxShadow: 'none' }}
+                pos="relative"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Text color="#BBB8B7" fontSize={['11px', '13px']}>
+                  {track.artist}
+                </Text>
+              </Link>
+            </Flex>
+            {isSmallScreen && <Box opacity={0.6}>•</Box>}
             <Link
-              href={track.artistUri}
+              href={track.albumUri}
               _hover={{ textDecor: 'none' }}
               w="fit-content"
               _focus={{ boxShadow: 'none' }}
@@ -132,12 +145,12 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
                 e.stopPropagation();
               }}
             >
-              <Text color="#BBB8B7" fontSize={['11px']}>
-                {track.artist}
+              <Text color="#BBB8B7" fontSize={['11px', '13px']}>
+                {track.albumName}
               </Text>
             </Link>
-          </Flex>
-        </Stack>
+          </Stack>
+        </Flex>
       </Stack>
     </motion.div>
   );

@@ -26,7 +26,7 @@ import {
 } from '@chakra-ui/react';
 import type { IconButtonProps } from '@chakra-ui/react';
 
-import { Moon, Profile2User, Setting2, Sun1 } from 'iconsax-react';
+import { Moon, Setting2, Sun1 } from 'iconsax-react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
@@ -257,8 +257,7 @@ const UserMenu = () => {
             <MenuList
               overflowX="clip"
               bg={bg}
-              boxShadow="0px 0px 10px 2px rgba(117,117,117,0.69)"
-              rounded="xl"
+              boxShadow="0px 0px 10px 2px rgba(63, 63, 63, 0.69)"
               zIndex={9}
             >
               <MenuItem
