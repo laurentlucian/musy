@@ -1,8 +1,7 @@
-import { Form, Link, useLocation, useNavigation } from '@remix-run/react';
+import { Link, useNavigation } from '@remix-run/react';
 import type { MouseEvent } from 'react';
 
 import {
-  Button,
   Flex,
   Heading,
   HStack,
@@ -13,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
-import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 
 import NavSearch from './NavSearch';
@@ -21,11 +19,7 @@ import UserMenu from './UserMenu';
 
 const Nav = () => {
   const transition = useNavigation();
-  const { pathname, search } = useLocation();
-  const color = useColorModeValue('#161616', '#EEE6E2');
-  const bg = useColorModeValue('musy.200', 'musy.900');
-  const currentUser = useSessionUser();
-  const authorized = !!currentUser;
+  const bg = useColorModeValue('musy.200', 'black');
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
 
@@ -37,7 +31,7 @@ const Nav = () => {
   };
 
   return (
-    <Flex w="100%" as="header" py={5} justify="space-between" px={0} zIndex={1}>
+    <Flex position="sticky" top={0} bg={bg} as="header" py={5} justify="space-between" zIndex={1}>
       <HStack spacing="8px" zIndex={1} onClick={handleClick}>
         <HStack as={Link} to="/">
           <Image src="/musylogo1.svg" boxSize="28px" />
@@ -56,26 +50,9 @@ const Nav = () => {
         {transition.state === 'loading' && <Waver />}
       </HStack>
       <HStack h="39px" zIndex={1}>
-        {!authorized ? (
-          <Form action={'/auth/spotify?returnTo=' + pathname + search} method="post">
-            <Button
-              type="submit"
-              variant="login"
-              spinner={<Waver />}
-              isLoading={transition.formAction?.includes('auth')}
-              bg={bg}
-              color={color}
-            >
-              Login
-            </Button>
-          </Form>
-        ) : (
-          <>
-            <HStack w="100%" spacing={3}>
-              <NavSearch /> <UserMenu />
-            </HStack>
-          </>
-        )}
+        <HStack w="100%" spacing={3}>
+          <NavSearch /> <UserMenu />
+        </HStack>
       </HStack>
     </Flex>
   );

@@ -34,7 +34,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
       bg={isProfile ? profileBg : bg}
       bgGradient={gradient ? bgGradient : undefined}
       bgAttachment="scroll, local"
-      overflow={['hidden', 'unset']}
       css={{ '::-webkit-scrollbar': { display: 'none' } }}
       h="max-content"
     >
@@ -42,7 +41,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         as="section"
         direction="column"
         w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
-        overflow={['hidden', 'unset']}
         h="max-content"
       >
         {isSmallScreen ? <MobileHeader /> : <Nav />}
@@ -53,8 +51,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          h={['84.2dvh', 'max-content']} // without 84h mobile is broken
-          overflowX={['hidden', 'unset']}
         >
           {children}
         </Box>

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 
-import { AnimatePresence } from 'framer-motion';
 import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react';
 
 import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
@@ -13,6 +12,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 
 const MobileNavBar = () => {
   const { pathname } = useLocation();
+  const bg = useColorModeValue('#EEE6E2', 'black');
   const currentUser = useSessionUser();
   const [active, setActive] = useState<number>(
     pathname.includes('home')
@@ -72,86 +72,88 @@ const MobileNavBar = () => {
     setActive(4);
   };
 
-  return (
-    <AnimatePresence>
-      {!hideButton && (
-        <Box
-          as="header"
-          h="90px"
-          color={color}
-          display="flex"
-          borderTop="0.5px solid"
-          borderColor={border}
-          justifyContent="space-around"
-          transition="bottom 0.25s ease-out"
-          zIndex={11}
-        >
-          <Link to="/home" onClick={onClickHome}>
+  return !hideButton ? (
+    <Box h="90px">
+      <Box
+        pb="55px"
+        position="fixed"
+        bottom={0}
+        w="100%"
+        as="header"
+        bg={bg}
+        color={color}
+        display="flex"
+        borderTop="0.5px solid"
+        borderColor={border}
+        justifyContent="space-around"
+        transition="bottom 0.25s ease-out"
+        zIndex={11}
+      >
+        <Link to="/home" onClick={onClickHome}>
+          <IconButton
+            aria-label="home"
+            icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
+            variant="mobileNav"
+            color={color}
+            opacity={active === 0 ? 1 : 0.4}
+            pt="12px"
+          />
+        </Link>
+        <Link to="/friends" onClick={onClickFriends}>
+          <IconButton
+            aria-label="friends"
+            icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
+            variant="mobileNav"
+            color={color}
+            opacity={active === 1 ? 1 : 0.4}
+            pt="12px"
+          />
+        </Link>
+        <Link to="/sessions" onClick={onClickSessions}>
+          <IconButton
+            aria-label="sessions"
+            icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
+            variant="mobileNav"
+            color={color}
+            opacity={active === 2 ? 1 : 0.4}
+            pt="12px"
+          />
+        </Link>
+        <Link to="/explore" onClick={onClickExplore}>
+          <IconButton
+            aria-label="search"
+            icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
+            variant="mobileNav"
+            color={color}
+            opacity={active === 3 ? 1 : 0.4}
+            pt="12px"
+          />
+        </Link>
+        {currentUser ? (
+          <Link to={`${profile}`} onClick={onClickUser}>
             <IconButton
-              aria-label="home"
-              icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
+              aria-label="profile"
+              icon={profileIcon}
               variant="mobileNav"
-              color={color}
-              opacity={active === 0 ? 1 : 0.4}
+              opacity={active === 4 ? 1 : 0.4}
               pt="12px"
             />
           </Link>
-          <Link to="/friends" onClick={onClickFriends}>
+        ) : (
+          <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
             <IconButton
-              aria-label="friends"
-              icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
+              aria-label="log in"
+              icon={logInIcon}
+              type="submit"
               variant="mobileNav"
-              color={color}
-              opacity={active === 1 ? 1 : 0.4}
+              opacity={active === 4 ? 1 : 0.4}
               pt="12px"
             />
-          </Link>
-          <Link to="/sessions" onClick={onClickSessions}>
-            <IconButton
-              aria-label="sessions"
-              icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              color={color}
-              opacity={active === 2 ? 1 : 0.4}
-              pt="12px"
-            />
-          </Link>
-          <Link to="/explore" onClick={onClickExplore}>
-            <IconButton
-              aria-label="search"
-              icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
-              variant="mobileNav"
-              color={color}
-              opacity={active === 3 ? 1 : 0.4}
-              pt="12px"
-            />
-          </Link>
-          {currentUser ? (
-            <Link to={`${profile}`} onClick={onClickUser}>
-              <IconButton
-                aria-label="profile"
-                icon={profileIcon}
-                variant="mobileNav"
-                opacity={active === 4 ? 1 : 0.4}
-                pt="12px"
-              />
-            </Link>
-          ) : (
-            <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
-              <IconButton
-                aria-label="log in"
-                icon={logInIcon}
-                type="submit"
-                variant="mobileNav"
-                opacity={active === 4 ? 1 : 0.4}
-                pt="12px"
-              />
-            </Form>
-          )}
-        </Box>
-      )}
-    </AnimatePresence>
-  );
+          </Form>
+        )}
+      </Box>
+    </Box>
+  ) : null;
 };
 
 export default MobileNavBar;
