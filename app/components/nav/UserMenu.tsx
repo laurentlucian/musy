@@ -131,7 +131,7 @@ const UserMenu = () => {
           >
             <DrawerOverlay />
             <DrawerContent>
-              <DrawerBody flexDirection="column" bg={bg} color={color} borderBottomRadius="5%">
+              <DrawerBody flexDirection="column" bg={bg} color={color}>
                 <Stack align="flex-start" pb="20px">
                   <Stack w="100%" h="40px">
                     <DrawerCloseButton />
@@ -205,39 +205,24 @@ const UserMenu = () => {
                     opacity={0.2}
                     alignSelf="center"
                   />
-                  {currentUser ? (
-                    <Form action="/logout" method="post">
-                      <Button
-                        leftIcon={<LogOut transform="scale(-1)" size="30px" />}
-                        iconSpacing="30px"
-                        _hover={{ bgColor: 'red.500', color: 'white' }}
-                        type="submit"
-                        bg="#0000"
-                        size="20px"
-                        pl="25px"
-                        mt="20px"
-                        w="100vw"
-                        h="45px"
-                        justifyContent="flex-start"
-                        color={color}
-                      >
-                        log out
-                      </Button>
-                    </Form>
-                  ) : (
-                    <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
-                      <Button
-                        type="submit"
-                        variant="login"
-                        spinner={<Waver />}
-                        isLoading={transition.formAction?.includes('auth')}
-                        bg={bg}
-                        color={color}
-                      >
-                        Login with &nbsp; <SpotifyLogo h="24px" w="85px" link={false} />
-                      </Button>
-                    </Form>
-                  )}
+                  <Form action="/logout" method="post">
+                    <Button
+                      leftIcon={<LogOut transform="scale(-1)" size="30px" />}
+                      iconSpacing="30px"
+                      _hover={{ bgColor: 'red.500', color: 'white' }}
+                      type="submit"
+                      bg="#0000"
+                      size="20px"
+                      pl="25px"
+                      mt="20px"
+                      w="100vw"
+                      h="45px"
+                      justifyContent="flex-start"
+                      color={color}
+                    >
+                      log out
+                    </Button>
+                  </Form>
                 </Stack>
               </DrawerBody>
             </DrawerContent>

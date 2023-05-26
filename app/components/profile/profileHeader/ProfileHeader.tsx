@@ -55,7 +55,7 @@ const ProfileHeader = () => {
         fontWeight="bold"
         textAlign="left"
       >
-        {!user.name.includes('cunt') ? user.name : 'healthycat'}
+        {user.name}
       </Heading>
       <PrivateBadge />
       {user.settings?.founder === true && (

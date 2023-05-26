@@ -35,14 +35,7 @@ const Profile = () => {
   );
 
   return (
-    <Stack
-      spacing={5}
-      pb={['110px', 5]}
-      pt={['44px', 5]}
-      h="max-content"
-      px={['5px', 0]}
-      zIndex={1}
-    >
+    <Stack spacing={5} px={['5px', 0]} zIndex={1}>
       <ProfileHeader />
       {Profile}
     </Stack>

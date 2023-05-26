@@ -15,22 +15,23 @@ import { shortenUsername } from '~/lib/utils';
 
 import QuickActions from '../../home/friends/friendsPlayer/QuickActions';
 import FavoriteButton from '../profileHeader/FavoriteButton';
+import useSessionUser from '~/hooks/useSessionUser';
 
 type PlayerProps = {
-  currentUserId: string | undefined;
   index: number;
   layoutKey: string;
   tracks: Track[];
   user: Friend;
 };
 
-const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerProps) => {
+const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
   const hoverBg = useColorModeValue('musy.50', '#5F5B59');
   const color = useColorModeValue('musy.900', 'musy.200');
   const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useFullscreenActions();
+  const currentUser = useSessionUser();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
 
@@ -38,7 +39,7 @@ const MiniPlayer = ({ currentUserId, index, layoutKey, tracks, user }: PlayerPro
   const track = playback?.track;
   const que = user?.settings?.allowQueue;
 
-  const isOwnProfile = currentUserId === user.userId;
+  const isOwnProfile = currentUser?.userId === user.userId;
 
   useFullscreenTileStore();
 

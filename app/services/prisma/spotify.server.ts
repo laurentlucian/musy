@@ -38,6 +38,10 @@ const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
       where: {
         id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
       },
+      include: {
+        liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+        recent: { select: { user: true } },
+      },
     })
   ).sort((a, b) => trackIds.indexOf(a.id) - trackIds.indexOf(b.id));
 };
@@ -101,4 +105,28 @@ export const getUserSpotifyPlayback = async (userId: string) => {
   const playback = await spotify.getMyCurrentPlayingTrack().then((data) => data.body);
 
   return playback;
+};
+
+export const getSearchResults = async ({ userId, url }: { userId: string; url: URL }) => {
+  const keyword = url.searchParams.get('search');
+  if (!keyword) return { tracks: [], users: [] };
+
+  const { spotify } = await getUserSpotify(userId);
+  const [tracks, users] = await Promise.all([
+    spotify.searchTracks(keyword).then((res) => {
+      if (res.statusCode !== 200) return [];
+      if (!res.body.tracks) return [];
+      return transformTracks(res.body.tracks.items);
+    }),
+    // prisma.track.findMany({ where: { name: { contains: keyword } } }),
+    prisma.profile.findMany({
+      where: { name: { contains: keyword } },
+      include: {
+        playback: { include: { track: true } },
+        settings: true,
+      },
+    }),
+  ]);
+
+  return { tracks, users };
 };

@@ -6,7 +6,7 @@ import ActivityTile from '~/components/home/activity/ActivityTile';
 import type { TrackWithInfo } from '~/lib/types/types';
 import { getActivity } from '~/services/prisma/tracks.server';
 
-const Index = () => {
+const Home = () => {
   const { activities } = useTypedLoaderData<typeof loader>();
   const bg = useColorModeValue('#EEE6E2', '#050404');
 
@@ -41,7 +41,7 @@ export const loader = async () => {
   });
 };
 
-export default Index;
+export default Home;
 
 export { CatchBoundary } from '~/components/error/CatchBoundary';
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';

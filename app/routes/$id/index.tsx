@@ -50,16 +50,16 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 
-  const { playback, ...user } = await getUserProfile(id);
-
-  const [recommended, recent, liked, party, top, playlists] = await Promise.all([
-    getUserRecommended(id).catch(() => []),
-    getUserRecent(id).catch(() => []),
-    getUserLiked(id).catch(() => []),
-    prisma.party.findMany({ where: { ownerId: id } }),
-    getCachedUserTop(id, new URL(request.url)),
-    getUserPlaylists(id),
-  ]);
+  const [{ playback, ...user }, recommended, recent, liked, party, top, playlists] =
+    await Promise.all([
+      getUserProfile(id),
+      getUserRecommended(id).catch(() => []),
+      getUserRecent(id).catch(() => []),
+      getUserLiked(id).catch(() => []),
+      prisma.party.findMany({ where: { ownerId: id } }),
+      getCachedUserTop(id, new URL(request.url)),
+      getUserPlaylists(id),
+    ]);
 
   return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });
 };

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useSearchParams } from '@remix-run/react';
+import { useLocation, useNavigate, useParams, useSearchParams } from '@remix-run/react';
 import { useEffect } from 'react';
 
 import { IconButton } from '@chakra-ui/react';
@@ -7,11 +7,14 @@ import { ArrowLeft2 } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/routes/$id';
+import useSessionUser from '~/hooks/useSessionUser';
 
 const ProfileHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   // const [show, setShow] = useState(0);
   const { pathname } = useLocation();
+  const { id } = useParams();
+  const currentUser = useSessionUser();
   const navigate = useNavigate();
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   // const { profileBg } = useThemeBg();
@@ -40,6 +43,8 @@ const ProfileHeader = () => {
           </Text>
         </Stack>
       </HStack> */
+
+  if (currentUser?.userId === id) return null;
 
   return (
     <IconButton

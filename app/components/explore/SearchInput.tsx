@@ -1,5 +1,5 @@
-import { useFetcher, useSearchParams } from '@remix-run/react';
-import { type ChangeEvent, useRef } from 'react';
+import { useNavigation, useSearchParams } from '@remix-run/react';
+import { useRef, useState } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
 import {
@@ -13,46 +13,38 @@ import {
 } from '@chakra-ui/react';
 
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
-import { useExplore, useSearch, useSetSearch } from '~/hooks/useSearchStore';
 import Waver from '~/lib/icons/Waver';
 
 const SearchInput = () => {
-  const { search, setSearch, setTracks } = useExplore();
-  const [searchParams, setSearchParams] = useSearchParams();
   const bg = useColorModeValue('#EEE6E2', '#050404');
   const color = useColorModeValue('musy.800', 'musy.200');
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('keyword') || '');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { state } = useFetcher();
-  const busy = state === 'loading' ?? false;
-  const setUserSearch = useSetSearch();
-  const userSearch = useSearch();
-  const deleteSearch = () => {
-    searchParams.delete('spotify');
+  const navigation = useNavigation();
+
+  const isLoading =
+    navigation.state === 'loading' && navigation.location.search.includes('?search=');
+
+  const timeoutRef = useRef<NodeJS.Timeout>();
+  const setSearchURL = (search: string) => {
+    setSearchParams(
+      { search: search },
+      {
+        replace: true,
+        state: { scroll: false },
+      },
+    );
+  };
+
+  const removeSearchURL = () => {
+    searchParams.delete('search');
     setSearchParams(searchParams, {
       replace: true,
       state: { scroll: false },
     });
-  };
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value.trim()) {
-      setUserSearch(e.currentTarget.value);
-      setSearch(e.currentTarget.value);
-    } else {
-      setSearch('');
-      deleteSearch();
-    }
-  };
-
-  const onClose = () => {
-    setUserSearch('');
-    setSearch('');
-    setTracks([]);
-    const deleteParamDelay = setTimeout(() => {
-      deleteSearch();
-    }, 600);
-    clearTimeout(deleteParamDelay);
   };
 
   return (
@@ -70,31 +62,50 @@ const SearchInput = () => {
         }
       />
       <Input
+        pt={1}
         ref={inputRef}
         name="spotify"
-        value={search || userSearch}
+        value={search}
+        variant="flushed"
+        fontSize="14px"
         placeholder="search"
         autoComplete="off"
-        onChange={onChange}
-        onBlur={showMenu}
-        transition="all 0.5s ease-in-out"
+        onChange={(e) => {
+          const search = e.currentTarget.value;
+          setSearch(search);
+          if (search.trim().length) {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+              setSearchURL(search);
+            }, 100);
+          } else {
+            removeSearchURL();
+          }
+        }}
+        transition="all 0.3s ease-in-out"
         _placeholder={{ color: '#414040' }}
         focusBorderColor={color}
         onFocus={hideMenu}
+        onBlur={showMenu}
       />
-      {(search || userSearch) && (
+      {search && (
         <InputRightElement
           justifyContent="end"
           w="69px"
           children={
             <>
-              {busy && <Waver />}
+              {isLoading && <Waver />}
               <IconButton
+                as="span"
                 aria-label="close"
                 variant="unstyled"
                 borderRadius={8}
-                onClick={onClose}
+                onClick={() => {
+                  setSearch('');
+                  removeSearchURL();
+                }}
                 icon={<CloseButton />}
+                mr={1}
               />
             </>
           }

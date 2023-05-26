@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
 
-import { Home2, MusicPlaylist, Profile2User, SearchNormal1 } from 'iconsax-react';
+import { Home2, MusicPlaylist, SearchNormal1 } from 'iconsax-react';
 
 import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
@@ -17,15 +17,11 @@ const MobileNavBar = () => {
   const [active, setActive] = useState<number>(
     pathname.includes('home')
       ? 0
-      : pathname.includes('friend')
-      ? 1
-      : pathname.includes('sessions')
-      ? 2
       : pathname.includes('explore')
-      ? 3
+      ? 1
       : pathname.includes(`${currentUser?.userId}`)
-      ? 4
-      : 5,
+      ? 2
+      : 3,
   );
   const track = useFullscreenTileStore();
 
@@ -39,14 +35,10 @@ const MobileNavBar = () => {
   useEffect(() => {
     if (pathname.includes('home')) {
       setActive(0);
-    } else if (pathname.includes('friends')) {
-      setActive(1);
-    } else if (pathname.includes('sessions')) {
-      setActive(2);
     } else if (pathname.includes('explore')) {
-      setActive(3);
+      setActive(1);
     } else if (pathname.includes(`${currentUser?.userId}`)) {
-      setActive(4);
+      setActive(2);
     }
   }, [pathname, currentUser?.userId]);
 
@@ -54,22 +46,15 @@ const MobileNavBar = () => {
   if (!isSmallScreen) return null;
 
   const profileIcon = <Image src={currentUser?.image} borderRadius="full" boxSize="30px" />;
-  const logInIcon = <Image src={'/favicon-32x32.png'} borderRadius="full" boxSize="30px" />;
 
   const onClickHome = () => {
     setActive(0);
   };
-  const onClickFriends = () => {
+  const onClickExplore = () => {
     setActive(1);
   };
-  const onClickSessions = () => {
-    setActive(2);
-  };
-  const onClickExplore = () => {
-    setActive(3);
-  };
   const onClickUser = () => {
-    setActive(4);
+    setActive(2);
   };
 
   return !hideButton ? (
@@ -99,58 +84,25 @@ const MobileNavBar = () => {
             pt="12px"
           />
         </Link>
-        <Link to="/friends" onClick={onClickFriends}>
+        <Link to="/explore" onClick={onClickExplore}>
           <IconButton
-            aria-label="friends"
-            icon={<Profile2User variant={active === 1 ? 'Bold' : 'Outline'} />}
+            aria-label="search"
+            icon={<SearchNormal1 variant={active === 1 ? 'Bold' : 'Outline'} />}
             variant="mobileNav"
             color={color}
             opacity={active === 1 ? 1 : 0.4}
             pt="12px"
           />
         </Link>
-        <Link to="/sessions" onClick={onClickSessions}>
+        <Link to={`${profile}`} onClick={onClickUser}>
           <IconButton
-            aria-label="sessions"
-            icon={<MusicPlaylist variant={active === 2 ? 'Bold' : 'Outline'} />}
+            aria-label="profile"
+            icon={profileIcon}
             variant="mobileNav"
-            color={color}
             opacity={active === 2 ? 1 : 0.4}
             pt="12px"
           />
         </Link>
-        <Link to="/explore" onClick={onClickExplore}>
-          <IconButton
-            aria-label="search"
-            icon={<SearchNormal1 variant={active === 3 ? 'Bold' : 'Outline'} />}
-            variant="mobileNav"
-            color={color}
-            opacity={active === 3 ? 1 : 0.4}
-            pt="12px"
-          />
-        </Link>
-        {currentUser ? (
-          <Link to={`${profile}`} onClick={onClickUser}>
-            <IconButton
-              aria-label="profile"
-              icon={profileIcon}
-              variant="mobileNav"
-              opacity={active === 4 ? 1 : 0.4}
-              pt="12px"
-            />
-          </Link>
-        ) : (
-          <Form action={'/auth/spotify?returnTo=' + pathname} method="post">
-            <IconButton
-              aria-label="log in"
-              icon={logInIcon}
-              type="submit"
-              variant="mobileNav"
-              opacity={active === 4 ? 1 : 0.4}
-              pt="12px"
-            />
-          </Form>
-        )}
       </Box>
     </Box>
   ) : null;

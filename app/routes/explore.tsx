@@ -1,45 +1,110 @@
-import { Outlet, useLocation } from '@remix-run/react';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { Stack, Text } from '@chakra-ui/react';
 
-import { Stack, useColorModeValue } from '@chakra-ui/react';
-
-import Tile from '~/components/profile/tiles/tile/Tile';
-import TileImage from '~/components/profile/tiles/tile/TileImage';
-import TileInfo from '~/components/profile/tiles/tile/TileInfo';
-import { useExplore } from '~/hooks/useExplore';
+import MiniPlayer from '~/components/profile/player/MiniPlayer';
+import useFriends from '~/hooks/useFriends';
+import { useRestOfUsers } from '~/hooks/useUsers';
+import type { TrackWithInfo } from '~/lib/types/types';
+import { getTopLeaderboard } from '~/services/prisma/tracks.server';
+import TrackTiles from '~/components/profile/tiles/TrackTiles';
+import { getCurrentUser } from '~/services/prisma/users.server';
+import { LoaderArgs } from '@remix-run/server-runtime';
+import { getSearchResults } from '~/services/prisma/spotify.server';
+import invariant from 'tiny-invariant';
 
 const Explore = () => {
-  const { tracks } = useExplore();
-  const { pathname } = useLocation();
-  const bg = useColorModeValue('#EEE6E2', '#050404');
+  const { top, results } = useTypedLoaderData<typeof loader>();
+  const friends = useFriends();
+  const restOfUsers = useRestOfUsers();
+
+  const friendTracks = [] as TrackWithInfo[];
+  for (const friend of friends) {
+    if (!friend.playback) continue;
+    friendTracks.push(friend.playback.track);
+  }
+
+  const everyoneTracks = [] as TrackWithInfo[];
+  for (const user of restOfUsers) {
+    if (!user.playback) continue;
+    everyoneTracks.push(user.playback.track);
+  }
+
+  const userTracks = [] as TrackWithInfo[];
+  for (const user of results.users) {
+    if (!user.playback) continue;
+    userTracks.push(user.playback.track);
+  }
+
+  if (results.tracks.length || results.users.length) {
+    return (
+      <Stack px={2}>
+        <TrackTiles tracks={results.tracks} title="TRACKS" />
+        {results.users.length && (
+          <Text pt="10px" fontSize="11px" fontWeight="bolder">
+            USERS
+          </Text>
+        )}
+        {results.users.map((user, index) => (
+          <MiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            tracks={userTracks}
+            index={index}
+          />
+        ))}
+      </Stack>
+    );
+  }
 
   return (
-    <Stack bg={bg} alignItems="center" px="5px" overflow="hidden">
-      <Stack w={['100%', '500px']}>
-        {tracks?.map((track, index) => {
-          const layoutKey = 'Explore' + index;
-          return (
-            !pathname.includes('/users') && (
-              <Tile
-                key={track.id}
-                track={track}
-                tracks={tracks}
-                index={index}
-                layoutKey={layoutKey}
-                image={<TileImage size={'40px'} />}
-                info={<TileInfo />}
-                list
-              />
-            )
-          );
-        })}
-
-        <Outlet />
+    <Stack px={2}>
+      <TrackTiles tracks={top} title="WEEKLY MOST LISTENED" />
+      <Stack spacing={3} px={['4px', 'unset']}>
+        {friends.length && (
+          <Text pt="10px" fontSize="11px" fontWeight="bolder">
+            FRIENDS
+          </Text>
+        )}
+        {friends.map((user, index) => (
+          <MiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            tracks={friendTracks}
+            index={index}
+          />
+        ))}
+        {friends.length && (
+          <Text pt="10px" fontSize="11px" fontWeight="bolder">
+            EVERYONE
+          </Text>
+        )}
+        {restOfUsers.map((user, index) => (
+          <MiniPlayer
+            key={user.userId}
+            layoutKey={'MiniPlayerF' + index}
+            user={user}
+            tracks={everyoneTracks}
+            index={index}
+          />
+        ))}
       </Stack>
     </Stack>
   );
 };
 
+export const loader = async ({ request }: LoaderArgs) => {
+  const currentUser = await getCurrentUser(request);
+  invariant(currentUser, 'No user found');
+  const userId = currentUser.userId;
+  const [results, top] = await Promise.all([
+    getSearchResults({ userId, url: new URL(request.url) }),
+    getTopLeaderboard(),
+  ]);
+
+  return typedjson({ results, top });
+};
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export { CatchBoundary } from '~/components/error/CatchBoundary';
-
 export default Explore;

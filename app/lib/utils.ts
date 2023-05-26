@@ -85,8 +85,7 @@ export const iosSplashScreens = [
 ];
 
 export const shortenUsername = (username?: string) => {
-  if (!username) return 'wut';
-  if (username.includes('cunt')) return 'healthycat';
+  if (!username) return 'anon';
 
   const [first, second = ''] = username.split(/[\s.]+/);
   return second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
