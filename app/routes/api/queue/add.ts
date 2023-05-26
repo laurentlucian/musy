@@ -40,7 +40,7 @@ export const action = async ({ request }: ActionArgs) => {
       },
     },
 
-    pending: !!playback.is_playing,
+    pending: !playback.is_playing,
 
     track: {
       connectOrCreate: {

@@ -45,7 +45,7 @@ export type TrackWithInfo = Track & {
     user: Profile;
   }[];
   queue?: {
-    user: Profile;
+    owner: { user: Profile | null };
   }[];
   recent?: {
     user: Profile;

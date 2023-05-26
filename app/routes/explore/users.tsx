@@ -4,7 +4,7 @@ import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import { useSearch } from '~/hooks/useSearchStore';
 import useSessionUser from '~/hooks/useSessionUser';
 import useUsers from '~/hooks/useUsers';
-import type { Track, TrackWithInfo } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 
 const Users = () => {
   const currentUser = useSessionUser();

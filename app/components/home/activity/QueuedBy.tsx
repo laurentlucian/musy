@@ -10,7 +10,7 @@ import { shortenUsername } from '~/lib/utils';
 
 const QueuedBy = (props: {
   queued: {
-    user: Profile | null;
+    owner: { user: Profile | null };
   }[];
 }) => {
   const [isLabelOpen, setIsLabelOpen] = useState(false);
@@ -25,7 +25,7 @@ const QueuedBy = (props: {
         isOpen={isLabelOpen}
         label={
           <Stack py="2px">
-            {props.queued.map(({ user }, index) => {
+            {props.queued.map(({ owner: { user } }, index) => {
               const name = shortenUsername(user?.name);
               return (
                 <HStack key={index}>
@@ -45,7 +45,7 @@ const QueuedBy = (props: {
         }
       >
         <AvatarGroup size="xs" max={5} spacing="-9px">
-          {props.queued.slice(0, 5).map(({ user }, index) => (
+          {props.queued.slice(0, 5).map(({ owner: { user } }, index) => (
             <Avatar
               minW="20px"
               maxW="20px"

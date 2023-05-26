@@ -8,7 +8,7 @@ export const getActivity = async () => {
         track: {
           include: {
             liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
             recent: { select: { user: true } },
           },
         },
@@ -23,7 +23,7 @@ export const getActivity = async () => {
         track: {
           include: {
             liked: { select: { user: true } },
-            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
             recent: { select: { user: true } },
           },
         },
@@ -40,7 +40,7 @@ export const getActivity = async () => {
         track: {
           include: {
             liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-            queue: { select: { user: true }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)
+            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)
             recent: { select: { user: true } },
           },
         },
