@@ -1,111 +1,103 @@
-import { Link, useLocation, Form } from '@remix-run/react';
-import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigation } from '@remix-run/react';
+import { Box, Flex, IconButton, Image, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
 
-import { Box, IconButton, Image, useColorModeValue } from '@chakra-ui/react';
-
-import { Home2, MusicPlaylist, SearchNormal1 } from 'iconsax-react';
+import { Home2, SearchNormal1 } from 'iconsax-react';
 
 import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
+import Waver from '~/lib/icons/Waver';
 
 const MobileNavBar = () => {
-  const { pathname } = useLocation();
-  const bg = useColorModeValue('#EEE6E2', 'black');
-  const currentUser = useSessionUser();
-  const [active, setActive] = useState<number>(
-    pathname.includes('home')
-      ? 0
-      : pathname.includes('explore')
-      ? 1
-      : pathname.includes(`${currentUser?.userId}`)
-      ? 2
-      : 3,
-  );
-  const track = useFullscreenTileStore();
-
-  const profile = currentUser?.userId;
-  const { show } = useMobileKeyboard();
-  const hideButton = track !== null || pathname.includes('/settings') || !show ? true : false;
-
   const border = useColorModeValue('musy.400', 'musy.700');
   const color = useColorModeValue('musy.500', 'musy.200');
-
-  useEffect(() => {
-    if (pathname.includes('home')) {
-      setActive(0);
-    } else if (pathname.includes('explore')) {
-      setActive(1);
-    } else if (pathname.includes(`${currentUser?.userId}`)) {
-      setActive(2);
-    }
-  }, [pathname, currentUser?.userId]);
-
+  const bg = useColorModeValue('#EEE6E2', 'black');
+  const track = useFullscreenTileStore();
+  const navigation = useNavigation();
+  const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
+  const { pathname } = useLocation();
+  const { show } = useMobileKeyboard();
+
   if (!isSmallScreen) return null;
+
+  const hideButton = track !== null || pathname === '/settings' || !show ? true : false;
+
+  const isHomeLoading = navigation.location?.pathname === '/home';
+  const isExploreLoading = navigation.location?.pathname === '/explore';
+  const isProfileLoading = navigation.location?.pathname === `/${currentUser?.userId}`;
+
+  const isHomeActive = pathname === '/home';
+  const isExploreActive = pathname === '/explore';
+  const isProfileActive = pathname === `/${currentUser?.userId}`;
 
   const profileIcon = <Image src={currentUser?.image} borderRadius="full" boxSize="30px" />;
 
-  const onClickHome = () => {
-    setActive(0);
-  };
-  const onClickExplore = () => {
-    setActive(1);
-  };
-  const onClickUser = () => {
-    setActive(2);
-  };
-
   return !hideButton ? (
     <Box h="90px">
-      <Box
+      <SimpleGrid
+        as="header"
+        pt="12px"
         pb="55px"
         position="fixed"
         right={0}
         left={0}
         bottom={0}
-        w="100%"
-        as="header"
         bg={bg}
         color={color}
-        display="flex"
         borderTop="0.5px solid"
         borderColor={border}
-        justifyContent="space-around"
+        columns={3}
         transition="bottom 0.25s ease-out"
         zIndex={11}
       >
-        <Link to="/home" prefetch="render" onClick={onClickHome}>
+        <Flex justify="center">
           <IconButton
+            display={isHomeLoading ? 'none' : 'flex'}
+            as={Link}
+            to="/home"
+            w="50px"
+            prefetch="render"
             aria-label="home"
-            icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
+            icon={<Home2 variant={isHomeActive ? 'Bold' : 'Outline'} />}
             variant="mobileNav"
             color={color}
-            opacity={active === 0 ? 1 : 0.4}
-            pt="12px"
+            opacity={isHomeActive ? 1 : 0.4}
           />
-        </Link>
-        <Link to="/explore" prefetch="render" onClick={onClickExplore}>
+          {isHomeLoading && <Waver mt="8px" />}
+        </Flex>
+
+        <Flex justify="center">
           <IconButton
+            as={Link}
+            display={isExploreLoading ? 'none' : 'flex'}
+            to="/explore"
+            prefetch="render"
             aria-label="search"
-            icon={<SearchNormal1 variant={active === 1 ? 'Bold' : 'Outline'} />}
+            w="50px"
+            icon={<SearchNormal1 variant={isExploreActive ? 'Bold' : 'Outline'} />}
             variant="mobileNav"
             color={color}
-            opacity={active === 1 ? 1 : 0.4}
-            pt="12px"
+            opacity={isExploreActive ? 1 : 0.4}
           />
-        </Link>
-        <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
+          {isExploreLoading && <Waver mt="8px" />}
+        </Flex>
+
+        <Flex justify="center">
           <IconButton
+            as={Link}
+            display={isProfileLoading ? 'none' : 'flex'}
+            to={`/${currentUser?.userId}`}
+            prefetch="render"
             aria-label="profile"
             icon={profileIcon}
             variant="mobileNav"
-            opacity={active === 2 ? 1 : 0.4}
-            pt="12px"
+            opacity={isProfileActive ? 1 : 0.4}
           />
-        </Link>
-      </Box>
+          {isProfileLoading && <Waver mt="8px" />}
+        </Flex>
+      </SimpleGrid>
     </Box>
   ) : null;
 };

@@ -36,7 +36,7 @@ import {
 import FullscreenTile from './components/profile/tiles/fullscreen/FullscreenTile';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
-import loading from './lib/styles/loading.css';
+import waver from './lib/icons/waver.css';
 import { iosSplashScreens } from './lib/utils';
 import { getTheme } from './services/prisma/theme.server';
 
@@ -137,7 +137,7 @@ export const meta: MetaFunction = () => {
 
 export let links: LinksFunction = () => {
   return [
-    { as: 'style', href: loading, rel: 'stylesheet' },
+    { as: 'style', href: waver, rel: 'stylesheet' },
     { as: 'preconnect', href: 'https://fonts.gstaticom', rel: 'preconnect' },
     {
       as: 'font',
