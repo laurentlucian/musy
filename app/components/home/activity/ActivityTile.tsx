@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react';
 
-import { HStack, Image, Stack, Text, Icon, Flex, Box } from '@chakra-ui/react';
+import { HStack, Image, Stack, Text, Icon, Flex, Box, Link as ChakraLink } from '@chakra-ui/react';
 
 import type { Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
@@ -120,22 +120,23 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
 
           <Flex justify="space-between" align="start" px="5px">
             <Stack spacing={0}>
-              <Text
+              <ChakraLink
+                href={track.uri}
                 fontSize={['12px', '13px']}
                 noOfLines={1}
                 whiteSpace="normal"
                 wordBreak="break-word"
               >
                 {track.name}
-              </Text>
+              </ChakraLink>
               <HStack spacing={1}>
-                <Text fontSize={['9px', '10px']} opacity={0.6}>
+                <ChakraLink href={track.artistUri} fontSize={['9px', '10px']} opacity={0.6}>
                   {track.artist}
-                </Text>
+                </ChakraLink>
                 <Box opacity={0.6}>•</Box>
-                <Text fontSize={['9px', '10px']} opacity={0.6}>
+                <ChakraLink href={track.albumUri} fontSize={['9px', '10px']} opacity={0.6}>
                   {track.albumName}
-                </Text>
+                </ChakraLink>
               </HStack>
               <Text fontSize={['8px', '9px']} opacity={0.6} w="100%">
                 {timeSince(activity.createdAt)}
