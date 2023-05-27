@@ -1,3 +1,4 @@
+import type { RecentSongs } from '@prisma/client';
 import { Configuration, OpenAIApi } from 'openai';
 
 const configuration = new Configuration({
@@ -24,10 +25,32 @@ export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
 
   return askGPT(prompt);
 };
-export const getMood = async (recent: SpotifyApi.UsersRecentlyPlayedTracksResponse) => {
+
+export const getMoodFromSpotify = async (recent: SpotifyApi.UsersRecentlyPlayedTracksResponse) => {
   const tracks = recent.items.map((item) => ({
     album_name: item.track.album.name,
     artist_name: item.track.artists[0].name,
+    song_name: item.track.name,
+  }));
+
+  const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
+    ${JSON.stringify(tracks)}`;
+
+  const response = (await askGPT(prompt)).split('.')[0];
+  return response;
+};
+export const getMoodFromPrisma = async (
+  recent: (RecentSongs & {
+    track: {
+      albumName: string;
+      artist: string;
+      name: string;
+    };
+  })[],
+) => {
+  const tracks = recent.map((item) => ({
+    album_name: item.track.albumName,
+    artist_name: item.track.artist,
     song_name: item.track.name,
   }));
 

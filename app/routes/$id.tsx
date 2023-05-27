@@ -11,7 +11,6 @@ import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
 import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
 import useSessionUser from '~/hooks/useSessionUser';
 import { msToString } from '~/lib/utils';
-import { getMood } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
@@ -103,7 +102,7 @@ export const action = async ({ params, request }: ActionArgs) => {
 
   const data = await request.formData();
   const follow = data.get('follow');
-  const mood = data.get('mood');
+
   const isFavorited = data.get('isFavorited');
   const blockUser = data.get('blockUser');
   const blockId = data.get('blockId');
@@ -156,17 +155,6 @@ export const action = async ({ params, request }: ActionArgs) => {
     const { spotify } = await getSpotifyClient(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     await spotify.unfollowUsers([id]);
-  }
-  if (typeof mood === 'string') {
-    const { spotify } = await getSpotifyClient(id);
-    invariant(spotify, 'Spotify API Error');
-    const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    const response = await getMood(recent.body);
-    await prisma.aI.upsert({
-      create: { mood: response, userId: id },
-      update: { mood: response },
-      where: { userId: id },
-    });
   }
 
   if (isFriend === 'true') {
