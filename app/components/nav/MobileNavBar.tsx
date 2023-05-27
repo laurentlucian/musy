@@ -62,6 +62,8 @@ const MobileNavBar = () => {
       <Box
         pb="55px"
         position="fixed"
+        right={0}
+        left={0}
         bottom={0}
         w="100%"
         as="header"
@@ -74,7 +76,7 @@ const MobileNavBar = () => {
         transition="bottom 0.25s ease-out"
         zIndex={11}
       >
-        <Link to="/home" onClick={onClickHome}>
+        <Link to="/home" prefetch="render" onClick={onClickHome}>
           <IconButton
             aria-label="home"
             icon={<Home2 variant={active === 0 ? 'Bold' : 'Outline'} />}
@@ -84,7 +86,7 @@ const MobileNavBar = () => {
             pt="12px"
           />
         </Link>
-        <Link to="/explore" onClick={onClickExplore}>
+        <Link to="/explore" prefetch="render" onClick={onClickExplore}>
           <IconButton
             aria-label="search"
             icon={<SearchNormal1 variant={active === 1 ? 'Bold' : 'Outline'} />}
@@ -94,7 +96,7 @@ const MobileNavBar = () => {
             pt="12px"
           />
         </Link>
-        <Link to={`${profile}`} onClick={onClickUser}>
+        <Link to={`${profile}`} prefetch="render" onClick={onClickUser}>
           <IconButton
             aria-label="profile"
             icon={profileIcon}

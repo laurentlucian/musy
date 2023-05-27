@@ -45,7 +45,9 @@ const MobileHeader = () => {
         justify="center"
         align="center"
         pos="fixed"
-        top="0"
+        right={0}
+        left={0}
+        top={0}
         w="100%"
       >
         {Header}
