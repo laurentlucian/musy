@@ -29,3 +29,4 @@ wireguard.conf
 fly_backup*.db
 
 .yarn/install-state.gz
+.DS_Store
