@@ -95,62 +95,63 @@ const FullscreenInfo = ({ direction, page, setPage }: ActionTrackProps) => {
       >
         <Stack w="65%" spacing={['10px']}>
           {/* <motion.div layoutId={tracks[originalIndex].id + layoutKey}> */}
-          <Image objectFit="cover" src={track.image} draggable={false} zIndex={10} />
+          <Image
+            objectFit="cover"
+            src={track.image}
+            draggable={false}
+            zIndex={10}
+            minH="253px" // minH to prevent jumping when using arrow keys
+          />
           {/* </motion.div> */}
           <HStack mt={['5px', '15px']}>
             {track.liked?.length && <LikedBy liked={track.liked} />}
             {track.recent?.length && <PlayedBy played={track.recent} />}
+            {track.explicit && <Image src={explicitImage} w="15px" ml="auto !important" />}
           </HStack>
         </Stack>
 
-        <Flex direction="column" flex={1} align={['center', 'start']}>
-          <Link href={track.uri} _hover={{ textDecor: 'none' }} _focus={{ boxShadow: 'none' }}>
-            <Text
-              fontSize={['xl', '3xl']}
-              fontWeight="bold"
-              textAlign={['center', 'left']}
-              w="fit-content"
-              wordBreak="break-word"
-              pos="relative"
-            >
-              {track.name}
-            </Text>
+        <Stack spacing={[0, 1]} flex={1} align={['center', 'start']}>
+          <Link
+            href={track.uri}
+            fontSize={['xl', '2xl']}
+            fontWeight="bold"
+            textAlign={['center', 'left']}
+            w="fit-content"
+            wordBreak="break-word"
+          >
+            {track.name}
           </Link>
-          <Stack direction={['row', 'column']} align={['center', 'start']}>
-            <Flex align="center">
-              {track.explicit && <Image src={explicitImage} w="15px" mr="3px" />}
-              <Link
-                href={track.artistUri}
-                _hover={{ textDecor: 'none' }}
-                w="fit-content"
-                _focus={{ boxShadow: 'none' }}
-                pos="relative"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Text color="#BBB8B7" fontSize={['11px', '13px']}>
-                  {track.artist}
-                </Text>
-              </Link>
-            </Flex>
-            {isSmallScreen && <Box opacity={0.6}>•</Box>}
+          <Stack
+            spacing={[2, 1]}
+            direction={['row', 'column']}
+            align={['center', 'start']}
+            px={[2, 0]}
+          >
             <Link
-              href={track.albumUri}
-              _hover={{ textDecor: 'none' }}
-              w="fit-content"
-              _focus={{ boxShadow: 'none' }}
-              pos="relative"
+              href={track.artistUri}
+              color="#BBB8B7"
+              fontSize={['11px', '13px']}
+              whiteSpace="nowrap"
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
-              <Text color="#BBB8B7" fontSize={['11px', '13px']}>
-                {track.albumName}
-              </Text>
+              {track.artist}
+            </Link>
+            {isSmallScreen && <Box opacity={0.6}>•</Box>}
+            <Link
+              href={track.albumUri}
+              noOfLines={1}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              color="#BBB8B7"
+              fontSize={['11px', '13px']}
+            >
+              {track.albumName}
             </Link>
           </Stack>
-        </Flex>
+        </Stack>
       </Stack>
     </motion.div>
   );
