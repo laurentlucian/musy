@@ -102,7 +102,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   invariant(currentUser, 'Missing current user');
 
   const data = await request.formData();
-  const bio = data.get('bio');
   const follow = data.get('follow');
   const mood = data.get('mood');
   const isFavorited = data.get('isFavorited');
@@ -157,9 +156,6 @@ export const action = async ({ params, request }: ActionArgs) => {
     const { spotify } = await getSpotifyClient(currentUser.userId);
     invariant(spotify, 'Spotify API Error');
     await spotify.unfollowUsers([id]);
-  }
-  if (typeof bio === 'string') {
-    await prisma.profile.update({ data: { bio }, where: { userId: id } });
   }
   if (typeof mood === 'string') {
     const { spotify } = await getSpotifyClient(id);

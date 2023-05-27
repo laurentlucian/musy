@@ -1,9 +1,9 @@
-import { Form, useSearchParams, useSubmit } from '@remix-run/react';
+import { useParams, useSearchParams } from '@remix-run/react';
 
 import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
 
 import { CodeCircle } from 'iconsax-react';
-import { useTypedRouteLoaderData } from 'remix-typedjson';
+import { useTypedFetcher, useTypedRouteLoaderData } from 'remix-typedjson';
 
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
 import MoodButton from '~/components/profile/profileHeader/MoodButton';
@@ -11,6 +11,7 @@ import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
+import type { action as bioAction } from '~/routes/api/user/profile/bio';
 
 import PrivateBadge from '../badges/PrivateBadge';
 import FavoriteButton from './FavoriteButton';
@@ -21,9 +22,10 @@ import Search from './Search';
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
-  const submit = useSubmit();
   const isSmallScreen = useIsMobile();
   const currentUser = useSessionUser();
+  const { id } = useParams();
+  const fetcher = useTypedFetcher<typeof bioAction>();
 
   if (!data) return null;
 
@@ -33,6 +35,13 @@ const ProfileHeader = () => {
 
   const isBlocked = currentUser?.block.find((block) => block.blockedId === user.userId);
   const isMuted = currentUser?.mute.find((mute) => mute.mutedId === user.userId);
+
+  const updateBio = (bio: string) => {
+    fetcher.submit(
+      { bio, userId: id ?? ':)' },
+      { action: '/api/user/profile/bio', method: 'post', replace: true },
+    );
+  };
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -69,42 +78,24 @@ const ProfileHeader = () => {
   const Bio =
     user.id === currentUser?.id ? (
       <Stack w="100%" minW="100%" maxW="100%" pt="20px">
-        <Form method="post" replace>
-          <Textarea
-            name="bio"
-            size="md"
-            variant="flushed"
-            defaultValue={user.bio ?? ''}
-            placeholder="write something :)"
-            onBlur={(e) => submit(e.currentTarget.form)}
-            resize="none"
-            maxLength={75}
-            rows={2}
-            py={0}
-            focusBorderColor="spotify.green"
-            w={isSmallScreen ? '100%' : '50%'}
-            spellCheck={false}
-            h="100%"
-            minH="20px"
-            overflow="hidden"
-          />
-          <Textarea
-            name="component"
-            size="xs"
-            variant="unstyled"
-            defaultValue={user.settings?.easterEgg === true ? '69' : ''}
-            textColor={user.settings?.easterEgg === true ? 'rgba(0, 0, 0, 0)' : undefined}
-            resize="none"
-            w="20px"
-            h="20px"
-            overflow="hidden"
-            cursor="default"
-            pos="absolute"
-            bottom={0}
-            left="50%"
-            onBlur={(e) => submit(e.currentTarget.form)}
-          />
-        </Form>
+        <Textarea
+          name="bio"
+          size="md"
+          variant="flushed"
+          defaultValue={user.bio ?? ''}
+          placeholder="write something :)"
+          onBlur={(e) => updateBio(e.currentTarget.value)}
+          resize="none"
+          maxLength={75}
+          rows={2}
+          py={0}
+          focusBorderColor="spotify.green"
+          w={isSmallScreen ? '100%' : '50%'}
+          spellCheck={false}
+          h="100%"
+          minH="20px"
+          overflow="hidden"
+        />
       </Stack>
     ) : (
       <Text
