@@ -1,17 +1,21 @@
 import type { Activity } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
+export const trackWithInfo = {
+  track: {
+    include: {
+      liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+      queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+      recent: { select: { user: true } },
+    },
+  },
+} as const;
+
 export const getActivity = async () => {
   const [like, queue, recommended] = await Promise.all([
     prisma.likedSongs.findMany({
       include: {
-        track: {
-          include: {
-            liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-            recent: { select: { user: true } },
-          },
-        },
+        ...trackWithInfo,
         user: true,
       },
       orderBy: { createdAt: 'desc' },
@@ -20,13 +24,7 @@ export const getActivity = async () => {
     prisma.queue.findMany({
       include: {
         owner: { select: { accessToken: false, user: true } },
-        track: {
-          include: {
-            liked: { select: { user: true } },
-            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-            recent: { select: { user: true } },
-          },
-        },
+        ...trackWithInfo,
         user: true,
       },
       orderBy: { createdAt: 'desc' },
@@ -37,13 +35,7 @@ export const getActivity = async () => {
     }),
     prisma.recommended.findMany({
       include: {
-        track: {
-          include: {
-            liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-            queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)
-            recent: { select: { user: true } },
-          },
-        },
+        ...trackWithInfo,
         user: true,
       },
       orderBy: { createdAt: 'desc' },
@@ -61,12 +53,7 @@ export const getActivity = async () => {
 export const getUserRecommended = async (userId: string) => {
   const recommended = await prisma.recommended.findMany({
     include: {
-      track: {
-        include: {
-          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-          recent: { select: { user: true } },
-        },
-      },
+      ...trackWithInfo,
     },
     orderBy: { createdAt: 'desc' },
     where: { userId },
@@ -78,12 +65,7 @@ export const getUserRecommended = async (userId: string) => {
 export const getUserRecent = async (userId: string) => {
   const recent = await prisma.recentSongs.findMany({
     include: {
-      track: {
-        include: {
-          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-          recent: { select: { user: true } },
-        },
-      },
+      ...trackWithInfo,
     },
     orderBy: {
       playedAt: 'desc',
@@ -100,12 +82,7 @@ export const getUserRecent = async (userId: string) => {
 export const getUserLiked = async (userId: string) => {
   const liked = await prisma.likedSongs.findMany({
     include: {
-      track: {
-        include: {
-          liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-          recent: { select: { user: true } },
-        },
-      },
+      ...trackWithInfo,
     },
     orderBy: {
       createdAt: 'desc',
@@ -131,16 +108,7 @@ export const getTopLeaderboard = async () => {
       _count: {
         select: { recent: true },
       },
-      liked: {
-        include: {
-          user: true,
-        },
-      },
-      recent: {
-        include: {
-          user: true,
-        },
-      },
+      ...trackWithInfo.track.include,
     },
     where: { id: { in: trackIds.map((t) => t.trackId) } },
   });

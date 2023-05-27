@@ -4,6 +4,7 @@ import { prisma } from '~/services/db.server';
 import { userQ } from '~/services/scheduler/jobs/user.server';
 
 import { authenticator } from '../auth.server';
+import { trackWithInfo } from './tracks.server';
 
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
 
@@ -91,12 +92,7 @@ export const getCurrentUser = async (request: Request) => {
       pendingListUserIsOn: { select: { userId: true } },
       playback: {
         include: {
-          track: {
-            include: {
-              liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-              recent: { select: { user: true } },
-            },
-          },
+          ...trackWithInfo,
         },
       },
       settings: { include: { profileSong: true } },
@@ -114,12 +110,7 @@ export const getUserProfile = async (userId: string) => {
       ai: true,
       playback: {
         include: {
-          track: {
-            include: {
-              liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-              recent: { select: { user: true } },
-            },
-          },
+          ...trackWithInfo,
         },
       },
       settings: true,
@@ -162,12 +153,7 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
         },
         playback: {
           include: {
-            track: {
-              include: {
-                liked: { select: { user: true } },
-                recent: { select: { user: true } },
-              },
-            },
+            ...trackWithInfo,
           },
         },
         settings: true,
@@ -180,12 +166,7 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
       include: {
         playback: {
           include: {
-            track: {
-              include: {
-                liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-                recent: { select: { user: true } },
-              },
-            },
+            ...trackWithInfo,
           },
         },
         settings: true,
@@ -266,12 +247,7 @@ export const getFriends = async (userId?: string) => {
           name: true,
           playback: {
             include: {
-              track: {
-                include: {
-                  liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-                  recent: { select: { user: true } },
-                },
-              },
+              ...trackWithInfo,
             },
           },
           settings: { select: { allowQueue: true } },
@@ -296,12 +272,7 @@ export const getFavorites = async (userId?: string) => {
           name: true,
           playback: {
             include: {
-              track: {
-                include: {
-                  liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-                  recent: { select: { user: true } },
-                },
-              },
+              ...trackWithInfo,
             },
           },
           settings: { select: { allowQueue: true } },
