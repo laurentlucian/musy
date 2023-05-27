@@ -37,14 +37,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
       css={{ '::-webkit-scrollbar': { display: 'none' } }}
       h="max-content"
     >
-      <Flex
-        as="section"
-        direction="column"
-        w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
-        h="max-content"
-      >
+      <Flex as="section" direction="column" h="max-content" w="100%" align="center">
         {isSmallScreen ? <MobileHeader /> : <Nav />}
         <Box
+          w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           py="10px"
           as={motion.div}
           key={pathname}

@@ -9,6 +9,7 @@ import {
   useColorModeValue,
   Link as ChakraLink,
   Spacer,
+  Box,
 } from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
@@ -19,7 +20,6 @@ import UserMenu from './UserMenu';
 
 const Nav = () => {
   const transition = useNavigation();
-  const bg = useColorModeValue('musy.200', 'black');
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
 
@@ -31,23 +31,37 @@ const Nav = () => {
   };
 
   return (
-    <Flex position="sticky" top={0} bg={bg} as="header" py={5} justify="space-between" zIndex={1}>
-      <HStack spacing="8px" zIndex={1} onClick={handleClick}>
-        <HStack as={Link} to="/">
-          <Image src="/musylogo1.svg" boxSize="28px" />
-          <Heading size="sm">musy</Heading>
+    <Flex
+      as="header"
+      position="sticky"
+      top={0}
+      zIndex={1}
+      justify="center"
+      w="100%"
+      backdropFilter="blur(27px)"
+    >
+      <Flex
+        w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
+        py={5}
+        justify="space-between"
+      >
+        <HStack spacing="8px" zIndex={1} onClick={handleClick}>
+          <HStack as={Link} to="/">
+            <Image src="/musylogo1.svg" boxSize="28px" />
+            <Heading size="sm">musy</Heading>
+          </HStack>
+          <Spacer />
+          <ChakraLink as={Link} to="/explore" fontSize="sm">
+            explore
+          </ChakraLink>
+          {transition.state === 'loading' && <Waver />}
         </HStack>
-        <Spacer />
-        <ChakraLink as={Link} to="/explore" fontSize="sm">
-          explore
-        </ChakraLink>
-        {transition.state === 'loading' && <Waver />}
-      </HStack>
-      <HStack h="39px" zIndex={1}>
-        <HStack w="100%" spacing={3}>
-          <NavSearch /> <UserMenu />
+        <HStack h="39px" zIndex={1}>
+          <HStack w="100%" spacing={3}>
+            <NavSearch /> <UserMenu />
+          </HStack>
         </HStack>
-      </HStack>
+      </Flex>
     </Flex>
   );
 };

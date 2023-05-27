@@ -37,7 +37,7 @@ const MobileHeader = () => {
         h="45px"
         as="header"
         backdropFilter="blur(27px)"
-        bg={isProfile ? '#10101066' : bg}
+        bg={isProfile ? 'transparent' : bg}
         py="8px"
         borderBottom={isProfile ? undefined : '1px solid'}
         borderColor={border}
