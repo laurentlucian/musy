@@ -108,7 +108,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   const blockId = data.get('blockId');
   const muteUser = data.get('muteUser');
   const muteId = data.get('muteId');
-  const easterEgg = data.get('component');
   const friendStatus = data.get('friendStatus');
   const isFriend = data.get('isFriend');
 
@@ -228,21 +227,6 @@ export const action = async ({ params, request }: ActionArgs) => {
         id: Number(muteId),
       },
     });
-  }
-  if (typeof easterEgg === 'string') {
-    if (easterEgg === '69') {
-      await prisma.settings.upsert({
-        create: { easterEgg: true, userId: id },
-        update: { easterEgg: true },
-        where: { userId: id },
-      });
-    } else {
-      await prisma.settings.upsert({
-        create: { easterEgg: false, userId: id },
-        update: { easterEgg: false },
-        where: { userId: id },
-      });
-    }
   }
   return null;
 };
