@@ -77,6 +77,12 @@ export const updateUserName = async (id: string, name: string) => {
   return data;
 };
 
+export const getCurrentUserId = async (request: Request) => {
+  const session = await authenticator.isAuthenticated(request);
+  if (!session || !session.user) throw new Response('Unauthorized', { status: 401 });
+  return session.user.id;
+};
+
 export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
@@ -85,8 +91,8 @@ export const getCurrentUser = async (request: Request) => {
     include: {
       block: { select: { blockedId: true } },
       favorite: { select: { favoriteId: true } },
-      followers: { select: { followId: true } },
-      following: { select: { userId: true } },
+      followers: { select: { followerId: true } },
+      following: { select: { followingId: true } },
       liked: { select: { trackId: true } },
       mute: true,
       playback: {
@@ -147,9 +153,6 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
   if (id) {
     return prisma.profile.findMany({
       include: {
-        following: {
-          where: { userId: id },
-        },
         playback: {
           include: {
             ...trackWithInfo,
@@ -182,7 +185,7 @@ export const getQueueableUsers = async (id: string | null = null) => {
       orderBy: { name: 'asc' },
       select: {
         followers: {
-          where: { followId: id },
+          where: { followingId: id },
         },
         image: true,
         name: true,

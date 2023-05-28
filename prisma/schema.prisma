@@ -26,48 +26,47 @@ model User {
 }
 
 model Profile {
-  id                  Int             @id @default(autoincrement())
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @default(now()) @updatedAt
-  user                User            @relation(fields: [userId], references: [id])
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
+  user        User          @relation(fields: [userId], references: [id])
   // should've been the @id
-  userId              String          @unique
+  userId      String        @unique
   //
-  name                String
-  bio                 String?
-  email               String
-  image               String
-  party               Party?
-  queue               Queue[]
-  liked               LikedSongs[]
+  name        String
+  bio         String?
+  email       String
+  image       String
+  party       Party?
+  queue       Queue[]
+  liked       LikedSongs[]
   // received
-  recent              RecentSongs[]
-  recommended         Recommended[]
+  recent      RecentSongs[]
+  recommended Recommended[]
   //
-  ai                  AI?
-  settings            Settings?
-  theme               Theme?
-  playback            Playback?
-  ColorPreset         ColorPreset[]
-  Sessions            Sessions[]
-  favorite            Favorite[]      @relation("userToFavorite")
-  favBy               Favorite[]      @relation("favoriteToUser")
-  block               Block[]         @relation("userToBlock")
-  blockBy             Block[]         @relation("blockToUser")
-  mute                Mute[]          @relation("userToMute")
-  muteBy              Mute[]          @relation("muteToUser")
-  following           Follow[]        @relation("userAsFollower")
-  followers           Follow[]        @relation("followerToUser")
+  ai          AI?
+  settings    Settings?
+  theme       Theme?
+  playback    Playback?
+  ColorPreset ColorPreset[]
+  Sessions    Sessions[]
+  favorite    Favorite[]    @relation("userToFavorite")
+  favBy       Favorite[]    @relation("favoriteToUser")
+  block       Block[]       @relation("userToBlock")
+  blockBy     Block[]       @relation("blockToUser")
+  mute        Mute[]        @relation("userToMute")
+  muteBy      Mute[]        @relation("muteToUser")
+  following   Follow[]      @relation("follower")
+  followers   Follow[]      @relation("following")
 }
 
 model Follow {
-  id       Int     @id @default(autoincrement())
-  user     Profile @relation("userAsFollower", fields: [userId], references: [userId])
-  userId   String
-  follow   Profile @relation("followerToUser", fields: [followId], references: [userId])
-  followId String
+  following   Profile @relation("following", fields: [followingId], references: [userId])
+  followingId String
+  follower    Profile @relation("follower", fields: [followerId], references: [userId])
+  followerId  String
 
-  @@unique([userId, followId])
+  @@id([followingId, followerId])
 }
 
 model Favorite {

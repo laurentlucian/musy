@@ -1,4 +1,4 @@
-import type { Playback, Prisma, Profile, Track } from '@prisma/client';
+import type { Playback, Prisma, Profile, Settings, Track } from '@prisma/client';
 
 import type { getCurrentUser } from '~/services/prisma/users.server';
 
@@ -52,39 +52,11 @@ export type TrackWithInfo = Track & {
   }[];
 };
 
-export type PendingCard = {
-  bio: string | null;
-  image: string;
-  name: string;
-  userId: string;
-};
-
-export type FriendCard = PendingCard & {
+export type ProfileWithInfo = Profile & {
   playback:
     | (Playback & {
         track: Track;
       })
     | null;
-  settings: { allowQueue: string } | null;
-};
-
-export type Friend = {
-  bio: string | null;
-  image: string;
-  name: string;
-  playback:
-    | (Playback & {
-        track: Track;
-      })
-    | null;
-  settings: { allowQueue: string } | null;
-  userId: string;
-};
-
-export type FriendsList = {
-  friend: Friend;
-};
-
-export type Favorite = {
-  favorite: Friend;
+  settings: Settings | null;
 };

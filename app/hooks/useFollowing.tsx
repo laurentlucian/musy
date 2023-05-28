@@ -7,7 +7,7 @@ const useFollowing = () => {
 
   return allUsers
     .filter((user) => {
-      return currentUser?.following.some((follow) => follow.userId === user.userId);
+      return currentUser?.following.some((follow) => follow.followingId === user.userId);
     })
     .sort((user, prevUser) => {
       if (user.playback === null && prevUser.playback !== null) return 0;

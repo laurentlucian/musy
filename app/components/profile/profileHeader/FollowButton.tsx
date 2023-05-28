@@ -12,12 +12,11 @@ import type { action as followAction } from '~/routes/api/user/follow';
 
 const FollowButton = (props: { id?: string }) => {
   const currentUser = useSessionUser();
-  const isFollowingDefault = currentUser?.following.find((user) => userId === user.userId);
-  const [isFollowing, setIsfollowing] = useState<boolean>(!!isFollowingDefault);
-  const color = useColorModeValue('#161616', '#EEE6E2');
-
   const params = useParams();
   const userId = (props.id || params.id) as string;
+  const isFollowingDefault = currentUser?.following.find((user) => userId === user.followingId);
+  const [isFollowing, setIsfollowing] = useState<boolean>(!!isFollowingDefault);
+  const color = useColorModeValue('#161616', '#EEE6E2');
 
   const fetcher = useTypedFetcher<typeof followAction>();
 

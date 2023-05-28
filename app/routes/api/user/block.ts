@@ -4,17 +4,17 @@ import { json } from '@remix-run/node';
 import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
+import { getCurrentUserId } from '~/services/prisma/users.server';
 
 export const action = async ({ request }: ActionArgs) => {
+  const currentUserId = await getCurrentUserId(request);
   const body = await request.formData();
   const userId = body.get('userId');
-  const currentUserId = body.get('currentUserId');
   const isNotBlocked = body.get('isNotBlocked');
   const blockId = body.get('blockId');
 
   if (
     typeof userId !== 'string' ||
-    typeof currentUserId !== 'string' ||
     typeof blockId !== 'string' ||
     typeof isNotBlocked !== 'string'
   ) {
@@ -32,9 +32,11 @@ export const action = async ({ request }: ActionArgs) => {
         },
       },
     });
-    await prisma.follow.delete({ where: { userId_followId: { followId: currentUserId, userId } } });
     await prisma.follow.delete({
-      where: { userId_followId: { followId: userId, userId: currentUserId } },
+      where: { followingId_followerId: { followerId: currentUserId, followingId: userId } },
+    });
+    await prisma.follow.delete({
+      where: { followingId_followerId: { followerId: userId, followingId: currentUserId } },
     });
   } else if (isNotBlocked === 'false') {
     await prisma.block.delete({

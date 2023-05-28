@@ -1,26 +1,24 @@
 import { Link, useNavigation } from '@remix-run/react';
 
-import { Button, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
+import FollowButton from '~/components/profile/profileHeader/FollowButton';
+import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '~/lib/icons/Waver';
+import type { ProfileWithInfo, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
-import { Profile } from '@prisma/client';
 
-type PlayerProps = {
-  user: Profile | null;
-};
-
-const ProfileCard = ({ user }: PlayerProps) => {
+const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
   const hoverBg = useColorModeValue('musy.50', '#5F5B59');
   const color = useColorModeValue('musy.900', 'musy.200');
-  const transition = useNavigation();
+  const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
-
-  if (!user) return null;
   const name = shortenUsername(user.name);
-  const loading = transition.location?.pathname.includes(user.userId);
+  const loading = navigation.location?.pathname.includes(user.userId);
+
+  useFullscreenTileStore();
 
   const ProfilePic = (
     <Image
@@ -39,20 +37,22 @@ const ProfileCard = ({ user }: PlayerProps) => {
     </Text>
   );
 
+  const Actions = <FollowButton id={user.userId} />;
+
   const User = (
-    <Stack justifySelf="left">
-      <Stack direction="row" w="100%">
+    <Flex justify="space-between" w="100%" align="center" pr="5px">
+      <HStack>
         {ProfilePic}
-        <HStack>
+        <Flex>
           <Stack>
-            {isSmallScreen && !user.bio && loading ? (
+            {!user.bio && loading ? (
               <Stack ml="8px">
                 <Waver />
               </Stack>
             ) : (
               Username
             )}
-            {isSmallScreen && user.bio && loading ? (
+            {user.bio && loading ? (
               <Waver />
             ) : user.bio ? (
               <Stack maxW={['40px', '100%']}>
@@ -62,10 +62,10 @@ const ProfileCard = ({ user }: PlayerProps) => {
               </Stack>
             ) : null}
           </Stack>
-          {!isSmallScreen && loading && <Waver />}
-        </HStack>
-      </Stack>
-    </Stack>
+        </Flex>
+      </HStack>
+      {Actions}
+    </Flex>
   );
 
   return (
@@ -89,4 +89,5 @@ const ProfileCard = ({ user }: PlayerProps) => {
     </Button>
   );
 };
-export default ProfileCard;
+
+export default ProfileButton;

@@ -11,7 +11,7 @@ import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import Waver from '~/lib/icons/Waver';
-import type { Friend, Track } from '~/lib/types/types';
+import type { ProfileWithInfo, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 import QuickActions from '../../home/friends/friendsPlayer/QuickActions';
@@ -21,7 +21,7 @@ type PlayerProps = {
   index: number;
   layoutKey: string;
   tracks: Track[];
-  user: Friend;
+  user: ProfileWithInfo;
 };
 
 const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
