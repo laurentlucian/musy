@@ -40,7 +40,7 @@ const Explore = () => {
   if (results.tracks.length || results.users.length) {
     return (
       <Stack px={2}>
-        <TrackTiles tracks={results.tracks} title="TRACKS" />
+        <TrackTiles tracks={results.tracks} title="SONGS" />
         {results.users.length && (
           <Text pt="10px" fontSize="11px" fontWeight="bolder">
             USERS

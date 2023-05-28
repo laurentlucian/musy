@@ -35,16 +35,17 @@ const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => 
         cursor="pointer"
         isLoading={isLoading}
         spinner={
-          <Stack ml="20px">
+          <Stack ml="15px">
             <Waver />
           </Stack>
         }
         onClick={getMood}
-        fontSize="14px"
+        fontSize={['10px', '13px']}
         p={0}
+        h="-webkit-fit-content"
       >
         {text}
-        <Text as="span" fontSize="11px" opacity={0.5} pl={2}>
+        <Text as="span" fontSize={['9px', '10px']} opacity={0.5} pl={1.5}>
           {timePassed}
         </Text>
       </Button>

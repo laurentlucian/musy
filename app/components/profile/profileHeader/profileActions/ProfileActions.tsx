@@ -15,14 +15,7 @@ import CopyLink from './CopyLink';
 import MuteUser from './MuteUser';
 import RemoveFriend from './RemoveFriend';
 
-type ProfileActionsTypes = {
-  block: boolean;
-  blockId: string;
-  mute: boolean;
-  muteId: string;
-};
-
-const ProfileActions = ({ block, blockId, mute, muteId }: ProfileActionsTypes) => {
+const ProfileActions = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('musy.200', 'musy.900');
 
@@ -45,8 +38,8 @@ const ProfileActions = ({ block, blockId, mute, muteId }: ProfileActionsTypes) =
         <MenuList bg={bg}>
           <CopyLink color={color} bg={bg} />
           <RemoveFriend />
-          <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
-          <BlockUser header={false} block={block} blockId={blockId} />
+          {/* <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
+          <BlockUser header={false} block={block} blockId={blockId} /> */}
         </MenuList>
       </Portal>
     </Menu>

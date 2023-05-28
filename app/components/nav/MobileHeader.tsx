@@ -9,9 +9,10 @@ import HomeHeader from './mobile/HomeHeader';
 import ProfileHeader from './mobile/ProfileHeader';
 import SettingsHeader from './mobile/SettingsHeader';
 import UserMenu from './UserMenu';
-import { useThemeBg } from '~/hooks/useTheme';
+import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
 
 const MobileHeader = () => {
+  const currentUser = useSessionUser();
   const { pathname } = useLocation();
   const bg = useColorModeValue('#EEE6E2', 'black');
   const border = useColorModeValue('musy.400', 'musy.700');
@@ -20,6 +21,7 @@ const MobileHeader = () => {
   const isExplore = pathname === '/explore';
   const isSettings = pathname === '/settings';
   const isProfile = !isHome || !isExplore || !isSettings;
+  const isOwnProfile = currentUser?.userId === pathname.split('/')[1];
 
   const Header = isHome ? (
     <HomeHeader />
@@ -51,7 +53,7 @@ const MobileHeader = () => {
         w="100%"
       >
         {Header}
-        <UserMenu />
+        {isOwnProfile ? <UserMenu /> : <ProfileActions />}
       </Flex>
     </Box>
   );
