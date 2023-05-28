@@ -3,11 +3,10 @@ import { useState } from 'react';
 import { NotAllowedIcon } from '@chakra-ui/icons';
 import { Button, MenuItem, useColorModeValue } from '@chakra-ui/react';
 
-import { useTypedFetcher, useTypedRouteLoaderData } from 'remix-typedjson';
+import { useTypedFetcher } from 'remix-typedjson';
 
 import { useProfileId } from '~/hooks/usePofile';
-import useSessionUser from '~/hooks/useSessionUser';
-import type { loader } from '~/routes/$id';
+import { useSessionUserId } from '~/hooks/useSessionUser';
 import type { action as blockAction } from '~/routes/api/user/block';
 
 type BlockTypes = {
@@ -21,7 +20,7 @@ export const BlockUser = ({ block, blockId, header }: BlockTypes) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
   const [isBlocked, setIsBlocked] = useState(block);
   const fetcher = useTypedFetcher<typeof blockAction>();
-  const currentUserId = useSessionUser()?.userId ?? '';
+  const currentUserId = useSessionUserId() ?? '';
   const userId = useProfileId();
 
   const handleClick = () => {
