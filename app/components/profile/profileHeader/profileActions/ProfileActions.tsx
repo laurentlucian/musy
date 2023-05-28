@@ -10,10 +10,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import { BlockUser } from './BlockUser';
 import CopyLink from './CopyLink';
-import MuteUser from './MuteUser';
-import RemoveFriend from './RemoveFriend';
 
 const ProfileActions = () => {
   const color = useColorModeValue('#161616', '#EEE6E2');
@@ -37,9 +34,6 @@ const ProfileActions = () => {
       <Portal>
         <MenuList bg={bg}>
           <CopyLink color={color} bg={bg} />
-          <RemoveFriend />
-          {/* <MuteUser color={color} bg={bg} mute={mute} muteId={muteId} />
-          <BlockUser header={false} block={block} blockId={blockId} /> */}
         </MenuList>
       </Portal>
     </Menu>

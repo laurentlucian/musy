@@ -26,12 +26,7 @@ import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
-import {
-  getAllUsers,
-  getCurrentUser,
-  getQueueableUsers,
-  getRecommendableUsers,
-} from '~/services/prisma/users.server';
+import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prisma/users.server';
 
 import FullscreenTile from './components/profile/tiles/fullscreen/FullscreenTile';
 import useVisibilityChange from './hooks/useVisibilityChange';
@@ -91,12 +86,11 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       users: [],
     });
 
-  const [currentUser, theme, users, queueableUsers, recommendableUsers] = await Promise.all([
+  const [currentUser, theme, users, queueableUsers] = await Promise.all([
     getCurrentUser(request),
     getTheme(params.id),
     getAllUsers(!!cookie, id),
     getQueueableUsers(id),
-    getRecommendableUsers(id),
   ]);
 
   return typedjson({
@@ -104,7 +98,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     currentUser,
     isMobile,
     queueableUsers,
-    recommendableUsers,
     theme,
     users,
   });

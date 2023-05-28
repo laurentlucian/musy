@@ -1,4 +1,4 @@
-import type { MetaFunction, LoaderArgs, ActionArgs } from '@remix-run/node';
+import type { MetaFunction, LoaderArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack } from '@chakra-ui/react';
@@ -13,7 +13,6 @@ import useSessionUser from '~/hooks/useSessionUser';
 import { msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { getCurrentUser } from '~/services/prisma/users.server';
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
@@ -91,75 +90,6 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     listened,
     user,
   });
-};
-
-export const action = async ({ params, request }: ActionArgs) => {
-  const id = params.id;
-  invariant(id, 'Missing params Id');
-  const currentUser = await getCurrentUser(request);
-  invariant(currentUser, 'Missing current user');
-
-  const data = await request.formData();
-  const friendStatus = data.get('friendStatus');
-  const isFriend = data.get('isFriend');
-
-  if (friendStatus === 'requested') {
-    const isPending = await prisma.pendingFriend.findFirst({
-      where: {
-        pendingFriendId: currentUser.userId,
-        userId: id,
-      },
-    });
-
-    await prisma.pendingFriend.create({
-      data: {
-        pendingFriendId: id,
-        userId: currentUser.userId,
-      },
-    });
-
-    if (isPending) {
-      await prisma.friend.create({
-        data: { friendId: currentUser.userId, userId: id },
-      });
-      await prisma.friend.create({
-        data: { friendId: id, userId: currentUser.userId },
-      });
-    }
-  } else if (friendStatus === 'block') {
-    await prisma.block.create({
-      data: {
-        blockedId: id,
-        userId: currentUser.userId,
-      },
-    });
-  } else if (friendStatus === 'unblock') {
-    await prisma.block.delete({
-      where: { userId_blockedId: { blockedId: id, userId: currentUser.userId } },
-    });
-  }
-
-  if (isFriend === 'true') {
-    const friendRecord = await prisma.friend.findUnique({
-      select: { id: true },
-      where: { userId_friendId: { friendId: id, userId: currentUser.userId } },
-    });
-    const secondFriendRecord = await prisma.friend.findUnique({
-      select: { id: true },
-      where: { userId_friendId: { friendId: currentUser.userId, userId: id } },
-    });
-    if (friendRecord && secondFriendRecord) {
-      console.log('deleted friend');
-      await prisma.friend.delete({
-        where: { id: friendRecord.id },
-      });
-      await prisma.friend.delete({
-        where: { id: secondFriendRecord.id },
-      });
-    }
-  }
-
-  return null;
 };
 
 export { CatchBoundary } from '~/components/error/CatchBoundary';

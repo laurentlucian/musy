@@ -10,24 +10,22 @@ export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
   const userId = body.get('userId');
   const currentUserId = body.get('currentUserId');
-  const follow = body.get('follow');
+  const isFollowing = body.get('isFollowing');
 
   if (
     typeof userId !== 'string' ||
     typeof currentUserId !== 'string' ||
-    typeof follow !== 'string'
+    typeof isFollowing !== 'string'
   ) {
     return typedjson('Bad Request');
   }
-
-  if (follow === 'true') {
-    const { spotify } = await getSpotifyClient(currentUserId);
-    invariant(spotify, 'Spotify API Error');
-    await spotify.followUsers([userId]);
-  } else if (follow === 'false') {
-    const { spotify } = await getSpotifyClient(currentUserId);
-    invariant(spotify, 'Spotify API Error');
+  const { spotify } = await getSpotifyClient(currentUserId);
+  invariant(spotify, 'Spotify API Error');
+  
+  if (isFollowing === 'true') {
     await spotify.unfollowUsers([userId]);
+  } else if (isFollowing === 'false') {
+    await spotify.followUsers([userId]);
   }
   return null;
 };

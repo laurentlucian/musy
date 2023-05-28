@@ -85,11 +85,10 @@ export const getCurrentUser = async (request: Request) => {
     include: {
       block: { select: { blockedId: true } },
       favorite: { select: { favoriteId: true } },
-      friendsList: { select: { friendId: true } },
+      followers: { select: { followId: true } },
+      following: { select: { userId: true } },
       liked: { select: { trackId: true } },
       mute: true,
-      pendingList: true,
-      pendingListUserIsOn: { select: { userId: true } },
       playback: {
         include: {
           ...trackWithInfo,
@@ -148,8 +147,8 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
   if (id) {
     return prisma.profile.findMany({
       include: {
-        friendsList: {
-          where: { friendId: id },
+        following: {
+          where: { userId: id },
         },
         playback: {
           include: {
@@ -182,8 +181,8 @@ export const getQueueableUsers = async (id: string | null = null) => {
     return prisma.profile.findMany({
       orderBy: { name: 'asc' },
       select: {
-        friendsList: {
-          where: { friendId: id },
+        followers: {
+          where: { followId: id },
         },
         image: true,
         name: true,
@@ -206,59 +205,30 @@ export const getQueueableUsers = async (id: string | null = null) => {
   }
 };
 
-export const getRecommendableUsers = async (id: string | null = null) => {
-  if (id) {
-    return prisma.profile.findMany({
-      orderBy: { name: 'asc' },
-      select: {
-        friendsList: {
-          where: { friendId: id },
-        },
-        image: true,
-        name: true,
-        settings: { select: { allowQueue: true } },
-        userId: true,
-      },
-      where: { user: { NOT: { id }, revoked: false } },
-    });
-  } else {
-    return prisma.profile.findMany({
-      orderBy: { name: 'asc' },
-      select: {
-        image: true,
-        name: true,
-        settings: { select: { allowQueue: true } },
-        userId: true,
-      },
-      where: { user: { revoked: false } },
-    });
-  }
-};
-
-export const getFriends = async (userId?: string) => {
-  if (!userId) return null;
-  const friends = await prisma.friend.findMany({
-    orderBy: [{ friend: { playback: { updatedAt: 'desc' } } }],
-    select: {
-      friend: {
-        select: {
-          bio: true,
-          image: true,
-          name: true,
-          playback: {
-            include: {
-              ...trackWithInfo,
-            },
-          },
-          settings: { select: { allowQueue: true } },
-          userId: true,
-        },
-      },
-    },
-    where: { userId },
-  });
-  return friends;
-};
+// export const getFriends = async (userId?: string) => {
+//   if (!userId) return null;
+//   const friends = await prisma.friend.findMany({
+//     orderBy: [{ friend: { playback: { updatedAt: 'desc' } } }],
+//     select: {
+//       friend: {
+//         select: {
+//           bio: true,
+//           image: true,
+//           name: true,
+//           playback: {
+//             include: {
+//               ...trackWithInfo,
+//             },
+//           },
+//           settings: { select: { allowQueue: true } },
+//           userId: true,
+//         },
+//       },
+//     },
+//     where: { userId },
+//   });
+//   return friends;
+// };
 
 export const getFavorites = async (userId?: string) => {
   if (!userId) return null;
@@ -283,23 +253,4 @@ export const getFavorites = async (userId?: string) => {
     where: { userId },
   });
   return favorites;
-};
-
-export const getPending = async (userId?: string) => {
-  if (!userId) return null;
-
-  const pendingList = await prisma.pendingFriend.findMany({
-    include: {
-      pendingFriend: {
-        select: {
-          bio: true,
-          image: true,
-          name: true,
-          userId: true,
-        },
-      },
-    },
-    where: { userId },
-  });
-  return pendingList;
 };

@@ -1,17 +1,6 @@
 import { useSearchParams } from '@remix-run/react';
 
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Image,
-  Textarea,
-  Flex,
-  VStack,
-  Button,
-  SimpleGrid,
-} from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Flex, VStack } from '@chakra-ui/react';
 
 import { CodeCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
@@ -23,6 +12,11 @@ import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
 import Bio from './Bio';
+import FavoriteButton from './FavoriteButton';
+import FollowButton from './FollowButton';
+import { BlockUser } from './profileActions/BlockUser';
+import ProfileActions from './profileActions/ProfileActions';
+import Search from './Search';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -35,14 +29,16 @@ const ProfileHeader = () => {
 
   const isOwnProfile = currentUser?.userId === user.userId;
 
+  const isBlocked = currentUser?.block.find((block) => block.blockedId === user.userId);
+
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
       <Image
         borderRadius="full"
-        minW={[100, 150, 200]}
-        maxW={[100, 150, 200]}
-        minH={[100, 150, 200]}
-        maxH={[100, 150, 200]}
+        minW={[150, 150, 200]}
+        maxW={[150, 150, 200]}
+        minH={[150, 150, 200]}
+        maxH={[150, 150, 200]}
         src={user.image}
         mr={[0, '10px']}
       />
@@ -51,7 +47,11 @@ const ProfileHeader = () => {
 
   const Username = (
     <HStack>
-      <Heading size={['md', 'lg']} fontWeight="bold" textAlign="left">
+      <Heading
+        size={user.name.length > 10 ? 'lg' : user.name.length > 16 ? 'md' : 'xl'}
+        fontWeight="bold"
+        textAlign="left"
+      >
         {user.name}
       </Heading>
       <PrivateBadge />
@@ -65,10 +65,12 @@ const ProfileHeader = () => {
 
   const timeframe = params.get('listened') === 'week' ? '7d' : '24h';
   const SubHeader = (
-    <>
+    <HStack spacing={[3, 5]} position="relative">
+      <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} />;
       <Tooltip label="hours listened" placement="bottom-end" hasArrow>
         <Flex
           align="baseline"
+          pt="1px"
           cursor="pointer"
           onClick={() => {
             if (params.get('listened') === 'week') {
@@ -79,46 +81,48 @@ const ProfileHeader = () => {
             }
           }}
         >
-          <Text fontSize={['10px', '13px']} mr="5px">
+          <Text fontSize="13px" mr="8px">
             {listened}
           </Text>
-          <Text as="span" fontSize={['9px', '10px']} opacity={0.5}>
+          <Text as="span" fontSize="10px" opacity={0.5}>
             /&nbsp; {timeframe}
           </Text>
         </Flex>
       </Tooltip>
-      <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} />
-    </>
+    </HStack>
   );
 
-  const Buttons = (
-    <SimpleGrid columns={2} gap={2} maxW={['unset', '400px']}>
-      <Button type="submit" variant="musy" fontSize={['12px', '13px']} h={['27px', '30px']}>
-        Follow
-      </Button>
-      <Button type="submit" variant="musy" fontSize={['12px', '13px']} h={['27px', '30px']}>
-        Send a song
-      </Button>
-    </SimpleGrid>
-  );
+  const MenuBttn = !isOwnProfile ? <ProfileActions/> : null;
 
   return (
-    <HStack spacing={3} align="unset">
-      <Stack>
+    <VStack mb="40px" alignItems="baseline" w="100%">
+      <HStack>
         {ProfilePic}
-
-        <Flex direction="column" align="center">
-          {SubHeader}
-        </Flex>
-      </Stack>
-      <Stack flexGrow={1} spacing={[2, 0]} justify={isOwnProfile ? 'flex-start' : 'space-between'}>
-        <Stack spacing={3}>
-          {Username}
-          {!isOwnProfile && Buttons}
+        <VStack align="left" pos="relative" top="20px" left="10px">
+          <HStack>{Username}</HStack>
+          <VStack justify="flex-end" align="inherit" pr={['10px', 0]}>
+            <HStack>
+              {isBlocked ? (
+                <BlockUser header block={true} blockId={String(isBlocked.blockedId)} />
+              ) : (
+                <>
+                  <FavoriteButton />
+                  {!isOwnProfile && <FollowButton />}
+                </>
+              )}
+              {MenuBttn}
+            </HStack>
+            {SubHeader}
+          </VStack>
+        </VStack>
+      </HStack>
+      <Bio bio={user.bio} isOwnProfile={isOwnProfile} />
+      {!isOwnProfile && !isBlocked && (
+        <Stack w="97%" pos="relative" top="30px" pb="20px">
+          <Search />
         </Stack>
-        <Bio bio={user.bio} isOwnProfile={isOwnProfile} />
-      </Stack>
-    </HStack>
+      )}
+    </VStack>
   );
 };
 

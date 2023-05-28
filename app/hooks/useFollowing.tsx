@@ -1,13 +1,13 @@
 import useSessionUser from './useSessionUser';
 import useUsers from './useUsers';
 
-const useFriends = () => {
+const useFollowing = () => {
   const currentUser = useSessionUser();
   const allUsers = useUsers();
 
   return allUsers
     .filter((user) => {
-      return currentUser?.friendsList.some((friend) => friend.friendId === user.userId);
+      return currentUser?.following.some((follow) => follow.userId === user.userId);
     })
     .sort((user, prevUser) => {
       if (user.playback === null && prevUser.playback !== null) return 0;
@@ -15,4 +15,4 @@ const useFriends = () => {
     });
 };
 
-export default useFriends;
+export default useFollowing;

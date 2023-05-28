@@ -4,7 +4,7 @@ import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from
 
 import { motion } from 'framer-motion';
 
-import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
+import FollowButton from '~/components/profile/profileHeader/FollowButton';
 import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
@@ -63,7 +63,7 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const Actions = (
     <HStack justify={track ? 'start' : 'end'} align="baseline" w="100%">
       <FavoriteButton id={user.userId} />
-      {!isOwnProfile && <AddFriendsButton id={user.userId} />}
+      {!isOwnProfile && <FollowButton id={user.userId} />}
       <QuickActions name={name} image={user.image} profileId={user.userId} que={que} />
     </HStack>
   );

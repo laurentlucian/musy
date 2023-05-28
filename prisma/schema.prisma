@@ -56,30 +56,18 @@ model Profile {
   blockBy             Block[]         @relation("blockToUser")
   mute                Mute[]          @relation("userToMute")
   muteBy              Mute[]          @relation("muteToUser")
-  pendingList         PendingFriend[] @relation("userToPending")
-  pendingListUserIsOn PendingFriend[] @relation("PendingToUser")
-  friendsList         Friend[]        @relation("userToFriend")
-  friendsListUserIsOn Friend[]        @relation("friendToUser")
+  following           Follow[]        @relation("userAsFollower")
+  followers           Follow[]        @relation("followerToUser")
 }
 
-model PendingFriend {
-  id              Int     @id @default(autoincrement())
-  user            Profile @relation("userToPending", fields: [userId], references: [userId])
-  userId          String
-  pendingFriend   Profile @relation("PendingToUser", fields: [pendingFriendId], references: [userId])
-  pendingFriendId String
-
-  @@unique([userId, pendingFriendId])
-}
-
-model Friend {
+model Follow {
   id       Int     @id @default(autoincrement())
-  user     Profile @relation("userToFriend", fields: [userId], references: [userId])
+  user     Profile @relation("userAsFollower", fields: [userId], references: [userId])
   userId   String
-  friend   Profile @relation("friendToUser", fields: [friendId], references: [userId])
-  friendId String
+  follow   Profile @relation("followerToUser", fields: [followId], references: [userId])
+  followId String
 
-  @@unique([userId, friendId])
+  @@unique([userId, followId])
 }
 
 model Favorite {

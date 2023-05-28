@@ -7,7 +7,7 @@ import invariant from 'tiny-invariant';
 
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
 import TrackTiles from '~/components/profile/tiles/TrackTiles';
-import useFriends from '~/hooks/useFriends';
+import useFriends from '~/hooks/useFollowing';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import type { TrackWithInfo } from '~/lib/types/types';
 import { getSearchResults } from '~/services/prisma/spotify.server';
