@@ -29,6 +29,7 @@ const ProfileActions = () => {
           _active={{ boxShadow: 'none' }}
           _focus={{ boxShadow: 'none' }}
           pl={['14px', '10px']}
+          pr="10px"
         />
       </Stack>
       <Portal>

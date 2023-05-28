@@ -1,7 +1,7 @@
 import { useParams } from '@remix-run/react';
 import { useState } from 'react';
 
-import { IconButton, useColorModeValue } from '@chakra-ui/react';
+import { Button, IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import { UserAdd, UserMinus } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
@@ -24,6 +24,28 @@ const FollowButton = (props: { id?: string }) => {
   const label = isFollowing ? 'Unfollow' : 'Follow';
 
   const icon = isFollowing ? <UserMinus /> : <UserAdd />;
+
+  return (
+    <Button
+      isLoading={fetcher.formAction?.includes(userId)}
+      onClick={(e) => {
+        e.preventDefault();
+        if (currentUser) {
+          setIsfollowing(!isFollowing);
+          fetcher.submit(
+            { currentUserId: currentUser.userId, isFollowing: String(isFollowing), userId },
+            { action: `/api/user/follow`, method: 'post', replace: true },
+          );
+        }
+      }}
+      type="submit"
+      variant="musy"
+      fontSize={['12px', '13px']}
+      h={['27px', '30px']}
+    >
+      {isFollowing ? 'Following' : 'Follow'}
+    </Button>
+  );
 
   return (
     <Tooltip label={label}>

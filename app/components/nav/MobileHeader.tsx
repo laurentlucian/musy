@@ -20,7 +20,7 @@ const MobileHeader = () => {
   const isHome = pathname === '/home';
   const isExplore = pathname === '/explore';
   const isSettings = pathname === '/settings';
-  const isProfile = !isHome || !isExplore || !isSettings;
+  const isProfile = !isHome && !isExplore && !isSettings;
   const isOwnProfile = currentUser?.userId === pathname.split('/')[1];
 
   const Header = isHome ? (
@@ -53,7 +53,7 @@ const MobileHeader = () => {
         w="100%"
       >
         {Header}
-        {isOwnProfile ? <UserMenu /> : <ProfileActions />}
+        {isProfile ? isOwnProfile ? <UserMenu /> : <ProfileActions /> : null}
       </Flex>
     </Box>
   );
