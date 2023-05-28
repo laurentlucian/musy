@@ -32,6 +32,10 @@ export const action = async ({ request }: ActionArgs) => {
         },
       },
     });
+    await prisma.follow.delete({ where: { userId_followId: { followId: currentUserId, userId } } });
+    await prisma.follow.delete({
+      where: { userId_followId: { followId: userId, userId: currentUserId } },
+    });
   } else if (isNotBlocked === 'false') {
     await prisma.block.delete({
       where: {
