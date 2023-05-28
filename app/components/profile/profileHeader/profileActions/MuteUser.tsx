@@ -1,25 +1,37 @@
-import { useSubmit } from '@remix-run/react';
 import { useState } from 'react';
 
 import { MenuItem } from '@chakra-ui/react';
 
 import { VolumeMute } from 'iconsax-react';
+import { useTypedFetcher } from 'remix-typedjson';
 
-type MuteTypes = {
+import { useProfileId } from '~/hooks/usePofile';
+import { useSessionUserId } from '~/hooks/useSessionUser';
+import type { action as muteAction } from '~/routes/api/user/mute';
+
+type Mute = {
   bg: string;
   color: string;
   mute: boolean;
   muteId: string;
 };
 
-const MuteUser = ({ bg, color, mute, muteId }: MuteTypes) => {
+const MuteUser = ({ bg, color, mute, muteId }: Mute) => {
   const [isMuted, setIsMuted] = useState(mute);
-  const submit = useSubmit();
+  const fetcher = useTypedFetcher<typeof muteAction>();
+  const userId = useProfileId();
+  const currentUserId = useSessionUserId();
 
   const handleClick = () => {
-    setIsMuted(!isMuted);
-    submit({ muteId: muteId, muteUser: String(!isMuted) }, { method: 'post', replace: true });
+    if (currentUserId) {
+      setIsMuted(!isMuted);
+      fetcher.submit(
+        { currentUserId, isNotMuted: String(!isMuted), muteId, userId },
+        { action: '/api/user/mute', method: 'post', replace: true },
+      );
+    }
   };
+
   return (
     <MenuItem
       icon={<VolumeMute size="18px" />}

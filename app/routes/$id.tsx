@@ -100,8 +100,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   invariant(currentUser, 'Missing current user');
 
   const data = await request.formData();
-  const muteUser = data.get('muteUser');
-  const muteId = data.get('muteId');
   const friendStatus = data.get('friendStatus');
   const isFriend = data.get('isFriend');
 
@@ -161,24 +159,6 @@ export const action = async ({ params, request }: ActionArgs) => {
     }
   }
 
-  if (muteUser === 'true') {
-    await prisma.mute.create({
-      data: {
-        muted: {
-          connect: { userId: id },
-        },
-        user: {
-          connect: { userId: currentUser.userId },
-        },
-      },
-    });
-  } else if (muteUser === 'false') {
-    await prisma.mute.delete({
-      where: {
-        id: Number(muteId),
-      },
-    });
-  }
   return null;
 };
 
