@@ -1,19 +1,18 @@
-import { useParams, useSearchParams } from '@remix-run/react';
+import { useSearchParams } from '@remix-run/react';
 
-import { Heading, HStack, Stack, Text, Image, Textarea, Flex, VStack } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Flex, VStack } from '@chakra-ui/react';
 
 import { CodeCircle } from 'iconsax-react';
-import { useTypedFetcher, useTypedRouteLoaderData } from 'remix-typedjson';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
 import MoodButton from '~/components/profile/profileHeader/MoodButton';
 import Tooltip from '~/components/Tooltip';
-import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import type { loader } from '~/routes/$id';
-import type { action as bioAction } from '~/routes/api/user/profile/bio';
 
 import PrivateBadge from '../badges/PrivateBadge';
+import Bio from './Bio';
 import FavoriteButton from './FavoriteButton';
 import { BlockUser } from './profileActions/BlockUser';
 import ProfileActions from './profileActions/ProfileActions';
@@ -22,10 +21,7 @@ import Search from './Search';
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
-  const isSmallScreen = useIsMobile();
   const currentUser = useSessionUser();
-  const { id } = useParams();
-  const fetcher = useTypedFetcher<typeof bioAction>();
 
   if (!data) return null;
 
@@ -35,13 +31,6 @@ const ProfileHeader = () => {
 
   const isBlocked = currentUser?.block.find((block) => block.blockedId === user.userId);
   const isMuted = currentUser?.mute.find((mute) => mute.mutedId === user.userId);
-
-  const updateBio = (bio: string) => {
-    fetcher.submit(
-      { bio, userId: id ?? ':)' },
-      { action: '/api/user/profile/bio', method: 'post', replace: true },
-    );
-  };
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
@@ -75,49 +64,10 @@ const ProfileHeader = () => {
     </HStack>
   );
 
-  const Bio =
-    user.id === currentUser?.id ? (
-      <Stack w="100%" minW="100%" maxW="100%" pt="20px">
-        <Textarea
-          name="bio"
-          size="md"
-          variant="flushed"
-          defaultValue={user.bio ?? ''}
-          placeholder="write something :)"
-          onBlur={(e) => updateBio(e.currentTarget.value)}
-          resize="none"
-          maxLength={75}
-          rows={2}
-          py={0}
-          focusBorderColor="spotify.green"
-          w={isSmallScreen ? '100%' : '50%'}
-          spellCheck={false}
-          h="100%"
-          minH="20px"
-          overflow="hidden"
-        />
-      </Stack>
-    ) : (
-      <Text
-        fontSize="14px"
-        noOfLines={3}
-        whiteSpace="normal"
-        wordBreak="break-word"
-        w="100%"
-        spellCheck={false}
-        h="100%"
-        minH="20px"
-        pt="20px"
-      >
-        {user.bio}
-      </Text>
-    );
-  const Mood = currentUser ? <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} /> : null;
-
   const timeframe = params.get('listened') === 'week' ? '7d' : '24h';
   const SubHeader = (
     <HStack spacing={[3, 5]} position="relative">
-      {Mood}
+      <MoodButton mood={user.ai?.mood} since={user.ai?.updatedAt} />;
       <Tooltip label="hours listened" placement="bottom-end" hasArrow>
         <Flex
           align="baseline"
@@ -174,7 +124,7 @@ const ProfileHeader = () => {
           </VStack>
         </VStack>
       </HStack>
-      {Bio}
+      <Bio bio={user.bio} isOwnProfile={isOwnProfile} />
       {!isOwnProfile && !isBlocked && (
         <Stack w="97%" pos="relative" top="30px" pb="20px">
           <Search />
