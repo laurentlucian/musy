@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import AddFriendsButton from '~/components/profile/profileHeader/AddFriendsButton';
 import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
+import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import Waver from '~/lib/icons/Waver';
@@ -15,7 +16,6 @@ import { shortenUsername } from '~/lib/utils';
 
 import QuickActions from '../../home/friends/friendsPlayer/QuickActions';
 import FavoriteButton from '../profileHeader/FavoriteButton';
-import useSessionUser from '~/hooks/useSessionUser';
 
 type PlayerProps = {
   index: number;
@@ -62,7 +62,7 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
 
   const Actions = (
     <HStack justify={track ? 'start' : 'end'} align="baseline" w="100%">
-      {!isOwnProfile && <FavoriteButton id={user.userId} />}
+      <FavoriteButton id={user.userId} />
       {!isOwnProfile && <AddFriendsButton id={user.userId} />}
       <QuickActions name={name} image={user.image} profileId={user.userId} que={que} />
     </HStack>

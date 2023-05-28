@@ -35,12 +35,12 @@ const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
 
   return (
     await prisma.track.findMany({
-      where: {
-        id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
-      },
       include: {
         liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
         recent: { select: { user: true } },
+      },
+      where: {
+        id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
       },
     })
   ).sort((a, b) => trackIds.indexOf(a.id) - trackIds.indexOf(b.id));
@@ -107,7 +107,7 @@ export const getUserSpotifyPlayback = async (userId: string) => {
   return playback;
 };
 
-export const getSearchResults = async ({ userId, url }: { userId: string; url: URL }) => {
+export const getSearchResults = async ({ url, userId }: { url: URL; userId: string }) => {
   const keyword = url.searchParams.get('search');
   if (!keyword) return { tracks: [], users: [] };
 
@@ -118,13 +118,12 @@ export const getSearchResults = async ({ userId, url }: { userId: string; url: U
       if (!res.body.tracks) return [];
       return transformTracks(res.body.tracks.items);
     }),
-    // prisma.track.findMany({ where: { name: { contains: keyword } } }),
     prisma.profile.findMany({
-      where: { name: { contains: keyword } },
       include: {
         playback: { include: { track: true } },
         settings: true,
       },
+      where: { name: { contains: keyword } },
     }),
   ]);
 

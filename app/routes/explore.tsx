@@ -1,19 +1,21 @@
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { Stack, Text } from '@chakra-ui/react';
 
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
+
 import MiniPlayer from '~/components/profile/player/MiniPlayer';
+import TrackTiles from '~/components/profile/tiles/TrackTiles';
 import useFriends from '~/hooks/useFriends';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import type { TrackWithInfo } from '~/lib/types/types';
-import { getTopLeaderboard } from '~/services/prisma/tracks.server';
-import TrackTiles from '~/components/profile/tiles/TrackTiles';
-import { getCurrentUser } from '~/services/prisma/users.server';
-import { LoaderArgs } from '@remix-run/server-runtime';
 import { getSearchResults } from '~/services/prisma/spotify.server';
-import invariant from 'tiny-invariant';
+import { getTopLeaderboard } from '~/services/prisma/tracks.server';
+import { getCurrentUser } from '~/services/prisma/users.server';
 
 const Explore = () => {
-  const { top, results } = useTypedLoaderData<typeof loader>();
+  const { results, top } = useTypedLoaderData<typeof loader>();
   const friends = useFriends();
   const restOfUsers = useRestOfUsers();
 
@@ -99,7 +101,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   invariant(currentUser, 'No user found');
   const userId = currentUser.userId;
   const [results, top] = await Promise.all([
-    getSearchResults({ userId, url: new URL(request.url) }),
+    getSearchResults({ url: new URL(request.url), userId }),
     getTopLeaderboard(),
   ]);
 
