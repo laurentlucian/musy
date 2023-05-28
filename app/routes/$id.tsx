@@ -14,7 +14,6 @@ import { msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
-import { getSpotifyClient } from '~/services/spotify.server';
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
@@ -101,7 +100,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   invariant(currentUser, 'Missing current user');
 
   const data = await request.formData();
-  const follow = data.get('follow');
   const muteUser = data.get('muteUser');
   const muteId = data.get('muteId');
   const friendStatus = data.get('friendStatus');
@@ -142,15 +140,6 @@ export const action = async ({ params, request }: ActionArgs) => {
       where: { userId_blockedId: { blockedId: id, userId: currentUser.userId } },
     });
   }
-  if (follow === 'true') {
-    const { spotify } = await getSpotifyClient(currentUser.userId);
-    invariant(spotify, 'Spotify API Error');
-    await spotify.followUsers([id]);
-  } else if (follow === 'false') {
-    const { spotify } = await getSpotifyClient(currentUser.userId);
-    invariant(spotify, 'Spotify API Error');
-    await spotify.unfollowUsers([id]);
-  }
 
   if (isFriend === 'true') {
     const friendRecord = await prisma.friend.findUnique({
@@ -171,7 +160,6 @@ export const action = async ({ params, request }: ActionArgs) => {
       });
     }
   }
-
 
   if (muteUser === 'true') {
     await prisma.mute.create({
