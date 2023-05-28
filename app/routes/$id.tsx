@@ -102,10 +102,7 @@ export const action = async ({ params, request }: ActionArgs) => {
 
   const data = await request.formData();
   const follow = data.get('follow');
-
   const isFavorited = data.get('isFavorited');
-  const blockUser = data.get('blockUser');
-  const blockId = data.get('blockId');
   const muteUser = data.get('muteUser');
   const muteId = data.get('muteId');
   const friendStatus = data.get('friendStatus');
@@ -190,24 +187,6 @@ export const action = async ({ params, request }: ActionArgs) => {
   } else if (isFavorited === 'false') {
     await prisma.favorite.delete({
       where: { userId_favoriteId: { favoriteId: id, userId: currentUser.userId } },
-    });
-  }
-  if (blockUser === 'true') {
-    await prisma.block.create({
-      data: {
-        blocked: {
-          connect: { userId: id },
-        },
-        user: {
-          connect: { userId: currentUser.userId },
-        },
-      },
-    });
-  } else if (blockUser === 'false') {
-    await prisma.block.delete({
-      where: {
-        id: Number(blockId),
-      },
     });
   }
   if (muteUser === 'true') {
