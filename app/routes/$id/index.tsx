@@ -24,7 +24,7 @@ const ProfileOutlet = () => {
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
-    <Stack spacing={8} pos="relative" top={playback ? '-30px' : 0}>
+    <Stack spacing={8} pos="relative">
       {playback && (
         <Player
           layoutKey="Player"
