@@ -11,7 +11,18 @@ export const trackWithInfo = {
   },
 } as const;
 
-export const getActivity = async () => {
+export const getActivity = async (userId: string) => {
+  const following = (
+    await prisma.follow.findMany({
+      select: {
+        followingId: true,
+      },
+      where: {
+        followerId: userId,
+      },
+    })
+  ).map((f) => f.followingId);
+
   const [like, queue, recommended] = await Promise.all([
     prisma.likedSongs.findMany({
       include: {
@@ -19,6 +30,11 @@ export const getActivity = async () => {
         user: true,
       },
       orderBy: { createdAt: 'desc' },
+      where: {
+        userId: {
+          in: following,
+        },
+      },
       take: 20,
     }),
     prisma.queue.findMany({
@@ -31,6 +47,7 @@ export const getActivity = async () => {
       take: 20,
       where: {
         action: 'send',
+        OR: [{ userId: { in: following } }, { ownerId: { in: following } }],
       },
     }),
     prisma.recommended.findMany({
@@ -39,6 +56,11 @@ export const getActivity = async () => {
         user: true,
       },
       orderBy: { createdAt: 'desc' },
+      where: {
+        userId: {
+          in: following,
+        },
+      },
       take: 20,
     }),
   ]);

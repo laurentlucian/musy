@@ -1,10 +1,12 @@
 import { Stack, useColorModeValue } from '@chakra-ui/react';
+import { LoaderArgs } from '@remix-run/server-runtime';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/home/activity/ActivityTile';
 import type { TrackWithInfo } from '~/lib/types/types';
 import { getActivity } from '~/services/prisma/tracks.server';
+import { getCurrentUserId } from '~/services/prisma/users.server';
 
 const Home = () => {
   const { activities } = useTypedLoaderData<typeof loader>();
@@ -33,8 +35,9 @@ const Home = () => {
   );
 };
 
-export const loader = async () => {
-  const activities = await getActivity();
+export const loader = async ({ request }: LoaderArgs) => {
+  const currentUserId = await getCurrentUserId(request);
+  const activities = await getActivity(currentUserId);
 
   return typedjson({
     activities,
