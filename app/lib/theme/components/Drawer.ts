@@ -13,20 +13,20 @@ function runIfFn<T, U>(valueOrFn: T | ((...fnArgs: U[]) => T), ...args: U[]): T 
 const $bg = cssVar('drawer-bg');
 const $bs = cssVar('drawer-box-shadow');
 
-const baseStyleOverlay = defineStyle((props) => ({
+const baseStyleOverlay = defineStyle({
   backdropFilter: 'blur(14px)',
   transition: 'all .2s',
   zIndex: 0,
-}));
+});
 
-const baseStyleDialogContainer = defineStyle((props) => ({
+const baseStyleDialogContainer = defineStyle({
   backdropFilter: 'blur(14px)',
   color: 'white',
   display: 'flex',
   justifyContent: 'center',
   transition: 'all .2s',
   zIndex: 0,
-}));
+});
 
 const desktop = defineStyle({
   dialog: { backdropFilter: 'blur(25px)', zIndex: 0 },
@@ -96,8 +96,8 @@ const baseStyle = definePartsStyle((props) => ({
   body,
   closeButton,
   dialog: runIfFn(baseStyleDialog, props),
-  dialogContainer: runIfFn(baseStyleDialogContainer, props),
-  overlay: runIfFn(baseStyleOverlay, props),
+  dialogContainer: baseStyleDialogContainer,
+  overlay: baseStyleOverlay,
 }));
 
 export const Drawer = defineMultiStyleConfig({ baseStyle, variants });

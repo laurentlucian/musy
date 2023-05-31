@@ -69,7 +69,7 @@ const ExpandedSongs = ({
         variant={isSmallScreen ? 'none' : 'desktop'}
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent zIndex={10}>
           <DrawerHeader alignSelf="center">
             <Stack direction="row" align="end">
               <Text pl={title === 'Top' ? '115px' : 0} mr={title === 'Top' ? '20px' : 0}>
