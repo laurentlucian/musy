@@ -29,8 +29,7 @@ const baseStyleDialogContainer = defineStyle({
 });
 
 const desktop = defineStyle({
-  dialog: { backdropFilter: 'blur(25px)', zIndex: 0 },
-  overlay: { backdropFilter: 'blur(25px)', zIndex: 0 },
+  dialogContainer: { backdropFilter: 'blur(25px)', zIndex: 'overlay' },
 });
 const colorPicker = defineStyle({
   dialog: { backdropFilter: 'blur(0px)', zIndex: 'modal' },
