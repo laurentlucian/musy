@@ -100,6 +100,7 @@ export const getCurrentUser = async (request: Request) => {
           ...trackWithInfo,
         },
       },
+      recommended: { select: { trackId: true } },
       settings: { include: { profileSong: true } },
     },
 

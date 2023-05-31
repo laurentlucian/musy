@@ -1,26 +1,21 @@
-import { Star1 } from 'iconsax-react';
-
 import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import { useRecommendData } from '~/hooks/useSendButton';
-import Waver from '~/lib/icons/Waver';
 
 import ActionButton from './shared/ActionButton';
 
 const Recommend = () => {
   const track = useFullscreenTileStore();
 
-  const { handleRecommend, isAdding, isDone, isError, text } = useRecommendData({
-    trackId: track?.id ?? '',
-  });
+  const { child, handleRecommend, isDisabled, leftIcon } = useRecommendData(track!.id);
 
   return (
     <ActionButton
       onClick={handleRecommend}
-      leftIcon={<Star1 />}
-      isDisabled={!!isDone || !!isError || !!isAdding}
+      leftIcon={leftIcon}
+      isDisabled={isDisabled}
       w={['100vw', '100%']}
     >
-      {isAdding ? <Waver /> : text}
+      {child}
     </ActionButton>
   );
 };

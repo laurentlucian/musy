@@ -1,6 +1,6 @@
 import { AlertCircle, Check } from 'react-feather';
 
-import { DirectInbox, CloseSquare, Send2, TickSquare } from 'iconsax-react';
+import { DirectInbox, CloseSquare, Send2, TickSquare, Star1 } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/lib/icons/Waver';
@@ -10,6 +10,7 @@ import type { action as recommendAction } from '~/routes/api/recommend/add';
 
 import { useFullscreenFromId } from './useFullscreenTileStore';
 import useSessionUser from './useSessionUser';
+import { useUserRecommended } from './useUserLibrary';
 
 type SelfQueueData = {
   trackId: string;
@@ -21,21 +22,22 @@ export type SendData = {
   username?: string;
 };
 
-export const useRecommendData = ({ trackId }: { trackId: string }) => {
+export const useRecommendData = (trackId: string) => {
   const fetcher = useTypedFetcher<typeof recommendAction>();
+  const { isRecommended, toggleRecommend } = useUserRecommended(trackId);
+
+  const action = isRecommended ? 'api/recommend/remove' : 'api/recommend/add';
 
   const handleRecommend = (): void => {
-    fetcher.submit(
-      {
-        trackId,
-      },
-      { action: '/api/recommend/add', method: 'post', replace: true },
-    );
+    toggleRecommend();
+    fetcher.submit({ trackId }, { action, method: 'post', replace: true });
   };
 
   const isAdding = fetcher.formData?.get('trackId') === trackId;
   const isDone = fetcher.state === 'idle' && fetcher.data != null;
   const isError = fetcher.data?.includes('Error') ? fetcher.data : null;
+
+  const isDisabled = !!isError || !!isAdding;
 
   const icon = isAdding ? (
     <Waver />
@@ -47,9 +49,19 @@ export const useRecommendData = ({ trackId }: { trackId: string }) => {
     <Send2 variant="Bold" />
   );
 
-  const text = fetcher.data ? fetcher.data : 'Recommend';
+  const leftIcon = isRecommended ? <Star1 variant="Bold" /> : <Star1 />;
 
-  return { handleRecommend, icon, isAdding, isDone, isError, text };
+  const child = isAdding ? (
+    <Waver />
+  ) : isRecommended ? (
+    'Recommended'
+  ) : fetcher.data ? (
+    fetcher.data
+  ) : (
+    'Recommend'
+  );
+
+  return { child, handleRecommend, icon, isDisabled, leftIcon };
 };
 
 export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
