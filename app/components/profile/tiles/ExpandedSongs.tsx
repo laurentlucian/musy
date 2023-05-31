@@ -81,6 +81,7 @@ const ExpandedSongs = ({
                 onClick={() => setLayout(!layout)}
                 variant="ghost"
                 tabIndex={-1}
+                color="musy.200"
               />
               {Filter}
             </Stack>
