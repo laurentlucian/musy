@@ -5,13 +5,13 @@ import { Stack, Text } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
+import ProfileButton from '~/components/profile/ProfileButton';
 import TrackTiles from '~/components/profile/tiles/TrackTiles';
 import useFollowing from '~/hooks/useFollowing';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import { getSearchResults } from '~/services/prisma/spotify.server';
 import { getTopLeaderboard } from '~/services/prisma/tracks.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
-import ProfileButton from '~/components/profile/ProfileButton';
 
 const Explore = () => {
   const { results, top } = useTypedLoaderData<typeof loader>();
@@ -37,7 +37,7 @@ const Explore = () => {
   return (
     <Stack px={2}>
       <TrackTiles tracks={top} title="WEEKLY MOST LISTENED" />
-      <Stack spacing={3} px={['4px', 'unset']}>
+      <Stack spacing={3} px={['4px', 'unset']} alignSelf="center" maxW="640px" w="100%">
         {following.length && (
           <Text pt="10px" fontSize="11px" fontWeight="bolder">
             FOLLOWING

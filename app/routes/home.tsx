@@ -1,5 +1,6 @@
+import type { LoaderArgs } from '@remix-run/server-runtime';
+
 import { Stack, useColorModeValue } from '@chakra-ui/react';
-import { LoaderArgs } from '@remix-run/server-runtime';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
