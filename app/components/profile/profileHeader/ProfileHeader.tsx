@@ -1,16 +1,6 @@
 import { useSearchParams } from '@remix-run/react';
 
-import {
-  Heading,
-  HStack,
-  Stack,
-  Text,
-  Image,
-  Flex,
-  VStack,
-  SimpleGrid,
-  Button,
-} from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Flex, SimpleGrid, Button } from '@chakra-ui/react';
 
 import { CodeCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
@@ -22,11 +12,7 @@ import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
 import Bio from './Bio';
-import FavoriteButton from './FavoriteButton';
 import FollowButton from './FollowButton';
-import { BlockUser } from './profileActions/BlockUser';
-import ProfileActions from './profileActions/ProfileActions';
-import Search from './Search';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -38,8 +24,6 @@ const ProfileHeader = () => {
   const { listened, user } = data;
 
   const isOwnProfile = currentUser?.userId === user.userId;
-
-  const isBlocked = currentUser?.block.find((block) => block.blockedId === user.userId);
 
   const ProfilePic = (
     <Tooltip label="<3" placement="top" hasArrow>
