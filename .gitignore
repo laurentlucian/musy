@@ -30,3 +30,4 @@ fly_backup*.db
 
 .yarn/install-state.gz
 .DS_Store
+remix.config.js
