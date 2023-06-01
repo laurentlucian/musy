@@ -3,10 +3,10 @@ import { Link, useNavigation } from '@remix-run/react';
 import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import FollowButton from '~/components/profile/profileHeader/FollowButton';
-import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
+import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '~/lib/icons/Waver';
-import type { ProfileWithInfo, Track } from '~/lib/types/types';
+import type { ProfileWithInfo } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
