@@ -34,6 +34,7 @@ const FollowButton = (props: { id?: string }) => {
       variant="musy"
       fontSize={['12px', '13px']}
       h={['27px', '30px']}
+      w="100px"
     >
       {isFollowing ? 'Following' : 'Follow'}
     </Button>

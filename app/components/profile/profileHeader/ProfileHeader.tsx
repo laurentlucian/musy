@@ -99,9 +99,15 @@ const ProfileHeader = () => {
   );
 
   const Buttons = (
-    <SimpleGrid columns={2} gap={2} maxW={['unset', '400px']}>
+    <SimpleGrid columns={2} gap={2} maxW="210px">
       <FollowButton />
-      <Button type="submit" variant="musy" fontSize={['12px', '13px']} h={['27px', '30px']}>
+      <Button
+        type="submit"
+        variant="musy"
+        fontSize={['12px', '13px']}
+        h={['27px', '30px']}
+        w="100px"
+      >
         Send a song
       </Button>
     </SimpleGrid>
