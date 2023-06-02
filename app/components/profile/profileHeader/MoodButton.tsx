@@ -1,8 +1,8 @@
-import { useNavigation, useParams } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
+import { useEffect } from 'react';
 
-import { Button, Stack, Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 
-import { Smileys } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Tooltip from '~/components/Tooltip';
@@ -13,32 +13,35 @@ import type { action as moodAction } from '~/routes/api/user/profile/mood';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {
   const fetcher = useTypedFetcher<typeof moodAction>();
-  const transition = useNavigation();
-  const { id } = useParams();
-  const isLoading = transition.formData?.get('mood') === 'true';
-  const label = mood ? 'refresh mood' : 'get mood ;)';
-  const icon = mood ? undefined : <Smileys />;
-  const text = mood ? mood : 'get mood';
+  const params = useParams();
   const timePassed = timeSince(since ?? null, 'minimal');
   const isSmallScreen = useIsMobile();
 
+  const text = mood ? mood : 'get mood';
+
+  const isLoading = fetcher.formAction === '/api/user/profile/mood';
+  const label = isLoading ? 'refreshing..' : mood ? 'refresh mood' : 'get mood ;)';
+  const userId = params.id as string;
   const getMood = () => {
-    fetcher.submit({ userId: id ?? ':(' }, { action: '/api/user/profile/mood', replace: true });
+    fetcher.submit({ userId }, { action: '/api/user/profile/mood', method: 'POST', replace: true });
   };
+
+  useEffect(() => {
+    if (!mood && !isLoading) {
+      getMood();
+    }
+  }, [mood]);
 
   return (
     <Tooltip label={label} placement="bottom-end" hasArrow isDisabled={isSmallScreen}>
       <Button
         aria-label="get mood"
-        rightIcon={icon}
         variant="unstyled"
         cursor="pointer"
+        display="flex"
+        justifyItems="center"
         isLoading={isLoading}
-        spinner={
-          <Stack ml="15px">
-            <Waver />
-          </Stack>
-        }
+        spinner={<Waver />}
         onClick={getMood}
         fontSize={['10px', '13px']}
         p={0}

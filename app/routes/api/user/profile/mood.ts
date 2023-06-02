@@ -12,7 +12,7 @@ export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
   const userId = body.get('userId');
 
-  if ( typeof userId !== 'string') {
+  if (typeof userId !== 'string') {
     return typedjson('Request Error');
   }
 
