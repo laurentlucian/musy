@@ -138,7 +138,7 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
         maxW={track ? ['100px', '120px'] : '60px'}
         onClick={(e) => {
           e.preventDefault();
-          track && onOpen(<FullscreenTrack track={track} />);
+          track && onOpen(<FullscreenTrack track={track} originUserId={user.userId} />);
         }}
       />
     </HStack>

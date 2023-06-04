@@ -100,7 +100,9 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
               w="100%"
               // layoutId={track.id + layoutKey}
               cursor="pointer"
-              onClick={() => onOpen(<FullscreenTrack track={track} />)}
+              onClick={() =>
+                onOpen(<FullscreenTrack track={track} originUserId={activity.user.userId} />)
+              }
             >
               <Image borderRadius="1px" w="100%" objectFit="cover" src={track.image} />
             </Box>

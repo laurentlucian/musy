@@ -146,3 +146,10 @@ export const getSearchResults = async ({
 
   return { tracks, users };
 };
+
+export const getSpotifyTrack = async (trackId: string, userId: string) => {
+  const { spotify } = await getUserSpotify(userId);
+  const track = await spotify.getTrack(trackId).then((res) => res.body);
+
+  return track;
+};

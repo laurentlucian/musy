@@ -302,7 +302,7 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
                     pos="absolute"
                     right={0}
                     top={0}
-                    onClick={() => onOpen(<FullscreenTrack track={track} />)}
+                    onClick={() => onOpen(<FullscreenTrack track={track} originUserId={id} />)}
                     cursor="pointer"
                   />
                 </Tooltip>

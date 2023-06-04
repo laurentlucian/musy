@@ -5,7 +5,8 @@ import type { Prisma } from '@prisma/client';
 import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
-import { createTrackModel } from '~/services/prisma/spotify.server';
+import { createTrackModel, getSpotifyTrack } from '~/services/prisma/spotify.server';
+import { getTrack } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
@@ -19,13 +20,18 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (invalidFormData) return typedjson('Request Error');
 
-  const { spotify } = await getSpotifyClient(toId);
-  if (!spotify) return typedjson('Error: no access to API');
+  const track = await getTrack(trackId).then(async (track) => {
+    if (!track) {
+      return createTrackModel(await getSpotifyTrack(trackId, currentUserId));
+    }
+    return track;
+  });
 
-  const { body: track } = await spotify.getTrack(trackId);
-  const trackDb = createTrackModel(track);
-
-  const { body: playback } = await spotify.getMyCurrentPlaybackState();
+  const playback = await prisma.playback.findUnique({
+    where: {
+      userId: toId,
+    },
+  });
 
   const data: Prisma.QueueCreateInput = {
     action: 'send',
@@ -35,11 +41,9 @@ export const action = async ({ request }: ActionArgs) => {
       },
     },
 
-    pending: !playback.is_playing,
-
     track: {
       connectOrCreate: {
-        create: trackDb,
+        create: track,
         where: {
           id: track.id,
         },
@@ -53,8 +57,10 @@ export const action = async ({ request }: ActionArgs) => {
     },
   };
 
-  if (playback.is_playing) {
+  if (playback) {
     try {
+      const { spotify } = await getSpotifyClient(toId);
+      if (!spotify) return typedjson('Error: no access to API');
       await spotify.addToQueue(track.uri);
     } catch (err) {
       console.error(err);
@@ -67,6 +73,8 @@ export const action = async ({ request }: ActionArgs) => {
       console.error(err);
       return typedjson('Queued (Prisma Error)');
     }
+  } else {
+    await prisma.queue.create({ data: { pending: true, ...data } });
   }
 
   return typedjson('Sent');

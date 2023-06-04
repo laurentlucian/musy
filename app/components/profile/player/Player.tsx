@@ -225,7 +225,7 @@ const Player = ({ id, layoutKey, playback }: PlayerProps) => {
                         : 135
                     }
                     transition="width 0.25s, height 0.25s"
-                    onClick={() => onOpen(<FullscreenTrack track={track} />)}
+                    onClick={() => onOpen(<FullscreenTrack track={track} originUserId={id} />)}
                     cursor="pointer"
                   />
                 </Tooltip>

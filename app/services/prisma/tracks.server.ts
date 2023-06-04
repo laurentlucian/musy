@@ -30,12 +30,12 @@ export const getActivity = async (userId: string) => {
         user: true,
       },
       orderBy: { createdAt: 'desc' },
+      take: 20,
       where: {
         userId: {
           in: following,
         },
       },
-      take: 20,
     }),
     prisma.queue.findMany({
       include: {
@@ -46,8 +46,8 @@ export const getActivity = async (userId: string) => {
       orderBy: { createdAt: 'desc' },
       take: 20,
       where: {
-        action: 'send',
         OR: [{ userId: { in: following } }, { ownerId: { in: following } }],
+        action: 'send',
       },
     }),
     prisma.recommended.findMany({
@@ -56,12 +56,12 @@ export const getActivity = async (userId: string) => {
         user: true,
       },
       orderBy: { createdAt: 'desc' },
+      take: 20,
       where: {
         userId: {
           in: following,
         },
       },
-      take: 20,
     }),
   ]);
   return [...like, ...queue, ...recommended]
@@ -141,4 +141,12 @@ export const getTopLeaderboard = async () => {
     return aIndex - bIndex;
   });
   return top;
+};
+
+export const getTrack = async (trackId: string) => {
+  const track = await prisma.track.findUnique({
+    where: { id: trackId },
+  });
+
+  return track;
 };

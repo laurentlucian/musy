@@ -126,19 +126,27 @@ export const playbackCreator = async () => {
 
     // queue pending (waiting for playback to start) songs from musy
     const queue = await prisma.queue.findMany({
+      include: {
+        track: { select: { uri: true } },
+      },
       orderBy: { createdAt: 'asc' },
-      where: { pending: true, userId },
+      where: { ownerId: userId, pending: true },
     });
+
     if (queue.length) {
+      console.log('playbackCreator -> pending queue', queue.length);
       const { spotify } = await getSpotifyClient(userId);
       if (spotify) {
-        for (const { trackId } of queue) {
-          await spotify.addToQueue(trackId);
+        for (const { track } of queue) {
+          const { uri } = track;
+          await spotify.addToQueue(uri);
+          console.log('playbackCreator -> queued track', uri);
         }
         await prisma.queue.updateMany({
           data: { pending: false },
           where: { id: { in: queue.map((q) => q.id) } },
         });
+        console.log('playbackCreator -> updated queues to not pending');
       }
     }
   }
