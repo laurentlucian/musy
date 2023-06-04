@@ -20,7 +20,7 @@ type SearchInputProps = InputGroupProps & {
   param: string;
 };
 
-const SearchInput = (props: SearchInputProps) => {
+const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
   const color = useColorModeValue('musy.800', 'musy.200');
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,6 +96,7 @@ const SearchInput = (props: SearchInputProps) => {
         focusBorderColor={color}
         onFocus={hideMenu}
         onBlur={showMenu}
+        autoFocus={autoFocus}
       />
       {search && (
         <InputRightElement

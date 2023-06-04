@@ -13,6 +13,7 @@ const FullscreenQueue = (props: { userId: string }) => {
         w={['100%']}
         maxW={['unset', '800px']}
         mt={['2px', '10px', '50px']}
+        autoFocus
       />
       <Box overflowX="hidden" w="100%">
         <FullscreenQueueTracks userId={props.userId} />
