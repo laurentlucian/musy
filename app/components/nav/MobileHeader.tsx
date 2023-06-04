@@ -1,15 +1,15 @@
-import { useLocation, useNavigation } from '@remix-run/react';
+import { useLocation } from '@remix-run/react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
-import SearchInput from '../explore/SearchInput';
+import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
+import SearchInput from '../search/SearchInput';
 import HomeHeader from './mobile/HomeHeader';
 import ProfileHeader from './mobile/ProfileHeader';
 import SettingsHeader from './mobile/SettingsHeader';
 import UserMenu from './UserMenu';
-import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
 
 const MobileHeader = () => {
   const currentUser = useSessionUser();
@@ -26,7 +26,7 @@ const MobileHeader = () => {
   const Header = isHome ? (
     <HomeHeader />
   ) : isExplore ? (
-    <SearchInput />
+    <SearchInput param="keyword" />
   ) : isSettings ? (
     <SettingsHeader />
   ) : (

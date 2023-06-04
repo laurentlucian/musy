@@ -6,8 +6,8 @@ import { IconButton } from '@chakra-ui/react';
 import { ArrowLeft2 } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-import type { loader } from '~/routes/$id';
 import useSessionUser from '~/hooks/useSessionUser';
+import type { loader } from '~/routes/$id';
 
 const ProfileHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();

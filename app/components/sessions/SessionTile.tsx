@@ -3,10 +3,11 @@ import { forwardRef } from 'react';
 import { Flex, Image } from '@chakra-ui/react';
 import type { ChakraProps } from '@chakra-ui/react';
 
-import { useClickDrag } from '~/hooks/useFullscreenTileStore';
 import type { Track } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
+import { useFullscreen } from '../fullscreen/Fullscreen';
+import FullscreenTrack from '../fullscreen/track/FullscreenTrack';
 import Tooltip from '../Tooltip';
 
 type TileProps = {
@@ -22,8 +23,7 @@ const SessionTile = forwardRef<HTMLDivElement, TileProps>(
   ({ index, layoutKey, playedAt, track, tracks, userId, ...props }, ref) => {
     const image = track.image;
     const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
-
-    const { onClick, onMouseDown, onMouseMove } = useClickDrag();
+    const { onOpen } = useFullscreen();
 
     return (
       <Flex direction="row" ref={ref} {...props}>
@@ -35,9 +35,7 @@ const SessionTile = forwardRef<HTMLDivElement, TileProps>(
             objectFit="cover"
             src={image}
             draggable={false}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onClick={() => onClick(track, userId, layoutKey, tracks, index)}
+            onClick={() => onOpen(<FullscreenTrack track={track} originUserId={userId} />)}
             cursor="pointer"
           />
         </Tooltip>

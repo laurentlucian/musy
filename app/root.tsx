@@ -28,7 +28,7 @@ import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prisma/users.server';
 
-import FullscreenTile from './components/profile/tiles/fullscreen/FullscreenTile';
+import { FullscreenRenderer } from './components/fullscreen/Fullscreen';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
@@ -58,7 +58,7 @@ const App = () => {
               <Outlet />
             </Layout>
           </AnimatePresence>
-          {currentUser && <FullscreenTile />}
+          <FullscreenRenderer />
         </ColorModeProvider>
       </ChakraProvider>
     </Document>

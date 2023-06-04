@@ -1,13 +1,15 @@
 import { Link, useNavigation } from '@remix-run/react';
 
-import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import FollowButton from '~/components/profile/profileHeader/FollowButton';
-import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
+import useIsFollowing from '~/hooks/useIsFollowing';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
+
+import SendSongButton from './profileHeader/SendSongButton';
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
@@ -17,8 +19,7 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const isSmallScreen = useIsMobile();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
-
-  useFullscreenTileStore();
+  const isFollowing = useIsFollowing(user.userId);
 
   const ProfilePic = (
     <Image
@@ -37,7 +38,11 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
     </Text>
   );
 
-  const Actions = <FollowButton id={user.userId} />;
+  const Actions = (
+    <Box maxW="130px">
+      {isFollowing ? <SendSongButton id={user.userId} /> : <FollowButton id={user.userId} />}
+    </Box>
+  );
 
   const User = (
     <Flex justify="space-between" w="100%" align="center" pr="5px">

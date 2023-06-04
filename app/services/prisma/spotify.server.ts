@@ -107,25 +107,42 @@ export const getUserSpotifyPlayback = async (userId: string) => {
   return playback;
 };
 
-export const getSearchResults = async ({ url, userId }: { url: URL; userId: string }) => {
-  const keyword = url.searchParams.get('search');
+export const getSpotifyTracks = async (keyword: string, userId: string) => {
+  const { spotify } = await getUserSpotify(userId);
+
+  return spotify.searchTracks(keyword).then((res) => {
+    if (res.statusCode !== 200) return [];
+    if (!res.body.tracks) return [];
+    return transformTracks(res.body.tracks.items);
+  });
+};
+
+export const getUsers = async (keyword: string) => {
+  return prisma.profile.findMany({
+    include: {
+      playback: { include: { track: true } },
+      settings: true,
+    },
+    where: { name: { contains: keyword } },
+  });
+};
+
+export const getSearchResults = async ({
+  url,
+  userId,
+  ...args
+}: {
+  param: string;
+  url: URL;
+  userId: string;
+}) => {
+  const param = url.searchParams.get('search');
+  if (param !== args.param) return { tracks: [], users: [] };
+  const keyword = url.searchParams.get(param);
+  console.log('keyword', keyword);
   if (!keyword) return { tracks: [], users: [] };
 
-  const { spotify } = await getUserSpotify(userId);
-  const [tracks, users] = await Promise.all([
-    spotify.searchTracks(keyword).then((res) => {
-      if (res.statusCode !== 200) return [];
-      if (!res.body.tracks) return [];
-      return transformTracks(res.body.tracks.items);
-    }),
-    prisma.profile.findMany({
-      include: {
-        playback: { include: { track: true } },
-        settings: true,
-      },
-      where: { name: { contains: keyword } },
-    }),
-  ]);
+  const [tracks, users] = await Promise.all([getSpotifyTracks(keyword, userId), getUsers(keyword)]);
 
   return { tracks, users };
 };

@@ -13,6 +13,7 @@ import type { loader } from '~/routes/$id';
 import PrivateBadge from '../badges/PrivateBadge';
 import Bio from './Bio';
 import FollowButton from './FollowButton';
+import SendSongButton from './SendSongButton';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -83,17 +84,9 @@ const ProfileHeader = () => {
   );
 
   const Buttons = (
-    <SimpleGrid columns={2} gap={2} maxW="210px">
+    <SimpleGrid columns={2} gap={2} maxW={['100%', 'fit-content']}>
       <FollowButton />
-      <Button
-        type="submit"
-        variant="musy"
-        fontSize={['12px', '13px']}
-        h={['27px', '30px']}
-        w="100px"
-      >
-        Send a song
-      </Button>
+      <SendSongButton />
     </SimpleGrid>
   );
 

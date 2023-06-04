@@ -6,10 +6,10 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import Player from '~/components/profile/player/Player';
-import EditableRecommendedTiles from '~/components/profile/tiles/EditableRecommendedTiles';
-import Playlists from '~/components/profile/tiles/playlists/Playlists';
-import TopTiles from '~/components/profile/tiles/TopTiles';
-import TrackTiles from '~/components/profile/tiles/TrackTiles';
+import EditableRecommendedTiles from '~/components/tiles/EditableRecommendedTiles';
+import Playlists from '~/components/tiles/playlists/Playlists';
+import TopTiles from '~/components/tiles/TopTiles';
+import TrackTiles from '~/components/tiles/TrackTiles';
 import useSessionUser from '~/hooks/useSessionUser';
 import { prisma } from '~/services/db.server';
 import { getCachedUserTop } from '~/services/prisma/spotify.server';

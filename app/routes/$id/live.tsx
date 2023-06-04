@@ -7,8 +7,8 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import Player from '~/components/profile/player/spotify/Player';
-import Playlists from '~/components/profile/tiles/playlists/Playlists';
-import TrackTiles from '~/components/profile/tiles/TrackTiles';
+import Playlists from '~/components/tiles/playlists/Playlists';
+import TrackTiles from '~/components/tiles/TrackTiles';
 import { prisma } from '~/services/db.server';
 import {
   getUserSpotifyLiked,

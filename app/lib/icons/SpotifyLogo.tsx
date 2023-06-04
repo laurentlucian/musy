@@ -18,8 +18,8 @@ type SpotifyLogoProps = {
 const SpotifyLogo = ({
   link = true,
   icon = false,
-  h = icon ? '25px' : '30px',
-  w = icon ? '25px' : '98px',
+  h = '25px',
+  w = icon ? '25px' : '80px',
   white,
   ...props
 }: SpotifyLogoProps) => {

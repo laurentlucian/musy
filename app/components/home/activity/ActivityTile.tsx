@@ -6,7 +6,8 @@ import type { Profile } from '@prisma/client';
 import { motion } from 'framer-motion';
 import { Send2, Star1 } from 'iconsax-react';
 
-import { useClickDrag, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
+import { useFullscreen } from '~/components/fullscreen/Fullscreen';
+import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import LikeIcon from '~/lib/icons/Like';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity, Track } from '~/lib/types/types';
@@ -85,9 +86,8 @@ export const ActivityAction = ({ activity }: ActivityActionProps) => {
 };
 
 const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => {
-  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  useFullscreenTileStore();
   const track = tracks[index];
+  const { onOpen } = useFullscreen();
 
   return (
     <Stack alignSelf="center">
@@ -98,11 +98,9 @@ const ActivityTile = ({ activity, index, layoutKey, tracks }: ActivityProps) => 
             <Box
               as={motion.div}
               w="100%"
-              layoutId={track.id + layoutKey}
-              onMouseDown={onMouseDown}
-              onMouseMove={onMouseMove}
+              // layoutId={track.id + layoutKey}
               cursor="pointer"
-              onClick={() => onClick(track, activity.user.userId, layoutKey, tracks, index)}
+              onClick={() => onOpen(<FullscreenTrack track={track} />)}
             >
               <Image borderRadius="1px" w="100%" objectFit="cover" src={track.image} />
             </Box>

@@ -4,8 +4,9 @@ import { Button, Flex, HStack, Image, Stack, Text, useColorModeValue, Box } from
 
 import { motion } from 'framer-motion';
 
+import { useFullscreen } from '~/components/fullscreen/Fullscreen';
+import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import FollowButton from '~/components/profile/profileHeader/FollowButton';
-import { useFullscreenActions, useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
@@ -14,7 +15,7 @@ import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import QuickActions from '../../home/friends/friendsPlayer/QuickActions';
+import QuickActions from '../../home/QuickActions';
 import FavoriteButton from '../profileHeader/FavoriteButton';
 
 type PlayerProps = {
@@ -30,7 +31,7 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const color = useColorModeValue('musy.900', 'musy.200');
   const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
-  const { onOpen } = useFullscreenActions();
+  const { onOpen } = useFullscreen();
   const currentUser = useSessionUser();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
@@ -40,8 +41,6 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
   const que = user?.settings?.allowQueue;
 
   const isOwnProfile = currentUser?.userId === user.userId;
-
-  useFullscreenTileStore();
 
   const ProfilePic = (
     <Image
@@ -139,7 +138,7 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
         maxW={track ? ['100px', '120px'] : '60px'}
         onClick={(e) => {
           e.preventDefault();
-          track && onOpen(track, user.userId, layoutKey, tracks, index);
+          track && onOpen(<FullscreenTrack track={track} />);
         }}
       />
     </HStack>

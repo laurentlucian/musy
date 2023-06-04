@@ -8,7 +8,7 @@ import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import { useFullscreenActions } from '~/hooks/useFullscreenTileStore';
+import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import { getAnalysis } from '~/services/ai.server';
 import { authenticator } from '~/services/auth.server';
 import { redis } from '~/services/scheduler/redis.server';
@@ -17,7 +17,7 @@ import { getSpotifyClient } from '~/services/spotify.server';
 const TrackAnalysis = () => {
   const { analysis, authorized, track } = useTypedLoaderData<typeof loader>();
   const transition = useNavigation();
-  const { onClose } = useFullscreenActions();
+  const { onClose } = useFullscreen();
 
   useEffect(() => {
     onClose();

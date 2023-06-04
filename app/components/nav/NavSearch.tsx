@@ -25,9 +25,9 @@ import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 import type { Track } from '~/lib/types/types';
 
-import Tile from '../profile/tiles/tile/Tile';
-import TileImage from '../profile/tiles/tile/TileImage';
-import TileInfo from '../profile/tiles/tile/TileInfo';
+import Tile from '../tiles/tile/Tile';
+import TileImage from '../tiles/tile/TileImage';
+import TileInfo from '../tiles/tile/TileInfo';
 import UserTile from './UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -156,7 +156,7 @@ const NavSearch = () => {
         offset={[0, 10]}
       >
         <PopoverTrigger>
-          <InputGroup w={show ? '300px' : '30px'} transition="all 0.5s ease-in-out" size="sm">
+          <InputGroup w={show ? '300px' : '30px'} transition="all 0.2s ease-in-out" size="sm">
             <InputLeftElement
               pointerEvents="all"
               children={
@@ -174,12 +174,13 @@ const NavSearch = () => {
               ref={inputRef}
               name="spotify"
               value={search}
+              variant="flushed"
               placeholder="search"
               autoComplete="off"
               onChange={handleChange}
-              border={show ? `solid 1px ${color}` : '#0000'}
+              border={show ? undefined : '#0000'}
               w={show ? '300px' : '30px'}
-              transition="all 0.5s ease-in-out"
+              transition="all 0.2s ease-in-out"
               cursor={show ? 'text' : 'pointer'}
               _placeholder={{ color: '#414040' }}
             />

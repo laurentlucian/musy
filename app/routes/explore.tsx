@@ -6,7 +6,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileButton from '~/components/profile/ProfileButton';
-import TrackTiles from '~/components/profile/tiles/TrackTiles';
+import TrackTiles from '~/components/tiles/TrackTiles';
 import useFollowing from '~/hooks/useFollowing';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import { getSearchResults } from '~/services/prisma/spotify.server';
@@ -27,7 +27,7 @@ const Explore = () => {
             USERS
           </Text>
         )}
-        {results.users.map((user, index) => (
+        {results.users.map((user) => (
           <ProfileButton key={user.userId} user={user} />
         ))}
       </Stack>
@@ -43,7 +43,7 @@ const Explore = () => {
             FOLLOWING
           </Text>
         )}
-        {following.map((user, index) => (
+        {following.map((user) => (
           <ProfileButton key={user.userId} user={user} />
         ))}
         {following.length && (
@@ -51,7 +51,7 @@ const Explore = () => {
             EVERYONE
           </Text>
         )}
-        {restOfUsers.map((user, index) => (
+        {restOfUsers.map((user) => (
           <ProfileButton key={user.userId} user={user} />
         ))}
       </Stack>
@@ -64,7 +64,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   invariant(currentUser, 'No user found');
   const userId = currentUser.userId;
   const [results, top] = await Promise.all([
-    getSearchResults({ url: new URL(request.url), userId }),
+    getSearchResults({ param: 'keyword', url: new URL(request.url), userId }),
     getTopLeaderboard(),
   ]);
 

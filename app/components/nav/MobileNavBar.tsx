@@ -1,28 +1,30 @@
 import { Link, useLocation, useNavigation } from '@remix-run/react';
+
 import { Box, Flex, IconButton, Image, SimpleGrid, useColorModeValue } from '@chakra-ui/react';
 
 import { Home2, SearchNormal1 } from 'iconsax-react';
 
-import { useFullscreenTileStore } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
 import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 
+import { useFullscreen } from '../fullscreen/Fullscreen';
+
 const MobileNavBar = () => {
   const border = useColorModeValue('musy.400', 'musy.700');
   const color = useColorModeValue('musy.500', 'musy.200');
   const bg = useColorModeValue('#EEE6E2', 'black');
-  const track = useFullscreenTileStore();
   const navigation = useNavigation();
   const currentUser = useSessionUser();
   const isSmallScreen = useIsMobile();
   const { pathname } = useLocation();
+  const { components } = useFullscreen();
   const { show } = useMobileKeyboard();
 
   if (!isSmallScreen) return null;
 
-  const hideButton = track !== null || pathname === '/settings' || !show ? true : false;
+  const hideButton = pathname === '/settings' || !show ? true : false;
 
   const isHomeLoading = navigation.location?.pathname === '/home';
   const isExploreLoading = navigation.location?.pathname === '/explore';
@@ -34,8 +36,8 @@ const MobileNavBar = () => {
 
   const profileIcon = <Image src={currentUser?.image} borderRadius="full" boxSize="30px" />;
 
-  return !hideButton ? (
-    <Box h="90px">
+  return (
+    <Box h="90px" display={components.length || hideButton ? 'none' : 'block'}>
       <SimpleGrid
         as="header"
         pt="12px"
@@ -99,7 +101,7 @@ const MobileNavBar = () => {
         </Flex>
       </SimpleGrid>
     </Box>
-  ) : null;
+  );
 };
 
 export default MobileNavBar;

@@ -8,11 +8,11 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/add';
 
-import { useFullscreenFromId } from './useFullscreenTileStore';
 import useSessionUser from './useSessionUser';
 import { useUserRecommended } from './useUserLibrary';
 
 type SelfQueueData = {
+  originUserId?: string;
   trackId: string;
 };
 
@@ -64,13 +64,12 @@ export const useRecommendData = (trackId: string) => {
   return { child, handleRecommend, icon, isDisabled, leftIcon };
 };
 
-export const useQueueToSelfData = ({ trackId }: SelfQueueData) => {
+export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => {
   const currentUserId = useSessionUser()?.userId ?? '';
-  const fromId = useFullscreenFromId() ?? '';
 
   const data = {
     action: 'add',
-    fromId,
+    fromId: originUserId ?? '',
     toId: currentUserId,
     trackId,
   };
@@ -123,7 +122,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   ) : isError ? (
     <CloseSquare size="25px" />
   ) : (
-    <Send2 variant="Outline" />
+    <Send2 variant="Outline" size="25px" />
   );
 
   const qText = username.split(/[ .]/)[0];

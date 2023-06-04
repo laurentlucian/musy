@@ -13,7 +13,7 @@ const FollowButton = (props: { id?: string }) => {
   const params = useParams();
   const userId = (props.id || params.id) as string;
   const isFollowingDefault = currentUser?.following.find((user) => userId === user.followingId);
-  const [isFollowing, setIsfollowing] = useState<boolean>(!!isFollowingDefault);
+  const [isFollowing, setIsFollowing] = useState<boolean>(!!isFollowingDefault);
 
   const fetcher = useTypedFetcher<typeof followAction>();
 
@@ -23,7 +23,7 @@ const FollowButton = (props: { id?: string }) => {
       onClick={(e) => {
         e.preventDefault();
         if (currentUser) {
-          setIsfollowing(!isFollowing);
+          setIsFollowing(!isFollowing);
           fetcher.submit(
             { currentUserId: currentUser.userId, isFollowing: String(isFollowing), userId },
             { action: `/api/user/follow`, method: 'post', replace: true },
@@ -31,10 +31,13 @@ const FollowButton = (props: { id?: string }) => {
         }
       }}
       type="submit"
-      variant="musy"
+      color={isFollowing ? 'musy.200' : undefined}
+      border={isFollowing ? '2px solid' : undefined}
+      borderColor={isFollowing ? 'musy.200' : undefined}
+      background={isFollowing ? 'transparent' : undefined}
       fontSize={['12px', '13px']}
       h={['27px', '30px']}
-      w="100px"
+      w={['100%', '120px']}
     >
       {isFollowing ? 'Following' : 'Follow'}
     </Button>

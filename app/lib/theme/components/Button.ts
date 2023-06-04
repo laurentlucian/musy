@@ -49,6 +49,7 @@ const variantMusy: SystemStyleFunction = (props) => {
         bg: background,
       },
       bg: mode(hoverBg, `${c}.300`)(props),
+      color: mode(color, `gray.800`)(props),
     },
     bg: background,
     color: mode(color, `gray.800`)(props),

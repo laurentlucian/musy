@@ -1,0 +1,23 @@
+import { useNavigate, useNavigation } from '@remix-run/react';
+
+import { DocumentText } from 'iconsax-react';
+
+import Waver from '~/lib/icons/Waver';
+
+import { useFullscreenTrack } from '../../FullscreenTrack';
+import ActionButton from './shared/ActionButton';
+
+const Analyze = () => {
+  const { track } = useFullscreenTrack();
+  const navigate = useNavigate();
+  const transition = useNavigation();
+  const isLoading = transition.location?.pathname.includes('analysis');
+
+  return (
+    <ActionButton leftIcon={<DocumentText />} onClick={() => navigate(`/analysis/${track.id}`)}>
+      {isLoading ? <Waver /> : 'View analysis'}
+    </ActionButton>
+  );
+};
+
+export default Analyze;

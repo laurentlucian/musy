@@ -2,49 +2,30 @@ import type { LoaderArgs } from '@remix-run/node';
 
 import { Box } from '@chakra-ui/react';
 
-import type { Track } from '@prisma/client';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import SendButton from '~/components/profile/tiles/fullscreen/menu/actions/SendButton';
-import Tile from '~/components/profile/tiles/tile/Tile';
-import TileImage from '~/components/profile/tiles/tile/TileImage';
-import TileInfo from '~/components/profile/tiles/tile/TileInfo';
-import Tiles from '~/components/profile/tiles/Tiles';
-import { prisma } from '~/services/db.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import SendButton from '~/components/fullscreen/shared/SendButton';
+import Tile from '~/components/tiles/tile/Tile';
+import TileImage from '~/components/tiles/tile/TileImage';
+import TileInfo from '~/components/tiles/tile/TileInfo';
+import Tiles from '~/components/tiles/Tiles';
+import { getSearchResults } from '~/services/prisma/spotify.server';
 
 const SearchOutlet = () => {
-  const { results } = useTypedLoaderData<typeof loader>();
-  const tracks = results?.tracks?.items ?? [];
-  const trackz: Track[] = tracks.map((track) => {
-    return {
-      albumName: track.album.name,
-      albumUri: track.album.uri,
-      artist: track.artists[0].name,
-      artistUri: track.artists[0].uri,
-      duration: track.duration_ms,
-      explicit: track.explicit,
-      id: track.id,
-      image: track.album.images[1].url,
-      link: track.external_urls.spotify,
-      name: track.name,
-      preview_url: track.preview_url ?? '',
-      uri: track.uri,
-    };
-  });
+  const { tracks, users } = useTypedLoaderData<typeof loader>();
 
   if (tracks.length === 0) return <></>;
 
   return (
     <Box h="60vh" zIndex={9}>
-      <Tiles title="">
-        {trackz.map((track, index) => {
+      <Tiles title="" tracks={tracks}>
+        {tracks.map((track, index) => {
           return (
             <Tile
               key={track.id}
               track={track}
-              tracks={trackz}
+              tracks={tracks}
               index={index}
               layoutKey="search"
               action={<SendButton trackId={track.id} />} // refactor search to recommend and queue
@@ -62,18 +43,13 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const { id } = params;
   invariant(id, 'Missing param Id');
 
-  const { spotify } = await getSpotifyClient(id);
-  invariant(spotify, 'No access to spotify API');
-  const url = new URL(request.url);
-  const searchURL = url.searchParams.get('spotify');
-  if (!searchURL) return typedjson({ results: null });
+  const { tracks, users } = await getSearchResults({
+    param: 'profile',
+    url: new URL(request.url),
+    userId: id,
+  });
 
-  const [{ body: results }, users] = await Promise.all([
-    spotify.searchTracks(searchURL),
-    prisma.profile.findMany({ where: { name: { startsWith: searchURL } } }),
-  ]);
-
-  return typedjson({ results, users });
+  return typedjson({ tracks, users });
 };
 
 export default SearchOutlet;

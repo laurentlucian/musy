@@ -25,7 +25,7 @@ import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import Tiles from '~/components/profile/tiles/Tiles';
+import Tiles from '~/components/tiles/Tiles';
 import Tooltip from '~/components/Tooltip';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import { getSpotifyClient } from '~/services/spotify.server';

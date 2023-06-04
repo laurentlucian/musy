@@ -20,8 +20,9 @@ import {
 import type { Party } from '@prisma/client';
 import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-react';
 
+import { useFullscreen } from '~/components/fullscreen/Fullscreen';
+import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import Tooltip from '~/components/Tooltip';
-import { useClickDrag, useFullscreenIsPlaying } from '~/hooks/useFullscreenTileStore';
 import useIsMobile from '~/hooks/useIsMobile';
 import useSessionUser from '~/hooks/useSessionUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
@@ -50,8 +51,7 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
   const [blur, setBlur] = useState(true);
 
   const { isOpen, onToggle } = useDisclosure();
-  const { onClick, onMouseDown, onMouseMove } = useClickDrag();
-  const isPlaying = useFullscreenIsPlaying();
+  const { onOpen } = useFullscreen();
 
   const bg = useColorModeValue('musy.50', '#10101066');
   const color = useColorModeValue('#10101066', 'musy.50');
@@ -109,15 +109,15 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
     setHovering(true);
   };
 
-  useEffect(() => {
-    const ref = audioRef.current;
-    if (isPlaying) {
-      ref?.pause();
-    } else if (playing) {
-      void ref?.play();
-      setPlaying(true);
-    }
-  }, [isPlaying, playing]);
+  // useEffect(() => {
+  //   const ref = audioRef.current;
+  //   if (isPlaying) {
+  //     ref?.pause();
+  //   } else if (playing) {
+  //     void ref?.play();
+  //     setPlaying(true);
+  //   }
+  // }, [isPlaying, playing]);
 
   useEffect(() => {
     const ref = audioRef.current;
@@ -179,9 +179,6 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
                 <Stack direction="column" spacing={0.5}>
                   <Text
                     noOfLines={1}
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey, [], 0)}
                     cursor="pointer"
                     w={['200px', '68%']}
                     overflow="hidden"
@@ -189,13 +186,7 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
                   >
                     {track.name}
                   </Text>
-                  <Flex
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey, [], 0)}
-                    cursor="pointer"
-                    w={['200px', '68%']}
-                  >
+                  <Flex cursor="pointer" w={['200px', '68%']}>
                     {track.explicit && <Image mr={1} src={explicitImage} w="19px" />}
                     <Text opacity={0.8} fontSize="13px" noOfLines={1}>
                       {track.artist}
@@ -311,9 +302,7 @@ const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
                     pos="absolute"
                     right={0}
                     top={0}
-                    onMouseDown={onMouseDown}
-                    onMouseMove={onMouseMove}
-                    onClick={() => onClick(track, id, layoutKey, [], 0)}
+                    onClick={() => onOpen(<FullscreenTrack track={track} />)}
                     cursor="pointer"
                   />
                 </Tooltip>
