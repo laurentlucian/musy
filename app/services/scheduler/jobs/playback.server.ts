@@ -123,6 +123,24 @@ export const playbackCreator = async () => {
     const remaining = track.duration_ms - progress_ms;
     await removePlaybackJob(userId);
     await playbackQ.add('playback', { userId }, { delay: remaining, removeOnComplete: true });
+
+    // queue pending (waiting for playback to start) songs from musy
+    const queue = await prisma.queue.findMany({
+      orderBy: { createdAt: 'asc' },
+      where: { pending: true, userId },
+    });
+    if (queue.length) {
+      const { spotify } = await getSpotifyClient(userId);
+      if (spotify) {
+        for (const { trackId } of queue) {
+          await spotify.addToQueue(trackId);
+        }
+        await prisma.queue.updateMany({
+          data: { pending: false },
+          where: { id: { in: queue.map((q) => q.id) } },
+        });
+      }
+    }
   }
 
   const inactive = playbacks.filter((u) => !notNull(u.playback));

@@ -65,12 +65,8 @@ export const useRecommendData = (trackId: string) => {
 };
 
 export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => {
-  const currentUserId = useSessionUser()?.userId ?? '';
-
   const data = {
-    action: 'add',
     fromId: originUserId ?? '',
-    toId: currentUserId,
     trackId,
   };
 
@@ -97,12 +93,8 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
 };
 
 export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: SendData) => {
-  const currentUserId = useSessionUser()?.userId ?? '';
-
   const data = {
-    fromId: currentUserId,
-    toId: toId,
-    toUsername: username,
+    toId,
     trackId,
   };
 

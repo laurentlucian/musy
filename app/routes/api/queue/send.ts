@@ -6,17 +6,16 @@ import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
-import { activityQ } from '~/services/scheduler/jobs/activity.server';
+import { getCurrentUserId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
+  const currentUserId = await getCurrentUserId(request);
   const trackId = body.get('trackId');
-  const fromId = body.get('fromId');
   const toId = body.get('toId');
 
-  const invalidFormData =
-    typeof trackId !== 'string' || typeof toId !== 'string' || typeof fromId !== 'string';
+  const invalidFormData = typeof trackId !== 'string' || typeof toId !== 'string';
 
   if (invalidFormData) return typedjson('Request Error');
 
@@ -49,36 +48,28 @@ export const action = async ({ request }: ActionArgs) => {
 
     user: {
       connect: {
-        userId: fromId,
+        userId: currentUserId,
       },
     },
   };
 
   if (playback.is_playing) {
     try {
-      await Promise.all([spotify.addToQueue(track.uri), prisma.queue.create({ data })]);
-      return typedjson('Queued');
-    } catch (error) {
-      console.log('send -> error', error);
+      await spotify.addToQueue(track.uri);
+    } catch (err) {
+      console.error(err);
       return typedjson('Error: Premium required');
+    }
+
+    try {
+      await prisma.queue.create({ data });
+    } catch (err) {
+      console.error(err);
+      return typedjson('Queued (Prisma Error)');
     }
   }
 
-  const activity = await prisma.queue.create({ data });
-  const res = await activityQ.add(
-    'pending_activity',
-    { activityId: activity.id },
-    {
-      jobId: String(activity.id),
-      removeOnComplete: true,
-      removeOnFail: true,
-      repeat: {
-        every: 30000,
-      },
-    },
-  );
-  console.log('add -> created Job on ', res.queueName);
-  return typedjson('Queued');
+  return typedjson('Sent');
 };
 
 export const loader = () => {
