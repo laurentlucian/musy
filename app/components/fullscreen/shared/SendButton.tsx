@@ -5,6 +5,7 @@ import { IconButton, useColorModeValue } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useQueueToFriendData } from '~/hooks/useSendButton';
+import Waver from '~/lib/icons/Waver';
 
 type SendButtonProps = {
   trackId: string;
@@ -16,7 +17,7 @@ const SendButton = ({ trackId, userId, ...props }: SendButtonProps) => {
   const toId = userId ?? id;
   if (!toId) throw new Error('Missing userId in <SendButton />');
 
-  const { addToFriendsQueue, icon } = useQueueToFriendData({ trackId, userId: toId });
+  const { addToFriendsQueue, icon, isAdding } = useQueueToFriendData({ trackId, userId: toId });
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue(`${isSmallScreen ? 'musy.200' : 'musy.800'}`, 'musy.200');
 
@@ -26,7 +27,7 @@ const SendButton = ({ trackId, userId, ...props }: SendButtonProps) => {
       pos="relative"
       variant="ghost"
       color={color}
-      icon={icon}
+      icon={isAdding ? <Waver /> : icon}
       _hover={{ color: 'white' }}
       aria-label="SEND"
       {...props}
