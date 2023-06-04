@@ -11,16 +11,14 @@ import { getCurrentUserId } from '~/services/prisma/users.server';
 
 const Home = () => {
   const { activities } = useTypedLoaderData<typeof loader>();
-  const bg = useColorModeValue('#EEE6E2', '#050404');
 
   const activityTracks = [] as TrackWithInfo[];
   for (const activity of activities) {
-    if (!activity.track) continue;
     activityTracks.push(activity.track);
   }
 
   return (
-    <Stack spacing={[2, 10]} px={['5px', 0]} bg={bg}>
+    <Stack spacing={[2, 10]} px={['5px', 0]}>
       {activities.map((activity, index) => {
         return (
           <ActivityTile

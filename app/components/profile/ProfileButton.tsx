@@ -9,6 +9,8 @@ import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
+import { useFullscreen } from '../fullscreen/Fullscreen';
+import FullscreenTrack from '../fullscreen/track/FullscreenTrack';
 import SendSongButton from './profileHeader/SendSongButton';
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
@@ -20,6 +22,8 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
   const isFollowing = useIsFollowing(user.userId);
+  const playback = user.playback;
+  const { onOpen } = useFullscreen();
 
   const ProfilePic = (
     <Image
@@ -28,12 +32,24 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
       minH="50px"
       minW="50px"
       src={user.image}
+      padding={playback ? '2px' : undefined}
+      border={playback ? '2px solid' : undefined}
+      cursor={playback ? 'pointer' : undefined}
+      onClick={
+        playback
+          ? (e) => {
+              e.preventDefault();
+              onOpen(<FullscreenTrack track={playback.track} originUserId={user.userId} />);
+            }
+          : undefined
+      }
+      borderColor="white"
       mr={[0, '10px']}
     />
   );
 
   const Username = (
-    <Text fontWeight="bold" fontSize={['15px', '20px']}>
+    <Text fontWeight="bold" fontSize="sm">
       {name}
     </Text>
   );
@@ -48,26 +64,20 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
     <Flex justify="space-between" w="100%" align="center" pr="5px">
       <HStack>
         {ProfilePic}
-        <Flex>
-          <Stack>
-            {!user.bio && loading ? (
-              <Stack ml="8px">
-                <Waver />
-              </Stack>
-            ) : (
-              Username
+
+        {loading ? (
+          <Waver />
+        ) : (
+          <Stack spacing={1}>
+            {Username}
+
+            {user.bio && (
+              <Text opacity={0.8} fontSize={['9px', '11px']} h="20px">
+                {user.bio.slice(0, isSmallScreen ? 14 : 50)}
+              </Text>
             )}
-            {user.bio && loading ? (
-              <Waver />
-            ) : user.bio ? (
-              <Stack maxW={['40px', '100%']}>
-                <Text opacity={0.8} fontSize={{ base: 'smaller', md: 'xs' }} h="20px">
-                  {user.bio.slice(0, isSmallScreen ? 14 : 50)}
-                </Text>
-              </Stack>
-            ) : null}
           </Stack>
-        </Flex>
+        )}
       </HStack>
       {Actions}
     </Flex>

@@ -166,13 +166,14 @@ const Player = ({ id, layoutKey, playback }: PlayerProps) => {
                     w={['200px', '68%']}
                     overflow="hidden"
                     whiteSpace="nowrap"
+                    fontSize={['13px', '14px']}
                     color={main}
                   >
                     {track.name}
                   </Text>
                   <Flex cursor="pointer" w={['200px', '68%']}>
                     {track.explicit && <Image mr={1} src={explicitImage} w="19px" />}
-                    <Text opacity={0.8} fontSize="13px" noOfLines={1} color={sub}>
+                    <Text opacity={0.8} fontSize={['12px', '13px']} noOfLines={1} color={sub}>
                       {track.artist}
                     </Text>
                   </Flex>

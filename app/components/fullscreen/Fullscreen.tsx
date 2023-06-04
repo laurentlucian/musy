@@ -44,6 +44,10 @@ export const FullscreenRenderer = () => {
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    };
   }, [component]);
 
   if (!component) return null;
