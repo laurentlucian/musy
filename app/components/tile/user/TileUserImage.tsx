@@ -41,9 +41,6 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
       )}
       <Image
         src={user.image}
-        padding={user.playback ? '2px' : undefined}
-        border={user.playback ? '2px solid' : undefined}
-        cursor={user.playback ? 'pointer' : undefined}
         onClick={(e) => {
           if (user.playback) {
             e.preventDefault();
