@@ -24,7 +24,12 @@ const FullscreenTracksLayout = () => {
             tracks={tracks}
             index={index}
             layoutKey={layoutKey}
-            image={<TileTrackImage box={{ w: ['115px', '160px', '200px'] }} />}
+            image={
+              <TileTrackImage
+                box={{ w: ['115px', '160px', '200px'] }}
+                image={{ src: track.image }}
+              />
+            }
             info={<TileTrackInfo track={track} />}
           />
         );
