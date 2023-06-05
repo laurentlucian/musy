@@ -1,6 +1,7 @@
 import { Stack } from '@chakra-ui/react';
 
-import { useQueueableUsers } from '~/hooks/useUsers';
+import useFollowing from '~/hooks/useFollowing';
+import { useRestOfUsers } from '~/hooks/useUsers';
 
 import FullscreenFadeLayout from '../../shared/FullscreenFadeLayout';
 import { useFullscreenTrack } from '../FullscreenTrack';
@@ -9,13 +10,19 @@ import BackButton from './shared/BackButton';
 
 const FullscreenTrackQueue = () => {
   const { track } = useFullscreenTrack();
-  const queueableUsers = useQueueableUsers();
+  const following = useFollowing();
+  const restOfUsers = useRestOfUsers();
 
   return (
-    <FullscreenFadeLayout>
+    <FullscreenFadeLayout
+      direction="column"
+      justify="space-between"
+      maxH={['unset', '450px']}
+      overflow="hidden"
+    >
       <BackButton />
-      <Stack overflowX="hidden">
-        {queueableUsers.map((user) => (
+      <Stack overflowX="hidden" w="100%">
+        {[...following, ...restOfUsers].map((user) => (
           <QueueToFriend
             key={user.userId}
             trackId={track.id}
