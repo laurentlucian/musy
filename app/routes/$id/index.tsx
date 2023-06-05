@@ -6,10 +6,10 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import Player from '~/components/profile/player/Player';
-import EditableRecommendedTiles from '~/components/tiles/EditableRecommendedTiles';
 import Playlists from '~/components/tiles/playlists/Playlists';
-import TopTiles from '~/components/tiles/TopTiles';
-import TrackTiles from '~/components/tiles/TrackTiles';
+import EditableRecommendedTiles from '~/components/tiles/TilesRecommended';
+import TilesTop from '~/components/tiles/TilesTop';
+import TilesTrack from '~/components/tiles/TilesTrack';
 import useSessionUser from '~/hooks/useSessionUser';
 import { prisma } from '~/services/db.server';
 import { getCachedUserTop } from '~/services/prisma/spotify.server';
@@ -36,11 +36,11 @@ const ProfileOutlet = () => {
       )}
 
       {isOwnProfile && <EditableRecommendedTiles tracks={recommended} />}
-      {!isOwnProfile && <TrackTiles tracks={recommended} title="RECOMMENDED" />}
+      {!isOwnProfile && <TilesTrack tracks={recommended} title="RECOMMENDED" />}
 
-      <TrackTiles tracks={recent} title="RECENT" />
-      <TrackTiles tracks={liked} title="LIKED" />
-      <TopTiles tracks={top} />
+      <TilesTrack tracks={recent} title="RECENT" />
+      <TilesTrack tracks={liked} title="LIKED" />
+      <TilesTop tracks={top} />
       <Playlists playlists={playlists} />
     </Stack>
   );

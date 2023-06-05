@@ -4,8 +4,8 @@ import { Music } from 'iconsax-react';
 
 import useSessionUser from '~/hooks/useSessionUser';
 
+import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
-import ActionButton from './shared/ActionButton';
 
 const ProfileSong = () => {
   const currentUser = useSessionUser();

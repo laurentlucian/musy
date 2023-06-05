@@ -6,7 +6,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileButton from '~/components/profile/ProfileButton';
-import TrackTiles from '~/components/tiles/TrackTiles';
+import TrackTiles from '~/components/tiles/TilesTrack';
 import useFollowing from '~/hooks/useFollowing';
 import { useRestOfUsers } from '~/hooks/useUsers';
 import { getSearchResults } from '~/services/prisma/spotify.server';

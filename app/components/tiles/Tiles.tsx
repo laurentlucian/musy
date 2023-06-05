@@ -3,14 +3,14 @@ import type { ReactNode } from 'react';
 import type { StackProps } from '@chakra-ui/react';
 import { Flex } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
-import { HStack, Heading } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/react';
 
 import { useMouseScroll } from '~/hooks/useMouseScroll';
 import type { TrackWithInfo } from '~/lib/types/types';
 
 import { useFullscreen } from '../fullscreen/Fullscreen';
 import FullscreenTracks from '../fullscreen/tracks/FullscreenTracks';
-import ScrollButtons from './ScrollButtons';
+import ScrollButtons from './shared/ScrollButtons';
 
 type TilesProps = {
   action?: ReactNode;

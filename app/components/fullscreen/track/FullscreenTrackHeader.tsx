@@ -1,9 +1,10 @@
 import { Stack } from '@chakra-ui/react';
 
+import ActivityTrackInfo from '~/components/activity/shared/ActivityTrackInfo';
+import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import useIsMobile from '~/hooks/useIsMobile';
 
-import TrackImage from '../shared/TrackImage';
-import TrackInfo from '../shared/TrackInfo';
+import TrackInfo from '../shared/FullscreenTrackInfo';
 import { useFullscreenTrack } from './FullscreenTrack';
 
 const variants = {
@@ -66,7 +67,10 @@ const FullscreenTrackHeader = () => {
     //   }}
     // >
     <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto">
-      <TrackImage track={track} />
+      <Stack direction="column" w="65%">
+        <TileTrackImage image={{ src: track.image }} />
+        <ActivityTrackInfo track={track} w="100%" />
+      </Stack>
       <TrackInfo track={track} />
     </Stack>
     // </motion.div>

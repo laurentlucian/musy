@@ -15,7 +15,6 @@ import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo, Track } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import QuickActions from '../../home/QuickActions';
 import FavoriteButton from '../profileHeader/FavoriteButton';
 
 type PlayerProps = {
@@ -63,7 +62,6 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
     <HStack justify={track ? 'start' : 'end'} align="baseline" w="100%">
       <FavoriteButton id={user.userId} />
       {!isOwnProfile && <FollowButton id={user.userId} />}
-      <QuickActions name={name} image={user.image} profileId={user.userId} que={que} />
     </HStack>
   );
 

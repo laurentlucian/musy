@@ -6,7 +6,7 @@ import { Next, Pause, Play, Previous } from 'iconsax-react';
 
 import Tooltip from '~/components/Tooltip';
 
-import SaveToLiked from '../../fullscreen/track/views/actions/SaveToLiked';
+import SaveToLiked from '../../fullscreen/shared/actions/SaveToLiked';
 
 type PlayControllerProps = {
   fetcher: FetcherWithComponents<any>;

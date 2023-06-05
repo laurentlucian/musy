@@ -1,6 +1,6 @@
 import { useSearchParams } from '@remix-run/react';
 
-import { Heading, HStack, Stack, Text, Image, Flex, SimpleGrid, Button } from '@chakra-ui/react';
+import { Heading, HStack, Stack, Text, Image, Flex, SimpleGrid } from '@chakra-ui/react';
 
 import { CodeCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
@@ -8,6 +8,7 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 import MoodButton from '~/components/profile/profileHeader/MoodButton';
 import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
@@ -42,9 +43,12 @@ const ProfileHeader = () => {
 
   const Username = (
     <HStack>
-      <Heading size={['md', 'lg']} fontWeight="bold" textAlign="left">
-        {user.name}
-      </Heading>
+      <HStack spacing={3}>
+        <Heading size={['md', 'lg']} fontWeight="bold" textAlign="left">
+          {user.name}
+        </Heading>
+        <SpotifyLogo icon />
+      </HStack>
       <PrivateBadge />
       {user.settings?.founder === true && (
         <Tooltip label="Dev" placement="top" hasArrow>

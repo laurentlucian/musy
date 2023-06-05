@@ -1,6 +1,4 @@
-import { useParams } from '@remix-run/react';
-
-import { Stack, Text, Textarea } from '@chakra-ui/react';
+import { Text, Textarea } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
@@ -33,6 +31,7 @@ const Bio = ({ bio, isOwnProfile }: { bio: string | null; isOwnProfile: boolean 
       minH="20px"
       overflow="hidden"
       fontSize={['12px', '14px']}
+      pt="10px"
     />
   ) : (
     <Text

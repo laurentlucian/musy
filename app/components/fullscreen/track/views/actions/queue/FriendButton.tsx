@@ -3,7 +3,7 @@ import { Image } from '@chakra-ui/react';
 import { useQueueToFriendData } from '~/hooks/useSendButton';
 import Waver from '~/lib/icons/Waver';
 
-import ActionButton from '../shared/ActionButton';
+import ActionButton from '../../../../shared/FullscreenActionButton';
 
 type QueueToFriendProps = {
   trackId: string;

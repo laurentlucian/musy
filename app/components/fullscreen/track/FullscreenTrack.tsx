@@ -5,6 +5,7 @@ import { SimpleGrid } from '@chakra-ui/react';
 
 import type { TrackWithInfo } from '~/lib/types/types';
 
+import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
 import FullscreenTrackHeader from './FullscreenTrackHeader';
 import FullscreenTrackViews from './FullscreenTrackViews';
 
@@ -31,11 +32,12 @@ const FullscreenTrack = (props: { originUserId?: string; track: TrackWithInfo })
 
   return (
     <FullscreenTrackContext.Provider value={{ originUserId, setView, track, view }}>
-      <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent="center">
-        <FullscreenTrackHeader />
-        <FullscreenTrackViews />
-      </SimpleGrid>
-      {/* <Fullscreen.CloseButton /> */}
+      <FullscreenFadeLayout>
+        <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent={['start', 'center']}>
+          <FullscreenTrackHeader />
+          <FullscreenTrackViews />
+        </SimpleGrid>
+      </FullscreenFadeLayout>
     </FullscreenTrackContext.Provider>
   );
 };

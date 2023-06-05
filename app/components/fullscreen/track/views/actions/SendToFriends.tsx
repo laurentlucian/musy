@@ -1,16 +1,15 @@
-import { ArrowLeft2 } from 'iconsax-react';
+import { Send2 } from 'iconsax-react';
 
 import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
 
-const BackButton = () => {
+const SendToFriends = () => {
   const { setView } = useFullscreenTrack();
-
   return (
-    <ActionButton leftIcon={<ArrowLeft2 />} onClick={() => setView('default')}>
-      Go back
+    <ActionButton leftIcon={<Send2 />} onClick={() => setView('queue')}>
+      Send to friend&apos;s
     </ActionButton>
   );
 };
 
-export default BackButton;
+export default SendToFriends;

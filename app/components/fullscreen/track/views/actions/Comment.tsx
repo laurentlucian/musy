@@ -1,7 +1,7 @@
 import { Messages1 } from 'iconsax-react';
 
+import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
-import ActionButton from './shared/ActionButton';
 
 const Comment = () => {
   const { setView } = useFullscreenTrack();

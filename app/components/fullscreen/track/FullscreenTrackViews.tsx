@@ -1,12 +1,14 @@
 import { useFullscreenTrack } from './FullscreenTrack';
-import Views from './views';
+import FullscreenTrackActions from './views/FullscreenTrackActions';
+import FullscreenTrackComments from './views/FullscreenTrackComments';
+import FullscreenTrackQueue from './views/FullscreenTrackQueue';
 
 const FullscreenTileViews = () => {
   const { view } = useFullscreenTrack();
 
-  if (view === 'default') return <Views.Actions />;
-  if (view === 'queue') return <Views.QueueList />;
-  if (view === 'comment') return <Views.Comments />;
+  if (view === 'default') return <FullscreenTrackActions />;
+  if (view === 'queue') return <FullscreenTrackQueue />;
+  if (view === 'comment') return <FullscreenTrackComments />;
   return null;
 };
 

@@ -1,12 +1,12 @@
-import { useRef, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
+import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
-import ActionButton from './shared/ActionButton';
 
 const PlayPreview = () => {
   const { track } = useFullscreenTrack();

@@ -5,6 +5,7 @@ import { Stack } from '@chakra-ui/react';
 
 import type { TrackWithInfo } from '~/lib/types/types';
 
+import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
 import FullscreenTracksHeader from './FullscreenTracksHeader';
 import FullscreenTracksLayout from './FullscreenTracksLayout';
 
@@ -30,14 +31,16 @@ const FullscreenTracks = (props: { title: string; tracks: TrackWithInfo[] }) => 
   const [layout, setLayout] = useState<LayoutTypes>('grid');
 
   return (
-    <FullscreenTracksContext.Provider value={{ layout, setLayout, title, tracks }}>
-      <Stack w="100%">
-        <FullscreenTracksHeader />
-        <Stack overflowX="hidden">
-          <FullscreenTracksLayout />
+    <FullscreenFadeLayout>
+      <FullscreenTracksContext.Provider value={{ layout, setLayout, title, tracks }}>
+        <Stack w="100%">
+          <FullscreenTracksHeader />
+          <Stack overflowX="hidden">
+            <FullscreenTracksLayout />
+          </Stack>
         </Stack>
-      </Stack>
-    </FullscreenTracksContext.Provider>
+      </FullscreenTracksContext.Provider>
+    </FullscreenFadeLayout>
   );
 };
 

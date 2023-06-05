@@ -5,10 +5,10 @@ import { Stack } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
-import Card from '~/components/tiles/Card';
+import HTile from '~/components/tile/track/TileTrackList';
 import type { loader } from '~/routes/api/search/results';
 
-import SendButton from '../shared/SendButton';
+import SendButton from '../shared/actions/SendTrack';
 
 const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
   const [searchParams] = useSearchParams();
@@ -26,7 +26,7 @@ const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
     <Stack spacing={5}>
       {tracks.map((track) => {
         return (
-          <Card
+          <HTile
             key={track.id}
             track={track}
             userId={userId}

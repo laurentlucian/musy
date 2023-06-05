@@ -25,9 +25,9 @@ import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 import type { Track } from '~/lib/types/types';
 
-import Tile from '../tiles/tile/Tile';
-import TileImage from '../tiles/tile/TileImage';
-import TileInfo from '../tiles/tile/TileInfo';
+import Tile from '../tile/Tile';
+import TileTrackImage from '../tile/track/TileTrackImage';
+import TileTrackInfo from '../tile/track/TileTrackInfo';
 import UserTile from './UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -226,8 +226,8 @@ const NavSearch = () => {
                     layoutKey={layoutKey}
                     track={track}
                     tracks={tracks}
-                    image={<TileImage size={'40px'} />}
-                    info={<TileInfo />}
+                    image={<TileTrackImage box={{ w: '40px' }} />}
+                    info={<TileTrackInfo track={track} />}
                     list
                   />
                 ))}

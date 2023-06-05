@@ -2,10 +2,10 @@ import { useParams } from '@remix-run/react';
 
 import { SimpleGrid, Stack } from '@chakra-ui/react';
 
-import Card from '~/components/tiles/Card';
-import Tile from '~/components/tiles/tile/Tile';
-import TileImage from '~/components/tiles/tile/TileImage';
-import TileInfo from '~/components/tiles/tile/TileInfo';
+import Tile from '~/components/tile/Tile';
+import TileTrackImage from '~/components/tile/track/TileTrackImage';
+import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
+import TileTrackList from '~/components/tile/track/TileTrackList';
 
 import { useFullscreenTracks } from './FullscreenTracks';
 
@@ -24,8 +24,8 @@ const FullscreenTracksLayout = () => {
             tracks={tracks}
             index={index}
             layoutKey={layoutKey}
-            image={<TileImage size={['115px', '160px', '200px']} />}
-            info={<TileInfo />}
+            image={<TileTrackImage box={{ w: ['115px', '160px', '200px'] }} />}
+            info={<TileTrackInfo track={track} />}
           />
         );
       })}
@@ -35,7 +35,7 @@ const FullscreenTracksLayout = () => {
   const List = (
     <Stack spacing={5}>
       {tracks.map((track) => {
-        return <Card key={track.id} track={track} userId={id ?? ''} />;
+        return <TileTrackList key={track.id} track={track} userId={id ?? ''} />;
       })}
     </Stack>
   );

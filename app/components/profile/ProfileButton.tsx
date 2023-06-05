@@ -35,14 +35,12 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
       padding={playback ? '2px' : undefined}
       border={playback ? '2px solid' : undefined}
       cursor={playback ? 'pointer' : undefined}
-      onClick={
-        playback
-          ? (e) => {
-              e.preventDefault();
-              onOpen(<FullscreenTrack track={playback.track} originUserId={user.userId} />);
-            }
-          : undefined
-      }
+      onClick={(e) => {
+        if (playback) {
+          e.preventDefault();
+          onOpen(<FullscreenTrack track={playback.track} originUserId={user.userId} />);
+        }
+      }}
       borderColor="white"
       mr={[0, '10px']}
     />

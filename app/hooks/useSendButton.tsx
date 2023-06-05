@@ -8,7 +8,6 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/add';
 
-import useSessionUser from './useSessionUser';
 import { useUserRecommended } from './useUserLibrary';
 
 type SelfQueueData = {
@@ -87,7 +86,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
     <DirectInbox />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to queue';
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to my queue';
 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };

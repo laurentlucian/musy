@@ -8,7 +8,7 @@ import invariant from 'tiny-invariant';
 
 import Player from '~/components/profile/player/spotify/Player';
 import Playlists from '~/components/tiles/playlists/Playlists';
-import TrackTiles from '~/components/tiles/TrackTiles';
+import TrackTiles from '~/components/tiles/TilesTrack';
 import { prisma } from '~/services/db.server';
 import {
   getUserSpotifyLiked,

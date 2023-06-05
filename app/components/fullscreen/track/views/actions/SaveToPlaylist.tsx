@@ -7,8 +7,8 @@ import useSessionUser from '~/hooks/useSessionUser';
 import LikeIcon from '~/lib/icons/Like';
 import Waver from '~/lib/icons/Waver';
 
+import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
-import ActionButton from './shared/ActionButton';
 
 const SaveToPlaylist = () => {
   const { track } = useFullscreenTrack();
