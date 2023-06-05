@@ -1,29 +1,23 @@
 import { Link } from '@remix-run/react';
 
-import { HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { HStack, Stack, Text } from '@chakra-ui/react';
 
-import type { Profile } from '@prisma/client';
+import TileUserImage from '~/components/tile/user/TileUserImage';
+import type { ProfileWithInfo } from '~/lib/types/types';
 
-const ActivityUserInfo = ({ user }: { user: Profile }) => {
+const ActivityUserInfo = ({ user }: { user: ProfileWithInfo }) => {
   return (
-    <Link to={`/${user.userId}`}>
-      <HStack data-group>
-        <Image
-          minW="35px"
-          maxW="35px"
-          minH="35px"
-          maxH="35px"
-          borderRadius="100%"
-          src={user.image}
-        />
-        <Stack spacing={0}>
-          <Text _groupHover={{ textDecoration: 'underline' }} fontWeight="bold" fontSize="xs">
+    <HStack>
+      <TileUserImage user={user} size="35px" />
+      <Link to={`/${user.userId}`}>
+        <Stack spacing={0} data-group>
+          <Text fontWeight="bold" fontSize="xs" _groupHover={{ textDecoration: 'underline' }}>
             {user.name}
           </Text>
           <Text fontSize="9px">{user.bio}</Text>
         </Stack>
-      </HStack>
-    </Link>
+      </Link>
+    </HStack>
   );
 };
 

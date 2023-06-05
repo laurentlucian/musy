@@ -51,7 +51,7 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
 
           return (
             <Stack key={index}>
-              {tile && <ActivityUserInfo user={user} />}
+              {tile && <ActivityUserInfo user={{ playback, ...user }} />}
               <Tile
                 track={playback.track}
                 tracks={tracks}

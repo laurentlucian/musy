@@ -5,12 +5,12 @@ import { Send2, Star1 } from 'iconsax-react';
 import LikeIcon from '~/lib/icons/Like';
 import type { Activity } from '~/lib/types/types';
 
-import UserInfo from './ActivityUserInfo';
+import ActivityUserInfo from './ActivityUserInfo';
 
 const ActivityInfo = ({ activity }: { activity: Activity }) => {
   return (
     <Flex justify="space-between" align="center">
-      <UserInfo user={activity.user} />
+      <ActivityUserInfo user={activity.user} />
 
       {activity.action === 'liked' && (
         <HStack align="center">
@@ -27,7 +27,7 @@ const ActivityInfo = ({ activity }: { activity: Activity }) => {
             SENT
           </Text>
           <Icon as={Send2} boxSize="20px" fill="white" />
-          {activity.owner?.user && <UserInfo user={activity.owner.user} />}
+          {activity.owner?.user && <ActivityUserInfo user={activity.owner.user} />}
         </HStack>
       )}
 

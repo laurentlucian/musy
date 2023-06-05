@@ -8,10 +8,10 @@ export type Activity = {
   createdAt: Date;
   id: number;
   likedBy?: Profile[];
-  owner?: { user: Profile | null };
+  owner?: { user: ProfileWithInfo | null };
   track: TrackWithInfo;
   trackId: string;
-  user: Profile;
+  user: ProfileWithInfo;
   userId: string;
 };
 export interface PlaylistTrack {

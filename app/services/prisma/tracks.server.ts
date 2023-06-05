@@ -1,15 +1,21 @@
+import type { Prisma } from '@prisma/client';
+
 import type { Activity } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
-export const trackWithInfo = {
-  track: {
-    include: {
-      liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-      queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-      recent: { select: { user: true } },
-    },
+export const trackWithInfo: Prisma.TrackArgs = {
+  include: {
+    liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+    queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+    recent: { select: { user: true } },
   },
-} as const;
+};
+
+export const profileWithInfo: Prisma.ProfileArgs = {
+  include: {
+    playback: { include: { track: trackWithInfo } },
+  },
+};
 
 export const getActivity = async (userId: string) => {
   const following = (
@@ -26,8 +32,8 @@ export const getActivity = async (userId: string) => {
   const [like, queue, recommended] = await Promise.all([
     prisma.likedSongs.findMany({
       include: {
-        ...trackWithInfo,
-        user: true,
+        track: trackWithInfo,
+        user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
       take: 20,
@@ -39,9 +45,9 @@ export const getActivity = async (userId: string) => {
     }),
     prisma.queue.findMany({
       include: {
-        owner: { select: { accessToken: false, user: true } },
-        ...trackWithInfo,
-        user: true,
+        owner: { select: { accessToken: false, user: profileWithInfo } },
+        track: trackWithInfo,
+        user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
       take: 20,
@@ -52,8 +58,7 @@ export const getActivity = async (userId: string) => {
     }),
     prisma.recommended.findMany({
       include: {
-        ...trackWithInfo,
-        user: true,
+        track: trackWithInfo,
       },
       orderBy: { createdAt: 'desc' },
       take: 20,
@@ -75,7 +80,7 @@ export const getActivity = async (userId: string) => {
 export const getUserRecommended = async (userId: string) => {
   const recommended = await prisma.recommended.findMany({
     include: {
-      ...trackWithInfo,
+      track: trackWithInfo,
     },
     orderBy: { createdAt: 'desc' },
     where: { userId },
@@ -87,7 +92,7 @@ export const getUserRecommended = async (userId: string) => {
 export const getUserRecent = async (userId: string) => {
   const recent = await prisma.recentSongs.findMany({
     include: {
-      ...trackWithInfo,
+      track: trackWithInfo,
     },
     orderBy: {
       playedAt: 'desc',
@@ -104,7 +109,7 @@ export const getUserRecent = async (userId: string) => {
 export const getUserLiked = async (userId: string) => {
   const liked = await prisma.likedSongs.findMany({
     include: {
-      ...trackWithInfo,
+      track: trackWithInfo,
     },
     orderBy: {
       createdAt: 'desc',
@@ -130,7 +135,7 @@ export const getTopLeaderboard = async () => {
       _count: {
         select: { recent: true },
       },
-      ...trackWithInfo.track.include,
+      ...trackWithInfo.include,
     },
     where: { id: { in: trackIds.map((t) => t.trackId) } },
   });

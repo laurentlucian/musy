@@ -47,7 +47,7 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
         left={0}
         bottom={0}
         borderRadius="50%"
-        border={['3px solid black', '3px solid black']}
+        border="3px solid black"
       />
       <Stack
         spacing={1}

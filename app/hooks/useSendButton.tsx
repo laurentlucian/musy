@@ -86,7 +86,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
     <DirectInbox />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to my queue';
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to queue';
 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };

@@ -97,7 +97,7 @@ export const getCurrentUser = async (request: Request) => {
       mute: true,
       playback: {
         include: {
-          ...trackWithInfo,
+          track: trackWithInfo,
         },
       },
       recommended: { select: { trackId: true } },
@@ -116,7 +116,7 @@ export const getUserProfile = async (userId: string) => {
       ai: true,
       playback: {
         include: {
-          ...trackWithInfo,
+          track: trackWithInfo,
         },
       },
       settings: true,
@@ -156,7 +156,7 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
       include: {
         playback: {
           include: {
-            ...trackWithInfo,
+            track: trackWithInfo,
           },
         },
         settings: true,
@@ -169,7 +169,7 @@ export const getAllUsers = async (isAuthenticated = false, id: string | null = n
       include: {
         playback: {
           include: {
-            ...trackWithInfo,
+            track: trackWithInfo,
           },
         },
         settings: true,
@@ -221,7 +221,7 @@ export const getQueueableUsers = async (id: string | null = null) => {
 //           name: true,
 //           playback: {
 //             include: {
-//               ...trackWithInfo,
+//               track: trackWithInfo,
 //             },
 //           },
 //           settings: { select: { allowQueue: true } },
@@ -246,7 +246,7 @@ export const getFavorites = async (userId?: string) => {
           name: true,
           playback: {
             include: {
-              ...trackWithInfo,
+              track: trackWithInfo,
             },
           },
           settings: { select: { allowQueue: true } },

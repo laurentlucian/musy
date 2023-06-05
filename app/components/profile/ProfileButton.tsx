@@ -1,6 +1,6 @@
 import { Link, useNavigation } from '@remix-run/react';
 
-import { Box, Button, Flex, HStack, Image, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 import FollowButton from '~/components/profile/profileHeader/FollowButton';
 import useIsFollowing from '~/hooks/useIsFollowing';
@@ -9,8 +9,7 @@ import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
-import { useFullscreen } from '../fullscreen/Fullscreen';
-import FullscreenTrack from '../fullscreen/track/FullscreenTrack';
+import TileUserImage from '../tile/user/TileUserImage';
 import SendSongButton from './profileHeader/SendSongButton';
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
@@ -22,29 +21,6 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
   const isFollowing = useIsFollowing(user.userId);
-  const playback = user.playback;
-  const { onOpen } = useFullscreen();
-
-  const ProfilePic = (
-    <Image
-      boxSize="50px"
-      borderRadius="100%"
-      minH="50px"
-      minW="50px"
-      src={user.image}
-      padding={playback ? '2px' : undefined}
-      border={playback ? '2px solid' : undefined}
-      cursor={playback ? 'pointer' : undefined}
-      onClick={(e) => {
-        if (playback) {
-          e.preventDefault();
-          onOpen(<FullscreenTrack track={playback.track} originUserId={user.userId} />);
-        }
-      }}
-      borderColor="white"
-      mr={[0, '10px']}
-    />
-  );
 
   const Username = (
     <Text fontWeight="bold" fontSize="sm">
@@ -61,8 +37,7 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const User = (
     <Flex justify="space-between" w="100%" align="center" pr="5px">
       <HStack>
-        {ProfilePic}
-
+        <TileUserImage user={user} />
         {loading ? (
           <Waver />
         ) : (
