@@ -279,11 +279,14 @@ export const addUsersToQueue = async () => {
   }
 
   await prisma.playback.deleteMany();
-
+  // delete all playbackQ jobs
+  await playbackQ.pause();
+  await playbackQ.obliterate({ force: true });
   console.log(
     'playbackQ',
     (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
   );
+  console.log('addUsersToQueue -> obliterated playbackQ');
 
   // needed this once because forgot to save duration_ms in db
   // await addDurationToRecent();

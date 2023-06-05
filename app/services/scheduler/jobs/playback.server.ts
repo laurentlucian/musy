@@ -25,6 +25,7 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   }
 
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
+
   if (!playback || !playback.is_playing) {
     console.log('playbackQ -> not playing', userId);
     return null;
@@ -36,20 +37,56 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
     return null;
   }
 
+  console.log('playbackQ -> repeat state', playback.repeat_state);
+  if (playback.repeat_state === 'track') {
+    console.log('playbackQ -> on repeat -- will check again in 5 minutes', track.name, userId); // figure out why playbackQ spams with isSameTrack --
+    await playbackQ.add(
+      'playback',
+      { userId },
+      {
+        delay: 1000 * 60 * 5,
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
+    console.log('playbackQ -> completed', userId);
+    return null;
+  }
   const current = await prisma.playback.findUnique({ where: { userId } });
   const isSameTrack = current?.trackId === track.id;
 
-  console.log('playbackQ -> user', userId, 'track', track.name);
-  await upsertPlayback(userId, track, progress_ms, playback.timestamp);
-
-  console.log('playbackQ -> completed', userId);
   const remaining = track.duration_ms - progress_ms;
+  if (isSameTrack) {
+    console.log(
+      'playbackQ -> same track -- added back with 30s delay (can happen when remainder isnt accurate',
+      track.name,
+      userId,
+    );
+    await playbackQ.add(
+      'playback',
+      { userId },
+      {
+        delay: remaining + 1000 * 60 * 30,
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
+    );
+    console.log('playbackQ -> completed', userId);
+    return null;
+  }
+
+  console.log('playbackQ -> user', userId, 'track', track.name, 'isSameTrack', isSameTrack);
+  await upsertPlayback(userId, track, progress_ms, playback.timestamp);
   await playbackQ.add(
     'playback',
     { userId },
-    { delay: remaining + (isSameTrack ? 2000 : 500), removeOnComplete: true, removeOnFail: true },
+    {
+      delay: remaining + 1000 * 60 * 1,
+      removeOnComplete: true,
+      removeOnFail: true,
+    },
   );
-  // return playback;
+  console.log('playbackQ -> completed', userId);
 });
 
 const getPlaybackState = async (id: string) => {
