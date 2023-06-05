@@ -1,9 +1,5 @@
-import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-
 import { Button, Flex, useEventListener } from '@chakra-ui/react';
 
-import { motion } from 'framer-motion';
 import { create } from 'zustand';
 
 const useFullscreenStore = create<{
@@ -36,35 +32,13 @@ export const FullscreenRenderer = () => {
   const components = useFullscreenStore((state) => state.components);
   const component = components[components.length - 1];
 
-  useEffect(() => {
-    if (component) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-    };
-  }, [component]);
-
   if (!component) return null;
 
-  return <Container>{component}</Container>;
-};
-
-const Container = (props: { children: ReactNode }) => {
   return (
     <Flex
-      as={motion.div}
       zIndex={9}
       bg="#10101066"
       backdropFilter="blur(27px)"
-      initial={{ opacity: 0.2 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       direction="column"
       align="center"
       pos="fixed"
@@ -78,7 +52,7 @@ const Container = (props: { children: ReactNode }) => {
         w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
         overflow="hidden"
       >
-        {props.children}
+        {component}
       </Flex>
       <CloseButton />
     </Flex>
@@ -108,9 +82,4 @@ const CloseButton = () => {
       Close
     </Button>
   );
-};
-
-export default {
-  CloseButton,
-  Container,
 };

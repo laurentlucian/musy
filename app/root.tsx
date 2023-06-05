@@ -28,7 +28,7 @@ import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prisma/users.server';
 
-import { FullscreenRenderer } from './components/fullscreen/Fullscreen';
+import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
@@ -156,6 +156,7 @@ type DocumentProps = {
 };
 
 const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, emotionCache) => {
+  const { components } = useFullscreen();
   const serverStyleData = useContext(ServerStyleContext);
   const clientStyleData = useContext(ClientStyleContext);
 
@@ -179,7 +180,7 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
   );
 
   return (
-    <html lang="en">
+    <html lang="en" style={{ overflowY: components.length > 0 ? 'hidden' : undefined }}>
       <head>
         <Meta />
         <Links />
