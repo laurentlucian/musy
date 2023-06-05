@@ -180,7 +180,13 @@ const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, 
   );
 
   return (
-    <html lang="en" style={{ overflowY: components.length > 0 ? 'hidden' : undefined }}>
+    <html
+      lang="en"
+      style={{
+        overflowY: components.length > 0 ? 'hidden' : undefined,
+        touchAction: components.length > 0 ? 'none' : undefined,
+      }}
+    >
       <head>
         <Meta />
         <Links />
