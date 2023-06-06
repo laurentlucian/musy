@@ -50,7 +50,7 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
           const layoutKey = title + index;
 
           return (
-            <Stack key={index}>
+            <Stack key={index} flexShrink={0}>
               {tile && <ActivityUserInfo user={{ playback, ...user }} />}
               <Tile
                 track={playback.track}
