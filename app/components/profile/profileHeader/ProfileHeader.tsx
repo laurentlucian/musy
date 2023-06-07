@@ -12,9 +12,9 @@ import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
+import AddToQueue from './AddToQueue';
 import Bio from './Bio';
 import FollowButton from './FollowButton';
-import SendSongButton from './SendSongButton';
 
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
@@ -90,7 +90,7 @@ const ProfileHeader = () => {
   const Buttons = (
     <SimpleGrid columns={2} gap={2} maxW={['100%', 'fit-content']}>
       <FollowButton />
-      <SendSongButton />
+      <AddToQueue />
     </SimpleGrid>
   );
 

@@ -5,7 +5,7 @@ import { Button } from '@chakra-ui/react';
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenQueue from '~/components/fullscreen/queue/FullscreenQueue';
 
-const SendSongButton = (props: { id?: string }) => {
+const AddToQueueButton = (props: { id?: string }) => {
   const { onOpen } = useFullscreen();
   const params = useParams();
   const userId = (props.id || params.id) as string;
@@ -21,9 +21,9 @@ const SendSongButton = (props: { id?: string }) => {
         onOpen(<FullscreenQueue userId={userId} />);
       }}
     >
-      Send a song
+      Add to queue
     </Button>
   );
 };
 
-export default SendSongButton;
+export default AddToQueueButton;

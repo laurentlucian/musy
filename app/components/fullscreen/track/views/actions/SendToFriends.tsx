@@ -7,7 +7,7 @@ const SendToFriends = () => {
   const { setView } = useFullscreenTrack();
   return (
     <ActionButton leftIcon={<Send2 />} onClick={() => setView('queue')}>
-      Send to friend&apos;s
+      Add to friend&apos;s
     </ActionButton>
   );
 };

@@ -77,7 +77,7 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
         value={search}
         variant="flushed"
         fontSize="14px"
-        placeholder="search"
+        placeholder="Search"
         autoComplete="off"
         onChange={(e) => {
           const search = e.currentTarget.value;

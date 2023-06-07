@@ -12,10 +12,10 @@ const FullscreenTrackActions = () => {
   const { originUserId, track } = useFullscreenTrack();
 
   return (
-    <FullscreenFadeLayout overflowX="hidden" direction="column" justify="space-between">
+    <FullscreenFadeLayout overflowX="hidden" direction="column">
       <SaveToLiked trackId={track.id} />
       <Recommend trackId={track.id} />
-      <Comment />
+      {/* <Comment /> */}
       <AddToSelf withIcon trackId={track.id} originUserId={originUserId} />
       <SendToFriends />
       <AnalyzeTrack trackId={track.id} />

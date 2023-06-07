@@ -10,7 +10,7 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 import { shortenUsername } from '~/lib/utils';
 
 import TileUserImage from '../tile/user/TileUserImage';
-import SendSongButton from './profileHeader/SendSongButton';
+import SendSongButton from './profileHeader/AddToQueue';
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const bg = useColorModeValue('musy.200', 'musy.900');

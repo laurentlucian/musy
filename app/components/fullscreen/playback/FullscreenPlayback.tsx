@@ -9,11 +9,11 @@ import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import type { ProfileWithInfo } from '~/lib/types/types';
 
 import { useFullscreen } from '../Fullscreen';
-import AddToSelf from '../shared/actions/AddToSelf';
-import SearchAndSend from '../shared/actions/SearchAndSend';
+import AddToUserQueue from '../shared/actions/AddToUserQueue';
 import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
 import TrackInfo from '../shared/FullscreenTrackInfo';
 import FullscreenTrack from '../track/FullscreenTrack';
+import PlaybackListenAlong from './PlaybackListenAlong';
 
 type ProfileWithPlayback = Omit<ProfileWithInfo, 'playback'> & {
   playback: Playback & {
@@ -34,7 +34,7 @@ const FullscreenPlayback = (props: { user: ProfileWithPlayback }) => {
             <ActivityUserInfo user={user} />
             <HStack align="center">
               <Text fontSize="10px" fontWeight="bolder">
-                LISTENING NOW
+                LISTENING
               </Text>
               <Icon as={Sound} boxSize="20px" />
             </HStack>
@@ -53,8 +53,8 @@ const FullscreenPlayback = (props: { user: ProfileWithPlayback }) => {
           </Stack>
         </Stack>
         <Flex direction="column" flexGrow={1} overflowX="hidden">
-          <AddToSelf trackId={track.id} originUserId={user.userId} withIcon />
-          <SearchAndSend userId={user.userId} />
+          <PlaybackListenAlong />
+          <AddToUserQueue userId={user.userId} />
         </Flex>
       </SimpleGrid>
     </FullscreenFadeLayout>

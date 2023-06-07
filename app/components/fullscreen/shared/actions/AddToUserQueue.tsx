@@ -4,14 +4,14 @@ import { useFullscreen } from '../../Fullscreen';
 import FullscreenQueue from '../../queue/FullscreenQueue';
 import ActionButton from '../FullscreenActionButton';
 
-const SearchAndSend = ({ userId }: { userId: string }) => {
+const AddToUserQueue = ({ userId }: { userId: string }) => {
   const { onOpen } = useFullscreen();
 
   return (
     <ActionButton leftIcon={<Send2 />} onClick={() => onOpen(<FullscreenQueue userId={userId} />)}>
-      Send a song
+      Add to queue
     </ActionButton>
   );
 };
 
-export default SearchAndSend;
+export default AddToUserQueue;
