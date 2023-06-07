@@ -51,8 +51,9 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
       />
       <Stack
         spacing={1}
-        display={['flex', 'none']}
-        _groupHover={{ display: 'flex' }}
+        opacity={[1, 0]}
+        _groupHover={{ opacity: 1 }}
+        transition="opacity 0.14s linear"
         direction="column"
         pos="absolute"
         top={0}
