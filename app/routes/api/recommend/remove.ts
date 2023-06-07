@@ -30,10 +30,10 @@ export const action = async ({ request }: ActionArgs) => {
     }
   } catch (error) {
     console.log('remove recommend -> error', error);
-    return typedjson('failed to remove');
+    return typedjson('Error');
   }
 
-  return typedjson('removed');
+  return typedjson('Removed');
 };
 
 export const loader = () => {

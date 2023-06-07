@@ -64,6 +64,10 @@ export const action = async ({ request }: ActionArgs) => {
       await spotify.addToQueue(track.uri);
     } catch (err) {
       console.error(err);
+      if (err instanceof Error) {
+        const details = err.stack?.split('Details:')[1];
+        return typedjson('Error: ' + details);
+      }
       return typedjson('Error: Premium required');
     }
 
