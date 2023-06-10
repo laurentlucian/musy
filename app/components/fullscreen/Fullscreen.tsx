@@ -1,3 +1,6 @@
+import { useNavigation } from '@remix-run/react';
+import { useEffect } from 'react';
+
 import { Button, Flex, useEventListener } from '@chakra-ui/react';
 
 import { create } from 'zustand';
@@ -29,8 +32,15 @@ export const useFullscreen = () => {
 };
 
 export const FullscreenRenderer = () => {
+  const navigation = useNavigation();
   const components = useFullscreenStore((state) => state.components);
   const component = components[components.length - 1];
+
+  useEffect(() => {
+    if (navigation.state === 'loading') {
+      setFullscreenState(() => ({ components: [] }));
+    }
+  }, [navigation.state]);
 
   if (!component) return null;
 
