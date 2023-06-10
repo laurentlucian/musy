@@ -29,6 +29,7 @@ import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prisma/users.server';
 
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
+import useAnalytics from './hooks/useAnalytics';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
@@ -41,6 +42,7 @@ const App = () => {
   const { revalidate } = useRevalidator();
 
   useVisibilityChange((isVisible) => isVisible && currentUser && revalidate());
+  useAnalytics();
 
   return (
     <Document>

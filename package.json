@@ -53,6 +53,7 @@
     "iconsax-react": "^0.0.8",
     "ioredis": "^5.2.5",
     "openai": "^3.2.1",
+    "posthog-js": "^1.67.1",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
     "react-colorful": "^5.6.1",
