@@ -7,9 +7,12 @@ import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
 import TileTrackList from '~/components/tile/track/TileTrackList';
 
+import { useFullscreen } from '../Fullscreen';
+import FullscreenTrack from '../track/FullscreenTrack';
 import { useFullscreenTracks } from './FullscreenTracks';
 
 const FullscreenTracksLayout = () => {
+  const { onOpen } = useFullscreen();
   const { layout, title, tracks } = useFullscreenTracks();
   const { id } = useParams();
 
@@ -27,7 +30,11 @@ const FullscreenTracksLayout = () => {
             image={
               <TileTrackImage
                 box={{ w: ['115px', '160px', '200px'] }}
-                image={{ src: track.image }}
+                image={{
+                  cursor: 'pointer',
+                  onClick: () => onOpen(<FullscreenTrack track={track} />),
+                  src: track.image,
+                }}
               />
             }
             info={<TileTrackInfo track={track} />}
