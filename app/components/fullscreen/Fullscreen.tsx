@@ -33,7 +33,7 @@ export const useFullscreen = () => {
 
 export const FullscreenRenderer = () => {
   const navigation = useNavigation();
-  const components = useFullscreenStore((state) => state.components);
+  const { components, onClose } = useFullscreen();
   const component = components[components.length - 1];
 
   useEffect(() => {
@@ -50,6 +50,23 @@ export const FullscreenRenderer = () => {
       bg="#10101066"
       backdropFilter="blur(27px)"
       direction="column"
+      onClick={(e) => {
+        // close fullscreen when clicking outside of the component (on the blur)
+        let target = e.target as HTMLElement;
+
+        while (target !== e.currentTarget) {
+          if (
+            target instanceof HTMLAnchorElement ||
+            target instanceof HTMLButtonElement ||
+            target instanceof HTMLImageElement ||
+            target.id === 'dont-close'
+          )
+            return;
+          target = target.parentNode as HTMLElement;
+        }
+
+        onClose();
+      }}
       align="center"
       pos="fixed"
       top={0}

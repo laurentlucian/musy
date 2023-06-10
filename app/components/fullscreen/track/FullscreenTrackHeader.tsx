@@ -66,7 +66,7 @@ const FullscreenTrackHeader = () => {
     //     setDragging(false);
     //   }}
     // >
-    <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto">
+    <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto" id="dont-close">
       <Stack direction="column" w="65%">
         <TileTrackImage image={{ src: track.image }} />
         <ActivityTrackInfo track={track} w="100%" />

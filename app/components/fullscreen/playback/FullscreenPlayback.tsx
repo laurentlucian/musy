@@ -29,7 +29,7 @@ const FullscreenPlayback = (props: { user: ProfileWithPlayback }) => {
   return (
     <FullscreenFadeLayout>
       <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent={['start', 'center']}>
-        <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto">
+        <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto" id="dont-close">
           <Flex justify="space-between" w="65%" mt={['0', '-42px']}>
             <ActivityUserInfo user={user} />
             <HStack align="center">

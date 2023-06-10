@@ -8,7 +8,7 @@ import FullscreenQueueTracks from './FullscreenQueueTracks';
 const FullscreenQueue = (props: { userId: string }) => {
   return (
     <FullscreenFadeLayout>
-      <Stack w="100%" align="center">
+      <Stack w="100%" align="center" id="dont-close">
         <SearchInput
           flexShrink={0}
           param="fullscreen"
