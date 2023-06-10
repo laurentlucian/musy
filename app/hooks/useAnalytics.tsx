@@ -1,30 +1,31 @@
 import { useEffect } from 'react';
 
 import { posthog } from 'posthog-js';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import { isProduction } from '~/lib/utils';
+import type { loader } from '~/root';
 
 import useSessionUser from './useSessionUser';
 
 const useAnalytics = () => {
+  const ENV = useTypedRouteLoaderData<typeof loader>('root')?.ENV;
   const currentUser = useSessionUser();
 
   useEffect(() => {
-    if (!isProduction || typeof process.env.PUBLIC_POSTHOG_KEY !== 'string') return;
+    if (!isProduction || typeof ENV?.PUBLIC_POSTHOG_KEY !== 'string') return;
 
     if (currentUser) {
-      posthog.init(process.env.PUBLIC_POSTHOG_KEY, {
-        api_host: 'https://musy.one',
+      posthog.init(ENV.PUBLIC_POSTHOG_KEY, {
+        api_host: 'https://app.posthog.com',
       });
       posthog.identify(currentUser.userId, {
-        email: currentUser.email,
-        image: currentUser.image,
-        name: currentUser.name,
+        email: currentUser.name, // better identification with name
       });
     } else {
       posthog.reset();
     }
-  }, [currentUser]);
+  }, [currentUser, ENV]);
 
   return null;
 };

@@ -77,8 +77,13 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const cookie = request.headers.get('cookie') ?? '';
   const isMobile = request.headers.get('user-agent')?.includes('Mobile') ?? false;
 
+  const ENV = {
+    PUBLIC_POSTHOG_KEY: process.env.PUBLIC_POSTHOG_KEY,
+  };
+
   if (!session)
     return typedjson({
+      ENV,
       cookie: '',
       currentUser: null,
       isMobile,
@@ -96,6 +101,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   ]);
 
   return typedjson({
+    ENV,
     cookie,
     currentUser,
     isMobile,
