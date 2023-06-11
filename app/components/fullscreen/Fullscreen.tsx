@@ -1,6 +1,3 @@
-import { useNavigation } from '@remix-run/react';
-import { useEffect } from 'react';
-
 import { Button, Flex, useEventListener } from '@chakra-ui/react';
 
 import { create } from 'zustand';
@@ -32,15 +29,8 @@ export const useFullscreen = () => {
 };
 
 export const FullscreenRenderer = () => {
-  const navigation = useNavigation();
   const { components, onClose } = useFullscreen();
   const component = components[components.length - 1];
-
-  useEffect(() => {
-    if (navigation.state === 'loading') {
-      setFullscreenState(() => ({ components: [] }));
-    }
-  }, [navigation.state]);
 
   if (!component) return null;
 
@@ -53,19 +43,26 @@ export const FullscreenRenderer = () => {
       onClick={(e) => {
         // close fullscreen when clicking outside of the component (on the blur)
         let target = e.target as HTMLElement;
+        let isAnchorTag = false;
+        let shouldClose = true;
 
         while (target !== e.currentTarget) {
-          if (
+          if (target instanceof HTMLAnchorElement) {
+            isAnchorTag = true;
+          }
+
+          shouldClose =
             target instanceof HTMLAnchorElement ||
             target instanceof HTMLButtonElement ||
             target instanceof HTMLImageElement ||
-            target.id === 'dont-close'
-          )
-            return;
+            target.id === 'dont-close';
+
           target = target.parentNode as HTMLElement;
         }
 
-        onClose();
+        if (shouldClose || isAnchorTag) {
+          onClose();
+        }
       }}
       align="center"
       pos="fixed"
