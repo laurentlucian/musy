@@ -39,7 +39,7 @@ export const getActivity = async (userId: string) => {
       take: 20,
       where: {
         userId: {
-          in: following,
+          in: [userId, ...following],
         },
       },
     }),
@@ -64,7 +64,7 @@ export const getActivity = async (userId: string) => {
       take: 20,
       where: {
         userId: {
-          in: following,
+          in: [userId, ...following],
         },
       },
     }),
