@@ -222,10 +222,8 @@ export const ErrorBoundary = ({ error }: { error: Error }) => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout>
-          <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
-          <Text fontSize="sm">Trace(for debug): {error.message}</Text>
-        </Layout>
+        <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
+        <Text fontSize="sm">Trace(for debug): {error.message}</Text>
       </ChakraProvider>
     </Document>
   );
@@ -250,12 +248,10 @@ export const CatchBoundary = () => {
   return (
     <Document title="musy - Error">
       <ChakraProvider theme={theme}>
-        <Layout>
-          <Heading fontSize={['sm', 'md']}>
-            {caught.status}: {caught.statusText}
-          </Heading>
-          <Text fontSize="sm">{message}</Text>
-        </Layout>
+        <Heading fontSize={['sm', 'md']}>
+          {caught.status}: {caught.statusText}
+        </Heading>
+        <Text fontSize="sm">{message}</Text>
       </ChakraProvider>
     </Document>
   );

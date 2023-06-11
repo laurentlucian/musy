@@ -15,10 +15,15 @@ const useAnalytics = () => {
   useEffect(() => {
     if (!isProduction || typeof ENV?.PUBLIC_POSTHOG_KEY !== 'string') return;
 
+    posthog.init(ENV.PUBLIC_POSTHOG_KEY, {
+      api_host: 'https://app.posthog.com',
+    });
+  }, [ENV?.PUBLIC_POSTHOG_KEY]);
+
+  useEffect(() => {
+    if (!isProduction) return;
+
     if (currentUser) {
-      posthog.init(ENV.PUBLIC_POSTHOG_KEY, {
-        api_host: 'https://app.posthog.com',
-      });
       posthog.identify(currentUser.userId, {
         email: currentUser.name, // better identification with name
       });
