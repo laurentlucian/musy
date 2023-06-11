@@ -21,7 +21,7 @@ if (!process.env.SPOTIFY_CALLBACK_URL) {
 
 // See https://developer.spotify.com/documentation/general/guides/authorization/scopes
 const scopes = [
-  'streaming', // (must have spotify premium) --> controls playback of tracks through a spotify player (might not need if we change direction with app (see user-modify-playback-state))
+  // 'streaming', // (must have spotify premium) --> controls playback of tracks through a spotify player (might not need if we change direction with app (see user-modify-playback-state))
   'user-library-read', // checks if a user saved specific songs (can show music_senders/user if a user already likes a song they suggested/queued )
   'user-read-email', // user spotify profile
   'user-read-private', // search for albums, artists, playlists, tracks, shows or episodes
