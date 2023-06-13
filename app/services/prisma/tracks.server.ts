@@ -59,6 +59,7 @@ export const getActivity = async (userId: string) => {
     prisma.recommended.findMany({
       include: {
         track: trackWithInfo,
+        user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
       take: 20,
