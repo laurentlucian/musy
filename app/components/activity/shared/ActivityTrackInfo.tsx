@@ -12,7 +12,7 @@ import type { TrackWithInfo } from '~/lib/types/types';
 
 const ActivityTrackInfo = ({ track, ...props }: { track: TrackWithInfo } & FlexProps) => {
   return (
-    <Flex justify="space-between" align="start" {...props}>
+    <Flex justify="space-between" align="start" {...props} id="dont-close">
       <HStack>
         <LikedBy liked={track.liked} />
         <PlayedBy played={track.recent} />

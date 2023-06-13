@@ -76,11 +76,15 @@ export const FullscreenRenderer = () => {
             isAnchorTag = true;
           }
 
-          shouldClose =
+          const dontClose =
             target instanceof HTMLAnchorElement ||
             target instanceof HTMLButtonElement ||
             target instanceof HTMLImageElement ||
             target.id === 'dont-close';
+
+          if (dontClose) {
+            shouldClose = !dontClose;
+          }
 
           target = target.parentNode as HTMLElement;
         }
@@ -119,6 +123,7 @@ const CloseButton = () => {
 
   return (
     <Button
+      id="dont-close"
       flexShrink={0}
       h={['80px', '150px', '250px']}
       variant="mobileNav"
