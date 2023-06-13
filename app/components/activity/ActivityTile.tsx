@@ -39,7 +39,7 @@ const ActivityTile = ({ activity, index, tracks }: ActivityTileProps) => {
             <ActivityTrackInfo track={track} />
           </Stack>
 
-          <TileTrackInfo track={activity.track} createdAt={activity.createdAt} />
+          <TileTrackInfo track={activity.track} createdAt={activity.createdAt} icon={false} />
         </Stack>
       </Flex>
     </Stack>
