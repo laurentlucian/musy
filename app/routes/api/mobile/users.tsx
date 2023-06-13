@@ -2,6 +2,7 @@ import type { ActionArgs } from '@remix-run/server-runtime';
 import { json } from '@remix-run/server-runtime';
 
 import { cors } from 'remix-utils';
+
 import { getAllUsers } from '~/services/prisma/users.server';
 
 export async function action({ request }: ActionArgs) {
