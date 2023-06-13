@@ -25,10 +25,10 @@ import useSessionUser from '~/hooks/useSessionUser';
 import Waver from '~/lib/icons/Waver';
 import type { Track } from '~/lib/types/types';
 
+import UserTile from '../nav/UserTile';
 import Tile from '../tile/Tile';
 import TileTrackImage from '../tile/track/TileTrackImage';
 import TileTrackInfo from '../tile/track/TileTrackInfo';
-import UserTile from './UserTile';
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(false);

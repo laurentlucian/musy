@@ -20,7 +20,7 @@ type TileProps = {
 } & ChakraProps;
 
 const SessionTile = forwardRef<HTMLDivElement, TileProps>(
-  ({ index, layoutKey, playedAt, track, tracks, userId, ...props }, ref) => {
+  ({ playedAt, track, userId, ...props }, ref) => {
     const image = track.image;
     const tooltip = playedAt ? `${track.name} by ${track.artist} ${timeSince(playedAt)}` : '';
     const { onOpen } = useFullscreen();

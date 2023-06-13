@@ -15,7 +15,7 @@ import {
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import Waver from '~/lib/icons/Waver';
 
-import NavSearch from './NavSearch';
+import NavSearch from '../profile/NavSearch';
 import UserMenu from './UserMenu';
 
 const Nav = () => {

@@ -39,7 +39,7 @@ type PlayerProps = {
   playback: SpotifyApi.CurrentlyPlayingResponse;
 };
 
-const Player = ({ id, layoutKey, party, playback }: PlayerProps) => {
+const Player = ({ id, party, playback }: PlayerProps) => {
   const currentUser = useSessionUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;

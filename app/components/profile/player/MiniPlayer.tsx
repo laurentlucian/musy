@@ -24,7 +24,7 @@ type PlayerProps = {
   user: ProfileWithInfo;
 };
 
-const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
+const MiniPlayer = ({ layoutKey, user }: PlayerProps) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
   const hoverBg = useColorModeValue('musy.50', '#5F5B59');
   const color = useColorModeValue('musy.900', 'musy.200');
@@ -37,7 +37,6 @@ const MiniPlayer = ({ index, layoutKey, tracks, user }: PlayerProps) => {
 
   const playback = user.playback;
   const track = playback?.track;
-  const que = user?.settings?.allowQueue;
 
   const isOwnProfile = currentUser?.userId === user.userId;
 

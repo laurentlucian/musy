@@ -1,4 +1,4 @@
-import { Form, useLocation, useNavigate, useNavigation } from '@remix-run/react';
+import { Form, useLocation, useNavigate } from '@remix-run/react';
 import { useRef } from 'react';
 import { LogOut, MoreHorizontal } from 'react-feather';
 
@@ -31,8 +31,6 @@ import { Moon, Setting2, Sun1 } from 'iconsax-react';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import useSessionUser from '~/hooks/useSessionUser';
-import SpotifyLogo from '~/lib/icons/SpotifyLogo';
-import Waver from '~/lib/icons/Waver';
 
 const UserMenu = () => {
   const currentUser = useSessionUser();
@@ -45,7 +43,6 @@ const UserMenu = () => {
   const hoverBg = useColorModeValue('musy.400', 'musy.900');
   const btnRef = useRef<HTMLButtonElement>(null);
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const transition = useNavigation();
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
   const handleClick = () => {

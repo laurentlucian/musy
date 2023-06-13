@@ -1,4 +1,3 @@
-import { useSearchParams } from '@remix-run/react';
 import { useEffect, useRef } from 'react';
 
 import type { Profile, Track } from '@prisma/client';
@@ -36,7 +35,6 @@ export const useSearchResults = () =>
   ] as const;
 
 export const useSearch = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useSearchInput();
   const [results, setResults] = useSearchResults();
 
