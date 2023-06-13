@@ -6,6 +6,7 @@ import SaveToLiked from '../../shared/actions/SaveToLiked';
 import FullscreenFadeLayout from '../../shared/FullscreenFadeLayout';
 import { useFullscreenTrack } from '../FullscreenTrack';
 import Comment from './actions/Comment';
+import PlayPreview from './actions/PlayPreview';
 import SendToFriends from './actions/SendToFriends';
 
 const FullscreenTrackActions = () => {
@@ -18,13 +19,9 @@ const FullscreenTrackActions = () => {
       {/* <Comment /> */}
       <AddToSelf withIcon trackId={track.id} originUserId={originUserId} />
       <SendToFriends />
+      <PlayPreview />
       <AnalyzeTrack trackId={track.id} />
       <CopyLink trackLink={track.link} />
-      {/* <PlayPreview
-        playing={props.play.playing}
-        setPlaying={props.play.setPlaying}
-        preview_url={track.preview_url}
-      /> */}
     </FullscreenFadeLayout>
   );
 };

@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 
+import { usePlayPreview } from '~/hooks/usePlayPreview';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
@@ -10,28 +11,18 @@ import { useFullscreenTrack } from '../../FullscreenTrack';
 
 const PlayPreview = () => {
   const { track } = useFullscreenTrack();
-  const [playing, setPlaying] = useState<boolean>();
+  const { isPlaying, onClick } = usePlayPreview(track.preview_url);
   const [showPause, setShowPause] = useState(true);
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const onClick = () => {
-    if (audioRef.current && !playing) {
-      void audioRef.current.play();
-      setPlaying(true);
-      setShowPause(false);
-    } else {
-      audioRef.current?.pause();
-      setPlaying(false);
-    }
-  };
-  const text = playing ? 'Stop' : 'Listen';
+  const text = isPlaying ? 'Stop' : 'Listen';
   const icon =
-    playing && !showPause ? (
+    isPlaying && !showPause ? (
       <AudioVisualizer />
-    ) : playing && showPause && hovering ? (
+    ) : isPlaying && showPause && hovering ? (
       <PauseCircle />
-    ) : playing ? (
+    ) : isPlaying ? (
       <AudioVisualizer />
     ) : (
       <PlayCircle />
@@ -44,19 +35,6 @@ const PlayPreview = () => {
   const onMouseEnter = () => {
     setHovering(true);
   };
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = 0.05;
-  }, []);
-
-  useEffect(() => {
-    const ref = audioRef.current;
-    if (ref) {
-      ref.addEventListener('ended', () => setPlaying(false));
-      return () => {
-        ref.removeEventListener('ended', () => setPlaying(false));
-      };
-    }
-  }, [audioRef]);
 
   return (
     <>

@@ -30,6 +30,7 @@ import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prism
 
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
+import { PlayPreviewRenderer } from './hooks/usePlayPreview';
 import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
@@ -61,6 +62,7 @@ const App = () => {
             </Layout>
           </AnimatePresence>
           <FullscreenRenderer />
+          <PlayPreviewRenderer />
         </ColorModeProvider>
       </ChakraProvider>
     </Document>
@@ -100,15 +102,22 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     getQueueableUsers(id),
   ]);
 
-  return typedjson({
-    ENV,
-    cookie,
-    currentUser,
-    isMobile,
-    queueableUsers,
-    theme,
-    users,
-  });
+  return typedjson(
+    {
+      ENV,
+      cookie,
+      currentUser,
+      isMobile,
+      queueableUsers,
+      theme,
+      users,
+    },
+    {
+      headers: {
+        'Cache-Control': 'private, max-age=3600',
+      },
+    },
+  );
 };
 
 export const meta: MetaFunction = () => {
