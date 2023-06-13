@@ -46,12 +46,13 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
         }
         tracks={tracks}
       >
-        {users.map(({ playback, ...user }, index) => {
+        {users.map((user, index) => {
+          const { playback } = user;
           const layoutKey = title + index;
 
           return (
             <Stack key={index} flexShrink={0}>
-              {tile && <ActivityUserInfo user={{ playback, ...user }} />}
+              {tile && <ActivityUserInfo user={user} />}
               <Tile
                 track={playback.track}
                 tracks={tracks}
@@ -70,7 +71,7 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
                       }}
                     />
                   ) : (
-                    <PlaybackUserImage user={{ playback, ...user }} />
+                    <PlaybackUserImage user={user} />
                   )
                 }
                 info={
