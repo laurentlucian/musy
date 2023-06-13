@@ -21,7 +21,7 @@ const TilesTrack = ({
   tracks: TrackWithInfo[];
 }) => {
   const { id } = useParams();
-  const { onOpen } = useFullscreen();
+  const { onClick, onMouseDown, onMouseMove } = useFullscreen();
   const scrollButtons = tracks.length > 5;
 
   if (!tracks.length) return null;
@@ -44,8 +44,10 @@ const TilesTrack = ({
                   image={{
                     cursor: 'pointer',
                     onClick: () => {
-                      onOpen(<FullscreenTrack track={track} originUserId={id} />);
+                      onClick(<FullscreenTrack track={track} originUserId={id} />);
                     },
+                    onMouseDown,
+                    onMouseMove,
                     src: track.image,
                   }}
                 />

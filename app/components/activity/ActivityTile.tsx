@@ -17,7 +17,7 @@ interface ActivityTileProps {
 }
 
 const ActivityTile = ({ activity, index, tracks }: ActivityTileProps) => {
-  const { onOpen } = useFullscreen();
+  const { onClick, onMouseDown, onMouseMove } = useFullscreen();
   const track = tracks[index];
 
   return (
@@ -30,7 +30,9 @@ const ActivityTile = ({ activity, index, tracks }: ActivityTileProps) => {
               image={{
                 cursor: 'pointer',
                 onClick: () =>
-                  onOpen(<FullscreenTrack track={track} originUserId={activity.userId} />),
+                  onClick(<FullscreenTrack track={track} originUserId={activity.userId} />),
+                onMouseDown,
+                onMouseMove,
                 src: track.image,
               }}
             />
