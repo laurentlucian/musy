@@ -1,3 +1,5 @@
+import { useNavigate } from '@remix-run/react';
+
 import { Box, Image } from '@chakra-ui/react';
 
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
@@ -8,6 +10,7 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 
 const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWithInfo }) => {
   const { components, onOpen } = useFullscreen();
+  const navigate = useNavigate();
 
   const isFullscreen = components.length > 0; //
 
@@ -18,13 +21,15 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
       h={size}
       overflow="hidden"
       border={user.playback ? '1.5px solid' : undefined}
-      cursor={user.playback && !isFullscreen ? 'pointer' : undefined}
+      cursor="pointer"
       borderColor="white"
       borderRadius="50%"
       onClick={(e) => {
         if (user.playback && !isFullscreen) {
           e.preventDefault();
           onOpen(<FullscreenPlayback user={user as ProfileWithPlayback} />);
+        } else {
+          navigate(`/${user.userId}`);
         }
       }}
     >
