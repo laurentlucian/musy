@@ -10,7 +10,7 @@ import BlockedProfile from '~/components/profile/profileHeader/BlockedProfile';
 import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
 import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
 import useSessionUser from '~/hooks/useSessionUser';
-import { msToString } from '~/lib/utils';
+import { getCacheControl, msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 

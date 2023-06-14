@@ -102,22 +102,15 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     getQueueableUsers(id),
   ]);
 
-  return typedjson(
-    {
-      ENV,
-      cookie,
-      currentUser,
-      isMobile,
-      queueableUsers,
-      theme,
-      users,
-    },
-    {
-      headers: {
-        'Cache-Control': 'private, max-age=3600',
-      },
-    },
-  );
+  return typedjson({
+    ENV,
+    cookie,
+    currentUser,
+    isMobile,
+    queueableUsers,
+    theme,
+    users,
+  });
 };
 
 export const meta: MetaFunction = () => {

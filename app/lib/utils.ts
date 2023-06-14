@@ -90,3 +90,7 @@ export const shortenUsername = (username?: string) => {
   const [first, second = ''] = username.split(/[\s.]+/);
   return second.length > 4 || first.length >= 6 ? first : [first, second].join(' ');
 };
+
+export const getCacheControl = (minutes = 1) => ({
+  'Cache-Control': `private, stale-while-revalidate, max-age=${minutes * 60}`,
+});

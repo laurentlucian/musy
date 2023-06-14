@@ -24,6 +24,7 @@ import { decodeHtmlEntity } from '~/components/tiles/playlists/PlaylistTile';
 import Track from '~/components/tiles/playlists/Track';
 import useIsMobile from '~/hooks/useIsMobile';
 import type { Track as Tracks } from '~/lib/types/types';
+import { getCacheControl } from '~/lib/utils';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 const PlaylistOutlet = () => {
@@ -122,7 +123,14 @@ export const loader = async ({ params }: LoaderArgs) => {
 
   const { body: playlist } = await spotify.getPlaylist(playlistId);
 
-  return typedjson({ playlist });
+  return typedjson(
+    { playlist },
+    {
+      headers: {
+        ...getCacheControl(60 * 24),
+      },
+    },
+  );
 };
 
 export default PlaylistOutlet;

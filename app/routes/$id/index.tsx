@@ -11,6 +11,7 @@ import EditableRecommendedTiles from '~/components/tiles/TilesRecommended';
 import TilesTop from '~/components/tiles/TilesTop';
 import TilesTrack from '~/components/tiles/TilesTrack';
 import useSessionUser from '~/hooks/useSessionUser';
+import { getCacheControl } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getCachedUserTop } from '~/services/prisma/spotify.server';
 import { getUserLiked, getUserRecent, getUserRecommended } from '~/services/prisma/tracks.server';
@@ -61,7 +62,14 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       getUserPlaylists(id),
     ]);
 
-  return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });
+  return typedjson(
+    { liked, party, playback, playlists, recent, recommended, top, user },
+    {
+      headers: {
+        ...getCacheControl(),
+      },
+    },
+  );
 };
 
 export default ProfileOutlet;

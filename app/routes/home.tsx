@@ -9,6 +9,7 @@ import type { ProfileWithPlayback } from '~/components/tiles/TilesPlayback';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
 import useFollowing from '~/hooks/useFollowing';
 import type { TrackWithInfo } from '~/lib/types/types';
+import { getCacheControl } from '~/lib/utils';
 import { getActivity } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 
@@ -45,9 +46,14 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const activities = await getActivity(currentUserId);
 
-  return typedjson({
-    activities,
-  });
+  return typedjson(
+    {
+      activities,
+    },
+    {
+      headers: { ...getCacheControl() },
+    },
+  );
 };
 
 export default Home;

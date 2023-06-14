@@ -9,6 +9,7 @@ import ProfileButton from '~/components/profile/ProfileButton';
 import TrackTiles from '~/components/tiles/TilesTrack';
 import useFollowing from '~/hooks/useFollowing';
 import { useRestOfUsers } from '~/hooks/useUsers';
+import { getCacheControl } from '~/lib/utils';
 import { getSearchResults } from '~/services/prisma/spotify.server';
 import { getTopLeaderboard } from '~/services/prisma/tracks.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
@@ -68,7 +69,12 @@ export const loader = async ({ request }: LoaderArgs) => {
     getTopLeaderboard(),
   ]);
 
-  return typedjson({ results, top });
+  return typedjson(
+    { results, top },
+    {
+      headers: { ...getCacheControl() },
+    },
+  );
 };
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export { CatchBoundary } from '~/components/error/CatchBoundary';

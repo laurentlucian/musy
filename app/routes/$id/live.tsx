@@ -9,6 +9,7 @@ import invariant from 'tiny-invariant';
 import Player from '~/components/profile/player/spotify/Player';
 import Playlists from '~/components/tiles/playlists/Playlists';
 import TrackTiles from '~/components/tiles/TilesTrack';
+import { getCacheControl } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import {
   getUserSpotifyLiked,
@@ -61,7 +62,14 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       .catch(() => []),
   ]);
 
-  return typedjson({ liked, party, playback, playlists, recent, recommended, top, user });
+  return typedjson(
+    { liked, party, playback, playlists, recent, recommended, top, user },
+    {
+      headers: {
+        ...getCacheControl(),
+      },
+    },
+  );
 };
 
 export default ProfileSpotifyOutlet;
