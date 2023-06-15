@@ -19,8 +19,8 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
     <Box
       mr="10px" // make tiles spacing dynamic
       pos="relative"
-      w={['110px', '180px']}
-      h={['110px', '180px']}
+      w={['150px', '180px']}
+      h={['150px', '180px']}
       overflow="hidden"
       border={user.playback ? ['2px solid', '3px solid'] : undefined}
       cursor={user.playback ? 'pointer' : undefined}
@@ -33,10 +33,10 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
       data-group
     >
       <Image
-        minW={['110px', '180px']}
-        maxW={['110px', '180px']}
-        minH={['110px', '180px']}
-        maxH={['110px', '180px']}
+        minW={['150px', '180px']}
+        maxW={['150px', '180px']}
+        minH={['150px', '180px']}
+        maxH={['150px', '180px']}
         objectFit="cover"
         src={user.image}
       />
@@ -66,10 +66,10 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
         backdropFilter={['blur(2px)', 'blur(6px)']}
       >
         <Image
-          minW={['50px', '100px']}
-          maxW={['50px', '100px']}
-          minH={['50px', '100px']}
-          maxH={['50px', '100px']}
+          minW={['85px', '100px']}
+          maxW={['85px', '100px']}
+          minH={['85px', '100px']}
+          maxH={['85px', '100px']}
           src={user.playback?.track.image}
         />
         <Text noOfLines={1} fontSize={['9px', '12px']} maxW={['90px', '110px']} color="white">
