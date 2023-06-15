@@ -4,26 +4,28 @@ import { Button, Flex, useEventListener } from '@chakra-ui/react';
 
 import { create } from 'zustand';
 
-const useFullscreenStore = create<{
+type FullscreenState = {
+  actions: {
+    onClose: () => void;
+    onOpen: (component: JSX.Element) => void;
+  };
   components: JSX.Element[];
-}>(() => ({
+};
+
+const useFullscreenStore = create<FullscreenState>((set) => ({
+  actions: {
+    onClose: () => set((prev) => ({ components: prev.components.slice(0, -1) })),
+    onOpen: (component: JSX.Element) =>
+      set((prev) => ({ components: [...prev.components, component] })),
+  },
   components: [],
 }));
-
-const setFullscreenState = useFullscreenStore.setState;
 
 export const useFullscreen = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [isMouseDragged, setIsMouseDragged] = useState(false);
   const { components } = useFullscreenStore();
-
-  const onOpen = (component: JSX.Element) => {
-    setFullscreenState((prev) => ({ components: [...prev.components, component] }));
-  };
-
-  const onClose = () => {
-    setFullscreenState((prev) => ({ components: prev.components.slice(0, -1) }));
-  };
+  const { onClose, onOpen } = useFullscreenStore((state) => state.actions);
 
   const handleMouseDown = () => {
     setIsMouseDown(true);
