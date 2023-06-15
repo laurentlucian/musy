@@ -4,8 +4,6 @@ import { Stack } from '@chakra-ui/react';
 
 import type { TrackWithInfo } from '~/lib/types/types';
 
-import { useFullscreen } from '../fullscreen/Fullscreen';
-import FullscreenTrack from '../fullscreen/track/FullscreenTrack';
 import Tile from '../tile/Tile';
 import TileTrackImage from '../tile/track/TileTrackImage';
 import TileTrackInfo from '../tile/track/TileTrackInfo';
@@ -21,7 +19,6 @@ const TilesTrack = ({
   tracks: TrackWithInfo[];
 }) => {
   const { id } = useParams();
-  const { onClick, onMouseDown, onMouseMove } = useFullscreen();
   const scrollButtons = tracks.length > 5;
 
   if (!tracks.length) return null;
@@ -41,13 +38,8 @@ const TilesTrack = ({
               image={
                 <TileTrackImage
                   box={{ w: '200px' }}
+                  fullscreen={{ originUserId: id, track }}
                   image={{
-                    cursor: 'pointer',
-                    onClick: () => {
-                      onClick(<FullscreenTrack track={track} originUserId={id} />);
-                    },
-                    onMouseDown,
-                    onMouseMove,
                     src: track.image,
                   }}
                 />

@@ -2,8 +2,6 @@ import { Stack, Flex } from '@chakra-ui/react';
 
 import type { Activity, Track } from '~/lib/types/types';
 
-import { useFullscreen } from '../fullscreen/Fullscreen';
-import FullscreenTrack from '../fullscreen/track/FullscreenTrack';
 import TileTrackImage from '../tile/track/TileTrackImage';
 import TileTrackInfo from '../tile/track/TileTrackInfo';
 import ActivityInfo from './shared/ActivityInfo';
@@ -17,7 +15,6 @@ interface ActivityTileProps {
 }
 
 const ActivityTile = ({ activity, index, tracks }: ActivityTileProps) => {
-  const { onClick, onMouseDown, onMouseMove } = useFullscreen();
   const track = tracks[index];
 
   return (
@@ -27,12 +24,11 @@ const ActivityTile = ({ activity, index, tracks }: ActivityTileProps) => {
         <Stack spacing="5px">
           <Stack>
             <TileTrackImage
+              fullscreen={{
+                originUserId: activity.userId,
+                track,
+              }}
               image={{
-                cursor: 'pointer',
-                onClick: () =>
-                  onClick(<FullscreenTrack track={track} originUserId={activity.userId} />),
-                onMouseDown,
-                onMouseMove,
                 src: track.image,
               }}
             />

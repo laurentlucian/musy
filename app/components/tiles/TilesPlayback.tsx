@@ -6,8 +6,6 @@ import { Link as ChakraLink, Stack, Switch } from '@chakra-ui/react';
 import type { Playback } from '@prisma/client';
 
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
-import { useFullscreen } from '~/components/fullscreen/Fullscreen';
-import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import Tile from '~/components/tile/Tile';
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
@@ -29,7 +27,6 @@ type TilesPlaybackProps = {
 
 const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
   const [tile, setTile] = useState(false);
-  const { onOpen } = useFullscreen();
   const scrollButtons = users.length > 5;
 
   if (!users.length) return null;
@@ -61,12 +58,11 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
                 image={
                   tile ? (
                     <TileTrackImage
+                      fullscreen={{
+                        originUserId: user.userId,
+                        track: playback.track,
+                      }}
                       image={{
-                        cursor: 'pointer',
-                        onClick: () =>
-                          onOpen(
-                            <FullscreenTrack track={playback.track} originUserId={user.userId} />,
-                          ),
                         src: playback.track.image,
                       }}
                     />
