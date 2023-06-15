@@ -8,7 +8,6 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 import MoodButton from '~/components/profile/profileHeader/MoodButton';
 import Tooltip from '~/components/Tooltip';
 import useSessionUser from '~/hooks/useSessionUser';
-import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
@@ -47,7 +46,6 @@ const ProfileHeader = () => {
         <Heading size={['md', 'lg']} fontWeight="bold" textAlign="left">
           {user.name}
         </Heading>
-        <SpotifyLogo icon />
       </HStack>
       <PrivateBadge />
       {user.settings?.founder === true && (
