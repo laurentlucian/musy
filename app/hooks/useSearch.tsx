@@ -38,7 +38,9 @@ export const useSearch = () => {
   const [search, setSearch] = useSearchInput();
   const [results, setResults] = useSearchResults();
 
-  const { data, load } = useTypedFetcher<typeof loader>();
+  const { data, load, state } = useTypedFetcher<typeof loader>();
+
+  const busy = state === 'loading' ?? false;
 
   const timeoutRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
@@ -69,5 +71,5 @@ export const useSearch = () => {
     setResults([]);
   };
 
-  return { onClose, results, search, setSearch };
+  return { busy, onClose, results, search, setResults, setSearch };
 };
