@@ -181,10 +181,6 @@ const NavSearch = () => {
         >
           <PopoverBody>
             <Stack>
-              {/* {data?.users.map((user: Profile) => (
-                <UserTile key={user.id} profile={user} />
-              ))} */}
-
               {results.length >= 1 &&
                 results.map((item, index) => {
                   if ("uri" in item) {
@@ -194,7 +190,14 @@ const NavSearch = () => {
                              layoutKey={layoutKey}
                              track={item}
                              tracks={[]}
-                             image={<TileTrackImage box={{ w: '40px' }} />}
+                             image={
+                               <TileTrackImage 
+                                 box={{ w: '40px' }} // need help on displaying this image
+                                 image={{
+                                   src: item.image,
+                                 }}
+                               />
+                             }
                              info={<TileTrackInfo track={item} />}
                              list
                            />
