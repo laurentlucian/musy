@@ -18,7 +18,6 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props
   const { id } = useParams();
 
   return (
-    <>
       <Stack ref={ref} flex="0 0 200px" {...props} cursor="pointer" pb={2}>
         <Link to={`/${id}/${playlist.id}`}>
           <Flex direction="column">
@@ -50,7 +49,6 @@ const PlaylistTile = forwardRef<HTMLDivElement, TileProps>(({ playlist, ...props
           </Flex>
         </Link>
       </Stack>
-    </>
   );
 });
 

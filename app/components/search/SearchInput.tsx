@@ -41,6 +41,7 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
         [props.param]: search,
         // i know this is confusing; plshelp figure out a better way to share component
         // test by using send song fullscreen when on /explore route
+        // maybe instead of sharing component we can share functionality and types
       },
       {
         replace: true,
