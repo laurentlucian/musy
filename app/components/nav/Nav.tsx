@@ -6,10 +6,8 @@ import {
   Heading,
   HStack,
   Image,
-  useColorModeValue,
   Link as ChakraLink,
   Spacer,
-  Box,
 } from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
