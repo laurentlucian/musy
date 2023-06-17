@@ -10,8 +10,10 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'No user found');
   const userId = currentUser.userId;
+  const url = new URL(request.url);
+  const param = url.searchParams.get('param');
   const { tracks, users } = await getSearchResults({
-    param: 'fullscreen',
+    param: param || 'search',
     url: new URL(request.url),
     userId,
   });

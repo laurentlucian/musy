@@ -34,7 +34,7 @@ export const useSearchResults = () =>
     useSearchStore((state) => state.setResults, shallow),
   ] as const;
 
-export const useSearch = () => {
+export const useSearch = (param: string) => {
   const [search, setSearch] = useSearchInput();
   const [results, setResults] = useSearchResults();
 
@@ -54,7 +54,7 @@ export const useSearch = () => {
     }
 
     previousTimeout = setTimeout(() => {
-      load(`/api/search/results?keyword=${search}`);
+      load(`/api/search/results?param=${param}&${param}=${search}`);
     }, 500);
 
     return () => clearTimeout(previousTimeout);

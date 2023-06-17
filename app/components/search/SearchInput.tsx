@@ -1,5 +1,5 @@
 import { useNavigation, useSearchParams } from '@remix-run/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { SearchIcon } from '@chakra-ui/icons';
 import type { InputGroupProps } from '@chakra-ui/react';
@@ -37,7 +37,7 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
       {
         // allow search input to reused in different screens without triggering others; eg: /explore search and fullscreen search
         // by using the param as the key, we can have multiple search inputs without them conflicting
-        search: props.param,
+        param: props.param,
         [props.param]: search,
         // i know this is confusing; plshelp figure out a better way to share component
         // test by using send song fullscreen when on /explore route
@@ -51,12 +51,19 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
   };
 
   const removeSearchURL = () => {
+    searchParams.delete('param');
     searchParams.delete(props.param);
     setSearchParams(searchParams, {
       replace: true,
       state: { scroll: false },
     });
   };
+
+  useEffect(() => {
+    return () => {
+      removeSearchURL();
+    };
+  }, []);
 
   return (
     <InputGroup zIndex={1} overflowY="hidden" {...props}>

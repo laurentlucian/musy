@@ -18,7 +18,7 @@ type TileTrackImageProps = {
 const TileTrackImage = ({ box, fullscreen, image }: TileTrackImageProps) => {
   const { onMouseDown, onMouseMove, onOpen } = useFullscreen();
   return (
-    <Flex {...box}>
+    <Flex flexShrink={0} {...box}>
       <Image
         borderRadius="1px"
         w="100%"

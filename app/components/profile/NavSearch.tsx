@@ -18,7 +18,6 @@ import {
   useEventListener,
 } from '@chakra-ui/react';
 
-
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import { useSearch } from '~/hooks/useSearch';
 import Waver from '~/lib/icons/Waver';
@@ -32,7 +31,7 @@ const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [show, setShow] = useState(false);
 
-  const {busy, onClose, results, search, setResults, setSearch} = useSearch()
+  const { busy, onClose, results, search, setResults, setSearch } = useSearch('nav');
 
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
@@ -50,14 +49,14 @@ const NavSearch = () => {
       state: { scroll: false },
     });
   };
-  
+
   const handleOpenButton = (e: React.MouseEvent<Element, MouseEvent>) => {
     e.stopPropagation();
     if (disable) {
       showAlert();
     } else {
       setShow(!show);
-      onClose()
+      onClose();
       const deleteParamDelay = setTimeout(() => {
         deleteSearch();
       }, 600);
@@ -76,7 +75,7 @@ const NavSearch = () => {
 
   const handleCloseButton = () => {
     setShow(false);
-    onClose()
+    onClose();
     const deleteParamDelay = setTimeout(() => {
       deleteSearch();
     }, 600);
@@ -108,7 +107,6 @@ const NavSearch = () => {
     if (show) inputRef.current?.focus();
     else inputRef.current?.blur();
   }, [show]);
-
 
   const layoutKey = 'NavSearch';
 
@@ -159,6 +157,7 @@ const NavSearch = () => {
                   <>
                     {busy && <Waver />}
                     <IconButton
+                      as="div"
                       aria-label="close"
                       variant="unstyled"
                       borderRadius={8}
@@ -183,28 +182,30 @@ const NavSearch = () => {
             <Stack>
               {results.length >= 1 &&
                 results.map((item, index) => {
-                  if ("uri" in item) {
-                    return <Tile
-                             key={item.id}
-                             index={index}
-                             layoutKey={layoutKey}
-                             track={item}
-                             tracks={[]}
-                             image={
-                               <TileTrackImage 
-                                 box={{ w: '40px' }} // need help on displaying this image
-                                 image={{
-                                   src: item.image,
-                                 }}
-                               />
-                             }
-                             info={<TileTrackInfo track={item} />}
-                             list
-                           />
+                  if ('uri' in item) {
+                    return (
+                      <Tile
+                        key={item.id}
+                        index={index}
+                        layoutKey={layoutKey}
+                        track={item}
+                        tracks={[]}
+                        image={
+                          <TileTrackImage
+                            box={{ w: '40px' }}
+                            image={{
+                              src: item.image,
+                            }}
+                          />
+                        }
+                        info={<TileTrackInfo track={item} />}
+                        list
+                      />
+                    );
                   } else {
-                    return <UserTile key={item.id} profile={item} />
+                    return <UserTile key={item.id} profile={item} />;
                   }
-                  })}
+                })}
             </Stack>
           </PopoverBody>
         </PopoverContent>

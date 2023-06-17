@@ -128,19 +128,16 @@ export const getUsers = async (keyword: string) => {
 };
 
 export const getSearchResults = async ({
+  param,
   url,
   userId,
-  // ...args
 }: {
   param: string;
   url: URL;
   userId: string;
 }) => {
-  // const param = url.searchParams.get('search');              // what are these used for?
-  // if (param !== args.param) return { tracks: [], users: [] };// ?
-  const keyword = url.searchParams.get("keyword");
+  const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
-
   const [tracks, users] = await Promise.all([getSpotifyTracks(keyword, userId), getUsers(keyword)]);
 
   return { tracks, users };
