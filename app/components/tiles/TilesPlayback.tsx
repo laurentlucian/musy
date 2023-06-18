@@ -62,6 +62,9 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
                         originUserId: user.userId,
                         track: playback.track,
                       }}
+                      box={{
+                        w: '200px',
+                      }}
                       image={{
                         src: playback.track.image,
                       }}
