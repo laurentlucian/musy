@@ -1,9 +1,10 @@
 import { HStack, Text, Icon, Flex } from '@chakra-ui/react';
 
-import { Send2, Star1 } from 'iconsax-react';
+import { Send2, Sound, Star1 } from 'iconsax-react';
 
 import LikeIcon from '~/lib/icons/Like';
 import type { Activity } from '~/lib/types/types';
+import { timeBetween } from '~/lib/utils';
 
 import ActivityUserInfo from './ActivityUserInfo';
 
@@ -37,6 +38,19 @@ const ActivityInfo = ({ activity }: { activity: Activity }) => {
             RECOMMENDED
           </Text>
           <Icon as={Star1} boxSize="20px" fill="white" />
+        </HStack>
+      )}
+
+      {activity.action === 'playback' && (
+        <HStack align="center">
+          <Text fontSize="10px" fontWeight="bolder" textTransform="uppercase">
+            LISTENED FOR{' '}
+            {timeBetween({
+              endDate: activity.playback?.endedAt,
+              startDate: activity.playback?.startedAt,
+            })}
+          </Text>
+          <Icon as={Sound} boxSize="20px" fill="white" />
         </HStack>
       )}
     </Flex>

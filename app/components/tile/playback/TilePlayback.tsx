@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react';
 
-import { Stack, Link as ChakraLink, SimpleGrid } from '@chakra-ui/react';
+import { Stack, Link as ChakraLink } from '@chakra-ui/react';
 
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
 import TilePlaybackUser from '~/components/tile/playback/TilePlaybackUser';
@@ -9,6 +9,7 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 import Tile from '../Tile';
 import TileTrackImage from '../track/TileTrackImage';
 import TileTrackInfo from '../track/TileTrackInfo';
+import TilePlaybackTracksImage, { getPlaybackTracks } from './inactive/TilePlaybackTracksImage';
 
 type TilesPlaybackProps = {
   index: number;
@@ -30,16 +31,7 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
       }}
     />
   ) : (
-    <SimpleGrid columns={2}>
-      {user.recent.map(({ track }, index) => (
-        <TileTrackImage
-          key={index}
-          image={{
-            src: track.image,
-          }}
-        />
-      ))}
-    </SimpleGrid>
+    <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} />
   );
 
   const info = playback ? <TileTrackInfo track={playback.track} /> : null;

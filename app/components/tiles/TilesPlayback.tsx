@@ -9,11 +9,10 @@ import TilePlayback from '../tile/playback/TilePlayback';
 import Tiles from './Tiles';
 
 type TilesPlaybackProps = {
-  title: string;
   users: ProfileWithInfo[];
 };
 
-const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
+const TilesPlayback = ({ users }: TilesPlaybackProps) => {
   const currentUser = useCurrentUser();
   const [tile, setTile] = useState(false);
 
@@ -35,7 +34,7 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
   return (
     <Stack spacing={1}>
       <Tiles
-        title={title}
+        title="LISTENING"
         scrollButtons={scrollButtons}
         action={
           <Switch size="sm" ml="10px" colorScheme="whiteAlpha" onChange={() => setTile(!tile)} />

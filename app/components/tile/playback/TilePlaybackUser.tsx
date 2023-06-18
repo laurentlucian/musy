@@ -1,4 +1,4 @@
-import { Box, Image, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+import { Box, Image, Stack, Text } from '@chakra-ui/react';
 
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenPlayback from '~/components/fullscreen/playback/FullscreenPlayback';
@@ -6,6 +6,7 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
 
 import TileTrackImage from '../track/TileTrackImage';
+import TilePlaybackTracksImage, { getPlaybackTracks } from './inactive/TilePlaybackTracksImage';
 
 const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
   const { onOpen } = useFullscreen();
@@ -68,16 +69,7 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
             image={{ src: user.playback?.track.image }}
           />
         ) : (
-          <SimpleGrid columns={2} w={['85px', '100px']}>
-            {user.recent.map(({ track }, index) => (
-              <TileTrackImage
-                key={index}
-                image={{
-                  src: track.image,
-                }}
-              />
-            ))}
-          </SimpleGrid>
+          <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w={['85px', '100px']} />
         )}
         <Text noOfLines={1} fontSize={['9px', '12px']} maxW={['90px', '110px']} color="white">
           {user.playback?.track.artist ?? timeSince(user.playbacks[0]?.endedAt)}

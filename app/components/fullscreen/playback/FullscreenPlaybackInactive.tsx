@@ -1,7 +1,9 @@
 import { Flex, HStack, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
-import TileTrackImage from '~/components/tile/track/TileTrackImage';
+import TilePlaybackTracksImage, {
+  getPlaybackTracks,
+} from '~/components/tile/playback/inactive/TilePlaybackTracksImage';
 import type { ProfileWithInfo } from '~/lib/types/types';
 import { timeBetween } from '~/lib/utils';
 
@@ -15,24 +17,15 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
           <ActivityUserInfo user={user} />
           <HStack align="center">
             <Text fontSize="10px" fontWeight="bolder" textTransform="uppercase">
-              LISTENED FOR {timeBetween(user.playbacks[0]?.startedAt, user.playbacks[0]?.endedAt)}
+              LISTENED FOR{' '}
+              {timeBetween({
+                endDate: user.playbacks[0].endedAt,
+                startDate: user.playbacks[0].startedAt,
+              })}
             </Text>
           </HStack>
         </Flex>
-        <SimpleGrid columns={2} w="65%">
-          {user.recent.map(({ track }, index) => (
-            <TileTrackImage
-              fullscreen={{
-                originUserId: user.userId,
-                track,
-              }}
-              key={index}
-              image={{
-                src: track.image,
-              }}
-            />
-          ))}
-        </SimpleGrid>
+        <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w="65%" />
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
         <PlaybackAddAll />

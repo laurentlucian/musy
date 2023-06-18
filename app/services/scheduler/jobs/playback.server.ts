@@ -191,17 +191,50 @@ export const playbackCreator = async () => {
     const exists = await prisma.playback.findUnique({ where: { userId } });
     if (exists) {
       await removePlaybackJob(userId);
-      await prisma.playbackHistory.create({
-        data: {
-          endedAt: new Date(),
-          startedAt: exists.createdAt,
-          user: {
-            connect: {
-              userId,
+      const recentHistory = await prisma.playbackHistory.findFirst({
+        orderBy: { endedAt: 'desc' },
+        where: { userId },
+      });
+
+      if (recentHistory) {
+        const { endedAt } = recentHistory;
+        const now = new Date();
+        const diff = now.getTime() - endedAt.getTime();
+        const diffMinutes = Math.floor(diff / 1000 / 60);
+
+        if (diffMinutes < 10) {
+          await prisma.playbackHistory.update({
+            data: { endedAt: now },
+            where: { id: recentHistory.id },
+          });
+          console.log('playbackCreator -> updated playback history', userId);
+        } else {
+          await prisma.playbackHistory.create({
+            data: {
+              startedAt: exists.createdAt,
+              user: {
+                connect: {
+                  userId,
+                },
+              },
+            },
+          });
+          console.log('playbackCreator -> created playback history', userId);
+        }
+      } else {
+        await prisma.playbackHistory.create({
+          data: {
+            startedAt: exists.createdAt,
+            user: {
+              connect: {
+                userId,
+              },
             },
           },
-        },
-      });
+        });
+        console.log('playbackCreator -> created playback history', userId);
+      }
+
       await prisma.playback.delete({ where: { userId } });
       console.log('playbackCreator -> deleted', userId, 'playback');
     }

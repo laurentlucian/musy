@@ -53,7 +53,8 @@ export const timeSince = (date: Date | null, type?: string) => {
   return 'now';
 };
 
-export const timeBetween = (startDate: Date, endDate: Date) => {
+export const timeBetween = ({ endDate, startDate }: { endDate?: Date; startDate?: Date }) => {
+  if (!endDate || !startDate) return '';
   const diffInMilliseconds = Math.abs(endDate.getTime() - startDate.getTime());
 
   if (diffInMilliseconds < 1000 * 60 * 60) {

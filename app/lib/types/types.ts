@@ -1,4 +1,4 @@
-import type { Prisma, Profile, Track } from '@prisma/client';
+import type { PlaybackHistory, Prisma, Profile, Track } from '@prisma/client';
 
 import type { getAllUsers } from '~/services/prisma/users.server';
 
@@ -6,11 +6,13 @@ export type { Track } from '@prisma/client';
 export type Activity = {
   action: string;
   createdAt: Date;
-  id: number;
+  id?: number;
   likedBy?: Profile[];
   owner?: { user: ProfileWithInfo | null };
-  track: TrackWithInfo;
-  trackId: string;
+  playback?: PlaybackHistory;
+  track?: TrackWithInfo;
+  trackId?: string;
+  tracks?: TrackWithInfo[];
   user: ProfileWithInfo;
   userId: string;
 };

@@ -7,7 +7,7 @@ export const trackWithInfo: Prisma.TrackArgs = {
   include: {
     liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
     queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-    recent: { select: { user: true } },
+    recent: { orderBy: { playedAt: 'asc' }, select: { user: true } },
   },
 };
 
@@ -15,6 +15,50 @@ export const profileWithInfo: Prisma.ProfileArgs = {
   include: {
     playback: { include: { track: trackWithInfo } },
   },
+};
+
+export const getPlaybackFeed = async (userIds: string[]) => {
+  const playbacks = await prisma.playbackHistory.findMany({
+    include: {
+      user: profileWithInfo,
+    },
+    orderBy: { endedAt: 'desc' },
+    take: 20,
+    where: {
+      userId: {
+        in: userIds,
+      },
+    },
+  });
+
+  let feed = [];
+
+  for (const playback of playbacks) {
+    const recent = await prisma.recentSongs.findMany({
+      include: {
+        track: trackWithInfo,
+      },
+      orderBy: {
+        playedAt: 'desc',
+      },
+
+      where: {
+        playedAt: { gte: playback.startedAt, lte: playback.endedAt },
+        userId: playback.userId,
+      },
+    });
+
+    feed.push({
+      action: 'playback',
+      createdAt: playback.endedAt,
+      playback,
+      tracks: recent.map((r) => r.track),
+      user: playback.user,
+      userId: playback.userId,
+    });
+  }
+
+  return feed;
 };
 
 export const getActivity = async (userId: string) => {
@@ -28,7 +72,7 @@ export const getActivity = async (userId: string) => {
   });
   const userIds = [...following.map((f) => f.followingId), userId];
 
-  const [like, queue, recommended] = await Promise.all([
+  const [like, queue, recommended, playbacks] = await Promise.all([
     prisma.likedSongs.findMany({
       include: {
         track: trackWithInfo,
@@ -68,13 +112,14 @@ export const getActivity = async (userId: string) => {
         },
       },
     }),
+    getPlaybackFeed(userIds),
   ]);
-  return [...like, ...queue, ...recommended]
+  return [...like, ...queue, ...recommended, ...playbacks]
     .sort((a, b) => {
       if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
       return 0;
     })
-    .slice(0, 20) as Activity[];
+    .slice(0, 50) as Activity[];
 };
 
 export const getUserRecommended = async (userId: string) => {

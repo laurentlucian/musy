@@ -35,25 +35,27 @@ const Tiles = ({
 
   return (
     <>
-      <Flex align="center" minH="35px">
-        {title && (
-          <Text
-            fontSize="11px"
-            onClick={() => {
-              if (title && tracks) {
-                onOpen(<FullscreenTracks title={title} tracks={tracks} />);
-              }
-            }}
-            cursor={tracks ? 'pointer' : undefined}
-            fontWeight="bolder"
-          >
-            {title}
-          </Text>
-        )}
+      {(title || scrollButtons || action) && (
+        <Flex align="center" minH="35px">
+          {title && (
+            <Text
+              fontSize="11px"
+              onClick={() => {
+                if (title && tracks) {
+                  onOpen(<FullscreenTracks title={title} tracks={tracks} />);
+                }
+              }}
+              cursor={tracks ? 'pointer' : undefined}
+              fontWeight="bolder"
+            >
+              {title}
+            </Text>
+          )}
 
-        {action}
-        {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
-      </Flex>
+          {action}
+          {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
+        </Flex>
+      )}
       <HStack
         ref={scrollRef}
         className="scrollbar"
