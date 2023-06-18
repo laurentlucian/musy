@@ -95,7 +95,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };
 
-export const useQueueToFriendData = ({ trackId, userId: toId }: SendData) => {
+export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: SendData) => {
   const data = {
     toId,
     trackId,
@@ -120,7 +120,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId }: SendData) => {
     <Send2 variant="Outline" size="25px" />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to their queue';
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : username.split(/[ .]/)[0];
 
   return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };
