@@ -10,8 +10,8 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 
 import { useFullscreen } from '../Fullscreen';
 import AddToUserQueue from '../shared/actions/AddToUserQueue';
+import ViewTrack from '../shared/actions/ViewTrack';
 import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
-import TrackInfo from '../shared/FullscreenTrackInfo';
 import FullscreenTrack from '../track/FullscreenTrack';
 import PlaybackListenAlong from './PlaybackListenAlong';
 
@@ -49,12 +49,12 @@ const FullscreenPlayback = (props: { user: ProfileWithPlayback }) => {
               }}
             />
             <ActivityTrackInfo track={track} />
-            <TrackInfo track={track} />
           </Stack>
         </Stack>
-        <Flex direction="column" flexGrow={1} overflowX="hidden">
+        <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
           <PlaybackListenAlong />
           <AddToUserQueue userId={user.userId} />
+          <ViewTrack track={track} userId={user.userId} />
         </Flex>
       </SimpleGrid>
     </FullscreenFadeLayout>
