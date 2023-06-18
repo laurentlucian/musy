@@ -1,19 +1,12 @@
 import { Link, useNavigation } from '@remix-run/react';
 import type { MouseEvent } from 'react';
 
-import {
-  Flex,
-  Heading,
-  HStack,
-  Image,
-  Link as ChakraLink,
-  Spacer,
-} from '@chakra-ui/react';
+import { Flex, Heading, HStack, Image, Link as ChakraLink, Spacer } from '@chakra-ui/react';
 
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import Waver from '~/lib/icons/Waver';
 
-import NavSearch from '../profile/NavSearch';
+import NavSearch from './NavSearch';
 import UserMenu from './UserMenu';
 
 const Nav = () => {

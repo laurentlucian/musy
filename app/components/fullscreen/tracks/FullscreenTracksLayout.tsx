@@ -1,5 +1,3 @@
-import { useParams } from '@remix-run/react';
-
 import { SimpleGrid, Stack } from '@chakra-ui/react';
 
 import Tile from '~/components/tile/Tile';
@@ -7,14 +5,10 @@ import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
 import TileTrackList from '~/components/tile/track/TileTrackList';
 
-import { useFullscreen } from '../Fullscreen';
-import FullscreenTrack from '../track/FullscreenTrack';
 import { useFullscreenTracks } from './FullscreenTracks';
 
 const FullscreenTracksLayout = () => {
-  const { onOpen } = useFullscreen();
   const { layout, title, tracks } = useFullscreenTracks();
-  const { id } = useParams();
 
   const Grid = (
     <SimpleGrid minChildWidth={['115px', '160px', '200px']} spacing="20px">
@@ -30,9 +24,8 @@ const FullscreenTracksLayout = () => {
             image={
               <TileTrackImage
                 box={{ w: ['115px', '160px', '200px'] }}
+                fullscreen={{ track }}
                 image={{
-                  cursor: 'pointer',
-                  onClick: () => onOpen(<FullscreenTrack track={track} />),
                   src: track.image,
                 }}
               />
@@ -47,7 +40,23 @@ const FullscreenTracksLayout = () => {
   const List = (
     <Stack spacing={5}>
       {tracks.map((track) => {
-        return <TileTrackList key={track.id} track={track} userId={id ?? ''} />;
+        return (
+          <TileTrackList
+            key={track.id}
+            image={
+              <TileTrackImage
+                fullscreen={{
+                  track,
+                }}
+                box={{ w: ['65px', '70px'] }}
+                image={{
+                  src: track.image,
+                }}
+              />
+            }
+            track={track}
+          />
+        );
       })}
     </Stack>
   );

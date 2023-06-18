@@ -16,22 +16,15 @@ type TileProps = {
   index: number;
   info?: ReactNode;
   layoutKey: string;
-  list?: boolean;
   track: TrackWithInfo;
   tracks: Track[];
 } & ChakraProps;
 
 const Tile = forwardRef<HTMLDivElement, TileProps>(
-  ({ image, index, info, layoutKey, list, track, tracks, ...props }, ref) => {
+  ({ image, index, info, layoutKey, track, tracks, ...props }, ref) => {
     return (
       <TileContext.Provider value={{ index, layoutKey, track, tracks }}>
-        <Stack
-          as={motion.div}
-          ref={ref}
-          direction={list ? 'row' : undefined}
-          {...props}
-          maxW={list ? '40px' : '200px'}
-        >
+        <Stack as={motion.div} ref={ref} {...props}>
           {image}
           <Flex justify="space-between">{info}</Flex>
         </Stack>

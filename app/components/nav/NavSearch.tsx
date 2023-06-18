@@ -22,10 +22,9 @@ import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 import { useSearch } from '~/hooks/useSearch';
 import Waver from '~/lib/icons/Waver';
 
-import UserTile from '../nav/UserTile';
-import Tile from '../tile/Tile';
 import TileTrackImage from '../tile/track/TileTrackImage';
-import TileTrackInfo from '../tile/track/TileTrackInfo';
+import TileTrackList from '../tile/track/TileTrackList';
+import UserTile from './UserTile';
 
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -108,8 +107,6 @@ const NavSearch = () => {
     else inputRef.current?.blur();
   }, [show]);
 
-  const layoutKey = 'NavSearch';
-
   return (
     <div ref={divRef}>
       <Popover
@@ -181,25 +178,21 @@ const NavSearch = () => {
           <PopoverBody>
             <Stack>
               {results.length >= 1 &&
-                results.map((item, index) => {
+                results.map((item) => {
                   if ('uri' in item) {
                     return (
-                      <Tile
+                      <TileTrackList
                         key={item.id}
-                        index={index}
-                        layoutKey={layoutKey}
                         track={item}
-                        tracks={[]}
                         image={
                           <TileTrackImage
+                            fullscreen={{ track: item }}
                             box={{ w: '40px' }}
                             image={{
                               src: item.image,
                             }}
                           />
                         }
-                        info={<TileTrackInfo track={item} />}
-                        list
                       />
                     );
                   } else {

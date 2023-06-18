@@ -1,3 +1,4 @@
+import { useParams } from '@remix-run/react';
 import { AlertCircle, Check } from 'react-feather';
 
 import { DirectInbox, CloseSquare, Send2, TickSquare, Star1 } from 'iconsax-react';
@@ -8,6 +9,7 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/add';
 
+import { useSessionUserId } from './useSessionUser';
 import { useUserRecommended } from './useUserLibrary';
 
 type SelfQueueData = {
@@ -64,8 +66,10 @@ export const useRecommendData = (trackId: string) => {
 };
 
 export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => {
+  const currentUserId = useSessionUserId();
+  const { id } = useParams();
   const data = {
-    fromId: originUserId ?? '',
+    fromId: originUserId ?? id ?? currentUserId ?? '',
     trackId,
   };
 
@@ -91,7 +95,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };
 
-export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: SendData) => {
+export const useQueueToFriendData = ({ trackId, userId: toId }: SendData) => {
   const data = {
     toId,
     trackId,
@@ -116,8 +120,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
     <Send2 variant="Outline" size="25px" />
   );
 
-  const qText = username.split(/[ .]/)[0];
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : qText;
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to their queue';
 
   return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };

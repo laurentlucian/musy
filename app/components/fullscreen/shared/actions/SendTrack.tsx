@@ -3,6 +3,7 @@ import { useParams } from '@remix-run/react';
 import type { IconButtonProps } from '@chakra-ui/react';
 import { IconButton, useColorModeValue } from '@chakra-ui/react';
 
+import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useQueueToFriendData } from '~/hooks/useSendButton';
 import Waver from '~/lib/icons/Waver';
@@ -22,16 +23,18 @@ const SendTrack = ({ trackId, userId, ...props }: SendButtonProps) => {
   const color = useColorModeValue(`${isSmallScreen ? 'musy.200' : 'musy.800'}`, 'musy.200');
 
   return (
-    <IconButton
-      onClick={addToFriendsQueue}
-      pos="relative"
-      variant="ghost"
-      color={color}
-      icon={isAdding ? <Waver /> : icon}
-      _hover={{ color: 'white' }}
-      aria-label="SEND"
-      {...props}
-    />
+    <Tooltip label="Add to their queue" placement="bottom">
+      <IconButton
+        onClick={addToFriendsQueue}
+        pos="relative"
+        variant="ghost"
+        color={color}
+        icon={isAdding ? <Waver /> : icon}
+        _hover={{ color: 'white' }}
+        aria-label="SEND"
+        {...props}
+      />
+    </Tooltip>
   );
 };
 
