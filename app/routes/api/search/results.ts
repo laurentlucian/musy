@@ -12,9 +12,10 @@ export const loader = async ({ request }: LoaderArgs) => {
   const userId = currentUser.userId;
   const url = new URL(request.url);
   const param = url.searchParams.get('param');
+  if (!param) return typedjson({ tracks: [], users: [] });
   const { tracks, users } = await getSearchResults({
-    param: param || 'search',
-    url: new URL(request.url),
+    param,
+    url,
     userId,
   });
 
