@@ -101,12 +101,14 @@ export const getCurrentUser = async (request: Request) => {
         },
       },
       playbacks: {
+        orderBy: { endedAt: 'desc' },
         take: 1,
       },
       recent: {
         include: {
           track: trackWithInfo,
         },
+        orderBy: { playedAt: 'desc' },
         take: 4,
       },
       recommended: { select: { trackId: true } },
@@ -180,12 +182,14 @@ export const getAllUsers = async (id: string) => {
         },
       },
       playbacks: {
+        orderBy: { endedAt: 'desc' },
         take: 1,
       },
       recent: {
         include: {
           track: trackWithInfo,
         },
+        orderBy: { playedAt: 'desc' },
         take: 4,
       },
       settings: true,

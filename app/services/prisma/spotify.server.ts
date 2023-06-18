@@ -38,7 +38,7 @@ const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
     await prisma.track.findMany({
       include: {
         liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-        recent: { select: { user: true } },
+        recent: { orderBy: { playedAt: 'desc' }, select: { user: true } },
       },
       where: {
         id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
@@ -122,11 +122,12 @@ export const getUsers = async (keyword: string, userId: string) => {
   return prisma.profile.findMany({
     include: {
       playback: { include: { track: true } },
-      playbacks: { take: 1 },
+      playbacks: { orderBy: { endedAt: 'desc' }, take: 1 },
       recent: {
         include: {
           track: trackWithInfo,
         },
+        orderBy: { playedAt: 'desc' },
         take: 4,
       },
       settings: true,
