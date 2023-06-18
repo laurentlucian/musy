@@ -24,7 +24,7 @@ const TileTrackImage = ({ box, fullscreen, image }: TileTrackImageProps) => {
         w="100%"
         draggable={false}
         objectFit="cover"
-        cursor={fullscreen ? 'cursor' : 'unset'}
+        cursor={fullscreen ? 'pointer' : 'unset'}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onClick={() =>
