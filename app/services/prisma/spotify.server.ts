@@ -117,13 +117,14 @@ export const getSpotifyTracks = async (keyword: string, userId: string) => {
   });
 };
 
-export const getUsers = async (keyword: string) => {
+export const getUsers = async (keyword: string, userId: string) => {
   return prisma.profile.findMany({
     include: {
       playback: { include: { track: true } },
       settings: true,
     },
-    where: { name: { contains: keyword } },
+
+    where: { AND: { NOT: { userId } }, name: { contains: keyword } },
   });
 };
 
@@ -138,7 +139,10 @@ export const getSearchResults = async ({
 }) => {
   const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
-  const [tracks, users] = await Promise.all([getSpotifyTracks(keyword, userId), getUsers(keyword)]);
+  const [tracks, users] = await Promise.all([
+    getSpotifyTracks(keyword, userId),
+    getUsers(keyword, userId),
+  ]);
 
   return { tracks, users };
 };
