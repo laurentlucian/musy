@@ -27,14 +27,9 @@ const TilesTrack = ({
     <Stack spacing={1}>
       <Tiles title={title} scrollButtons={scrollButtons} action={actions?.tiles} tracks={tracks}>
         {tracks.map((track, index) => {
-          const layoutKey = title + index;
           return (
             <Tile
               key={index}
-              track={track}
-              tracks={tracks}
-              index={index}
-              layoutKey={layoutKey}
               image={
                 <TileTrackImage
                   box={{ w: '200px' }}
@@ -44,8 +39,7 @@ const TilesTrack = ({
                   }}
                 />
               }
-              info={<TileTrackInfo track={track} maxW="200px"/>}
-              action={actions?.tile}
+              info={<TileTrackInfo track={track} maxW="200px" />}
             />
           );
         })}

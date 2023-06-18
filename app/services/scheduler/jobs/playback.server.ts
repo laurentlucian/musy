@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant';
 import { notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getAllUsers } from '~/services/prisma/users.server';
+import { getAllUsersId } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
@@ -12,15 +12,11 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   const { userId } = job.data;
 
   console.log('playbackQ -> job starting...', userId);
-  const profile = await prisma.user.findUnique({
-    include: { user: true },
-    where: { id: userId },
-  });
 
   const { spotify } = await getSpotifyClient(userId);
 
-  if (!profile || !profile.user || !spotify) {
-    console.log(`playbackQ ${userId} removed -> user not found`);
+  if (!spotify) {
+    console.log(`playbackQ ${userId} removed -> spotify client not found`);
     return null;
   }
 
@@ -137,8 +133,8 @@ const removePlaybackJob = async (userId: string) => {
 };
 
 export const playbackCreator = async () => {
-  const users = await getAllUsers();
-  const playbacks = await Promise.all(users.map((user) => getPlaybackState(user.userId)));
+  const users = await getAllUsersId();
+  const playbacks = await Promise.all(users.map((userId) => getPlaybackState(userId)));
   const active = playbacks.filter((u) => notNull(u.playback));
 
   console.log(
@@ -195,6 +191,17 @@ export const playbackCreator = async () => {
     const exists = await prisma.playback.findUnique({ where: { userId } });
     if (exists) {
       await removePlaybackJob(userId);
+      await prisma.playbackHistory.create({
+        data: {
+          endedAt: new Date(),
+          startedAt: exists.createdAt,
+          user: {
+            connect: {
+              userId,
+            },
+          },
+        },
+      });
       await prisma.playback.delete({ where: { userId } });
       console.log('playbackCreator -> deleted', userId, 'playback');
     }
@@ -210,7 +217,7 @@ export const upsertPlayback = async (
   const trackDb = createTrackModel(track);
   const data = {
     progress,
-    updatedAt: timestamp,
+    timestamp,
   };
 
   await prisma.playback.upsert({

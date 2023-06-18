@@ -83,7 +83,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     PUBLIC_POSTHOG_KEY: process.env.PUBLIC_POSTHOG_KEY,
   };
 
-  if (!session)
+  if (!session || !id)
     return typedjson({
       ENV,
       cookie: '',
@@ -98,7 +98,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const [currentUser, theme, users, queueableUsers] = await Promise.all([
     getCurrentUser(request),
     getTheme(params.id),
-    getAllUsers(!!cookie, id),
+    getAllUsers(id),
     getQueueableUsers(id),
   ]);
 

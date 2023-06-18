@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant';
 import { isProduction, minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getAllUsers, updateUserImage, updateUserName } from '~/services/prisma/users.server';
+import { getAllUsersId, updateUserImage, updateUserName } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
@@ -281,7 +281,7 @@ export const addUsersToQueue = async () => {
   await prisma.playback.deleteMany();
   // delete all playbackQ jobs
   await playbackQ.pause();
-  await playbackQ.obliterate({ force: true });
+  // await playbackQ.obliterate({ force: true });
   console.log(
     'playbackQ',
     (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
@@ -292,12 +292,8 @@ export const addUsersToQueue = async () => {
   // await addDurationToRecent();
   // console.log('addUsersToQueue -> added all durations to recent');
 
-  const users = await getAllUsers();
-  console.log(
-    'addUsersToQueue -> users..',
-    users.map((u) => u.userId),
-    users.length,
-  );
+  const users = await getAllUsersId();
+  console.log('addUsersToQueue -> users..', users, users.length);
 
   // await userQ.pause(); // pause all jobs before obliterating
   // await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
@@ -309,17 +305,17 @@ export const addUsersToQueue = async () => {
 
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
-  for (const user of users) {
+  for (const userId of users) {
     await userQ.add(
-      user.userId,
-      { userId: user.userId },
+      userId,
+      { userId: userId },
       {
         backoff: {
           delay: minutesToMs(1),
           type: 'exponential',
         },
         // a job with duplicate id will not be added
-        jobId: user.userId,
+        jobId: userId,
         removeOnComplete: true,
         removeOnFail: true,
         repeat: { every: minutesToMs(isProduction ? 30 : 60) },
@@ -329,9 +325,9 @@ export const addUsersToQueue = async () => {
 
   // repeateableJobs are started with delay, so run these manually at startup
   await userQ.addBulk(
-    users.map((user) => ({
+    users.map((userId) => ({
       data: {
-        userId: user.userId,
+        userId,
       },
       name: 'update_liked',
     })),

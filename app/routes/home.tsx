@@ -5,7 +5,6 @@ import { Stack } from '@chakra-ui/react';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
-import type { ProfileWithPlayback } from '~/components/tiles/TilesPlayback';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
 import useFollowing from '~/hooks/useFollowing';
 import type { TrackWithInfo } from '~/lib/types/types';
@@ -22,11 +21,9 @@ const Home = () => {
     activityTracks.push(activity.track);
   }
 
-  const playbacks = following.filter((user) => user.playback) as ProfileWithPlayback[];
-
   return (
     <Stack spacing={[2, 10]} px={['5px', 0]}>
-      <TilesPlayback users={playbacks} title="LISTENING NOW" />
+      <TilesPlayback users={following} title="LISTENING" />
       {activities.map((activity, index) => {
         return (
           <ActivityTile

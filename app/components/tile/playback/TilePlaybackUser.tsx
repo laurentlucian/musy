@@ -1,18 +1,13 @@
-import { Box, Image, Stack, Text } from '@chakra-ui/react';
-
-import type { Playback } from '@prisma/client';
+import { Box, Image, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenPlayback from '~/components/fullscreen/playback/FullscreenPlayback';
-import type { ProfileWithInfo, TrackWithInfo } from '~/lib/types/types';
+import type { ProfileWithInfo } from '~/lib/types/types';
+import { timeSince } from '~/lib/utils';
 
-export type ProfileWithPlayback = Omit<ProfileWithInfo, 'playback'> & {
-  playback: Playback & {
-    track: TrackWithInfo;
-  };
-};
+import TileTrackImage from '../track/TileTrackImage';
 
-const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
+const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
   const { onOpen } = useFullscreen();
 
   return (
@@ -22,9 +17,9 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
       w={['150px', '180px']}
       h={['150px', '180px']}
       overflow="hidden"
-      border={user.playback ? ['2px solid', '3px solid'] : undefined}
-      cursor={user.playback ? 'pointer' : undefined}
-      borderColor="white"
+      border={['2px solid', '3px solid']}
+      cursor="pointer"
+      borderColor={user.playback ? 'white !important' : 'rgba(255, 255, 255, .5) !important'}
       borderRadius="50%"
       onClick={(e) => {
         e.preventDefault();
@@ -65,19 +60,31 @@ const PlaybackUserImage = ({ user }: { user: ProfileWithPlayback }) => {
         bg="#10101066"
         backdropFilter={['blur(2px)', 'blur(6px)']}
       >
-        <Image
-          minW={['85px', '100px']}
-          maxW={['85px', '100px']}
-          minH={['85px', '100px']}
-          maxH={['85px', '100px']}
-          src={user.playback?.track.image}
-        />
+        {user.playback ? (
+          <TileTrackImage
+            box={{
+              w: ['85px', '100px'],
+            }}
+            image={{ src: user.playback?.track.image }}
+          />
+        ) : (
+          <SimpleGrid columns={2} w={['85px', '100px']}>
+            {user.recent.map(({ track }, index) => (
+              <TileTrackImage
+                key={index}
+                image={{
+                  src: track.image,
+                }}
+              />
+            ))}
+          </SimpleGrid>
+        )}
         <Text noOfLines={1} fontSize={['9px', '12px']} maxW={['90px', '110px']} color="white">
-          {user.playback?.track.artist}
+          {user.playback?.track.artist ?? timeSince(user.playbacks[0]?.endedAt)}
         </Text>
       </Stack>
     </Box>
   );
 };
 
-export default PlaybackUserImage;
+export default TilePlaybackUser;

@@ -100,6 +100,15 @@ export const getCurrentUser = async (request: Request) => {
           track: trackWithInfo,
         },
       },
+      playbacks: {
+        take: 1,
+      },
+      recent: {
+        include: {
+          track: trackWithInfo,
+        },
+        take: 4,
+      },
       recommended: { select: { trackId: true } },
       settings: { include: { profileSong: true } },
     },
@@ -146,38 +155,46 @@ export type AllUsers = (Profile & {
   settings: Settings | null;
 })[];
 
-export const getAllUsers = async (isAuthenticated = false, id: string | null = null) => {
-  const restrict = !isAuthenticated
-    ? { user: { settings: { isNot: { isPrivate: true } } } }
-    : undefined;
+export const getAllUsersId = async () =>
+  prisma.user
+    .findMany({
+      select: {
+        id: true,
+      },
+      where: {
+        revoked: false,
+      },
+    })
+    .then((users) => users.map((u) => u.id));
 
-  if (id) {
-    return prisma.profile.findMany({
-      include: {
-        playback: {
-          include: {
-            track: trackWithInfo,
-          },
+export const getAllUsers = async (id: string) => {
+  // const restrict = !isAuthenticated
+  //   ? { user: { settings: { isNot: { isPrivate: true } } } }
+  //   : undefined;
+
+  const users = await prisma.profile.findMany({
+    include: {
+      playback: {
+        include: {
+          track: trackWithInfo,
         },
-        settings: true,
       },
-      orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
-      where: { user: { revoked: false, ...restrict, NOT: { id } } },
-    });
-  } else {
-    return prisma.profile.findMany({
-      include: {
-        playback: {
-          include: {
-            track: trackWithInfo,
-          },
+      playbacks: {
+        take: 1,
+      },
+      recent: {
+        include: {
+          track: trackWithInfo,
         },
-        settings: true,
+        take: 4,
       },
-      orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
-      where: { user: { revoked: false, ...restrict } },
-    });
-  }
+      settings: true,
+    },
+    orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
+    where: { user: { NOT: { id }, revoked: false } },
+  });
+
+  return users;
 };
 
 export const getQueueableUsers = async (id: string | null = null) => {

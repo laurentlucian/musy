@@ -26,12 +26,12 @@ model User {
 }
 
 model Profile {
-  id          Int           @id @default(autoincrement())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @default(now()) @updatedAt
-  user        User          @relation(fields: [userId], references: [id])
+  id          Int               @id @default(autoincrement())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @default(now()) @updatedAt
+  user        User              @relation(fields: [userId], references: [id])
   // should've been the @id
-  userId      String        @unique
+  userId      String            @unique
   //
   name        String
   bio         String?
@@ -50,14 +50,15 @@ model Profile {
   playback    Playback?
   ColorPreset ColorPreset[]
   Sessions    Sessions[]
-  favorite    Favorite[]    @relation("userToFavorite")
-  favBy       Favorite[]    @relation("favoriteToUser")
-  block       Block[]       @relation("userToBlock")
-  blockBy     Block[]       @relation("blockToUser")
-  mute        Mute[]        @relation("userToMute")
-  muteBy      Mute[]        @relation("muteToUser")
-  following   Follow[]      @relation("follower")
-  followers   Follow[]      @relation("following")
+  favorite    Favorite[]        @relation("userToFavorite")
+  favBy       Favorite[]        @relation("favoriteToUser")
+  block       Block[]           @relation("userToBlock")
+  blockBy     Block[]           @relation("blockToUser")
+  mute        Mute[]            @relation("userToMute")
+  muteBy      Mute[]            @relation("muteToUser")
+  following   Follow[]          @relation("follower")
+  followers   Follow[]          @relation("following")
+  playbacks   PlaybackHistory[]
 }
 
 model Follow {
@@ -270,7 +271,7 @@ model Track {
 model Playback {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt Int // timestamp from spotify response
+  updatedAt DateTime @updatedAt
   //
   user      Profile  @relation(fields: [userId], references: [userId])
   userId    String   @unique
@@ -278,7 +279,17 @@ model Playback {
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
   //
+  timestamp Int      @default(0) // timestamp from spotify response
   progress  Int
+}
+
+model PlaybackHistory {
+  id        Int      @id @default(autoincrement())
+  startedAt DateTime @default(now())
+  endedAt   DateTime @default(now())
+  //
+  user      Profile  @relation(fields: [userId], references: [userId])
+  userId    String
 }
 
 model RecentSongs {

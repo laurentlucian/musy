@@ -1,37 +1,36 @@
-import { Link } from '@remix-run/react';
 import { useState } from 'react';
 
-import { Link as ChakraLink, Stack, Switch } from '@chakra-ui/react';
+import { Stack, Switch } from '@chakra-ui/react';
 
-import type { Playback } from '@prisma/client';
-
-import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
-import Tile from '~/components/tile/Tile';
-import TileTrackImage from '~/components/tile/track/TileTrackImage';
-import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
+import useSessionUser from '~/hooks/useSessionUser';
 import type { ProfileWithInfo, TrackWithInfo } from '~/lib/types/types';
 
-import PlaybackUserImage from './playback/PlaybackUserImage';
+import TilePlayback from '../tile/playback/TilePlayback';
 import Tiles from './Tiles';
-
-export type ProfileWithPlayback = Omit<ProfileWithInfo, 'playback'> & {
-  playback: Playback & {
-    track: TrackWithInfo;
-  };
-};
 
 type TilesPlaybackProps = {
   title: string;
-  users: ProfileWithPlayback[];
+  users: ProfileWithInfo[];
 };
 
 const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
+  const currentUser = useSessionUser();
   const [tile, setTile] = useState(false);
-  const scrollButtons = users.length > 5;
 
-  if (!users.length) return null;
+  const active = users.filter((user) => user.playback);
+  const inactive = users
+    .filter((user) => !user.playback && user.playbacks.length)
+    .sort((a, b) => {
+      const aPlayback = a.playbacks[0]?.endedAt || 0;
+      const bPlayback = b.playbacks[0]?.endedAt || 0;
+      if (aPlayback > bPlayback) return -1;
+      if (aPlayback < bPlayback) return 1;
+      return 0;
+    });
 
-  const tracks = users.map(({ playback }) => playback.track);
+  const scrollButtons = [...active, ...inactive].length > 5;
+
+  const tracks = active.map(({ playback }) => playback?.track) as TrackWithInfo[];
 
   return (
     <Stack spacing={1}>
@@ -43,54 +42,15 @@ const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
         }
         tracks={tracks}
       >
-        {users.map((user, index) => {
-          const { playback } = user;
-          const layoutKey = title + index;
+        <TilePlayback index={0} tile={tile} user={currentUser} />
 
-          return (
-            <Stack key={index} flexShrink={0}>
-              {tile && <ActivityUserInfo user={user} />}
-              <Tile
-                track={playback.track}
-                tracks={tracks}
-                index={index}
-                layoutKey={layoutKey}
-                image={
-                  tile ? (
-                    <TileTrackImage
-                      fullscreen={{
-                        originUserId: user.userId,
-                        track: playback.track,
-                      }}
-                      box={{
-                        w: '200px',
-                      }}
-                      image={{
-                        src: playback.track.image,
-                      }}
-                    />
-                  ) : (
-                    <PlaybackUserImage user={user} />
-                  )
-                }
-                info={
-                  tile ? (
-                    <TileTrackInfo track={playback.track} />
-                  ) : (
-                    <ChakraLink
-                      as={Link}
-                      to={`/${user.userId}`}
-                      mx="auto"
-                      fontSize={['12px', '14px']}
-                    >
-                      {user.name}
-                    </ChakraLink>
-                  )
-                }
-              />
-            </Stack>
-          );
-        })}
+        {active.map((user, index) => (
+          <TilePlayback key={index} index={index} tile={tile} user={user} />
+        ))}
+
+        {inactive.map((user, index) => (
+          <TilePlayback key={index} index={index} tile={tile} user={user} />
+        ))}
       </Tiles>
     </Stack>
   );

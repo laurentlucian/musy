@@ -6,7 +6,7 @@ import { cors } from 'remix-utils';
 import { getAllUsers } from '~/services/prisma/users.server';
 
 export async function action({ request }: ActionArgs) {
-  let data = await getAllUsers();
+  const data = await getAllUsers('');
   return await cors(request, json(data));
 }
 

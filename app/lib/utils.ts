@@ -53,6 +53,18 @@ export const timeSince = (date: Date | null, type?: string) => {
   return 'now';
 };
 
+export const timeBetween = (startDate: Date, endDate: Date) => {
+  const diffInMilliseconds = Math.abs(endDate.getTime() - startDate.getTime());
+
+  if (diffInMilliseconds < 1000 * 60 * 60) {
+    const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
+    return `${diffInMinutes}m`;
+  } else {
+    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+    return `${diffInHours}h`;
+  }
+};
+
 export const msToString = (ms: number) => {
   if (ms < 6000) {
     return `${ms / 1000}s`;
