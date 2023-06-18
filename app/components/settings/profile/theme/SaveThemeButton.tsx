@@ -6,9 +6,9 @@ import { Button, HStack, Text } from '@chakra-ui/react';
 import type { Theme } from '@prisma/client';
 import { AnimatePresence } from 'framer-motion';
 
+import useCurrentUser from '~/hooks/useCurrentUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSaveTheme';
-import useCurrentUser from '~/hooks/useCurrentUser';
 import Waver from '~/lib/icons/Waver';
 
 const SaveThemeButton = ({

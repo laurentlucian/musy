@@ -5,9 +5,9 @@ import { FormControl, IconButton, useColorModeValue } from '@chakra-ui/react';
 import type { Theme } from '@prisma/client';
 
 import Tooltip from '~/components/Tooltip';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSetShowSave } from '~/hooks/useSaveTheme';
-import useCurrentUser from '~/hooks/useCurrentUser';
 
 const ToggleSetting = ({
   bold,

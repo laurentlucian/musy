@@ -23,8 +23,8 @@ import {
 
 import { CloseSquare } from 'iconsax-react';
 
-import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 import useCurrentUser from '~/hooks/useCurrentUser';
+import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();

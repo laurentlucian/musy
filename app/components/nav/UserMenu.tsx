@@ -28,9 +28,9 @@ import type { IconButtonProps } from '@chakra-ui/react';
 
 import { Moon, Setting2, Sun1 } from 'iconsax-react';
 
+import useCurrentUser from '~/hooks/useCurrentUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
-import useCurrentUser from '~/hooks/useCurrentUser';
 
 const UserMenu = () => {
   const currentUser = useCurrentUser();

@@ -4,9 +4,9 @@ import { Box, Flex, IconButton, Image, SimpleGrid, useColorModeValue } from '@ch
 
 import { Home2, SearchNormal1 } from 'iconsax-react';
 
+import useCurrentUser from '~/hooks/useCurrentUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
-import useCurrentUser from '~/hooks/useCurrentUser';
 import Waver from '~/lib/icons/Waver';
 
 import { useFullscreen } from '../fullscreen/Fullscreen';

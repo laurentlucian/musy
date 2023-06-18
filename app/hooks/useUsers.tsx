@@ -2,8 +2,8 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import type { loader } from '~/root';
 
-import useFriends from './useFollowing';
 import useCurrentUser from './useCurrentUser';
+import useFriends from './useFollowing';
 
 const useUsers = () => useTypedRouteLoaderData<typeof loader>('root')?.users ?? [];
 

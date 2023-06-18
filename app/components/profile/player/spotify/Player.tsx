@@ -23,8 +23,8 @@ import { ArrowDown2, ArrowUp2, PauseCircle, People, PlayCircle } from 'iconsax-r
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import Tooltip from '~/components/Tooltip';
-import useIsMobile from '~/hooks/useIsMobile';
 import useCurrentUser from '~/hooks/useCurrentUser';
+import useIsMobile from '~/hooks/useIsMobile';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';

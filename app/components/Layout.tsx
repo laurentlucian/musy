@@ -5,8 +5,8 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
 import { motion } from 'framer-motion';
 
-import useIsMobile from '~/hooks/useIsMobile';
 import useCurrentUser from '~/hooks/useCurrentUser';
+import useIsMobile from '~/hooks/useIsMobile';
 import { useThemeBg } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
