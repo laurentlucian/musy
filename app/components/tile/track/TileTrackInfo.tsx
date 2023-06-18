@@ -1,4 +1,4 @@
-import { HStack, Text, Box, Link as ChakraLink, Flex } from '@chakra-ui/react';
+import { HStack, Text, Box, Link as ChakraLink, Flex, type ChakraProps } from '@chakra-ui/react';
 
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { TrackWithInfo } from '~/lib/types/types';
@@ -8,13 +8,14 @@ const TileTrackInfo = ({
   createdAt,
   icon = true,
   track,
+  ...props
 }: {
   createdAt?: Date;
   icon?: boolean;
   track: TrackWithInfo;
-}) => {
+} & ChakraProps) => {
   return (
-    <Flex justify="space-between" w="100%">
+    <Flex justify="space-between" w="100%" {...props}>
       <Flex direction="column" flexGrow={1}>
         <ChakraLink
           href={track.uri}

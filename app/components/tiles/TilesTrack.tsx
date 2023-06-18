@@ -44,7 +44,7 @@ const TilesTrack = ({
                   }}
                 />
               }
-              info={<TileTrackInfo track={track} />}
+              info={<TileTrackInfo track={track} maxW="200px"/>}
               action={actions?.tile}
             />
           );
