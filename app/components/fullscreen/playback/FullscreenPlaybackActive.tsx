@@ -4,6 +4,7 @@ import { Sound } from 'iconsax-react';
 
 import ActivityTrackInfo from '~/components/activity/shared/ActivityTrackInfo';
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
+import { getPlaybackTracks } from '~/components/tile/playback/inactive/TilePlaybackTracksImage';
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import Tiles from '~/components/tiles/Tiles';
 import type { ProfileWithInfo } from '~/lib/types/types';
@@ -16,6 +17,7 @@ import PlaybackListenAlong from './PlaybackListenAlong';
 const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
   if (!user.playback) throw new Error('User has no playback');
   const track = user.playback.track;
+  const tracks = getPlaybackTracks(user);
 
   return (
     <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent={['start', 'center']}>
@@ -45,26 +47,30 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
             }}
           />
           <ActivityTrackInfo track={track} />
-          <Text fontSize="11px" fontWeight="bolder">
-            RECENT
-          </Text>
-          <Tiles>
-            {user.recent.map(({ track }, index) => {
-              if (index === 0) return null;
+          {tracks.length && (
+            <>
+              <Text fontSize="11px" fontWeight="bolder">
+                RECENT
+              </Text>
+              <Tiles>
+                {tracks.map((track, index) => {
+                  if (index === 0) return null;
 
-              return (
-                <TileTrackImage
-                  key={index}
-                  box={{ w: '90px' }}
-                  image={{ src: track.image }}
-                  fullscreen={{
-                    originUserId: user.userId,
-                    track,
-                  }}
-                />
-              );
-            })}
-          </Tiles>
+                  return (
+                    <TileTrackImage
+                      key={index}
+                      box={{ w: '90px' }}
+                      image={{ src: track.image }}
+                      fullscreen={{
+                        originUserId: user.userId,
+                        track,
+                      }}
+                    />
+                  );
+                })}
+              </Tiles>
+            </>
+          )}
         </Stack>
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">

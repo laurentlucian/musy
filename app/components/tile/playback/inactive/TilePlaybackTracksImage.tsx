@@ -6,13 +6,16 @@ import type { ProfileWithInfo, TrackWithInfo } from '~/lib/types/types';
 import TileTrackImage from '../../track/TileTrackImage';
 
 export const getPlaybackTracks = (user: ProfileWithInfo) => {
-  const endedAt = user.playbacks[0]?.endedAt?.getTime();
+  const startedAt = user.playbacks[0].startedAt.getTime();
+  const endedAt = user.playbacks[0].endedAt.getTime();
 
   return user.recent
     .filter((r) => {
       const playedAt = r.playedAt.getTime();
-      const diff = endedAt - playedAt;
-      return diff;
+      if (playedAt > startedAt && playedAt < endedAt) {
+        return true;
+      }
+      return false;
     })
     .map((r) => r.track);
 };
