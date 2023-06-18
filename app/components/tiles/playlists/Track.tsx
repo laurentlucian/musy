@@ -43,7 +43,7 @@ const Track = (props: {
   };
 
   const SongTitle = (
-    <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
+    <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-all">
       {track.name}
     </Text>
   );

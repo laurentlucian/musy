@@ -87,7 +87,7 @@ const PlaylistDrawer = () => {
                           fontWeight="bold"
                           textAlign="left"
                           w="fit-content"
-                          wordBreak="break-word"
+                          wordBreak="break-all"
                           pos="relative"
                         >
                           {playlist.name}

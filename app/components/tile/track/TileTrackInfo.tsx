@@ -21,7 +21,7 @@ const TileTrackInfo = ({
           fontSize={['12px', '13px']}
           noOfLines={1}
           whiteSpace="normal"
-          wordBreak="break-word"
+          wordBreak="break-all"
         >
           {track.name}
         </ChakraLink>

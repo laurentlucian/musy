@@ -33,7 +33,7 @@ const UserTile = forwardRef<HTMLDivElement, UserTileProps>(({ profile, ...props 
       </Flex>
       <Flex justify="space-between">
         <Stack as={Link} to={`/${userId}`} spacing={0} cursor="pointer">
-          <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+          <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-all">
             {name}
           </Text>
           <Stack>

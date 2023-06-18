@@ -132,7 +132,7 @@ const Analysis = () => {
               </Flex>
               <Flex justify="space-between">
                 <Stack spacing={0}>
-                  <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-word">
+                  <Text fontSize="13px" noOfLines={3} whiteSpace="normal" wordBreak="break-all">
                     {track.name}
                   </Text>
                   <Flex align="center">

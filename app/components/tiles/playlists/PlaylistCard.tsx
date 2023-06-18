@@ -11,7 +11,7 @@ const PlaylistCard = forwardRef<HTMLDivElement, PlaylistCardProps>(
   ({ playlist, ...props }, ref) => {
     const { onOpen } = usePlaylistDrawerActions();
     const Title = (
-      <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-word">
+      <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-all">
         {playlist.name}
       </Text>
     );

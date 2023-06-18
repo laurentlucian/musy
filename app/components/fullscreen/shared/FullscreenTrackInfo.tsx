@@ -15,7 +15,7 @@ const TrackInfo = (props: { track: TrackWithInfo }) => {
         fontWeight="bold"
         textAlign={['center', 'left']}
         w="fit-content"
-        wordBreak="break-word"
+        wordBreak="break-all"
       >
         {track.name}
       </Link>
