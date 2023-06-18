@@ -12,7 +12,7 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
   const { components, onOpen } = useFullscreen();
   const navigate = useNavigate();
 
-  const isFullscreen = components.length > 0; //
+  const isFullscreen = components.length > 0;
 
   return (
     <Box
@@ -24,14 +24,6 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
       cursor="pointer"
       borderColor="white"
       borderRadius="50%"
-      onClick={(e) => {
-        if (user.playback && !isFullscreen) {
-          e.preventDefault();
-          onOpen(<FullscreenPlayback user={user as ProfileWithPlayback} />);
-        } else {
-          navigate(`/${user.userId}`);
-        }
-      }}
     >
       {user.playback && (
         <Box
@@ -47,9 +39,11 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
       <Image
         src={user.image}
         onClick={(e) => {
-          if (user.playback) {
+          if (user.playback && !isFullscreen) {
             e.preventDefault();
-            onOpen(<FullscreenTrack track={user.playback.track} originUserId={user.userId} />);
+            onOpen(<FullscreenPlayback user={user as ProfileWithPlayback} />);
+          } else {
+            navigate(`/${user.userId}`);
           }
         }}
       />
