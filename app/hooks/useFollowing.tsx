@@ -1,8 +1,8 @@
-import useSessionUser from './useSessionUser';
+import useCurrentUser from './useCurrentUser';
 import useUsers from './useUsers';
 
 const useFollowing = () => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const allUsers = useUsers();
 
   return allUsers

@@ -30,10 +30,10 @@ import { Moon, Setting2, Sun1 } from 'iconsax-react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 const UserMenu = () => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const isSmallScreen = useIsMobile();

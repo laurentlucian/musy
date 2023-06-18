@@ -5,11 +5,11 @@ import { Button } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { action as followAction } from '~/routes/api/user/follow';
 
 const FollowButton = (props: { id?: string }) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const params = useParams();
   const userId = (props.id || params.id) as string;
   const isFollowingDefault = currentUser?.following.find((user) => userId === user.followingId);

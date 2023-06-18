@@ -5,7 +5,7 @@ import { IconButton, useColorModeValue } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Tooltip from '~/components/Tooltip';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
 import LikeIcon from '~/lib/icons/Like';
 
@@ -17,7 +17,7 @@ type SaveToLikedProps = {
 };
 
 const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const { isSaved, toggleSave } = useUserLibrary(trackId);
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();

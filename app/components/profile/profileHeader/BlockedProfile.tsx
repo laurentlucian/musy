@@ -5,7 +5,7 @@ import { Button, HStack, Stack, Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { Forbidden } from 'iconsax-react';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 const block = (
   <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
@@ -14,7 +14,7 @@ const block = (
 );
 
 const BlockedProfile = ({ name }: { name: string }) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const { id } = useParams();
   const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
   const amIBlocked = blockRecord?.blockedId === currentUser?.userId;

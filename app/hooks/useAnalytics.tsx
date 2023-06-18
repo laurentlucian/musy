@@ -6,11 +6,11 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 import { isProduction } from '~/lib/utils';
 import type { loader } from '~/root';
 
-import useSessionUser from './useSessionUser';
+import useCurrentUser from './useCurrentUser';
 
 const useAnalytics = () => {
   const ENV = useTypedRouteLoaderData<typeof loader>('root')?.ENV;
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (!isProduction || typeof ENV?.PUBLIC_POSTHOG_KEY !== 'string') return;

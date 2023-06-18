@@ -6,7 +6,7 @@ import { IconButton } from '@chakra-ui/react';
 import { ArrowLeft2 } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { loader } from '~/routes/$id';
 
 const ProfileHeader = () => {
@@ -14,7 +14,7 @@ const ProfileHeader = () => {
   // const [show, setShow] = useState(0);
   const { pathname } = useLocation();
   const { id } = useParams();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const navigate = useNavigate();
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   // const { profileBg } = useThemeBg();

@@ -9,7 +9,7 @@ import type { action as addAction } from '~/routes/api/queue/add';
 import type { action as sendAction } from '~/routes/api/queue/send';
 import type { action as recommendAction } from '~/routes/api/recommend/add';
 
-import { useSessionUserId } from './useSessionUser';
+import { useCurrentUserId } from './useCurrentUser';
 import { useUserRecommended } from './useUserLibrary';
 
 type SelfQueueData = {
@@ -66,7 +66,7 @@ export const useRecommendData = (trackId: string) => {
 };
 
 export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => {
-  const currentUserId = useSessionUserId();
+  const currentUserId = useCurrentUserId();
   const { id } = useParams();
   const data = {
     fromId: originUserId ?? id ?? currentUserId ?? '',

@@ -2,7 +2,7 @@ import { useLocation } from '@remix-run/react';
 
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
 import SearchInput from '../search/SearchInput';
@@ -12,7 +12,7 @@ import SettingsHeader from './mobile/SettingsHeader';
 import UserMenu from './UserMenu';
 
 const MobileHeader = () => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const { pathname } = useLocation();
   const bg = useColorModeValue('#EEE6E2', 'black');
   const border = useColorModeValue('musy.400', 'musy.700');

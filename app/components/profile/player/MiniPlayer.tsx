@@ -8,7 +8,7 @@ import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import FollowButton from '~/components/profile/profileHeader/FollowButton';
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import Waver from '~/lib/icons/Waver';
@@ -31,7 +31,7 @@ const MiniPlayer = ({ layoutKey, user }: PlayerProps) => {
   const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
   const { onOpen } = useFullscreen();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
 

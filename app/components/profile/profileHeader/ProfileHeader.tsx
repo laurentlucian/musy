@@ -7,7 +7,7 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import MoodButton from '~/components/profile/profileHeader/MoodButton';
 import Tooltip from '~/components/Tooltip';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { loader } from '~/routes/$id';
 
 import PrivateBadge from '../badges/PrivateBadge';
@@ -18,7 +18,7 @@ import FollowButton from './FollowButton';
 const ProfileHeader = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
   const [params, setParams] = useSearchParams();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   if (!data) return null;
 

@@ -6,7 +6,7 @@ import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { useThemeBg } from '~/hooks/useTheme';
 
 import MobileHeader from './nav/MobileHeader';
@@ -15,7 +15,7 @@ import Nav from './nav/Nav';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { pathname } = useLocation();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isSmallScreen = useIsMobile();
   const color = useColorModeValue('#161616', '#EEE6E2');
   const bg = useColorModeValue('#EEE6E2', '#050404');

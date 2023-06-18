@@ -6,11 +6,11 @@ import { Star1 } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Tooltip from '~/components/Tooltip';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { action as favoriteAction } from '~/routes/api/user/favorite';
 
 const FavoriteButton = (props: { id?: string }) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const params = useParams();
   const userId = (props.id || params.id) ?? '';
   const fetcher = useTypedFetcher<typeof favoriteAction>();

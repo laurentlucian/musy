@@ -5,7 +5,7 @@ import { Box, useColorModeValue, Stack } from '@chakra-ui/react';
 import type { Theme } from '@prisma/client';
 import { useTypedLoaderData } from 'remix-typedjson';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { loader } from '~/routes/settings/appearance';
 
 import { default as Player } from './SettingsPlayer';
@@ -16,7 +16,7 @@ import ToggleSettings from './theme/ToggleSettings';
 
 const ProfileSettings = () => {
   const { theme: currentTheme } = useTypedLoaderData<typeof loader>();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const [playerBtnSide, setPlayerBtnSide] = useState(
     currentUser?.settings?.playerButtonRight ? true : false,
   );

@@ -1,7 +1,7 @@
-import useSessionUser from './useSessionUser';
+import useCurrentUser from './useCurrentUser';
 
 const useIsFollowing = (userId: string) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isFollowingDefault = currentUser?.following.find((user) => userId === user.followingId);
   return !!isFollowingDefault;
 };

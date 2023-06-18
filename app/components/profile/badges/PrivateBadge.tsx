@@ -2,12 +2,12 @@ import { LockCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
 import Tooltip from '~/components/Tooltip';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { loader } from '~/routes/$id';
 
 const PrivateBadge = () => {
   const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   if (!data) return null;
 

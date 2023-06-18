@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Stack, Switch } from '@chakra-ui/react';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import type { ProfileWithInfo, TrackWithInfo } from '~/lib/types/types';
 
 import TilePlayback from '../tile/playback/TilePlayback';
@@ -14,7 +14,7 @@ type TilesPlaybackProps = {
 };
 
 const TilesPlayback = ({ title, users }: TilesPlaybackProps) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const [tile, setTile] = useState(false);
 
   const active = users.filter((user) => user.playback);

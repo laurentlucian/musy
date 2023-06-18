@@ -24,7 +24,7 @@ import {
 import { CloseSquare } from 'iconsax-react';
 
 import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,7 +40,7 @@ const Search = () => {
   const navigate = useNavigate();
   const color = useColorModeValue('musy.800', 'musy.200');
   const { hideMenu, showMenu } = useMobileKeyboardActions();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const authorized = !!currentUser;
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
 
-import useSessionUser from './useSessionUser';
+import useCurrentUser from './useCurrentUser';
 
 type UserLibraryStore = {
   library: Map<string, boolean> | null;
@@ -18,7 +18,7 @@ const useUserLibraryStore = create<UserLibraryStore>((set) => ({
 }));
 
 const useUserLibrary = (trackId: string) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   // set zustand state before acces state.library, otherwise first render will be null
   if (!useUserLibraryStore.getState().library && currentUser?.liked) {
@@ -52,7 +52,7 @@ const useUserLibrary = (trackId: string) => {
 };
 
 export const useUserRecommended = (trackId: string) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   if (!useUserLibraryStore.getState().recommended && currentUser?.recommended) {
     const recommended = currentUser.recommended;

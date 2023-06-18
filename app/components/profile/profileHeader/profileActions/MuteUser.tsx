@@ -5,8 +5,8 @@ import { MenuItem } from '@chakra-ui/react';
 import { VolumeMute } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
+import { useCurrentUserId } from '~/hooks/useCurrentUser';
 import { useProfileId } from '~/hooks/usePofile';
-import { useSessionUserId } from '~/hooks/useSessionUser';
 import type { action as muteAction } from '~/routes/api/user/mute';
 
 type Mute = {
@@ -20,7 +20,7 @@ const MuteUser = ({ bg, color, mute, muteId }: Mute) => {
   const [isMuted, setIsMuted] = useState(mute);
   const fetcher = useTypedFetcher<typeof muteAction>();
   const userId = useProfileId();
-  const currentUserId = useSessionUserId();
+  const currentUserId = useCurrentUserId();
 
   const handleClick = () => {
     if (currentUserId) {

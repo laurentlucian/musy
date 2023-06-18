@@ -5,8 +5,8 @@ import { Button, MenuItem, useColorModeValue } from '@chakra-ui/react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
+import { useCurrentUserId } from '~/hooks/useCurrentUser';
 import { useProfileId } from '~/hooks/usePofile';
-import { useSessionUserId } from '~/hooks/useSessionUser';
 import type { action as blockAction } from '~/routes/api/user/block';
 
 type BlockTypes = {
@@ -20,7 +20,7 @@ export const BlockUser = ({ block, blockId, header }: BlockTypes) => {
   const bg = useColorModeValue('musy.200', 'musy.900');
   const [isBlocked, setIsBlocked] = useState(block);
   const fetcher = useTypedFetcher<typeof blockAction>();
-  const currentUserId = useSessionUserId() ?? '';
+  const currentUserId = useCurrentUserId() ?? '';
   const userId = useProfileId();
 
   const handleClick = () => {

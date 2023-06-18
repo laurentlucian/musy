@@ -7,7 +7,7 @@ import type { Theme } from '@prisma/client';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSetShowSave } from '~/hooks/useSaveTheme';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 const ToggleSetting = ({
   bold,
@@ -30,7 +30,7 @@ const ToggleSetting = ({
 }) => {
   const bg = useColorModeValue('musy.200', 'musy.800');
   const color = useColorModeValue('musy.800', 'musy.200');
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isSmallScreen = useIsMobile();
   const setSave = useSetShowSave();
 

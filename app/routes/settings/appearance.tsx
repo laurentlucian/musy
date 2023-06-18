@@ -6,13 +6,13 @@ import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import ProfileSettings from '~/components/settings/profile/ProfileSettings';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 import { upsertSettingsField, upsertThemeField } from '~/services/prisma/theme.server';
 
 const Appearance = () => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   if (!currentUser) return null;
   return (

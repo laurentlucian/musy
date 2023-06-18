@@ -3,7 +3,7 @@ import { useTypedRouteLoaderData } from 'remix-typedjson';
 import type { loader } from '~/root';
 
 import useFriends from './useFollowing';
-import useSessionUser from './useSessionUser';
+import useCurrentUser from './useCurrentUser';
 
 const useUsers = () => useTypedRouteLoaderData<typeof loader>('root')?.users ?? [];
 
@@ -14,7 +14,7 @@ export const useQueueableUsers = () => {
 export const useRestOfUsers = () => {
   const users = useUsers();
   const friends = useFriends();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   const restOfUsers = users
     .filter((user) => {

@@ -24,7 +24,7 @@ import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
@@ -40,7 +40,7 @@ type PlayerProps = {
 };
 
 const Player = ({ id, party, playback }: PlayerProps) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isOwnProfile = currentUser?.userId === id;
   const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;
   const [hasPreview, setHasPreview] = useState<boolean>();

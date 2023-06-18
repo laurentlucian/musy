@@ -9,14 +9,14 @@ import invariant from 'tiny-invariant';
 import BlockedProfile from '~/components/profile/profileHeader/BlockedProfile';
 import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
 import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
 
   const isDev = currentUser?.settings?.dev === true;
   const isOwnProfile = currentUser?.userId === user.userId;

@@ -6,7 +6,7 @@ import { Home2, SearchNormal1 } from 'iconsax-react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useMobileKeyboard } from '~/hooks/useMobileKeyboardCheck';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import Waver from '~/lib/icons/Waver';
 
 import { useFullscreen } from '../fullscreen/Fullscreen';
@@ -16,7 +16,7 @@ const MobileNavBar = () => {
   const color = useColorModeValue('musy.500', 'musy.200');
   const bg = useColorModeValue('#EEE6E2', 'black');
   const navigation = useNavigation();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isSmallScreen = useIsMobile();
   const { pathname } = useLocation();
   const { components } = useFullscreen();

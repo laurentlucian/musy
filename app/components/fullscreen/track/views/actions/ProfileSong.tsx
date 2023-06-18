@@ -2,13 +2,13 @@ import { useFetcher } from '@remix-run/react';
 
 import { Music } from 'iconsax-react';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 
 import ActionButton from '../../../shared/FullscreenActionButton';
 import { useFullscreenTrack } from '../../FullscreenTrack';
 
 const ProfileSong = () => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const fetcher = useFetcher();
   const { track } = useFullscreenTrack();
 

@@ -8,7 +8,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowSave, useAlertState } from '~/hooks/useSaveTheme';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import Waver from '~/lib/icons/Waver';
 
 const SaveThemeButton = ({
@@ -25,7 +25,7 @@ const SaveThemeButton = ({
   theme: Theme;
 }) => {
   const [text, setText] = useState('Save');
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const submit = useSubmit();
   const transition = useNavigation();
   const isSmallScreen = useIsMobile();

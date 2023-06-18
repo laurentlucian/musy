@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { useTypedFetcher } from 'remix-typedjson';
 
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import LikeIcon from '~/lib/icons/Like';
 import Waver from '~/lib/icons/Waver';
 
@@ -13,7 +13,7 @@ import { useFullscreenTrack } from '../../FullscreenTrack';
 const SaveToPlaylist = () => {
   const { track } = useFullscreenTrack();
   const [isSaved, setIsSaved] = useState(false);
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const userId = currentUser?.userId;
   const fetcher = useTypedFetcher<string>();
   const { pathname, search } = useLocation();

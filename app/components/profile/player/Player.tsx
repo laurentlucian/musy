@@ -23,7 +23,7 @@ import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
 import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { useThemePlayer } from '~/hooks/useTheme';
 import explicitImage from '~/lib/assets/explicit-solid.svg';
 import AudioVisualizer from '~/lib/icons/AudioVisualizer';
@@ -40,7 +40,7 @@ type PlayerProps = {
 };
 
 const Player = ({ id, layoutKey, playback }: PlayerProps) => {
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const { bg, blurPlayer, main, sub } = useThemePlayer();
   const isOwnProfile = currentUser?.userId === id;
   const preview = currentUser?.settings?.allowPreview === true && !isOwnProfile;

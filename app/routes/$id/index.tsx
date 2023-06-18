@@ -10,7 +10,7 @@ import Playlists from '~/components/tiles/playlists/Playlists';
 import EditableRecommendedTiles from '~/components/tiles/TilesRecommended';
 import TilesTop from '~/components/tiles/TilesTop';
 import TilesTrack from '~/components/tiles/TilesTrack';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { getCacheControl } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getCachedUserTop } from '~/services/prisma/spotify.server';
@@ -21,7 +21,7 @@ import { getUserPlaylists } from '~/services/spotify.server';
 const ProfileOutlet = () => {
   const { liked, party, playback, playlists, recent, recommended, top, user } =
     useTypedLoaderData<typeof loader>();
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (

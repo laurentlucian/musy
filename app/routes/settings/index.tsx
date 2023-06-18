@@ -24,7 +24,7 @@ import { Code1, Ghost, Logout, MusicPlay, PlayCricle, Scroll } from 'iconsax-rea
 import invariant from 'tiny-invariant';
 
 import QueueSettings from '~/components/settings/QueueSettings';
-import useSessionUser from '~/hooks/useSessionUser';
+import useCurrentUser from '~/hooks/useCurrentUser';
 import { authenticator } from '~/services/auth.server';
 import { upsertSettingsField } from '~/services/prisma/theme.server';
 
@@ -32,7 +32,7 @@ const Account = () => {
   const bg = useColorModeValue('musy.100', 'musy.800');
   const cancelBg = useColorModeValue('white', 'musy.400');
   const color = useColorModeValue('musy.800', 'white');
-  const currentUser = useSessionUser();
+  const currentUser = useCurrentUser();
   const submit = useSubmit();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
