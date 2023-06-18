@@ -4,7 +4,7 @@ import { prisma } from '~/services/db.server';
 import { userQ } from '~/services/scheduler/jobs/user.server';
 
 import { authenticator } from '../auth.server';
-import { trackWithInfo } from './tracks.server';
+import { profileWithInfo, trackWithInfo } from './tracks.server';
 
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
 
@@ -175,25 +175,7 @@ export const getAllUsers = async (id: string) => {
   //   : undefined;
 
   const users = await prisma.profile.findMany({
-    include: {
-      playback: {
-        include: {
-          track: trackWithInfo,
-        },
-      },
-      playbacks: {
-        orderBy: { endedAt: 'desc' },
-        take: 1,
-      },
-      recent: {
-        include: {
-          track: trackWithInfo,
-        },
-        orderBy: { playedAt: 'desc' },
-        take: 4,
-      },
-      settings: true,
-    },
+    include: profileWithInfo.include,
     orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
     where: { user: { NOT: { id }, revoked: false } },
   });

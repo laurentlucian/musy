@@ -3,7 +3,7 @@ import type { Track } from '@prisma/client';
 import { prisma } from '../db.server';
 import { redis } from '../scheduler/redis.server';
 import { getUserSpotify } from '../spotify.server';
-import { trackWithInfo } from './tracks.server';
+import { profileWithInfo } from './tracks.server';
 
 export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
   albumName: track.album.name,
@@ -120,19 +120,7 @@ export const getSpotifyTracks = async (keyword: string, userId: string) => {
 
 export const getUsers = async (keyword: string, userId: string) => {
   return prisma.profile.findMany({
-    include: {
-      playback: { include: { track: true } },
-      playbacks: { orderBy: { endedAt: 'desc' }, take: 1 },
-      recent: {
-        include: {
-          track: trackWithInfo,
-        },
-        orderBy: { playedAt: 'desc' },
-        take: 4,
-      },
-      settings: true,
-    },
-
+    include: profileWithInfo.include,
     where: { AND: { NOT: { userId } }, name: { contains: keyword } },
   });
 };

@@ -1,21 +1,35 @@
-import type { Prisma } from '@prisma/client';
-
 import type { Activity } from '~/lib/types/types';
 import { prisma } from '~/services/db.server';
 
-export const trackWithInfo: Prisma.TrackArgs = {
+export const trackWithInfo = {
   include: {
     liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
     queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
     recent: { orderBy: { playedAt: 'asc' }, select: { user: true } },
   },
-};
+} as const;
 
-export const profileWithInfo: Prisma.ProfileArgs = {
+export const profileWithInfo = {
   include: {
-    playback: { include: { track: trackWithInfo } },
+    playback: {
+      include: {
+        track: trackWithInfo,
+      },
+    },
+    playbacks: {
+      orderBy: { endedAt: 'desc' },
+      take: 1,
+    },
+    recent: {
+      include: {
+        track: trackWithInfo,
+      },
+      orderBy: { playedAt: 'desc' },
+      take: 4,
+    },
+    settings: true,
   },
-};
+} as const;
 
 export const getPlaybackFeed = async (userIds: string[]) => {
   const playbacks = await prisma.playbackHistory.findMany({
@@ -31,9 +45,9 @@ export const getPlaybackFeed = async (userIds: string[]) => {
     },
   });
 
-  let feed = [];
+  let feed = [] as Activity[];
 
-  for (const playback of playbacks) {
+  const promises = playbacks.map(async (playback) => {
     const recent = await prisma.recentSongs.findMany({
       include: {
         track: trackWithInfo,
@@ -41,7 +55,6 @@ export const getPlaybackFeed = async (userIds: string[]) => {
       orderBy: {
         playedAt: 'desc',
       },
-
       where: {
         playedAt: { gte: playback.startedAt, lte: playback.endedAt },
         userId: playback.userId,
@@ -56,7 +69,9 @@ export const getPlaybackFeed = async (userIds: string[]) => {
       user: playback.user,
       userId: playback.userId,
     });
-  }
+  });
+
+  await Promise.all(promises);
 
   return feed;
 };
