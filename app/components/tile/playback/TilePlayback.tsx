@@ -22,6 +22,7 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
 
   const image = playback ? (
     <TileTrackImage
+      box={{ w: '200px' }}
       fullscreen={{
         originUserId: user.userId,
         track: playback.track,
@@ -31,7 +32,7 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
       }}
     />
   ) : (
-    <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} />
+    <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w="200px" />
   );
 
   const info = playback ? <TileTrackInfo track={playback.track} /> : null;
@@ -40,7 +41,6 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
     <Stack key={index} flexShrink={0}>
       {tile && <ActivityUserInfo user={user} />}
       <Tile
-        w="200px"
         image={tile ? image : <TilePlaybackUser user={user} />}
         info={
           tile ? (
