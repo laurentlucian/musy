@@ -4,8 +4,6 @@ import { Box, Image } from '@chakra-ui/react';
 
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenPlayback from '~/components/fullscreen/playback/FullscreenPlayback';
-import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
-import type { ProfileWithPlayback } from '~/components/tiles/TilesPlayback';
 import type { ProfileWithInfo } from '~/lib/types/types';
 
 const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWithInfo }) => {
@@ -21,9 +19,17 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
       h={size}
       overflow="hidden"
       border={user.playback ? '1.5px solid' : undefined}
-      cursor="pointer"
       borderColor="white"
       borderRadius="50%"
+      cursor="pointer"
+      onClick={(e) => {
+        if (user.playback && !isFullscreen) {
+          e.preventDefault();
+          onOpen(<FullscreenPlayback user={user} />);
+        } else {
+          navigate(`/${user.userId}`);
+        }
+      }}
     >
       {user.playback && (
         <Box
@@ -36,17 +42,7 @@ const TileUserImage = ({ size = '50px', user }: { size?: string; user: ProfileWi
           border="2px solid black"
         />
       )}
-      <Image
-        src={user.image}
-        onClick={(e) => {
-          if (user.playback && !isFullscreen) {
-            e.preventDefault();
-            onOpen(<FullscreenPlayback user={user as ProfileWithPlayback} />);
-          } else {
-            navigate(`/${user.userId}`);
-          }
-        }}
-      />
+      <Image src={user.image} />
     </Box>
   );
 };
