@@ -13,6 +13,7 @@ import useCurrentUser from '~/hooks/useCurrentUser';
 import { msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
+import { getTheme } from '~/services/prisma/theme.server';
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
@@ -65,7 +66,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   const dateToCompare = listenedTimeframe === 'week' ? week() : day();
 
-  const [session, user, recentDb] = await Promise.all([
+  const [session, user, recentDb, theme] = await Promise.all([
     authenticator.isAuthenticated(request),
     prisma.profile.findUnique({
       include: { ai: true, settings: { include: { profileSong: true } }, theme: true },
@@ -76,6 +77,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       select: { playedAt: true, track: { select: { duration: true } } },
       where: { playedAt: { gt: dateToCompare }, userId: id },
     }),
+    getTheme(params.id),
   ]);
 
   if (!user || (!session && user.settings?.isPrivate)) {
@@ -88,6 +90,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
 
   return typedjson({
     listened,
+    theme,
     user,
   });
 };

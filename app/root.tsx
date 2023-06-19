@@ -1,4 +1,5 @@
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
+import type { ShouldRevalidateFunction } from '@remix-run/react';
 import {
   Links,
   LiveReload,
@@ -26,7 +27,7 @@ import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
-import { getAllUsers, getCurrentUser, getQueueableUsers } from '~/services/prisma/users.server';
+import { getAllUsers, getCurrentUser } from '~/services/prisma/users.server';
 
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
@@ -35,7 +36,6 @@ import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
 import { iosSplashScreens } from './lib/utils';
-import { getTheme } from './services/prisma/theme.server';
 
 const App = () => {
   const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
@@ -69,7 +69,16 @@ const App = () => {
   );
 };
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const shouldRevalidate: ShouldRevalidateFunction = ({
+  defaultShouldRevalidate,
+  nextUrl,
+}) => {
+  if (nextUrl.search || nextUrl.pathname !== '/home') return false;
+
+  return defaultShouldRevalidate;
+};
+
+export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
   if (!session && url.pathname !== '/' && !url.pathname.includes('/auth/spotify/callback'))
@@ -89,26 +98,16 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       cookie: '',
       currentUser: null,
       isMobile,
-      queueableUsers: [],
-      recommendableUsers: [],
-      theme: null,
       users: [],
     });
 
-  const [currentUser, theme, users, queueableUsers] = await Promise.all([
-    getCurrentUser(request),
-    getTheme(params.id),
-    getAllUsers(id),
-    getQueueableUsers(id),
-  ]);
+  const [currentUser, users] = await Promise.all([getCurrentUser(request), getAllUsers(id)]);
 
   return typedjson({
     ENV,
     cookie,
     currentUser,
     isMobile,
-    queueableUsers,
-    theme,
     users,
   });
 };

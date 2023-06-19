@@ -7,10 +7,6 @@ import useFriends from './useFollowing';
 
 const useUsers = () => useTypedRouteLoaderData<typeof loader>('root')?.users ?? [];
 
-export const useQueueableUsers = () => {
-  return useTypedRouteLoaderData<typeof loader>('root')?.queueableUsers ?? [];
-};
-
 export const useRestOfUsers = () => {
   const users = useUsers();
   const friends = useFriends();
