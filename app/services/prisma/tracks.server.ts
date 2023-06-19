@@ -27,7 +27,6 @@ export const profileWithInfo = {
       orderBy: { playedAt: 'desc' },
       take: 4,
     },
-    settings: true,
   },
 } as const;
 
@@ -48,24 +47,10 @@ export const getPlaybackFeed = async (userIds: string[]) => {
   let feed = [] as Activity[];
 
   const promises = playbacks.map(async (playback) => {
-    const recent = await prisma.recentSongs.findMany({
-      include: {
-        track: trackWithInfo,
-      },
-      orderBy: {
-        playedAt: 'desc',
-      },
-      where: {
-        playedAt: { gte: playback.startedAt, lte: playback.endedAt },
-        userId: playback.userId,
-      },
-    });
-
     feed.push({
       action: 'playback',
       createdAt: playback.endedAt,
       playback,
-      tracks: recent.map((r) => r.track),
       user: playback.user,
       userId: playback.userId,
     });
@@ -129,12 +114,38 @@ export const getActivity = async (userId: string) => {
     }),
     getPlaybackFeed(userIds),
   ]);
-  return [...like, ...queue, ...recommended, ...playbacks]
+
+  const activity = [...like, ...queue, ...recommended, ...playbacks]
     .sort((a, b) => {
       if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
       return 0;
     })
     .slice(0, 50) as Activity[];
+
+  const addTracksToPlayback = activity.map(async (a) => {
+    if (a.action === 'playback' && a.playback) {
+      const recent = await prisma.recentSongs.findMany({
+        include: {
+          track: trackWithInfo,
+        },
+        orderBy: {
+          playedAt: 'desc',
+        },
+        take: 4,
+        where: {
+          playedAt: { gte: a.playback.startedAt, lte: a.playback.endedAt },
+          userId: a.playback.userId,
+        },
+      });
+      return { ...a, tracks: recent.map((r) => r.track) };
+    }
+
+    return a;
+  });
+
+  const activityWithPlaybackTracks = await Promise.all(addTracksToPlayback);
+
+  return activityWithPlaybackTracks;
 };
 
 export const getUserRecommended = async (userId: string) => {

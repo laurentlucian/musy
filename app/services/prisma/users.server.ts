@@ -95,24 +95,9 @@ export const getCurrentUser = async (request: Request) => {
       following: { select: { followingId: true } },
       liked: { select: { trackId: true } },
       mute: true,
-      playback: {
-        include: {
-          track: trackWithInfo,
-        },
-      },
-      playbacks: {
-        orderBy: { endedAt: 'desc' },
-        take: 1,
-      },
-      recent: {
-        include: {
-          track: trackWithInfo,
-        },
-        orderBy: { playedAt: 'desc' },
-        take: 4,
-      },
       recommended: { select: { trackId: true } },
       settings: { include: { profileSong: true } },
+      ...profileWithInfo.include,
     },
 
     where: { userId },
