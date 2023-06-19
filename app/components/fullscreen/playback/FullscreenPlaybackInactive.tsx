@@ -25,7 +25,11 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
             </Text>
           </HStack>
         </Flex>
-        <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w="65%" />
+        <TilePlaybackTracksImage
+          tracks={getPlaybackTracks(user)}
+          fullscreen={{ originUserId: user.userId }}
+          w="65%"
+        />
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
         <PlaybackAddAll />
