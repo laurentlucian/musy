@@ -17,6 +17,7 @@ import PlaybackListenAlong from './PlaybackListenAlong';
 const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
   if (!user.playback) throw new Error('User has no playback');
   const tracks = usePlaybackTracks(user);
+  const tracksWithoutCurrentPlayback = tracks?.slice(1);
   const track = user.playback.track;
 
   return (
@@ -47,36 +48,32 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
             }}
           />
           <ActivityTrackInfo track={track} />
-          {tracks && (
-            <>
-              <Text fontSize="11px" fontWeight="bolder">
-                RECENT
-              </Text>
-              <Tiles>
-                {tracks.map((track, index) => {
-                  if (index === 0) return null;
-
-                  return (
-                    <TileTrackImage
-                      key={index}
-                      box={{ w: '90px' }}
-                      image={{ src: track.image }}
-                      fullscreen={{
-                        originUserId: user.userId,
-                        track,
-                      }}
-                    />
-                  );
-                })}
-              </Tiles>
-            </>
-          )}
         </Stack>
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
         <PlaybackListenAlong />
         <AddToUserQueue userId={user.userId} />
         <ViewTrack track={track} userId={user.userId} />
+        {!!tracksWithoutCurrentPlayback?.length && (
+          <>
+            <Text fontSize="11px" fontWeight="bolder">
+              RECENT
+            </Text>
+            <Tiles>
+              {tracksWithoutCurrentPlayback.map((track, index) => (
+                <TileTrackImage
+                  key={index}
+                  box={{ w: '90px' }}
+                  image={{ src: track.image }}
+                  fullscreen={{
+                    originUserId: user.userId,
+                    track,
+                  }}
+                />
+              ))}
+            </Tiles>
+          </>
+        )}
       </Flex>
     </SimpleGrid>
   );
