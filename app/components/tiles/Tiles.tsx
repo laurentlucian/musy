@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import type { StackProps } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 import { Flex } from '@chakra-ui/react';
 import { Text } from '@chakra-ui/react';
 import { HStack } from '@chakra-ui/react';
@@ -34,9 +35,9 @@ const Tiles = ({
   const { onOpen } = useFullscreen();
 
   return (
-    <>
+    <Stack>
       {(title || scrollButtons || action) && (
-        <Flex align="center" minH="35px">
+        <Flex align="center">
           {title && (
             <Text
               fontSize="11px"
@@ -66,7 +67,7 @@ const Tiles = ({
       >
         {children}
       </HStack>
-    </>
+    </Stack>
   );
 };
 
