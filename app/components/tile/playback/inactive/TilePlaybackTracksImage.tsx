@@ -1,4 +1,4 @@
-import type { BoxProps, SimpleGridProps } from '@chakra-ui/react';
+import type { ImageProps, SimpleGridProps } from '@chakra-ui/react';
 import { SimpleGrid } from '@chakra-ui/react';
 
 import type { TrackWithInfo } from '~/lib/types/types';
@@ -14,7 +14,7 @@ const TilePlaybackTracksImage = ({
   fullscreen?: {
     originUserId?: string;
   };
-  image?: BoxProps;
+  image?: ImageProps;
   tracks: TrackWithInfo[];
 } & SimpleGridProps) => {
   if (tracks.length === 0) return null;
@@ -33,7 +33,6 @@ const TilePlaybackTracksImage = ({
         <TileTrackImage
           key={index}
           fullscreen={fullscreen?.originUserId ? { track } : undefined}
-          box={{ ...props }}
           image={{
             src: track.image,
             ...image,
