@@ -124,7 +124,7 @@ export const getActivity = async (userId: string) => {
         orderBy: {
           playedAt: 'desc',
         },
-        take: 4,
+        // take: 4,
         where: {
           playedAt: { gte: a.playback.startedAt, lte: a.playback.endedAt },
           userId: a.playback.userId,
