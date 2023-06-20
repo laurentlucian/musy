@@ -10,6 +10,7 @@ import BlockedProfile from '~/components/profile/profileHeader/BlockedProfile';
 import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
 import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
 import useCurrentUser from '~/hooks/useCurrentUser';
+import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
 import { msToString } from '~/lib/utils';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -18,6 +19,7 @@ import { getTheme } from '~/services/prisma/theme.server';
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
   const currentUser = useCurrentUser();
+  useRevalidateOnFocus();
 
   const isDev = currentUser?.settings?.dev === true;
   const isOwnProfile = currentUser?.userId === user.userId;

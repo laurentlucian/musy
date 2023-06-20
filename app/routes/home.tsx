@@ -1,4 +1,3 @@
-import { useRevalidator } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
@@ -7,16 +6,14 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
-import useVisibilityChange from '~/hooks/useVisibilityChange';
+import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
 import { getCacheControl } from '~/lib/utils';
 import { getActivity } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 
 const Home = () => {
   const { activities } = useTypedLoaderData<typeof loader>();
-  const { revalidate } = useRevalidator();
-
-  useVisibilityChange((isVisible) => isVisible && revalidate());
+  useRevalidateOnFocus();
 
   return (
     <Stack spacing={[2, 10]} px={['5px', 0]}>
