@@ -62,7 +62,7 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
       'playback',
       { userId },
       {
-        delay: remaining + 1000 * 60 * 30,
+        delay: remaining + 1000 * 30,
         removeOnComplete: true,
         removeOnFail: true,
       },
@@ -77,7 +77,7 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
     'playback',
     { userId },
     {
-      delay: remaining + 1000 * 60 * 1,
+      delay: remaining + 1000 * 10,
       removeOnComplete: true,
       removeOnFail: true,
     },
