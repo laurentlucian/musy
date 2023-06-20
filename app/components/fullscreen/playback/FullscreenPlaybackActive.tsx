@@ -62,7 +62,7 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
               animate={{ opacity: 1 }}
               transition={{ duration: '1' }}
             >
-              <Tiles title="RECENT">
+              <Tiles title="LISTENED">
                 {tracksWithoutCurrentPlayback.map((track, index) => (
                   <Stack key={index}>
                     <TileTrackImage
