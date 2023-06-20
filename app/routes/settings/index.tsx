@@ -231,4 +231,5 @@ export const action = async ({ request }: ActionArgs) => {
   return null;
 };
 
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default Account;

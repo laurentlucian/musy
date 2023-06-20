@@ -77,5 +77,4 @@ export const loader = async ({ request }: LoaderArgs) => {
   );
 };
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
-export { CatchBoundary } from '~/components/error/CatchBoundary';
 export default Explore;

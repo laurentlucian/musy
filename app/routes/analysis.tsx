@@ -1,5 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { Form, useCatch, useSearchParams, useSubmit, useNavigation } from '@remix-run/react';
+import { Form, useSearchParams, useSubmit, useNavigation } from '@remix-run/react';
 import { Link } from '@remix-run/react';
 import { Outlet } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
@@ -185,43 +185,5 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
   };
 };
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.log('index -> ErrorBoundary', error);
-
-  return (
-    <>
-      <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
-      <Text fontSize="sm">Trace(for debug): {error.message}</Text>
-    </>
-  );
-};
-
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  let message;
-  switch (caught.status) {
-    case 401:
-      message = <Text>Oops, you shouldn&apos;t be here (No access)</Text>;
-      break;
-    case 404:
-      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
-      break;
-    case 429:
-      message = <Text>Oops, API suspended (too many requests)</Text>;
-      break;
-
-    default:
-      throw new Error(caught.data || caught.statusText);
-  }
-
-  return (
-    <>
-      <Heading fontSize={['sm', 'md']}>
-        {caught.status} {caught.statusText}
-      </Heading>
-      <Text fontSize="sm">{message}</Text>
-    </>
-  );
-};
-
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default Analysis;

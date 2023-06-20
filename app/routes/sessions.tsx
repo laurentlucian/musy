@@ -73,5 +73,4 @@ export const loader = async () => {
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
-export { CatchBoundary } from '~/components/error/CatchBoundary';
 export default Sessions;

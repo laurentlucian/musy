@@ -46,7 +46,5 @@ export const loader = async ({ request }: LoaderArgs) => {
   return null;
 };
 
-export default Index;
-
-export { CatchBoundary } from '~/components/error/CatchBoundary';
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export default Index;

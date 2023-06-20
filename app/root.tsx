@@ -1,15 +1,8 @@
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useCatch,
-  useRevalidator,
-} from '@remix-run/react';
+import { isRouteErrorResponse } from '@remix-run/react';
+import { useRouteError } from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 import { useContext, useEffect } from 'react';
 
 import {
@@ -22,49 +15,31 @@ import {
 
 import { withEmotionCache } from '@emotion/react';
 import { AnimatePresence } from 'framer-motion';
-import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { Forbidden } from 'iconsax-react';
+import { redirect, typedjson, useTypedLoaderData, useTypedRouteLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser } from '~/services/prisma/users.server';
 
+import NotFound from './components/error/NotFound';
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
-import useVisibilityChange from './hooks/useVisibilityChange';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import waver from './lib/icons/waver.css';
 import { iosSplashScreens } from './lib/utils';
 
 const App = () => {
-  const { cookie, currentUser } = useTypedLoaderData<typeof loader>();
-  const colorModeManager = cookieStorageManagerSSR(cookie);
-  const { revalidate } = useRevalidator();
-
-  useVisibilityChange((isVisible) => isVisible && currentUser && revalidate());
+  const { cookie } = useTypedLoaderData<typeof loader>();
   useAnalytics();
 
   return (
-    <Document>
-      <ChakraProvider theme={theme}>
-        <ColorModeProvider
-          colorModeManager={colorModeManager}
-          options={{
-            disableTransitionOnChange: true,
-            initialColorMode: theme.config.initialColorMode,
-            useSystemColorMode: theme.config.useSystemColorMode,
-          }}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            <Layout>
-              <Outlet />
-            </Layout>
-          </AnimatePresence>
-          <FullscreenRenderer />
-          <PlayPreviewRenderer />
-        </ColorModeProvider>
-      </ChakraProvider>
+    <Document cookie={cookie}>
+      <Outlet />
+      <FullscreenRenderer />
+      <PlayPreviewRenderer />
     </Document>
   );
 };
@@ -161,99 +136,111 @@ export let links: LinksFunction = () => {
 
 type DocumentProps = {
   children: React.ReactNode;
+  cookie?: string;
   title?: string;
 };
 
-const Document = withEmotionCache(({ children, title = 'musy' }: DocumentProps, emotionCache) => {
-  const { components } = useFullscreen();
-  const serverStyleData = useContext(ServerStyleContext);
-  const clientStyleData = useContext(ClientStyleContext);
+const Document = withEmotionCache(
+  ({ children, cookie = '', title = 'musy' }: DocumentProps, emotionCache) => {
+    const { components } = useFullscreen();
+    const serverStyleData = useContext(ServerStyleContext);
+    const clientStyleData = useContext(ClientStyleContext);
+    const colorModeManager = cookieStorageManagerSSR(cookie);
 
-  // Only executed on client
-  useEffect(
-    () => {
-      // re-link sheet container
-      emotionCache.sheet.container = document.head;
-      // re-inject tags
-      const tags = emotionCache.sheet.tags;
-      emotionCache.sheet.flush();
-      tags.forEach((tag) => {
-        (emotionCache.sheet as any)._insertTag(tag);
-      });
-      // reset cache to reapply global styles
-      clientStyleData?.reset();
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      /* "clientStyleData", "emotionCache.sheet", */
-    ],
-  );
+    // Only executed on client
+    useEffect(
+      () => {
+        // re-link sheet container
+        emotionCache.sheet.container = document.head;
+        // re-inject tags
+        const tags = emotionCache.sheet.tags;
+        emotionCache.sheet.flush();
+        tags.forEach((tag) => {
+          (emotionCache.sheet as any)._insertTag(tag);
+        });
+        // reset cache to reapply global styles
+        clientStyleData?.reset();
+      }, // eslint-disable-next-line react-hooks/exhaustive-deps
+      [
+        /* "clientStyleData", "emotionCache.sheet", */
+      ],
+    );
 
-  return (
-    <html
-      lang="en"
-      style={{
-        overflowY: components.length > 0 ? 'hidden' : undefined,
-        touchAction: components.length > 0 ? 'none' : undefined,
-      }}
-    >
-      <head>
-        <Meta />
-        <Links />
-        {serverStyleData?.map(({ css, ids, key }) => (
-          <style
-            key={key}
-            data-emotion={`${key} ${ids.join(' ')}`}
-            dangerouslySetInnerHTML={{ __html: css }}
-          />
-        ))}
-        <title>{title}</title>
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
-      </body>
-    </html>
-  );
-});
+    return (
+      <html
+        lang="en"
+        style={{
+          overflowY: components.length > 0 ? 'hidden' : undefined,
+          touchAction: components.length > 0 ? 'none' : undefined,
+        }}
+      >
+        <head>
+          <Meta />
+          <Links />
+          {serverStyleData?.map(({ css, ids, key }) => (
+            <style
+              key={key}
+              data-emotion={`${key} ${ids.join(' ')}`}
+              dangerouslySetInnerHTML={{ __html: css }}
+            />
+          ))}
+          <title>{title}</title>
+        </head>
+        <body>
+          <ChakraProvider theme={theme}>
+            <ColorModeProvider
+              colorModeManager={colorModeManager}
+              options={{
+                disableTransitionOnChange: true,
+                initialColorMode: theme.config.initialColorMode,
+                useSystemColorMode: theme.config.useSystemColorMode,
+              }}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <Layout>{children}</Layout>
+              </AnimatePresence>
+            </ColorModeProvider>
+          </ChakraProvider>
+          <ScrollRestoration />
+          <Scripts />
+          {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
+        </body>
+      </html>
+    );
+  },
+);
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.error(error);
-  return (
-    <Document title="musy - Error">
-      <ChakraProvider theme={theme}>
-        <Heading fontSize={['sm', 'md']}>Oops, unhandled error</Heading>
-        <Text fontSize="sm">Trace(for debug): {error.message}</Text>
-      </ChakraProvider>
-    </Document>
-  );
-};
+export const ErrorBoundary = () => {
+  const error = useRouteError();
 
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  let message;
-  switch (caught.status) {
-    case 401:
-      message = <Text>Oops, you shouldn&apos;t be here (No access)</Text>;
-      break;
-    case 404:
-      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
-      break;
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 404)
+      return (
+        <Document>
+          <NotFound />
+        </Document>
+      );
 
-    default:
-      // throw new Error(caught.data || caught.statusText);
-      message = <Text>Oops, this definitely shouldn&apos;t have happened</Text>;
+    if (error.status === 403)
+      return (
+        <Document>
+          <Forbidden />
+        </Document>
+      );
+  } else if (error instanceof Error) {
+    return (
+      <Document title="musy - Error">
+        <Heading fontSize={['sm', 'md']}>oops, unhandled error</Heading>
+        <Text fontSize="sm">{error.message}</Text>
+        <Text fontSize="sm">{error.stack}</Text>
+      </Document>
+    );
   }
 
   return (
     <Document title="musy - Error">
-      <ChakraProvider theme={theme}>
-        <Heading fontSize={['sm', 'md']}>
-          {caught.status}: {caught.statusText}
-        </Heading>
-        <Text fontSize="sm">{message}</Text>
-      </ChakraProvider>
+      <Heading fontSize={['sm', 'md']}>ooooops, unknown error</Heading>
+      <Text fontSize="sm">reload the page eventually</Text>
     </Document>
   );
 };

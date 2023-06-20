@@ -1,3 +1,4 @@
+import { useRevalidator } from '@remix-run/react';
 import type { LoaderArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
@@ -6,12 +7,16 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
+import useVisibilityChange from '~/hooks/useVisibilityChange';
 import { getCacheControl } from '~/lib/utils';
 import { getActivity } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 
 const Home = () => {
   const { activities } = useTypedLoaderData<typeof loader>();
+  const { revalidate } = useRevalidator();
+
+  useVisibilityChange((isVisible) => isVisible && revalidate());
 
   return (
     <Stack spacing={[2, 10]} px={['5px', 0]}>
@@ -37,7 +42,5 @@ export const loader = async ({ request }: LoaderArgs) => {
   );
 };
 
-export default Home;
-
-export { CatchBoundary } from '~/components/error/CatchBoundary';
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export default Home;

@@ -70,4 +70,6 @@ const Settings = () => {
     </Stack>
   );
 };
+
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default Settings;

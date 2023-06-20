@@ -1,4 +1,4 @@
-import { Form, Link, useCatch, useNavigation } from '@remix-run/react';
+import { Form, Link, useNavigation } from '@remix-run/react';
 import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
@@ -118,30 +118,6 @@ export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
     title: `${track.name} Analysis`,
     'twitter:card': analysis,
   };
-};
-
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  switch (caught.status) {
-    case 401:
-      break;
-    case 404:
-      break;
-
-    default:
-      throw new Error(caught.data || caught.statusText);
-  }
-
-  return (
-    <>
-      <Heading fontSize={['xl', 'xxl']}>
-        {caught.status} {caught.data}
-      </Heading>
-      <Button mt={4} as={Link} to="/analysis">
-        earch new song
-      </Button>
-    </>
-  );
 };
 
 export default TrackAnalysis;

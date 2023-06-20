@@ -95,7 +95,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   });
 };
 
-export { CatchBoundary } from '~/components/error/CatchBoundary';
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
-
 export default Profile;

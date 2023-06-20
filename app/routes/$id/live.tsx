@@ -72,4 +72,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   );
 };
 
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default ProfileSpotifyOutlet;

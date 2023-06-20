@@ -1,7 +1,6 @@
 import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
-import { useCatch } from '@remix-run/react';
 
 import { Heading, Text } from '@chakra-ui/react';
 
@@ -34,40 +33,4 @@ export const loader = async ({ request }: LoaderArgs) => {
   return redirect(returnTo === '/' ? '/' + session.user.id : returnTo, { headers });
 };
 
-export const ErrorBoundary = ({ error }: { error: Error }) => {
-  console.log('spotify.callback error ->', error);
-  return (
-    <Text fontSize="14px" color="white">
-      Only authorized users while in development {`:(`}
-    </Text>
-  );
-};
-
-export const CatchBoundary = () => {
-  let caught = useCatch();
-  console.log('spotify.callback caught ->', caught);
-  let message;
-  switch (caught.status) {
-    case 401:
-      message = <Text>Only authorized users while in development</Text>;
-      break;
-    case 404:
-      message = <Text>Oops, you shouldn&apos;t be here (Page doesn&apos;t exist)</Text>;
-      break;
-    case 429:
-      message = <Text>Oops, API suspended (too many requests)</Text>;
-      break;
-
-    default:
-      throw new Error(caught.data || caught.statusText);
-  }
-
-  return (
-    <>
-      <Heading fontSize={['sm', 'md']}>
-        {caught.status} - {caught.statusText}
-      </Heading>
-      <Text fontSize="sm">{message}</Text>
-    </>
-  );
-};
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';

@@ -133,4 +133,5 @@ export const loader = async ({ params }: LoaderArgs) => {
   );
 };
 
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default PlaylistOutlet;
