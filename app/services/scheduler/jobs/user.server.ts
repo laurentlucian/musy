@@ -278,7 +278,7 @@ export const addUsersToQueue = async () => {
     return;
   }
 
-  await prisma.playback.deleteMany();
+  // await prisma.playback.deleteMany();
   // delete all playbackQ jobs
   await playbackQ.pause();
   // await playbackQ.obliterate({ force: true });
