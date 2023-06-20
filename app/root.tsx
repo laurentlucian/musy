@@ -81,7 +81,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 export const loader = async ({ request }: LoaderArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
-  if (!session && url.pathname !== '/' && !url.pathname.includes('/auth/spotify/callback'))
+  if (!session && url.pathname !== '/' && !url.pathname.includes('/api/auth/spotify/callback'))
     return redirect('/');
 
   const id = session?.user?.id;

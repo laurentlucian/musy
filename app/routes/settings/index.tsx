@@ -179,7 +179,7 @@ const Account = () => {
               <Text pl="20px">are you sure you want to logout?</Text>
             </AlertDialogBody>
             <AlertDialogFooter bg={bg} color={color}>
-              <Form action={'/logout'} method="post">
+              <Form action={'/api/logout'} method="post">
                 <Button
                   ref={cancelRef}
                   onClick={onClose}

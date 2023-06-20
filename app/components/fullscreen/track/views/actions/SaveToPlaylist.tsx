@@ -21,7 +21,7 @@ const SaveToPlaylist = () => {
   const saveSong = () => {
     setIsSaved(!isSaved);
     if (!userId) {
-      return fetcher.submit({}, { action: '/auth/spotify?returnTo=' + pathname + search });
+      return fetcher.submit({}, { action: '/api/auth/spotify?returnTo=' + pathname + search });
     }
 
     fetcher.submit(
