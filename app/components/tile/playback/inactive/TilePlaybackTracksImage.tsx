@@ -1,24 +1,9 @@
 import type { SimpleGridProps } from '@chakra-ui/react';
 import { SimpleGrid } from '@chakra-ui/react';
 
-import type { ProfileWithInfo, TrackWithInfo } from '~/lib/types/types';
+import type { TrackWithInfo } from '~/lib/types/types';
 
 import TileTrackImage from '../../track/TileTrackImage';
-
-export const getPlaybackTracks = (user: ProfileWithInfo) => {
-  const startedAt = user.playbacks[0].startedAt.getTime();
-  const endedAt = user.playbacks[0].endedAt.getTime();
-
-  return user.recent
-    .filter((r) => {
-      const playedAt = r.playedAt.getTime();
-      if (playedAt > startedAt && playedAt < endedAt) {
-        return true;
-      }
-      return false;
-    })
-    .map((r) => r.track);
-};
 
 const TilePlaybackTracksImage = ({
   tracks,
@@ -29,6 +14,9 @@ const TilePlaybackTracksImage = ({
   };
   tracks: TrackWithInfo[];
 } & SimpleGridProps) => {
+  if (tracks.length === 0) return null;
+  if (tracks.length <= 2) return <TileTrackImage image={{ src: tracks[0].image }} />;
+
   return (
     <SimpleGrid columns={2} {...props}>
       {tracks.slice(0, 4).map((track, index) => (

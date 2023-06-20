@@ -3,10 +3,9 @@ import { Box, Image, Stack, Text } from '@chakra-ui/react';
 import { useFullscreen } from '~/components/fullscreen/Fullscreen';
 import FullscreenPlayback from '~/components/fullscreen/playback/FullscreenPlayback';
 import type { ProfileWithInfo } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
+import { timeBetween, timeSince } from '~/lib/utils';
 
 import TileTrackImage from '../track/TileTrackImage';
-import TilePlaybackTracksImage, { getPlaybackTracks } from './inactive/TilePlaybackTracksImage';
 
 const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
   const { onOpen } = useFullscreen();
@@ -69,7 +68,13 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
             image={{ src: user.playback?.track.image }}
           />
         ) : (
-          <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w={['85px', '100px']} />
+          <Text fontSize={['11px', '12px']} fontWeight="bolder" textTransform="uppercase">
+            LISTENED FOR{' '}
+            {timeBetween({
+              endDate: user.playbacks[0].endedAt,
+              startDate: user.playbacks[0].startedAt,
+            })}
+          </Text>
         )}
         <Text noOfLines={1} fontSize={['9px', '12px']} maxW={['90px', '110px']} color="white">
           {user.playback?.track.artist ?? timeSince(user.playbacks[0]?.endedAt)}

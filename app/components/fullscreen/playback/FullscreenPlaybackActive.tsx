@@ -4,9 +4,9 @@ import { Sound } from 'iconsax-react';
 
 import ActivityTrackInfo from '~/components/activity/shared/ActivityTrackInfo';
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
-import { getPlaybackTracks } from '~/components/tile/playback/inactive/TilePlaybackTracksImage';
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import Tiles from '~/components/tiles/Tiles';
+import usePlaybackTracks from '~/hooks/usePlaybackTracks';
 import type { ProfileWithInfo } from '~/lib/types/types';
 import { timeBetween } from '~/lib/utils';
 
@@ -16,8 +16,8 @@ import PlaybackListenAlong from './PlaybackListenAlong';
 
 const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
   if (!user.playback) throw new Error('User has no playback');
+  const tracks = usePlaybackTracks(user);
   const track = user.playback.track;
-  const tracks = getPlaybackTracks(user);
 
   return (
     <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent={['start', 'center']}>
@@ -47,7 +47,7 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
             }}
           />
           <ActivityTrackInfo track={track} />
-          {tracks.length && (
+          {tracks && (
             <>
               <Text fontSize="11px" fontWeight="bolder">
                 RECENT

@@ -9,7 +9,7 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 import Tile from '../Tile';
 import TileTrackImage from '../track/TileTrackImage';
 import TileTrackInfo from '../track/TileTrackInfo';
-import TilePlaybackTracksImage, { getPlaybackTracks } from './inactive/TilePlaybackTracksImage';
+import TilePlaybackTracksImage from './inactive/TilePlaybackTracksImage';
 
 type TilesPlaybackProps = {
   index: number;
@@ -19,6 +19,8 @@ type TilesPlaybackProps = {
 
 const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
   const { playback } = user;
+
+  if (!playback) return null;
 
   const image = playback ? (
     <TileTrackImage
@@ -32,7 +34,7 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
       }}
     />
   ) : (
-    <TilePlaybackTracksImage tracks={getPlaybackTracks(user)} w="200px" />
+    <TilePlaybackTracksImage tracks={[]} w="200px" />
   );
 
   const info = playback ? <TileTrackInfo track={playback.track} /> : null;

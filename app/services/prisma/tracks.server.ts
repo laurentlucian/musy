@@ -20,13 +20,6 @@ export const profileWithInfo = {
       orderBy: { endedAt: 'desc' },
       take: 1,
     },
-    recent: {
-      include: {
-        track: trackWithInfo,
-      },
-      orderBy: { playedAt: 'desc' },
-      take: 4,
-    },
   },
 } as const;
 
@@ -36,7 +29,7 @@ export const getPlaybackFeed = async (userIds: string[]) => {
       user: profileWithInfo,
     },
     orderBy: { endedAt: 'desc' },
-    take: 20,
+    take: 10,
     where: {
       userId: {
         in: userIds,
@@ -79,7 +72,7 @@ export const getActivity = async (userId: string) => {
         user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
-      take: 20,
+      take: 10,
       where: {
         userId: {
           in: userIds,
@@ -93,7 +86,7 @@ export const getActivity = async (userId: string) => {
         user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
-      take: 20,
+      take: 10,
       where: {
         OR: [{ userId: { in: userIds } }, { ownerId: { in: userIds } }],
         action: 'send',
@@ -105,7 +98,7 @@ export const getActivity = async (userId: string) => {
         user: profileWithInfo,
       },
       orderBy: { createdAt: 'desc' },
-      take: 20,
+      take: 10,
       where: {
         userId: {
           in: userIds,
@@ -120,7 +113,7 @@ export const getActivity = async (userId: string) => {
       if (a.createdAt && b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime();
       return 0;
     })
-    .slice(0, 50) as Activity[];
+    .slice(0, 20) as Activity[];
 
   const addTracksToPlayback = activity.map(async (a) => {
     if (a.action === 'playback' && a.playback) {
