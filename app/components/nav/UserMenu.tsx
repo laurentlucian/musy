@@ -202,7 +202,7 @@ const UserMenu = () => {
                     opacity={0.2}
                     alignSelf="center"
                   />
-                  <Form action="/logout" method="post">
+                  <Form action="/api/logout" method="post">
                     <Button
                       leftIcon={<LogOut transform="scale(-1)" size="30px" />}
                       iconSpacing="30px"
@@ -279,7 +279,7 @@ const UserMenu = () => {
                 opacity={0.2}
                 alignSelf="center"
               />
-              <Form action="/logout" method="post">
+              <Form action="/api/logout" method="post">
                 <MenuItem
                   icon={<LogOut transform="scale(-1)" />}
                   _hover={{ bgColor: 'red.500', color: 'white' }}
