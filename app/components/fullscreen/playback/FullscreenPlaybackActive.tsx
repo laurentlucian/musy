@@ -1,5 +1,6 @@
 import { Flex, HStack, Icon, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import { Sound } from 'iconsax-react';
 
 import ActivityTrackInfo from '~/components/activity/shared/ActivityTrackInfo';
@@ -51,29 +52,34 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
         </Stack>
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
-        <PlaybackListenAlong />
+        {/* <PlaybackListenAlong />
         <AddToUserQueue userId={user.userId} />
-        <ViewTrack track={track} userId={user.userId} />
-        {!!tracksWithoutCurrentPlayback?.length && (
-          <>
-            <Text fontSize="11px" fontWeight="bolder">
-              RECENT
-            </Text>
-            <Tiles>
-              {tracksWithoutCurrentPlayback.map((track, index) => (
-                <TileTrackImage
-                  key={index}
-                  box={{ w: '90px' }}
-                  image={{ src: track.image }}
-                  fullscreen={{
-                    originUserId: user.userId,
-                    track,
-                  }}
-                />
-              ))}
-            </Tiles>
-          </>
-        )}
+        <ViewTrack track={track} userId={user.userId} /> */}
+        <AnimatePresence>
+          {!!tracksWithoutCurrentPlayback?.length && (
+            <motion.div // no needed because tiletrackimage already has opacity animation
+              initial={{ opacity: 0 }} // but this motion.div is preventing layout shift
+              animate={{ opacity: 1 }}
+              transition={{ duration: '1' }}
+            >
+              <Tiles title="RECENT">
+                {tracksWithoutCurrentPlayback.map((track, index) => (
+                  <Stack key={index}>
+                    <TileTrackImage
+                      box={{ w: '200px' }}
+                      image={{ src: track.image }}
+                      fullscreen={{
+                        originUserId: user.userId,
+                        track,
+                      }}
+                    />
+                    <ActivityTrackInfo track={track} />
+                  </Stack>
+                ))}
+              </Tiles>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Flex>
     </SimpleGrid>
   );

@@ -1,7 +1,11 @@
 import { Flex, HStack, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 
+import { AnimatePresence, motion } from 'framer-motion';
+
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
 import TilePlaybackTracksImage from '~/components/tile/playback/inactive/TilePlaybackTracksImage';
+import TileTrackImage from '~/components/tile/track/TileTrackImage';
+import Tiles from '~/components/tiles/Tiles';
 import usePlaybackTracks from '~/hooks/usePlaybackTracks';
 import Waver from '~/lib/icons/Waver';
 import type { ProfileWithInfo } from '~/lib/types/types';
@@ -22,11 +26,17 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
     </Text>
   );
 
-  if (!tracks)
+  if (!tracks || !tracks?.length)
     return (
       <Stack w="100%" justify="center" align="center">
         {timeListened}
-        <Waver />
+        {tracks ? (
+          <Text fontSize="10px" fontWeight="bolder" textTransform="uppercase">
+            no songs found
+          </Text>
+        ) : (
+          <Waver />
+        )}
       </Stack>
     );
 
@@ -44,7 +54,28 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
         />
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
-        <PlaybackAddAll />
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: '1' }}
+          >
+            <Tiles>
+              {tracks.slice(4).map((track, index) => (
+                <TileTrackImage
+                  key={index}
+                  box={{ w: '180px' }}
+                  image={{ src: track.image }}
+                  fullscreen={{
+                    originUserId: user.userId,
+                    track,
+                  }}
+                />
+              ))}
+            </Tiles>
+          </motion.div>
+        </AnimatePresence>
+        {/* <PlaybackAddAll /> */}
       </Flex>
     </SimpleGrid>
   );
