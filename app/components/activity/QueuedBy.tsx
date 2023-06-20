@@ -12,12 +12,15 @@ const QueuedBy = (props: {
   queued?: {
     owner: { user: Profile | null };
   }[];
+  slice?: number;
 }) => {
   const [isLabelOpen, setIsLabelOpen] = useState(false);
+  const slice = props.slice || 5;
 
   if (!props.queued?.length) return null;
   return (
     <HStack
+      spacing={1}
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
@@ -47,7 +50,7 @@ const QueuedBy = (props: {
         }
       >
         <AvatarGroup size="xs" max={5} spacing="-9px">
-          {props.queued.slice(0, 5).map(({ owner: { user } }, index) => (
+          {props.queued.slice(0, slice).map(({ owner: { user } }, index) => (
             <Avatar
               minW="20px"
               maxW="20px"

@@ -8,21 +8,22 @@ import { Play } from 'iconsax-react';
 import Tooltip from '~/components/Tooltip';
 import { shortenUsername } from '~/lib/utils';
 
-const PlayedBy = ({
-  played,
-}: {
+const PlayedBy = (props: {
   played?: {
     user: Profile | null;
   }[];
+  slice?: number;
 }) => {
   const [isLabelOpen, setIsLabelOpen] = useState(false);
+  const slice = props.slice || 5;
 
-  if (!played?.length) return null;
+  if (!props.played?.length) return null;
   return (
     <HStack
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
+      spacing={1}
     >
       <Icon as={Play} />
       <Tooltip
@@ -30,7 +31,7 @@ const PlayedBy = ({
         label={
           <Stack py="2px">
             {Object.values(
-              played.reduce((acc: Record<string, { count: number; user: Profile }>, curr) => {
+              props.played.reduce((acc: Record<string, { count: number; user: Profile }>, curr) => {
                 if (!curr.user) return acc;
                 const userId = curr.user.userId;
                 if (!acc[userId]) {
@@ -63,7 +64,7 @@ const PlayedBy = ({
         }
       >
         <AvatarGroup size="xs">
-          {played.slice(0, 5).map(({ user }, index) => (
+          {props.played.slice(0, slice).map(({ user }, index) => (
             <Avatar
               minW="20px"
               maxW="20px"

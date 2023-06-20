@@ -12,8 +12,10 @@ const LikedBy = (props: {
   liked?: {
     user: Profile | null;
   }[];
+  slice?: number;
 }) => {
   const [isLabelOpen, setIsLabelOpen] = useState(false);
+  const slice = props.slice || 5;
 
   if (!props.liked?.length) return null;
   return (
@@ -21,6 +23,7 @@ const LikedBy = (props: {
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
+      spacing={1}
     >
       <Icon as={Heart} />
       <Tooltip
@@ -47,7 +50,7 @@ const LikedBy = (props: {
         }
       >
         <AvatarGroup size="xs" max={5} spacing="-9px">
-          {props.liked.slice(0, 5).map(({ user }) => (
+          {props.liked.slice(0, slice).map(({ user }) => (
             <Avatar
               minW="20px"
               maxW="20px"
