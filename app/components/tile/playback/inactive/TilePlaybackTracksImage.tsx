@@ -15,7 +15,8 @@ const TilePlaybackTracksImage = ({
   tracks: TrackWithInfo[];
 } & SimpleGridProps) => {
   if (tracks.length === 0) return null;
-  if (tracks.length <= 2) return <TileTrackImage image={{ src: tracks[0].image }} />;
+  if (tracks.length <= 2)
+    return <TileTrackImage image={{ src: tracks[0].image }} box={{ ...props }} />;
 
   return (
     <SimpleGrid columns={2} {...props}>
