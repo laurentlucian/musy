@@ -12,7 +12,7 @@ import { addUsersToQueue } from '~/services/scheduler/jobs/user.server';
 
 require('better-logging')(console);
 
-void runSessionsQ();
+// void runSessionsQ();
 void addUsersToQueue();
 
 export default function handleRequest(
