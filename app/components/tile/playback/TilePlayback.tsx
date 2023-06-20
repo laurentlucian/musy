@@ -20,7 +20,7 @@ type TilesPlaybackProps = {
 const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
   const { playback } = user;
 
-  if (!playback) return null;
+  if (!playback && tile) return null;
 
   const image = playback ? (
     <TileTrackImage
