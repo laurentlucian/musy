@@ -90,7 +90,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
     <DirectInbox />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : 'Add to queue';
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Timeout') : 'Add to queue';
 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };
@@ -120,7 +120,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
     <Send2 variant="Outline" size="25px" />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Authenticated') : username.split(/[ .]/)[0];
+  const text = isDone ? (fetcher.data ? fetcher.data : 'Timeout') : username.split(/[ .]/)[0];
 
   return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };
