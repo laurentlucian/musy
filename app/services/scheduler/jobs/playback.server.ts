@@ -1,7 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
-import { notNull } from '~/lib/utils';
+import { msToString, notNull, secondsToMinutes } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getAllUsersId } from '~/services/prisma/users.server';
@@ -10,26 +10,27 @@ import { getSpotifyClient } from '~/services/spotify.server';
 
 export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   const { userId } = job.data;
-
   console.log('playbackQ -> job starting...', userId);
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    console.log(`playbackQ ${userId} removed -> spotify client not found`);
+    console.log(`playbackQ -> exiting; spotify client not found`);
     return null;
   }
 
   const { body: playback } = await spotify.getMyCurrentPlaybackState();
 
   if (!playback || !playback.is_playing) {
-    console.log('playbackQ -> not playing', userId);
+    console.log('playbackQ -> exiting; user not playing, will be cleaned up on playbackCreator');
     return null;
   }
   const { item: track, progress_ms } = playback;
 
   if (!track || track.type !== 'track' || !progress_ms) {
-    console.log('playbackQ -> not playing a track', userId);
+    console.log(
+      'playbackQ -> exiting; user not playing a track, will be cleaned up on playbackCreator',
+    );
     return null;
   }
 
@@ -40,7 +41,7 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
       'playback',
       { userId },
       {
-        delay: 1000 * 60 * 5,
+        delay: 1000 * 60 * 60 * 5,
         removeOnComplete: true,
         removeOnFail: true,
       },
@@ -52,37 +53,25 @@ export const playbackQ = Queue<{ userId: string }>('playback', async (job) => {
   const isSameTrack = current?.trackId === track.id;
 
   const remaining = track.duration_ms - progress_ms;
-  if (isSameTrack) {
-    console.log(
-      'playbackQ -> same track -- added back with 30s delay (can happen when remainder isnt accurate',
-      track.name,
-      userId,
-    );
-    await playbackQ.add(
-      'playback',
-      { userId },
-      {
-        delay: remaining + 1000 * 30,
-        removeOnComplete: true,
-        removeOnFail: true,
-      },
-    );
-    console.log('playbackQ -> completed', userId);
-    return null;
-  }
 
-  console.log('playbackQ -> user', userId, 'track', track.name, 'isSameTrack', isSameTrack);
+  console.log('playbackQ ->', track.name, isSameTrack ? '' : 'newTrack');
+
   await upsertPlayback(userId, track, progress_ms, playback.timestamp);
+  console.log('playbackQ -> prisma updated');
+
+  const extraDelay = isSameTrack ? 1000 * 60 : 1000 * 60 * 5;
+  const delay = remaining + extraDelay;
   await playbackQ.add(
     'playback',
     { userId },
     {
-      delay: remaining + 1000 * 10,
+      delay,
       removeOnComplete: true,
       removeOnFail: true,
     },
   );
-  console.log('playbackQ -> completed', userId);
+
+  console.log('playbackQ -> completed', userId, 'will check again in', msToString(delay));
 });
 
 const getPlaybackState = async (id: string) => {
@@ -125,9 +114,9 @@ const removePlaybackJob = async (userId: string) => {
   const allJobs = await playbackQ.getJobs(['waiting', 'delayed']);
   const jobs = allJobs.filter((j) => j.data.userId === userId); // get generated jobId through job.data being the userId
 
-  console.log('removePlaybackJob -> jobs', jobs.length);
+  console.log('playbackCreator -> jobs', jobs.length);
   for (const job of jobs) {
-    console.log('removePlaybackJob -> removing', job.id);
+    console.log('playbackCreator -> removing', job.id);
     await job.remove();
   }
 };
@@ -148,15 +137,22 @@ export const playbackCreator = async () => {
     const { item: track, progress_ms, timestamp } = playback;
     const current = await prisma.playback.findUnique({ where: { userId } });
     const isSameTrack = current?.trackId === track?.id;
-    if (isSameTrack) console.log('playbackCreator -> same track', track?.name, userId);
+    if (isSameTrack) console.log('playbackCreator -> same track', userId);
     if (!track || track.type !== 'track' || !progress_ms || isSameTrack) continue;
-    console.log('playbackCreator -> new track', track?.name, userId);
+    console.log('playbackCreator -> new track', userId);
 
-    await upsertPlayback(userId, track, progress_ms, timestamp).catch((e) => console.log(e));
+    await upsertPlayback(userId, track, progress_ms, timestamp).catch((e) =>
+      console.log('playbackCreator -> prisma update failed: ', e),
+    );
+    console.log('playbackCreator -> prisma updated');
     const remaining = track.duration_ms - progress_ms;
     await removePlaybackJob(userId);
-    await playbackQ.add('playback', { userId }, { delay: remaining, removeOnComplete: true });
-
+    await playbackQ.add(
+      'playback',
+      { userId },
+      { delay: remaining, removeOnComplete: true, removeOnFail: true },
+    );
+    console.log('playbackCreator -> created playbackQ job with delay', msToString(remaining));
     // queue pending (waiting for playback to start) songs from musy
     const queue = await prisma.queue.findMany({
       include: {
@@ -188,9 +184,13 @@ export const playbackCreator = async () => {
   console.log('playbackCreator -> users inactive', inactive.length);
 
   for (const { id: userId } of inactive) {
-    const exists = await prisma.playback.findUnique({ where: { userId } });
-    if (exists) {
+    const playback = await prisma.playback.findUnique({ where: { userId } });
+    if (playback) {
+      console.log('playbackCreator -> playback exists for', userId);
+
       await removePlaybackJob(userId);
+      console.log('playbackCreator -> removed playback');
+
       const recentHistory = await prisma.playbackHistory.findFirst({
         orderBy: { endedAt: 'desc' },
         where: { userId },
@@ -199,7 +199,7 @@ export const playbackCreator = async () => {
       if (recentHistory) {
         const { endedAt } = recentHistory;
         const now = new Date();
-        const diff = now.getTime() - endedAt.getTime();
+        const diff = playback.createdAt.getTime() - endedAt.getTime();
         const diffMinutes = Math.floor(diff / 1000 / 60);
 
         if (diffMinutes < 10) {
@@ -207,11 +207,11 @@ export const playbackCreator = async () => {
             data: { endedAt: now },
             where: { id: recentHistory.id },
           });
-          console.log('playbackCreator -> updated playback history', userId);
+          console.log('playbackCreator -> less than 10 minutes between playbacks, updated endedAt');
         } else {
           await prisma.playbackHistory.create({
             data: {
-              startedAt: exists.createdAt,
+              startedAt: playback.createdAt,
               user: {
                 connect: {
                   userId,
@@ -219,12 +219,12 @@ export const playbackCreator = async () => {
               },
             },
           });
-          console.log('playbackCreator -> created playback history', userId);
+          console.log('playbackCreator -> created new playback history');
         }
       } else {
         await prisma.playbackHistory.create({
           data: {
-            startedAt: exists.createdAt,
+            startedAt: playback.createdAt,
             user: {
               connect: {
                 userId,
@@ -232,13 +232,14 @@ export const playbackCreator = async () => {
             },
           },
         });
-        console.log('playbackCreator -> created playback history', userId);
+        console.log('playbackCreator -> created first playback history');
       }
 
       await prisma.playback.delete({ where: { userId } });
-      console.log('playbackCreator -> deleted', userId, 'playback');
+      console.log('playbackCreator -> deleted playback');
     }
   }
+  console.log('playbackCreator -> completed');
 };
 
 export const upsertPlayback = async (
@@ -324,6 +325,4 @@ export const upsertPlayback = async (
       where: { playedAt_userId: { playedAt: endedAt, userId } },
     });
   }
-
-  console.log('playbackQ -> prisma updated', userId);
 };
