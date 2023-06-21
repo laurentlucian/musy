@@ -24,7 +24,7 @@ const Index = () => {
       </Stack> */}
       <Flex direction="column" align="center" mt="30px">
         <Image src="/musylogo1.svg" w="300px" mb="-40px" ml="-14px" />
-        <Form action="/auth/spotify" method="post">
+        <Form action="/api/auth/spotify" method="post">
           <Button
             type="submit"
             isLoading={navigation.state === 'submitting'}
