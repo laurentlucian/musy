@@ -1,6 +1,5 @@
 import { Stack, Flex, Text } from '@chakra-ui/react';
 
-import useUsers from '~/hooks/useUsers';
 import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 import type { Activity, TrackWithInfo } from '~/lib/types/types';
 import { timeSince } from '~/lib/utils';
@@ -13,9 +12,7 @@ import ActivityInfo from './shared/ActivityInfo';
 import ActivityTrackInfo from './shared/ActivityTrackInfo';
 
 const TileActivityPlayback = ({ activity }: { activity: Activity }) => {
-  const users = useUsers();
-  const user = users.find((u) => u.userId === activity.userId);
-  if (!user || !activity.tracks?.length) return null;
+  if (!activity.user || !activity.tracks?.length) return null;
   const isMoreThan4Tracks = activity.tracks.length >= 4;
 
   const tracks = [] as TrackWithInfo[][];
@@ -36,7 +33,7 @@ const TileActivityPlayback = ({ activity }: { activity: Activity }) => {
                 <TilePlaybackTracksImage
                   key={index}
                   tracks={t}
-                  fullscreen={{ originUserId: user.userId }}
+                  fullscreen={{ originUserId: activity.user.userId }}
                   image={{ maxW: ['190px', '225px', '320px'] }}
                   flexShrink={0}
                   maxW="640px"
@@ -46,7 +43,7 @@ const TileActivityPlayback = ({ activity }: { activity: Activity }) => {
           ) : (
             <TilePlaybackTracksImage
               tracks={activity.tracks}
-              fullscreen={{ originUserId: user.userId }}
+              fullscreen={{ originUserId: activity.user.userId }}
               flexShrink={0}
               image={{ flexShrink: 0 }}
               maxW="640px"
