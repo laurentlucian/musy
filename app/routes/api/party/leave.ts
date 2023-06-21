@@ -36,3 +36,5 @@ export const action = async ({ request }: ActionArgs) => {
 export const loader = () => {
   throw json({}, { status: 404 });
 };
+
+export default () => null;

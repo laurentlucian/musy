@@ -21,3 +21,5 @@ export const loader = async ({ request }: LoaderArgs) => {
 
   return typedjson({ tracks, users });
 };
+
+export default () => null;

@@ -22,3 +22,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const data = body.items ?? [];
   return typedjson(data);
 };
+
+export default () => null;

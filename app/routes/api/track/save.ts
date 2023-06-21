@@ -86,3 +86,5 @@ export const action = async ({ request }: ActionArgs) => {
     }
   }
 };
+
+export default () => null;

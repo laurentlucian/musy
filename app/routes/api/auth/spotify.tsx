@@ -9,10 +9,6 @@ const isRedirect = (response: Response) => {
   return response.headers.has('Location');
 };
 
-export default () => null;
-
-export const loader = () => redirect('/');
-
 export const action = async ({ request }: ActionArgs) => {
   const url = new URL(request.url);
   const returnTo = url.searchParams.get('returnTo') as string | null;
@@ -30,3 +26,6 @@ export const action = async ({ request }: ActionArgs) => {
     throw error;
   }
 };
+
+export const loader = () => redirect('/');
+export default () => null;

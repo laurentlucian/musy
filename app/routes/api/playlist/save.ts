@@ -24,3 +24,5 @@ export const action = async ({ request }: ActionArgs) => {
     return typedjson('error: Reauthenticate');
   }
 };
+
+export default () => null;

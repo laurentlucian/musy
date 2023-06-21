@@ -2,12 +2,8 @@ import type { LoaderArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 
-import { Heading, Text } from '@chakra-ui/react';
-
 import { authenticator } from '~/services/auth.server';
 import { commitSession, getSession, returnToCookie } from '~/services/session.server';
-
-export default () => null;
 
 export const loader = async ({ request }: LoaderArgs) => {
   const returnTo: string = (await returnToCookie.parse(request.headers.get('Cookie'))) ?? '/';
@@ -33,4 +29,4 @@ export const loader = async ({ request }: LoaderArgs) => {
   return redirect(returnTo === '/' ? '/' + session.user.id : returnTo, { headers });
 };
 
-export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export default () => null;

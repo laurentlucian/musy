@@ -24,3 +24,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
     .catch(() => []);
   return typedjson(data);
 };
+
+export default () => null;

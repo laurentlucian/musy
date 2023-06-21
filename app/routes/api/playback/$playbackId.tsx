@@ -32,3 +32,5 @@ export const loader = async ({ params, request }: LoaderArgs) => {
   const tracks = recent.map((recent) => recent.track);
   return typedjson({ tracks });
 };
+
+export default () => null;
