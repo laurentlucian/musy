@@ -7,7 +7,6 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import ActivityTile from '~/components/activity/ActivityTile';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
 import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
-import { getCacheControl } from '~/lib/utils';
 import { getActivity } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 
@@ -29,14 +28,9 @@ export const loader = async ({ request }: LoaderArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const activities = await getActivity(currentUserId);
 
-  return typedjson(
-    {
-      activities,
-    },
-    {
-      headers: { ...getCacheControl() },
-    },
-  );
+  return typedjson({
+    activities,
+  });
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';
