@@ -15,9 +15,8 @@ export const userQ = Queue<{ userId: string }>(
   'update_tracks',
   async (job) => {
     const { userId } = job.data;
-    console.log('userQ -> pending job starting...', userId);
+    console.debug('userQ -> pending job starting...', userId);
 
-    await playbackCreator();
     const profile = await prisma.user.findUnique({
       include: { user: true },
       where: { id: userId },
@@ -26,7 +25,7 @@ export const userQ = Queue<{ userId: string }>(
     const { spotify } = await getSpotifyClient(userId);
 
     if (!profile || !profile.user || !spotify) {
-      console.log(`userQ ${userId} removed -> user not found`);
+      console.debug(`userQ ${userId} removed -> user not found`);
       const jobKey = job.repeatJobKey;
       if (jobKey) {
         await userQ.removeRepeatableByKey(jobKey);
@@ -46,7 +45,7 @@ export const userQ = Queue<{ userId: string }>(
       await updateUserName(userId, name);
     }
 
-    console.log('userQ -> adding recent tracks to db', userId);
+    console.debug('userQ -> adding recent tracks to db');
     const {
       body: { items: recent },
     } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
@@ -99,7 +98,7 @@ export const userQ = Queue<{ userId: string }>(
       });
     }
 
-    console.log('userQ -> adding liked tracks to db', userId);
+    console.debug('userQ -> adding liked tracks to db');
     const {
       body: { items: liked, total },
     } = await spotify.getMySavedTracks({ limit: 50 });
@@ -138,7 +137,7 @@ export const userQ = Queue<{ userId: string }>(
         },
       });
     }
-    console.log('userQ -> added liked tracks', userId);
+    console.debug('userQ -> added liked tracks');
 
     const dbTotal = await prisma.likedSongs.count({
       where: { userId },
@@ -155,7 +154,7 @@ export const userQ = Queue<{ userId: string }>(
 
       const limit = 50;
       const pages = Math.ceil(total / limit);
-      console.log('userQ -> total > dbTotal', total, dbTotal, pages, userId);
+      console.debug('userQ -> total > dbTotal', total, dbTotal, pages);
       const {
         body: {
           items: [lastTrack],
@@ -163,7 +162,7 @@ export const userQ = Queue<{ userId: string }>(
       } = await spotify.getMySavedTracks({ limit: 1, offset: total - 1 });
       // note: if user disliked songs after we've added all to db, this would've run every time job repeats
       // if last track exists in our db, then don't scrape all pages
-      console.log('userQ -> lastTrack', lastTrack.track.name);
+      console.debug('userQ -> lastTrack', lastTrack.track.name);
       const exists = await prisma.likedSongs.findUnique({
         where: {
           trackId_userId: {
@@ -172,12 +171,11 @@ export const userQ = Queue<{ userId: string }>(
           },
         },
       });
-      console.log('userQ -> last track exists?', exists);
+      console.debug('userQ -> last track exists?', exists);
 
       if (!exists) {
-        console.log(
+        console.debug(
           'userQ -> adding all user liked tracks to db',
-          userId,
           'pages',
           pages,
           'total',
@@ -197,7 +195,7 @@ export const userQ = Queue<{ userId: string }>(
           },
         );
       } else {
-        console.log('userQ -> all liked tracks already in db', userId, total, dbTotal);
+        console.debug('userQ -> all liked tracks already in db total:', total, 'dbTotal:', dbTotal);
       }
     }
 
@@ -216,7 +214,7 @@ export const userQ = Queue<{ userId: string }>(
 
     const following = users.filter((_, i) => isFollowing[i]);
 
-    console.log('userQ -> adding following to db', userId, following.length);
+    console.debug('userQ -> adding following to db', following.length);
     for (const followingId of following) {
       await prisma.follow.upsert({
         create: {
@@ -234,7 +232,11 @@ export const userQ = Queue<{ userId: string }>(
       });
     }
 
-    console.log('userQ -> completed', userId);
+    console.debug('userQ -> completed');
+
+    await playbackCreator().catch((err) =>
+      console.debug('userQ -> playbackCreator error thrown ->', err),
+    );
   },
   {
     limiter: {
@@ -250,13 +252,13 @@ declare global {
 }
 
 export const addUsersToQueue = async () => {
-  console.log('addUsersToQueue -> starting...');
+  console.debug('addUsersToQueue -> starting...');
   // To ensure this function only runs once per environment,
   // we use a global variable to keep track if it has run
   if (global.__didRegisterLikedQ) {
     // and stop if it did.
 
-    // console.log(
+    // console.debug(
     //   'addUsersToQueue -> already registered, repeating jobs:',
     //   (await userQ.getRepeatableJobs()).map((j) => [
     //     j.name,
@@ -270,7 +272,7 @@ export const addUsersToQueue = async () => {
     //   ]),
     // );
 
-    console.log(
+    console.debug(
       'playbackQ',
       (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
     );
@@ -282,22 +284,22 @@ export const addUsersToQueue = async () => {
   // delete all playbackQ jobs
   await playbackQ.pause();
   // await playbackQ.obliterate({ force: true });
-  console.log(
+  console.debug(
     'playbackQ',
     (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
   );
-  console.log('addUsersToQueue -> obliterated playbackQ');
+  console.debug('addUsersToQueue -> obliterated playbackQ');
 
   // needed this once because forgot to save duration_ms in db
   // await addDurationToRecent();
-  // console.log('addUsersToQueue -> added all durations to recent');
+  // console.debug('addUsersToQueue -> added all durations to recent');
 
   const users = await getAllUsersId();
-  console.log('addUsersToQueue -> users..', users, users.length);
+  console.debug('addUsersToQueue -> users..', users, users.length);
 
   // await userQ.pause(); // pause all jobs before obliterating
   // await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
-  console.log('addUsersToQueue -> obliterated userQ');
+  console.debug('addUsersToQueue -> obliterated userQ');
 
   // for testing
   // await userQ.add('update_liked', { userId: '1295028670' });
@@ -333,7 +335,7 @@ export const addUsersToQueue = async () => {
     })),
   );
 
-  console.log(
+  console.debug(
     'addUsersToQueue -> non repeateable jobs created (only at startup):',
     await userQ.getJobCounts(),
   );
@@ -345,7 +347,7 @@ export const addUsersToQueue = async () => {
   //   longScriptQ.add('long-script', null);
   // }
 
-  console.log('addUsersToQueue -> done');
+  console.debug('addUsersToQueue -> done');
   global.__didRegisterLikedQ = true;
 };
 
@@ -382,9 +384,9 @@ export const addMissingTracks = async () => {
     );
   `;
 
-  console.log('addMissingTracks -> missing tracks', missingLiked.length);
-  console.log('addMissingTracks -> missing recent', missingRecent.length);
-  console.log('addMissingTracks -> missing queue', missingQueues.length);
+  console.debug('addMissingTracks -> missing tracks', missingLiked.length);
+  console.debug('addMissingTracks -> missing recent', missingRecent.length);
+  console.debug('addMissingTracks -> missing queue', missingQueues.length);
 
   const deleteRows = async (table: string, ids: string[]) => {
     const trackIds = [...new Set(ids)];
@@ -426,7 +428,7 @@ export const addMissingTracks = async () => {
   //       where: { id: missing.trackId },
   //     });
   //     if (track) {
-  //       console.log('addMissingTracks -> track exists; connecting');
+  //       console.debug('addMissingTracks -> track exists; connecting');
   //       await prisma.recentSongs.update({
   //         data: { track: { connect: { id: track.id } } },
   //         where: { id: missing.id },
@@ -448,7 +450,7 @@ export const addMissingTracks = async () => {
 
   // const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
   // const trackIds = [...new Set(trackIdsDuplicate)];
-  // console.log('addMissingTracks -> trackIds', trackIds.length);
+  // console.debug('addMissingTracks -> trackIds', trackIds.length);
 
   // const pages = [];
 
@@ -456,9 +458,9 @@ export const addMissingTracks = async () => {
   // pages.push(trackIds.slice(i, i + 50));
   // }
 
-  // console.log('addMissingTracks -> pages', pages.length);
+  // console.debug('addMissingTracks -> pages', pages.length);
   // for (const page of pages) {
-  // console.log('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
+  // console.debug('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
 
   // ⚠️ don't run on development
   // @todo add fn to delete missing tracks from dev db
@@ -466,21 +468,21 @@ export const addMissingTracks = async () => {
   //   body: { tracks },
   // } = await spotify.getTracks(page);
   // try {
-  //   console.log('addMissingTracks -> retrieved spotify; tracks', tracks.length);
+  //   console.debug('addMissingTracks -> retrieved spotify; tracks', tracks.length);
   //   for (const track of tracks) {
   //     const trackDb = createTrackModel(track);
 
   //     const instances = await prisma.recentSongs.findMany({
   //       where: { trackId: track.id },
   //     });
-  //     console.log(
+  //     console.debug(
   //       'addMissingTracks -> likedsongs without relation',
   //       instances.length,
   //       track.name,
   //     );
 
   //     for (const instance of instances) {
-  //       console.log('addMissingTracks -> loop over instance', instance.userId);
+  //       console.debug('addMissingTracks -> loop over instance', instance.userId);
 
   //       await prisma.recentSongs.update({
   //         data: {
@@ -492,13 +494,13 @@ export const addMissingTracks = async () => {
   //       });
   //       continue;
   //     }
-  //     console.log('addMissingTracks -> track done', track.name);
+  //     console.debug('addMissingTracks -> track done', track.name);
   //   }
   // } catch (e) {
-  //   console.log('addMissingTracks -> error', e);
+  //   console.debug('addMissingTracks -> error', e);
   // }
-  // console.log('addMissingTracks -> page done');
+  // console.debug('addMissingTracks -> page done');
   // }
 
-  console.log('addMissingTracks -> done');
+  console.debug('addMissingTracks -> done');
 };
