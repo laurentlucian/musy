@@ -63,7 +63,7 @@ export const updateToken = async (
     data: { accessToken: token, expiresAt, refreshToken, revoked: false },
     where: { id },
   });
-  console.log('updateToken -> data', new Date(data.expiresAt).toLocaleTimeString('en-US'));
+  console.log('updatedToken -> expires at:', new Date(data.expiresAt).toLocaleTimeString('en-US'));
   return data.expiresAt;
 };
 

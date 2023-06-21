@@ -15,7 +15,7 @@ declare global {
   var __registeredQueues: Record<string, RegisteredQueue> | undefined;
 }
 
-EventEmitter.defaultMaxListeners = 20;
+EventEmitter.defaultMaxListeners = 50;
 
 export const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 

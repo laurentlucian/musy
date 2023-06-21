@@ -88,7 +88,7 @@ export const spotifyStrategy = new SpotifyStrategy(
     };
 
     const user = await createUser(newUser);
-    await userQ.add('update_tracks', { userId: user.id });
+    await userQ.add('update_user', { userId: user.id });
 
     return response;
   },

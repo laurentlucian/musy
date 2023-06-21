@@ -1,21 +1,23 @@
-import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
 
 import { isProduction, minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
-import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getAllUsersId, updateUserImage, updateUserName } from '~/services/prisma/users.server';
+import { getAllUsersId } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-import { playbackCreator, playbackQ } from './playback.server';
-import { libraryQ } from './scraper.server';
+import { playbackQ } from './playback.server';
+import { playbackCreatorQ } from './playback/creator.server';
+import { followQ } from './user/follow.server';
+import { likedQ } from './user/liked.server';
+import { profileQ } from './user/profile.server';
+import { recentQ } from './user/recent.server';
 
 export const userQ = Queue<{ userId: string }>(
-  'update_tracks',
+  'update_user',
   async (job) => {
     const { userId } = job.data;
-    console.debug('userQ -> pending job starting...', userId);
+    console.log('userQ -> pending job starting...', userId);
 
     const profile = await prisma.user.findUnique({
       include: { user: true },
@@ -25,218 +27,21 @@ export const userQ = Queue<{ userId: string }>(
     const { spotify } = await getSpotifyClient(userId);
 
     if (!profile || !profile.user || !spotify) {
-      console.debug(`userQ ${userId} removed -> user not found`);
+      console.log(`userQ ${userId} removed -> user not found`);
       const jobKey = job.repeatJobKey;
       if (jobKey) {
         await userQ.removeRepeatableByKey(jobKey);
       }
-      return null;
+      return;
     }
 
-    const spotifyProfile = await spotify.getMe();
+    await recentQ.add('update_recent', { userId });
+    await likedQ.add('update_liked', { userId });
+    await followQ.add('update_follow', { userId });
+    await profileQ.add('update_profile', { userId });
+    console.log('userQ -> completed');
 
-    const pfp = spotifyProfile?.body.images;
-    if (pfp) {
-      await updateUserImage(userId, pfp[0].url);
-    }
-
-    const name = spotifyProfile?.body.display_name;
-    if (name) {
-      await updateUserName(userId, name);
-    }
-
-    console.debug('userQ -> adding recent tracks to db');
-    const {
-      body: { items: recent },
-    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
-    for (const { played_at, track } of recent) {
-      const trackDb = createTrackModel(track);
-      const data: Prisma.RecentSongsCreateInput = {
-        action: 'played',
-        playedAt: new Date(played_at),
-        track: {
-          connectOrCreate: {
-            create: trackDb,
-            where: {
-              id: track.id,
-            },
-          },
-        },
-        user: {
-          connect: {
-            userId,
-          },
-        },
-        verifiedFromSpotify: true,
-      };
-
-      const playedAt = new Date(played_at);
-      await prisma.recentSongs.upsert({
-        create: data,
-        update: data,
-        where: {
-          playedAt_userId: {
-            playedAt,
-            userId,
-          },
-        },
-      });
-
-      // HACK(po): this is a hack to make sure we don't have duplicate recent songs
-      // See model on prisma schema for docs
-      await prisma.recentSongs.deleteMany({
-        where: {
-          // only if it is within 10 minutes of the current song
-          // playedAt: {
-          //   gte: new Date(playedAt.getTime() - minutesToMs(10)),
-          //   lte: new Date(playedAt.getTime() + minutesToMs(10)),
-          // },
-          // trackId: track.id,
-          userId,
-          verifiedFromSpotify: false,
-        },
-      });
-    }
-
-    console.debug('userQ -> adding liked tracks to db');
-    const {
-      body: { items: liked, total },
-    } = await spotify.getMySavedTracks({ limit: 50 });
-
-    for (const { added_at, track } of liked) {
-      const trackDb = createTrackModel(track);
-
-      const data: Prisma.LikedSongsCreateInput = {
-        action: 'liked',
-
-        createdAt: new Date(added_at),
-
-        track: {
-          connectOrCreate: {
-            create: trackDb,
-            where: {
-              id: track.id,
-            },
-          },
-        },
-        user: {
-          connect: {
-            userId,
-          },
-        },
-      };
-
-      await prisma.likedSongs.upsert({
-        create: data,
-        update: data,
-        where: {
-          trackId_userId: {
-            trackId: track.id,
-            userId,
-          },
-        },
-      });
-    }
-    console.debug('userQ -> added liked tracks');
-
-    const dbTotal = await prisma.likedSongs.count({
-      where: { userId },
-    });
-
-    // we want to scrape all of user's liked songs, this is useful for showing dynamic UI to the current logged in user
-    // so, if the total from spotify is greater than the total in the db
-    // loop through the rest of the pages and add them to the db
-
-    if (total > dbTotal && isProduction) {
-      // by default, don't scrape all liked tracks in dev
-      // change above to !isProduction to scrape all liked tracks as needed
-      // make sure to uncomment lines 221&222 to only run this job for your own user id
-
-      const limit = 50;
-      const pages = Math.ceil(total / limit);
-      console.debug('userQ -> total > dbTotal', total, dbTotal, pages);
-      const {
-        body: {
-          items: [lastTrack],
-        },
-      } = await spotify.getMySavedTracks({ limit: 1, offset: total - 1 });
-      // note: if user disliked songs after we've added all to db, this would've run every time job repeats
-      // if last track exists in our db, then don't scrape all pages
-      console.debug('userQ -> lastTrack', lastTrack.track.name);
-      const exists = await prisma.likedSongs.findUnique({
-        where: {
-          trackId_userId: {
-            trackId: lastTrack.track.id,
-            userId,
-          },
-        },
-      });
-      console.debug('userQ -> last track exists?', exists);
-
-      if (!exists) {
-        console.debug(
-          'userQ -> adding all user liked tracks to db',
-          'pages',
-          pages,
-          'total',
-          total,
-          'dbTotal',
-          dbTotal,
-        );
-        await libraryQ.add(
-          'user-library',
-          {
-            pages,
-            userId,
-          },
-          {
-            removeOnComplete: true,
-            removeOnFail: true,
-          },
-        );
-      } else {
-        console.debug('userQ -> all liked tracks already in db total:', total, 'dbTotal:', dbTotal);
-      }
-    }
-
-    const users = await prisma.user
-      .findMany({
-        select: {
-          id: true,
-        },
-        where: {
-          revoked: false,
-        },
-      })
-      .then((users) => users.map((u) => u.id));
-
-    const { body: isFollowing } = await spotify.isFollowingUsers(users);
-
-    const following = users.filter((_, i) => isFollowing[i]);
-
-    console.debug('userQ -> adding following to db', following.length);
-    for (const followingId of following) {
-      await prisma.follow.upsert({
-        create: {
-          // create if it doesn't exist -- if user unfollow in musy but keep in spotify, it'll auto follow again on next job run
-          followerId: userId,
-          followingId,
-        },
-        update: {}, // if it exists, do nothing
-        where: {
-          followingId_followerId: {
-            followerId: userId,
-            followingId,
-          },
-        },
-      });
-    }
-
-    console.debug('userQ -> completed');
-
-    await playbackCreator().catch((err) =>
-      console.debug('userQ -> playbackCreator error thrown ->', err),
-    );
+    await playbackCreatorQ.add('playback_creator', null);
   },
   {
     limiter: {
@@ -248,32 +53,31 @@ export const userQ = Queue<{ userId: string }>(
 
 declare global {
   // eslint-disable-next-line no-var
-  var __didRegisterLikedQ: boolean | undefined;
+  var __didRegisterUserQ: boolean | undefined;
 }
 
 export const addUsersToQueue = async () => {
-  console.debug('addUsersToQueue -> starting...');
+  console.log('addUsersToQueue -> starting...');
   // To ensure this function only runs once per environment,
   // we use a global variable to keep track if it has run
-  if (global.__didRegisterLikedQ) {
+  const getUserQs = async () =>
+    (await userQ.getRepeatableJobs()).map((j) => [
+      j.name,
+
+      j.next,
+      new Date(j.next).toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      }),
+    ]);
+  console.log('global.__didRegisterUserQ', global.__didRegisterUserQ);
+  if (global.__didRegisterUserQ) {
     // and stop if it did.
 
-    // console.debug(
-    //   'addUsersToQueue -> already registered, repeating jobs:',
-    //   (await userQ.getRepeatableJobs()).map((j) => [
-    //     j.name,
-
-    //     j.next,
-    //     new Date(j.next).toLocaleString('en-US', {
-    //       hour: 'numeric',
-    //       minute: 'numeric',
-    //       second: 'numeric',
-    //     }),
-    //   ]),
-    // );
-
-    console.debug(
-      'playbackQ',
+    console.log('addUsersToQueue -> already registered, repeating jobs:', await getUserQs());
+    console.log(
+      'addUsersToQueue -> playbackQ',
       (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
     );
 
@@ -282,34 +86,34 @@ export const addUsersToQueue = async () => {
 
   // await prisma.playback.deleteMany();
   // delete all playbackQ jobs
-  await playbackQ.pause();
-  // await playbackQ.obliterate({ force: true });
-  console.debug(
-    'playbackQ',
+  // await playbackQ.pause();
+  // // await playbackQ.obliterate({ force: true });
+  console.log(
+    'addUsersToQueue -> playbackQ',
     (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
   );
-  console.debug('addUsersToQueue -> obliterated playbackQ');
+  // console.log('addUsersToQueue -> obliterated playbackQ');
 
   // needed this once because forgot to save duration_ms in db
   // await addDurationToRecent();
-  // console.debug('addUsersToQueue -> added all durations to recent');
+  // console.log('addUsersToQueue -> added all durations to recent');
 
-  const users = await getAllUsersId();
-  console.debug('addUsersToQueue -> users..', users, users.length);
-
-  // await userQ.pause(); // pause all jobs before obliterating
-  // await userQ.obliterate({ force: true }); // https://github.com/taskforcesh/bullmq/issues/430
-  console.debug('addUsersToQueue -> obliterated userQ');
+  await userQ.pause().catch(console.log); // pause all jobs before obliterating
+  await userQ.obliterate({ force: true }).catch(console.log); // https://github.com/taskforcesh/bullmq/issues/430
+  console.log('addUsersToQueue -> obliterated userQ (or not)');
+  console.log('addUsersToQueue -> current queues', await getUserQs());
 
   // for testing
-  // await userQ.add('update_liked', { userId: '1295028670' });
+  // await userQ.add('update_user', { userId: '1295028670' });
   // return;
 
+  const users = await getAllUsersId();
+  console.log('addUsersToQueue -> users..', users, users.length);
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
   for (const userId of users) {
     await userQ.add(
-      userId,
+      'update_user',
       { userId: userId },
       {
         backoff: {
@@ -331,11 +135,11 @@ export const addUsersToQueue = async () => {
       data: {
         userId,
       },
-      name: 'update_liked',
+      name: 'update_user',
     })),
   );
 
-  console.debug(
+  console.log(
     'addUsersToQueue -> non repeateable jobs created (only at startup):',
     await userQ.getJobCounts(),
   );
@@ -347,8 +151,8 @@ export const addUsersToQueue = async () => {
   //   longScriptQ.add('long-script', null);
   // }
 
-  console.debug('addUsersToQueue -> done');
-  global.__didRegisterLikedQ = true;
+  console.log('addUsersToQueue -> done');
+  global.__didRegisterUserQ = true;
 };
 
 // ------------------------------------------------------------- SCRIPTS
@@ -384,9 +188,9 @@ export const addMissingTracks = async () => {
     );
   `;
 
-  console.debug('addMissingTracks -> missing tracks', missingLiked.length);
-  console.debug('addMissingTracks -> missing recent', missingRecent.length);
-  console.debug('addMissingTracks -> missing queue', missingQueues.length);
+  console.log('addMissingTracks -> missing tracks', missingLiked.length);
+  console.log('addMissingTracks -> missing recent', missingRecent.length);
+  console.log('addMissingTracks -> missing queue', missingQueues.length);
 
   const deleteRows = async (table: string, ids: string[]) => {
     const trackIds = [...new Set(ids)];
@@ -428,7 +232,7 @@ export const addMissingTracks = async () => {
   //       where: { id: missing.trackId },
   //     });
   //     if (track) {
-  //       console.debug('addMissingTracks -> track exists; connecting');
+  //       console.log('addMissingTracks -> track exists; connecting');
   //       await prisma.recentSongs.update({
   //         data: { track: { connect: { id: track.id } } },
   //         where: { id: missing.id },
@@ -450,7 +254,7 @@ export const addMissingTracks = async () => {
 
   // const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
   // const trackIds = [...new Set(trackIdsDuplicate)];
-  // console.debug('addMissingTracks -> trackIds', trackIds.length);
+  // console.log('addMissingTracks -> trackIds', trackIds.length);
 
   // const pages = [];
 
@@ -458,9 +262,9 @@ export const addMissingTracks = async () => {
   // pages.push(trackIds.slice(i, i + 50));
   // }
 
-  // console.debug('addMissingTracks -> pages', pages.length);
+  // console.log('addMissingTracks -> pages', pages.length);
   // for (const page of pages) {
-  // console.debug('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
+  // console.log('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
 
   // ⚠️ don't run on development
   // @todo add fn to delete missing tracks from dev db
@@ -468,21 +272,21 @@ export const addMissingTracks = async () => {
   //   body: { tracks },
   // } = await spotify.getTracks(page);
   // try {
-  //   console.debug('addMissingTracks -> retrieved spotify; tracks', tracks.length);
+  //   console.log('addMissingTracks -> retrieved spotify; tracks', tracks.length);
   //   for (const track of tracks) {
   //     const trackDb = createTrackModel(track);
 
   //     const instances = await prisma.recentSongs.findMany({
   //       where: { trackId: track.id },
   //     });
-  //     console.debug(
+  //     console.log(
   //       'addMissingTracks -> likedsongs without relation',
   //       instances.length,
   //       track.name,
   //     );
 
   //     for (const instance of instances) {
-  //       console.debug('addMissingTracks -> loop over instance', instance.userId);
+  //       console.log('addMissingTracks -> loop over instance', instance.userId);
 
   //       await prisma.recentSongs.update({
   //         data: {
@@ -494,13 +298,13 @@ export const addMissingTracks = async () => {
   //       });
   //       continue;
   //     }
-  //     console.debug('addMissingTracks -> track done', track.name);
+  //     console.log('addMissingTracks -> track done', track.name);
   //   }
   // } catch (e) {
-  //   console.debug('addMissingTracks -> error', e);
+  //   console.log('addMissingTracks -> error', e);
   // }
-  // console.debug('addMissingTracks -> page done');
+  // console.log('addMissingTracks -> page done');
   // }
 
-  console.debug('addMissingTracks -> done');
+  console.log('addMissingTracks -> done');
 };
