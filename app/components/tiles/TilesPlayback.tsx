@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Stack, Switch } from '@chakra-ui/react';
 
-import useCurrentUser from '~/hooks/useCurrentUser';
+import { useRequiredCurrentUser } from '~/hooks/useCurrentUser';
 import useFollowing from '~/hooks/useFollowing';
 import type { TrackWithInfo } from '~/lib/types/types';
 
@@ -11,7 +11,7 @@ import Tiles from './Tiles';
 
 const TilesPlayback = () => {
   const users = useFollowing();
-  const currentUser = useCurrentUser();
+  const currentUser = useRequiredCurrentUser();
   const [tile, setTile] = useState(false);
 
   const active = users.filter((user) => user.playback);

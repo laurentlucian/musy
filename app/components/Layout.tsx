@@ -24,8 +24,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
   );
   const { bgGradient, gradient, profileBg } = useThemeBg();
 
-  if (!currentUser) return <>{children}</>;
-
   return (
     <Flex
       justify="center"
@@ -38,7 +36,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       h="max-content"
     >
       <Flex as="section" direction="column" h="max-content" w="100%" align="center">
-        {isSmallScreen ? <MobileHeader /> : <Nav />}
+        {currentUser ? isSmallScreen ? <MobileHeader /> : <Nav /> : null}
         <Box
           w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
           py="10px"
@@ -50,7 +48,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         >
           {children}
         </Box>
-        <MobileNavBar />
+        {currentUser && <MobileNavBar />}
       </Flex>
     </Flex>
   );

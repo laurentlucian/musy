@@ -16,7 +16,7 @@ import {
 import { withEmotionCache } from '@emotion/react';
 import { AnimatePresence } from 'framer-motion';
 import { Forbidden } from 'iconsax-react';
-import { redirect, typedjson, useTypedLoaderData, useTypedRouteLoaderData } from 'remix-typedjson';
+import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { theme } from '~/lib/theme';
@@ -48,7 +48,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   defaultShouldRevalidate,
   nextUrl,
 }) => {
-  if (nextUrl.search || nextUrl.pathname !== '/home') return false;
+  // if (nextUrl.search || nextUrl.pathname !== '/home' ) return false;
 
   return defaultShouldRevalidate;
 };

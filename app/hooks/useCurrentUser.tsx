@@ -5,12 +5,19 @@ import type { loader } from '~/root';
 const useCurrentUser = () => {
   const currentUser = useTypedRouteLoaderData<typeof loader>('root')?.currentUser;
 
-  if (!currentUser) throw new Error('No current user'); // remove when we open up for unauthenticed users
+  return currentUser;
+};
+
+export const useRequiredCurrentUser = () => {
+  const currentUser = useCurrentUser();
+
+  if (!currentUser) throw new Error('No current user');
+
   return currentUser;
 };
 
 export const useCurrentUserId = () => {
-  return useCurrentUser().userId;
+  return useCurrentUser()?.userId;
 };
 
 export default useCurrentUser;
