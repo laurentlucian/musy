@@ -125,9 +125,9 @@ export const removePlaybackJob = async (userId: string) => {
   const allJobs = await playbackQ.getJobs(['waiting', 'delayed']);
   const jobs = allJobs.filter((j) => j.data.userId === userId); // get generated jobId through job.data being the userId
 
-  debugCreatorQ('userQ -> playbackCreatorQ -> jobs', jobs.length);
+  debugCreatorQ('playbackQ jobs', jobs.length);
   for (const job of jobs) {
-    debugCreatorQ('userQ -> playbackCreatorQ -> removing', job.id);
+    debugCreatorQ('playbackQ removing', job.id);
     await job.remove();
   }
 };
@@ -137,9 +137,22 @@ export const clearDuplicatePlaybackJobs = async () => {
   debugCreatorQ('playbackQ active', playbackQs);
 
   if (!playbackQs.length) return;
-  // if there are more than one job for a single user Id then call removePlaybackJob
-  // and add a new job with the delay of the last job
-  const playbackQsMap = new Map<string, string>();
+
+  const hasMoreThanOneUserIdJob = playbackQs.some(([, data]) => {
+    const userId = data?.userId;
+    if (!userId) return false;
+
+    return playbackQs.some(([, data]) => {
+      const userId2 = data?.userId;
+      if (!userId2) return false;
+      return userId === userId2;
+    });
+  });
+  if (!hasMoreThanOneUserIdJob) return;
+  debugCreatorQ('has duplicate playbackQs');
+
+  // Remove duplicate jobs
+  const playbackQsMap = new Map<string, [string, any, number]>();
   for (const [name, data, delay] of playbackQs) {
     const userId = data?.userId;
     if (!userId) continue;
@@ -149,10 +162,14 @@ export const clearDuplicatePlaybackJobs = async () => {
       debugCreatorQ('removing existing job', existing);
       await removePlaybackJob(userId);
     }
-    playbackQsMap.set(userId, name);
-    debugCreatorQ('adding new job', userId, delay);
+    playbackQsMap.set(userId, [name, data, delay]);
+  }
 
+  // Add new jobs with the correct delay
+  for (const [userId, [name, data, delay]] of playbackQsMap.entries()) {
+    debugCreatorQ('adding new job', userId, delay);
     await playbackQ.add(name, data, { delay, removeOnComplete: true, removeOnFail: true });
   }
-  debugCreatorQ('playbackQ active after clearing', playbackQs);
+
+  debugCreatorQ('playbackQ active after clearing', await playbackQ.getDelayed());
 };
