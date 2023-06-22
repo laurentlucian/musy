@@ -8,7 +8,7 @@ import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 import { playbackQ } from './playback.server';
-import { playbackCreatorQ } from './playback/creator.server';
+import { createPlaybackQ, playbackCreator } from './playback/creator.server';
 import { followQ } from './user/follow.server';
 import { likedQ } from './user/liked.server';
 import { profileQ } from './user/profile.server';
@@ -51,17 +51,9 @@ export const userQ = Queue<{ userId: string }>(
 
     debugUserQ('completed');
 
-    await playbackCreatorQ
-      .add('playback_creator', null, {
-        repeat: { every: minutesToMs(0.5), jobId: 'playback_creator' },
-      })
+    await createPlaybackQ()
       .catch(debugUserQ)
       .then(() => debugUserQ('playback_creator added'));
-
-    const creatorQs = (await playbackCreatorQ.getDelayed()).map(
-      (j) => [j.name, j.data, j.delay] as const,
-    );
-    debugUserQ('playbackCreatorQs', creatorQs);
   },
   {
     limiter: {
@@ -73,7 +65,7 @@ export const userQ = Queue<{ userId: string }>(
 
 const debugStartUp = debugUserQ.extend('startUp');
 
-const userQStartup = async () => {
+export const userQStartup = async () => {
   debugStartUp('starting...');
 
   const timestampToDate = (timestamp: number) =>
@@ -83,6 +75,18 @@ const userQStartup = async () => {
       second: 'numeric',
     });
 
+  //get and log all jobs
+  const dashboard = await Promise.all([
+    userQ.getJobCounts(),
+    likedQ.getJobCounts(),
+    recentQ.getJobCounts(),
+    followQ.getJobCounts(),
+    profileQ.getJobCounts(),
+  ]);
+  debugStartUp('userQ overview: ', dashboard);
+
+  const users = await getAllUsersId();
+
   const getUserQs = async () =>
     (await userQ.getRepeatableJobs()).map((j) => [timestampToDate(j.next), j.key]);
 
@@ -90,8 +94,8 @@ const userQStartup = async () => {
     (await playbackQ.getDelayed()).map((j) => [timestampToDate(j.timestamp), j.name, j.data]);
 
   const userQs = await getUserQs();
-  const userQexists = userQs.length > 0;
-  if (userQexists) {
+  const hasSameUsersLength = userQs.length === users.length;
+  if (hasSameUsersLength) {
     debugStartUp('already registered, repeatable userQ:', userQs);
 
     debugStartUp('playbackQs', await getPlaybackQs());
@@ -99,24 +103,18 @@ const userQStartup = async () => {
     return;
   }
 
-  // await prisma.playback.deleteMany();
-  // delete all playbackQ jobs
-  // await playbackQ.pause();
-  // // await playbackQ.obliterate({ force: true });
+  debugStartUp('not registered or not the same length of users', userQs, hasSameUsersLength);
 
-  debugStartUp('not registered', userQs);
-  debugStartUp('playbackQs', await getPlaybackQs());
   // debugStartUp('obliterated playbackQ');
 
   await userQ.pause().catch(debugStartUp); // pause all jobs before obliterating
-  await userQ.obliterate({ force: true }).catch(debugStartUp); // https://github.com/taskforcesh/bullmq/issues/430
-  debugStartUp('obliterated userQ (or not); userQs now', await getUserQs());
+  await userQ.obliterate({ force: true }).catch(() => debugStartUp('obliterated userQ')); // https://github.com/taskforcesh/bullmq/issues/430
+  debugStartUp('obliterated userQ; userQs now', await getUserQs());
 
   // for testing
   // await userQ.add('update_user', { userId: '1295028670' });
   // return;
 
-  const users = await getAllUsersId();
   debugStartUp(`adding ${users.length} users to userQ..`);
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
@@ -159,10 +157,14 @@ const userQStartup = async () => {
   //   longScriptQ.add('long-script', null);
   // }
 
+  // await prisma.playback.deleteMany();
+  // delete all playbackQ jobs
+  // await playbackQ.pause();
+  // // await playbackQ.obliterate({ force: true });
+  debugStartUp('playbackQs', await getPlaybackQs());
+
   debugStartUp('completed');
 };
-
-void userQStartup();
 
 // ------------------------------------------------------------- SCRIPTS
 
