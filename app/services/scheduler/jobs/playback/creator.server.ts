@@ -1,9 +1,8 @@
-import { minutesToMs, msToString, notNull } from '~/lib/utils';
+import { msToString, notNull } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getAllUsersId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-import { Queue } from '../../queue.server';
 import { debugCreatorQ, playbackQ } from '../playback.server';
 import {
   clearDuplicatePlaybackJobs,
@@ -129,16 +128,3 @@ export const createPlaybackQ = async () => {
   }
   debugCreatorQ('completed');
 };
-
-export const playbackCreator = Queue<null>(
-  'playback_creator',
-  async () => {
-    return;
-  },
-  {
-    limiter: {
-      duration: minutesToMs(0.5),
-      max: 1,
-    },
-  },
-);
