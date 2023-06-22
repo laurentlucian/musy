@@ -138,37 +138,22 @@ export const clearDuplicatePlaybackJobs = async () => {
 
   if (!playbackQs.length) return;
 
-  const hasMoreThanOneUserIdJob = playbackQs.some(([, data]) => {
-    const userId = data?.userId;
-    if (!userId) return false;
+  const playbackQIds = playbackQs.map(([, { userId }]) => userId);
+  const hasDuplicateIds = new Set(playbackQIds).size !== playbackQIds.length;
 
-    return playbackQs.some(([, data]) => {
-      const userId2 = data?.userId;
-      if (!userId2) return false;
-      return userId === userId2;
-    });
-  });
-  if (!hasMoreThanOneUserIdJob) return;
+  if (!hasDuplicateIds) return;
   debugCreatorQ('has duplicate playbackQs');
 
-  // Remove duplicate jobs
-  const playbackQsMap = new Map<string, [string, any, number]>();
+  const playbackQsMap = new Map<string, string>();
   for (const [name, data, delay] of playbackQs) {
     const userId = data?.userId;
     if (!userId) continue;
-
-    const existing = playbackQsMap.get(userId);
-    if (existing) {
-      debugCreatorQ('removing existing job', existing);
-      await removePlaybackJob(userId);
-    }
-    playbackQsMap.set(userId, [name, data, delay]);
-  }
-
-  // Add new jobs with the correct delay
-  for (const [userId, [name, data, delay]] of playbackQsMap.entries()) {
-    debugCreatorQ('adding new job', userId, delay);
+    const exists = playbackQsMap.get(userId);
+    if (exists) return;
+    playbackQsMap.set(userId, name);
+    await removePlaybackJob(userId);
     await playbackQ.add(name, data, { delay, removeOnComplete: true, removeOnFail: true });
+    debugCreatorQ('added new job', userId, delay);
   }
 
   debugCreatorQ('playbackQ active after clearing', await playbackQ.getDelayed());
