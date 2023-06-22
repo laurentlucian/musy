@@ -42,13 +42,26 @@ export const userQ = Queue<{ userId: string }>(
       return;
     }
 
-    await recentQ.add('update_recent', { userId });
-    await likedQ.add('update_liked', { userId });
-    await followQ.add('update_follow', { userId });
-    await profileQ.add('update_profile', { userId });
+    await Promise.all([
+      recentQ.add('update_recent', { userId }),
+      likedQ.add('update_liked', { userId }),
+      followQ.add('update_follow', { userId }),
+      profileQ.add('update_profile', { userId }),
+    ]);
+
     debugUserQ('completed');
 
-    await playbackCreatorQ.add('playback_creator', null);
+    await playbackCreatorQ
+      .add('playback_creator', null, {
+        repeat: { every: minutesToMs(0.5), jobId: 'playback_creator' },
+      })
+      .catch(debugUserQ)
+      .then(() => debugUserQ('playback_creator added'));
+
+    const creatorQs = (await playbackCreatorQ.getDelayed()).map(
+      (j) => [j.name, j.data, j.delay] as const,
+    );
+    debugUserQ('playbackCreatorQs', creatorQs);
   },
   {
     limiter: {
