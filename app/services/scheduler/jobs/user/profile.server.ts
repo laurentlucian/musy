@@ -2,15 +2,16 @@ import { updateUserImage, updateUserName } from '~/services/prisma/users.server'
 import { getSpotifyClient } from '~/services/spotify.server';
 
 import { Queue } from '../../queue.server';
+import { debugProfileQ } from '../user.server';
 
 export const profileQ = Queue<{ userId: string }>('update_profile', async (job) => {
   const { userId } = job.data;
-  console.log('userQ -> profileQ -> starting...', userId);
+  debugProfileQ('starting...');
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    console.log('userQ -> profileQ -> no spotify client');
+    debugProfileQ('no spotify client');
     return;
   }
 
@@ -26,5 +27,5 @@ export const profileQ = Queue<{ userId: string }>('update_profile', async (job) 
     await updateUserName(userId, name);
   }
 
-  console.log('userQ -> profileQ -> completed');
+  debugProfileQ('completed');
 });

@@ -5,19 +5,20 @@ import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 import { Queue } from '../../queue.server';
+import { debugRecentQ } from '../user.server';
 
 export const recentQ = Queue<{ userId: string }>('update_recent', async (job) => {
   const { userId } = job.data;
-  console.log('userQ -> recentQ -> starting...', userId);
+  debugRecentQ('starting...');
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    console.log('userQ -> recentQ -> no spotify client');
+    debugRecentQ('no spotify client');
     return;
   }
 
-  console.log('userQ -> recentQ -> adding recent tracks to db');
+  debugRecentQ('adding recent tracks to db');
   const {
     body: { items: recent },
   } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });

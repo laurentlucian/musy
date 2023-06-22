@@ -1,6 +1,7 @@
+import debug from 'debug';
 import invariant from 'tiny-invariant';
 
-import { isProduction, minutesToMs } from '~/lib/utils';
+import { minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getAllUsersId } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
@@ -13,11 +14,17 @@ import { likedQ } from './user/liked.server';
 import { profileQ } from './user/profile.server';
 import { recentQ } from './user/recent.server';
 
+const debugUserQ = debug('userQ');
+export const debugLikedQ = debugUserQ.extend('likedQ');
+export const debugFollowQ = debugUserQ.extend('followQ');
+export const debugProfileQ = debugUserQ.extend('profileQ');
+export const debugRecentQ = debugUserQ.extend('recentQ');
+
 export const userQ = Queue<{ userId: string }>(
   'update_user',
   async (job) => {
     const { userId } = job.data;
-    console.log('userQ -> pending job starting...', userId);
+    debugUserQ('pending job starting...', userId);
 
     const profile = await prisma.user.findUnique({
       include: { user: true },
@@ -27,7 +34,7 @@ export const userQ = Queue<{ userId: string }>(
     const { spotify } = await getSpotifyClient(userId);
 
     if (!profile || !profile.user || !spotify) {
-      console.log(`userQ ${userId} removed -> user not found`);
+      debugUserQ(`userQ ${userId} removed -> user not found`);
       const jobKey = job.repeatJobKey;
       if (jobKey) {
         await userQ.removeRepeatableByKey(jobKey);
@@ -39,7 +46,7 @@ export const userQ = Queue<{ userId: string }>(
     await likedQ.add('update_liked', { userId });
     await followQ.add('update_follow', { userId });
     await profileQ.add('update_profile', { userId });
-    console.log('userQ -> completed');
+    debugUserQ('completed');
 
     await playbackCreatorQ.add('playback_creator', null);
   },
@@ -51,35 +58,30 @@ export const userQ = Queue<{ userId: string }>(
   },
 );
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __didRegisterUserQ: boolean | undefined;
-}
+const debugStartUp = debugUserQ.extend('startUp');
 
-export const addUsersToQueue = async () => {
-  console.log('addUsersToQueue -> starting...');
-  // To ensure this function only runs once per environment,
-  // we use a global variable to keep track if it has run
+const userQStartup = async () => {
+  debugStartUp('starting...');
+
+  const timestampToDate = (timestamp: number) =>
+    new Date(timestamp).toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
+
   const getUserQs = async () =>
-    (await userQ.getRepeatableJobs()).map((j) => [
-      j.name,
+    (await userQ.getRepeatableJobs()).map((j) => [timestampToDate(j.next), j.key]);
 
-      j.next,
-      new Date(j.next).toLocaleString('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      }),
-    ]);
-  console.log('global.__didRegisterUserQ', global.__didRegisterUserQ);
-  if (global.__didRegisterUserQ) {
-    // and stop if it did.
+  const getPlaybackQs = async () =>
+    (await playbackQ.getDelayed()).map((j) => [timestampToDate(j.timestamp), j.name, j.data]);
 
-    console.log('addUsersToQueue -> already registered, repeating jobs:', await getUserQs());
-    console.log(
-      'addUsersToQueue -> playbackQ',
-      (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
-    );
+  const userQs = await getUserQs();
+  const userQexists = userQs.length > 0;
+  if (userQexists) {
+    debugStartUp('already registered, repeatable userQ:', userQs);
+
+    debugStartUp('playbackQs', await getPlaybackQs());
 
     return;
   }
@@ -88,27 +90,21 @@ export const addUsersToQueue = async () => {
   // delete all playbackQ jobs
   // await playbackQ.pause();
   // // await playbackQ.obliterate({ force: true });
-  console.log(
-    'addUsersToQueue -> playbackQ',
-    (await playbackQ.getDelayed()).map((j) => [j.name, j.data]),
-  );
-  // console.log('addUsersToQueue -> obliterated playbackQ');
 
-  // needed this once because forgot to save duration_ms in db
-  // await addDurationToRecent();
-  // console.log('addUsersToQueue -> added all durations to recent');
+  debugStartUp('not registered', userQs);
+  debugStartUp('playbackQs', await getPlaybackQs());
+  // debugStartUp('obliterated playbackQ');
 
-  await userQ.pause().catch(console.log); // pause all jobs before obliterating
-  await userQ.obliterate({ force: true }).catch(console.log); // https://github.com/taskforcesh/bullmq/issues/430
-  console.log('addUsersToQueue -> obliterated userQ (or not)');
-  console.log('addUsersToQueue -> current queues', await getUserQs());
+  await userQ.pause().catch(debugStartUp); // pause all jobs before obliterating
+  await userQ.obliterate({ force: true }).catch(debugStartUp); // https://github.com/taskforcesh/bullmq/issues/430
+  debugStartUp('obliterated userQ (or not); userQs now', await getUserQs());
 
   // for testing
   // await userQ.add('update_user', { userId: '1295028670' });
   // return;
 
   const users = await getAllUsersId();
-  console.log('addUsersToQueue -> users..', users, users.length);
+  debugStartUp(`adding ${users.length} users to userQ..`);
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
   for (const userId of users) {
@@ -124,10 +120,12 @@ export const addUsersToQueue = async () => {
         jobId: userId,
         removeOnComplete: true,
         removeOnFail: true,
-        repeat: { every: minutesToMs(isProduction ? 30 : 60) },
+        repeat: { every: minutesToMs(30) },
       },
     );
   }
+
+  debugStartUp('repeatable jobs created:', await userQ.getJobCounts());
 
   // repeateableJobs are started with delay, so run these manually at startup
   await userQ.addBulk(
@@ -139,10 +137,7 @@ export const addUsersToQueue = async () => {
     })),
   );
 
-  console.log(
-    'addUsersToQueue -> non repeateable jobs created (only at startup):',
-    await userQ.getJobCounts(),
-  );
+  debugStartUp('immediate jobs created', await userQ.getJobCounts());
 
   // if (!isProduction) {
   //   await addMissingTracks();
@@ -151,9 +146,10 @@ export const addUsersToQueue = async () => {
   //   longScriptQ.add('long-script', null);
   // }
 
-  console.log('addUsersToQueue -> done');
-  global.__didRegisterUserQ = true;
+  debugStartUp('completed');
 };
+
+void userQStartup();
 
 // ------------------------------------------------------------- SCRIPTS
 
@@ -188,9 +184,9 @@ export const addMissingTracks = async () => {
     );
   `;
 
-  console.log('addMissingTracks -> missing tracks', missingLiked.length);
-  console.log('addMissingTracks -> missing recent', missingRecent.length);
-  console.log('addMissingTracks -> missing queue', missingQueues.length);
+  debugUserQ('addMissingTracks -> missing tracks', missingLiked.length);
+  debugUserQ('addMissingTracks -> missing recent', missingRecent.length);
+  debugUserQ('addMissingTracks -> missing queue', missingQueues.length);
 
   const deleteRows = async (table: string, ids: string[]) => {
     const trackIds = [...new Set(ids)];
@@ -232,7 +228,7 @@ export const addMissingTracks = async () => {
   //       where: { id: missing.trackId },
   //     });
   //     if (track) {
-  //       console.log('addMissingTracks -> track exists; connecting');
+  //       debugUserQ('addMissingTracks -> track exists; connecting');
   //       await prisma.recentSongs.update({
   //         data: { track: { connect: { id: track.id } } },
   //         where: { id: missing.id },
@@ -254,7 +250,7 @@ export const addMissingTracks = async () => {
 
   // const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
   // const trackIds = [...new Set(trackIdsDuplicate)];
-  // console.log('addMissingTracks -> trackIds', trackIds.length);
+  // debugUserQ('addMissingTracks -> trackIds', trackIds.length);
 
   // const pages = [];
 
@@ -262,9 +258,9 @@ export const addMissingTracks = async () => {
   // pages.push(trackIds.slice(i, i + 50));
   // }
 
-  // console.log('addMissingTracks -> pages', pages.length);
+  // debugUserQ('addMissingTracks -> pages', pages.length);
   // for (const page of pages) {
-  // console.log('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
+  // debugUserQ('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
 
   // ⚠️ don't run on development
   // @todo add fn to delete missing tracks from dev db
@@ -272,21 +268,21 @@ export const addMissingTracks = async () => {
   //   body: { tracks },
   // } = await spotify.getTracks(page);
   // try {
-  //   console.log('addMissingTracks -> retrieved spotify; tracks', tracks.length);
+  //   debugUserQ('addMissingTracks -> retrieved spotify; tracks', tracks.length);
   //   for (const track of tracks) {
   //     const trackDb = createTrackModel(track);
 
   //     const instances = await prisma.recentSongs.findMany({
   //       where: { trackId: track.id },
   //     });
-  //     console.log(
+  //     debugUserQ(
   //       'addMissingTracks -> likedsongs without relation',
   //       instances.length,
   //       track.name,
   //     );
 
   //     for (const instance of instances) {
-  //       console.log('addMissingTracks -> loop over instance', instance.userId);
+  //       debugUserQ('addMissingTracks -> loop over instance', instance.userId);
 
   //       await prisma.recentSongs.update({
   //         data: {
@@ -298,13 +294,13 @@ export const addMissingTracks = async () => {
   //       });
   //       continue;
   //     }
-  //     console.log('addMissingTracks -> track done', track.name);
+  //     debugUserQ('addMissingTracks -> track done', track.name);
   //   }
   // } catch (e) {
-  //   console.log('addMissingTracks -> error', e);
+  //   debugUserQ('addMissingTracks -> error', e);
   // }
-  // console.log('addMissingTracks -> page done');
+  // debugUserQ('addMissingTracks -> page done');
   // }
 
-  console.log('addMissingTracks -> done');
+  debugUserQ('addMissingTracks -> done');
 };

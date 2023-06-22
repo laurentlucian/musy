@@ -7,15 +7,16 @@ import { getSpotifyClient } from '~/services/spotify.server';
 
 import { Queue } from '../../queue.server';
 import { libraryQ } from '../scraper.server';
+import { debugLikedQ } from '../user.server';
 
 export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
   const { userId } = job.data;
-  console.log('userQ -> likedQ -> starting...', userId);
+  debugLikedQ('starting...');
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    console.log('userQ -> likedQ -> no spotify client');
+    debugLikedQ('no spotify client');
     return;
   }
   const {
@@ -56,7 +57,7 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
       },
     });
   }
-  console.log('userQ -> likedQ -> added liked tracks');
+  debugLikedQ('added liked tracks');
 
   const dbTotal = await prisma.likedSongs.count({
     where: { userId },
@@ -73,7 +74,7 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
 
     const limit = 50;
     const pages = Math.ceil(total / limit);
-    console.log('userQ -> likedQ -> total > dbTotal', total, dbTotal, pages);
+    debugLikedQ('total > dbTotal', total, dbTotal, pages);
     const {
       body: {
         items: [lastTrack],
@@ -81,7 +82,7 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
     } = await spotify.getMySavedTracks({ limit: 1, offset: total - 1 });
     // note: if user disliked songs after we've added all to db, this would've run every time job repeats
     // if last track exists in our db, then don't scrape all pages
-    console.log('userQ -> likedQ -> lastTrack', lastTrack.track.name);
+    debugLikedQ('lastTrack', lastTrack.track.name);
     const exists = await prisma.likedSongs.findUnique({
       where: {
         trackId_userId: {
@@ -90,11 +91,11 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
         },
       },
     });
-    console.log('userQ -> likedQ -> last track exists?', exists);
+    debugLikedQ('last track exists?', exists);
 
     if (!exists) {
-      console.log(
-        'userQ -> likedQ -> adding all user liked tracks to db',
+      debugLikedQ(
+        'adding all user liked tracks to db',
         'pages',
         pages,
         'total',
@@ -114,13 +115,8 @@ export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
         },
       );
     } else {
-      console.log(
-        'userQ -> likedQ -> all liked tracks already in db total:',
-        total,
-        'dbTotal:',
-        dbTotal,
-      );
+      debugLikedQ('all liked tracks already in db total:', total, 'dbTotal:', dbTotal);
     }
   }
-  console.log('userQ -> likedQ -> completed');
+  debugLikedQ('completed');
 });
