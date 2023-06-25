@@ -40,7 +40,7 @@ model Profile {
   party       Party?
   queue       Queue[]
   liked       LikedSongs[]
-  // received
+  //
   recent      RecentSongs[]
   recommended Recommended[]
   //
@@ -59,6 +59,7 @@ model Profile {
   following   Follow[]          @relation("follower")
   followers   Follow[]          @relation("following")
   playbacks   PlaybackHistory[]
+  playlists   Playlist[]
 }
 
 model Follow {
@@ -247,7 +248,7 @@ model Theme {
 }
 
 model Track {
-  id          String        @id @unique
+  id          String          @id @unique
   uri         String
   name        String
   image       String
@@ -264,8 +265,9 @@ model Track {
   liked       LikedSongs[]
   recent      RecentSongs[]
   playback    Playback[]
-  Settings    Settings[]
+  settings    Settings[]
   recommended Recommended[]
+  playlists   PlaylistTrack[]
 }
 
 model Playback {
@@ -330,4 +332,27 @@ model Sessions {
   user      Profile       @relation(fields: [userId], references: [userId])
   userId    String
   songs     RecentSongs[]
+}
+
+model Playlist {
+  id          String          @id @unique
+  name        String
+  description String?
+  uri         String
+  image       String
+  user        Profile         @relation(fields: [userId], references: [userId])
+  userId      String
+  tracks      PlaylistTrack[]
+}
+
+model PlaylistTrack {
+  addedAt    DateTime
+  //
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  playlistId String
+  //
+  track      Track    @relation(fields: [trackId], references: [id])
+  trackId    String
+
+  @@id([playlistId, trackId])
 }
