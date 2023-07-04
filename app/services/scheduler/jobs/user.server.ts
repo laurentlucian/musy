@@ -8,15 +8,17 @@ import { getSpotifyClient } from '~/services/spotify.server';
 import { createPlaybackQ } from './playback/creator.server';
 import { followQ } from './user/follow.server';
 import { likedQ } from './user/liked.server';
+import { playlistQ } from './user/playlist.server';
 import { profileQ } from './user/profile.server';
 import { recentQ } from './user/recent.server';
 
 const debugUserQ = debug('userQ');
+export const debugStartUp = debugUserQ.extend('startUp');
 export const debugLikedQ = debugUserQ.extend('likedQ');
 export const debugFollowQ = debugUserQ.extend('followQ');
 export const debugProfileQ = debugUserQ.extend('profileQ');
 export const debugRecentQ = debugUserQ.extend('recentQ');
-export const debugStartUp = debugUserQ.extend('startUp');
+export const debugPlaylistQ = debugUserQ.extend('playlistQ');
 
 export const userQ = Queue<{ userId: string }>(
   'update_user',
@@ -45,6 +47,7 @@ export const userQ = Queue<{ userId: string }>(
       likedQ.add('update_liked', { userId }),
       followQ.add('update_follow', { userId }),
       profileQ.add('update_profile', { userId }),
+      playlistQ.add('update_playlist', { userId }),
     ]);
 
     debugUserQ('completed');
