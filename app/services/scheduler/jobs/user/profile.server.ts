@@ -19,7 +19,7 @@ export const profileQ = Queue<{ userId: string }>('update_profile', async (job) 
 
   const pfp = spotifyProfile?.body.images;
   if (pfp) {
-    await updateUserImage(userId, pfp[0].url);
+    await updateUserImage(userId, pfp[1]?.url || pfp[0]?.url);
   }
 
   const name = spotifyProfile?.body.display_name;
