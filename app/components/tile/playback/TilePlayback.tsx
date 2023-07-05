@@ -37,7 +37,7 @@ const TilePlayback = ({ index, tile, user }: TilesPlaybackProps) => {
     <TilePlaybackTracksImage tracks={[]} w="200px" />
   );
 
-  const info = playback ? <TileTrackInfo track={playback.track} /> : null;
+  const info = playback ? <TileTrackInfo track={playback.track} maxW="200px" /> : null;
 
   return (
     <Stack key={index} flexShrink={0}>

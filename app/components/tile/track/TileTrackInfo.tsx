@@ -37,7 +37,13 @@ const TileTrackInfo = ({
             {track.artist}
           </ChakraLink>
           <Box opacity={0.6}>•</Box>
-          <ChakraLink href={track.albumUri} fontSize={['9px', '10px']} opacity={0.6} noOfLines={1}>
+          <ChakraLink
+            href={track.albumUri}
+            fontSize={['9px', '10px']}
+            opacity={0.6}
+            noOfLines={1}
+            wordBreak="break-all"
+          >
             {track.albumName}
           </ChakraLink>
         </HStack>

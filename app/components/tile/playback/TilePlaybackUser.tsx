@@ -76,7 +76,13 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
             })}
           </Text>
         )}
-        <Text noOfLines={1} fontSize={['9px', '12px']} maxW={['90px', '110px']} color="white">
+        <Text
+          noOfLines={1}
+          fontSize={['9px', '12px']}
+          maxW={['90px', '110px']}
+          color="white"
+          wordBreak="break-all"
+        >
           {user.playback?.track.artist ?? timeSince(user.playbacks[0]?.endedAt)}
         </Text>
       </Stack>
