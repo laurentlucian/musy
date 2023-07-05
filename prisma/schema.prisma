@@ -387,4 +387,6 @@ model Feed {
   playback  PlaybackHistory?
   //
   // playlist        PlaylistTrack? 
+
+  @@index([createdAt])
 }
