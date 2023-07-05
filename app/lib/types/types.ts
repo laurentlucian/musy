@@ -1,21 +1,12 @@
 import type { PlaybackHistory, Prisma, Profile, Track } from '@prisma/client';
 
+import type { getFeed } from '~/services/prisma/tracks.server';
 import type { getAllUsers } from '~/services/prisma/users.server';
 
 export type { Track } from '@prisma/client';
-export type Activity = {
-  action: string;
-  createdAt: Date;
-  id?: number;
-  likedBy?: Profile[];
-  owner?: { user: ProfileWithInfo | null };
-  playback?: PlaybackHistory;
-  track?: TrackWithInfo;
-  trackId?: string;
-  tracks?: TrackWithInfo[];
-  user: ProfileWithInfo;
-  userId: string;
-};
+
+export type Activity = Prisma.PromiseReturnType<typeof getFeed>[number];
+
 export interface PlaylistTrack {
   description: string | null;
   image: string;

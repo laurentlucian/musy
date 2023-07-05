@@ -60,6 +60,7 @@ model Profile {
   followers   Follow[]          @relation("following")
   playbacks   PlaybackHistory[]
   playlists   Playlist[]
+  feed        Feed[]
 }
 
 model Follow {
@@ -145,6 +146,9 @@ model Queue {
   user      Profile? @relation(fields: [userId], references: [userId])
   userId    String?
   action    String   @default("add")
+  //
+  feed      Feed?    @relation(fields: [feedId], references: [id])
+  feedId    Int?     @unique
 }
 
 model LikedSongs {
@@ -157,6 +161,8 @@ model LikedSongs {
   user      Profile  @relation(fields: [userId], references: [userId])
   userId    String
   action    String   @default("liked")
+  feed      Feed?    @relation(fields: [feedId], references: [id])
+  feedId    Int?     @unique
 
   @@unique([trackId, userId])
 }
@@ -174,6 +180,9 @@ model Recommended {
   //
   caption   String?
   action    String   @default("recommend")
+  //
+  feed      Feed?    @relation(fields: [feedId], references: [id])
+  feedId    Int?     @unique
 }
 
 model Settings {
@@ -292,6 +301,9 @@ model PlaybackHistory {
   //
   user      Profile  @relation(fields: [userId], references: [userId])
   userId    String
+  //
+  feed      Feed?    @relation(fields: [feedId], references: [id])
+  feedId    Int?     @unique
 }
 
 model RecentSongs {
@@ -346,6 +358,7 @@ model Playlist {
 }
 
 model PlaylistTrack {
+  // id         Int      @id @default(autoincrement())
   addedAt    DateTime
   //
   playlist   Playlist @relation(fields: [playlistId], references: [id])
@@ -353,6 +366,25 @@ model PlaylistTrack {
   //
   track      Track    @relation(fields: [trackId], references: [id])
   trackId    String
+  // feed       Feed?
 
-  @@id([playlistId, trackId])
+  @@unique([playlistId, trackId])
+}
+
+model Feed {
+  id        Int              @id @default(autoincrement())
+  createdAt DateTime
+  //
+  user      Profile          @relation(fields: [userId], references: [userId])
+  userId    String
+  //
+  recommend Recommended?
+  //
+  queue     Queue?
+  //
+  liked     LikedSongs?
+  //
+  playback  PlaybackHistory?
+  //
+  // playlist        PlaylistTrack? 
 }

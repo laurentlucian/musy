@@ -1,26 +1,29 @@
+import debug from 'debug';
 import invariant from 'tiny-invariant';
 
-import { isProduction, minutesToMs } from '~/lib/utils';
+import { minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getAllUsersId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-import { playbackQ } from '../playback.server';
-import { debugStartUp, userQ } from '../user.server';
-import { followQ } from './follow.server';
-import { likedQ } from './liked.server';
-import { profileQ } from './profile.server';
-import { recentQ } from './recent.server';
+import { playbackQ } from '../jobs/playback.server';
+import { userQ } from '../jobs/user.server';
+import { followQ } from '../jobs/user/follow.server';
+import { likedQ } from '../jobs/user/liked.server';
+import { profileQ } from '../jobs/user/profile.server';
+import { recentQ } from '../jobs/user/recent.server';
 
-export const userQStartup = async () => {
-  debugStartUp('starting...');
+const debugUserQCreator = debug('userQCreator');
 
-  const timestampToDate = (timestamp: number) =>
-    new Date(timestamp).toLocaleString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-    });
+export const timestampToDate = (timestamp: number) =>
+  new Date(timestamp).toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  });
+
+export const createUserQ = async () => {
+  debugUserQCreator('creating userQ...');
 
   //get and log all jobs
   const dashboard = await Promise.all([
@@ -30,7 +33,7 @@ export const userQStartup = async () => {
     followQ.getJobCounts(),
     profileQ.getJobCounts(),
   ]);
-  debugStartUp('userQ overview: ', dashboard);
+  debugUserQCreator('userQ overview: ', dashboard);
 
   const users = await getAllUsersId();
 
@@ -43,26 +46,26 @@ export const userQStartup = async () => {
   const userQs = await getUserQs();
   const hasSameUsersLength = userQs.length === users.length;
   if (hasSameUsersLength) {
-    debugStartUp('already registered, repeatable userQ:', userQs);
+    debugUserQCreator('already registered, repeatable userQ:', userQs);
 
-    debugStartUp('playbackQs', await getPlaybackQs());
+    debugUserQCreator('playbackQs', await getPlaybackQs());
 
     return;
   }
 
-  debugStartUp('not registered or not the same length of users', userQs, hasSameUsersLength);
+  debugUserQCreator('not registered or not the same length of users', userQs, hasSameUsersLength);
 
-  // debugStartUp('obliterated playbackQ');
+  // debugUserQCreator('obliterated playbackQ');
 
-  await userQ.pause().catch(debugStartUp); // pause all jobs before obliterating
-  await userQ.obliterate({ force: true }).catch(() => debugStartUp('obliterated userQ')); // https://github.com/taskforcesh/bullmq/issues/430
-  debugStartUp('obliterated userQ; userQs now', await getUserQs());
+  await userQ.pause().catch(debugUserQCreator); // pause all jobs before obliterating
+  await userQ.obliterate({ force: true }).catch(() => debugUserQCreator('obliterated userQ')); // https://github.com/taskforcesh/bullmq/issues/430
+  debugUserQCreator('obliterated userQ; userQs now', await getUserQs());
 
   // for testing
   // await userQ.add('update_user', { userId: '1295028670' });
   // return;
 
-  debugStartUp(`adding ${users.length} users to userQ..`);
+  debugUserQCreator(`adding ${users.length} users to userQ..`);
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
   for (const userId of users) {
@@ -83,7 +86,7 @@ export const userQStartup = async () => {
     );
   }
 
-  debugStartUp('repeatable jobs created:', await userQ.getJobCounts());
+  debugUserQCreator('repeatable jobs created:', await userQ.getJobCounts());
 
   // repeateableJobs are started with delay, so run these manually at startup
   await userQ.addBulk(
@@ -95,7 +98,7 @@ export const userQStartup = async () => {
     })),
   );
 
-  debugStartUp('immediate jobs created', await userQ.getJobCounts());
+  debugUserQCreator('immediate jobs created', await userQ.getJobCounts());
 
   // if (!isProduction) {
   //   await addMissingTracks();
@@ -108,9 +111,9 @@ export const userQStartup = async () => {
   // delete all playbackQ jobs
   // await playbackQ.pause();
   // // await playbackQ.obliterate({ force: true });
-  debugStartUp('playbackQs', await getPlaybackQs());
+  debugUserQCreator('playbackQs', await getPlaybackQs());
 
-  debugStartUp('completed');
+  debugUserQCreator('userQ completed');
 };
 
 // ------------------------------------------------------------- SCRIPTS
@@ -146,9 +149,9 @@ export const addMissingTracks = async () => {
     );
   `;
 
-  // debugUserQ('addMissingTracks -> missing tracks', missingLiked.length);
-  // debugUserQ('addMissingTracks -> missing recent', missingRecent.length);
-  // debugUserQ('addMissingTracks -> missing queue', missingQueues.length);
+  // debugUserQCreator('addMissingTracks -> missing tracks', missingLiked.length);
+  // debugUserQCreator('addMissingTracks -> missing recent', missingRecent.length);
+  // debugUserQCreator('addMissingTracks -> missing queue', missingQueues.length);
 
   const deleteRows = async (table: string, ids: string[]) => {
     const trackIds = [...new Set(ids)];
@@ -190,7 +193,7 @@ export const addMissingTracks = async () => {
   //       where: { id: missing.trackId },
   //     });
   //     if (track) {
-  //       debugUserQ('addMissingTracks -> track exists; connecting');
+  //       debugUserQCreator('addMissingTracks -> track exists; connecting');
   //       await prisma.recentSongs.update({
   //         data: { track: { connect: { id: track.id } } },
   //         where: { id: missing.id },
@@ -212,7 +215,7 @@ export const addMissingTracks = async () => {
 
   // const trackIdsDuplicate = missingRecentAfter.map((t) => t.trackId);
   // const trackIds = [...new Set(trackIdsDuplicate)];
-  // debugUserQ('addMissingTracks -> trackIds', trackIds.length);
+  // debugUserQCreator('addMissingTracks -> trackIds', trackIds.length);
 
   // const pages = [];
 
@@ -220,9 +223,9 @@ export const addMissingTracks = async () => {
   // pages.push(trackIds.slice(i, i + 50));
   // }
 
-  // debugUserQ('addMissingTracks -> pages', pages.length);
+  // debugUserQCreator('addMissingTracks -> pages', pages.length);
   // for (const page of pages) {
-  // debugUserQ('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
+  // debugUserQCreator('addMissingTracks -> pages remaining', pages.length - pages.indexOf(page));
 
   // ⚠️ don't run on development
   // @todo add fn to delete missing tracks from dev db
@@ -230,21 +233,21 @@ export const addMissingTracks = async () => {
   //   body: { tracks },
   // } = await spotify.getTracks(page);
   // try {
-  //   debugUserQ('addMissingTracks -> retrieved spotify; tracks', tracks.length);
+  //   debugUserQCreator('addMissingTracks -> retrieved spotify; tracks', tracks.length);
   //   for (const track of tracks) {
   //     const trackDb = createTrackModel(track);
 
   //     const instances = await prisma.recentSongs.findMany({
   //       where: { trackId: track.id },
   //     });
-  //     debugUserQ(
+  //     debugUserQCreator(
   //       'addMissingTracks -> likedsongs without relation',
   //       instances.length,
   //       track.name,
   //     );
 
   //     for (const instance of instances) {
-  //       debugUserQ('addMissingTracks -> loop over instance', instance.userId);
+  //       debugUserQCreator('addMissingTracks -> loop over instance', instance.userId);
 
   //       await prisma.recentSongs.update({
   //         data: {
@@ -256,13 +259,13 @@ export const addMissingTracks = async () => {
   //       });
   //       continue;
   //     }
-  //     debugUserQ('addMissingTracks -> track done', track.name);
+  //     debugUserQCreator('addMissingTracks -> track done', track.name);
   //   }
   // } catch (e) {
-  //   debugUserQ('addMissingTracks -> error', e);
+  //   debugUserQCreator('addMissingTracks -> error', e);
   // }
-  // debugUserQ('addMissingTracks -> page done');
+  // debugUserQCreator('addMissingTracks -> page done');
   // }
 
-  // debugUserQ('addMissingTracks -> done');
+  // debugUserQCreator('addMissingTracks -> done');
 };

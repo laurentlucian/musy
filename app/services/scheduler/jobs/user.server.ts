@@ -13,7 +13,6 @@ import { profileQ } from './user/profile.server';
 import { recentQ } from './user/recent.server';
 
 const debugUserQ = debug('userQ');
-export const debugStartUp = debugUserQ.extend('startUp');
 export const debugLikedQ = debugUserQ.extend('likedQ');
 export const debugFollowQ = debugUserQ.extend('followQ');
 export const debugProfileQ = debugUserQ.extend('profileQ');
@@ -47,7 +46,7 @@ export const userQ = Queue<{ userId: string }>(
       likedQ.add('update_liked', { userId }),
       followQ.add('update_follow', { userId }),
       profileQ.add('update_profile', { userId }),
-      playlistQ.add('update_playlist', { userId }),
+      // playlistQ.add('update_playlist', { userId }),
     ]);
 
     debugUserQ('completed');

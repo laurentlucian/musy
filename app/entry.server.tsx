@@ -8,11 +8,13 @@ import createEmotionServer from '@emotion/server/create-instance';
 import { ServerStyleContext } from '~/lib/emotion/context';
 import createEmotionCache from '~/lib/emotion/createEmotionCache';
 
-import { userQStartup } from './services/scheduler/jobs/user/creator.server';
+import { createFeedQ } from './services/scheduler/creators/feedQ.server';
+import { createUserQ } from './services/scheduler/creators/userQ.server';
 
 require('better-logging')(console);
 
-void userQStartup();
+void createUserQ();
+void createFeedQ();
 
 export default function handleRequest(
   request: Request,
