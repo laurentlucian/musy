@@ -44,6 +44,12 @@ export const getFeed = async (userId: string) => {
           user: profileWithInfo,
         },
       },
+      playlist: {
+        include: {
+          playlist: true,
+          track: true,
+        },
+      },
       queue: {
         include: {
           owner: { include: { user: profileWithInfo } },
@@ -64,6 +70,9 @@ export const getFeed = async (userId: string) => {
     },
     take: 10,
     where: {
+      // NOT: {
+      //   queue: null,
+      // },
       userId: {
         in: userIds,
       },

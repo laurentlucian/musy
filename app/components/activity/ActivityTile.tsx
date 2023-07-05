@@ -8,7 +8,12 @@ import ActivityInfo from './shared/ActivityInfo';
 import ActivityTrackInfo from './shared/ActivityTrackInfo';
 
 const ActivityTile = ({ activity }: { activity: Activity }) => {
-  const track = activity.liked?.track || activity.queue?.track || activity.recommend?.track;
+  const track =
+    activity.liked?.track ||
+    activity.queue?.track ||
+    activity.recommend?.track ||
+    activity.playlist?.track;
+
   if (!track) return null;
 
   return (

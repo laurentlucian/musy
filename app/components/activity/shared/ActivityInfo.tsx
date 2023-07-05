@@ -1,10 +1,11 @@
 import { HStack, Text, Icon, Flex } from '@chakra-ui/react';
 
-import { Send2, Sound, Star1 } from 'iconsax-react';
+import { ArchiveTick, HeartAdd, Send2, Sound, Star1 } from 'iconsax-react';
 
 import LikeIcon from '~/lib/icons/Like';
 import type { Activity } from '~/lib/types/types';
 
+import ActivityPlaylistInfo from './ActivityPlaylistInfo';
 import ActivityUserInfo from './ActivityUserInfo';
 
 const ActivityInfo = ({ activity }: { activity: Activity }) => {
@@ -37,6 +38,15 @@ const ActivityInfo = ({ activity }: { activity: Activity }) => {
             RECOMMENDED
           </Text>
           <Icon as={Star1} boxSize="20px" fill="white" />
+        </HStack>
+      )}
+
+      {activity.playlist && (
+        <HStack align="center">
+          <Text fontSize="10px" fontWeight="bolder">
+            ADDED TO
+          </Text>
+          <ActivityPlaylistInfo playlist={activity.playlist.playlist} />
         </HStack>
       )}
 

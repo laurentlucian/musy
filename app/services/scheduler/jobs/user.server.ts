@@ -46,7 +46,7 @@ export const userQ = Queue<{ userId: string }>(
       likedQ.add('update_liked', { userId }),
       followQ.add('update_follow', { userId }),
       profileQ.add('update_profile', { userId }),
-      // playlistQ.add('update_playlist', { userId }),
+      playlistQ.add('update_playlist', { userId }),
     ]);
 
     debugUserQ('completed');

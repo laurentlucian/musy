@@ -8,7 +8,7 @@ const debugFeedQ = debug('feedQ');
 export const feedQ = Queue<null>('update_feed', async () => {
   debugFeedQ('feedQ starting...');
 
-  const [liked, queue, recommended] = await Promise.all([
+  const [liked, queue, recommended, playlistTracks] = await Promise.all([
     prisma.likedSongs.findMany({
       where: {
         feedId: null,
@@ -23,6 +23,18 @@ export const feedQ = Queue<null>('update_feed', async () => {
       },
     }),
     prisma.recommended.findMany({
+      where: {
+        feedId: null,
+      },
+    }),
+    prisma.playlistTrack.findMany({
+      include: {
+        playlist: {
+          select: {
+            userId: true,
+          },
+        },
+      },
       where: {
         feedId: null,
       },
@@ -50,6 +62,7 @@ export const feedQ = Queue<null>('update_feed', async () => {
 
   debugFeedQ('adding queue', queue.length);
   for (const item of queue) {
+    if (!item.userId) continue;
     await prisma.feed.create({
       data: {
         createdAt: item.createdAt,
@@ -60,7 +73,7 @@ export const feedQ = Queue<null>('update_feed', async () => {
         },
         user: {
           connect: {
-            userId: item.ownerId,
+            userId: item.userId,
           },
         },
       },
@@ -80,6 +93,28 @@ export const feedQ = Queue<null>('update_feed', async () => {
         user: {
           connect: {
             userId: item.userId,
+          },
+        },
+      },
+    });
+  }
+
+  debugFeedQ('adding playlist tracks', playlistTracks.length);
+  for (const item of playlistTracks) {
+    await prisma.feed.create({
+      data: {
+        createdAt: item.addedAt,
+        playlist: {
+          connect: {
+            playlistId_trackId: {
+              playlistId: item.playlistId,
+              trackId: item.trackId,
+            },
+          },
+        },
+        user: {
+          connect: {
+            userId: item.playlist.userId,
           },
         },
       },

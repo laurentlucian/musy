@@ -366,7 +366,9 @@ model PlaylistTrack {
   //
   track      Track    @relation(fields: [trackId], references: [id])
   trackId    String
-  // feed       Feed?
+  //
+  feed       Feed?    @relation(fields: [feedId], references: [id])
+  feedId     Int?     @unique
 
   @@unique([playlistId, trackId])
 }
@@ -386,7 +388,7 @@ model Feed {
   //
   playback  PlaybackHistory?
   //
-  // playlist        PlaylistTrack? 
+  playlist  PlaylistTrack?
 
   @@index([createdAt])
 }
