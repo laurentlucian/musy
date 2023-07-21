@@ -7,9 +7,7 @@ import {
   useLocation,
 } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import {
   Flex,

@@ -1,7 +1,5 @@
 import type { FlexProps } from '@chakra-ui/react';
-import { Flex } from '@chakra-ui/react';
-import { HStack } from '@chakra-ui/react';
-import { Image } from '@chakra-ui/react';
+import { Flex, HStack, Image } from '@chakra-ui/react';
 
 import LikedBy from '~/components/activity/LikedBy';
 import PlayedBy from '~/components/activity/PlayedBy';

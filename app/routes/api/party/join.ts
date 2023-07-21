@@ -1,6 +1,5 @@
 import type { ActionArgs, LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';

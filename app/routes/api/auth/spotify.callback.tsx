@@ -1,6 +1,5 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
 
 import { authenticator } from '~/services/auth.server';
 import { commitSession, getSession, returnToCookie } from '~/services/session.server';

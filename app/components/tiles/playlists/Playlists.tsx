@@ -13,7 +13,6 @@ const Playlists = ({
 }) => {
   const { playlists, setRef } = usePlaylists(initialPlaylists);
 
-
   if (!playlists) return null;
   const scrollButtons = playlists.length > 5;
   const title = playlists.length > 1 ? 'PLAYLISTS' : 'PLAYLIST';

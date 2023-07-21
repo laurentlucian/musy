@@ -1,7 +1,6 @@
 import { RemixBrowser } from '@remix-run/react';
 import type { ReactNode } from 'react';
-import { StrictMode } from 'react';
-import { startTransition, useState } from 'react';
+import { StrictMode, startTransition, useState } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 
 import { CacheProvider } from '@emotion/react';

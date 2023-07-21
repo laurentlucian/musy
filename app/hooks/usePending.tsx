@@ -15,7 +15,7 @@ const usePending = (): {
   const route = matches.find((match) => match.data?.pendingFriends);
 
   if (!route) return [];
-  
+
   return route.data.pendingFriends;
 };
 

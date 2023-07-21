@@ -1,15 +1,10 @@
 import type { LoaderArgs } from '@remix-run/node';
-import { Form, useSearchParams, useSubmit, useNavigation } from '@remix-run/react';
-import { Link } from '@remix-run/react';
-import { Outlet } from '@remix-run/react';
+import { Form, useSearchParams, useSubmit, useNavigation, Link, Outlet } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
-import { useRef } from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 import {
   Flex,
-  Heading,
   IconButton,
   Image,
   Input,
