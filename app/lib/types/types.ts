@@ -1,4 +1,4 @@
-import type { PlaybackHistory, Prisma, Profile, Track } from '@prisma/client';
+import type { Prisma, Profile, Track } from '@prisma/client';
 
 import type { getFeed } from '~/services/prisma/tracks.server';
 import type { getAllUsers } from '~/services/prisma/users.server';
@@ -21,6 +21,7 @@ export interface PlaylistTrack {
 }
 
 export type ProfileWithInfo = Prisma.PromiseReturnType<typeof getAllUsers>[number];
+export type Feed = Prisma.PromiseReturnType<typeof getFeed>;
 
 export type TrackWithInfo = Track & {
   liked?: {

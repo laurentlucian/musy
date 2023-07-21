@@ -25,7 +25,7 @@ export const profileWithInfo = {
   },
 } as const;
 
-export const getFeed = async (userId: string) => {
+export const getFeed = async (userId: string, limit = 10, offset = 0) => {
   const following = await prisma.follow.findMany({
     select: {
       followingId: true,
@@ -68,7 +68,8 @@ export const getFeed = async (userId: string) => {
     orderBy: {
       createdAt: 'desc',
     },
-    take: 10,
+    skip: offset * limit,
+    take: limit,
     where: {
       // NOT: {
       //   queue: null,
