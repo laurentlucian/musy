@@ -19,25 +19,43 @@ export const playlistQ = Queue<{ userId: string }>('update_playlist', async (job
   });
 
   const playlists = response.body.items.filter((p) => p.owner.id === userId);
+  const saved = await prisma.playlist.findMany({
+    select: {
+      id: true,
+      total: true,
+    },
+    where: {
+      id: {
+        in: playlists.map((p) => p.id),
+      },
+    },
+  });
 
   debugPlaylistQ(
     'playlists',
     playlists.map((p) => p.name),
   );
 
-  const playlistsTracks = await Promise.all(playlists.map((p) => spotify.getPlaylistTracks(p.id)));
+  const onlyPlaylistsNeededToUpdate = playlists.filter((p) => {
+    const savedPlaylist = saved.find((s) => s.id === p.id);
+    return !savedPlaylist || savedPlaylist.total < p.tracks.total;
+  });
+  const playlistsTracks = await Promise.all(
+    onlyPlaylistsNeededToUpdate.map((p) => spotify.getPlaylistTracks(p.id)),
+  );
   debugPlaylistQ(
     'playlistTracks',
     playlistsTracks.map((p) => p.body.items.length),
   );
 
-  for (const [index, playlist] of playlists.entries()) {
+  for (const [index, playlist] of onlyPlaylistsNeededToUpdate.entries()) {
     await prisma.playlist.upsert({
       create: {
         description: playlist.description,
         id: playlist.id,
         image: playlist.images[0].url,
         name: playlist.name,
+        total: playlist.tracks.total,
         uri: playlist.uri,
         user: {
           connect: {
@@ -49,6 +67,7 @@ export const playlistQ = Queue<{ userId: string }>('update_playlist', async (job
         description: playlist.description,
         image: playlist.images[0].url,
         name: playlist.name,
+        total: playlist.tracks.total,
         uri: playlist.uri,
         user: {
           connect: {

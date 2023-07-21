@@ -355,6 +355,7 @@ model Playlist {
   user        Profile         @relation(fields: [userId], references: [userId])
   userId      String
   tracks      PlaylistTrack[]
+  total       Int             @default(0) // spotify's total
 }
 
 model PlaylistTrack {
