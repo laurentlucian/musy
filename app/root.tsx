@@ -1,8 +1,15 @@
 import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
-import { isRouteErrorResponse } from '@remix-run/react';
-import { useRouteError } from '@remix-run/react';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import {
+  isRouteErrorResponse,
+  useRouteError,
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from '@remix-run/react';
 import { useContext, useEffect } from 'react';
 
 import {
@@ -28,6 +35,7 @@ import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fulls
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
+import fonts from './lib/fonts.css';
 import waver from './lib/icons/waver.css';
 import { iosSplashScreens } from './lib/utils';
 
@@ -115,12 +123,7 @@ export const meta: MetaFunction = () => {
 export let links: LinksFunction = () => {
   return [
     { as: 'style', href: waver, rel: 'stylesheet' },
-    { as: 'preconnect', href: 'https://fonts.gstaticom', rel: 'preconnect' },
-    {
-      as: 'font',
-      href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;500;600;700;800;900&display=swap"',
-      rel: 'stylesheet',
-    },
+    { as: 'style', href: fonts, rel: 'stylesheet' },
     {
       as: 'manifest',
       href: '/manifest.json',
