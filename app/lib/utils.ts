@@ -107,3 +107,9 @@ export const shortenUsername = (username?: string) => {
 export const getCacheControl = (minutes = 1) => ({
   'Cache-Control': `private, stale-while-revalidate, max-age=${minutes * 60}`,
 });
+
+export const decodeHtmlEntity = (str?: string | null) => {
+  return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
+    return String.fromCharCode(parseInt(dec, 16));
+  });
+};

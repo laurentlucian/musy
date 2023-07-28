@@ -1,15 +1,11 @@
 import { HStack, Image, Stack, Text } from '@chakra-ui/react';
 
+import { decodeHtmlEntity } from '~/lib/utils';
+
 type PlayingFromType = {
   description?: string;
   image?: string;
   name?: string;
-};
-
-const decodeHtmlEntity = (str?: string) => {
-  return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
-    return String.fromCharCode(parseInt(dec, 16));
-  });
 };
 
 const PlayingFromTooltip = ({ description, image, name }: PlayingFromType) => {

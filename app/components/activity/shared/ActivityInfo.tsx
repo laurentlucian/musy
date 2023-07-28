@@ -1,6 +1,6 @@
-import { HStack, Text, Icon, Flex } from '@chakra-ui/react';
+import { HStack, Text, Icon } from '@chakra-ui/react';
 
-import { ArchiveTick, HeartAdd, Send2, Sound, Star1 } from 'iconsax-react';
+import { Send2, Star1 } from 'iconsax-react';
 
 import LikeIcon from '~/lib/icons/Like';
 import type { Activity } from '~/lib/types/types';
@@ -10,7 +10,7 @@ import ActivityUserInfo from './ActivityUserInfo';
 
 const ActivityInfo = ({ activity }: { activity: Activity }) => {
   return (
-    <Flex justify="space-between" align="center">
+    <HStack spacing={12} justify="space-between" align="center" flexShrink={0}>
       <ActivityUserInfo user={activity.user} />
 
       {activity.liked && (
@@ -62,7 +62,7 @@ const ActivityInfo = ({ activity }: { activity: Activity }) => {
           <Icon as={Sound} boxSize="20px" fill="white" />
         </HStack>
       )} */}
-    </Flex>
+    </HStack>
   );
 };
 
