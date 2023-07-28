@@ -1,44 +1,15 @@
 import type { LoaderArgs } from '@remix-run/server-runtime';
-import { useEffect, useMemo, useState } from 'react';
 
 import { Stack } from '@chakra-ui/react';
 
-import { typedjson, useTypedFetcher, useTypedLoaderData } from 'remix-typedjson';
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import ActivityTile from '~/components/activity/ActivityTile';
 import TilesPlayback from '~/components/tiles/TilesPlayback';
-import useInfiniteScroll from '~/hooks/useInfiniteScroll';
+import useInfiniteFeed from '~/hooks/useInfiniteFeed';
 import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
-import type { Feed } from '~/lib/types/types';
-import type { loader as feedLoader } from '~/routes/api/activity/feed';
 import { getFeed } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
-
-const useInfiniteFeed = () => {
-  const [feed, setFeed] = useState<Feed[]>([]);
-  const [page, setPage] = useState(0);
-  const { data = [], load, state } = useTypedFetcher<typeof feedLoader>();
-  const isFetching = state === 'loading';
-  const { waver } = useInfiniteScroll(
-    () => {
-      if (isFetching) return;
-      const next = page + 1;
-      setPage(next);
-      load(`/api/activity/feed?limit=10&offset=${next}`);
-    },
-    isFetching,
-    1500,
-  );
-
-  useEffect(() => {
-    if (!data) return;
-    setFeed((prev) => [...prev, data]);
-  }, [data]);
-
-  const flatted = useMemo(() => feed.flat(), [feed]);
-
-  return { feed: flatted, waver };
-};
 
 const Home = () => {
   useRevalidateOnFocus();
