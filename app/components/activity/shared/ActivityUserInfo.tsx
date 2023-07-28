@@ -7,16 +7,14 @@ import type { ProfileWithInfo } from '~/lib/types/types';
 
 const ActivityUserInfo = ({ user }: { user: ProfileWithInfo }) => {
   return (
-    <HStack>
+    <HStack flexShrink={0}>
       <TileUserImage user={user} size="35px" />
-      <Link to={`/${user.userId}`}>
-        <Stack spacing={0} data-group>
-          <Text fontWeight="bold" fontSize="xs" _groupHover={{ textDecoration: 'underline' }}>
-            {user.name}
-          </Text>
-          <Text fontSize="9px">{user.bio}</Text>
-        </Stack>
-      </Link>
+      <Stack as={Link} to={`/${user.userId}`} spacing={0} data-group>
+        <Text fontWeight="bold" fontSize="xs" _groupHover={{ textDecoration: 'underline' }}>
+          {user.name}
+        </Text>
+        <Text fontSize="9px">{user.bio}</Text>
+      </Stack>
     </HStack>
   );
 };
