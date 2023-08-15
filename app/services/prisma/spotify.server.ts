@@ -20,7 +20,7 @@ export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
   uri: track.uri,
 });
 
-const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
+export const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
   const trackIds = tracks.map((track) => track.id);
   const existingTracks = await prisma.track.findMany({
     select: { id: true },
@@ -67,22 +67,7 @@ export const getUserSpotifyLiked = async (userId: string) => {
   return transformTracks(liked.map((track) => track.track));
 };
 
-export const getUserSpotifyTop = async (userId: string, url: URL) => {
-  const range = (url.searchParams.get('top-filter') || 'medium_term') as
-    | 'medium_term'
-    | 'long_term'
-    | 'short_term';
-
-  const { spotify } = await getUserSpotify(userId);
-  const top = await spotify
-    .getMyTopTracks({ limit: 50, time_range: range })
-    .then((data) => data.body.items)
-    .catch(() => []);
-
-  return transformTracks(top.map((track) => track));
-};
-
-export const getCachedUserTop = async (userId: string, url: URL) => {
+export const getUserCachedTop = async (userId: string, url: URL) => {
   const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
     | 'medium_term'
     | 'long_term'
@@ -90,15 +75,10 @@ export const getCachedUserTop = async (userId: string, url: URL) => {
 
   const cacheKeyTop = 'profile_top_prisma' + topFilter + '_' + userId;
   const cachedDataTop = await redis.get(cacheKeyTop);
-  let top = [] as Track[];
 
   if (cachedDataTop) {
-    top = JSON.parse(cachedDataTop) as Track[];
-  } else {
-    top = await getUserSpotifyTop(userId, url);
-    await redis.set(cacheKeyTop, JSON.stringify(top), 'EX', 60 * 60 * 24);
-  }
-  return top;
+    return JSON.parse(cachedDataTop) as Track[];
+  } else return [];
 };
 
 export const getUserSpotifyPlayback = async (userId: string) => {
@@ -149,4 +129,15 @@ export const getSpotifyTrack = async (trackId: string, userId: string) => {
   const track = await spotify.getTrack(trackId).then((res) => res.body);
 
   return track;
+};
+
+export const getUserPlaylists = async (userId: string) => {
+  return prisma.playlist.findMany({
+    take: 20,
+    orderBy: {
+      tracks: {
+        _count: 'desc',
+      },
+    },
+  });
 };

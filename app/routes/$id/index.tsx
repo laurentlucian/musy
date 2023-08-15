@@ -13,10 +13,9 @@ import TilesTrack from '~/components/tiles/TilesTrack';
 import useCurrentUser from '~/hooks/useCurrentUser';
 import { getCacheControl } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
-import { getCachedUserTop } from '~/services/prisma/spotify.server';
+import { getUserCachedTop, getUserPlaylists } from '~/services/prisma/spotify.server';
 import { getUserLiked, getUserRecent, getUserRecommended } from '~/services/prisma/tracks.server';
 import { getUserProfile } from '~/services/prisma/users.server';
-import { getUserPlaylists } from '~/services/spotify.server';
 
 const ProfileOutlet = () => {
   const { liked, party, playback, playlists, recent, recommended, top, user } =
@@ -58,7 +57,7 @@ export const loader = async ({ params, request }: LoaderArgs) => {
       getUserRecent(id).catch(() => []),
       getUserLiked(id).catch(() => []),
       prisma.party.findMany({ where: { ownerId: id } }),
-      getCachedUserTop(id, new URL(request.url)),
+      getUserCachedTop(id, new URL(request.url)),
       getUserPlaylists(id),
     ]);
 

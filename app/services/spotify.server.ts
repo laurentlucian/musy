@@ -2,7 +2,7 @@ import SpotifyWebApi from 'spotify-web-api-node';
 import invariant from 'tiny-invariant';
 
 import { getUser, updateToken } from './prisma/users.server';
-import { redis } from './scheduler/redis.server';
+import { transformTracks } from './prisma/spotify.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -97,21 +97,26 @@ export const getSavedStatus = async (id: string, trackId: string) => {
   return data;
 };
 
-export const getUserPlaylists = async (userId: string) => {
+export const getUserSpotifyPlaylists = async (userId: string) => {
   const { spotify } = await getUserSpotify(userId);
-  const cacheKeyPlaylist = 'profile_playlist_' + userId;
-  const cachedDataPlaylist = await redis.get(cacheKeyPlaylist);
-  let playlists = [] as SpotifyApi.PlaylistObjectSimplified[];
 
-  if (cachedDataPlaylist) {
-    playlists = JSON.parse(cachedDataPlaylist) as SpotifyApi.PlaylistObjectSimplified[];
-  } else {
-    playlists = await spotify
-      .getUserPlaylists(userId, { limit: 50 })
-      .then((res) => res.body.items.filter((data) => data.public && data.owner.id === userId))
-      .catch(() => []);
-    await redis.set(cacheKeyPlaylist, JSON.stringify(playlists), 'EX', 60 * 30);
-  }
+  return spotify
+    .getUserPlaylists(userId, { limit: 50 })
+    .then((res) => res.body.items.filter((data) => data.public && data.owner.id === userId))
+    .catch(() => []);
+};
 
-  return playlists;
+export const getUserSpotifyTop = async (userId: string, url: URL) => {
+  const range = (url.searchParams.get('top-filter') || 'medium_term') as
+    | 'medium_term'
+    | 'long_term'
+    | 'short_term';
+
+  const { spotify } = await getUserSpotify(userId);
+  const top = await spotify
+    .getMyTopTracks({ limit: 50, time_range: range })
+    .then((data) => data.body.items)
+    .catch(() => []);
+
+  return transformTracks(top.map((track) => track));
 };

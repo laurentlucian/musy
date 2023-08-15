@@ -24,11 +24,11 @@ const Profile = () => {
   const isDev = currentUser?.settings?.dev === true;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isPrivate = user.settings?.isPrivate && !isOwnProfile && !isDev;
-  const youAreBlocked = currentUser?.block.find((blocked) => blocked.blockedId === user.userId);
+  const isBlocked = currentUser?.block.find((blocked) => blocked.blockedId === user.userId);
 
   const Profile = isPrivate ? (
     <PrivateProfile name={user.name} />
-  ) : youAreBlocked ? (
+  ) : isBlocked ? (
     <BlockedProfile name={user.name} />
   ) : (
     <Outlet />

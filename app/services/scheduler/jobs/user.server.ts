@@ -11,6 +11,7 @@ import { likedQ } from './user/liked.server';
 import { playlistQ } from './user/playlist.server';
 import { profileQ } from './user/profile.server';
 import { recentQ } from './user/recent.server';
+import { topQ } from './user/top.server';
 
 const debugUserQ = debug('userQ');
 export const debugLikedQ = debugUserQ.extend('likedQ');
@@ -18,6 +19,7 @@ export const debugFollowQ = debugUserQ.extend('followQ');
 export const debugProfileQ = debugUserQ.extend('profileQ');
 export const debugRecentQ = debugUserQ.extend('recentQ');
 export const debugPlaylistQ = debugUserQ.extend('playlistQ');
+export const debugTopQ = debugUserQ.extend('topQ');
 
 export const userQ = Queue<{ userId: string }>(
   'update_user',
@@ -47,6 +49,7 @@ export const userQ = Queue<{ userId: string }>(
       followQ.add('update_follow', { userId }),
       profileQ.add('update_profile', { userId }),
       playlistQ.add('update_playlist', { userId }),
+      topQ.add('update_top', { userId }),
     ]);
 
     debugUserQ('completed');
