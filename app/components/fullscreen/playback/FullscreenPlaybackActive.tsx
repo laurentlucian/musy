@@ -6,6 +6,7 @@ import { Sound } from 'iconsax-react';
 import ActivityTrackInfo from '~/components/activity/shared/ActivityTrackInfo';
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
+import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
 import Tiles from '~/components/tiles/Tiles';
 import usePlaybackTracks from '~/hooks/usePlaybackTracks';
 import type { ProfileWithInfo } from '~/lib/types/types';
@@ -13,6 +14,7 @@ import { timeBetween } from '~/lib/utils';
 
 import AddToUserQueue from '../shared/actions/AddToUserQueue';
 import ViewTrack from '../shared/actions/ViewTrack';
+import TrackInfo from '../shared/FullscreenTrackInfo';
 import PlaybackListenAlong from './PlaybackListenAlong';
 
 const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
@@ -49,6 +51,7 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
             }}
           />
           <ActivityTrackInfo track={track} />
+          <TrackInfo track={track} />
         </Stack>
       </Stack>
       <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
@@ -74,6 +77,7 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
                       }}
                     />
                     <ActivityTrackInfo track={track} />
+                    <TileTrackInfo track={track} icon={false} />
                   </Stack>
                 ))}
               </Tiles>
