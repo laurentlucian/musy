@@ -107,10 +107,10 @@ export const createUserQ = async () => {
   //   longScriptQ.add('long-script', null);
   // }
 
-  // await prisma.playback.deleteMany();
+  await prisma.playback.deleteMany();
   // delete all playbackQ jobs
-  // await playbackQ.pause();
-  // // await playbackQ.obliterate({ force: true });
+  await playbackQ.pause();
+  await playbackQ.obliterate({ force: true });
   debugUserQCreator('playbackQs', await getPlaybackQs());
 
   debugUserQCreator('userQ completed');

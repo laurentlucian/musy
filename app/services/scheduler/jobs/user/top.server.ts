@@ -1,6 +1,7 @@
 import { transformTracks } from '~/services/prisma/spotify.server';
-import { Queue } from '../../queue.server';
 import { getUserSpotify } from '~/services/spotify.server';
+
+import { Queue } from '../../queue.server';
 import { redis } from '../../redis.server';
 import { debugTopQ } from '../user.server';
 
