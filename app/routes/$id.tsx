@@ -1,4 +1,5 @@
-import type { LoaderFunctionArgs, V2_MetaFunction } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
+import type { MetaFunction } from '@remix-run/react';
 import { Outlet } from '@remix-run/react';
 
 import { Stack } from '@chakra-ui/react';
@@ -42,7 +43,7 @@ const Profile = () => {
   );
 };
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     {
       title: `musy - ${data?.user?.name.split(' ')[0] ?? ''}`,

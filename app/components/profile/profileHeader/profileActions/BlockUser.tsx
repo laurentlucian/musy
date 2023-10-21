@@ -27,7 +27,7 @@ export const BlockUser = ({ block, blockId, header }: BlockTypes) => {
     setIsBlocked(!isBlocked);
     fetcher.submit(
       { blockId, currentUserId, isNotBlocked: String(!isBlocked), userId },
-      { action: '/api/user/block', method: 'POST', replace: true },
+      { action: '/api/user/block', method: 'POST' },
     );
   };
 

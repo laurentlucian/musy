@@ -40,20 +40,20 @@ export const createUserQ = async () => {
   const getUserQs = async () =>
     (await userQ.getRepeatableJobs()).map((j) => [timestampToDate(j.next), j.key]);
 
-  const getPlaybackQs = async () =>
-    (await playbackQ.getDelayed()).map((j) => [timestampToDate(j.timestamp), j.name, j.data]);
+  // const getPlaybackQs = async () =>
+  //   (await playbackQ.getDelayed()).map((j) => [timestampToDate(j.timestamp), j.name, j.data]);
 
-  const userQs = await getUserQs();
-  const hasSameUsersLength = userQs.length === users.length;
-  if (hasSameUsersLength) {
-    debugUserQCreator('already registered, repeatable userQ:', userQs);
+  // const userQs = await getUserQs();
+  // const hasSameUsersLength = userQs.length === users.length;
+  // if (hasSameUsersLength) {
+  //   debugUserQCreator('already registered, repeatable userQ:', userQs);
 
-    debugUserQCreator('playbackQs', await getPlaybackQs());
+  //   debugUserQCreator('playbackQs', await getPlaybackQs());
 
-    return;
-  }
+  //   return;
+  // }
 
-  debugUserQCreator('not registered or not the same length of users', userQs, hasSameUsersLength);
+  // debugUserQCreator('not registered or not the same length of users', userQs, hasSameUsersLength);
 
   // debugUserQCreator('obliterated playbackQ');
 
@@ -68,35 +68,35 @@ export const createUserQ = async () => {
   debugUserQCreator(`adding ${users.length} users to userQ..`);
   // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
   // bulkAll doesn't support repeateable jobs
-  for (const userId of users) {
-    await userQ.add(
-      'update_user',
-      { userId: userId },
-      {
-        backoff: {
-          delay: minutesToMs(1),
-          type: 'exponential',
-        },
-        // a job with duplicate id will not be added
-        jobId: userId,
-        removeOnComplete: true,
-        removeOnFail: true,
-        repeat: { every: minutesToMs(30) },
-      },
-    );
-  }
+  // for (const userId of users) {
+  //   await userQ.add(
+  //     'update_user',
+  //     { userId: userId },
+  //     {
+  //       backoff: {
+  //         delay: minutesToMs(1),
+  //         type: 'exponential',
+  //       },
+  //       // a job with duplicate id will not be added
+  //       jobId: userId,
+  //       removeOnComplete: true,
+  //       removeOnFail: true,
+  //       repeat: { every: minutesToMs(30) },
+  //     },
+  //   );
+  // }
 
   debugUserQCreator('repeatable jobs created:', await userQ.getJobCounts());
 
   // repeateableJobs are started with delay, so run these manually at startup
-  await userQ.addBulk(
-    users.map((userId) => ({
-      data: {
-        userId,
-      },
-      name: 'update_user',
-    })),
-  );
+  // await userQ.addBulk(
+  //   users.map((userId) => ({
+  //     data: {
+  //       userId,
+  //     },
+  //     name: 'update_user',
+  //   })),
+  // );
 
   debugUserQCreator('immediate jobs created', await userQ.getJobCounts());
 
@@ -111,7 +111,7 @@ export const createUserQ = async () => {
   // delete all playbackQ jobs
   await playbackQ.pause();
   await playbackQ.obliterate({ force: true });
-  debugUserQCreator('playbackQs', await getPlaybackQs());
+  // debugUserQCreator('playbackQs', await getPlaybackQs());
 
   debugUserQCreator('userQ completed');
 };

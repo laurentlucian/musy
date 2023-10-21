@@ -26,7 +26,7 @@ const FollowButton = (props: { id?: string }) => {
           setIsFollowing(!isFollowing);
           fetcher.submit(
             { currentUserId: currentUser.userId, isFollowing: String(isFollowing), userId },
-            { action: `/api/user/follow`, method: 'POST', replace: true },
+            { action: `/api/user/follow`, method: 'POST' },
           );
         }
       }}

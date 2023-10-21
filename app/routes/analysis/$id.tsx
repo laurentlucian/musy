@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from '@remix-run/node';
+import type { MetaFunction } from '@remix-run/node';
 import { Form, useNavigation } from '@remix-run/react';
 import type { HeadersFunction, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
@@ -102,7 +102,7 @@ export const headers: HeadersFunction = ({ loaderHeaders }) => {
   };
 };
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const { analysis, track } = data;
   if (!track || !analysis) {
     return [

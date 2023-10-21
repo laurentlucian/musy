@@ -31,7 +31,7 @@ export const useRecommendData = (trackId: string) => {
 
   const handleRecommend = (): void => {
     toggleRecommend();
-    fetcher.submit({ trackId }, { action, method: 'POST', replace: true });
+    fetcher.submit({ trackId }, { action, method: 'POST' });
   };
 
   const isAdding = fetcher.formData?.get('trackId') === trackId;
@@ -76,7 +76,7 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
   const fetcher = useTypedFetcher<typeof addAction>();
 
   const addToSelfQueue = () => {
-    fetcher.submit(data, { action: '/api/queue/add', method: 'POST', replace: true });
+    fetcher.submit(data, { action: '/api/queue/add', method: 'POST' });
   };
   const isAdding = fetcher.formData?.get('trackId') === trackId;
 
@@ -104,7 +104,7 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   const fetcher = useTypedFetcher<typeof sendAction>();
 
   const addToFriendsQueue = () => {
-    fetcher.submit(data, { action: '/api/queue/send', method: 'POST', replace: true });
+    fetcher.submit(data, { action: '/api/queue/send', method: 'POST' });
   };
   const isAdding = fetcher.formData?.get('trackId') === trackId;
 

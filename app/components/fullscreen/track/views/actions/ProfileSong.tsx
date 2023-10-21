@@ -18,7 +18,7 @@ const ProfileSong = () => {
       userId: currentUser?.userId ?? '',
     };
 
-    fetcher.submit(data, { action: 'api/track/profile', method: 'POST', replace: true });
+    fetcher.submit(data, { action: 'api/track/profile', method: 'POST' });
   };
 
   return (

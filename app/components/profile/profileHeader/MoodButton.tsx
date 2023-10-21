@@ -23,7 +23,7 @@ const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => 
   const label = isLoading ? 'refreshing..' : mood ? 'refresh mood' : 'get mood ;)';
   const userId = params.id as string;
   const getMood = () => {
-    fetcher.submit({ userId }, { action: '/api/user/profile/mood', method: 'POST', replace: true });
+    fetcher.submit({ userId }, { action: '/api/user/profile/mood', method: 'POST' });
   };
 
   useEffect(() => {

@@ -246,7 +246,6 @@ const Player = ({ id, party, playback }: PlayerProps) => {
                               {
                                 action: isUserInParty ? 'api/party/leave' : 'api/party/join',
                                 method: 'POST',
-                                replace: true,
                               },
                             );
                           }}

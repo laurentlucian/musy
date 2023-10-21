@@ -40,7 +40,7 @@ const FavoriteButton = (props: { id?: string }) => {
                 isFavorited: isFavorited ? 'false' : 'true',
                 userId,
               },
-              { action: `/api/user/favorite`, method: 'POST', replace: true },
+              { action: `/api/user/favorite`, method: 'POST' },
             );
           }
         }}
