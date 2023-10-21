@@ -1,10 +1,10 @@
-import { Form, Link, useNavigation } from '@remix-run/react';
+import type { V2_MetaFunction } from '@remix-run/node';
+import { Form, useNavigation } from '@remix-run/react';
 import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
 import { Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
 
-import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -102,22 +102,22 @@ export const headers: HeadersFunction = ({ loaderHeaders }) => {
   };
 };
 
-export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
   const { analysis, track } = data;
   if (!track || !analysis) {
-    return {
-      description: `Song not found 🥁`,
-      title: 'musy Analysis',
-    };
+    return [
+      { content: 'Song not found 🥁', name: 'description' },
+      { content: 'musy Analysis', name: 'title' },
+    ];
   }
 
-  return {
-    description: analysis,
-    'og:description': analysis,
-    'og:image': track.album.images[0].url,
-    title: `${track.name} Analysis`,
-    'twitter:card': analysis,
-  };
+  return [
+    { content: analysis, name: 'description' },
+    { content: analysis, property: 'og:description' },
+    { content: track.album.images[0].url, property: 'og:image' },
+    { content: `${track.name} Analysis`, name: 'title' },
+    { content: analysis, name: 'twitter:card' },
+  ];
 };
 
 export default TrackAnalysis;

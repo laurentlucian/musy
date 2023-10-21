@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/node';
+import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node';
 import { Form, useSearchParams, useSubmit, useNavigation, Link, Outlet } from '@remix-run/react';
 import type { ChangeEvent } from 'react';
 import { useRef, useEffect, useState } from 'react';
@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 
 import { CloseSquare } from 'iconsax-react';
-import type { TypedMetaFunction } from 'remix-typedjson';
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -164,20 +163,28 @@ export const loader = async ({ request }: LoaderArgs) => {
   return typedjson(results);
 };
 
-export const meta: TypedMetaFunction<typeof loader> = ({ data }) => {
+export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
   if (!data || data.length === 0) {
-    return {
-      description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
-      title: 'musy Analysis',
-    };
+    return [
+      {
+        title: 'musy Analysis',
+      },
+      {
+        description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+      },
+    ];
   }
 
   const track = data[0];
 
-  return {
-    description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
-    title: `${track?.name} | musy Analysis`,
-  };
+  return [
+    {
+      title: `${track?.name} | musy Analysis`,
+    },
+    {
+      description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+    },
+  ];
 };
 
 export { ErrorBoundary } from '~/components/error/ErrorBoundary';

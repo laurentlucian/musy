@@ -1,4 +1,4 @@
-import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
+import type { LinksFunction, LoaderArgs } from '@remix-run/node';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
 import {
   isRouteErrorResponse,
@@ -95,31 +95,6 @@ export const loader = async ({ request }: LoaderArgs) => {
   });
 };
 
-export const meta: MetaFunction = () => {
-  const description = 'Music shared easy';
-
-  return {
-    'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'black',
-    charset: 'utf-8',
-    description,
-    keywords: 'music, discover, spotify, playlist, share, friends',
-    'og:description': description,
-    'og:image': '/meta-image.png',
-    'og:image:alt': 'musy',
-    'og:image:height': '630',
-    'og:image:type': 'image/png',
-    'og:image:width': '1200',
-    'og:title': 'musy',
-
-    'twitter:card': 'summary_large_image',
-    'twitter:description': description,
-    'twitter:image': '/meta-image.png',
-    'twitter:title': 'musy',
-    viewport: 'width=device-width,initial-scale=1,user-scalable=no',
-  };
-};
-
 export let links: LinksFunction = () => {
   return [
     { as: 'style', href: waver, rel: 'stylesheet' },
@@ -178,6 +153,23 @@ const Document = withEmotionCache(
         }}
       >
         <head>
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+          <meta charSet="utf-8" />
+          <meta name="description" content="Music shared easy" />
+          <meta name="keywords" content="music, discover, spotify, playlist, share, friends" />
+          <meta property="og:description" content="Music shared easy" />
+          <meta property="og:image" content="/meta-image.png" />
+          <meta property="og:image:alt" content="musy" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:type" content="image/png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:title" content="musy" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:description" content="Music shared easy" />
+          <meta name="twitter:image" content="/meta-image.png" />
+          <meta name="twitter:title" content="musy" />
+          <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
           <Meta />
           <Links />
           {serverStyleData?.map(({ css, ids, key }) => (

@@ -4108,6 +4108,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@remix-run/v1-route-convention@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@remix-run/v1-route-convention@npm:0.1.4"
+  dependencies:
+    minimatch: ^7.4.3
+  peerDependencies:
+    "@remix-run/dev": ^1.15.0 || ^2.0.0
+  checksum: c0c782dcac749274b0fd49a9b7850c1ecff4151955dbf31a106de6c2b288038e41457e46092fad1bc1e5f4a7cdfff64f29f06170d07bb8b4be762fa77ed069b3
+  languageName: node
+  linkType: hard
+
 "@remix-run/web-blob@npm:^3.0.3, @remix-run/web-blob@npm:^3.0.4":
   version: 3.0.4
   resolution: "@remix-run/web-blob@npm:3.0.4"
@@ -10851,6 +10862,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:^7.4.3":
+  version: 7.4.6
+  resolution: "minimatch@npm:7.4.6"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 1a6c8d22618df9d2a88aabeef1de5622eb7b558e9f8010be791cb6b0fa6e102d39b11c28d75b855a1e377b12edc7db8ff12a99c20353441caa6a05e78deb5da9
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^9.0.0":
   version: 9.0.1
   resolution: "minimatch@npm:9.0.1"
@@ -11115,6 +11135,7 @@ __metadata:
     "@remix-run/react": ^1.19.1
     "@remix-run/serve": ^1.19.1
     "@remix-run/server-runtime": ^1.19.1
+    "@remix-run/v1-route-convention": ^0.1.4
     "@tanstack/react-virtual": ^3.0.0-beta.39
     "@types/react": ^18.2.15
     "@types/react-color": ^3.0.6
