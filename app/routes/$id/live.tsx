@@ -1,5 +1,5 @@
 import { useParams } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -35,7 +35,7 @@ const ProfileSpotifyOutlet = () => {
   );
 };
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 

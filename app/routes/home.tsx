@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -30,7 +30,7 @@ const Home = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const feed = await getFeed(currentUserId);
 

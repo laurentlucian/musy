@@ -1,6 +1,6 @@
 import type { V2_MetaFunction } from '@remix-run/node';
 import { Form, useNavigation } from '@remix-run/react';
-import type { HeadersFunction, LoaderArgs } from '@remix-run/server-runtime';
+import type { HeadersFunction, LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { useEffect } from 'react';
 
 import { Button, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
@@ -51,7 +51,7 @@ const TrackAnalysis = () => {
   );
 };
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const cacheKey = 'track_analysis_' + id;

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import {
   Heading,
@@ -104,7 +104,7 @@ const PlaylistOutlet = () => {
   );
 };
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params id');
   const playlistId = params.playlist;

@@ -1,5 +1,5 @@
 import { Form, useSubmit } from '@remix-run/react';
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { useRef } from 'react';
 
 import {
@@ -57,7 +57,7 @@ const Account = () => {
               submit(
                 { 'private-profile': `${e.target.checked}` },
 
-                { method: 'post', replace: true },
+                { method: 'POST', replace: true },
               );
             }}
             size="lg"
@@ -79,7 +79,7 @@ const Account = () => {
               submit(
                 { autoscroll: `${e.target.checked}` },
 
-                { method: 'post', replace: true },
+                { method: 'POST', replace: true },
               );
             }}
             size="lg"
@@ -104,7 +104,7 @@ const Account = () => {
               submit(
                 { allowPreview: `${e.target.checked}` },
 
-                { method: 'post', replace: true },
+                { method: 'POST', replace: true },
               );
             }}
             size="lg"
@@ -129,7 +129,7 @@ const Account = () => {
               submit(
                 { miniplayer: `${e.target.checked}` },
 
-                { method: 'post', replace: true },
+                { method: 'POST', replace: true },
               );
             }}
             size="lg"
@@ -151,7 +151,7 @@ const Account = () => {
                 submit(
                   { 'dev-mode': `${e.target.checked}` },
 
-                  { method: 'post', replace: true },
+                  { method: 'POST', replace: true },
                 );
               }}
               size="lg"
@@ -208,7 +208,7 @@ const Account = () => {
   );
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const [session, data] = await Promise.all([
     authenticator.isAuthenticated(request),
     request.formData(),

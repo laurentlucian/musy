@@ -15,7 +15,7 @@ const options = [
 
 const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: SubmitFunction }) => {
   const onChange = (value: string) => {
-    submit({ 'allow-queue': value }, { method: 'post', replace: true });
+    submit({ 'allow-queue': value }, { method: 'POST', replace: true });
   };
 
   const { getRadioProps, getRootProps } = useRadioGroup({

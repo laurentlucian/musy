@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import { typedjson } from 'remix-typedjson';
@@ -8,7 +8,7 @@ import { getMoodFromPrisma, getMoodFromSpotify } from '~/services/ai.server';
 import { prisma } from '~/services/db.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const userId = body.get('userId');
 

@@ -1,10 +1,10 @@
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 
 import { getSpotifyClient } from '~/services/spotify.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const data = await request.formData();
   const userId = data.get('userId');
   const trackId = data.get('trackId');

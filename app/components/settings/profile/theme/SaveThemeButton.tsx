@@ -57,7 +57,7 @@ const SaveThemeButton = ({
         subTextLight: theme.subTextLight,
       },
 
-      { method: 'post', replace: true },
+      { method: 'POST', replace: true },
     );
     setText('Saved');
     const delayExit = setTimeout(() => {

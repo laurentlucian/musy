@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { redirect } from 'react-router';
 
 import { authenticator } from '~/services/auth.server';
@@ -9,7 +9,7 @@ const isRedirect = (response: Response) => {
   return response.headers.has('Location');
 };
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const url = new URL(request.url);
   const returnTo = url.searchParams.get('returnTo') as string | null;
 

@@ -1,5 +1,5 @@
 import { Form, useNavigation } from '@remix-run/react';
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
 
@@ -39,7 +39,7 @@ const Index = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
   if (session && url.pathname === '/') return redirect('/home');

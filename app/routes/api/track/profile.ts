@@ -1,11 +1,11 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import { typedjson } from 'remix-typedjson';
 
 import { prisma } from '~/services/db.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const id = body.get('userId');
   const trackId = body.get('trackId');

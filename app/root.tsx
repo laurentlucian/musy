@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderArgs } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
 import {
   isRouteErrorResponse,
@@ -61,7 +61,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   return defaultShouldRevalidate;
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
   if (!session && url.pathname !== '/' && !url.pathname.includes('/api/auth/spotify/callback'))

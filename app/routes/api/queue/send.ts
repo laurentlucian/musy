@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import type { Prisma } from '@prisma/client';
@@ -10,7 +10,7 @@ import { getTrack } from '~/services/prisma/tracks.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const currentUserId = await getCurrentUserId(request);
   const trackId = body.get('trackId');

@@ -1,4 +1,4 @@
-import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node';
+import type { LoaderFunctionArgs, V2_MetaFunction } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 
 import { Stack } from '@chakra-ui/react';
@@ -62,7 +62,7 @@ const day = () => {
   return aDayAgo;
 };
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
   const { searchParams } = new URL(request.url);

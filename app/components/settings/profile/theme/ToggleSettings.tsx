@@ -56,7 +56,7 @@ const ToggleSettings = ({
         submit(
           { 'player-button-side': `${playerBtnSide}` },
 
-          { method: 'post', replace: true },
+          { method: 'POST', replace: true },
         );
       },
       themeValue: playerBtnSide,

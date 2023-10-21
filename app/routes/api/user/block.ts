@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { json } from '@remix-run/node';
 
 import { typedjson } from 'remix-typedjson';
@@ -6,7 +6,7 @@ import { typedjson } from 'remix-typedjson';
 import { prisma } from '~/services/db.server';
 import { getCurrentUserId } from '~/services/prisma/users.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const body = await request.formData();
   const userId = body.get('userId');

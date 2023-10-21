@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
@@ -6,7 +6,7 @@ import invariant from 'tiny-invariant';
 import { getFeed } from '~/services/prisma/tracks.server';
 import { getCurrentUser } from '~/services/prisma/users.server';
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'No user found');
   const userId = currentUser.userId;

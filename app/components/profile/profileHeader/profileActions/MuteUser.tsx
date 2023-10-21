@@ -27,7 +27,7 @@ const MuteUser = ({ bg, color, mute, muteId }: Mute) => {
       setIsMuted(!isMuted);
       fetcher.submit(
         { currentUserId, isNotMuted: String(!isMuted), muteId, userId },
-        { action: '/api/user/mute', method: 'post', replace: true },
+        { action: '/api/user/mute', method: 'POST', replace: true },
       );
     }
   };

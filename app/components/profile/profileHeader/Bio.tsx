@@ -10,7 +10,7 @@ const Bio = ({ bio, isOwnProfile }: { bio: string | null; isOwnProfile: boolean 
   const isSmallScreen = useIsMobile();
 
   const updateBio = (bio: string) => {
-    fetcher.submit({ bio }, { action: '/api/user/profile/bio', method: 'post', replace: true });
+    fetcher.submit({ bio }, { action: '/api/user/profile/bio', method: 'POST', replace: true });
   };
 
   return isOwnProfile ? (

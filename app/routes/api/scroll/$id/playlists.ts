@@ -1,11 +1,11 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import { getSpotifyClient } from '~/services/spotify.server';
 
-export const loader = async ({ params, request }: LoaderArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const userId = params.id;
 
   if (typeof userId !== 'string') {

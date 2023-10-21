@@ -20,7 +20,7 @@ const DeleteRecommended = () => {
       {
         trackId: track.id,
       },
-      { action: '/api/recommend/remove', method: 'post', replace: true },
+      { action: '/api/recommend/remove', method: 'POST', replace: true },
     );
   };
 

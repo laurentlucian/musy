@@ -32,7 +32,7 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
 
     fetcher.submit(
       { state: `${isSaved}`, trackId, userId },
-      { action: 'api/track/save', method: 'post', replace: true },
+      { action: 'api/track/save', method: 'POST' },
     );
   };
 

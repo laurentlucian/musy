@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -26,7 +26,7 @@ const ProfilePlaylists = () => {
   );
 };
 
-export const loader = async ({ params }: LoaderArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
 

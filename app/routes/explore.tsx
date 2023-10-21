@@ -1,4 +1,4 @@
-import type { LoaderArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
 import { Stack, Text } from '@chakra-ui/react';
 
@@ -60,7 +60,7 @@ const Explore = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUser = await getCurrentUser(request);
   invariant(currentUser, 'No user found');
   const userId = currentUser.userId;

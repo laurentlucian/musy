@@ -1,4 +1,4 @@
-import type { ActionArgs } from '@remix-run/server-runtime';
+import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
 import { Stack } from '@chakra-ui/react';
 
@@ -22,7 +22,7 @@ const Appearance = () => {
   );
 };
 
-export const loader = async ({ request }: ActionArgs) => {
+export const loader = async ({ request }: ActionFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const userId = session?.user?.id;
   invariant(userId, 'Unauthenticated');
@@ -35,7 +35,7 @@ export const loader = async ({ request }: ActionArgs) => {
     theme,
   });
 };
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const userId = session?.user?.id;
   invariant(userId, 'Unauthenticated');

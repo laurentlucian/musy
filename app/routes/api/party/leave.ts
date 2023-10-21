@@ -1,10 +1,10 @@
-import type { ActionArgs } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
 
-export const action = async ({ request }: ActionArgs) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const ownerId = body.get('userId');
   console.log('Leaving party...');
