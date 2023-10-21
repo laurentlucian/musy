@@ -6,5 +6,5 @@
 # Learn more: https://community.fly.io/t/sqlite-not-getting-setup-properly/4386
 
 set -ex
-npx prisma migrate deploy
+npx prisma@3.15.2 migrate deploy
 yarn start
