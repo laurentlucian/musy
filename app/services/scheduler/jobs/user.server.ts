@@ -2,6 +2,7 @@ import debug from 'debug';
 
 import { minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
+import { getAllUsersId } from '~/services/prisma/users.server';
 import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
@@ -52,7 +53,13 @@ export const userQ = Queue<{ userId: string }>(
       topQ.add('update_top', { userId }),
     ]);
 
-    debugUserQ('completed');
+    const users = await getAllUsersId();
+    const jobs = await userQ.getJobCounts();
+
+    debugUserQ('completed', {
+      jobs,
+      'total users': users.length,
+    });
 
     await createPlaybackQ()
       .catch(debugUserQ)
