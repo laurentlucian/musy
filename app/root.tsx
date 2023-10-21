@@ -154,7 +154,7 @@ const Document = withEmotionCache(
       >
         <head>
           <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <meta charSet="utf-8" />
           <meta name="description" content="Music shared easy" />
           <meta name="keywords" content="music, discover, spotify, playlist, share, friends" />
