@@ -6,7 +6,7 @@ import { VolumeMute } from 'iconsax-react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import { useCurrentUserId } from '~/hooks/useCurrentUser';
-import { useProfileId } from '~/hooks/usePofile';
+import { useProfileId } from '~/hooks/useProfile';
 import type { action as muteAction } from '~/routes/api/user/mute';
 
 type Mute = {

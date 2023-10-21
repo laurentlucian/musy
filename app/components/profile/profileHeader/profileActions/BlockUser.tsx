@@ -6,7 +6,7 @@ import { Button, MenuItem, useColorModeValue } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import { useCurrentUserId } from '~/hooks/useCurrentUser';
-import { useProfileId } from '~/hooks/usePofile';
+import { useProfileId } from '~/hooks/useProfile';
 import type { action as blockAction } from '~/routes/api/user/block';
 
 type BlockTypes = {

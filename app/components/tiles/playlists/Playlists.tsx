@@ -1,11 +1,10 @@
 import { Stack } from '@chakra-ui/react';
 
-import { usePlaylists } from '~/hooks/usePlaylist';
+import type { Playlist } from '@prisma/client';
 
 import Tiles from '../Tiles';
 import PlaylistDrawer from './PlaylistDrawer';
 import PlaylistTile from './PlaylistTile';
-import { Playlist } from '@prisma/client';
 
 const Playlists = ({ playlists }: { playlists: Playlist[] }) => {
   const scrollButtons = playlists.length > 5;

@@ -1,11 +1,11 @@
-import { useMatches } from '@remix-run/react';
+import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-const useIsMobile = (): boolean => {
-  const matches = useMatches();
-  const route = matches.find((match) => match.id === 'root');
-  if (!route || !route.data) return false;
+import type { loader } from '~/root';
 
-  return route.data.isMobile;
+const useIsMobile = () => {
+  const data = useTypedRouteLoaderData<typeof loader>('root');
+
+  return Boolean(data?.isMobile);
 };
 
 export default useIsMobile;
