@@ -1,7 +1,7 @@
 import debug from 'debug';
 import invariant from 'tiny-invariant';
 
-import { minutesToMs } from '~/lib/utils';
+import { isProduction, minutesToMs } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import { getAllUsersId } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
@@ -61,33 +61,35 @@ export const createUserQ = async () => {
   await userQ.obliterate({ force: true }).catch(() => debugUserQCreator('obliterated userQ')); // https://github.com/taskforcesh/bullmq/issues/430
   debugUserQCreator('obliterated userQ; userQs now', await getUserQs());
 
-  // for testing
-  // await userQ.add('update_user', { userId: '1295028670' });
-  // return;
+  // for testing/dev
+  if (!isProduction) {
+    await userQ.add('update_user', { userId: '1295028670' });
+  }
 
   debugUserQCreator(`adding ${users.length} users to userQ..`);
-  // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
-  // bulkAll doesn't support repeateable jobs
-  // for (const userId of users) {
-  //   await userQ.add(
-  //     'update_user',
-  //     { userId: userId },
-  //     {
-  //       backoff: {
-  //         delay: minutesToMs(1),
-  //         type: 'exponential',
-  //       },
-  //       // a job with duplicate id will not be added
-  //       jobId: userId,
-  //       removeOnComplete: true,
-  //       removeOnFail: true,
-  //       repeat: { every: minutesToMs(30) },
-  //     },
-  //   );
-  // }
+  if (isProduction) {
+    // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
+    // bulkAll doesn't support repeateable jobs
+    for (const userId of users) {
+      await userQ.add(
+        'update_user',
+        { userId: userId },
+        {
+          backoff: {
+            delay: minutesToMs(1),
+            type: 'exponential',
+          },
+          // a job with duplicate id will not be added
+          jobId: userId,
+          removeOnComplete: true,
+          removeOnFail: true,
+          repeat: { every: minutesToMs(30) },
+        },
+      );
+    }
 
-  debugUserQCreator('repeatable jobs created:', await userQ.getJobCounts());
-
+    debugUserQCreator('repeatable jobs created:', await userQ.getJobCounts());
+  }
   // repeateableJobs are started with delay, so run these manually at startup
   // await userQ.addBulk(
   //   users.map((userId) => ({
@@ -98,7 +100,7 @@ export const createUserQ = async () => {
   //   })),
   // );
 
-  debugUserQCreator('immediate jobs created', await userQ.getJobCounts());
+  // debugUserQCreator('immediate jobs created', await userQ.getJobCounts());
 
   // if (!isProduction) {
   //   await addMissingTracks();
