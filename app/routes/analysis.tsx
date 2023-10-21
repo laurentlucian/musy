@@ -1,5 +1,6 @@
-import type { LoaderArgs, V2_MetaFunction } from '@remix-run/node';
+import type { MetaFunction } from '@remix-run/node';
 import { Form, useSearchParams, useSubmit, useNavigation, Link, Outlet } from '@remix-run/react';
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import type { ChangeEvent } from 'react';
 import { useRef, useEffect, useState } from 'react';
 
@@ -145,7 +146,7 @@ const Analysis = () => {
   );
 };
 
-export const loader = async ({ request }: LoaderArgs) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const searchURL = url.searchParams.get('spotify');
   if (!searchURL) return typedjson(null);
@@ -163,7 +164,7 @@ export const loader = async ({ request }: LoaderArgs) => {
   return typedjson(results);
 };
 
-export const meta: V2_MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data || data.length === 0) {
     return [
       {
