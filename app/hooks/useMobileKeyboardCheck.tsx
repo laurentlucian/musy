@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 
+import { createWithEqualityFn } from 'zustand/traditional'
 interface DrawerStateConfig {
   actions: {
     hideMenu: () => void;
@@ -8,7 +8,7 @@ interface DrawerStateConfig {
   show: boolean;
 }
 
-const useMobileKeyboardCheck = create<DrawerStateConfig>()((set) => ({
+const useMobileKeyboardCheck = createWithEqualityFn<DrawerStateConfig>()((set) => ({
   actions: {
     hideMenu: () => set({ show: false }),
     showMenu: () => set({ show: true }),

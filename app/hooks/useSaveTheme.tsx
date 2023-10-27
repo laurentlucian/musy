@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
+import { createWithEqualityFn } from 'zustand/traditional';
 
 interface SaveThemeStateConfig {
   alert: boolean;
@@ -8,7 +8,7 @@ interface SaveThemeStateConfig {
   show: boolean;
 }
 
-const useSaveThemeStore = create<SaveThemeStateConfig>()((set) => ({
+const useSaveThemeStore = createWithEqualityFn<SaveThemeStateConfig>()((set) => ({
   alert: false,
   setAlert: () => set({ alert: true }),
   setShow: (by) => set({ alert: false, show: by }),

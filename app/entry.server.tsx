@@ -13,7 +13,7 @@ import { createUserQ } from './services/scheduler/creators/userQ.server';
 
 require('better-logging')(console);
 
-void createUserQ();
+// void createUserQ();
 void createFeedQ();
 
 export default function handleRequest(

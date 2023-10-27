@@ -1,5 +1,5 @@
-import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
+import { createWithEqualityFn } from 'zustand/traditional';
 
 import useCurrentUser from './useCurrentUser';
 
@@ -10,7 +10,7 @@ type UserLibraryStore = {
   setRecommended: (recommended: Map<string, boolean>) => void;
 };
 
-const useUserLibraryStore = create<UserLibraryStore>((set) => ({
+const useUserLibraryStore = createWithEqualityFn<UserLibraryStore>((set) => ({
   library: null,
   recommended: null,
   setLibrary: (library: Map<string, boolean>) => set({ library }),

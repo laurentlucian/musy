@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Button, Flex, useEventListener } from '@chakra-ui/react';
 
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional'
 
 type FullscreenState = {
   actions: {
@@ -12,7 +12,7 @@ type FullscreenState = {
   components: JSX.Element[];
 };
 
-const useFullscreenStore = create<FullscreenState>((set) => ({
+const useFullscreenStore = createWithEqualityFn<FullscreenState>((set) => ({
   actions: {
     onClose: () => set((prev) => ({ components: prev.components.slice(0, -1) })),
     onOpen: (component: JSX.Element) =>

@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 
 import type { Profile, Track } from '@prisma/client';
 import { useTypedFetcher } from 'remix-typedjson';
-import { create } from 'zustand';
 import { shallow } from 'zustand/shallow';
+import { createWithEqualityFn } from 'zustand/traditional';
 
 import type { loader } from '~/routes/api/search/results';
 
@@ -16,12 +16,12 @@ interface SearchStoreType {
   setSearch: (search: string) => void;
 }
 
-const useSearchStore = create<SearchStoreType>()((set) => ({
+const useSearchStore = createWithEqualityFn<SearchStoreType>()((set) => ({
   results: [],
   search: '',
   setResults: (results) => set({ results }),
   setSearch: (search) => set({ search }),
-}));
+}), Object.is);
 
 export const useSearchInput = () =>
   [
