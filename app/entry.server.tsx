@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server';
 
 import { CacheProvider } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
+import * as betterLogging from 'better-logging';
 
 import { ServerStyleContext } from '~/lib/emotion/context';
 import createEmotionCache from '~/lib/emotion/createEmotionCache';
@@ -11,7 +12,7 @@ import createEmotionCache from '~/lib/emotion/createEmotionCache';
 import { createFeedQ } from './services/scheduler/creators/feedQ.server';
 import { createUserQ } from './services/scheduler/creators/userQ.server';
 
-require('better-logging')(console);
+betterLogging.default(console);
 
 // void createUserQ();
 void createFeedQ();

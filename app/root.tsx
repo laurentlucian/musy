@@ -35,9 +35,10 @@ import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fulls
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
 import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
-import fonts from './lib/fonts.css';
-import waver from './lib/icons/waver.css';
 import { iosSplashScreens } from './lib/utils';
+
+import './lib/fonts.css';
+import './lib/icons/waver.css';
 
 const App = () => {
   const { cookie } = useTypedLoaderData<typeof loader>();
@@ -97,8 +98,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export let links: LinksFunction = () => {
   return [
-    { as: 'style', href: waver, rel: 'stylesheet' },
-    { as: 'style', href: fonts, rel: 'stylesheet' },
     {
       as: 'manifest',
       href: '/manifest.json',
@@ -197,8 +196,8 @@ const Document = withEmotionCache(
             </ColorModeProvider>
           </ChakraProvider>
           <ScrollRestoration />
-          <Scripts />
           {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
+          <Scripts />
         </body>
       </html>
     );
