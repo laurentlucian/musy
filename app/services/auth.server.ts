@@ -37,7 +37,6 @@ const scopes = [
 ].join(' ');
 
 const callbackURL = process.env.SPOTIFY_CALLBACK_URL;
-// const callbackURL = 'http://192.168.0.105:3000/auth/spotify/callback';
 
 export const spotifyStrategy = new SpotifyStrategy(
   {
