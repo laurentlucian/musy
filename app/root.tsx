@@ -55,7 +55,7 @@ const App = () => {
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
   defaultShouldRevalidate,
-  nextUrl,
+  // nextUrl,
 }) => {
   // if (nextUrl.search || nextUrl.pathname !== '/home' ) return false;
 
@@ -96,7 +96,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 };
 
-export let links: LinksFunction = () => {
+export const links: LinksFunction = () => {
   return [
     {
       as: 'manifest',
