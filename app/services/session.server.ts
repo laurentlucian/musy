@@ -1,6 +1,6 @@
 import { createCookie, createCookieSessionStorage } from '@remix-run/node';
 
-let sessionSecret = process.env.SESSION_SECRET;
+const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
   throw new Error('Must set environment variable SESSION_SECRET');
 }
