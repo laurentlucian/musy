@@ -161,3 +161,28 @@ export const getTrack = async (trackId: string) => {
 
   return track;
 };
+
+export const getSessions = () => {
+  return prisma.sessions.findMany({
+    include: {
+      songs: {
+        include: {
+          track: true,
+        },
+        orderBy: {
+          playedAt: 'desc',
+        },
+        take: 50,
+      },
+      user: {
+        include: {
+          playback: true,
+        },
+      },
+    },
+    orderBy: {
+      startTime: 'desc',
+    },
+    take: 30,
+  });
+};

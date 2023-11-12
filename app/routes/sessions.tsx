@@ -5,7 +5,7 @@ import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
 import SessionModal from '~/components/sessions/SessionModal';
 import SessionT from '~/components/sessions/SessionTile';
-import { prisma } from '~/services/db.server';
+import { getSessions } from '~/services/prisma/tracks.server';
 
 const Sessions = () => {
   const { sessions } = useTypedLoaderData<typeof loader>();
@@ -37,31 +37,6 @@ const Sessions = () => {
       })}
     </Stack>
   );
-};
-
-export const getSessions = () => {
-  return prisma.sessions.findMany({
-    include: {
-      songs: {
-        include: {
-          track: true,
-        },
-        orderBy: {
-          playedAt: 'desc',
-        },
-        take: 50,
-      },
-      user: {
-        include: {
-          playback: true,
-        },
-      },
-    },
-    orderBy: {
-      startTime: 'desc',
-    },
-    take: 30,
-  });
 };
 
 export type SessionsWithData = Prisma.PromiseReturnType<typeof getSessions>;
