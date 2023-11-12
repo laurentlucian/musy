@@ -1,6 +1,6 @@
 import { unstable_vitePlugin as remix } from '@remix-run/dev';
-import { createRoutesFromFolders } from '@remix-run/v1-route-convention';
 
+import { flatRoutes } from 'remix-flat-routes';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -9,7 +9,7 @@ export default defineConfig({
     remix({
       ignoredRouteFiles: ['**/.*'],
       routes: async (defineRoutes) => {
-        return createRoutesFromFolders(defineRoutes);
+        return flatRoutes('routes', defineRoutes);
       },
       serverModuleFormat: 'cjs',
     }),
