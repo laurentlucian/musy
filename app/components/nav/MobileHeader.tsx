@@ -34,28 +34,22 @@ const MobileHeader = () => {
   );
 
   return (
-    <Box h="45px">
-      <Flex
-        h="45px"
-        as="header"
-        backdropFilter="blur(27px)"
-        bg={isProfile ? 'transparent' : bg}
-        py="8px"
-        borderBottom={isProfile ? undefined : '1px solid'}
-        borderColor={border}
-        zIndex={9}
-        justify="center"
-        align="center"
-        pos="fixed"
-        right={0}
-        left={0}
-        top={0}
-        w="100%"
-      >
-        {Header}
-        {isProfile ? isOwnProfile ? <UserMenu /> : <ProfileActions /> : null}
-      </Flex>
-    </Box>
+    <Flex
+      h="45px"
+      as="header"
+      backdropFilter="blur(27px)"
+      bg={isProfile ? 'transparent' : bg}
+      py="8px"
+      borderBottom={isProfile ? undefined : '1px solid'}
+      borderColor={border}
+      zIndex={9}
+      justify="center"
+      align="center"
+      w="100%"
+    >
+      {Header}
+      {isProfile ? isOwnProfile ? <UserMenu /> : <ProfileActions /> : null}
+    </Flex>
   );
 };
 

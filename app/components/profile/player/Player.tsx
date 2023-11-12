@@ -145,7 +145,7 @@ const Player = ({ id, layoutKey, playback }: PlayerProps) => {
   const { track } = playback;
 
   return (
-    <Stack pos="sticky" top={isOpen ? ['45px', '78px'] : ['44px', '78px']} zIndex={1} spacing={0}>
+    <Stack pos="sticky" top={isOpen ? ['0px', '78px'] : ['0px', '78px']} zIndex={1} spacing={0}>
       <Stack
         backdropFilter={blurPlayer && blur ? 'blur(27px)' : 'none'}
         borderRadius={size === 'small' ? 0 : 5}
