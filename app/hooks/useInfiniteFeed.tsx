@@ -4,7 +4,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import useInfiniteScroll from '~/hooks/useInfiniteScroll';
 import type { Feed } from '~/lib/types/types';
-import type { loader as feedLoader } from '~/routes/api/activity/feed';
+import type { loader as feedLoader } from '~/routes/api+/activity+/feed';
 
 const useInfiniteFeed = () => {
   const [feed, setFeed] = useState<Feed[]>([]);

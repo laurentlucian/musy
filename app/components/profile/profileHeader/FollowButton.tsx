@@ -6,7 +6,7 @@ import { Button } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import useCurrentUser from '~/hooks/useCurrentUser';
-import type { action as followAction } from '~/routes/api/user/follow';
+import type { action as followAction } from '~/routes/api+/user+/follow';
 
 const FollowButton = (props: { id?: string }) => {
   const currentUser = useCurrentUser();

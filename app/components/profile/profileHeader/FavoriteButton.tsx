@@ -7,7 +7,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import Tooltip from '~/components/Tooltip';
 import useCurrentUser from '~/hooks/useCurrentUser';
-import type { action as favoriteAction } from '~/routes/api/user/favorite';
+import type { action as favoriteAction } from '~/routes/api+/user+/favorite';
 
 const FavoriteButton = (props: { id?: string }) => {
   const currentUser = useCurrentUser();

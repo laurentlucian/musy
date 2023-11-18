@@ -9,7 +9,7 @@ import Tooltip from '~/components/Tooltip';
 import useIsMobile from '~/hooks/useIsMobile';
 import Waver from '~/lib/icons/Waver';
 import { timeSince } from '~/lib/utils';
-import type { action as moodAction } from '~/routes/api/user/profile/mood';
+import type { action as moodAction } from '~/routes/api+/user+/profile+/mood';
 
 const MoodButton = ({ mood, since }: { mood?: string | null; since?: Date }) => {
   const fetcher = useTypedFetcher<typeof moodAction>();

@@ -7,7 +7,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import { useCurrentUserId } from '~/hooks/useCurrentUser';
 import { useProfileId } from '~/hooks/useProfile';
-import type { action as blockAction } from '~/routes/api/user/block';
+import type { action as blockAction } from '~/routes/api+/user+/block';
 
 type BlockTypes = {
   block: boolean;

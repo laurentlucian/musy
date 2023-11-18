@@ -3,7 +3,7 @@ import { Text, Textarea } from '@chakra-ui/react';
 import { useTypedFetcher } from 'remix-typedjson';
 
 import useIsMobile from '~/hooks/useIsMobile';
-import type { action as bioAction } from '~/routes/api/user/profile/bio';
+import type { action as bioAction } from '~/routes/api+/user+/profile+/bio';
 
 const Bio = ({ bio, isOwnProfile }: { bio: string | null; isOwnProfile: boolean }) => {
   const fetcher = useTypedFetcher<typeof bioAction>();

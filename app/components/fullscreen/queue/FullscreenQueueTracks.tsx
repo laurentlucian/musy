@@ -7,7 +7,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import TileTrackList from '~/components/tile/track/TileTrackList';
-import type { loader } from '~/routes/api/search/results';
+import type { loader } from '~/routes/api+/search+/results';
 
 import SendButton from '../shared/actions/SendTrack';
 

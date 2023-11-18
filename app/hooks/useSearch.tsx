@@ -5,7 +5,7 @@ import { useTypedFetcher } from 'remix-typedjson';
 import { shallow } from 'zustand/shallow';
 import { createWithEqualityFn } from 'zustand/traditional';
 
-import type { loader } from '~/routes/api/search/results';
+import type { loader } from '~/routes/api+/search+/results';
 
 type SearchResult = Track | Profile;
 
@@ -16,12 +16,15 @@ interface SearchStoreType {
   setSearch: (search: string) => void;
 }
 
-const useSearchStore = createWithEqualityFn<SearchStoreType>()((set) => ({
-  results: [],
-  search: '',
-  setResults: (results) => set({ results }),
-  setSearch: (search) => set({ search }),
-}), Object.is);
+const useSearchStore = createWithEqualityFn<SearchStoreType>()(
+  (set) => ({
+    results: [],
+    search: '',
+    setResults: (results) => set({ results }),
+    setSearch: (search) => set({ search }),
+  }),
+  Object.is,
+);
 
 export const useSearchInput = () =>
   [

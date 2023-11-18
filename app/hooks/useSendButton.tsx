@@ -5,9 +5,9 @@ import { DirectInbox, CloseSquare, Send2, TickSquare, Star1 } from 'iconsax-reac
 import { useTypedFetcher } from 'remix-typedjson';
 
 import Waver from '~/lib/icons/Waver';
-import type { action as addAction } from '~/routes/api/queue/add';
-import type { action as sendAction } from '~/routes/api/queue/send';
-import type { action as recommendAction } from '~/routes/api/recommend/add';
+import type { action as addAction } from '~/routes/api+/queue+/add';
+import type { action as sendAction } from '~/routes/api+/queue+/send';
+import type { action as recommendAction } from '~/routes/api+/recommend+/add';
 
 import { useCurrentUserId } from './useCurrentUser';
 import { useUserRecommended } from './useUserLibrary';

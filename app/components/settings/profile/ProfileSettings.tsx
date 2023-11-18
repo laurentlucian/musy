@@ -6,7 +6,7 @@ import type { Theme } from '@prisma/client';
 import { useTypedLoaderData } from 'remix-typedjson';
 
 import useCurrentUser from '~/hooks/useCurrentUser';
-import type { loader } from '~/routes/settings/appearance';
+import type { loader } from '~/routes/settings.appearance';
 
 import { default as Player } from './SettingsPlayer';
 import { default as ProfileHeader } from './SettingsProfileHeader';
