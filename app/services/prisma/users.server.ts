@@ -48,7 +48,10 @@ export const createUser = async (data: CreateUser) => {
 };
 
 export const getUser = async (id: string) => {
-  const user = await prisma.user.findUnique({ include: { user: true }, where: { id } });
+  const user = await prisma.user.findUnique({
+    include: { user: true },
+    where: { id },
+  });
   if (!user || !user.user) return null;
   return user;
 };
@@ -68,12 +71,18 @@ export const updateToken = async (
 };
 
 export const updateUserImage = async (id: string, image: string) => {
-  const data = await prisma.profile.update({ data: { image }, where: { userId: id } });
+  const data = await prisma.profile.update({
+    data: { image },
+    where: { userId: id },
+  });
   return data;
 };
 
 export const updateUserName = async (id: string, name: string) => {
-  const data = await prisma.profile.update({ data: { name }, where: { userId: id } });
+  const data = await prisma.profile.update({
+    data: { name },
+    where: { userId: id },
+  });
   return data;
 };
 

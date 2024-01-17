@@ -1,14 +1,14 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import clsx from "clsx";
+import clsx from 'clsx';
 
-import { useMouseScroll } from "~/hooks/useMouseScroll";
-import { cn } from "~/lib/cn";
-import type { TrackWithInfo } from "~/lib/types/types";
+import { useMouseScroll } from '~/hooks/useMouseScroll';
+import { cn } from '~/lib/cn';
+import type { TrackWithInfo } from '~/lib/types/types';
 
-import { useFullscreen } from "../fullscreen/Fullscreen";
-import FullscreenTracks from "../fullscreen/tracks/FullscreenTracks";
-import ScrollButtons from "./shared/ScrollButtons";
+import { useFullscreen } from '../fullscreen/Fullscreen';
+import FullscreenTracks from '../fullscreen/tracks/FullscreenTracks';
+import ScrollButtons from './shared/ScrollButtons';
 
 type TilesProps = {
   action?: ReactNode;
@@ -29,17 +29,17 @@ const Tiles = ({
   title,
   tracks,
 }: TilesProps) => {
-  const { props, scrollRef } = useMouseScroll("reverse", autoScroll);
+  const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
   const { onOpen } = useFullscreen();
 
   return (
-    <div className={cn("stack-3", className)}>
+    <div className={cn('stack-3', className)}>
       {(title || scrollButtons || action) && (
-        <div className="flex items-center">
+        <div className='flex items-center'>
           {title && (
             <p
-              className={clsx("text-[11px] font-semibold", {
-                "cursor-pointer": tracks,
+              className={clsx('text-[11px] font-semibold', {
+                'cursor-pointer': tracks,
               })}
               onClick={() => {
                 if (title && tracks) {
@@ -55,7 +55,7 @@ const Tiles = ({
         </div>
       )}
       <div
-        className="scrollbar flex items-start space-x-4 overflow-auto pb-2"
+        className='scrollbar flex items-start space-x-4 overflow-auto pb-2'
         ref={scrollRef}
         {...props}
       >

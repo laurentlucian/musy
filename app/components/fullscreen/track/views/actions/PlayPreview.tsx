@@ -1,13 +1,13 @@
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
-import { PauseCircle, PlayCircle } from "iconsax-react";
+import { PauseCircle, PlayCircle } from 'iconsax-react';
 
-import { usePlayPreview } from "~/hooks/usePlayPreview";
-import AudioVisualizer from "~/lib/icons/AudioVisualizer";
-import SpotifyLogo from "~/lib/icons/SpotifyLogo";
+import { usePlayPreview } from '~/hooks/usePlayPreview';
+import AudioVisualizer from '~/lib/icons/AudioVisualizer';
+import SpotifyLogo from '~/lib/icons/SpotifyLogo';
 
-import ActionButton from "../../../shared/FullscreenActionButton";
-import { useFullscreenTrack } from "../../FullscreenTrack";
+import ActionButton from '../../../shared/FullscreenActionButton';
+import { useFullscreenTrack } from '../../FullscreenTrack';
 
 const PlayPreview = () => {
   const { track } = useFullscreenTrack();
@@ -16,7 +16,7 @@ const PlayPreview = () => {
   const [hovering, setHovering] = useState<boolean>();
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const text = isPlaying ? "Stop" : "Listen";
+  const text = isPlaying ? 'Stop' : 'Listen';
   const icon =
     isPlaying && !showPause ? (
       <AudioVisualizer />
@@ -38,7 +38,7 @@ const PlayPreview = () => {
 
   return (
     <>
-      {track.preview_url !== "" && track.preview_url && (
+      {track.preview_url !== '' && track.preview_url && (
         <ActionButton
           onClick={onClick}
           leftIcon={icon}

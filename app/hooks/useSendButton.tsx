@@ -47,10 +47,10 @@ export const useRecommendData = (trackId: string) => {
   ) : isError ? (
     <AlertCircle />
   ) : (
-    <Send2 variant="Bold" />
+    <Send2 variant='Bold' />
   );
 
-  const leftIcon = isRecommended ? <Star1 variant="Bold" /> : <Star1 />;
+  const leftIcon = isRecommended ? <Star1 variant='Bold' /> : <Star1 />;
 
   const child = isAdding ? (
     <Waver />
@@ -83,9 +83,9 @@ export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => 
   const isDone = fetcher.state === 'idle' && fetcher.data != null;
   const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
   const icon = isDone ? (
-    <TickSquare size="25px" />
+    <TickSquare size='25px' />
   ) : isError ? (
-    <CloseSquare size="25px" />
+    <CloseSquare size='25px' />
   ) : (
     <DirectInbox />
   );
@@ -113,11 +113,11 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
 
   const icon = isDone ? (
-    <TickSquare size="25px" />
+    <TickSquare size='25px' />
   ) : isError ? (
-    <CloseSquare size="25px" />
+    <CloseSquare size='25px' />
   ) : (
-    <Send2 variant="Outline" size="25px" />
+    <Send2 variant='Outline' size='25px' />
   );
 
   const text = isDone ? (fetcher.data ? fetcher.data : 'Timeout') : username.split(/[ .]/)[0];

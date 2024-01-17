@@ -26,9 +26,9 @@ const DeleteRecommended = () => {
 
   return (
     <IconButton
-      icon={<MinusCirlce size="25px" />}
-      variant="ghost"
-      aria-label="delete"
+      icon={<MinusCirlce size='25px' />}
+      variant='ghost'
+      aria-label='delete'
       _hover={{ color: 'white', opacity: 1 }}
       opacity={0.5}
       onClick={onClick}
@@ -47,8 +47,8 @@ const TilesRecommended = ({ tracks }: { tracks: TrackWithInfo[] }) => {
     tiles: (
       <IconButton
         onClick={() => setEditing(!editing)}
-        icon={!editing ? <Edit size="15px" /> : <TickCircle size="15px" />}
-        variant="ghost"
+        icon={!editing ? <Edit size='15px' /> : <TickCircle size='15px' />}
+        variant='ghost'
         aria-label={!editing ? 'edit' : 'done'}
         _hover={{ color: 'white', opacity: 1 }}
         opacity={0.5}
@@ -58,7 +58,7 @@ const TilesRecommended = ({ tracks }: { tracks: TrackWithInfo[] }) => {
     ),
   };
 
-  return <TrackTiles tracks={tracks} title="RECOMMENDED" actions={actions} />;
+  return <TrackTiles tracks={tracks} title='RECOMMENDED' actions={actions} />;
 };
 
 export default TilesRecommended;

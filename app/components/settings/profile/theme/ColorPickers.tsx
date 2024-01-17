@@ -118,15 +118,15 @@ const ColorPickers = ({ picker, setPicker, setTheme, theme }: ColorPickersProps)
   }, [picker]);
 
   return (
-    <Box ref={constraintRef} h="100%" w="100%" zIndex={99999}>
-      <SimpleGrid columns={2} p={[1, 0]} w="100%">
+    <Box ref={constraintRef} h='100%' w='100%' zIndex={99999}>
+      <SimpleGrid columns={2} p={[1, 0]} w='100%'>
         {colorPickers.map((colorPicker, i) => (
           <Box key={i}>
             <ColorPicker setPicker={setPicker} picker={picker} index={i} {...colorPicker} />
           </Box>
         ))}
       </SimpleGrid>
-      <Box zIndex={99999} boxSize="30px" w="222px">
+      <Box zIndex={99999} boxSize='30px' w='222px'>
         <motion.div
           drag={mouseIn}
           dragConstraints={constraintRef}
@@ -139,35 +139,35 @@ const ColorPickers = ({ picker, setPicker, setTheme, theme }: ColorPickersProps)
             {picker >= 0 && (
               <>
                 <Flex
-                  aria-label="color picker controls"
+                  aria-label='color picker controls'
                   onPointerDown={startDrag}
                   onPointerUp={dontDrag}
                   style={{ touchAction: 'none' }}
-                  boxSize="30px"
-                  bg="#fff"
+                  boxSize='30px'
+                  bg='#fff'
                 >
                   <IconButton
-                    aria-label="move"
+                    aria-label='move'
                     icon={<Move />}
-                    bg="#fff"
-                    color="#161616"
+                    bg='#fff'
+                    color='#161616'
                     _hover={{}}
                     _active={{}}
                   />
                   <IconButton
-                    aria-label="close"
+                    aria-label='close'
                     icon={<X />}
                     onClick={() => {
                       setPicker(-1);
                     }}
                     onMouseDown={dontDrag}
-                    bg="#fff"
-                    color="#161616"
+                    bg='#fff'
+                    color='#161616'
                     _hover={{}}
                     _active={{}}
                   />
                 </Flex>
-                <Box onPointerDown={dontDrag} w="225px" h="178px">
+                <Box onPointerDown={dontDrag} w='225px' h='178px'>
                   {/* <SketchPicker
                     color={colorPickers[picker].bgCol}
                     onChange={(col) => {

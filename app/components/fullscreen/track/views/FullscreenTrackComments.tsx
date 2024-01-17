@@ -1,7 +1,7 @@
-import FullscreenFadeLayout from "../../shared/FullscreenFadeLayout";
-import CommentInput from "./comments/CommentInput";
-import CommentList from "./comments/CommentList";
-import BackButton from "./shared/BackButton";
+import FullscreenFadeLayout from '../../shared/FullscreenFadeLayout';
+import CommentInput from './comments/CommentInput';
+import CommentList from './comments/CommentList';
+import BackButton from './shared/BackButton';
 
 const FullscreenTrackComments = () => (
   <FullscreenFadeLayout>

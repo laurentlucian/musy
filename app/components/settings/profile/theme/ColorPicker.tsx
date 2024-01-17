@@ -19,8 +19,8 @@ const ColorPicker = ({ bgCol, gradient, index, picker, setPicker, title }: Color
     } else setPicker(index);
   };
   return (
-    <HStack cursor="pointer" onClick={onToggle}>
-      <Box p="1px" bg={bgCol} bgGradient={gradient} boxSize="20px" />
+    <HStack cursor='pointer' onClick={onToggle}>
+      <Box p='1px' bg={bgCol} bgGradient={gradient} boxSize='20px' />
       <Text>{title}</Text>
     </HStack>
   );

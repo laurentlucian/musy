@@ -1,8 +1,8 @@
-import { useParams } from "@remix-run/react";
+import { useParams } from '@remix-run/react';
 
-import Tooltip from "~/components/Tooltip";
-import { useQueueToFriendData } from "~/hooks/useSendButton";
-import Waver from "~/lib/icons/Waver";
+import Tooltip from '~/components/Tooltip';
+import { useQueueToFriendData } from '~/hooks/useSendButton';
+import Waver from '~/lib/icons/Waver';
 
 type SendButtonProps = {
   trackId: string;
@@ -12,7 +12,7 @@ type SendButtonProps = {
 const SendTrack = ({ trackId, userId }: SendButtonProps) => {
   const { id } = useParams();
   const toId = userId ?? id;
-  if (!toId) throw new Error("Missing userId in <SendTrack />");
+  if (!toId) throw new Error('Missing userId in <SendTrack />');
 
   const { addToFriendsQueue, icon, isAdding } = useQueueToFriendData({
     trackId,
@@ -20,11 +20,11 @@ const SendTrack = ({ trackId, userId }: SendButtonProps) => {
   });
 
   return (
-    <Tooltip label="Add to their queue" placement="bottom">
+    <Tooltip label='Add to their queue' placement='bottom'>
       <button
-        className="relative text-musy-200 hover:text-white"
+        className='relative text-musy-200 hover:text-white'
         onClick={addToFriendsQueue}
-        aria-label="SEND"
+        aria-label='SEND'
       >
         {isAdding ? <Waver /> : icon}
       </button>

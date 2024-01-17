@@ -100,21 +100,21 @@ const SaveThemeButton = ({
         <HStack
           bg={alert ? 'red' : bg}
           w={['95%', '100%']}
-          h="50px"
+          h='50px'
           zIndex={6969}
-          justify="space-around"
-          borderRadius="10px"
+          justify='space-around'
+          borderRadius='10px'
           pos={['fixed', 'unset']}
           bottom={5}
-          alignSelf="center"
+          alignSelf='center'
         >
-          <Text color="white">Reset or Save changes</Text>
+          <Text color='white'>Reset or Save changes</Text>
           <HStack>
-            <Button variant="ghost" onClick={onReset}>
+            <Button variant='ghost' onClick={onReset}>
               Reset
             </Button>
             <Button
-              bg="green"
+              bg='green'
               color={color}
               isLoading={isLoading}
               spinner={<Waver />}

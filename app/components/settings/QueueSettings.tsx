@@ -28,14 +28,14 @@ const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: Sub
   return (
     <>
       <FormControl
-        display="flex"
-        flexDirection="column"
+        display='flex'
+        flexDirection='column'
         gap={['10px', null, '20px']}
-        alignContent="center"
+        alignContent='center'
       >
         <HStack>
-          <Layer color={allowQueue === 'off' ? '#555555' : '#1DB954'} variant="Bold" />
-          <FormLabel htmlFor="allow-queue" mb="0">
+          <Layer color={allowQueue === 'off' ? '#555555' : '#1DB954'} variant='Bold' />
+          <FormLabel htmlFor='allow-queue' mb='0'>
             queue
           </FormLabel>
         </HStack>

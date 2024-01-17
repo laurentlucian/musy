@@ -41,17 +41,17 @@ const Account = () => {
 
   return (
     <>
-      <Stack spacing={5} w="100%" h="100%">
-        <FormControl display="flex" alignItems="center" justifyContent="space-between">
+      <Stack spacing={5} w='100%' h='100%'>
+        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
           <HStack>
-            <Ghost size="24" color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
-            <FormLabel fontSize={['sm', 'md']} htmlFor="private-profile" mb="0" color={color}>
+            <Ghost size='24' color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
+            <FormLabel fontSize={['sm', 'md']} htmlFor='private-profile' mb='0' color={color}>
               private profile
             </FormLabel>
           </HStack>
           <Switch
-            colorScheme="music"
-            id="private-profile"
+            colorScheme='music'
+            id='private-profile'
             defaultChecked={currentUser.settings?.isPrivate ?? false}
             onChange={(e) => {
               submit(
@@ -60,20 +60,20 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size="lg"
+            size='lg'
           />
         </FormControl>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
-        <FormControl display="flex" alignItems="center" justifyContent="space-between">
+        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
           <HStack>
-            <Scroll size="24" color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
-            <FormLabel fontSize={['sm', 'md']} htmlFor="auto-scroll" mb="0" color={color}>
+            <Scroll size='24' color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
+            <FormLabel fontSize={['sm', 'md']} htmlFor='auto-scroll' mb='0' color={color}>
               auto scroll
             </FormLabel>
           </HStack>
           <Switch
-            colorScheme="music"
-            id="auto-scroll"
+            colorScheme='music'
+            id='auto-scroll'
             defaultChecked={currentUser.settings?.autoscroll ?? true}
             onChange={(e) => {
               submit(
@@ -82,23 +82,23 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size="lg"
+            size='lg'
           />
         </FormControl>
-        <FormControl display="flex" alignItems="center" justifyContent="space-between">
+        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
           <HStack>
             <MusicPlay
-              size="24"
+              size='24'
               color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
-              variant="Bold"
+              variant='Bold'
             />
-            <FormLabel fontSize={['sm', 'md']} htmlFor="allowPreview" mb="0" color={color}>
+            <FormLabel fontSize={['sm', 'md']} htmlFor='allowPreview' mb='0' color={color}>
               song preview
             </FormLabel>
           </HStack>
           <Switch
-            colorScheme="music"
-            id="allowPreview"
+            colorScheme='music'
+            id='allowPreview'
             defaultChecked={currentUser.settings?.allowPreview ?? false}
             onChange={(e) => {
               submit(
@@ -107,23 +107,23 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size="lg"
+            size='lg'
           />
         </FormControl>
-        <FormControl display="flex" alignItems="center" justifyContent="space-between">
+        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
           <HStack>
             <PlayCricle
-              size="24"
+              size='24'
               color={currentUser.settings?.miniPlayer ? spotifyGreen : '#555555'}
-              variant="Bold"
+              variant='Bold'
             />
-            <FormLabel fontSize={['sm', 'md']} htmlFor="miniplayer" mb="0" color={color}>
+            <FormLabel fontSize={['sm', 'md']} htmlFor='miniplayer' mb='0' color={color}>
               home miniplayer
             </FormLabel>
           </HStack>
           <Switch
-            colorScheme="music"
-            id="miniplayer"
+            colorScheme='music'
+            id='miniplayer'
             defaultChecked={currentUser.settings?.miniPlayer ?? false}
             onChange={(e) => {
               submit(
@@ -132,20 +132,20 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size="lg"
+            size='lg'
           />
         </FormControl>
         {currentUser.settings?.founder && (
-          <FormControl display="flex" alignItems="center" justifyContent="space-between">
+          <FormControl display='flex' alignItems='center' justifyContent='space-between'>
             <HStack>
-              <Code1 size="24" color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
-              <FormLabel fontSize={['sm', 'md']} htmlFor="'dev-mode'" mb="0" color={color}>
+              <Code1 size='24' color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
+              <FormLabel fontSize={['sm', 'md']} htmlFor="'dev-mode'" mb='0' color={color}>
                 dev mode
               </FormLabel>
             </HStack>
             <Switch
-              colorScheme="music"
-              id="dev-mode"
+              colorScheme='music'
+              id='dev-mode'
               defaultChecked={currentUser.settings.dev ?? false}
               onChange={(e) => {
                 submit(
@@ -154,14 +154,14 @@ const Account = () => {
                   { method: 'POST', replace: true },
                 );
               }}
-              size="lg"
+              size='lg'
             />
           </FormControl>
         )}
         <Button
           leftIcon={<Logout />}
-          bgColor="red.600"
-          color="white"
+          bgColor='red.600'
+          color='white'
           _hover={{ bgColor: 'red.500' }}
           onClick={onOpen}
         >
@@ -172,14 +172,14 @@ const Account = () => {
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold" bg={bg} color={color}>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold' bg={bg} color={color}>
               log out
             </AlertDialogHeader>
             <AlertDialogBody bg={bg} color={color}>
-              <Text pl="20px">are you sure you want to logout?</Text>
+              <Text pl='20px'>are you sure you want to logout?</Text>
             </AlertDialogBody>
             <AlertDialogFooter bg={bg} color={color}>
-              <Form action={'/api/logout'} method="post">
+              <Form action={'/api/logout'} method='post'>
                 <Button
                   ref={cancelRef}
                   onClick={onClose}
@@ -190,11 +190,11 @@ const Account = () => {
                   cancel
                 </Button>
                 <Button
-                  bgColor="red"
-                  color="white"
+                  bgColor='red'
+                  color='white'
                   onClick={onClose}
                   ml={3}
-                  type="submit"
+                  type='submit'
                   _hover={{ bgColor: 'red.500' }}
                 >
                   log out

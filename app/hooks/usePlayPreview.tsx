@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { createWithEqualityFn } from 'zustand/traditional'
+import { createWithEqualityFn } from 'zustand/traditional';
 
 type PlayPreviewStore = {
   preview: string | null;

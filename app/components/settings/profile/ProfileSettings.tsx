@@ -55,18 +55,18 @@ const ProfileSettings = () => {
 
   return (
     <Stack>
-      <Stack direction={['column', 'row']} w="100%" h="100%" ref={constraintRef}>
+      <Stack direction={['column', 'row']} w='100%' h='100%' ref={constraintRef}>
         <ToggleSettings
           setTheme={setTheme}
           theme={theme}
           playerBtnSide={playerBtnSide}
           setPlayerBtnSide={setPlayerBtnSide}
         />
-        <Stack direction={['column', 'row']} w="100%">
+        <Stack direction={['column', 'row']} w='100%'>
           <Box
-            h="400px"
+            h='400px'
             border={`solid 1px ${color}`}
-            borderRadius="10px"
+            borderRadius='10px'
             bgGradient={theme.gradient ? bgGradient : undefined}
             bg={!theme.gradient ? bg : undefined}
           >
@@ -75,7 +75,7 @@ const ProfileSettings = () => {
           </Box>
           <ColorPickers setTheme={setTheme} theme={theme} setPicker={setPicker} picker={picker} />
         </Stack>
-        <Box h="300px" />
+        <Box h='300px' />
       </Stack>
       <SaveThemeButton
         color={color}

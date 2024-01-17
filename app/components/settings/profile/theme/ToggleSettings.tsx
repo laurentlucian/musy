@@ -25,7 +25,7 @@ const ToggleSettings = ({
   const toggleSettings = [
     {
       bold: true,
-      icon: colorMode === 'dark' ? <Moon variant="Bold" /> : <Sun1 variant="Bold" />,
+      icon: colorMode === 'dark' ? <Moon variant='Bold' /> : <Sun1 variant='Bold' />,
       label: 'toggle theme',
       setState: () => {
         toggleColorMode();
@@ -42,12 +42,12 @@ const ToggleSettings = ({
     {
       bold: true,
       icon: playerBtnSide ? (
-        <Box transform="rotateY(180deg)">
-          <ArrangeHorizontal variant="TwoTone" />
+        <Box transform='rotateY(180deg)'>
+          <ArrangeHorizontal variant='TwoTone' />
         </Box>
       ) : (
-        <Box transform="rotateX(180deg)">
-          <ArrangeHorizontal variant="TwoTone" />
+        <Box transform='rotateX(180deg)'>
+          <ArrangeHorizontal variant='TwoTone' />
         </Box>
       ),
       label: 'player button side',

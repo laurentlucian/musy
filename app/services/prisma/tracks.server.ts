@@ -6,7 +6,10 @@ import { prisma } from '~/services/db.server';
 export const trackWithInfo = {
   include: {
     liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-    queue: { select: { owner: { select: { user: true } } }, where: { action: 'add' } }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
+    queue: {
+      select: { owner: { select: { user: true } } },
+      where: { action: 'add' },
+    }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
     recent: { orderBy: { playedAt: 'asc' }, select: { user: true } },
   },
 } as const;

@@ -1,13 +1,13 @@
-import type { LoaderFunctionArgs } from "@remix-run/server-runtime";
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 
-import ActivityTile from "~/components/activity/ActivityTile";
-import TilesPlayback from "~/components/tiles/TilesPlayback";
-import useInfiniteFeed from "~/hooks/useInfiniteFeed";
-import useRevalidateOnFocus from "~/hooks/useRevalidateOnFocus";
-import { getFeed } from "~/services/prisma/tracks.server";
-import { getCurrentUserId } from "~/services/prisma/users.server";
+import ActivityTile from '~/components/activity/ActivityTile';
+import TilesPlayback from '~/components/tiles/TilesPlayback';
+import useInfiniteFeed from '~/hooks/useInfiniteFeed';
+import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
+import { getFeed } from '~/services/prisma/tracks.server';
+import { getCurrentUserId } from '~/services/prisma/users.server';
 
 const Home = () => {
   useRevalidateOnFocus();
@@ -15,19 +15,13 @@ const Home = () => {
   const { feed: more, waver } = useInfiniteFeed();
 
   return (
-    <article className="stack-2 px-1 md:space-y-10 md:px-0">
+    <article className='stack-2 px-1 md:space-y-10 md:px-0'>
       <TilesPlayback />
       {feed.map((activity, index) => (
-        <ActivityTile
-          key={`activity.${activity.id}${index}`}
-          activity={activity}
-        />
+        <ActivityTile key={`activity.${activity.id}${index}`} activity={activity} />
       ))}
       {more.map((activity, index) => (
-        <ActivityTile
-          key={`activity.${activity.id}${index}`}
-          activity={activity}
-        />
+        <ActivityTile key={`activity.${activity.id}${index}`} activity={activity} />
       ))}
       {waver}
     </article>
@@ -43,5 +37,5 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 };
 
-export { ErrorBoundary } from "~/components/error/ErrorBoundary";
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default Home;

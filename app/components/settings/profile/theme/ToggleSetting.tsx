@@ -37,7 +37,10 @@ const ToggleSetting = ({
   const onToggle = () => {
     setSave(true);
     if (setState) setState();
-    setTheme((prevTheme) => ({ ...prevTheme, [title.toLowerCase()]: !themeValue }));
+    setTheme((prevTheme) => ({
+      ...prevTheme,
+      [title.toLowerCase()]: !themeValue,
+    }));
   };
 
   useEffect(() => {
@@ -51,7 +54,7 @@ const ToggleSetting = ({
 
   if (!currentUser) return null;
   return (
-    <FormControl display="flex">
+    <FormControl display='flex'>
       <Tooltip label={label} hasArrow isDisabled={isSmallScreen} openDelay={300}>
         <IconButton
           aria-label={label}
@@ -61,7 +64,7 @@ const ToggleSetting = ({
           onClick={onToggle}
           opacity={themeValue || bold ? 1 : 0.3}
           border={themeValue || bold ? `1px solid white` : undefined} // color mode isn't working here
-          borderRadius="md"
+          borderRadius='md'
           _hover={{}} // color mode doesn't switch hover colors
         />
       </Tooltip>

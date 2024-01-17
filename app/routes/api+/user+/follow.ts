@@ -23,7 +23,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (isFollowing === 'true') {
     await spotify.unfollowUsers([userId]);
     await prisma.follow.delete({
-      where: { followingId_followerId: { followerId: currentUserId, followingId: userId } },
+      where: {
+        followingId_followerId: {
+          followerId: currentUserId,
+          followingId: userId,
+        },
+      },
     });
   } else if (isFollowing === 'false') {
     await spotify.followUsers([userId]);

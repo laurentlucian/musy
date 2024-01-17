@@ -15,7 +15,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return typedjson('Request Error');
   }
 
-  await prisma.profile.update({ data: { bio }, where: { userId: currentUserId } });
+  await prisma.profile.update({
+    data: { bio },
+    where: { userId: currentUserId },
+  });
   return null;
 };
 

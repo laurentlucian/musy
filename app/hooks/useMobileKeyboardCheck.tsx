@@ -1,5 +1,4 @@
-
-import { createWithEqualityFn } from 'zustand/traditional'
+import { createWithEqualityFn } from 'zustand/traditional';
 interface DrawerStateConfig {
   actions: {
     hideMenu: () => void;

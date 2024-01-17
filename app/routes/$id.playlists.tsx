@@ -1,16 +1,16 @@
-import type { LoaderFunctionArgs } from "@remix-run/server-runtime";
+import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
-import { typedjson, useTypedLoaderData } from "remix-typedjson";
-import invariant from "tiny-invariant";
+import { typedjson, useTypedLoaderData } from 'remix-typedjson';
+import invariant from 'tiny-invariant';
 
-import TilesTrack from "~/components/tiles/TilesTrack";
-import { prisma } from "~/services/db.server";
+import TilesTrack from '~/components/tiles/TilesTrack';
+import { prisma } from '~/services/db.server';
 
 const ProfilePlaylists = () => {
   const { playlists } = useTypedLoaderData<typeof loader>();
 
   return (
-    <div className="stack-3 relative">
+    <div className='stack-3 relative'>
       {playlists.map((playlist) => {
         return (
           <TilesTrack
@@ -26,7 +26,7 @@ const ProfilePlaylists = () => {
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
-  invariant(id, "Missing params Id");
+  invariant(id, 'Missing params Id');
 
   const playlists = await prisma.playlist.findMany({
     include: {
@@ -35,7 +35,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
           track: true,
         },
         orderBy: {
-          addedAt: "desc",
+          addedAt: 'desc',
         },
         take: 20,
       },

@@ -11,15 +11,15 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
   const isSmallScreen = useIsMobile();
 
   const SubHeader = (
-    <HStack spacing={[3, 5]} position="relative" w={['auto', '377px']}>
-      <Text fontSize="13px" mr="8px">
+    <HStack spacing={[3, 5]} position='relative' w={['auto', '377px']}>
+      <Text fontSize='13px' mr='8px'>
         Mood
       </Text>
-      <Flex align="baseline" pt="1px" cursor="pointer">
-        <Text fontSize="13px" mr="8px">
+      <Flex align='baseline' pt='1px' cursor='pointer'>
+        <Text fontSize='13px' mr='8px'>
           Time Listened
         </Text>
-        <Text as="span" fontSize="10px" opacity={0.5}>
+        <Text as='span' fontSize='10px' opacity={0.5}>
           /&nbsp; 24hr
         </Text>
       </Flex>
@@ -27,41 +27,41 @@ const SettingsProfileHeader = ({ profile }: { profile: Profile }) => {
   );
 
   const Bio = (
-    <Stack w={['100%', '195%']} pt="4px" pr="5px">
-      <Form method="post" replace>
+    <Stack w={['100%', '195%']} pt='4px' pr='5px'>
+      <Form method='post' replace>
         <Textarea
-          name="bio"
-          size="md"
-          variant="flushed"
+          name='bio'
+          size='md'
+          variant='flushed'
           defaultValue={profile.bio ?? ''}
-          placeholder="write something :)"
+          placeholder='write something :)'
           onBlur={(e) => submit(e.currentTarget.form)}
-          resize="none"
+          resize='none'
           maxLength={75}
           rows={2}
           py={0}
-          focusBorderColor="spotify.green"
+          focusBorderColor='spotify.green'
           w={isSmallScreen ? '100%' : '50%'}
           spellCheck={false}
-          h="100%"
-          minH="20px"
-          overflow="hidden"
+          h='100%'
+          minH='20px'
+          overflow='hidden'
         />
       </Form>
     </Stack>
   );
 
   return (
-    <Stack ml="10px" mt="20px">
+    <Stack ml='10px' mt='20px'>
       <HStack>
-        <Image src={profile.image} boxSize="120px" borderRadius="full" />
+        <Image src={profile.image} boxSize='120px' borderRadius='full' />
         <HStack>
           <Stack>
-            <Box h="20px" />
+            <Box h='20px' />
             <Heading
               size={profile.name.length > 10 ? 'lg' : profile.name.length > 16 ? 'md' : 'xl'}
-              fontWeight="bold"
-              textAlign="left"
+              fontWeight='bold'
+              textAlign='left'
             >
               {profile.name}
             </Heading>

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import type { Profile } from "@prisma/client";
-import { DirectInbox } from "iconsax-react";
+import type { Profile } from '@prisma/client';
+import { DirectInbox } from 'iconsax-react';
 
-import Tooltip from "~/components/Tooltip";
-import { shortenUsername } from "~/lib/utils";
+import Tooltip from '~/components/Tooltip';
+import { shortenUsername } from '~/lib/utils';
 
 const QueuedBy = (props: {
   queued?: {
@@ -18,7 +18,7 @@ const QueuedBy = (props: {
   if (!props.queued?.length) return null;
   return (
     <div
-      className="stack-h-1"
+      className='stack-h-1'
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
@@ -27,16 +27,12 @@ const QueuedBy = (props: {
       <Tooltip
         isOpen={isLabelOpen}
         label={
-          <div className="stack-3 bg-musy-900 rounded-sm px-2 py-1">
+          <div className='stack-3 rounded-sm bg-musy-900 px-2 py-1'>
             {props.queued.map(({ owner: { user } }, index) => {
               const name = shortenUsername(user?.name);
               return (
-                <div className="flex" key={index}>
-                  <img
-                    className="w-5 rounded-full"
-                    alt={user?.name}
-                    src={user?.image}
-                  />
+                <div className='flex' key={index}>
+                  <img className='w-5 rounded-full' alt={user?.name} src={user?.image} />
                   <p>{name}</p>
                 </div>
               );
@@ -44,10 +40,10 @@ const QueuedBy = (props: {
           </div>
         }
       >
-        <div className="flex -space-x-2 overflow-hidden">
+        <div className='flex -space-x-2 overflow-hidden'>
           {props.queued.slice(0, slice).map(({ owner: { user } }) => (
             <img
-              className="w-5 rounded-full ring-2 ring-black"
+              className='w-5 rounded-full ring-2 ring-black'
               key={user?.userId}
               alt={user?.name}
               src={user?.image}

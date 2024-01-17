@@ -1,5 +1,5 @@
 import { shallow } from 'zustand/shallow';
-import { createWithEqualityFn } from 'zustand/traditional'
+import { createWithEqualityFn } from 'zustand/traditional';
 
 interface DrawerStateConfig {
   actions: {
@@ -9,16 +9,19 @@ interface DrawerStateConfig {
   playlist: SpotifyApi.PlaylistObjectSimplified | null;
 }
 
-const useDrawerStore = createWithEqualityFn<DrawerStateConfig>()((set) => ({
-  actions: {
-    onClose: () => set({ playlist: null }),
-    onOpen: (playlist) =>
-      set({
-        playlist,
-      }),
-  },
-  playlist: null,
-}), Object.is);
+const useDrawerStore = createWithEqualityFn<DrawerStateConfig>()(
+  (set) => ({
+    actions: {
+      onClose: () => set({ playlist: null }),
+      onOpen: (playlist) =>
+        set({
+          playlist,
+        }),
+    },
+    playlist: null,
+  }),
+  Object.is,
+);
 
 export const usePlaylistDrawerStore = () =>
   useDrawerStore(

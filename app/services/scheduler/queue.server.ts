@@ -34,7 +34,10 @@ export const Queue = <Payload>(
   // workers are where the meat of our processing lives within a queue.
   // they reach out to our redis connection and pull jobs off the queue
   // in an order determined by factors such as job priority, delay, etc.
-  const worker = new Worker<Payload>(name, handler, { connection: redis, ...workOpts });
+  const worker = new Worker<Payload>(name, handler, {
+    connection: redis,
+    ...workOpts,
+  });
 
   // the scheduler plays an important role in helping workers stay busy.
 

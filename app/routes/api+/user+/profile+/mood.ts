@@ -17,7 +17,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const recent = await prisma.recentSongs.findMany({
-    include: { track: { select: { albumName: true, artist: true, name: true } } },
+    include: {
+      track: { select: { albumName: true, artist: true, name: true } },
+    },
     take: 25,
     where: { userId },
   });

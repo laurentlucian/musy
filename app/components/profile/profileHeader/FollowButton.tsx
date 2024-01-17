@@ -1,18 +1,16 @@
-import { useParams } from "@remix-run/react";
-import { useState } from "react";
+import { useParams } from '@remix-run/react';
+import { useState } from 'react';
 
-import { useTypedFetcher } from "remix-typedjson";
+import { useTypedFetcher } from 'remix-typedjson';
 
-import useCurrentUser from "~/hooks/useCurrentUser";
-import type { action as followAction } from "~/routes/api+/user+/follow";
+import useCurrentUser from '~/hooks/useCurrentUser';
+import type { action as followAction } from '~/routes/api+/user+/follow';
 
 const FollowButton = (props: { id?: string }) => {
   const currentUser = useCurrentUser();
   const params = useParams();
   const userId = (props.id || params.id) as string;
-  const isFollowingDefault = currentUser?.following.find(
-    (user) => userId === user.followingId,
-  );
+  const isFollowingDefault = currentUser?.following.find((user) => userId === user.followingId);
   const [isFollowing, setIsFollowing] = useState<boolean>(!!isFollowingDefault);
 
   const fetcher = useTypedFetcher<typeof followAction>();
@@ -30,14 +28,14 @@ const FollowButton = (props: { id?: string }) => {
               isFollowing: String(isFollowing),
               userId,
             },
-            { action: `/api/user/follow`, method: "POST" },
+            { action: `/api/user/follow`, method: 'POST' },
           );
         }
       }}
-      type="submit"
-      className="rounded-sm border border-musy px-2 py-1.5 text-xs hover:bg-musy hover:text-musy-900 md:text-[13px]"
+      type='submit'
+      className='rounded-sm border border-musy px-2 py-1.5 text-xs hover:bg-musy hover:text-musy-900 md:text-[13px]'
     >
-      {isFollowing ? "Following" : "Follow"}
+      {isFollowing ? 'Following' : 'Follow'}
     </button>
   );
 };

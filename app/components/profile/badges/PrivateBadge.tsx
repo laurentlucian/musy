@@ -17,8 +17,8 @@ const PrivateBadge = () => {
   if (!isPrivate) return null;
 
   return (
-    <Tooltip label="Private" placement="top" hasArrow>
-      <LockCircle size="32" variant="Bulk" />
+    <Tooltip label='Private' placement='top' hasArrow>
+      <LockCircle size='32' variant='Bulk' />
     </Tooltip>
   );
 };

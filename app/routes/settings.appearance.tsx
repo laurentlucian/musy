@@ -14,7 +14,7 @@ const Appearance = () => {
 
   if (!currentUser) return null;
   return (
-    <div className="space-y-5 w-full h-full flex flex-col md:flex-row">
+    <div className='flex h-full w-full flex-col space-y-5 md:flex-row'>
       <ProfileSettings />
     </div>
   );

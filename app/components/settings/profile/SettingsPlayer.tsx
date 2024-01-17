@@ -53,23 +53,23 @@ const SettingsPlayer = ({
   const isSmallScreen = useIsMobile();
 
   return (
-    <Stack zIndex={1} spacing={0} mt="10px" px="5px">
-      <Stack backdropFilter={theme.blur ? 'blur(27px)' : undefined} h="100%" zIndex={1}>
+    <Stack zIndex={1} spacing={0} mt='10px' px='5px'>
+      <Stack backdropFilter={theme.blur ? 'blur(27px)' : undefined} h='100%' zIndex={1}>
         <Collapse in={!isOpen} animateOpacity>
           <Stack bg={bg} backdropFilter={theme.blur && isSmallScreen ? 'blur(27px)' : 'none'}>
-            <Flex h="135px" px="2px" py="2px" justify="space-between">
-              <Stack pl="7px">
-                <Stack direction="column" spacing={0.5} justifyContent="space-between">
-                  <Text noOfLines={1} w={['190px', '220px']} textOverflow="ellipsis" color={main}>
+            <Flex h='135px' px='2px' py='2px' justify='space-between'>
+              <Stack pl='7px'>
+                <Stack direction='column' spacing={0.5} justifyContent='space-between'>
+                  <Text noOfLines={1} w={['190px', '220px']} textOverflow='ellipsis' color={main}>
                     {song.name}
                   </Text>
                   <Flex w={['200px', '68%']}>
-                    {song.explicit && <Image mr={1} src={explicitImage} w="19px" />}
+                    {song.explicit && <Image mr={1} src={explicitImage} w='19px' />}
                     <Text
                       opacity={0.8}
-                      fontSize="13px"
+                      fontSize='13px'
                       noOfLines={1}
-                      textOverflow="ellipsis"
+                      textOverflow='ellipsis'
                       color={sub}
                     >
                       {song.artist}
@@ -77,12 +77,12 @@ const SettingsPlayer = ({
                   </Flex>
                 </Stack>
                 <HStack>
-                  <HStack mb="5px !important" mt="40px">
+                  <HStack mb='5px !important' mt='40px'>
                     <SpotifyLogo icon={isSmallScreen} />
                   </HStack>
                 </HStack>
               </Stack>
-              <HStack spacing={1} align="end">
+              <HStack spacing={1} align='end'>
                 <Image src={song.image} boxSize={135} minW={135} minH={135} />
               </HStack>
             </Flex>
@@ -90,16 +90,16 @@ const SettingsPlayer = ({
         </Collapse>
       </Stack>
       <Box
-        w="-webkit-fit-content"
+        w='-webkit-fit-content'
         bg={bg}
-        borderRadius="0px 0px 3px 3px"
+        borderRadius='0px 0px 3px 3px'
         zIndex={0}
         backdropFilter={theme.blur && !isSmallScreen ? 'blur(27px)' : 'none'}
         alignSelf={right ? 'end' : 'unset'}
       >
         <IconButton
           icon={isOpen ? <ArrowDown2 /> : <ArrowUp2 />}
-          variant="ghost"
+          variant='ghost'
           onClick={() => {
             onToggle();
           }}
@@ -107,7 +107,7 @@ const SettingsPlayer = ({
           _hover={{ color: main, opacity: 1 }}
           opacity={isSmallScreen ? 1 : 0.5}
           _active={{ boxShadow: 'none' }}
-          boxShadow="none"
+          boxShadow='none'
           color={sub}
         />
       </Box>

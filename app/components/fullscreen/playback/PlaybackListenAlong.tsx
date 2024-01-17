@@ -1,11 +1,11 @@
-import { MusicPlay } from "iconsax-react";
+import { MusicPlay } from 'iconsax-react';
 
-import FullscreenActionButton from "../shared/FullscreenActionButton";
+import FullscreenActionButton from '../shared/FullscreenActionButton';
 
 const PlaybackListenAlong = () => {
   return (
     <FullscreenActionButton leftIcon={<MusicPlay />}>
-      <p className="line-through">Listen along</p>
+      <p className='line-through'>Listen along</p>
     </FullscreenActionButton>
   );
 };

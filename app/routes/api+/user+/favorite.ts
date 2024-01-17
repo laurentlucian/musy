@@ -29,7 +29,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
   } else if (isFavorited === 'false') {
     await prisma.favorite.delete({
-      where: { userId_favoriteId: { favoriteId: userId, userId: currentUserId } },
+      where: {
+        userId_favoriteId: { favoriteId: userId, userId: currentUserId },
+      },
     });
   }
   return null;

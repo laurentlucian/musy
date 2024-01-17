@@ -1,4 +1,4 @@
-import { decodeHtmlEntity } from "~/lib/utils";
+import { decodeHtmlEntity } from '~/lib/utils';
 
 type PlayingFromType = {
   description?: string;
@@ -8,11 +8,11 @@ type PlayingFromType = {
 
 const PlayingFromTooltip = ({ description, image, name }: PlayingFromType) => {
   return (
-    <div className="stack-h-2 p-0">
-      <img src={image} className="h-14 w-14" alt="playing" />
-      <div className="stack-2 py-2">
-        <p className="text-xs font-bold">{name}</p>
-        <p className="text-xs italic">{decodeHtmlEntity(description)}</p>
+    <div className='stack-h-2 p-0'>
+      <img src={image} className='h-14 w-14' alt='playing' />
+      <div className='stack-2 py-2'>
+        <p className='text-xs font-bold'>{name}</p>
+        <p className='text-xs italic'>{decodeHtmlEntity(description)}</p>
       </div>
     </div>
   );
