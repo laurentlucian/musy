@@ -1,13 +1,16 @@
-import { useLocation, useNavigate, useParams, useSearchParams } from '@remix-run/react';
-import { useEffect } from 'react';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "@remix-run/react";
+import { useEffect } from "react";
 
-import { IconButton } from '@chakra-ui/react';
+import { ArrowLeft2 } from "iconsax-react";
+import { useTypedRouteLoaderData } from "remix-typedjson";
 
-import { ArrowLeft2 } from 'iconsax-react';
-import { useTypedRouteLoaderData } from 'remix-typedjson';
-
-import useCurrentUser from '~/hooks/useCurrentUser';
-import type { loader } from '~/routes/$id';
+import useCurrentUser from "~/hooks/useCurrentUser";
+import type { loader } from "~/routes/$id";
 
 const ProfileHeader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -16,7 +19,7 @@ const ProfileHeader = () => {
   const { id } = useParams();
   const currentUser = useCurrentUser();
   const navigate = useNavigate();
-  const data = useTypedRouteLoaderData<typeof loader>('routes/$id');
+  const data = useTypedRouteLoaderData<typeof loader>("routes/$id");
   // const { profileBg } = useThemeBg();
 
   useEffect(() => {
@@ -47,23 +50,22 @@ const ProfileHeader = () => {
   if (currentUser?.userId === id) return null;
 
   return (
-    <IconButton
-      w="100%"
+    <button
+      className="w-full"
       aria-label="back"
-      icon={<ArrowLeft2 />}
-      variant="unstyled"
       onClick={() => {
-        searchParams.delete('spotify');
+        searchParams.delete("spotify");
         setSearchParams(searchParams, {
           replace: true,
           state: { scroll: false },
         });
-        if (!pathname.includes('spotify')) {
+        if (!pathname.includes("spotify")) {
           navigate(-1);
         }
       }}
-      size="xs"
-    />
+    >
+      <ArrowLeft2 />
+    </button>
   );
 };
 

@@ -1,45 +1,40 @@
-import type { ImageProps, SimpleGridProps } from '@chakra-ui/react';
-import { SimpleGrid } from '@chakra-ui/react';
+import type { TrackWithInfo } from "~/lib/types/types";
 
-import type { TrackWithInfo } from '~/lib/types/types';
-
-import TileTrackImage from '../../track/TileTrackImage';
+import TileTrackImage from "../../track/TileTrackImage";
 
 const TilePlaybackTracksImage = ({
   fullscreen,
-  image,
+  imageTw,
   tracks,
-  ...props
 }: {
   fullscreen?: {
     originUserId?: string;
   };
-  image?: ImageProps;
+  imageTw?: string;
   tracks: TrackWithInfo[];
-} & SimpleGridProps) => {
+}) => {
   if (tracks.length === 0) return null;
   if (tracks.length <= 2)
     return (
       <TileTrackImage
-        image={{ src: tracks[0].image, ...image }}
+        image={{ className: imageTw, src: tracks[0].image }}
         fullscreen={fullscreen?.originUserId ? { track: tracks[0] } : undefined}
-        box={{ ...props }}
       />
     );
 
   return (
-    <SimpleGrid columns={2} {...props}>
+    <div className="grid grid-cols-2">
       {tracks.slice(0, 4).map((track, index) => (
         <TileTrackImage
           key={index}
           fullscreen={fullscreen?.originUserId ? { track } : undefined}
           image={{
+            // className: imageTw,
             src: track.image,
-            ...image,
           }}
         />
       ))}
-    </SimpleGrid>
+    </div>
   );
 };
 

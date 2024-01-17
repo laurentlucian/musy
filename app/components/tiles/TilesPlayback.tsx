@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Stack, Switch } from '@chakra-ui/react';
+import { Switch } from "@chakra-ui/react";
 
-import { useRequiredCurrentUser } from '~/hooks/useCurrentUser';
-import useFollowing from '~/hooks/useFollowing';
-import type { TrackWithInfo } from '~/lib/types/types';
+import { useRequiredCurrentUser } from "~/hooks/useCurrentUser";
+import useFollowing from "~/hooks/useFollowing";
+import type { TrackWithInfo } from "~/lib/types/types";
 
-import TilePlayback from '../tile/playback/TilePlayback';
-import Tiles from './Tiles';
+import TilePlayback from "../tile/playback/TilePlayback";
+import Tiles from "./Tiles";
 
 const TilesPlayback = () => {
   const users = useFollowing();
@@ -27,15 +27,22 @@ const TilesPlayback = () => {
 
   const scrollButtons = [...active, ...inactive].length > 5;
 
-  const tracks = active.map(({ playback }) => playback?.track) as TrackWithInfo[];
+  const tracks = active.map(
+    ({ playback }) => playback?.track,
+  ) as TrackWithInfo[];
 
   return (
-    <Stack spacing={1}>
+    <div className="stack-3">
       <Tiles
         title="LISTENING"
         scrollButtons={scrollButtons}
         action={
-          <Switch size="sm" ml="10px" colorScheme="whiteAlpha" onChange={() => setTile(!tile)} />
+          <Switch
+            size="sm"
+            ml="10px"
+            colorScheme="whiteAlpha"
+            onChange={() => setTile(!tile)}
+          />
         }
         tracks={tracks}
       >
@@ -49,7 +56,7 @@ const TilesPlayback = () => {
           <TilePlayback key={index} index={index} tile={tile} user={user} />
         ))}
       </Tiles>
-    </Stack>
+    </div>
   );
 };
 

@@ -1,50 +1,51 @@
-import { Form, useNavigation } from '@remix-run/react';
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import { Form, useNavigation } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/server-runtime";
 
-import { Button, Flex, Heading, Image, Stack, Text } from '@chakra-ui/react';
+import { redirect } from "remix-typedjson";
 
-import { redirect } from 'remix-typedjson';
-
-import { authenticator } from '~/services/auth.server';
+import { cn } from "~/lib/cn";
+import Waver from "~/lib/icons/Waver";
+import { authenticator } from "~/services/auth.server";
 
 const Index = () => {
   const navigation = useNavigation();
+  const submitting = navigation.state === "submitting";
+
   return (
-    <Flex direction="column" align="center">
-      <Stack mt="55px" spacing="15px" align="center" justify="center">
-        <Heading size="3xl">musy</Heading>
-        <Text>music & friends</Text>
-      </Stack>
-      {/* <Stack>
-        <Heading>Send songs to your friends</Heading>
-        <Text>recommend or add to their queue</Text>
-      </Stack>
-      <Stack align="center">
-        <Heading>See what your friends are listening to</Heading>
-      </Stack> */}
-      <Flex direction="column" align="center" mt="30px">
-        <Image src="/musylogo1.svg" w="300px" mb="-40px" ml="-14px" />
+    <div className="stack items-center">
+      <div className="stack mt-28 items-center space-y-7">
+        <img
+          alt="musy-logo"
+          className="-mb-16 -ml-3 w-80 select-none"
+          draggable={false}
+          src="/musylogo1.svg"
+        />
+        <h1 className="text-6xl font-semibold">musy</h1>
         <Form action="/api/auth/spotify" method="post">
-          <Button
+          <button
+            className={cn(
+              "rounded border border-musy-200 px-4 py-2 font-semibold text-musy-200 hover:bg-musy-200 hover:text-musy-900",
+              {
+                "bg-musy-200": submitting,
+              },
+            )}
+            disabled={submitting}
             type="submit"
-            isLoading={navigation.state === 'submitting'}
-            variant="musy"
-            size="lg"
           >
-            Enter with Spotify
-          </Button>
+            {submitting ? <Waver dark /> : "Enter with Spotify"}
+          </button>
         </Form>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const url = new URL(request.url);
-  if (session && url.pathname === '/') return redirect('/home');
+  if (session && url.pathname === "/") return redirect("/home");
   return null;
 };
 
-export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export { ErrorBoundary } from "~/components/error/ErrorBoundary";
 export default Index;

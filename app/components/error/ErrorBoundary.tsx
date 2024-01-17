@@ -1,9 +1,7 @@
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
+import { isRouteErrorResponse, useRouteError } from "@remix-run/react";
 
-import { Heading, HStack, Text } from '@chakra-ui/react';
-
-import Forbidden from './Forbidden';
-import NotFound from './NotFound';
+import Forbidden from "./Forbidden";
+import NotFound from "./NotFound";
 
 export const ErrorBoundary = () => {
   const error = useRouteError();
@@ -14,19 +12,19 @@ export const ErrorBoundary = () => {
   } else if (error instanceof Error) {
     return (
       <>
-        <HStack>
-          <Heading fontSize={['sm', 'md']}>500 - </Heading>
-          <Text fontSize="md">oops something broke :3</Text>
-        </HStack>
-        <Text fontSize="sm">Trace(for debug): {error.message}</Text>
+        <div className="stack-h-2">
+          <h1 className="text-base md:text-base">500 - </h1>
+          <p>oops something broke</p>
+        </div>
+        <p className="text-sm">Trace(for debug): {error.message}</p>
       </>
     );
   }
 
   return (
-    <HStack>
-      <Heading fontSize={['sm', 'md']}>500 - </Heading>
-      <Text fontSize="md">ooooooooooops unknown error</Text>
-    </HStack>
+    <div className="stack-1">
+      <h1 className="text-base md:text-base">500 - </h1>
+      <p>ooooooooooops unknown error</p>
+    </div>
   );
 };

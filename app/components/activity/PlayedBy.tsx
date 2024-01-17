@@ -1,12 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { HStack, Stack, Text, Icon, AvatarGroup, Avatar } from '@chakra-ui/react';
+import type { Profile } from "@prisma/client";
+import { Play } from "iconsax-react";
 
-import type { Profile } from '@prisma/client';
-import { Play } from 'iconsax-react';
-
-import Tooltip from '~/components/Tooltip';
-import { shortenUsername } from '~/lib/utils';
+import Tooltip from "~/components/Tooltip";
+import { shortenUsername } from "~/lib/utils";
 
 const PlayedBy = (props: {
   played?: {
@@ -19,65 +17,65 @@ const PlayedBy = (props: {
 
   if (!props.played?.length) return null;
   return (
-    <HStack
+    <div
+      className="stack-h-1"
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
-      spacing={1}
     >
-      <Icon as={Play} />
+      <Play size={15} />
       <Tooltip
         isOpen={isLabelOpen}
         label={
-          <Stack py="2px">
+          <div className="stack-3 bg-musy-900 rounded-sm px-2 py-1">
             {Object.values(
-              props.played.reduce((acc: Record<string, { count: number; user: Profile }>, curr) => {
-                if (!curr.user) return acc;
-                const userId = curr.user.userId;
-                if (!acc[userId]) {
-                  acc[userId] = { count: 1, user: curr.user };
-                } else {
-                  acc[userId].count += 1;
-                }
-                return acc;
-              }, {}),
+              props.played.reduce(
+                (
+                  acc: Record<string, { count: number; user: Profile }>,
+                  curr,
+                ) => {
+                  if (!curr.user) return acc;
+                  const userId = curr.user.userId;
+                  if (!acc[userId]) {
+                    acc[userId] = { count: 1, user: curr.user };
+                  } else {
+                    acc[userId].count += 1;
+                  }
+                  return acc;
+                },
+                {},
+              ),
             )
               .sort((a, b) => b.count - a.count)
-              .map(({ count, user }, index) => {
+              .map(({ count, user }) => {
                 const name = shortenUsername(user.name);
                 return (
-                  <HStack key={index}>
-                    <Avatar
-                      minW="20px"
-                      maxW="20px"
-                      minH="20px"
-                      maxH="20px"
-                      name={user?.name}
+                  <div className="stack-h-2" key={user.name}>
+                    <img
+                      className="w-5 rounded-full"
+                      alt={user?.name}
                       src={user?.image}
                     />
-                    <Text>{name}</Text>
-                    {count > 1 && <Text>{count}x</Text>}
-                  </HStack>
+                    <p>{name}</p>
+                    {count > 1 && <p>{count}x</p>}
+                  </div>
                 );
               })}
-          </Stack>
+          </div>
         }
       >
-        <AvatarGroup size="xs">
+        <div className="flex -space-x-2 overflow-hidden">
           {props.played.slice(0, slice).map(({ user }, index) => (
-            <Avatar
-              minW="20px"
-              maxW="20px"
-              minH="20px"
-              maxH="20px"
+            <img
+              className="w-5 rounded-full ring-2 ring-black"
               key={index}
-              name={user?.name}
+              alt={user?.name}
               src={user?.image}
             />
           ))}
-        </AvatarGroup>
+        </div>
       </Tooltip>
-    </HStack>
+    </div>
   );
 };
 

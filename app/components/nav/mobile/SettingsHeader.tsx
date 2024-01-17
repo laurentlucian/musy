@@ -1,15 +1,12 @@
-import { useNavigate } from '@remix-run/react';
-import { useEffect, useState } from 'react';
+import { useNavigate } from "@remix-run/react";
+import { useEffect, useState } from "react";
 
-import { Button, Divider, Heading, HStack, Stack, useColorModeValue } from '@chakra-ui/react';
-
-import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
+import { useSaveState, useSetShowAlert } from "~/hooks/useSaveTheme";
 
 const SettingsHeader = () => {
   const [show, setShow] = useState(0);
   const navigate = useNavigate();
-  const bg = useColorModeValue('#EEE6E2', '#050404');
-  const color = useColorModeValue('#161616', '#EEE6E2');
+
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
 
@@ -25,23 +22,21 @@ const SettingsHeader = () => {
     const checkScroll = () => {
       setShow(window.scrollY - 50);
     };
-    window.addEventListener('scroll', checkScroll);
+    window.addEventListener("scroll", checkScroll);
 
-    return () => window.removeEventListener('scroll', checkScroll);
+    return () => window.removeEventListener("scroll", checkScroll);
   }, []);
 
   return (
-    <Stack w="100%" h="100%" bg={bg}>
-      <HStack w="100%" bg={bg} justifyContent="center">
-        <Heading fontSize="13px" mt="15px" ml="20px">
-          Settings
-        </Heading>
-        <Button onClick={handleClick} pos="fixed" top={2} right={0} bg={bg} color={color}>
+    <div className="h-full w-full">
+      <div className="stack-h-2 w-full justify-center">
+        <h1 className="ml-5 mt-4 text-[13px]">Settings</h1>
+        <button className="fixed right-0 top-1" onClick={handleClick}>
           Done
-        </Button>
-      </HStack>
-      <Divider bg={show + 50 <= 45 ? bg : color} />
-    </Stack>
+        </button>
+      </div>
+      {/* <Divider bg={show + 50 <= 45 ? bg : color} /> */}
+    </div>
   );
 };
 

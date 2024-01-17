@@ -1,21 +1,25 @@
-import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
+import type { LoaderFunctionArgs } from "@remix-run/server-runtime";
 
-import { Stack } from '@chakra-ui/react';
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import invariant from "tiny-invariant";
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import invariant from 'tiny-invariant';
-
-import Player from '~/components/profile/player/Player';
-import Playlists from '~/components/tiles/playlists/Playlists';
-import EditableRecommendedTiles from '~/components/tiles/TilesRecommended';
-import TilesTop from '~/components/tiles/TilesTop';
-import TilesTrack from '~/components/tiles/TilesTrack';
-import useCurrentUser from '~/hooks/useCurrentUser';
-import { getCacheControl } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
-import { getUserCachedTop, getUserPlaylists } from '~/services/prisma/spotify.server';
-import { getUserLiked, getUserRecent, getUserRecommended } from '~/services/prisma/tracks.server';
-import { getUserProfile } from '~/services/prisma/users.server';
+import Playlists from "~/components/tiles/playlists/Playlists";
+import EditableRecommendedTiles from "~/components/tiles/TilesRecommended";
+import TilesTop from "~/components/tiles/TilesTop";
+import TilesTrack from "~/components/tiles/TilesTrack";
+import useCurrentUser from "~/hooks/useCurrentUser";
+import { getCacheControl } from "~/lib/utils";
+import { prisma } from "~/services/db.server";
+import {
+  getUserCachedTop,
+  getUserPlaylists,
+} from "~/services/prisma/spotify.server";
+import {
+  getUserLiked,
+  getUserRecent,
+  getUserRecommended,
+} from "~/services/prisma/tracks.server";
+import { getUserProfile } from "~/services/prisma/users.server";
 
 const ProfileOutlet = () => {
   const { liked, party, playback, playlists, recent, recommended, top, user } =
@@ -24,8 +28,8 @@ const ProfileOutlet = () => {
   const isOwnProfile = currentUser?.userId === user.userId;
 
   return (
-    <Stack spacing={8} pos="relative">
-      {playback && (
+    <div className="stack-3 relative">
+      {/* {playback && (
         <Player
           layoutKey="Player"
           id={user.userId}
@@ -33,7 +37,7 @@ const ProfileOutlet = () => {
           playback={playback}
           name={user.name}
         />
-      )}
+      )} */}
 
       {isOwnProfile && <EditableRecommendedTiles tracks={recommended} />}
       {!isOwnProfile && <TilesTrack tracks={recommended} title="RECOMMENDED" />}
@@ -42,24 +46,31 @@ const ProfileOutlet = () => {
       <TilesTrack tracks={liked} title="LIKED" />
       <TilesTop tracks={top} />
       <Playlists playlists={playlists} />
-    </Stack>
+    </div>
   );
 };
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
-  invariant(id, 'Missing params Id');
+  invariant(id, "Missing params Id");
 
-  const [{ playback, ...user }, recommended, recent, liked, party, top, playlists] =
-    await Promise.all([
-      getUserProfile(id),
-      getUserRecommended(id).catch(() => []),
-      getUserRecent(id).catch(() => []),
-      getUserLiked(id).catch(() => []),
-      prisma.party.findMany({ where: { ownerId: id } }),
-      getUserCachedTop(id, new URL(request.url)),
-      getUserPlaylists(id),
-    ]);
+  const [
+    { playback, ...user },
+    recommended,
+    recent,
+    liked,
+    party,
+    top,
+    playlists,
+  ] = await Promise.all([
+    getUserProfile(id),
+    getUserRecommended(id).catch(() => []),
+    getUserRecent(id).catch(() => []),
+    getUserLiked(id).catch(() => []),
+    prisma.party.findMany({ where: { ownerId: id } }),
+    getUserCachedTop(id, new URL(request.url)),
+    getUserPlaylists(id),
+  ]);
 
   return typedjson(
     { liked, party, playback, playlists, recent, recommended, top, user },
@@ -71,5 +82,5 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   );
 };
 
-export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export { ErrorBoundary } from "~/components/error/ErrorBoundary";
 export default ProfileOutlet;

@@ -1,6 +1,4 @@
-import { HStack, Image, Stack, Text } from '@chakra-ui/react';
-
-import { decodeHtmlEntity } from '~/lib/utils';
+import { decodeHtmlEntity } from "~/lib/utils";
 
 type PlayingFromType = {
   description?: string;
@@ -10,17 +8,13 @@ type PlayingFromType = {
 
 const PlayingFromTooltip = ({ description, image, name }: PlayingFromType) => {
   return (
-    <HStack p="0">
-      <Image src={image} boxSize="55px" />
-      <Stack py={2}>
-        <Text fontWeight="bold" fontSize="12px">
-          {name}
-        </Text>
-        <Text fontStyle="italic" fontSize="10px">
-          {decodeHtmlEntity(description)}
-        </Text>
-      </Stack>
-    </HStack>
+    <div className="stack-h-2 p-0">
+      <img src={image} className="h-14 w-14" alt="playing" />
+      <div className="stack-2 py-2">
+        <p className="text-xs font-bold">{name}</p>
+        <p className="text-xs italic">{decodeHtmlEntity(description)}</p>
+      </div>
+    </div>
   );
 };
 

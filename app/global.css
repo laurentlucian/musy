@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 11% 2%;
+    --foreground: 20 26% 91%;
+    /* --primary-foreground: 60 9.1% 97.8%; */
+    --radius: 0.5rem;
+
+    --musy: 24 22% 86%;
+    --musy-50: 26 23% 88%;
+    --musy-100: 26 18% 85%;
+    --musy-200: 22 12% 82%;
+    --musy-300: 24 16% 81%;
+    --musy-400: 26 14% 78%;
+    --musy-500: 0 0% 6%;
+    --musy-600: 60 2% 11%;
+    --musy-700: 60 3% 8%;
+    --musy-800: 0 0% 7%;
+    --musy-900: 0 6% 3%;
+  }
+}
+
+@layer base {
+  * {
+    @apply box-border min-w-0;
+  }
+
+  html {
+    font-family: "Montserrat", system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-musy-900 text-foreground;
+    min-height: 100dvh;
+    /* font-feature-settings:
+      "rlig" 1,
+      "calt" 1; */
+  }
+
+  p {
+    @apply text-pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-balance;
+  }
+}
+
+.stack {
+  @apply flex flex-col;
+}
+
+.stack-1 {
+  @apply flex flex-col space-y-1;
+}
+
+.stack-2 {
+  @apply flex flex-col space-y-2;
+}
+
+.stack-3 {
+  @apply flex flex-col space-y-3;
+}
+
+.stack-h-1 {
+  @apply flex items-center space-x-1;
+}
+
+.stack-h-2 {
+  @apply flex items-center space-x-2;
+}
+
+.stack-h-3 {
+  @apply flex items-center space-x-3;
+}
+
+*::-webkit-scrollbar {
+  background: transparent;
+  height: 2px;
+  width: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: hsl(var(--musy));
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}

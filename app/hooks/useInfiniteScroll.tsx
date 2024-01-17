@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { Flex } from '@chakra-ui/react';
+import Waver from "~/lib/icons/Waver";
 
-import Waver from '~/lib/icons/Waver';
+import useIntersectionObserver from "./useIntersectionObserver";
 
-import useIntersectionObserver from './useIntersectionObserver';
-
-const useInfiniteScroll = (callback: () => void, isFetching: boolean, margin: number) => {
+const useInfiniteScroll = (
+  callback: () => void,
+  isFetching: boolean,
+  margin: number,
+) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const entry = useIntersectionObserver(ref, {
@@ -22,9 +24,9 @@ const useInfiniteScroll = (callback: () => void, isFetching: boolean, margin: nu
   }, [isVisible]);
 
   const waver = (
-    <Flex justify="center" h="50px" ref={ref}>
+    <div className="flex h-12 justify-center" ref={ref}>
       {isFetching && <Waver />}
-    </Flex>
+    </div>
   );
 
   return { waver };

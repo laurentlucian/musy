@@ -1,14 +1,10 @@
-import { Stack, Text } from '@chakra-ui/react';
-
 const CommentList = () => {
   return (
-    <Stack overflowX="hidden" px={['10px']}>
+    <div className="stack-2 overflow-x-hidden px-2 md:px-0">
       {[...Array(100)].map((_, i) => (
-        <Text key={i} py="8px">
-          oioioi
-        </Text>
+        <p key={i}>oioioi</p>
       ))}
-    </Stack>
+    </div>
   );
 };
 

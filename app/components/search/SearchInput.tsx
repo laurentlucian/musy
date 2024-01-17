@@ -1,35 +1,24 @@
-import { useNavigation, useSearchParams } from '@remix-run/react';
-import { useEffect, useRef, useState } from 'react';
+import { useNavigation, useSearchParams } from "@remix-run/react";
+import { useEffect, useRef, useState } from "react";
+import { Search, X } from "react-feather";
 
-import { SearchIcon } from '@chakra-ui/icons';
-import type { InputGroupProps } from '@chakra-ui/react';
-import {
-  CloseButton,
-  IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { useMobileKeyboardActions } from "~/hooks/useMobileKeyboardCheck";
+import { cn } from "~/lib/cn";
+import Waver from "~/lib/icons/Waver";
 
-import { useMobileKeyboardActions } from '~/hooks/useMobileKeyboardCheck';
-import Waver from '~/lib/icons/Waver';
-
-type SearchInputProps = InputGroupProps & {
+type SearchInputProps = {
   param: string;
-};
+} & JSX.IntrinsicElements["input"];
 
-const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
-  const color = useColorModeValue('musy.800', 'musy.200');
-
+const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get(props.param) || '');
+  const [search, setSearch] = useState(searchParams.get(props.param) || "");
   const { hideMenu, showMenu } = useMobileKeyboardActions();
   const navigation = useNavigation();
 
   const isLoading =
-    navigation.state === 'loading' && navigation.location.search.includes(`?${props.param}=`);
+    navigation.state === "loading" &&
+    navigation.location.search.includes(`?${props.param}=`);
 
   const timeoutRef = useRef<NodeJS.Timeout>();
   const setSearchURL = (search: string) => {
@@ -39,9 +28,6 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
         // by using the param as the key, we can have multiple search inputs without them conflicting
         param: props.param,
         [props.param]: search,
-        // i know this is confusing; plshelp figure out a better way to share component
-        // test by using send song fullscreen when on /explore route
-        // maybe instead of sharing component we can share functionality and types
       },
       {
         replace: true,
@@ -51,7 +37,7 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
   };
 
   const removeSearchURL = () => {
-    searchParams.delete('param');
+    searchParams.delete("param");
     searchParams.delete(props.param);
     setSearchParams(searchParams, {
       replace: true,
@@ -66,25 +52,25 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
   }, []);
 
   return (
-    <InputGroup zIndex={1} overflowY="hidden" {...props}>
-      <InputLeftElement
-        pointerEvents="all"
-        children={
-          <IconButton
-            aria-label="search"
-            icon={<SearchIcon boxSize="16px" />}
-            variant="unstyled"
-            color={color}
-            cursor="pointer"
-          />
-        }
-      />
-      <Input
-        pt={1}
+    <div
+      className={cn(
+        "relative isolate z-10 flex w-full overflow-y-hidden",
+        className,
+      )}
+      {...props}
+    >
+      <div className="absolute inset-0 left-2 top-0 flex w-fit items-center justify-start">
+        <button
+          aria-label="search"
+          className="flex cursor-pointer select-none items-center justify-center whitespace-nowrap p-0 text-musy"
+        >
+          <Search size={20} />
+        </button>
+      </div>
+      <input
+        className="w-full rounded bg-transparent px-9 py-2 text-[14px] transition-all duration-300 ease-in-out focus:outline-musy-100"
         name="spotify"
         value={search}
-        variant="flushed"
-        fontSize="14px"
         placeholder="Search"
         autoComplete="off"
         onChange={(e) => {
@@ -99,37 +85,31 @@ const SearchInput = ({ autoFocus, ...props }: SearchInputProps) => {
             removeSearchURL();
           }
         }}
-        transition="all 0.3s ease-in-out"
-        _placeholder={{ color: '#414040' }}
-        focusBorderColor={color}
         onFocus={hideMenu}
         onBlur={showMenu}
         autoFocus={autoFocus}
       />
       {search && (
-        <InputRightElement
-          justifyContent="end"
-          w="69px"
+        <div
+          className="absolute bottom-0 right-1 top-0 flex items-center justify-center"
           children={
             <>
               {isLoading && <Waver />}
-              <IconButton
-                as="span"
+              <button
+                className="mr-1 rounded"
                 aria-label="close"
-                variant="unstyled"
-                borderRadius={8}
                 onClick={() => {
-                  setSearch('');
+                  setSearch("");
                   removeSearchURL();
                 }}
-                icon={<CloseButton />}
-                mr={1}
-              />
+              >
+                <X />
+              </button>
             </>
           }
         />
       )}
-    </InputGroup>
+    </div>
   );
 };
 

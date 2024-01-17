@@ -1,15 +1,16 @@
-import type { BoxProps } from '@chakra-ui/react';
-import { Box } from '@chakra-ui/react';
+import { cn } from "../cn";
 
-const Waver = (props: BoxProps) => {
+const Waver = ({ className, dark }: { className?: string; dark?: boolean }) => {
   return (
-    <Box className="la-line-scale-pulse-out" {...props}>
+    <div
+      className={cn("la-line-scale-pulse-out", { "la-dark": dark }, className)}
+    >
       <div></div>
       <div></div>
       <div></div>
       <div></div>
       <div></div>
-    </Box>
+    </div>
   );
 };
 

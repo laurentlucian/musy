@@ -1,17 +1,13 @@
-import { Link } from '@remix-run/react';
-
-import { Button, HStack, Heading, Text } from '@chakra-ui/react';
+import { Link } from "@remix-run/react";
 
 const Forbidden = () => {
   return (
     <>
-      <HStack>
-        <Heading fontSize={['sm', 'md']}>401 - </Heading>
-        <Text fontSize="md">Not authorized</Text>
-      </HStack>
-      <Button as={Link} to="/">
-        Take me home
-      </Button>
+      <div className="stack-h-1">
+        <h1 className="text-base md:text-base">401 - </h1>
+        <p>Not authorized</p>
+      </div>
+      <Link to="/">Take me home</Link>
     </>
   );
 };

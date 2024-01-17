@@ -1,70 +1,67 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import type { StackProps } from '@chakra-ui/react';
-import { Stack, Flex, Text, HStack } from '@chakra-ui/react';
+import clsx from "clsx";
 
-import { useMouseScroll } from '~/hooks/useMouseScroll';
-import type { TrackWithInfo } from '~/lib/types/types';
+import { useMouseScroll } from "~/hooks/useMouseScroll";
+import { cn } from "~/lib/cn";
+import type { TrackWithInfo } from "~/lib/types/types";
 
-import { useFullscreen } from '../fullscreen/Fullscreen';
-import FullscreenTracks from '../fullscreen/tracks/FullscreenTracks';
-import ScrollButtons from './shared/ScrollButtons';
+import { useFullscreen } from "../fullscreen/Fullscreen";
+import FullscreenTracks from "../fullscreen/tracks/FullscreenTracks";
+import ScrollButtons from "./shared/ScrollButtons";
 
 type TilesProps = {
   action?: ReactNode;
   autoScroll?: boolean;
   children: ReactNode;
+  className?: string;
   scrollButtons?: boolean;
   title?: string;
   tracks?: TrackWithInfo[];
-} & StackProps;
+};
 
 const Tiles = ({
   action = null,
   autoScroll,
   children,
+  className,
   scrollButtons,
   title,
   tracks,
-  ...ChakraProps
 }: TilesProps) => {
-  const { props, scrollRef } = useMouseScroll('reverse', autoScroll);
+  const { props, scrollRef } = useMouseScroll("reverse", autoScroll);
   const { onOpen } = useFullscreen();
 
   return (
-    <Stack>
+    <div className={cn("stack-3", className)}>
       {(title || scrollButtons || action) && (
-        <Flex align="center">
+        <div className="flex items-center">
           {title && (
-            <Text
-              fontSize="11px"
+            <p
+              className={clsx("text-[11px] font-semibold", {
+                "cursor-pointer": tracks,
+              })}
               onClick={() => {
                 if (title && tracks) {
                   onOpen(<FullscreenTracks title={title} tracks={tracks} />);
                 }
               }}
-              cursor={tracks ? 'pointer' : undefined}
-              fontWeight="bolder"
             >
               {title}
-            </Text>
+            </p>
           )}
-
           {action}
           {scrollButtons && <ScrollButtons scrollRef={scrollRef} />}
-        </Flex>
+        </div>
       )}
-      <HStack
+      <div
+        className="scrollbar flex items-start space-x-4 overflow-auto pb-2"
         ref={scrollRef}
-        className="scrollbar"
-        overflow="auto"
-        align="flex-start"
         {...props}
-        {...ChakraProps}
       >
         {children}
-      </HStack>
-    </Stack>
+      </div>
+    </div>
   );
 };
 

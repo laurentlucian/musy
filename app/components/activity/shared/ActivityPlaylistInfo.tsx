@@ -1,28 +1,26 @@
-import { Link } from '@remix-run/react';
+import { Link } from "@remix-run/react";
 
-import { Box, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import type { Playlist } from "@prisma/client";
 
-import type { Playlist } from '@prisma/client';
-
-import { decodeHtmlEntity } from '~/lib/utils';
+import { decodeHtmlEntity } from "~/lib/utils";
 
 const ActivityPlaylistInfo = ({ playlist }: { playlist: Playlist }) => {
   return (
-    <HStack>
-      <Box w="35px" h="35px" flexShrink={0}>
-        <Image src={playlist.image} />
-      </Box>
+    <div className="stack-h-2 items-start">
+      <div className="h-9 w-9 shrink-0">
+        <img src={playlist.image} alt="playlist" />
+      </div>
       <Link to={`/${playlist.userId}/${playlist.id}`}>
-        <Stack spacing={0} data-group>
-          <Text fontWeight="bold" fontSize="xs" _groupHover={{ textDecoration: 'underline' }}>
+        <div className="group space-y-0">
+          <p className="text-xs font-bold group-hover:underline">
             {playlist.name}
-          </Text>
-          <Text fontSize="9px" wordBreak="break-all" noOfLines={2}>
+          </p>
+          <p className="line-clamp-2 break-all text-[9px]">
             {decodeHtmlEntity(playlist.description)}
-          </Text>
-        </Stack>
+          </p>
+        </div>
       </Link>
-    </HStack>
+    </div>
   );
 };
 

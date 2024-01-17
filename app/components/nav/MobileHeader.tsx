@@ -1,30 +1,25 @@
-import { useLocation } from '@remix-run/react';
+import { useLocation } from "@remix-run/react";
 
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+import useCurrentUser from "~/hooks/useCurrentUser";
+import { cn } from "~/lib/cn";
 
-import useCurrentUser from '~/hooks/useCurrentUser';
-
-import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
-import SearchInput from '../search/SearchInput';
-import HomeHeader from './mobile/HomeHeader';
-import ProfileHeader from './mobile/ProfileHeader';
-import SettingsHeader from './mobile/SettingsHeader';
-import UserMenu from './UserMenu';
+// import ProfileActions from '../profile/profileHeader/profileActions/ProfileActions';
+import SearchInput from "../search/SearchInput";
+import ProfileHeader from "./mobile/ProfileHeader";
+import SettingsHeader from "./mobile/SettingsHeader";
 
 const MobileHeader = () => {
   const currentUser = useCurrentUser();
   const { pathname } = useLocation();
-  const bg = useColorModeValue('#EEE6E2', 'black');
-  const border = useColorModeValue('musy.400', 'musy.700');
 
-  const isHome = pathname === '/home';
-  const isExplore = pathname === '/explore';
-  const isSettings = pathname === '/settings';
+  const isHome = pathname === "/home";
+  const isExplore = pathname === "/explore";
+  const isSettings = pathname === "/settings";
   const isProfile = !isHome && !isExplore && !isSettings;
-  const isOwnProfile = currentUser?.userId === pathname.split('/')[1];
+  const isOwnProfile = currentUser?.userId === pathname.split("/")[1];
 
   const Header = isHome ? (
-    <HomeHeader />
+    <img src="/musylogo1.svg" className="-mb-2 w-[35px]" alt="musy-logo" />
   ) : isExplore ? (
     <SearchInput param="keyword" />
   ) : isSettings ? (
@@ -34,22 +29,18 @@ const MobileHeader = () => {
   );
 
   return (
-    <Flex
-      h="45px"
-      as="header"
-      backdropFilter="blur(27px)"
-      bg={isProfile ? 'transparent' : bg}
-      py="8px"
-      borderBottom={isProfile ? undefined : '1px solid'}
-      borderColor={border}
-      zIndex={9}
-      justify="center"
-      align="center"
-      w="100%"
+    <header
+      className={cn(
+        "z-10 flex h-[45px] w-full items-center justify-center bg-transparent py-[8px] backdrop-blur-[27px]",
+        {
+          "border-primary-400 border-b": isProfile,
+        },
+      )}
+      // bg={isProfile ? 'transparent' : bg}
     >
       {Header}
-      {isProfile ? isOwnProfile ? <UserMenu /> : <ProfileActions /> : null}
-    </Flex>
+      {/* {isProfile ? isOwnProfile ? <UserMenu /> : <ProfileActions /> : null} */}
+    </header>
   );
 };
 

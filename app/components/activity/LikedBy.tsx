@@ -1,12 +1,10 @@
-import { useState } from 'react';
-import { Heart } from 'react-feather';
+import { useState } from "react";
+import { Heart } from "react-feather";
 
-import { Avatar, AvatarGroup, HStack, Icon, Stack, Text } from '@chakra-ui/react';
+import type { Profile } from "@prisma/client";
 
-import type { Profile } from '@prisma/client';
-
-import Tooltip from '~/components/Tooltip';
-import { shortenUsername } from '~/lib/utils';
+import Tooltip from "~/components/Tooltip";
+import { shortenUsername } from "~/lib/utils";
 
 const LikedBy = (props: {
   liked?: {
@@ -19,51 +17,45 @@ const LikedBy = (props: {
 
   if (!props.liked?.length) return null;
   return (
-    <HStack
+    <div
+      className="stack-h-1"
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen(!isLabelOpen)}
-      spacing={1}
     >
-      <Icon as={Heart} />
+      <Heart size={15} />
       <Tooltip
         isOpen={isLabelOpen}
         label={
-          <Stack py="2px">
+          <div className="stack-3 bg-musy-900 rounded-sm px-2 py-1">
             {props.liked.map(({ user }, index) => {
               const name = shortenUsername(user?.name);
               return (
-                <HStack key={index}>
-                  <Avatar
-                    minW="20px"
-                    maxW="20px"
-                    minH="20px"
-                    maxH="20px"
-                    name={user?.name}
+                <div className="stack-h-2" key={index}>
+                  <img
+                    className="w-5 rounded-full"
+                    alt={user?.name}
                     src={user?.image}
                   />
-                  <Text>{name}</Text>
-                </HStack>
+                  <p>{name}</p>
+                </div>
               );
             })}
-          </Stack>
+          </div>
         }
       >
-        <AvatarGroup size="xs" max={5} spacing="-9px">
+        <div className="flex -space-x-2 overflow-hidden">
           {props.liked.slice(0, slice).map(({ user }) => (
-            <Avatar
-              minW="20px"
-              maxW="20px"
-              minH="20px"
-              maxH="20px"
+            <img
+              alt="user-avatar"
+              className="w-5 rounded-full"
               key={user?.userId}
-              name={user?.name}
               src={user?.image}
             />
           ))}
-        </AvatarGroup>
+        </div>
       </Tooltip>
-    </HStack>
+    </div>
   );
 };
 

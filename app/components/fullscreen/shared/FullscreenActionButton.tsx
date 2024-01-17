@@ -1,20 +1,17 @@
-import type { ButtonProps } from '@chakra-ui/react';
-import { Button } from '@chakra-ui/react';
+type Props = {
+  children: React.ReactNode;
+  leftIcon?: React.ReactNode;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const FullscreenActionButton = (props: ButtonProps) => {
+const FullscreenActionButton = (props: Props) => {
   return (
-    <Button
-      variant="ghost"
-      justifyContent="left"
-      w={['100vw', '100%']}
-      color="musy.200"
-      _hover={{ color: 'white' }}
-      py="30px"
-      iconSpacing="15px"
+    <button
+      className="flex w-[100vw] items-center justify-start rounded px-4 py-8 text-musy-200 hover:text-white hover:backdrop-blur-sm md:w-full"
       {...props}
     >
+      {props.leftIcon && <div className="mr-3">{props.leftIcon}</div>}
       {props.children}
-    </Button>
+    </button>
   );
 };
 

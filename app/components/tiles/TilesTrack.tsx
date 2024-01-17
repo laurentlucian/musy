@@ -1,13 +1,11 @@
-import { useParams } from '@remix-run/react';
+import { useParams } from "@remix-run/react";
 
-import { Stack } from '@chakra-ui/react';
+import type { TrackWithInfo } from "~/lib/types/types";
 
-import type { TrackWithInfo } from '~/lib/types/types';
-
-import Tile from '../tile/Tile';
-import TileTrackImage from '../tile/track/TileTrackImage';
-import TileTrackInfo from '../tile/track/TileTrackInfo';
-import Tiles from './Tiles';
+import Tile from "../tile/Tile";
+import TileTrackImage from "../tile/track/TileTrackImage";
+import TileTrackInfo from "../tile/track/TileTrackInfo";
+import Tiles from "./Tiles";
 
 const TilesTrack = ({
   actions,
@@ -24,27 +22,32 @@ const TilesTrack = ({
   if (!tracks.length) return null;
 
   return (
-    <Stack spacing={1}>
-      <Tiles title={title} scrollButtons={scrollButtons} action={actions?.tiles} tracks={tracks}>
+    <div className="stack-h-1">
+      <Tiles
+        title={title}
+        scrollButtons={scrollButtons}
+        action={actions?.tiles}
+        tracks={tracks}
+      >
         {tracks.map((track, index) => {
           return (
             <Tile
               key={index}
               image={
                 <TileTrackImage
-                  box={{ w: '200px' }}
+                  box="w-[200px] h-[200px] fade-in"
                   fullscreen={{ originUserId: id, track }}
                   image={{
                     src: track.image,
                   }}
                 />
               }
-              info={<TileTrackInfo track={track} maxW="200px" />}
+              info={<TileTrackInfo track={track} className="max-w-[200px]" />}
             />
           );
         })}
       </Tiles>
-    </Stack>
+    </div>
   );
 };
 

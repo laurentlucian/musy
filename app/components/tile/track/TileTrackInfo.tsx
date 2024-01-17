@@ -1,60 +1,51 @@
-import { HStack, Text, Box, Link as ChakraLink, Flex, type ChakraProps } from '@chakra-ui/react';
-
-import SpotifyLogo from '~/lib/icons/SpotifyLogo';
-import type { TrackWithInfo } from '~/lib/types/types';
-import { timeSince } from '~/lib/utils';
+import { cn } from "~/lib/cn";
+import SpotifyLogo from "~/lib/icons/SpotifyLogo";
+import type { TrackWithInfo } from "~/lib/types/types";
+import { timeSince } from "~/lib/utils";
 
 const TileTrackInfo = ({
+  className,
   createdAt,
   icon = true,
   track,
-  ...props
 }: {
+  className?: string;
   createdAt?: Date;
   icon?: boolean;
   track: TrackWithInfo;
-} & ChakraProps) => {
+}) => {
   return (
-    <Flex justify="space-between" w="100%" {...props}>
-      <Flex direction="column" flexGrow={1}>
-        <ChakraLink
+    <div className={cn("flex w-full justify-between", className)}>
+      <div className="stack flex-grow">
+        <a
           href={track.uri}
-          fontSize={['12px', '13px']}
-          noOfLines={1}
-          whiteSpace="normal"
-          wordBreak="break-all"
+          className="line-clamp-1 overflow-hidden whitespace-normal break-all text-xs font-extralight hover:underline md:text-[13px]"
         >
           {track.name}
-        </ChakraLink>
-        <HStack spacing={1}>
-          <ChakraLink
+        </a>
+        <div className="stack-h-1 items-baseline">
+          <a
             href={track.artistUri}
-            fontSize={['9px', '10px']}
-            opacity={0.6}
-            noOfLines={1}
-            flexShrink={0}
+            className="line-clamp-1 overflow-hidden break-all text-[9px] font-extralight opacity-60 hover:underline md:text-[10px]"
           >
             {track.artist}
-          </ChakraLink>
-          <Box opacity={0.6}>•</Box>
-          <ChakraLink
+          </a>
+          <span className="-translate-y-px opacity-60">•</span>
+          <a
             href={track.albumUri}
-            fontSize={['9px', '10px']}
-            opacity={0.6}
-            noOfLines={1}
-            wordBreak="break-all"
+            className="line-clamp-1 overflow-hidden text-[9px] font-extralight opacity-60 hover:underline md:text-[10px]"
           >
             {track.albumName}
-          </ChakraLink>
-        </HStack>
+          </a>
+        </div>
         {createdAt && (
-          <Text fontSize={['8px', '9px']} opacity={0.6} w="100%">
+          <p className="w-full text-[8px] opacity-50 md:text-[9px]">
             {timeSince(createdAt)}
-          </Text>
+          </p>
         )}
-      </Flex>
+      </div>
       {icon && <SpotifyLogo icon w="21px" h="21px" />}
-    </Flex>
+    </div>
   );
 };
 

@@ -1,20 +1,24 @@
-import type { StackProps } from '@chakra-ui/react';
-import { Flex } from '@chakra-ui/react';
+import type { ReactNode } from "react";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
-const FullscreenFadeLayout = ({ children, ...props }: StackProps) => {
+import { cn } from "~/lib/cn";
+
+type Props = {
+  children: ReactNode;
+  className?: string;
+};
+
+const FullscreenFadeLayout = ({ children, className }: Props) => {
   return (
-    <Flex
-      as={motion.div}
+    <motion.div
+      className={cn("flex w-full", className)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      w="100%"
-      {...props}
     >
       {children}
-    </Flex>
+    </motion.div>
   );
 };
 

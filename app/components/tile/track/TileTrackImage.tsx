@@ -1,46 +1,52 @@
-import type { BoxProps, ImageProps } from '@chakra-ui/react';
-import { Flex, Image } from '@chakra-ui/react';
+import clsx from "clsx";
 
-import { AnimatePresence, motion } from 'framer-motion';
-
-import { useFullscreen } from '~/components/fullscreen/Fullscreen';
-import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
-import type { TrackWithInfo } from '~/lib/types/types';
+import { useFullscreen } from "~/components/fullscreen/Fullscreen";
+import FullscreenTrack from "~/components/fullscreen/track/FullscreenTrack";
+import { cn } from "~/lib/cn";
+import type { TrackWithInfo } from "~/lib/types/types";
 
 type TileTrackImageProps = {
-  box?: BoxProps;
+  box?: string;
   fullscreen?: {
     originUserId?: string;
     track: TrackWithInfo;
   };
-  image?: ImageProps;
+  image: {
+    className?: string;
+    src: string;
+  };
 };
 
 const TileTrackImage = ({ box, fullscreen, image }: TileTrackImageProps) => {
   const { onMouseDown, onMouseMove, onOpen } = useFullscreen();
+
   return (
-    <AnimatePresence>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: '1' }}>
-        <Flex flexShrink={0} {...box}>
-          <Image
-            borderRadius="1px"
-            w="100%"
-            draggable={false}
-            objectFit="cover"
-            cursor={fullscreen ? 'pointer' : 'unset'}
-            onMouseDown={onMouseDown}
-            onMouseMove={onMouseMove}
-            onClick={() =>
-              fullscreen &&
-              onOpen(
-                <FullscreenTrack track={fullscreen.track} originUserId={fullscreen.originUserId} />,
-              )
-            }
-            {...image}
-          />
-        </Flex>
-      </motion.div>
-    </AnimatePresence>
+    <div className={cn("shrink-0", box)}>
+      <img
+        alt="album-cover"
+        draggable={false}
+        className={clsx(
+          "w-full rounded-[1px] border-transparent object-cover",
+          {
+            "cursor-default": !fullscreen,
+            "cursor-pointer border hover:border-musy": fullscreen,
+          },
+          image?.className,
+        )}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onClick={() =>
+          fullscreen &&
+          onOpen(
+            <FullscreenTrack
+              track={fullscreen.track}
+              originUserId={fullscreen.originUserId}
+            />,
+          )
+        }
+        src={image?.src}
+      />
+    </div>
   );
 };
 

@@ -1,26 +1,21 @@
-import { Box, Stack } from '@chakra-ui/react';
+import SearchInput from "~/components/search/SearchInput";
 
-import SearchInput from '~/components/search/SearchInput';
-
-import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
-import FullscreenQueueTracks from './FullscreenQueueTracks';
+import FullscreenFadeLayout from "../shared/FullscreenFadeLayout";
+import FullscreenQueueTracks from "./FullscreenQueueTracks";
 
 const FullscreenQueue = (props: { userId: string }) => {
   return (
     <FullscreenFadeLayout>
-      <Stack w="100%" align="center" id="dont-close">
+      <div className="stack-3 w-full items-center" id="dont-close">
         <SearchInput
-          flexShrink={0}
+          className="mt-1 shrink-0 md:mt-3 md:max-w-[800px] lg:mt-12"
           param="fullscreen"
-          w={['100%']}
-          maxW={['unset', '800px']}
-          mt={['2px', '10px', '50px']}
           autoFocus
         />
-        <Box overflowX="hidden" w="100%">
+        <div className="w-full overflow-x-hidden">
           <FullscreenQueueTracks userId={props.userId} />
-        </Box>
-      </Stack>
+        </div>
+      </div>
     </FullscreenFadeLayout>
   );
 };

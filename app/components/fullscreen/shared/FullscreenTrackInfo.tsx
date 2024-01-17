@@ -1,50 +1,40 @@
-import { Box, Link, Stack } from '@chakra-ui/react';
-
-import useIsMobile from '~/hooks/useIsMobile';
-import type { TrackWithInfo } from '~/lib/types/types';
+import useIsMobile from "~/hooks/useIsMobile";
+import type { TrackWithInfo } from "~/lib/types/types";
 
 const TrackInfo = (props: { track: TrackWithInfo }) => {
   const isSmallScreen = useIsMobile();
   const { track } = props;
 
   return (
-    <Stack spacing={[0, 1]} flex={1} align={['center', 'start']}>
-      <Link
+    <div className="stack md:stack-1 flex-1 items-center md:items-start">
+      <a
         href={track.uri}
-        fontSize={['xl', '2xl']}
-        fontWeight="bold"
-        textAlign={['center', 'left']}
-        w="fit-content"
-        wordBreak="break-all"
+        className="w-fit break-all text-center font-bold hover:underline md:text-left"
       >
         {track.name}
-      </Link>
-      <Stack spacing={[2, 1]} direction={['row', 'column']} align={['center', 'start']} px={[2, 0]}>
-        <Link
+      </a>
+      <div className="flex items-center space-x-1 px-2 md:flex-col md:items-start md:space-x-0 md:px-0 ">
+        <a
           href={track.artistUri}
-          color="#BBB8B7"
-          fontSize={['11px', '13px']}
-          whiteSpace="nowrap"
+          className="whitespace-nowrap text-[11px] text-musy-200 hover:underline md:text-[13px]"
           onClick={(e) => {
             e.stopPropagation();
           }}
         >
           {track.artist}
-        </Link>
-        {isSmallScreen && <Box opacity={0.6}>•</Box>}
-        <Link
+        </a>
+        {isSmallScreen && <span className="opacity-60">•</span>}
+        <a
+          className="overflow-hidden overflow-ellipsis whitespace-nowrap text-[10px] text-musy-200 hover:underline md:text-[11px]"
           href={track.albumUri}
-          noOfLines={1}
           onClick={(e) => {
             e.stopPropagation();
           }}
-          color="#BBB8B7"
-          fontSize={['11px', '13px']}
         >
           {track.albumName}
-        </Link>
-      </Stack>
-    </Stack>
+        </a>
+      </div>
+    </div>
   );
 };
 

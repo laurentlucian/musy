@@ -1,29 +1,22 @@
-import { Stack } from '@chakra-ui/react';
+import useFollowing from "~/hooks/useFollowing";
 
-import useFollowing from '~/hooks/useFollowing';
-
-import FullscreenFadeLayout from '../../shared/FullscreenFadeLayout';
-import { useFullscreenTrack } from '../FullscreenTrack';
-import QueueToUser from './actions/queue/QueueToUser';
-import BackButton from './shared/BackButton';
+import FullscreenFadeLayout from "../../shared/FullscreenFadeLayout";
+import { useFullscreenTrack } from "../FullscreenTrack";
+import QueueToUser from "./actions/queue/QueueToUser";
+import BackButton from "./shared/BackButton";
 
 const FullscreenTrackQueue = () => {
   const { track } = useFullscreenTrack();
-  const following = useFollowing(); // maybe only followers? eventually
+  const following = useFollowing();
 
   return (
-    <FullscreenFadeLayout
-      direction="column"
-      justify="space-between"
-      maxH={['unset', '450px']}
-      overflow="hidden"
-    >
+    <FullscreenFadeLayout className="flex-col justify-between overflow-hidden md:max-h-[450px]">
       <BackButton />
-      <Stack overflowX="hidden" w="100%">
+      <div className="stack w-full overflow-x-hidden">
         {following.map((user, index) => (
           <QueueToUser key={index} trackId={track.id} user={user} />
         ))}
-      </Stack>
+      </div>
     </FullscreenFadeLayout>
   );
 };

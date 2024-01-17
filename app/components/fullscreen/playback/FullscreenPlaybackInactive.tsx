@@ -1,70 +1,69 @@
-import { Flex, HStack, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+import { AnimatePresence, motion } from "framer-motion";
 
-import { AnimatePresence, motion } from 'framer-motion';
+import ActivityUserInfo from "~/components/activity/shared/ActivityUserInfo";
+import TilePlaybackTracksImage from "~/components/tile/playback/inactive/TilePlaybackTracksImage";
+import TileTrackImage from "~/components/tile/track/TileTrackImage";
+import Tiles from "~/components/tiles/Tiles";
+import usePlaybackTracks from "~/hooks/usePlaybackTracks";
+import Waver from "~/lib/icons/Waver";
+import type { ProfileWithInfo } from "~/lib/types/types";
+import { timeBetween } from "~/lib/utils";
 
-import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
-import TilePlaybackTracksImage from '~/components/tile/playback/inactive/TilePlaybackTracksImage';
-import TileTrackImage from '~/components/tile/track/TileTrackImage';
-import Tiles from '~/components/tiles/Tiles';
-import usePlaybackTracks from '~/hooks/usePlaybackTracks';
-import Waver from '~/lib/icons/Waver';
-import type { ProfileWithInfo } from '~/lib/types/types';
-import { timeBetween } from '~/lib/utils';
-
-import PlaybackAddAll from './PlaybackAddAll';
+import PlaybackAddAll from "./PlaybackAddAll";
 
 const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
   const tracks = usePlaybackTracks(user);
 
   const timeListened = (
-    <Text fontSize="10px" fontWeight="bolder" textTransform="uppercase">
-      LISTENED FOR{' '}
+    <p className="text-[10px] font-bold uppercase">
+      LISTENED FOR{" "}
       {timeBetween({
         endDate: user.playbacks[0].endedAt,
         startDate: user.playbacks[0].startedAt,
       })}
-    </Text>
+    </p>
   );
 
   if (!tracks || !tracks?.length)
     return (
-      <Stack w="100%" justify="center" align="center">
+      <div className="stack w-full items-center justify-center">
         {timeListened}
         {tracks ? (
-          <Text fontSize="10px" fontWeight="bolder" textTransform="uppercase">
-            no songs found
-          </Text>
+          <p className="font-bolder text-[10px] uppercase">no songs found</p>
         ) : (
           <Waver />
         )}
-      </Stack>
+      </div>
     );
 
   return (
-    <SimpleGrid columns={[1, 2]} overflow="hidden" alignContent={['start', 'center']}>
-      <Stack align={['center', 'start']} mt={['50px', '0px']} mx="auto">
-        <Flex justify="space-between" w="65%" mt={['0', '-42px']} id="dont-close">
+    <div className="grid grid-cols-1 content-start gap-4 overflow-hidden md:grid-cols-2 md:content-center">
+      <div className="stack-2 mx-auto mt-12 items-center md:mt-0 md:items-start">
+        <div
+          className="stack-h-2 w-2/3 justify-between md:mt-[-42px]"
+          id="dont-close"
+        >
           <ActivityUserInfo user={user} />
-          <HStack align="center">{timeListened}</HStack>
-        </Flex>
+          <div className="stack-h-2">{timeListened}</div>
+        </div>
         <TilePlaybackTracksImage
           tracks={tracks}
           fullscreen={{ originUserId: user.userId }}
-          w="65%"
+          imageTw="w-2/3"
         />
-      </Stack>
-      <Flex direction="column" flexGrow={1} overflowX="hidden" pt="8px">
+      </div>
+      <div className="stack grow overflow-x-hidden">
         <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: '1' }}
+            transition={{ duration: "1" }}
           >
             <Tiles>
               {tracks.slice(4).map((track, index) => (
                 <TileTrackImage
                   key={index}
-                  box={{ w: '180px' }}
+                  box="w-[180px]"
                   image={{ src: track.image }}
                   fullscreen={{
                     originUserId: user.userId,
@@ -76,8 +75,8 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
           </motion.div>
         </AnimatePresence>
         {/* <PlaybackAddAll /> */}
-      </Flex>
-    </SimpleGrid>
+      </div>
+    </div>
   );
 };
 

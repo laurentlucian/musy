@@ -1,7 +1,5 @@
 import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 
-import { Stack } from '@chakra-ui/react';
-
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
@@ -16,9 +14,9 @@ const Appearance = () => {
 
   if (!currentUser) return null;
   return (
-    <Stack spacing={5} w="100%" h="100%" direction={['column', 'row']}>
+    <div className="space-y-5 w-full h-full flex flex-col md:flex-row">
       <ProfileSettings />
-    </Stack>
+    </div>
   );
 };
 

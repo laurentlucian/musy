@@ -1,13 +1,11 @@
-import { Text } from '@chakra-ui/react';
+import { MusicPlay } from "iconsax-react";
 
-import { MusicPlay } from 'iconsax-react';
-
-import FullscreenActionButton from '../shared/FullscreenActionButton';
+import FullscreenActionButton from "../shared/FullscreenActionButton";
 
 const PlaybackAddAll = () => {
   return (
     <FullscreenActionButton leftIcon={<MusicPlay />}>
-      <Text textDecoration="line-through">Add all to queue</Text>
+      <p className="line-through">Add all to queue</p>
     </FullscreenActionButton>
   );
 };

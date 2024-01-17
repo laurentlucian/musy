@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { Box, useColorModeValue } from '@chakra-ui/react';
-
-const PlayerBar = ({ playback }: { playback: SpotifyApi.CurrentlyPlayingResponse }) => {
-  const color = useColorModeValue('musy.900', 'musy.50');
+const PlayerBar = ({
+  playback,
+}: {
+  playback: SpotifyApi.CurrentlyPlayingResponse;
+}) => {
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
@@ -36,6 +37,15 @@ const PlayerBar = ({ playback }: { playback: SpotifyApi.CurrentlyPlayingResponse
     };
   }, [duration, progress]);
   const initial = `${(progress / duration) * 100}%`;
-  return <Box ref={boxRef} h="2px" background={color} width={initial} />;
+  return (
+    <div
+      ref={boxRef}
+      style={{
+        background: "var(--bg-musy)",
+        height: "2px",
+        width: initial,
+      }}
+    />
+  );
 };
 export default PlayerBar;

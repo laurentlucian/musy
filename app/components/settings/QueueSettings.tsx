@@ -5,7 +5,7 @@ import { FormControl, FormLabel, useRadioGroup, SimpleGrid, HStack } from '@chak
 
 import { Layer } from 'iconsax-react';
 
-import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
+// import { RadioButtons } from '~/lib/theme/components/SettingsRadio';
 
 const options = [
   { name: 'off', value: 'off' },
@@ -40,7 +40,7 @@ const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: Sub
           </FormLabel>
         </HStack>
         <SimpleGrid gap={[0, 2]} {...group} p={0} m={0}>
-          {options.map(({ name, value }) => {
+          {/* {options.map(({ name, value }) => {
             const radio = getRadioProps({ value });
             return (
               <RadioButtons key={value} {...radio} value={value}>
@@ -56,7 +56,7 @@ const QueueSettings = ({ allowQueue, submit }: { allowQueue: string; submit: Sub
                 </HStack>
               </RadioButtons>
             );
-          })}
+          })} */}
         </SimpleGrid>
       </FormControl>
     </>

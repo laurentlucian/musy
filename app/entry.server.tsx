@@ -1,21 +1,21 @@
-import type { EntryContext } from '@remix-run/node';
-import { RemixServer } from '@remix-run/react';
-import { renderToString } from 'react-dom/server';
+import {
+  createReadableStreamFromReadable,
+  type EntryContext,
+} from "@remix-run/node";
+import { RemixServer } from "@remix-run/react";
+import { renderToPipeableStream } from "react-dom/server";
 
-import { CacheProvider } from '@emotion/react';
-import createEmotionServer from '@emotion/server/create-instance';
-import * as betterLogging from 'better-logging';
+import * as betterLogging from "better-logging";
+import { PassThrough } from "node:stream";
 
-import { ServerStyleContext } from '~/lib/emotion/context';
-import createEmotionCache from '~/lib/emotion/createEmotionCache';
+import { createFeedQ } from "./services/scheduler/creators/feedQ.server";
+import { createUserQ } from "./services/scheduler/creators/userQ.server";
 
-import { createFeedQ } from './services/scheduler/creators/feedQ.server';
-import { createUserQ } from './services/scheduler/creators/userQ.server';
+void createUserQ();
+void createFeedQ();
 
 betterLogging.default(console);
-
-// void createUserQ();
-void createFeedQ();
+const ABORT_DELAY = 5_000;
 
 export default function handleRequest(
   request: Request,
@@ -23,36 +23,46 @@ export default function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext,
 ) {
-  const cache = createEmotionCache();
-  const { extractCriticalToChunks } = createEmotionServer(cache);
+  return new Promise((resolve, reject) => {
+    let shellRendered = false;
+    const { abort, pipe } = renderToPipeableStream(
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+        abortDelay={ABORT_DELAY}
+      />,
+      {
+        onError(error: unknown) {
+          responseStatusCode = 500;
+          // Log streaming rendering errors from inside the shell.  Don't log
+          // errors encountered during initial shell rendering since they'll
+          // reject and get logged in handleDocumentRequest.
+          if (shellRendered) {
+            console.error(error);
+          }
+        },
+        onShellError(error: unknown) {
+          reject(error);
+        },
+        onShellReady() {
+          shellRendered = true;
+          const body = new PassThrough();
+          const stream = createReadableStreamFromReadable(body);
 
-  const html = renderToString(
-    <ServerStyleContext.Provider value={null}>
-      <CacheProvider value={cache}>
-        <RemixServer context={remixContext} url={request.url} />
-      </CacheProvider>
-    </ServerStyleContext.Provider>,
-  );
+          responseHeaders.set("Content-Type", "text/html");
 
-  const chunks = extractCriticalToChunks(html);
+          resolve(
+            new Response(stream, {
+              headers: responseHeaders,
+              status: responseStatusCode,
+            }),
+          );
 
-  const markup = renderToString(
-    <ServerStyleContext.Provider value={chunks.styles}>
-      <CacheProvider value={cache}>
-        <RemixServer context={remixContext} url={request.url} />
-      </CacheProvider>
-    </ServerStyleContext.Provider>,
-  );
+          pipe(body);
+        },
+      },
+    );
 
-  responseHeaders.set('Content-Type', 'text/html');
-
-  return new Response(`<!DOCTYPE html>${markup}`, {
-    headers: responseHeaders,
-    status: responseStatusCode,
+    setTimeout(abort, ABORT_DELAY);
   });
 }
-
-// https://github.com/emotion-js/emotion/issues/2800
-// https://github.com/styled-components/styled-components/issues/3658
-// emotion.js doesn't support renderToPipeableStream yet
-// preventing musy from taking advantage of the new streaming/defer features in remix 1.11

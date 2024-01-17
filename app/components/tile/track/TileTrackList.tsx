@@ -1,28 +1,30 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import { HStack, Flex } from '@chakra-ui/react';
-import type { ChakraProps } from '@chakra-ui/react';
+import type { Track } from "~/lib/types/types";
 
-import type { Track } from '~/lib/types/types';
-
-import TileTrackInfo from './TileTrackInfo';
+import TileTrackInfo from "./TileTrackInfo";
 
 type TileTrackListProps = {
   action?: ReactNode;
   image: ReactNode;
   onClick?: () => void;
   track: Track;
-} & ChakraProps;
+};
 
-const TileTrackList = ({ action, image, onClick, track }: TileTrackListProps) => {
+const TileTrackList = ({
+  action,
+  image,
+  onClick,
+  track,
+}: TileTrackListProps) => {
   return (
-    <HStack>
+    <div className="stack-h-2">
       {image}
-      <Flex direction="column" justify="space-between" w="100%" onClick={onClick}>
+      <div className="stack w-full justify-between" onClick={onClick}>
         <TileTrackInfo track={track} />
-        <Flex>{action}</Flex>
-      </Flex>
-    </HStack>
+        <div className="flex">{action}</div>
+      </div>
+    </div>
   );
 };
 

@@ -1,80 +1,64 @@
-import { Link, useNavigation } from '@remix-run/react';
+import { Link, useNavigation } from "@remix-run/react";
 
-import { Box, Button, Flex, HStack, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import FollowButton from "~/components/profile/profileHeader/FollowButton";
+import useIsFollowing from "~/hooks/useIsFollowing";
+import useIsMobile from "~/hooks/useIsMobile";
+import Waver from "~/lib/icons/Waver";
+import type { ProfileWithInfo } from "~/lib/types/types";
+import { shortenUsername } from "~/lib/utils";
 
-import FollowButton from '~/components/profile/profileHeader/FollowButton';
-import useIsFollowing from '~/hooks/useIsFollowing';
-import useIsMobile from '~/hooks/useIsMobile';
-import Waver from '~/lib/icons/Waver';
-import type { ProfileWithInfo } from '~/lib/types/types';
-import { shortenUsername } from '~/lib/utils';
-
-import TileUserImage from '../tile/user/TileUserImage';
-import SendSongButton from './profileHeader/AddToQueue';
+import TileUserImage from "../tile/user/TileUserImage";
+import SendSongButton from "./profileHeader/AddToQueue";
 
 const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
-  const bg = useColorModeValue('musy.200', 'musy.900');
-  const hoverBg = useColorModeValue('musy.50', '#5F5B59');
-  const color = useColorModeValue('musy.900', 'musy.200');
   const navigation = useNavigation();
   const isSmallScreen = useIsMobile();
   const name = shortenUsername(user.name);
   const loading = navigation.location?.pathname.includes(user.userId);
   const isFollowing = useIsFollowing(user.userId);
 
-  const Username = (
-    <Text fontWeight="bold" fontSize="sm">
-      {name}
-    </Text>
-  );
+  const Username = <p className="text-sm font-bold">{name}</p>;
 
   const Actions = (
-    <Box maxW="130px">
-      {isFollowing ? <SendSongButton id={user.userId} /> : <FollowButton id={user.userId} />}
-    </Box>
+    <div className="max-w-[130px]">
+      {isFollowing ? (
+        <SendSongButton id={user.userId} />
+      ) : (
+        <FollowButton id={user.userId} />
+      )}
+    </div>
   );
 
   const User = (
-    <Flex justify="space-between" w="100%" align="center" pr="5px">
-      <HStack>
+    <div className="flex w-full items-center justify-between pr-2">
+      <div className="stack-h-2">
         <TileUserImage user={user} />
         {loading ? (
           <Waver />
         ) : (
-          <Stack spacing={1}>
+          <div className="stack-1">
             {Username}
 
             {user.bio && (
-              <Text opacity={0.8} fontSize={['9px', '11px']} h="20px">
+              <p className="h-5 text-[9px] opacity-80 md:text-[11px]">
                 {user.bio.slice(0, isSmallScreen ? 14 : 50)}
-              </Text>
+              </p>
             )}
-          </Stack>
+          </div>
         )}
-      </HStack>
+      </div>
       {Actions}
-    </Flex>
+    </div>
   );
 
   return (
-    <Button
-      as={Link}
+    <Link
       to={`/${user.userId}`}
       prefetch="intent"
-      bg={loading ? hoverBg : bg}
-      color={color}
-      pl={['2px', '10px']}
-      pr={0}
-      variant="ghost"
-      h="65px"
-      minW="100%"
-      maxW="100%"
-      borderRadius={5}
-      _hover={isSmallScreen && !loading ? { bg } : { bg: hoverBg }}
-      justifyContent="left"
+      className="flex h-16 items-center rounded-sm pl-[2px] pr-0 hover:bg-[#10101066] hover:backdrop-blur-[27px] md:pl-2"
     >
       {User}
-    </Button>
+    </Link>
   );
 };
 

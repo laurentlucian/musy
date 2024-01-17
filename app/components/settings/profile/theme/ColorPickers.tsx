@@ -1,6 +1,6 @@
 import { type Dispatch, type PointerEvent, type SetStateAction, useState, useEffect } from 'react';
 import { useRef } from 'react';
-import { SketchPicker, type ColorResult } from 'react-color';
+import { type ColorResult } from 'react-color';
 import { Move, X } from 'react-feather';
 
 import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chakra-ui/react';
@@ -168,12 +168,12 @@ const ColorPickers = ({ picker, setPicker, setTheme, theme }: ColorPickersProps)
                   />
                 </Flex>
                 <Box onPointerDown={dontDrag} w="225px" h="178px">
-                  <SketchPicker
+                  {/* <SketchPicker
                     color={colorPickers[picker].bgCol}
                     onChange={(col) => {
                       onChange(col, colorPickers[picker].themeProp);
                     }}
-                  />
+                  /> */}
                 </Box>
               </>
             )}

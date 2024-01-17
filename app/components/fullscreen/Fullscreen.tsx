@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Button, Flex, useEventListener } from '@chakra-ui/react';
+import { useEventListener } from "@chakra-ui/react";
 
-import { createWithEqualityFn } from 'zustand/traditional'
+import { createWithEqualityFn } from "zustand/traditional";
 
 type FullscreenState = {
   actions: {
@@ -14,7 +14,8 @@ type FullscreenState = {
 
 const useFullscreenStore = createWithEqualityFn<FullscreenState>((set) => ({
   actions: {
-    onClose: () => set((prev) => ({ components: prev.components.slice(0, -1) })),
+    onClose: () =>
+      set((prev) => ({ components: prev.components.slice(0, -1) })),
     onOpen: (component: JSX.Element) =>
       set((prev) => ({ components: [...prev.components, component] })),
   },
@@ -62,11 +63,8 @@ export const FullscreenRenderer = () => {
   if (!component) return null;
 
   return (
-    <Flex
-      zIndex={9}
-      bg="#10101066"
-      backdropFilter="blur(27px)"
-      direction="column"
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center bg-[#10101066] backdrop-blur-[27px]"
       onClick={(e) => {
         // close fullscreen when clicking outside of the component (on the blur)
         let target = e.target as HTMLElement;
@@ -82,7 +80,7 @@ export const FullscreenRenderer = () => {
             target instanceof HTMLAnchorElement ||
             target instanceof HTMLButtonElement ||
             target instanceof HTMLImageElement ||
-            target.id === 'dont-close';
+            target.id === "dont-close";
 
           if (dontClose) {
             shouldClose = !dontClose;
@@ -95,47 +93,31 @@ export const FullscreenRenderer = () => {
           onClose();
         }
       }}
-      align="center"
-      pos="fixed"
-      top={0}
-      left={0}
-      right={0}
-      bottom={0}
     >
-      <Flex
-        flexGrow={1}
-        w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
-        overflow="hidden"
-      >
+      <div className="flex w-full flex-grow overflow-hidden sm:w-[450px] md:w-[750px] xl:w-[1100px]">
         {component}
-      </Flex>
+      </div>
       <CloseButton />
-    </Flex>
+    </div>
   );
 };
 
 const CloseButton = () => {
   const { onClose } = useFullscreen();
 
-  useEventListener('keydown', (e) => {
-    if (e.code === 'Escape') {
+  useEventListener("keydown", (e) => {
+    if (e.code === "Escape") {
       onClose();
     }
   });
 
   return (
-    <Button
+    <button
       id="dont-close"
-      flexShrink={0}
-      h={['80px', '150px', '250px']}
-      variant="mobileNav"
-      w="100%"
-      color="musy.200"
-      _hover={{ color: 'white' }}
+      className="z-10 h-20 w-full flex-shrink-0 text-musy-200 hover:text-white hover:backdrop-blur-sm md:h-40 lg:h-64"
       onClick={onClose}
-      zIndex={1}
     >
       Close
-    </Button>
+    </button>
   );
 };

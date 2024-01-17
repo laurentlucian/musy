@@ -1,14 +1,10 @@
-import { HStack, Image, Stack, Td, Text, Tr } from '@chakra-ui/react';
-
-import { motion } from 'framer-motion';
-
-import { useFullscreen } from '~/components/fullscreen/Fullscreen';
-import FullscreenTrack from '~/components/fullscreen/track/FullscreenTrack';
-import useIsMobile from '~/hooks/useIsMobile';
-import explicitImage from '~/lib/assets/explicit-solid.svg';
-import musyIcon from '~/lib/assets/musySquareIcon.png';
-import SpotifyLogo from '~/lib/icons/SpotifyLogo';
-import type { Track as Tracks } from '~/lib/types/types';
+import { useFullscreen } from "~/components/fullscreen/Fullscreen";
+import FullscreenTrack from "~/components/fullscreen/track/FullscreenTrack";
+import useIsMobile from "~/hooks/useIsMobile";
+import explicitImage from "~/lib/assets/explicit-solid.svg";
+import musyIcon from "~/lib/assets/musySquareIcon.png";
+import SpotifyLogo from "~/lib/icons/SpotifyLogo";
+import type { Track as Tracks } from "~/lib/types/types";
 
 const Track = (props: {
   addedAt: string;
@@ -39,81 +35,72 @@ const Track = (props: {
   const convert = (ms: number) => {
     const minutes = Math.floor(ms / 60000);
     const seconds = ((ms % 60000) / 1000).toFixed(0);
-    return minutes + ':' + (Number(seconds) < 10 ? '0' : '') + seconds;
+    return minutes + ":" + (Number(seconds) < 10 ? "0" : "") + seconds;
   };
 
-  const SongTitle = (
-    <Text fontSize="16px" noOfLines={1} whiteSpace="normal" wordBreak="break-all">
-      {track.name}
-    </Text>
-  );
+  const SongTitle = <p className="truncate text-lg">{track.name}</p>;
   const SongImage = (
-    <Image
-      as={motion.img}
-      layoutId={track.id + layoutkey}
-      boxSize={['85px', '100px']}
-      objectFit="cover"
+    <img
+      className="h-20 w-20 shrink-0 object-cover"
       src={track.image}
+      alt="track"
     />
   );
   const ArtistName = (
-    <Stack direction="row" justify={['space-between', 'unset']}>
-      <Stack>
-        <HStack>
-          {track.explicit && <Image src={explicitImage} mr={-1} w="19px" />}
-          <Text fontSize="14px" opacity={0.8} noOfLines={1}>
-            {track.artist}
-          </Text>
-        </HStack>
-        <SpotifyLogo w="70px" h="21px" />
-      </Stack>
+    <div className="flex justify-between">
+      <div>
+        <div className="flex items-center">
+          {track.explicit && (
+            <img className="mr-1 w-5" src={explicitImage} alt="explicit" />
+          )}
+          <p className="truncate text-base opacity-80">{track.artist}</p>
+        </div>
+        <SpotifyLogo />
+      </div>
       {isSmallScreen && <SpotifyLogo icon />}
-    </Stack>
+    </div>
   );
-  const AlbumName = (
-    <Text fontSize="14px" opacity={0.8}>
-      {track.albumName}
-    </Text>
-  );
+  const AlbumName = <p className="text-base opacity-80">{track.albumName}</p>;
   const AddedAt = (
-    <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
-      {new Date(props.addedAt).toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
+    <p className="w-full text-center text-base opacity-80">
+      {new Date(props.addedAt).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
       })}
-    </Text>
+    </p>
   );
 
   const SongLength = (
-    <Text fontSize="14px" opacity={0.8} w={['100%', '60%']} textAlign={['unset', 'center']}>
+    <p className="w-full text-center text-base opacity-80">
       {convert(track.duration)}
-    </Text>
+    </p>
   );
 
   return (
-    <Tr
-      cursor="pointer"
-      onClick={() => onOpen(<FullscreenTrack track={track} originUserId={props.userId} />)}
-      zIndex={10}
+    <tr
+      className="z-10 cursor-pointer"
+      onClick={() =>
+        onOpen(<FullscreenTrack track={track} originUserId={props.userId} />)
+      }
     >
-      <Td>
-        <HStack>
+      <td>
+        <div className="stack-h-2">
           {SongImage}
-          <Stack w="100%">
+          <div className="w-full">
             {SongTitle}
             {ArtistName}
-          </Stack>
-        </HStack>
-      </Td>
-      {!isSmallScreen ? (
+          </div>
+        </div>
+      </td>
+      {!isSmallScreen && (
         <>
-          <Td>{AlbumName}</Td>
-          <Td>{AddedAt}</Td>
-          <Td>{SongLength}</Td>
+          <td>{AlbumName}</td>
+          <td>{AddedAt}</td>
+          <td>{SongLength}</td>
         </>
-      ) : null}
-    </Tr>
+      )}
+    </tr>
   );
 };
 

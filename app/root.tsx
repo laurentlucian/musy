@@ -1,3 +1,4 @@
+import './global.css';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import type { ShouldRevalidateFunction } from '@remix-run/react';
 import {
@@ -10,23 +11,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react';
-import { useContext, useEffect } from 'react';
 
-import {
-  Heading,
-  ChakraProvider,
-  Text,
-  cookieStorageManagerSSR,
-  ColorModeProvider,
-} from '@chakra-ui/react';
-
-import { withEmotionCache } from '@emotion/react';
 import { AnimatePresence } from 'framer-motion';
 import { Forbidden } from 'iconsax-react';
-import { redirect, typedjson, useTypedLoaderData } from 'remix-typedjson';
+import { redirect, typedjson } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
-import { theme } from '~/lib/theme';
 import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser } from '~/services/prisma/users.server';
 
@@ -34,19 +24,21 @@ import NotFound from './components/error/NotFound';
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
-import { ClientStyleContext, ServerStyleContext } from './lib/emotion/context';
 import { iosSplashScreens } from './lib/utils';
 
 import './lib/fonts.css';
 import './lib/icons/waver.css';
 
 const App = () => {
-  const { cookie } = useTypedLoaderData<typeof loader>();
   useAnalytics();
 
   return (
-    <Document cookie={cookie}>
-      <Outlet />
+    <Document>
+      <AnimatePresence mode="wait" initial={false}>
+        <Layout>
+          <Outlet />
+        </Layout>
+      </AnimatePresence>
       <FullscreenRenderer />
       <PlayPreviewRenderer />
     </Document>
@@ -113,96 +105,53 @@ export const links: LinksFunction = () => {
 
 type DocumentProps = {
   children: React.ReactNode;
-  cookie?: string;
   title?: string;
 };
 
-const Document = withEmotionCache(
-  ({ children, cookie = '', title = 'musy' }: DocumentProps, emotionCache) => {
-    const { components } = useFullscreen();
-    const serverStyleData = useContext(ServerStyleContext);
-    const clientStyleData = useContext(ClientStyleContext);
-    const colorModeManager = cookieStorageManagerSSR(cookie);
+const Document = ({ children, title = 'musy' }: DocumentProps) => {
+  const { components } = useFullscreen();
 
-    // Only executed on client
-    useEffect(
-      () => {
-        // re-link sheet container
-        emotionCache.sheet.container = document.head;
-        // re-inject tags
-        const tags = emotionCache.sheet.tags;
-        emotionCache.sheet.flush();
-        tags.forEach((tag) => {
-          (emotionCache.sheet as any)._insertTag(tag);
-        });
-        // reset cache to reapply global styles
-        clientStyleData?.reset();
-      }, // eslint-disable-next-line react-hooks/exhaustive-deps
-      [
-        /* "clientStyleData", "emotionCache.sheet", */
-      ],
-    );
+  return (
+    <html
+      lang="en"
+      style={{
+        overflowY: components.length > 0 ? 'hidden' : undefined,
+        touchAction: components.length > 0 ? 'none' : undefined,
+      }}
+    >
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta charSet="utf-8" />
+        <meta name="description" content="Music shared easy" />
+        <meta name="keywords" content="music, discover, spotify, playlist, share, friends" />
+        <meta property="og:description" content="Music shared easy" />
+        <meta property="og:image" content="/meta-image.png" />
+        <meta property="og:image:alt" content="musy" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:title" content="musy" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:description" content="Music shared easy" />
+        <meta name="twitter:image" content="/meta-image.png" />
+        <meta name="twitter:title" content="musy" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+        <Meta />
+        <Links />
+        <title>{title}</title>
+      </head>
+      <body>
+        {children}
 
-    return (
-      <html
-        lang="en"
-        style={{
-          overflowY: components.length > 0 ? 'hidden' : undefined,
-          touchAction: components.length > 0 ? 'none' : undefined,
-        }}
-      >
-        <head>
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-          <meta charSet="utf-8" />
-          <meta name="description" content="Music shared easy" />
-          <meta name="keywords" content="music, discover, spotify, playlist, share, friends" />
-          <meta property="og:description" content="Music shared easy" />
-          <meta property="og:image" content="/meta-image.png" />
-          <meta property="og:image:alt" content="musy" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:type" content="image/png" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:title" content="musy" />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:description" content="Music shared easy" />
-          <meta name="twitter:image" content="/meta-image.png" />
-          <meta name="twitter:title" content="musy" />
-          <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-          <Meta />
-          <Links />
-          {serverStyleData?.map(({ css, ids, key }) => (
-            <style
-              key={key}
-              data-emotion={`${key} ${ids.join(' ')}`}
-              dangerouslySetInnerHTML={{ __html: css }}
-            />
-          ))}
-          <title>{title}</title>
-        </head>
-        <body>
-          <ChakraProvider theme={theme}>
-            <ColorModeProvider
-              colorModeManager={colorModeManager}
-              options={{
-                disableTransitionOnChange: true,
-                initialColorMode: theme.config.initialColorMode,
-                useSystemColorMode: theme.config.useSystemColorMode,
-              }}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <Layout>{children}</Layout>
-              </AnimatePresence>
-            </ColorModeProvider>
-          </ChakraProvider>
-          <ScrollRestoration />
-          {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
-          <Scripts />
-        </body>
-      </html>
-    );
-  },
-);
+        <ScrollRestoration />
+        {/* {process.env.NODE_ENV === 'development' ? <LiveReload /> : null} */}
+        <LiveReload />
+        <Scripts />
+      </body>
+    </html>
+  );
+};
 
 export const ErrorBoundary = () => {
   const error = useRouteError();
@@ -224,17 +173,17 @@ export const ErrorBoundary = () => {
   } else if (error instanceof Error) {
     return (
       <Document title="musy - Error">
-        <Heading fontSize={['sm', 'md']}>oops, unhandled error</Heading>
-        <Text fontSize="sm">{error.message}</Text>
-        <Text fontSize="sm">{error.stack}</Text>
+        <h1>oops, unhandled error</h1>
+        <p>{error.message}</p>
+        <p>{error.stack}</p>
       </Document>
     );
   }
 
   return (
     <Document title="musy - Error">
-      <Heading fontSize={['sm', 'md']}>ooooops, unknown error</Heading>
-      <Text fontSize="sm">reload the page eventually</Text>
+      <h1>ooooops, unknown error</h1>
+      <p>reload the page eventually</p>
     </Document>
   );
 };

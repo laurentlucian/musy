@@ -1,11 +1,9 @@
-import { Stack, Flex } from '@chakra-ui/react';
+import type { Activity } from "~/lib/types/types";
 
-import type { Activity } from '~/lib/types/types';
-
-import TileTrackImage from '../tile/track/TileTrackImage';
-import TileTrackInfo from '../tile/track/TileTrackInfo';
-import ActivityInfo from './shared/ActivityInfo';
-import ActivityTrackInfo from './shared/ActivityTrackInfo';
+import TileTrackImage from "../tile/track/TileTrackImage";
+import TileTrackInfo from "../tile/track/TileTrackInfo";
+import ActivityInfo from "./shared/ActivityInfo";
+import ActivityTrackInfo from "./shared/ActivityTrackInfo";
 
 const ActivityTile = ({ activity }: { activity: Activity }) => {
   const track =
@@ -17,28 +15,31 @@ const ActivityTile = ({ activity }: { activity: Activity }) => {
   if (!track) return null;
 
   return (
-    <Stack alignSelf="center" w="100%" maxW="640px">
+    <div className="stack-2 w-full max-w-xl self-center">
       <ActivityInfo activity={activity} />
-      <Flex pb="5px" w="100%">
-        <Stack spacing="5px" w="100%">
-          <Stack>
-            <TileTrackImage
-              fullscreen={{
-                originUserId: activity.userId,
-                track,
-              }}
-              image={{
-                src: track.image,
-              }}
-            />
+      <div className="stack-1 w-full">
+        <div className="stack-3">
+          <TileTrackImage
+            fullscreen={{
+              originUserId: activity.userId,
+              track,
+            }}
+            image={{
+              className: "min-h-[576px]",
+              src: track.image,
+            }}
+          />
 
-            <ActivityTrackInfo track={track} />
-          </Stack>
+          <ActivityTrackInfo track={track} />
+        </div>
 
-          <TileTrackInfo track={track} createdAt={activity.createdAt} icon={false} />
-        </Stack>
-      </Flex>
-    </Stack>
+        <TileTrackInfo
+          track={track}
+          createdAt={activity.createdAt}
+          icon={false}
+        />
+      </div>
+    </div>
   );
 };
 

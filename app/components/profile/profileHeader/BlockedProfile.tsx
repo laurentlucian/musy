@@ -1,14 +1,15 @@
-import { useParams } from '@remix-run/react';
+import { useParams } from "@remix-run/react";
 
-import { Button, HStack, Stack, Text } from '@chakra-ui/react';
+import { motion } from "framer-motion";
+import { Forbidden } from "iconsax-react";
 
-import { motion } from 'framer-motion';
-import { Forbidden } from 'iconsax-react';
-
-import useCurrentUser from '~/hooks/useCurrentUser';
+import useCurrentUser from "~/hooks/useCurrentUser";
 
 const block = (
-  <motion.div animate={{ opacity: [0, 1, 0, 1] }} transition={{ duration: 5, loop: Infinity }}>
+  <motion.div
+    animate={{ opacity: [0, 1, 0, 1] }}
+    transition={{ duration: 5, loop: Infinity }}
+  >
     <Forbidden size="30" color="red" />
   </motion.div>
 );
@@ -16,26 +17,28 @@ const block = (
 const BlockedProfile = ({ name }: { name: string }) => {
   const currentUser = useCurrentUser();
   const { id } = useParams();
-  const blockRecord = currentUser?.block.find((blocked) => blocked.blockedId === id);
+  const blockRecord = currentUser?.block.find(
+    (blocked) => blocked.blockedId === id,
+  );
   const amIBlocked = blockRecord?.blockedId === currentUser?.userId;
 
   return (
-    <Stack spacing={5} px={5}>
-      <HStack>
+    <div className="space-y-5 px-5">
+      <div className="flex">
         {block}
-        <Text opacity=".5">
-          {amIBlocked ? `You have been blocked by ${name}` : `You have blocked ${name}`}
-        </Text>
-      </HStack>
-      <Button
-        w="300px"
-        size="md"
-        _hover={{ color: 'spotify.green' }}
+        <p className="opacity-50">
+          {amIBlocked
+            ? `You have been blocked by ${name}`
+            : `You have blocked ${name}`}
+        </p>
+      </div>
+      <button
+        className="md:w-300px text-md w-72"
         onClick={() => window.history.back()}
       >
         go back
-      </Button>
-    </Stack>
+      </button>
+    </div>
   );
 };
 

@@ -1,20 +1,18 @@
-import { useSearchParams } from '@remix-run/react';
-import { useEffect } from 'react';
+import { useSearchParams } from "@remix-run/react";
+import { useEffect } from "react";
 
-import { Stack } from '@chakra-ui/react';
+import { useTypedFetcher } from "remix-typedjson";
 
-import { useTypedFetcher } from 'remix-typedjson';
+import TileTrackImage from "~/components/tile/track/TileTrackImage";
+import TileTrackList from "~/components/tile/track/TileTrackList";
+import type { loader } from "~/routes/api+/search+/results";
 
-import TileTrackImage from '~/components/tile/track/TileTrackImage';
-import TileTrackList from '~/components/tile/track/TileTrackList';
-import type { loader } from '~/routes/api+/search+/results';
-
-import SendButton from '../shared/actions/SendTrack';
+import SendButton from "../shared/actions/SendTrack";
 
 const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
   const [searchParams] = useSearchParams();
   const { data, load } = useTypedFetcher<typeof loader | undefined>();
-  const search = searchParams.get('fullscreen');
+  const search = searchParams.get("fullscreen");
   useEffect(() => {
     if (search) {
       load(`/api/search/results?fullscreen=${search}&param=fullscreen`);
@@ -24,7 +22,7 @@ const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
   const tracks = search ? data?.tracks ?? [] : [];
 
   return (
-    <Stack spacing={5} pr="10px">
+    <div className="stack-3 pr-3">
       {tracks.map((track) => {
         return (
           <TileTrackList
@@ -35,7 +33,7 @@ const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
                 fullscreen={{
                   track: track,
                 }}
-                box={{ w: ['75px', '90px'] }}
+                box="w-[75px] md:w-[90px]"
                 image={{
                   src: track.image,
                 }}
@@ -45,7 +43,7 @@ const FullscreenQueueTracks = ({ userId }: { userId: string }) => {
           />
         );
       })}
-    </Stack>
+    </div>
   );
 };
 
