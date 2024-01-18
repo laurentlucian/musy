@@ -4,7 +4,6 @@ import { Heart } from 'react-feather';
 import clsx from 'clsx';
 import { useTypedFetcher } from 'remix-typedjson';
 
-import Tooltip from '~/components/Tooltip';
 import useCurrentUser from '~/hooks/useCurrentUser';
 import useUserLibrary from '~/hooks/useUserLibrary';
 
@@ -36,19 +35,17 @@ const SaveToLiked = ({ iconOnly, trackId }: SaveToLikedProps) => {
 
   if (iconOnly)
     return (
-      <Tooltip label={isSaved ? 'remove' : 'save'} placement='top'>
-        <button
-          aria-label={isSaved ? 'remove' : 'save'}
-          className='shadow-none hover:shadow-none active:shadow-none'
-          onClick={saveSong}
-        >
-          <Heart
-            className={clsx({
-              'fill-musy-200': isSaved,
-            })}
-          />
-        </button>
-      </Tooltip>
+      <button
+        aria-label={isSaved ? 'remove' : 'save'}
+        className='shadow-none hover:shadow-none active:shadow-none'
+        onClick={saveSong}
+      >
+        <Heart
+          className={clsx({
+            'fill-musy-200': isSaved,
+          })}
+        />
+      </button>
     );
 
   return (

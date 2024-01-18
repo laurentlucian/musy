@@ -4,11 +4,6 @@
 
 @layer base {
   :root {
-    --background: 0 11% 2%;
-    --foreground: 20 26% 91%;
-    /* --primary-foreground: 60 9.1% 97.8%; */
-    --radius: 0.5rem;
-
     --musy: 24 22% 86%;
     --musy-50: 26 23% 88%;
     --musy-100: 26 18% 85%;
@@ -20,6 +15,28 @@
     --musy-700: 60 3% 8%;
     --musy-800: 0 0% 7%;
     --musy-900: 0 6% 3%;
+
+    /* shadcn-ui */
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: var(--musy-900);
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+
+    --radius: 0.4rem;
   }
 }
 
@@ -29,7 +46,7 @@
   }
 
   html {
-    font-family: "Montserrat", system-ui, sans-serif;
+    font-family: 'Montserrat', system-ui, sans-serif;
   }
 
   body {

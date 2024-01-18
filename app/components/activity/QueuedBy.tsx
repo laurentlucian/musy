@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { Profile } from '@prisma/client';
 import { DirectInbox } from 'iconsax-react';
 
-import Tooltip from '~/components/Tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/lib/ui/tooltip';
 import { shortenUsername } from '~/lib/utils';
 
 const QueuedBy = (props: {
@@ -24,32 +24,31 @@ const QueuedBy = (props: {
       onClick={() => setIsLabelOpen(!isLabelOpen)}
     >
       <DirectInbox size={15} />
-      <Tooltip
-        isOpen={isLabelOpen}
-        label={
-          <div className='stack-3 rounded-sm bg-musy-900 px-2 py-1'>
-            {props.queued.map(({ owner: { user } }, index) => {
-              const name = shortenUsername(user?.name);
-              return (
-                <div className='flex' key={index}>
-                  <img className='w-5 rounded-full' alt={user?.name} src={user?.image} />
-                  <p>{name}</p>
-                </div>
-              );
-            })}
+      <Tooltip open={isLabelOpen}>
+        <TooltipTrigger>
+          <div className='flex -space-x-2 overflow-hidden'>
+            {props.queued.slice(0, slice).map(({ owner: { user } }, index) => (
+              <img
+                className='w-5 rounded-full ring-2 ring-black'
+                key={index}
+                alt={user?.name}
+                src={user?.image}
+              />
+            ))}
           </div>
-        }
-      >
-        <div className='flex -space-x-2 overflow-hidden'>
-          {props.queued.slice(0, slice).map(({ owner: { user } }, index) => (
-            <img
-              className='w-5 rounded-full ring-2 ring-black'
-              key={index}
-              alt={user?.name}
-              src={user?.image}
-            />
-          ))}
-        </div>
+        </TooltipTrigger>
+
+        <TooltipContent>
+          {props.queued.map(({ owner: { user } }, index) => {
+            const name = shortenUsername(user?.name);
+            return (
+              <div className='stack-h-2' key={index}>
+                <img className='w-5 rounded-full' alt={user?.name} src={user?.image} />
+                <p>{name}</p>
+              </div>
+            );
+          })}
+        </TooltipContent>
       </Tooltip>
     </div>
   );

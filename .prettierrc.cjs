@@ -8,6 +8,12 @@ module.exports = {
   semi: true,
   trailingComma: 'all',
   tabWidth: 2,
-  plugins: [require.resolve('prettier-plugin-tailwindcss')],
+  plugins: [
+    require.resolve('prettier-plugin-tailwindcss'),
+    'prettier-plugin-classnames',
+    'prettier-plugin-merge',
+  ],
   tailwindConfig: 'tailwind.config.ts',
+  customAttributes: ['className'],
+  customFunctions: ['classNames'],
 };

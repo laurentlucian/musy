@@ -1,13 +1,11 @@
 import { type Dispatch, type SetStateAction, type ReactElement, useEffect } from 'react';
 
-import { FormControl, IconButton, useColorModeValue } from '@chakra-ui/react';
-
 import type { Theme } from '@prisma/client';
 
-import Tooltip from '~/components/Tooltip';
 import useCurrentUser from '~/hooks/useCurrentUser';
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSetShowSave } from '~/hooks/useSaveTheme';
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/lib/ui/tooltip';
 
 const ToggleSetting = ({
   bold,
@@ -28,8 +26,6 @@ const ToggleSetting = ({
   title: string;
   value?: boolean;
 }) => {
-  const bg = useColorModeValue('musy.200', 'musy.800');
-  const color = useColorModeValue('musy.800', 'musy.200');
   const currentUser = useCurrentUser();
   const isSmallScreen = useIsMobile();
   const setSave = useSetShowSave();
@@ -54,21 +50,19 @@ const ToggleSetting = ({
 
   if (!currentUser) return null;
   return (
-    <FormControl display='flex'>
-      <Tooltip label={label} hasArrow isDisabled={isSmallScreen} openDelay={300}>
-        <IconButton
+    <Tooltip disableHoverableContent={isSmallScreen}>
+      <TooltipTrigger>
+        <button
           aria-label={label}
-          bg={bg}
-          color={color}
-          icon={icon}
           onClick={onToggle}
-          opacity={themeValue || bold ? 1 : 0.3}
-          border={themeValue || bold ? `1px solid white` : undefined} // color mode isn't working here
-          borderRadius='md'
-          _hover={{}} // color mode doesn't switch hover colors
-        />
-      </Tooltip>
-    </FormControl>
+          // opacity={themeValue || bold ? 1 : 0.3}
+          // border={themeValue || bold ? `1px solid white` : undefined} // color mode isn't working here
+        >
+          {icon}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   );
 };
 

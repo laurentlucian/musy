@@ -1,7 +1,5 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react';
 
-import { HStack, useRadioGroup } from '@chakra-ui/react';
-
 // import { RadioCard } from '~/lib/theme/components/Radio';
 import type { TrackWithInfo } from '~/lib/types/types';
 
@@ -18,12 +16,12 @@ const TilesTop = ({ tracks }: { tracks: TrackWithInfo[] }) => {
   const [params] = useSearchParams();
   const topFilter = params.get('top-filter') ?? 'medium_term';
 
-  const { getRadioProps, getRootProps } = useRadioGroup({
-    defaultValue: topFilter,
-    name: 'top-filter',
-  });
+  // const { getRadioProps, getRootProps } = useRadioGroup({
+  //   defaultValue: topFilter,
+  //   name: 'top-filter',
+  // });
 
-  const group = getRootProps();
+  // const group = getRootProps();
 
   const Filter = (
     <Form
@@ -32,7 +30,7 @@ const TilesTop = ({ tracks }: { tracks: TrackWithInfo[] }) => {
         submit(e.currentTarget, { preventScrollReset: true, replace: true });
       }}
     >
-      <div className='stack-h-3 m-0 ml-1 p-0' {...group}>
+      <div className='stack-h-3 m-0 ml-1 p-0'>
         {/* {options.map(({ name, value }) => {
           const radio = getRadioProps({ value });
           return (

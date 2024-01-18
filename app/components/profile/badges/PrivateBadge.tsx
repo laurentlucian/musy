@@ -1,7 +1,6 @@
 import { LockCircle } from 'iconsax-react';
 import { useTypedRouteLoaderData } from 'remix-typedjson';
 
-import Tooltip from '~/components/Tooltip';
 import useCurrentUser from '~/hooks/useCurrentUser';
 import type { loader } from '~/routes/$id';
 
@@ -16,11 +15,7 @@ const PrivateBadge = () => {
 
   if (!isPrivate) return null;
 
-  return (
-    <Tooltip label='Private' placement='top' hasArrow>
-      <LockCircle size='32' variant='Bulk' />
-    </Tooltip>
-  );
+  return <LockCircle size='32' variant='Bulk' />;
 };
 
 export default PrivateBadge;

@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { Switch } from '@chakra-ui/react';
-
 import { useRequiredCurrentUser } from '~/hooks/useCurrentUser';
 import useFollowing from '~/hooks/useFollowing';
 import type { TrackWithInfo } from '~/lib/types/types';
@@ -34,9 +32,9 @@ const TilesPlayback = () => {
       <Tiles
         title='LISTENING'
         scrollButtons={scrollButtons}
-        action={
-          <Switch size='sm' ml='10px' colorScheme='whiteAlpha' onChange={() => setTile(!tile)} />
-        }
+        // action={
+        //   <Switch size='sm' ml='10px' colorScheme='whiteAlpha' onChange={() => setTile(!tile)} />
+        // }
         tracks={tracks}
       >
         <TilePlayback index={0} tile={tile} user={currentUser} />

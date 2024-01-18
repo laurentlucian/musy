@@ -1,3 +1,7 @@
+import './globals.css';
+import './lib/fonts.css';
+import './lib/icons/waver.css';
+
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
   isRouteErrorResponse,
@@ -22,11 +26,8 @@ import NotFound from './components/error/NotFound';
 import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
+import { TooltipProvider } from './lib/ui/tooltip';
 import { iosSplashScreens } from './lib/utils';
-
-import './global.css';
-import './lib/fonts.css';
-import './lib/icons/waver.css';
 
 const App = () => {
   useAnalytics();
@@ -35,7 +36,9 @@ const App = () => {
     <Document>
       <AnimatePresence mode='wait' initial={false}>
         <Layout>
-          <Outlet />
+          <TooltipProvider>
+            <Outlet />
+          </TooltipProvider>
         </Layout>
       </AnimatePresence>
       <FullscreenRenderer />

@@ -2,7 +2,6 @@ import { Link, useParams } from '@remix-run/react';
 
 import type { Playlist } from '@prisma/client';
 
-import Tooltip from '~/components/Tooltip';
 import { decodeHtmlEntity } from '~/lib/utils';
 
 const PlaylistTile = ({ playlist }: { playlist: Playlist }) => {
@@ -12,14 +11,12 @@ const PlaylistTile = ({ playlist }: { playlist: Playlist }) => {
     <div className='w-48 shrink-0 cursor-pointer'>
       <Link to={`/${id}/${playlist.id}`} className='stack-2'>
         <div className='flex flex-col'>
-          <Tooltip label={playlist.name} placement='top-start'>
-            <img
-              className='h-[200px] w-[200px] object-cover'
-              src={playlist.image}
-              draggable={false}
-              alt='playlist'
-            />
-          </Tooltip>
+          <img
+            className='h-[200px] w-[200px] object-cover'
+            src={playlist.image}
+            draggable={false}
+            alt='playlist'
+          />
         </div>
         <div className='stack justify-between'>
           <p className='overflow-hidden overflow-ellipsis whitespace-normal break-all text-xs leading-5'>
