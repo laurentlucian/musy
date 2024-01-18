@@ -9,7 +9,7 @@ const PlaylistTile = ({ playlist }: { playlist: Playlist }) => {
   const { id } = useParams();
 
   return (
-    <div className='w-50 shrink-0 cursor-pointer'>
+    <div className='w-48 shrink-0 cursor-pointer'>
       <Link to={`/${id}/${playlist.id}`} className='stack-2'>
         <div className='flex flex-col'>
           <Tooltip label={playlist.name} placement='top-start'>
