@@ -1,7 +1,6 @@
-import { Link as RemixLink, Outlet, useLocation } from '@remix-run/react';
+import { Link, Outlet, useLocation } from '@remix-run/react';
 import type { MouseEvent } from 'react';
 
-import { Link, Stack, useColorModeValue, Divider, Box } from '@chakra-ui/react';
 
 import useIsMobile from '~/hooks/useIsMobile';
 import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
@@ -9,8 +8,6 @@ import { useSaveState, useSetShowAlert } from '~/hooks/useSaveTheme';
 const Settings = () => {
   const isSmallScreen = useIsMobile();
   const location = useLocation();
-  const color = useColorModeValue('#050404', '#EEE6E2');
-  const bg = useColorModeValue('#EEE6E2', '#050404');
   const disable = useSaveState();
   const showAlert = useSetShowAlert();
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
@@ -20,54 +17,36 @@ const Settings = () => {
     }
   };
   return (
-    <Stack
-      direction={['column', 'row']}
-      pt={['60px', 4]}
-      justifyContent={['start', 'space-between']}
-      overflowX='hidden'
-      px={['20px', 0]}
-      bg={bg}
-      h='100%'
-      w={{ base: '100vw', md: '750px', sm: '450px', xl: '1100px' }}
-    >
-      <Stack direction={['row', 'column']} w='110px' h='100%'>
-        <Link
-          as={RemixLink}
-          to='/settings'
-          replace
-          fontSize={['sm', 'md']}
-          aria-current={location.pathname === '/settings' ? 'page' : undefined}
-          _activeLink={{ opacity: 1, textDecor: 'underline' }}
-          color={color}
-          w='80px'
-          onClick={handleClick}
-        >
-          account
-        </Link>
-        <Link
-          as={RemixLink}
+      <div className='flex sm:flex-col lg:flex-row h-full sm:justify-start lg:justify-between'>
+        <div className='flex sm:flex-row lg:flex-col w-28 h-full'>
+          <Link
+          className='sm:text-sm lg:text-md w-20'
+            to='/settings'
+            replace
+            aria-current={location.pathname === '/settings' ? 'page' : undefined}
+            // _activeLink={{ opacity: 1, textDecor: 'underline' }}
+            onClick={handleClick}
+          >
+            account
+          </Link>
+          <Link
+          className='sm:text-sm lg:text-md w-28'
           to='/settings/appearance'
-          replace
-          fontSize={['sm', 'md']}
-          aria-current={location.pathname === '/settings/appearance' ? 'page' : undefined}
-          _activeLink={{ opacity: 1, textDecor: 'underline' }}
-          color={color}
-          w='110px'
-          onClick={handleClick}
-        >
-          appearance
-        </Link>
-      </Stack>
-      {isSmallScreen ? (
-        <Divider bg={color} orientation='horizontal' w='100vh' alignSelf='center' />
-      ) : (
-        <>
-          <Divider bg={color} orientation='vertical' h='86vh' />
-          <Box w='30px' />
-        </>
-      )}
-      <Outlet />
-    </Stack>
+            replace
+            aria-current={location.pathname === '/settings/appearance' ? 'page' : undefined}
+            // _activeLink={{ opacity: 1, textDecor: 'underline' }}
+            onClick={handleClick}
+          >
+            appearance
+          </Link>
+        </div>
+        {isSmallScreen ? (
+          <div className='h-[1px] w-full self-center bg-[#EEE6E2]'/>
+        ) : (
+            <div className='h-[86vh] w-[1px] bg-[#EEE6E2]'/>
+        )}
+        <Outlet />
+      </div>
   );
 };
 
