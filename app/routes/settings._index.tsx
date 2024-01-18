@@ -3,21 +3,11 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { useRef } from 'react';
 
 import {
-  Button,
   useDisclosure,
   AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  Stack,
   Switch,
-  FormLabel,
-  FormControl,
-  useColorModeValue,
-  Text,
-  HStack,
 } from '@chakra-ui/react';
 
 import { Code1, Ghost, Logout, MusicPlay, PlayCricle, Scroll } from 'iconsax-react';
@@ -29,9 +19,9 @@ import { authenticator } from '~/services/auth.server';
 import { upsertSettingsField } from '~/services/prisma/theme.server';
 
 const Account = () => {
-  const bg = useColorModeValue('musy.100', 'musy.800');
-  const cancelBg = useColorModeValue('white', 'musy.400');
-  const color = useColorModeValue('musy.800', 'white');
+  // const bg = useColorModeValue('musy.100', 'musy.800');
+  // const cancelBg = useColorModeValue('white', 'musy.400');
+  // const color = useColorModeValue('musy.800', 'white');
   const currentUser = useCurrentUser();
   const submit = useSubmit();
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -41,16 +31,15 @@ const Account = () => {
 
   return (
     <>
-      <Stack spacing={5} w='100%' h='100%'>
-        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
-          <HStack>
+      <div className='w-full h-full space-y-5 ml-5'>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-3'>
             <Ghost size='24' color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
-            <FormLabel fontSize={['sm', 'md']} htmlFor='private-profile' mb='0' color={color}>
+            <label className='sm:text-sm lg:text-md mb-0' htmlFor='private-profile'>
               private profile
-            </FormLabel>
-          </HStack>
+            </label>
+          </div>
           <Switch
-            colorScheme='music'
             id='private-profile'
             defaultChecked={currentUser.settings?.isPrivate ?? false}
             onChange={(e) => {
@@ -62,15 +51,15 @@ const Account = () => {
             }}
             size='lg'
           />
-        </FormControl>
+        </div>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
-        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
-          <HStack>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-3'>
             <Scroll size='24' color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
-            <FormLabel fontSize={['sm', 'md']} htmlFor='auto-scroll' mb='0' color={color}>
+            <label className='sm:text-sm lg:text-md mb-0' htmlFor='auto-scroll'>
               auto scroll
-            </FormLabel>
-          </HStack>
+            </label>
+          </div>
           <Switch
             colorScheme='music'
             id='auto-scroll'
@@ -84,21 +73,21 @@ const Account = () => {
             }}
             size='lg'
           />
-        </FormControl>
-        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
-          <HStack>
+        </div>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-3'>
             <MusicPlay
               size='24'
               color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
               variant='Bold'
             />
-            <FormLabel fontSize={['sm', 'md']} htmlFor='allowPreview' mb='0' color={color}>
+            <label className='sm:text-sm lg:text-md mb-0' htmlFor='song-preview'>
               song preview
-            </FormLabel>
-          </HStack>
+            </label>
+          </div>
           <Switch
             colorScheme='music'
-            id='allowPreview'
+            id='allow-preview'
             defaultChecked={currentUser.settings?.allowPreview ?? false}
             onChange={(e) => {
               submit(
@@ -109,21 +98,21 @@ const Account = () => {
             }}
             size='lg'
           />
-        </FormControl>
-        <FormControl display='flex' alignItems='center' justifyContent='space-between'>
-          <HStack>
+        </div>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-3'>
             <PlayCricle
               size='24'
               color={currentUser.settings?.miniPlayer ? spotifyGreen : '#555555'}
               variant='Bold'
             />
-            <FormLabel fontSize={['sm', 'md']} htmlFor='miniplayer' mb='0' color={color}>
+            <label className='sm:text-sm lg:text-md mb-0' htmlFor='home-miniplayer'>
               home miniplayer
-            </FormLabel>
-          </HStack>
+            </label>
+          </div>
           <Switch
             colorScheme='music'
-            id='miniplayer'
+            id='home-miniplayer'
             defaultChecked={currentUser.settings?.miniPlayer ?? false}
             onChange={(e) => {
               submit(
@@ -134,15 +123,15 @@ const Account = () => {
             }}
             size='lg'
           />
-        </FormControl>
+        </div>
         {currentUser.settings?.founder && (
-          <FormControl display='flex' alignItems='center' justifyContent='space-between'>
-            <HStack>
+          <div className='flex items-center justify-between'>
+            <div className='flex gap-3'>
               <Code1 size='24' color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
-              <FormLabel fontSize={['sm', 'md']} htmlFor="'dev-mode'" mb='0' color={color}>
+              <label className='sm:text-sm lg:text-md mb-0' htmlFor='dev-mode'>
                 dev mode
-              </FormLabel>
-            </HStack>
+              </label>
+            </div>
             <Switch
               colorScheme='music'
               id='dev-mode'
@@ -156,51 +145,49 @@ const Account = () => {
               }}
               size='lg'
             />
-          </FormControl>
+          </div>
         )}
-        <Button
-          leftIcon={<Logout />}
-          bgColor='red.600'
-          color='white'
-          _hover={{ bgColor: 'red.500' }}
+        <button
+        className='flex flex-row gap-3 hover:text-red-500'
           onClick={onOpen}
         >
+          <Logout />
           log out
-        </Button>
-      </Stack>
+        </button>
+      </div>
 
       <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
         <AlertDialogOverlay>
           <AlertDialogContent>
-            <AlertDialogHeader fontSize='lg' fontWeight='bold' bg={bg} color={color}>
+            {/* <AlertDialogHeader fontSize='lg' fontWeight='bold' bg={bg} color={color}>
               log out
-            </AlertDialogHeader>
-            <AlertDialogBody bg={bg} color={color}>
-              <Text pl='20px'>are you sure you want to logout?</Text>
-            </AlertDialogBody>
-            <AlertDialogFooter bg={bg} color={color}>
-              <Form action={'/api/logout'} method='post'>
-                <Button
+            </AlertDialogHeader> */}
+            {/* <AlertDialogBody bg={bg} color={color}>
+              <p className='pl-5'>are you sure you want to logout?</p>
+            </AlertDialogBody> */}
+            {/* <AlertDialogFooter bg={bg} color={color}> */}
+              <Form action='/api/logout' method='post'>
+                <button
                   ref={cancelRef}
                   onClick={onClose}
-                  bg={bg}
-                  color={color}
-                  _hover={{ bg: cancelBg, color: 'musy.800' }}
+                  // bg={bg}
+                  // color={color}
+                  // _hover={{ bg: cancelBg, color: 'musy.800' }}
                 >
                   cancel
-                </Button>
-                <Button
-                  bgColor='red'
-                  color='white'
-                  onClick={onClose}
-                  ml={3}
-                  type='submit'
-                  _hover={{ bgColor: 'red.500' }}
+                </button>
+                <button
+                  // bgColor='red'
+                  // color='white'
+                  // onClick={onClose}
+                  // ml={3}
+                  // type='submit'
+                  // _hover={{ bgColor: 'red.500' }}
                 >
                   log out
-                </Button>
+                </button>
               </Form>
-            </AlertDialogFooter>
+            {/* </AlertDialogFooter> */}
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
