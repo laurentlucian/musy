@@ -1,4 +1,6 @@
-import { Link, useNavigation } from '@remix-run/react';
+import { Link, useLocation, useNavigation } from '@remix-run/react';
+
+import { Setting2 } from 'iconsax-react';
 
 import useCurrentUser from '~/hooks/useCurrentUser';
 import Waver from '~/lib/icons/Waver';
@@ -6,6 +8,8 @@ import Waver from '~/lib/icons/Waver';
 const Nav = () => {
   const currentUser = useCurrentUser();
   const transition = useNavigation();
+  const { pathname } = useLocation();
+  const isOwnProfile = currentUser?.userId === pathname.split('/')[1];
 
   return (
     <header className='sticky top-0 z-10 flex w-full justify-center backdrop-blur-[27px]'>
@@ -23,13 +27,19 @@ const Nav = () => {
           </Link>
           {transition.state === 'loading' && <Waver />}
         </div>
-        <Link to={`/${currentUser?.userId}`}>
-          <img
-            className='h-[30px] w-[30px] rounded-full md:h-[40px] md:w-[40px]'
-            src={currentUser?.image}
-            alt='user'
-          />
-        </Link>
+        {isOwnProfile ? (
+          <Link className='flex h-[30px] justify-center md:h-[40px]' to='/settings'>
+            <Setting2 />
+          </Link>
+        ) : (
+          <Link to={`/${currentUser?.userId}`}>
+            <img
+              className='h-[30px] w-[30px] rounded-full md:h-[40px] md:w-[40px]'
+              src={currentUser?.image}
+              alt='user'
+            />
+          </Link>
+        )}
       </div>
     </header>
   );
