@@ -19,7 +19,7 @@ const TileTrackInfo = ({
       <div className='stack flex-grow'>
         <a
           href={track.uri}
-          className='line-clamp-1 overflow-hidden whitespace-normal break-all text-xs font-extralight hover:underline md:text-[13px]'
+          className='line-clamp-1 w-44 overflow-hidden whitespace-normal break-all text-xs font-extralight hover:underline md:text-[13px]'
         >
           {track.name}
         </a>
