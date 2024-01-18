@@ -1,6 +1,3 @@
-import type { ChakraProps } from '@chakra-ui/react';
-import { Image, useColorModeValue } from '@chakra-ui/react';
-
 import useIsMobile from '~/hooks/useIsMobile';
 import spotify_icon_black from '~/lib/assets/spotify_icon_black.png';
 import spotify_icon_white from '~/lib/assets/spotify_icon_white.png';
@@ -13,7 +10,7 @@ type SpotifyLogoProps = {
   link?: boolean;
   w?: string;
   white?: boolean;
-} & ChakraProps;
+};
 
 const SpotifyLogo = ({
   link = true,
@@ -21,7 +18,6 @@ const SpotifyLogo = ({
   h = '25px',
   w = icon ? '25px' : '80px',
   white,
-  ...props
 }: SpotifyLogoProps) => {
   // const isSmallScreen = useIsMobile();
 
@@ -37,13 +33,15 @@ const SpotifyLogo = ({
 
   return (
     <>
-      <Image
-        minH={h}
-        maxH={h}
-        minW={w}
-        maxW={w}
+      <img
+        alt='spotify-logo'
+        style={{
+          maxHeight: h,
+          maxWidth: w,
+          minHeight: h,
+          minWidth: w,
+        }}
         src={spotify}
-        {...props}
         onClick={(e) => {
           if (link) {
             e.preventDefault();

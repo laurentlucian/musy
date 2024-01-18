@@ -1,7 +1,5 @@
 import { Link } from '@remix-run/react';
 
-import { Stack, Link as ChakraLink } from '@chakra-ui/react';
-
 import ActivityUserInfo from '~/components/activity/shared/ActivityUserInfo';
 import TilePlaybackUser from '~/components/tile/playback/TilePlaybackUser';
 import type { ProfileWithInfo } from '~/lib/types/types';

@@ -1,5 +1,3 @@
-import { SimpleGrid, Stack } from '@chakra-ui/react';
-
 import Tile from '~/components/tile/Tile';
 import TileTrackImage from '~/components/tile/track/TileTrackImage';
 import TileTrackInfo from '~/components/tile/track/TileTrackInfo';
@@ -11,7 +9,7 @@ const FullscreenTracksLayout = () => {
   const { layout, tracks } = useFullscreenTracks();
 
   const Grid = (
-    <SimpleGrid minChildWidth={['115px', '160px', '200px']} spacing='20px'>
+    <div className='grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3'>
       {tracks.map((track, index) => {
         return (
           <Tile
@@ -29,11 +27,11 @@ const FullscreenTracksLayout = () => {
           />
         );
       })}
-    </SimpleGrid>
+    </div>
   );
 
   const List = (
-    <Stack spacing={5}>
+    <div className='stack-3'>
       {tracks.map((track) => {
         return (
           <TileTrackList
@@ -53,7 +51,7 @@ const FullscreenTracksLayout = () => {
           />
         );
       })}
-    </Stack>
+    </div>
   );
 
   return layout === 'grid' ? Grid : List;

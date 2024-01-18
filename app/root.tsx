@@ -1,4 +1,3 @@
-import './global.css';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
   isRouteErrorResponse,
@@ -16,7 +15,7 @@ import { Forbidden } from 'iconsax-react';
 import { redirect, typedjson } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
-import { authenticator, spotifyStrategy } from '~/services/auth.server';
+import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser } from '~/services/prisma/users.server';
 
 import NotFound from './components/error/NotFound';
@@ -25,6 +24,7 @@ import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
 import { iosSplashScreens } from './lib/utils';
 
+import './global.css';
 import './lib/fonts.css';
 import './lib/icons/waver.css';
 
@@ -132,10 +132,8 @@ const Document = ({ children, title = 'musy' }: DocumentProps) => {
       </head>
       <body>
         {children}
-
         <ScrollRestoration />
-        {/* {process.env.NODE_ENV === 'development' ? <LiveReload /> : null} */}
-        <LiveReload />
+        {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
         <Scripts />
       </body>
     </html>

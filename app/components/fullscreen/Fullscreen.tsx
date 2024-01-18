@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { useEventListener } from '@chakra-ui/react';
-
+import { useEventListener } from 'ahooks';
 import { createWithEqualityFn } from 'zustand/traditional';
 
 type FullscreenState = {

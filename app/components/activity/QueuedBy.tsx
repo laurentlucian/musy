@@ -41,10 +41,10 @@ const QueuedBy = (props: {
         }
       >
         <div className='flex -space-x-2 overflow-hidden'>
-          {props.queued.slice(0, slice).map(({ owner: { user } }) => (
+          {props.queued.slice(0, slice).map(({ owner: { user } }, index) => (
             <img
               className='w-5 rounded-full ring-2 ring-black'
-              key={user?.userId}
+              key={index}
               alt={user?.name}
               src={user?.image}
             />

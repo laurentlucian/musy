@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
 
-import { useInterval } from '@chakra-ui/react';
+import { useInterval } from 'ahooks';
 
 type scrollBehavior = 'natural' | 'reverse';
 export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => {

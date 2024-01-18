@@ -1,12 +1,11 @@
 import { useParams } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 
-import { Stack } from '@chakra-ui/react';
-
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
 import TrackTiles from '~/components/tiles/TilesTrack';
+import { cn } from '~/lib/cn';
 import { getCacheControl } from '~/lib/utils';
 import { prisma } from '~/services/db.server';
 import {
@@ -22,7 +21,11 @@ const ProfileSpotifyOutlet = () => {
   const { liked, playback, recent, recommended, top } = useTypedLoaderData<typeof loader>();
 
   return (
-    <Stack spacing={5} pos='relative' top={playback ? '-30px' : 0}>
+    <div
+      className={cn('stack-3 relative', {
+        'pt-10': playback,
+      })}
+    >
       {/* {playback && playback.item?.type === 'track' && (
         <Player layoutKey="Player" id={id as string} party={[]} playback={playback} />
       )} */}
@@ -30,7 +33,7 @@ const ProfileSpotifyOutlet = () => {
       <TrackTiles tracks={recent} title='Recent' />
       <TrackTiles tracks={liked} title='Liked' />
       <TrackTiles tracks={top} title='Top' />
-    </Stack>
+    </div>
   );
 };
 
