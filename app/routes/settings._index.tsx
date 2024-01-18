@@ -7,7 +7,6 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogOverlay,
-  Switch,
 } from '@chakra-ui/react';
 
 import { Code1, Ghost, Logout, MusicPlay, PlayCricle, Scroll } from 'iconsax-react';
@@ -33,12 +32,10 @@ const Account = () => {
     <>
       <div className='w-full h-full space-y-6 ml-5'>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-5'>
+            <label className='flex gap-5 sm:text-sm lg:text-md mb-0 cursor-pointer' htmlFor='private-profile'>
             <Ghost size='24' color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
-            <label className='sm:text-sm lg:text-md mb-0' htmlFor='private-profile'>
               private profile
             </label>
-          </div>
           <Switch
             id='private-profile'
             defaultChecked={currentUser.settings?.isPrivate ?? false}
@@ -49,19 +46,15 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size='lg'
           />
         </div>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
         <div className='flex items-center justify-between'>
-          <div className='flex gap-5'>
+            <label className='flex gap-5 sm:text-sm lg:text-md mb-0 cursor-pointer' htmlFor='auto-scroll'>
             <Scroll size='24' color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
-            <label className='sm:text-sm lg:text-md mb-0' htmlFor='auto-scroll'>
               auto scroll
             </label>
-          </div>
           <Switch
-            colorScheme='music'
             id='auto-scroll'
             defaultChecked={currentUser.settings?.autoscroll ?? true}
             onChange={(e) => {
@@ -71,22 +64,18 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size='lg'
           />
         </div>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-5'>
+            <label className='flex gap-5 sm:text-sm lg:text-md mb-0 cursor-pointer' htmlFor='song-preview'>
             <MusicPlay
               size='24'
               color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
               variant='Bold'
             />
-            <label className='sm:text-sm lg:text-md mb-0' htmlFor='song-preview'>
               song preview
             </label>
-          </div>
           <Switch
-            colorScheme='music'
             id='allow-preview'
             defaultChecked={currentUser.settings?.allowPreview ?? false}
             onChange={(e) => {
@@ -96,22 +85,18 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size='lg'
           />
         </div>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-5'>
+            <label className='flex gap-5 sm:text-sm lg:text-md mb-0 cursor-pointer' htmlFor='home-miniplayer'>
             <PlayCricle
               size='24'
               color={currentUser.settings?.miniPlayer ? spotifyGreen : '#555555'}
               variant='Bold'
             />
-            <label className='sm:text-sm lg:text-md mb-0' htmlFor='home-miniplayer'>
               home miniplayer
             </label>
-          </div>
           <Switch
-            colorScheme='music'
             id='home-miniplayer'
             defaultChecked={currentUser.settings?.miniPlayer ?? false}
             onChange={(e) => {
@@ -121,19 +106,15 @@ const Account = () => {
                 { method: 'POST', replace: true },
               );
             }}
-            size='lg'
           />
         </div>
         {currentUser.settings?.founder && (
           <div className='flex items-center justify-between'>
-            <div className='flex gap-5'>
+              <label className='flex gap-5 sm:text-sm lg:text-md mb-0 cursor-pointer' htmlFor='dev-mode'>
               <Code1 size='24' color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
-              <label className='sm:text-sm lg:text-md mb-0' htmlFor='dev-mode'>
                 dev mode
               </label>
-            </div>
             <Switch
-              colorScheme='music'
               id='dev-mode'
               defaultChecked={currentUser.settings.dev ?? false}
               onChange={(e) => {
@@ -143,7 +124,6 @@ const Account = () => {
                   { method: 'POST', replace: true },
                 );
               }}
-              size='lg'
             />
           </div>
         )}
@@ -194,6 +174,10 @@ const Account = () => {
     </>
   );
 };
+
+function Switch({defaultChecked, id, onChange}:{defaultChecked: boolean, id:string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) {
+  return (<input className='hidden' checked={defaultChecked} id={id} type='checkbox' onChange={onChange}/>)
+}
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const [session, data] = await Promise.all([
