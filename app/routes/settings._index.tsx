@@ -31,9 +31,9 @@ const Account = () => {
 
   return (
     <>
-      <div className='w-full h-full space-y-5 ml-5'>
+      <div className='w-full h-full space-y-6 ml-5'>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-3'>
+          <div className='flex gap-5'>
             <Ghost size='24' color={currentUser.settings?.isPrivate ? spotifyGreen : '#555555'} />
             <label className='sm:text-sm lg:text-md mb-0' htmlFor='private-profile'>
               private profile
@@ -54,7 +54,7 @@ const Account = () => {
         </div>
         <QueueSettings allowQueue={currentUser.settings?.allowQueue ?? 'on'} submit={submit} />
         <div className='flex items-center justify-between'>
-          <div className='flex gap-3'>
+          <div className='flex gap-5'>
             <Scroll size='24' color={currentUser.settings?.autoscroll ? spotifyGreen : '#555555'} />
             <label className='sm:text-sm lg:text-md mb-0' htmlFor='auto-scroll'>
               auto scroll
@@ -75,7 +75,7 @@ const Account = () => {
           />
         </div>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-3'>
+          <div className='flex gap-5'>
             <MusicPlay
               size='24'
               color={currentUser.settings?.allowPreview ? spotifyGreen : '#555555'}
@@ -100,7 +100,7 @@ const Account = () => {
           />
         </div>
         <div className='flex items-center justify-between'>
-          <div className='flex gap-3'>
+          <div className='flex gap-5'>
             <PlayCricle
               size='24'
               color={currentUser.settings?.miniPlayer ? spotifyGreen : '#555555'}
@@ -126,7 +126,7 @@ const Account = () => {
         </div>
         {currentUser.settings?.founder && (
           <div className='flex items-center justify-between'>
-            <div className='flex gap-3'>
+            <div className='flex gap-5'>
               <Code1 size='24' color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
               <label className='sm:text-sm lg:text-md mb-0' htmlFor='dev-mode'>
                 dev mode
@@ -148,7 +148,7 @@ const Account = () => {
           </div>
         )}
         <button
-        className='flex flex-row gap-3 hover:text-red-500'
+        className='flex flex-row gap-5 hover:text-red-500'
           onClick={onOpen}
         >
           <Logout />
