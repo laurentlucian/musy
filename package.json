@@ -52,7 +52,7 @@
     "framer-motion": "^8.5.5",
     "iconsax-react": "^0.0.8",
     "ioredis": "^5.3.2",
-    "openai": "^3.3.0",
+    "openai": "^4.24.7",
     "posthog-js": "^1.87.6",
     "react": "18.3.0-canary-6639ed3b3-20240111",
     "react-color": "^2.19.3",

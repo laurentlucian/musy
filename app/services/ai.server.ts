@@ -1,19 +1,17 @@
 import type { RecentSongs } from '@prisma/client';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
-
 export const askGPT = async (content: string) => {
-  const completion = await openai.createChatCompletion({
+  const completion = await openai.chat.completions.create({
     messages: [{ content, role: 'user' }],
     model: 'gpt-3.5-turbo',
   });
 
-  return completion.data.choices[0].message?.content ?? 'No analysis found';
+  return completion.choices[0].message?.content ?? 'No analysis found';
 };
 
 export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
