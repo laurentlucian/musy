@@ -96,7 +96,9 @@ export const getPlaybackState = async (id: string) => {
   } catch (e) {
     if (e instanceof Error && e.message.includes('revoked')) {
       await prisma.user.update({ data: { revoked: true }, where: { id } });
-      await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
+      await prisma.queue.deleteMany({
+        where: { OR: [{ userId: id }, { ownerId: id }] },
+      });
       await prisma.likedSongs.deleteMany({ where: { userId: id } });
     }
 
@@ -152,7 +154,11 @@ export const clearDuplicatePlaybackJobs = async () => {
     if (exists) return;
     playbackQsMap.set(userId, name);
     await removePlaybackJob(userId);
-    await playbackQ.add(name, data, { delay, removeOnComplete: true, removeOnFail: true });
+    await playbackQ.add(name, data, {
+      delay,
+      removeOnComplete: true,
+      removeOnFail: true,
+    });
     debugCreatorQ('added new job', userId, delay);
   }
 
