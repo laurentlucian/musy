@@ -20,6 +20,12 @@ const useFullscreenStore = createWithEqualityFn<FullscreenState>((set) => ({
   components: [],
 }));
 
+export const useFullscreenOpen = () => {
+  const components = useFullscreenStore((state) => state.components);
+
+  return !!components;
+};
+
 export const useFullscreen = () => {
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [isMouseDragged, setIsMouseDragged] = useState(false);

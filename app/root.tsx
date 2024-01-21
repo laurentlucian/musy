@@ -3,27 +3,16 @@ import './lib/fonts.css';
 import './lib/icons/waver.css';
 
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
-import {
-  isRouteErrorResponse,
-  useRouteError,
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from '@remix-run/react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
 import { AnimatePresence } from 'framer-motion';
-import { Forbidden } from 'iconsax-react';
 import { redirect, typedjson } from 'remix-typedjson';
 
 import Layout from '~/components/Layout';
 import { authenticator } from '~/services/auth.server';
 import { getAllUsers, getCurrentUser } from '~/services/prisma/users.server';
 
-import NotFound from './components/error/NotFound';
-import { FullscreenRenderer, useFullscreen } from './components/fullscreen/Fullscreen';
+import { FullscreenRenderer, useFullscreenOpen } from './components/fullscreen/Fullscreen';
 import useAnalytics from './hooks/useAnalytics';
 import { PlayPreviewRenderer } from './hooks/usePlayPreview';
 import { TooltipProvider } from './lib/ui/tooltip';
@@ -34,15 +23,15 @@ const App = () => {
 
   return (
     <Document>
-      <AnimatePresence mode='wait' initial={false}>
-        <Layout>
-          <TooltipProvider>
+      <TooltipProvider>
+        <AnimatePresence mode='wait' initial={false}>
+          <Layout>
             <Outlet />
-          </TooltipProvider>
-        </Layout>
-      </AnimatePresence>
-      <FullscreenRenderer />
-      <PlayPreviewRenderer />
+          </Layout>
+        </AnimatePresence>
+        <FullscreenRenderer />
+        <PlayPreviewRenderer />
+      </TooltipProvider>
     </Document>
   );
 };
@@ -101,14 +90,14 @@ type DocumentProps = {
 };
 
 const Document = ({ children, title = 'musy' }: DocumentProps) => {
-  const { components } = useFullscreen();
+  const fullscreen = useFullscreenOpen();
 
   return (
     <html
       lang='en'
       style={{
-        overflowY: components.length > 0 ? 'hidden' : undefined,
-        touchAction: components.length > 0 ? 'none' : undefined,
+        overflowY: fullscreen ? 'hidden' : undefined,
+        touchAction: fullscreen ? 'none' : undefined,
       }}
     >
       <head>
@@ -143,39 +132,5 @@ const Document = ({ children, title = 'musy' }: DocumentProps) => {
   );
 };
 
-export const ErrorBoundary = () => {
-  const error = useRouteError();
-
-  if (isRouteErrorResponse(error)) {
-    if (error.status === 404)
-      return (
-        <Document>
-          <NotFound />
-        </Document>
-      );
-
-    if (error.status === 403)
-      return (
-        <Document>
-          <Forbidden />
-        </Document>
-      );
-  } else if (error instanceof Error) {
-    return (
-      <Document title='musy - Error'>
-        <h1>oops, unhandled error</h1>
-        <p>{error.message}</p>
-        <p>{error.stack}</p>
-      </Document>
-    );
-  }
-
-  return (
-    <Document title='musy - Error'>
-      <h1>ooooops, unknown error</h1>
-      <p>reload the page eventually</p>
-    </Document>
-  );
-};
-
+export { ErrorBoundary } from '~/components/error/ErrorBoundary';
 export default App;
