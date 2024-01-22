@@ -25,7 +25,6 @@ const ActivityTile = ({ activity }: { activity: Activity }) => {
               track,
             }}
             image={{
-              className: 'min-h-[576px]',
               src: track.image,
             }}
           />
