@@ -32,7 +32,7 @@ export const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
     newTracks
       .filter((t) => t.name !== '') // tracks removed by spotify have empty names
       .map((track) => prisma.track.create({ data: createTrackModel(track) })),
-  );
+  ).catch(() => []);
 
   return (
     await prisma.track.findMany({
@@ -54,7 +54,7 @@ export const getUserSpotifyRecent = async (userId: string) => {
     .then((data) => data.body.items)
     .catch(() => []);
 
-  return transformTracks(recent.map((track) => track.track));
+  return transformTracks(recent.map((track: any) => track.track));
 };
 
 export const getUserSpotifyLiked = async (userId: string) => {
@@ -98,6 +98,24 @@ export const getSpotifyTracks = async (keyword: string, userId: string) => {
   });
 };
 
+export const getDbTracks = async (keyword: string) => {
+  return prisma.track.findMany({
+    include: {
+      liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+      recent: {
+        orderBy: { playedAt: 'desc' },
+        select: { user: true },
+      },
+    },
+    orderBy: {
+      recent: {
+        _count: 'desc',
+      },
+    },
+    where: { name: { contains: keyword } },
+  });
+};
+
 export const getUsers = async (keyword: string, userId: string) => {
   return prisma.profile.findMany({
     include: profileWithInfo.include,
@@ -116,12 +134,9 @@ export const getSearchResults = async ({
 }) => {
   const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
-  const [tracks, users] = await Promise.all([
-    getSpotifyTracks(keyword, userId),
-    getUsers(keyword, userId),
-  ]);
+  const [tracks, users] = await Promise.all([getDbTracks(keyword), getUsers(keyword, userId)]);
 
-  return { tracks, users };
+  return { spotify: getSpotifyTracks(keyword, userId), tracks, users };
 };
 
 export const getSpotifyTrack = async (trackId: string, userId: string) => {
