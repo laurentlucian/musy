@@ -23,7 +23,7 @@ const useFullscreenStore = createWithEqualityFn<FullscreenState>((set) => ({
 export const useFullscreenOpen = () => {
   const components = useFullscreenStore((state) => state.components);
 
-  return !!components;
+  return !!components.length;
 };
 
 export const useFullscreen = () => {
