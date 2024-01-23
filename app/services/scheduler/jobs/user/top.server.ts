@@ -7,7 +7,7 @@ import { debugTopQ } from '../user.server';
 
 export const topQ = Queue<{ userId: string }>('update_top', async (job) => {
   const { userId } = job.data;
-  debugTopQ('starting...');
+  debugTopQ('starting...', userId);
   const { spotify } = await getUserSpotify(userId);
 
   const getUserSpotifyTop = async (range: 'short_term' | 'medium_term' | 'long_term') => {
@@ -34,5 +34,5 @@ export const topQ = Queue<{ userId: string }>('update_top', async (job) => {
     redis.set(medium.key, JSON.stringify(medium.tracks)),
     redis.set(long.key, JSON.stringify(long.tracks)),
   ]);
-  debugTopQ('completed');
+  debugTopQ('completed', userId);
 });
