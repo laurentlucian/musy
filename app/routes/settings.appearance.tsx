@@ -3,7 +3,6 @@ import type { ActionFunctionArgs } from '@remix-run/server-runtime';
 import { typedjson } from 'remix-typedjson';
 import invariant from 'tiny-invariant';
 
-import ProfileSettings from '~/components/settings/profile/ProfileSettings';
 import useCurrentUser from '~/hooks/useCurrentUser';
 import { authenticator } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
@@ -14,8 +13,9 @@ const Appearance = () => {
 
   if (!currentUser) return null;
   return (
-    <div className='flex h-full w-full flex-col space-y-5 md:flex-row'>
-      <ProfileSettings />
+    <div className='flex h-full w-full flex-col space-y-5 px-3 md:flex-row'>
+      {/* <ProfileSettings /> */}
+      <p className='text-sm'>to be made by daniel valdecantos</p>
     </div>
   );
 };
@@ -33,6 +33,7 @@ export const loader = async ({ request }: ActionFunctionArgs) => {
     theme,
   });
 };
+
 export const action = async ({ request }: ActionFunctionArgs) => {
   const session = await authenticator.isAuthenticated(request);
   const userId = session?.user?.id;
