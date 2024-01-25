@@ -82,7 +82,13 @@ export const playlistQ = Queue<{ userId: string }>('update_playlist', async (job
     const tracks = playlistsTracks[index];
 
     const trackModels = tracks.body.items
-      .map((t) => t.track && { addedAt: t.added_at, track: createTrackModel(t.track) })
+      .map(
+        (t) =>
+          t.track && {
+            addedAt: t.added_at,
+            track: createTrackModel(t.track),
+          },
+      )
       .filter(notNull);
 
     debugPlaylistQ('playlist - adding tracks', tracks.body.items.length);

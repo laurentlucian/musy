@@ -24,7 +24,10 @@ export const useFullscreenTracks = () => {
   return context;
 };
 
-const FullscreenTracks = (props: { title: string; tracks: TrackWithInfo[] }) => {
+const FullscreenTracks = (props: {
+  title: string;
+  tracks: TrackWithInfo[];
+}) => {
   const { title, tracks } = props;
   const [layout, setLayout] = useState<LayoutTypes>('grid');
 

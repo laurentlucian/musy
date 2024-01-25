@@ -24,7 +24,10 @@ export const useFullscreenTrack = () => {
   return context;
 };
 
-const FullscreenTrack = (props: { originUserId?: string; track: TrackWithInfo }) => {
+const FullscreenTrack = (props: {
+  originUserId?: string;
+  track: TrackWithInfo;
+}) => {
   const [view, setView] = useState<ViewsTypes>('default');
   const { originUserId, track } = props;
 
