@@ -1,5 +1,7 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.defaultFormatter": "biomejs.biome",
+  "prettier.enable": false,
   "workbench.colorCustomizations": {
     "activityBar.background": "#000000",
     "titleBar.activeBackground": "#000000"
