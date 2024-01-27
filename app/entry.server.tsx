@@ -3,6 +3,7 @@ import { RemixServer } from '@remix-run/react';
 import { renderToPipeableStream } from 'react-dom/server';
 
 import * as betterLogging from 'better-logging';
+import debug from 'debug';
 import { PassThrough } from 'node:stream';
 
 import { createFeedQ } from './services/scheduler/creators/feedQ.server';
@@ -10,6 +11,7 @@ import { createUserQ } from './services/scheduler/creators/userQ.server';
 
 void createUserQ();
 void createFeedQ();
+debug.enable('*Q*');
 
 betterLogging.default(console);
 const ABORT_DELAY = 5_000;
