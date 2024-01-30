@@ -22,8 +22,7 @@
       },
       "nursery": {
         "useImportType": "error",
-        "useExportType": "error",
-        "useSortedClasses": "error"
+        "useExportType": "error"
       },
       "performance": {
         "recommended": true
@@ -36,7 +35,6 @@
       "jsxQuoteStyle": "single"
     }
   },
-
   "vcs": {
     "enabled": true,
     "clientKind": "git",
