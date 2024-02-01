@@ -12,6 +12,7 @@ import { followQ } from '../jobs/user/follow.server';
 import { likedQ } from '../jobs/user/liked.server';
 import { profileQ } from '../jobs/user/profile.server';
 import { recentQ } from '../jobs/user/recent.server';
+import { topQ } from '../jobs/user/top.server';
 
 const debugUserQCreator = debug('userQCreator');
 
@@ -59,6 +60,7 @@ export const createUserQ = async () => {
 
   await userQ.pause().catch(debugUserQCreator); // pause all jobs before obliterating
   await userQ.obliterate({ force: true }).catch(() => debugUserQCreator('obliterated userQ')); // https://github.com/taskforcesh/bullmq/issues/430
+  await topQ.obliterate({ force: true }).catch(() => debugUserQCreator('obliterated topQ'));
   debugUserQCreator('obliterated userQ; userQs now', await getUserQs());
 
   // for testing/dev
