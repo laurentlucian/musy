@@ -105,7 +105,7 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
 
   const handleDragMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      if (scrollRef && scrollRef.current) {
+      if (scrollRef?.current) {
         e.preventDefault();
         e.stopPropagation();
 

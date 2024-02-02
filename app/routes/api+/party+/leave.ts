@@ -16,7 +16,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (!session || !session.user) {
     console.log('Leave failed -> no authentication');
-    return redirect('/' + ownerId);
+    return redirect(`/${ownerId}`);
   }
 
   const userId = session.user.id;
@@ -25,12 +25,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   // shouldn't be here if not in party
   if (!party) {
     console.log('Leave failed -> not in a party');
-    return redirect('/' + ownerId);
+    return redirect(`/${ownerId}`);
   }
   await prisma.party.delete({ where: { userId } });
 
   console.log('Left party');
-  return redirect('/' + ownerId);
+  return redirect(`/${ownerId}`);
 };
 
 export const loader = () => {

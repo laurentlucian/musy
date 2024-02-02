@@ -83,7 +83,6 @@ const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
         }}
         onFocus={hideMenu}
         onBlur={showMenu}
-        autoFocus={autoFocus}
       />
       {search && (
         <div

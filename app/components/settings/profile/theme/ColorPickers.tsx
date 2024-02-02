@@ -1,6 +1,6 @@
 import { type Dispatch, type PointerEvent, type SetStateAction, useState, useEffect } from 'react';
 import { useRef } from 'react';
-import { type ColorResult } from 'react-color';
+import type { ColorResult } from 'react-color';
 import { Move, X } from 'react-feather';
 
 import { Box, Collapse, Flex, IconButton, SimpleGrid, useColorMode } from '@chakra-ui/react';

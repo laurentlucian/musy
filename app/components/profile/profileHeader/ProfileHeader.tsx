@@ -25,7 +25,7 @@ const ProfileHeader = () => {
   const isOwnProfile = currentUser?.userId === user.userId;
 
   const ProfilePic = (
-    <a href={'spotify:user:' + user.userId} target='_blank' rel='noopener noreferrer'>
+    <a href={`spotify:user:${user.userId}`} target='_blank' rel='noopener noreferrer'>
       <img
         className='h-[100px] max-h-[100px] w-[100px] max-w-[100px] cursor-pointer rounded-full border-2
           border-transparent object-cover hover:border-musy-200 sm:mr-[10px] sm:h-[150px] sm:max-h-[150px]
@@ -39,7 +39,7 @@ const ProfileHeader = () => {
   const Username = (
     <div className='stack-2'>
       <div className='stack-h-2'>
-        <a href={'spotify:user:' + user.userId} target='_blank' rel='noopener noreferrer'>
+        <a href={`spotify:user:${user.userId}`} target='_blank' rel='noopener noreferrer'>
           <h1 className='text-left font-bold hover:underline md:text-lg'>{user.name}</h1>
         </a>
       </div>
@@ -52,18 +52,17 @@ const ProfileHeader = () => {
   const SubHeader = (
     <Fragment>
       <Tooltip>
-        <TooltipTrigger>
-          <div
-            className='flex cursor-pointer items-baseline pt-[1px]'
-            onClick={() => {
-              if (params.get('listened') === 'week') {
-                params.delete('listened');
-                setParams(params);
-              } else {
-                setParams({ listened: 'week' });
-              }
-            }}
-          >
+        <TooltipTrigger
+          onClick={() => {
+            if (params.get('listened') === 'week') {
+              params.delete('listened');
+              setParams(params);
+            } else {
+              setParams({ listened: 'week' });
+            }
+          }}
+        >
+          <div className='flex cursor-pointer items-baseline pt-[1px]'>
             <p className='mr-1 text-[10px] md:text-[13px]'>{listened}</p>
             <span className='pl-1 text-[9px] opacity-50 md:text-[10px]'>/&nbsp; {timeframe}</span>
           </div>

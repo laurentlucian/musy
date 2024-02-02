@@ -52,7 +52,7 @@ const TrackAnalysis = () => {
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
   invariant(id, 'Missing params Id');
-  const cacheKey = 'track_analysis_' + id;
+  const cacheKey = `track_analysis_${id}`;
   const [cachedData, session] = await Promise.all([
     redis.get(cacheKey),
     authenticator.isAuthenticated(request),

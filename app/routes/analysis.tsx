@@ -1,8 +1,8 @@
 import type { MetaFunction } from '@remix-run/node';
-import { Form, useSearchParams, useSubmit, useNavigation, Link, Outlet } from '@remix-run/react';
+import { Form, Link, Outlet, useNavigation, useSearchParams, useSubmit } from '@remix-run/react';
 import type { LoaderFunctionArgs } from '@remix-run/server-runtime';
 import type { ChangeEvent } from 'react';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X } from 'react-feather';
 
 import { typedjson, useTypedLoaderData } from 'remix-typedjson';
@@ -69,6 +69,7 @@ const Analysis = () => {
                   <>
                     {/* {busy && <Spinner size="xs" mr={2} />} */}
                     <button
+                      type='button'
                       aria-label='close'
                       className='rounded'
                       onClick={() => {
@@ -89,35 +90,34 @@ const Analysis = () => {
           </div>
         </div>
       </Form>
-      {results &&
-        results.map((track) => (
-          <Link
-            className='stack-h-3 shrink-0 grow-0 rounded-sm bg-transparent hover:bg-musy-800'
-            key={track.id}
-            to={`/analysis/${track.id}`}
-            onClick={clearSearch}
-          >
+      {results?.map((track) => (
+        <Link
+          className='stack-h-3 shrink-0 grow-0 rounded-sm bg-transparent hover:bg-musy-800'
+          key={track.id}
+          to={`/analysis/${track.id}`}
+          onClick={clearSearch}
+        >
+          <div className='stack'>
+            <img
+              className='w-32 shrink-0'
+              alt='album-cover'
+              src={track.album.images[0].url}
+              draggable={false}
+            />
+          </div>
+          <div className='stack justify-between'>
             <div className='stack'>
-              <img
-                className='w-32 shrink-0'
-                alt='album-cover'
-                src={track.album.images[0].url}
-                draggable={false}
-              />
-            </div>
-            <div className='stack justify-between'>
-              <div className='stack'>
-                <p className='line-clamp-3 break-all text-[13px] font-bold'>{track.name}</p>
-                <div className='flex items-center'>
-                  {track.explicit && (
-                    <img src={explicitImage} alt='explicit' className='mr-1 w-[19px]' />
-                  )}
-                  <p className='text-[11px] opacity-80'>{track.artists[0].name}</p>
-                </div>
+              <p className='line-clamp-3 break-all text-[13px] font-bold'>{track.name}</p>
+              <div className='flex items-center'>
+                {track.explicit && (
+                  <img src={explicitImage} alt='explicit' className='mr-1 w-[19px]' />
+                )}
+                <p className='text-[11px] opacity-80'>{track.artists[0].name}</p>
               </div>
             </div>
-          </Link>
-        ))}
+          </div>
+        </Link>
+      ))}
 
       <Outlet />
     </div>

@@ -96,7 +96,7 @@ export const getCurrentUser = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
   if (!session || !session.user) return null;
   const userId = session.user.id;
-  let data = await prisma.profile.findUnique({
+  const data = await prisma.profile.findUnique({
     include: {
       block: { select: { blockedId: true } },
       favorite: { select: { favoriteId: true } },
@@ -192,7 +192,7 @@ export const getQueueableUsers = async (id: string | null = null) => {
       },
       where: { user: { NOT: { id }, revoked: false } },
     });
-  } else {
+  }
     return prisma.profile.findMany({
       orderBy: { name: 'asc' },
       select: {
@@ -203,7 +203,6 @@ export const getQueueableUsers = async (id: string | null = null) => {
       },
       where: { user: { revoked: false } },
     });
-  }
 };
 
 // export const getFriends = async (userId?: string) => {

@@ -30,23 +30,23 @@ export const timeSince = (date: Date | null, type?: string) => {
   const suffix = type === 'minimal' ? '' : ' ago';
 
   if (interval > 1) {
-    return Math.floor(interval) + 'y' + suffix;
+    return `${Math.floor(interval)}y${suffix}`;
   }
   interval = seconds / 2592000;
   if (interval > 1) {
-    return Math.floor(interval) + 'mo' + suffix;
+    return `${Math.floor(interval)}mo${suffix}`;
   }
   interval = seconds / 86400;
   if (interval > 1) {
-    return Math.floor(interval) + 'd' + suffix;
+    return `${Math.floor(interval)}d${suffix}`;
   }
   interval = seconds / 3600;
   if (interval > 1) {
-    return Math.floor(interval) + 'h' + suffix;
+    return `${Math.floor(interval)}h${suffix}`;
   }
   interval = seconds / 60;
   if (interval > 1) {
-    return Math.floor(interval) + 'm' + suffix;
+    return `${Math.floor(interval)}m${suffix}`;
   }
   // server hydration breaks when html is different from server (because this changes every second)
   // return Math.floor(seconds) + 's';
@@ -60,20 +60,18 @@ export const timeBetween = ({ endDate, startDate }: { endDate?: Date; startDate?
   if (diffInMilliseconds < 1000 * 60 * 60) {
     const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
     return `${diffInMinutes}m`;
-  } else {
+  }
     const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
     return `${diffInHours}h`;
-  }
 };
 
 export const msToString = (ms: number) => {
   if (ms < 6000) {
     return `${ms / 1000}s`;
-  } else if (ms < 3600000) {
+  }if (ms < 3600000) {
     return `${Math.floor(ms / 60000)}m`;
-  } else {
-    return `${Math.floor(ms / 3600000)}h`;
   }
+    return `${Math.floor(ms / 3600000)}h`;
 };
 
 export const iosSplashScreens = [

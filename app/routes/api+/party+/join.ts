@@ -7,7 +7,7 @@ import { ownerQ } from '~/services/scheduler/jobs/party.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 export const loader = ({ params }: LoaderFunctionArgs) => {
-  return redirect('/' + params.id);
+  return redirect(`/${params.id}`);
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -22,7 +22,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (!session || !session.user || !session.user.name || !session.user.image) {
     console.log('Party join failed -> no authentication');
-    return redirect('/api/auth/spotify?returnTo=/' + ownerId);
+    return redirect(`/api/auth/spotify?returnTo=/${ownerId}`);
   }
   const userId = session.user.id;
 
@@ -30,7 +30,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (party) {
     if (party.ownerId === ownerId) {
       // party with both users already exists, refresh page?
-      return redirect('/' + ownerId);
+      return redirect(`/${ownerId}`);
     }
     console.log('Party join -> leaving existing party');
     await prisma.party.delete({ where: { userId } });
@@ -39,20 +39,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { spotify: owner_spotify } = await getSpotifyClient(ownerId);
   if (!owner_spotify) {
     console.log('Party join failed -> no spotify API');
-    return redirect('/' + ownerId);
+    return redirect(`/${ownerId}`);
   }
 
   const { body: playback } = await owner_spotify.getMyCurrentPlaybackState();
   if (!playback.item) {
     console.log('Party join failed -> no currentTrack found');
-    return redirect('/' + ownerId);
+    return redirect(`/${ownerId}`);
   }
 
   try {
     const { spotify: listener_spotify } = await getSpotifyClient(userId);
     if (!listener_spotify) {
       console.log('Party join failed -> no spotify API');
-      return redirect('/' + ownerId);
+      return redirect(`/${ownerId}`);
     }
 
     const { body } = await listener_spotify.getMyCurrentPlaybackState();
@@ -134,7 +134,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       where: { id: ownerId },
     });
     console.log('Party join -> added ownerQ update_track and created party in db');
-    return redirect('/' + ownerId);
+    return redirect(`/${ownerId}`);
   } catch (e) {
     console.log('Party join failed ->', e);
     return null;

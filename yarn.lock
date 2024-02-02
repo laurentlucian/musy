@@ -406,7 +406,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:^1.5.3-nightly.24fcf19":
+"@biomejs/biome@npm:^1.5.3-nightly.6cbf1c7":
   version: 1.5.3
   resolution: "@biomejs/biome@npm:1.5.3"
   dependencies:
@@ -8088,7 +8088,7 @@ __metadata:
   resolution: "musy@workspace:."
   dependencies:
     "@babel/core": ^7.18.6
-    "@biomejs/biome": ^1.5.3-nightly.24fcf19
+    "@biomejs/biome": ^1.5.3-nightly.6cbf1c7
     "@chakra-ui/icons": ^2.1.1
     "@commitlint/config-conventional": ^17.8.1
     "@manypkg/cli": ^0.21.0

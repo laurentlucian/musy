@@ -1,4 +1,4 @@
-import { type SubmitFunction } from '@remix-run/react';
+import type { SubmitFunction } from '@remix-run/react';
 
 import { Layer } from 'iconsax-react';
 

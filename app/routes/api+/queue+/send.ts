@@ -66,7 +66,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.error(err);
       if (err instanceof Error) {
         const details = err.stack?.split('Details:')[1];
-        return typedjson('Error: ' + details);
+        return typedjson(`Error: ${details}`);
       }
       return typedjson('Error: Premium required');
     }

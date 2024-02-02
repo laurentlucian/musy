@@ -10,7 +10,7 @@
     "start": "remix-serve ./build/server/index.js",
     "dev": "prisma generate && prisma migrate dev && remix vite:dev",
     "deploy": "fly deploy --remote-only",
-    "format": "yarn dlx @biomejs/biome format --write ./app",
+    "format": "biome format --write ./app",
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\"",
     "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version major && git push origin && git push origin --tags",
     "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version minor && git push origin && git push origin --tags",
@@ -68,7 +68,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
-    "@biomejs/biome": "^1.5.3-nightly.24fcf19",
+    "@biomejs/biome": "^1.5.3-nightly.6cbf1c7",
     "@commitlint/config-conventional": "^17.8.1",
     "@manypkg/cli": "^0.21.0",
     "@remix-run/dev": "^2.5.0",
