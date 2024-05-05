@@ -23,7 +23,6 @@ export const spotifyClient = new SpotifyWebApi({
 });
 
 declare global {
-  // eslint-disable-next-line no-var
   var __registeredSpotifyClients: Record<string, SpotifyWebApi> | undefined;
 }
 

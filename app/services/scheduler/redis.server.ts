@@ -1,4 +1,4 @@
-import type { Redis as RedisType, RedisOptions } from 'ioredis';
+import type { RedisOptions, Redis as RedisType } from 'ioredis';
 import Redis from 'ioredis';
 
 if (!process.env.REDIS_URL) {
@@ -8,7 +8,6 @@ if (!process.env.REDIS_URL) {
 let redis: RedisType;
 
 declare global {
-  // eslint-disable-next-line no-var
   var __redis: RedisType | undefined;
 }
 
@@ -22,7 +21,7 @@ const redisOptions: RedisOptions = {
 // create a new connection to the Redis with every change either
 if (process.env.NODE_ENV === 'production') {
   if (!process.env.REDIS_PASSWORD) {
-    throw new Error('Missing REDIS_URL env');
+    throw new Error('Missing REDIS_PASSWORD env');
   }
 
   const _redisOption: RedisOptions = {

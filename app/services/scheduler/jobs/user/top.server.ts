@@ -18,7 +18,7 @@ export const topQ = Queue<{ userId: string }>('update_top', async (job) => {
     const tracks = await transformTracks(response.map((track) => track));
 
     return {
-      key: 'profile_top_prisma' + range + '_' + userId,
+      key: `profile_top_prisma${range}_${userId}`,
       tracks,
     };
   };

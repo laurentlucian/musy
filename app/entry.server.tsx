@@ -1,19 +1,9 @@
-import { createReadableStreamFromReadable, type EntryContext } from '@remix-run/node';
+import { type EntryContext, createReadableStreamFromReadable } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import { renderToPipeableStream } from 'react-dom/server';
 
-import * as betterLogging from 'better-logging';
-import debug from 'debug';
 import { PassThrough } from 'node:stream';
 
-import { createFeedQ } from './services/scheduler/creators/feedQ.server';
-import { createUserQ } from './services/scheduler/creators/userQ.server';
-
-void createUserQ();
-void createFeedQ();
-debug.enable('*Q*');
-
-betterLogging.default(console);
 const ABORT_DELAY = 5_000;
 
 export default function handleRequest(
@@ -28,6 +18,7 @@ export default function handleRequest(
       <RemixServer context={remixContext} url={request.url} abortDelay={ABORT_DELAY} />,
       {
         onError(error: unknown) {
+          // biome-ignore lint: it's okay
           responseStatusCode = 500;
           // Log streaming rendering errors from inside the shell.  Don't log
           // errors encountered during initial shell rendering since they'll

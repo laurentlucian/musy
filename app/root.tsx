@@ -125,7 +125,7 @@ const Document = ({ children, title = 'musy' }: DocumentProps) => {
       <body>
         {children}
         <ScrollRestoration />
-        {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
+        <LiveReload />
         <Scripts />
       </body>
     </html>

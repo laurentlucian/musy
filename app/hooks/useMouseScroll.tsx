@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useInterval } from 'ahooks';
 
@@ -63,7 +63,7 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
         }
       }
     },
-    autoScroll ? (isMobile ? 35 : 20) : null,
+    autoScroll ? (isMobile ? 35 : 20) : undefined,
   );
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 # base node image
-FROM node:18-bullseye-slim as base
+FROM node:20-bookworm-slim as base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV=production
@@ -48,10 +48,9 @@ RUN yarn build && rm -rf ./.yarn
 # Finally, build the production image with minimal footprint
 FROM base
 
-
 ENV DATABASE_URL=file:/data/sqlite.db
-ENV PORT="8080"
-ENV NODE_ENV="production"
+ENV PORT=8080
+ENV NODE_ENV=production
 
 # add shortcut for connecting to database CLI `fly ssh console -C database-cli`
 RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-cli && chmod +x /usr/local/bin/database-cli
@@ -65,8 +64,9 @@ COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
 COPY --from=build /app/build/server /app/build/server
 COPY --from=build /app/build/client /app/build/client
 COPY --from=build /app/package.json /app/package.json
+
 COPY --from=build /app/start.sh /app/start.sh
 COPY --from=build /app/prisma /app/prisma
 ADD . .
 
-ENTRYPOINT [ "./start.sh" ]
+ENTRYPOINT [ "/start.sh" ]

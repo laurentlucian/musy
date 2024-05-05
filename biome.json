@@ -21,8 +21,7 @@
         "noBannedTypes": "off"
       },
       "nursery": {
-        "useImportType": "error",
-        "useExportType": "error"
+        "useSortedClasses": "warn"
       },
       "performance": {
         "recommended": true

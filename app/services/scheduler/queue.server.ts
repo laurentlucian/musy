@@ -1,6 +1,6 @@
+import EventEmitter from 'node:events';
 import type { Processor, WorkerOptions } from 'bullmq';
-import { Queue as BullQueue, Worker, QueueScheduler } from 'bullmq';
-import EventEmitter from 'events';
+import { Queue as BullQueue, QueueScheduler, Worker } from 'bullmq';
 
 import { redis } from './redis.server';
 
@@ -11,12 +11,12 @@ type RegisteredQueue = {
 };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __registeredQueues: Record<string, RegisteredQueue> | undefined;
 }
 
 EventEmitter.defaultMaxListeners = 50;
 
+// biome-ignore lint/suspicious/noAssignInExpressions: it's okay
 export const registeredQueues = global.__registeredQueues || (global.__registeredQueues = {});
 
 export const Queue = <Payload>(
