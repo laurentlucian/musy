@@ -6,7 +6,7 @@ import { Queue } from '../queue.server';
 const debugFeedQ = debug('feedQ');
 
 export const feedQ = Queue<null>('update_feed', async () => {
-  debugFeedQ('feedQ starting...');
+  debugFeedQ('starting...');
 
   const [liked, queue, recommended, playlistTracks] = await Promise.all([
     prisma.likedSongs.findMany({
@@ -41,7 +41,6 @@ export const feedQ = Queue<null>('update_feed', async () => {
     }),
   ]);
 
-  debugFeedQ('adding liked', liked.length);
   for (const item of liked) {
     await prisma.feed.create({
       data: {
@@ -60,7 +59,6 @@ export const feedQ = Queue<null>('update_feed', async () => {
     });
   }
 
-  debugFeedQ('adding queue', queue.length);
   for (const item of queue) {
     if (!item.userId) continue;
     await prisma.feed.create({
@@ -80,7 +78,6 @@ export const feedQ = Queue<null>('update_feed', async () => {
     });
   }
 
-  debugFeedQ('adding recommended', recommended.length);
   for (const item of recommended) {
     await prisma.feed.create({
       data: {
@@ -99,7 +96,6 @@ export const feedQ = Queue<null>('update_feed', async () => {
     });
   }
 
-  debugFeedQ('adding playlist tracks', playlistTracks.length);
   for (const item of playlistTracks) {
     await prisma.feed.create({
       data: {
@@ -119,6 +115,22 @@ export const feedQ = Queue<null>('update_feed', async () => {
         },
       },
     });
+  }
+
+  if (liked.length > 0) {
+    debugFeedQ('liked items processed', liked.length);
+  }
+
+  if (queue.length > 0) {
+    debugFeedQ('queue items processed', queue.length);
+  }
+
+  if (recommended.length > 0) {
+    debugFeedQ('recommended items processed', recommended.length);
+  }
+
+  if (playlistTracks.length > 0) {
+    debugFeedQ('playlist tracks processed', playlistTracks.length);
   }
 
   debugFeedQ('completed');

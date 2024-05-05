@@ -4,14 +4,7 @@ import { ExpressAdapter } from '@bull-board/express';
 import { createRequestHandler } from '@remix-run/express';
 import { type ServerBuild, installGlobals } from '@remix-run/node';
 import express from 'express';
-import { feedQ } from '~/services/scheduler/jobs/feed.server.js';
-import { userQ } from '~/services/scheduler/jobs/user.server.js';
-import { followQ } from '~/services/scheduler/jobs/user/follow.server.js';
-import { likedQ } from '~/services/scheduler/jobs/user/liked.server.js';
-import { playlistQ } from '~/services/scheduler/jobs/user/playlist.server.js';
-import { profileQ } from '~/services/scheduler/jobs/user/profile.server.js';
-import { recentQ } from '~/services/scheduler/jobs/user/recent.server.js';
-import { topQ } from '~/services/scheduler/jobs/user/top.server.js';
+import { QUEUES } from '~/services/scheduler/queues.server.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -32,16 +25,7 @@ export default async function () {
   serverAdapter.setBasePath('/bull-ui');
 
   createBullBoard({
-    queues: [
-      new BullMQAdapter(feedQ),
-      new BullMQAdapter(userQ),
-      new BullMQAdapter(profileQ),
-      new BullMQAdapter(playlistQ),
-      new BullMQAdapter(recentQ),
-      new BullMQAdapter(topQ),
-      new BullMQAdapter(followQ),
-      new BullMQAdapter(likedQ),
-    ],
+    queues: QUEUES.map((q) => new BullMQAdapter(q)),
     serverAdapter,
   });
 
@@ -76,6 +60,6 @@ export default async function () {
     }),
   );
 
-  const port = process.env.PORT || 8080;
-  app.listen(port, () => console.log(`musy hosted @ http://localhost:${port}`));
+  const url = isProduction ? 'https://0.0.0.0:8080' : `http://localhost:8080`;
+  app.listen(8080, '0.0.0.0', () => console.log(`musy hosted @ ${url}`));
 }

@@ -65,7 +65,11 @@ export const createUserQ = async () => {
 
   // for testing/dev
   if (!isProduction) {
-    await userQ.add('update_user', { userId: '1295028670' });
+    await userQ.add(
+      'update_user',
+      { userId: '1295028670' },
+      { repeat: { every: minutesToMs(10) } },
+    );
   }
 
   debugUserQCreator(`adding ${users.length} users to userQ..`);
