@@ -1,8 +1,7 @@
 import { QueueEvents } from 'bullmq';
 import debug from 'debug';
 import { config } from 'dotenv';
-import { createFeedQ } from '~/services/scheduler/creators/feedQ.server';
-import { createUserQ } from '~/services/scheduler/creators/userQ.server';
+import createQueues from '~/services/scheduler/jobs/creator.server';
 import { QUEUES } from '~/services/scheduler/queues.server';
 import { redis } from '~/services/scheduler/redis.server';
 import express from './express';
@@ -16,7 +15,7 @@ if (!isProduction) {
 }
 
 const gracefulShutdown = async (signal: NodeJS.Signals) => {
-  console.log(` received ${signal}, closing server...`);
+  console.log(`received ${signal}, closing server...`);
   for (const queue of QUEUES) {
     await queue.close();
   }
@@ -49,14 +48,13 @@ queueEvents.on('failed', ({ jobId, failedReason }) => {
 
 async function main() {
   // void cleanup();
-  await createUserQ();
-  await createFeedQ();
+  await createQueues();
   debug.enable('*Q*');
 
   await express();
+  // await hono();
 
   // betterLogging.default(console);
-  // await hono();
 }
 
 export default main().catch((err) => {

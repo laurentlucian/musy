@@ -26,7 +26,7 @@ export const createFeedQ = async () => {
       },
       removeOnComplete: true,
       removeOnFail: true,
-      repeat: { every: minutesToMs(0.2) },
+      repeat: { every: minutesToMs(1) },
     });
     debugFeedQCreator('added 1 repeateable feed job');
   }

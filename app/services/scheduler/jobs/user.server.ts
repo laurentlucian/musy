@@ -22,53 +22,44 @@ export const debugRecentQ = debugUserQ.extend('recentQ');
 export const debugPlaylistQ = debugUserQ.extend('playlistQ');
 export const debugTopQ = debugUserQ.extend('topQ');
 
-export const userQ = Queue<{ userId: string }>(
-  'update_user',
-  async (job) => {
-    const { userId } = job.data;
-    debugUserQ('pending job starting...', userId);
+export const userQ = Queue<{ userId: string }>('update_user', async (job) => {
+  const { userId } = job.data;
+  debugUserQ('pending job starting...', userId);
 
-    const profile = await prisma.user.findUnique({
-      include: { user: true },
-      where: { id: userId },
-    });
+  const profile = await prisma.user.findUnique({
+    include: { user: true },
+    where: { id: userId },
+  });
 
-    const { spotify } = await getSpotifyClient(userId);
+  const { spotify } = await getSpotifyClient(userId);
 
-    if (!profile || !profile.user || !spotify) {
-      debugUserQ(`userQ ${userId} removed -> user not found`);
-      const jobKey = job.repeatJobKey;
-      if (jobKey) {
-        await userQ.removeRepeatableByKey(jobKey);
-      }
-      return;
+  if (!profile || !profile.user || !spotify) {
+    debugUserQ(`userQ ${userId} removed -> user not found`);
+    const jobKey = job.repeatJobKey;
+    if (jobKey) {
+      await userQ.removeRepeatableByKey(jobKey);
     }
+    return;
+  }
 
-    await Promise.all([
-      recentQ.add('update_recent', { userId }),
-      likedQ.add('update_liked', { userId }),
-      followQ.add('update_follow', { userId }),
-      profileQ.add('update_profile', { userId }),
-      playlistQ.add('update_playlist', { userId }),
-      topQ.add('update_top', { userId }),
-    ]);
+  await Promise.all([
+    recentQ.add('update_recent', { userId }),
+    likedQ.add('update_liked', { userId }),
+    followQ.add('update_follow', { userId }),
+    profileQ.add('update_profile', { userId }),
+    playlistQ.add('update_playlist', { userId }),
+    topQ.add('update_top', { userId }),
+  ]);
 
-    const users = await getAllUsersId();
-    const jobs = await userQ.getJobCounts();
+  const users = await getAllUsersId();
+  const jobs = await userQ.getJobCounts();
 
-    debugUserQ('completed', {
-      jobs,
-      'total users': users.length,
-    });
+  debugUserQ('completed', {
+    jobs,
+    'total users': users.length,
+  });
 
-    await createPlaybackQ()
-      .catch(debugUserQ)
-      .then(() => debugUserQ('playback_creator added'));
-  },
-  {
-    limiter: {
-      duration: minutesToMs(1),
-      max: 1,
-    },
-  },
-);
+  await createPlaybackQ()
+    .catch(debugUserQ)
+    .then(() => debugUserQ('playback_creator added'));
+});

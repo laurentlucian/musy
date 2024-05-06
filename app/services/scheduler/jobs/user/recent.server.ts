@@ -57,17 +57,17 @@ export const recentQ = Queue<{ userId: string }>('update_recent', async (job) =>
 
     // HACK(po): this is a hack to make sure we don't have duplicate recent songs
     // See model on prisma schema for docs
-    await prisma.recentSongs.deleteMany({
-      where: {
-        // only if it is within 10 minutes of the current song
-        // playedAt: {
-        //   gte: new Date(playedAt.getTime() - minutesToMs(10)),
-        //   lte: new Date(playedAt.getTime() + minutesToMs(10)),
-        // },
-        // trackId: track.id,
-        userId,
-        verifiedFromSpotify: false,
-      },
-    });
+    // await prisma.recentSongs.deleteMany({
+    //   where: {
+    //     // only if it is within 10 minutes of the current song
+    //     // playedAt: {
+    //     //   gte: new Date(playedAt.getTime() - minutesToMs(10)),
+    //     //   lte: new Date(playedAt.getTime() + minutesToMs(10)),
+    //     // },
+    //     // trackId: track.id,
+    //     userId,
+    //     verifiedFromSpotify: false,
+    //   },
+    // });
   }
 });

@@ -31,7 +31,7 @@ export const Queue = <Payload>(
   const queue = new BullQueue<Payload>(name, {
     defaultJobOptions: {
       removeOnComplete: true,
-      removeOnFail: true,
+      removeOnFail: false,
     },
     connection: redis,
   });
@@ -40,7 +40,7 @@ export const Queue = <Payload>(
   // they reach out to our redis connection and pull jobs off the queue
   // in an order determined by factors such as job priority, delay, etc.
   const worker = new Worker<Payload>(name, handler, {
-    limiter: { max: 3, duration: minutesToMs(1) },
+    limiter: { max: 1, duration: minutesToMs(1) },
     ...workOpts,
     connection: redis,
   });

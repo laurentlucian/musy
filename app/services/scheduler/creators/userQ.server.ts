@@ -10,6 +10,7 @@ import { playbackQ } from '../jobs/playback.server';
 import { userQ } from '../jobs/user.server';
 import { followQ } from '../jobs/user/follow.server';
 import { likedQ } from '../jobs/user/liked.server';
+import { playlistQ } from '../jobs/user/playlist.server';
 import { profileQ } from '../jobs/user/profile.server';
 import { recentQ } from '../jobs/user/recent.server';
 import { topQ } from '../jobs/user/top.server';
@@ -77,21 +78,80 @@ export const createUserQ = async () => {
     // https: github.com/OptimalBits/bull/issues/1731#issuecomment-639074663
     // bulkAll doesn't support repeateable jobs
     for (const userId of users) {
-      await userQ.add(
-        'update_user',
-        { userId: userId },
-        {
-          backoff: {
-            delay: minutesToMs(1),
-            type: 'exponential',
-          },
-          // a job with duplicate id will not be added
-          jobId: userId,
-          removeOnComplete: true,
-          removeOnFail: true,
-          repeat: { every: minutesToMs(30) },
+      const options = {
+        backoff: {
+          delay: minutesToMs(1),
+          type: 'exponential',
         },
-      );
+        removeOnComplete: true,
+        removeOnFail: true,
+      };
+
+      await Promise.all([
+        // userQ.add(
+        //   'update_user',
+        //   { userId: userId },
+        //   {
+        //     ...options,
+        //     jobId: userId, // a job with duplicate id will not be added
+        //     repeat: { every: minutesToMs(10) },
+        //   },
+        // ),
+        recentQ.add(
+          'update_recent',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+        likedQ.add(
+          'update_liked',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+        followQ.add(
+          'update_follow',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+        profileQ.add(
+          'update_profile',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+        playlistQ.add(
+          'update_playlist',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+        topQ.add(
+          'update_top',
+          { userId },
+          {
+            ...options,
+            jobId: userId, // a job with duplicate id will not be added
+            repeat: { every: minutesToMs(10) },
+          },
+        ),
+      ]);
     }
 
     debugUserQCreator('repeatable jobs created:', await userQ.getJobCounts());

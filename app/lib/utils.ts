@@ -61,17 +61,18 @@ export const timeBetween = ({ endDate, startDate }: { endDate?: Date; startDate?
     const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
     return `${diffInMinutes}m`;
   }
-    const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
-    return `${diffInHours}h`;
+  const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
+  return `${diffInHours}h`;
 };
 
 export const msToString = (ms: number) => {
   if (ms < 6000) {
     return `${ms / 1000}s`;
-  }if (ms < 3600000) {
+  }
+  if (ms < 3600000) {
     return `${Math.floor(ms / 60000)}m`;
   }
-    return `${Math.floor(ms / 3600000)}h`;
+  return `${Math.floor(ms / 3600000)}h`;
 };
 
 export const iosSplashScreens = [
@@ -108,6 +109,6 @@ export const getCacheControl = (minutes = 1) => ({
 
 export const decodeHtmlEntity = (str?: string | null) => {
   return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
-    return String.fromCharCode(parseInt(dec, 16));
+    return String.fromCharCode(Number.parseInt(dec, 16));
   });
 };
