@@ -1,18 +1,5 @@
 import type { RecentSongs } from '@prisma/client';
-import OpenAI from 'openai';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export const askGPT = async (content: string) => {
-  const completion = await openai.chat.completions.create({
-    messages: [{ content, role: 'user' }],
-    model: 'gpt-3.5-turbo',
-  });
-
-  return completion.choices[0].message?.content ?? 'No analysis found';
-};
+import { askGroq } from './ai/groq';
 
 export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
   const {
@@ -21,7 +8,7 @@ export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
   } = track;
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
 
-  return askGPT(prompt);
+  return askGroq(prompt);
 };
 
 export const getMoodFromSpotify = async (recent: SpotifyApi.UsersRecentlyPlayedTracksResponse) => {
@@ -34,7 +21,7 @@ export const getMoodFromSpotify = async (recent: SpotifyApi.UsersRecentlyPlayedT
   const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
     ${JSON.stringify(tracks)}`;
 
-  const response = (await askGPT(prompt)).split('.')[0];
+  const response = (await askGroq(prompt)).split('.')[0];
   return response;
 };
 export const getMoodFromPrisma = async (
@@ -55,7 +42,7 @@ export const getMoodFromPrisma = async (
   const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
     ${JSON.stringify(tracks)}`;
 
-  const response = (await askGPT(prompt)).split('.')[0];
+  const response = (await askGroq(prompt)).split('.')[0];
   return response;
 };
 
@@ -69,5 +56,5 @@ export const getStory = async (track: SpotifyApi.SingleTrackResponse) => {
     Encourage ChatGPT to use descriptive language to help the reader imagine the setting, and to touch on the song's songwriting, vocal, instrumental, bpm, and genre in a way that enhances the environment.
     `;
 
-  return askGPT(prompt);
+  return askGroq(prompt);
 };

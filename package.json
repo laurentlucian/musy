@@ -53,6 +53,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "framer-motion": "^8.5.5",
+    "groq-sdk": "^0.3.3",
     "hono": "^4.3.2",
     "iconsax-react": "^0.0.8",
     "ioredis": "^5.4.1",
