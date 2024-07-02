@@ -20,7 +20,7 @@ const Profile = () => {
   const currentUser = useCurrentUser();
   useRevalidateOnFocus();
 
-  const isDev = currentUser?.settings?.dev === true;
+  const isDev = currentUser?.settings?.dev === false;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isPrivate = user.settings?.isPrivate && !isOwnProfile && !isDev;
   const isBlocked = currentUser?.block.find((blocked) => blocked.blockedId === user.userId);
