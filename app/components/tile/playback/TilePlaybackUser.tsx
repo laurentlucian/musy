@@ -43,8 +43,8 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
           <p className='text-[12px] font-semibold uppercase sm:text-xs'>
             LISTENED FOR{' '}
             {timeBetween({
-              endDate: user.playbacks[0].endedAt,
-              startDate: user.playbacks[0].startedAt,
+              endDate: user.playbacks[0]?.endedAt,
+              startDate: user.playbacks[0]?.startedAt,
             })}
           </p>
         )}
