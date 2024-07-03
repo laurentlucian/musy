@@ -106,18 +106,18 @@ const Account = () => {
           }}
         />
       </div>
-      {currentUser.settings?.founder && (
+     
         <div className='flex items-center justify-between'>
           <label
             className='lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm'
             htmlFor='dev-mode'
           >
-            <Code1 size='24' color={currentUser.settings.dev ? spotifyGreen : '#555555'} />
+            <Code1 size='24' color={currentUser.settings?.dev ? spotifyGreen : '#555555'} />
             dev mode
           </label>
           <Switch
             id='dev-mode'
-            defaultChecked={currentUser.settings.dev ?? false}
+            defaultChecked={currentUser.settings?.dev ?? false}
             onChange={(e) => {
               submit(
                 { 'dev-mode': `${e.target.checked}` },
@@ -127,7 +127,7 @@ const Account = () => {
             }}
           />
         </div>
-      )}
+     
       <Form action='/api/logout' method='post'>
         <button className='flex flex-row gap-5 hover:text-red-500' type='submit'>
           <Logout />
