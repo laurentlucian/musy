@@ -1,10 +1,6 @@
-import { createBullBoard } from '@bull-board/api';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter.js';
-import { ExpressAdapter } from '@bull-board/express';
 import { createRequestHandler } from '@remix-run/express';
 import { type ServerBuild, installGlobals } from '@remix-run/node';
 import express from 'express';
-import { QUEUES } from '~/services/scheduler/queues.server.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -20,16 +16,6 @@ export default async function () {
     : null;
 
   const app = express();
-
-  const serverAdapter = new ExpressAdapter();
-  serverAdapter.setBasePath('/bull-ui');
-
-  createBullBoard({
-    queues: QUEUES.map((q) => new BullMQAdapter(q)),
-    serverAdapter,
-  });
-
-  app.use('/bull-ui', serverAdapter.getRouter());
 
   app.disable('x-powered-by');
 

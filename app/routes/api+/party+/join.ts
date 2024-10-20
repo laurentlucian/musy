@@ -1,9 +1,7 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-
 import { spotifyStrategy } from '~/services/auth.server';
 import { prisma } from '~/services/db.server';
-import { ownerQ } from '~/services/scheduler/jobs/party.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 export const loader = ({ params }: LoaderFunctionArgs) => {
@@ -105,20 +103,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } else {
       await play();
     }
-
-    await ownerQ.add(
-      'update_track',
-      {
-        ownerId,
-        userId,
-      },
-      {
-        jobId: ownerId,
-        repeat: {
-          every: 10000,
-        },
-      },
-    );
 
     await prisma.user.update({
       data: {

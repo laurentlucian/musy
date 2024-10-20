@@ -1,7 +1,6 @@
 import type { Track } from '@prisma/client';
 
 import { prisma } from '../db.server';
-import { redis } from '../scheduler/redis.server';
 import { getUserSpotify } from '../spotify.server';
 import { profileWithInfo } from './tracks.server';
 
@@ -74,11 +73,11 @@ export const getUserCachedTop = async (userId: string, url: URL) => {
     | 'short_term';
 
   const cacheKeyTop = `profile_top_prisma${topFilter}_${userId}`;
-  const cachedDataTop = await redis.get(cacheKeyTop);
+  // const cachedDataTop = await redis.get(cacheKeyTop);
 
-  if (cachedDataTop) {
-    return JSON.parse(cachedDataTop) as Track[];
-  }
+  // if (cachedDataTop) {
+  //   return JSON.parse(cachedDataTop) as Track[];
+  // }
   return [];
 };
 

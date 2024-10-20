@@ -1,14 +1,12 @@
 import type { Prisma } from '@prisma/client';
 import invariant from 'tiny-invariant';
-
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
-import { Queue } from '~/services/scheduler/queue.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-export const libraryQ = Queue<{ pages: number; userId: string }>('user-library', async (job) => {
-  const { pages, userId } = job.data;
+export const libraryQ = async (userId: string) => {
   const limit = 50;
+  const pages = 10;
   const { spotify } = await getSpotifyClient(userId);
   invariant(spotify, 'libraryQ -> spotify api not found');
 
@@ -55,4 +53,4 @@ export const libraryQ = Queue<{ pages: number; userId: string }>('user-library',
     console.log('libraryQ -> sleeping for 5 seconds');
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
-});
+};

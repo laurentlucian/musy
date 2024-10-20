@@ -6,7 +6,7 @@ import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
 import { Queue } from '../../queue.server';
-import { libraryQ } from '../scraper.server';
+import { libraryQ } from '../../scripts/scraper.server';
 import { debugLikedQ } from '../user.server';
 
 export const likedQ = Queue<{ userId: string }>('update_liked', async (job) => {
