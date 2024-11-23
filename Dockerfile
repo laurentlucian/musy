@@ -7,7 +7,7 @@ ENV NODE_ENV=production
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl sqlite3
 
-EXPOSE 8080
+EXPOSE 3000
 
 # Install all node_modules, including dev dependencies
 FROM base as deps
@@ -49,7 +49,7 @@ RUN yarn build && rm -rf ./.yarn
 FROM base
 
 ENV DATABASE_URL=file:/data/sqlite.db
-ENV PORT=8080
+ENV PORT=3000
 ENV NODE_ENV=production
 
 # add shortcut for connecting to database CLI `fly ssh console -C database-cli`

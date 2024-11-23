@@ -1,23 +1,23 @@
 {
   "include": [
-    "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".eslintrc.cjs",
-    "commitlint.config.cjs",
-    "app/.entry.server.tsx",
-    "postcss.config.js"
+    "**/.server/**/*.ts",
+    "**/.server/**/*.tsx",
+    "**/.client/**/*.ts",
+    "**/.client/**/*.tsx"
   ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "isolatedModules": true,
+    "types": ["@remix-run/node", "vite/client", "@remix-run/react/dist/single-fetch"],
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "resolveJsonModule": true,
-    "target": "ES2019",
+    "target": "ES2022",
     "strict": true,
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
