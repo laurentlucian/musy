@@ -46,6 +46,6 @@ export default async function () {
     }),
   );
 
-  const url = isProduction ? 'https://0.0.0.0:8080' : `http://localhost:8080`;
-  app.listen(8080, '0.0.0.0', () => console.log(`musy hosted @ ${url}`));
+  const url = isProduction ? 'https://0.0.0.0:3000' : `http://localhost:3000`;
+  app.listen(3000, '0.0.0.0', () => console.log(`musy hosted @ ${url}`));
 }

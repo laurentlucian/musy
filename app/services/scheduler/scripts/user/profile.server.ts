@@ -1,11 +1,10 @@
+import debug from 'debug';
 import { updateUserImage, updateUserName } from '~/services/prisma/users.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-import { Queue } from '../../queue.server';
-import { debugProfileQ } from '../user.server';
+const debugProfileQ = debug('userQ:profileQ');
 
-export const profileQ = Queue<{ userId: string }>('update_profile', async (job) => {
-  const { userId } = job.data;
+export async function syncUserProfile(userId: string) {
   debugProfileQ('starting...');
 
   const { spotify } = await getSpotifyClient(userId);
@@ -19,7 +18,7 @@ export const profileQ = Queue<{ userId: string }>('update_profile', async (job) 
 
   const pfp = spotifyProfile?.body.images;
   if (pfp) {
-    await updateUserImage(userId, pfp[1]?.url || pfp[0]?.url);
+    await updateUserImage(userId, pfp[0]?.url || pfp[1]?.url);
   }
 
   const name = spotifyProfile?.body.display_name;
@@ -28,4 +27,4 @@ export const profileQ = Queue<{ userId: string }>('update_profile', async (job) 
   }
 
   debugProfileQ('completed');
-});
+}

@@ -5,7 +5,6 @@ import { SpotifyStrategy } from 'remix-auth-spotify';
 import { sessionStorage } from '~/services/session.server';
 
 import { createUser, getUser, updateToken } from './prisma/users.server';
-import { userQ } from './scheduler/jobs/user.server';
 
 if (!process.env.SPOTIFY_CLIENT_ID) {
   throw new Error('Missing SPOTIFY_CLIENT_ID env');
@@ -69,7 +68,7 @@ export const spotifyStrategy = new SpotifyStrategy(
       accessToken: response.accessToken,
       expiresAt: response.expiresAt,
       id: response.user.id,
-      refreshToken: response.refreshToken,
+      refreshToken: response.refreshToken || '',
       tokenType: response.tokenType,
       user: {
         create: {
@@ -80,8 +79,7 @@ export const spotifyStrategy = new SpotifyStrategy(
       },
     };
 
-    const user = await createUser(newUser);
-    await userQ.add('update_user', { userId: user.id });
+    await createUser(newUser);
 
     return response;
   },

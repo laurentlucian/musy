@@ -3,7 +3,7 @@ import './lib/fonts.css';
 import './lib/icons/waver.css';
 
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
 
 import { AnimatePresence } from 'framer-motion';
 import { redirect, typedjson } from 'remix-typedjson';
@@ -125,7 +125,6 @@ const Document = ({ children, title = 'musy' }: DocumentProps) => {
       <body>
         {children}
         <ScrollRestoration />
-        <LiveReload />
         <Scripts />
       </body>
     </html>

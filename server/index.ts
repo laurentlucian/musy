@@ -1,6 +1,6 @@
 import debug from 'debug';
 import { config } from 'dotenv';
-
+import { initCron } from '~/services/scheduler/croner.server';
 import express from './express';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -13,9 +13,6 @@ if (!isProduction) {
 
 const gracefulShutdown = async (signal: NodeJS.Signals) => {
   console.log(`received ${signal}, closing server...`);
-  // for (const queue of QUEUES) {
-  //   await queue.close();
-  // }
 
   process.exit(0);
 };
@@ -24,13 +21,9 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 async function main() {
-  // void cleanup();
   debug.enable('*Q*');
-
+  await initCron();
   await express();
-  // await hono();
-
-  // betterLogging.default(console);
 }
 
 export default main().catch((err) => {

@@ -1,14 +1,12 @@
 import type { Prisma } from '@prisma/client';
-
+import debug from 'debug';
 import { prisma } from '~/services/db.server';
 import { createTrackModel } from '~/services/prisma/spotify.server';
 import { getSpotifyClient } from '~/services/spotify.server';
 
-import { Queue } from '../../queue.server';
-import { debugRecentQ } from '../user.server';
+const debugRecentQ = debug('userQ:recentQ');
 
-export const recentQ = Queue<{ userId: string }>('update_recent', async (job) => {
-  const { userId } = job.data;
+export async function syncUserRecent(userId: string) {
   debugRecentQ('starting...');
 
   const { spotify } = await getSpotifyClient(userId);
@@ -22,6 +20,7 @@ export const recentQ = Queue<{ userId: string }>('update_recent', async (job) =>
   const {
     body: { items: recent },
   } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+
   for (const { played_at, track } of recent) {
     const trackDb = createTrackModel(track);
     const data: Prisma.RecentSongsCreateInput = {
@@ -54,20 +53,7 @@ export const recentQ = Queue<{ userId: string }>('update_recent', async (job) =>
         },
       },
     });
-
-    // HACK(po): this is a hack to make sure we don't have duplicate recent songs
-    // See model on prisma schema for docs
-    // await prisma.recentSongs.deleteMany({
-    //   where: {
-    //     // only if it is within 10 minutes of the current song
-    //     // playedAt: {
-    //     //   gte: new Date(playedAt.getTime() - minutesToMs(10)),
-    //     //   lte: new Date(playedAt.getTime() + minutesToMs(10)),
-    //     // },
-    //     // trackId: track.id,
-    //     userId,
-    //     verifiedFromSpotify: false,
-    //   },
-    // });
   }
-});
+
+  debugRecentQ('completed');
+}

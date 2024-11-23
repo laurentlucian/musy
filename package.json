@@ -9,39 +9,28 @@
   "module": "server/index.ts",
   "scripts": {
     "build": "remix vite:build",
-    "start": "tsx --no-warnings ./server/index.ts",
-    "dev": "prisma generate && prisma migrate dev && tsx --no-warnings ./server/index.ts",
+    "start": "tsx --no-warnings ./build/server/index.ts",
+    "dev": "prisma generate && prisma migrate dev && tsx server/index.ts",
     "deploy": "fly deploy --remote-only",
     "format": "biome format --write ./app",
     "typecheck": "tsc",
-    "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\"",
-    "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version major && git push origin && git push origin --tags",
-    "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version minor && git push origin && git push origin --tags",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'update CHANGELOG.md' && npm version patch && git push origin && git push origin --tags",
     "prod:db": "fly ssh console -C database-cli",
-    "find-deadcode": "yarn ts-prune --ignore 'app/routes|app/services|app/lib|app/root|app/context|app/entry.server.tsx|app/createEmotionCache'",
     "docker:build": "docker build -t musy .",
     "docker:run": "docker run --rm -d -p 8080:8080 --env-file .env musy"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,cjs,mjs}": [
-      "biome --write"
-    ],
-    "src/**/*.{json,css,scss,md}": [
-      "biome --write"
-    ]
+    "src/**/*.{js,jsx,ts,tsx,cjs,mjs}": ["biome --write"],
+    "src/**/*.{json,css,scss,md}": ["biome --write"]
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
-    "@hono/node-server": "^1.11.1",
     "@prisma/client": "^3.15.2",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@remix-run/express": "^2.9.1",
-    "@remix-run/node": "^2.9.1",
-    "@remix-run/react": "^2.9.1",
+    "@remix-run/express": "^2.15.0",
+    "@remix-run/node": "^2.15.0",
+    "@remix-run/react": "^2.15.0",
     "@tanstack/react-virtual": "3.5.0",
-    "@types/express": "^4.17.21",
     "ahooks": "^3.7.8",
     "better-logging": "^5.0.0",
     "class-variance-authority": "^0.7.0",
@@ -50,11 +39,11 @@
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "framer-motion": "^8.5.5",
     "groq-sdk": "^0.3.3",
-    "hono": "^4.3.2",
     "iconsax-react": "^0.0.8",
+    "isbot": "^4",
     "openai": "^4.24.7",
     "posthog-js": "^1.130.2",
     "react": "18.3.1",
@@ -62,28 +51,27 @@
     "react-colorful": "^5.6.1",
     "react-dom": "18.3.1",
     "react-feather": "^2.0.10",
-    "remix": "^2.9.1",
-    "remix-auth": "^3.6.0",
+    "remix": "^2.15.0",
+    "remix-auth": "^3.7.0",
     "remix-auth-oauth2": "^1.11.2",
     "remix-auth-spotify": "^1.3.2",
-    "remix-hono": "^0.0.16",
     "remix-typedjson": "^0.4.1",
-    "remix-utils": "^7.6.0",
+    "remix-utils": "^7.7.0",
     "spotify-web-api-node": "^5.0.2",
     "supports-color": "^9.4.0",
-    "tailwind-merge": "^2.3.0",
+    "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "tiny-invariant": "^1.3.3",
-    "tsx": "^4.9.1",
+    "tsx": "^4.13.1",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
     "@biomejs/biome": "^1.7.2",
     "@commitlint/config-conventional": "^17.8.1",
-    "@hono/vite-dev-server": "^0.12.0",
     "@manypkg/cli": "^0.21.0",
-    "@remix-run/dev": "^2.9.1",
+    "@remix-run/dev": "^2.15.0",
+    "@types/express": "^5.0.0",
     "@types/react": "^18.3.1",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "^18.3.0",
@@ -105,7 +93,7 @@
     "vite-tsconfig-paths": "^4.3.2"
   },
   "peerDependencies": {
-    "zod": "3.19.1"
+    "zod": "3.113.1"
   },
   "engines": {
     "node": ">=18"

@@ -1,8 +1,5 @@
 import type { Playback, Prisma, Profile, Settings, Track } from '@prisma/client';
-
 import { prisma } from '~/services/db.server';
-import { userQ } from '~/services/scheduler/jobs/user.server';
-
 import { authenticator } from '../auth.server';
 import { profileWithInfo, trackWithInfo } from './tracks.server';
 
@@ -25,25 +22,9 @@ type CreateUser = {
 
 export const createUser = async (data: CreateUser) => {
   const newUser = await prisma.user.create({ data, include: { user: true } });
-
-  // scrape user's liked songs
-  await userQ.add(newUser.id, { userId: newUser.id });
-
-  // repeat the scrape every hour
-  await userQ.add(
-    newUser.id,
-    { userId: newUser.id },
-    {
-      backoff: {
-        delay: 1000 * 60 * 60,
-        type: 'fixed',
-      },
-      // a job with an id that already exists will not be added.
-      jobId: newUser.id,
-      repeat: { every: 1000 * 60 * 60 },
-    },
-  );
-
+  if (globalThis.schedulers?.userSync) {
+    globalThis.schedulers.userSync.addUserSchedulers(newUser.id);
+  }
   return newUser;
 };
 
@@ -193,16 +174,16 @@ export const getQueueableUsers = async (id: string | null = null) => {
       where: { user: { NOT: { id }, revoked: false } },
     });
   }
-    return prisma.profile.findMany({
-      orderBy: { name: 'asc' },
-      select: {
-        image: true,
-        name: true,
-        settings: { select: { allowQueue: true } },
-        userId: true,
-      },
-      where: { user: { revoked: false } },
-    });
+  return prisma.profile.findMany({
+    orderBy: { name: 'asc' },
+    select: {
+      image: true,
+      name: true,
+      settings: { select: { allowQueue: true } },
+      userId: true,
+    },
+    where: { user: { revoked: false } },
+  });
 };
 
 // export const getFriends = async (userId?: string) => {

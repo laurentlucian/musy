@@ -1,14 +1,17 @@
+import debug from 'debug';
 import { transformTracks } from '~/services/prisma/spotify.server';
-import { getUserSpotify } from '~/services/spotify.server';
+import { getSpotifyClient } from '~/services/spotify.server';
 
-import { Queue } from '../../queue.server';
-import { redis } from '../../redis.server';
-import { debugTopQ } from '../user.server';
+const debugTopQ = debug('userQ:topQ');
 
-export const topQ = Queue<{ userId: string }>('update_top', async (job) => {
-  const { userId } = job.data;
+export async function syncUserTop(userId: string) {
   debugTopQ('starting...', userId);
-  const { spotify } = await getUserSpotify(userId);
+
+  const { spotify } = await getSpotifyClient(userId);
+  if (!spotify) {
+    debugTopQ('no spotify client');
+    return;
+  }
 
   const getUserSpotifyTop = async (range: 'short_term' | 'medium_term' | 'long_term') => {
     const response = await spotify
@@ -29,10 +32,8 @@ export const topQ = Queue<{ userId: string }>('update_top', async (job) => {
     getUserSpotifyTop('long_term'),
   ]);
 
-  await Promise.all([
-    redis.set(short.key, JSON.stringify(short.tracks)),
-    redis.set(medium.key, JSON.stringify(medium.tracks)),
-    redis.set(long.key, JSON.stringify(long.tracks)),
-  ]);
+  // TODO: Implement storage mechanism for top tracks
+  // Could use Redis or database storage depending on requirements
+
   debugTopQ('completed', userId);
-});
+}

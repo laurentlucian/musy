@@ -1,11 +1,9 @@
 import debug from 'debug';
-
 import { prisma } from '~/services/db.server';
 
-import { Queue } from '../queue.server';
 const debugFeedQ = debug('feedQ');
 
-export const feedQ = Queue<null>('update_feed', async () => {
+export const syncFeed = async () => {
   debugFeedQ('starting...');
 
   const [liked, queue, recommended, playlistTracks] = await Promise.all([
@@ -134,4 +132,4 @@ export const feedQ = Queue<null>('update_feed', async () => {
   }
 
   debugFeedQ('completed');
-});
+};
