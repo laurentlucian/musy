@@ -1,5 +1,5 @@
-# base node image
-FROM node:20-bookworm-slim as base
+# base bun image
+FROM oven/bun:1 AS base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV=production
@@ -10,40 +10,44 @@ RUN apt-get update && apt-get install -y openssl sqlite3
 EXPOSE 3000
 
 # Install all node_modules, including dev dependencies
-FROM base as deps
+FROM base AS deps
 
 RUN mkdir /app
 WORKDIR /app
 
-COPY .yarn ./.yarn
-COPY .yarnrc.yml package.json yarn.lock* ./
-RUN yarn install && rm -rf ./.yarn/cache
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile
 
 # Setup production node_modules
-FROM base as production-deps
+FROM base AS production-deps
 
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=deps /app/node_modules /app/node_modules
-COPY .yarn ./.yarn
-COPY .yarnrc.yml package.json yarn.lock* ./
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production && rm -rf ./.yarn/cache
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --production
 
 # Build the app
-FROM base as build
+FROM base AS build
 
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=deps /app/node_modules /app/node_modules
+COPY --from=deps /app/node_modules ./node_modules
 
-ADD prisma .
-RUN npx prisma generate
+COPY prisma ./prisma
 
-ADD . .
-RUN yarn build && rm -rf ./.yarn
+RUN ls -la prisma/
+RUN cat prisma/schema.prisma
+RUN echo $DATABASE_URL
+
+RUN bunx prisma --version
+
+RUN cat prisma/schema.prisma
+
+RUN bunx prisma generate
+COPY . .
+RUN bun run build
 
 # Finally, build the production image with minimal footprint
 FROM base
@@ -67,6 +71,6 @@ COPY --from=build /app/package.json /app/package.json
 
 COPY --from=build /app/start.sh /app/start.sh
 COPY --from=build /app/prisma /app/prisma
-ADD . .
 
+RUN chmod +x /app/start.sh
 ENTRYPOINT [ "/start.sh" ]

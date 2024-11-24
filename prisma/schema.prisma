@@ -290,7 +290,7 @@ model Playback {
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
   //
-  timestamp Int      @default(0) // timestamp from spotify response
+  timestamp BigInt   @default(0) // timestamp from spotify response
   progress  Int
 }
 
