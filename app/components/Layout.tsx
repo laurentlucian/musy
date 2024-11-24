@@ -13,7 +13,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const isSmallScreen = useIsMobile();
 
   return (
-    <main className="max-h-content scroll-local flex justify-center">
+    <main className="scroll-local flex max-h-content justify-center">
       <section className="stack-3 max-h-content w-full items-center">
         {currentUser ? isSmallScreen ? <MobileHeader /> : <Nav /> : null}
         <motion.div

@@ -31,9 +31,7 @@ const ProfileHeader = () => {
       rel="noopener noreferrer"
     >
       <img
-        className="h-[100px] max-h-[100px] w-[100px] max-w-[100px] cursor-pointer rounded-full border-2
-          border-transparent object-cover hover:border-musy-200 sm:mr-[10px] sm:h-[150px] sm:max-h-[150px]
-          sm:w-[150px] sm:max-w-[150px] md:h-[200px] md:max-h-[200px] md:w-[200px] md:max-w-[200px]"
+        className="h-[100px] max-h-[100px] w-[100px] max-w-[100px] cursor-pointer rounded-full border-2 border-transparent object-cover hover:border-musy-200 sm:mr-[10px] sm:h-[150px] sm:max-h-[150px] sm:w-[150px] sm:max-w-[150px] md:h-[200px] md:max-h-[200px] md:w-[200px] md:max-w-[200px]"
         alt="user-profile"
         src={user.image}
       />

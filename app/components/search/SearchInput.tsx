@@ -59,7 +59,7 @@ const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
       )}
       {...props}
     >
-      <div className="absolute inset-0 left-2 top-0 flex w-fit items-center justify-start">
+      <div className="absolute inset-0 top-0 left-2 flex w-fit items-center justify-start">
         <button
           aria-label="search"
           className="flex cursor-pointer select-none items-center justify-center whitespace-nowrap p-0 text-musy"
@@ -90,7 +90,7 @@ const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
       />
       {search && (
         <div
-          className="absolute bottom-0 right-1 top-0 flex items-center justify-center"
+          className="absolute top-0 right-1 bottom-0 flex items-center justify-center"
           children={
             <>
               {isLoading && <Waver />}

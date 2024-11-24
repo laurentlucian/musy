@@ -1,8 +1,8 @@
 import useIsMobile from "~/hooks/useIsMobile";
-import spotify_icon_black from "~/lib/assets/spotify_icon_black.png";
-import spotify_icon_white from "~/lib/assets/spotify_icon_white.png";
 import Spotify_Logo_Black from "~/lib/assets/Spotify_Logo_Black.png";
 import Spotify_Logo_White from "~/lib/assets/Spotify_Logo_White.png";
+import spotify_icon_black from "~/lib/assets/spotify_icon_black.png";
+import spotify_icon_white from "~/lib/assets/spotify_icon_white.png";
 
 type SpotifyLogoProps = {
   h?: string;

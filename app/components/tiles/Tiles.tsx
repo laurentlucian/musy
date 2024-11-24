@@ -38,7 +38,7 @@ const Tiles = ({
         <div className="flex items-center">
           {title && (
             <p
-              className={clsx("text-[11px] font-semibold", {
+              className={clsx("font-semibold text-[11px]", {
                 "cursor-pointer": tracks,
               })}
               onClick={() => {

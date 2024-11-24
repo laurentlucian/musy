@@ -15,7 +15,7 @@ const Track = (props: {
 }) => {
   const { onOpen } = useFullscreen();
   const isSmallScreen = useIsMobile();
-  const layoutkey = props.addedAt.toString();
+  const _layoutkey = props.addedAt.toString();
 
   const track = {
     albumName: props.track.album.name,

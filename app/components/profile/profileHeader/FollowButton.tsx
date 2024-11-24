@@ -30,7 +30,7 @@ const FollowButton = (props: { id?: string }) => {
               isFollowing: String(isFollowing),
               userId,
             },
-            { action: `/api/user/follow`, method: "POST" },
+            { action: "/api/user/follow", method: "POST" },
           );
         }
       }}

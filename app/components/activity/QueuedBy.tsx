@@ -26,7 +26,7 @@ const QueuedBy = (props: {
       <DirectInbox size={15} />
       <Tooltip open={isLabelOpen}>
         <TooltipTrigger>
-          <div className="flex -space-x-2 overflow-hidden">
+          <div className="-space-x-2 flex overflow-hidden">
             {props.queued.slice(0, slice).map(({ owner: { user } }, index) => (
               <img
                 className="w-5 rounded-full ring-2 ring-black"

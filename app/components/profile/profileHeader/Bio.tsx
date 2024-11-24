@@ -22,7 +22,7 @@ const Bio = ({
     <textarea
       name="bio"
       className={cn(
-        "resize-none overflow-hidden border-b border-musy bg-transparent px-1 py-1 text-[12px] text-musy placeholder:text-musy-200 placeholder:opacity-50 focus:outline-musy-200 md:text-[14px]",
+        "resize-none overflow-hidden border-musy border-b bg-transparent px-1 py-1 text-[12px] text-musy placeholder:text-musy-200 placeholder:opacity-50 focus:outline-musy-200 md:text-[14px]",
         {
           "w-1/2": !isSmallScreen,
           "w-full": isSmallScreen,

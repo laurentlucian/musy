@@ -15,7 +15,7 @@ const FullscreenPlaybackInactive = ({ user }: { user: ProfileWithInfo }) => {
   const tracks = usePlaybackTracks(user);
 
   const timeListened = (
-    <p className="text-[10px] font-bold uppercase">
+    <p className="font-bold text-[10px] uppercase">
       LISTENED FOR{" "}
       {timeBetween({
         endDate: user.playbacks[0].endedAt,

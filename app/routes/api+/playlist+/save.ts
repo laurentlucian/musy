@@ -24,7 +24,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     await spotify.addTracksToPlaylist(playlistId, [trackId]);
     return typedjson("Saved");
-  } catch (error) {
+  } catch (_error) {
     return typedjson("error: Reauthenticate");
   }
 };

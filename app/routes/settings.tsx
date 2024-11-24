@@ -19,7 +19,7 @@ const Settings = () => {
     <div className="flex h-full sm:flex-col sm:justify-start lg:flex-row lg:justify-between">
       <div className="flex h-full w-28 sm:flex-row lg:flex-col">
         <Link
-          className="lg:text-md w-20 sm:text-sm"
+          className="w-20 sm:text-sm lg:text-md"
           to="/settings"
           replace
           aria-current={location.pathname === "/settings" ? "page" : undefined}
@@ -29,7 +29,7 @@ const Settings = () => {
           account
         </Link>
         <Link
-          className="lg:text-md w-28 sm:text-sm"
+          className="w-28 sm:text-sm lg:text-md"
           to="/settings/appearance"
           replace
           aria-current={

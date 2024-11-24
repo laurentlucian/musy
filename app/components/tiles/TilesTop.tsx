@@ -5,7 +5,7 @@ import type { TrackWithInfo } from "~/lib/types/types";
 
 import TilesTrack from "./TilesTrack";
 
-const options = [
+const _options = [
   { name: "All", value: "long_term" },
   { name: "6 mo", value: "medium_term" },
   { name: "1 mo", value: "short_term" },
@@ -14,7 +14,7 @@ const options = [
 const TilesTop = ({ tracks }: { tracks: TrackWithInfo[] }) => {
   const submit = useSubmit();
   const [params] = useSearchParams();
-  const topFilter = params.get("top-filter") ?? "medium_term";
+  const _topFilter = params.get("top-filter") ?? "medium_term";
 
   // const { getRadioProps, getRootProps } = useRadioGroup({
   //   defaultValue: topFilter,

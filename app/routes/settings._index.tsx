@@ -25,7 +25,7 @@ const Account = () => {
     <div className="ml-5 h-full w-full space-y-6">
       <div className="flex items-center justify-between">
         <label
-          className="lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm"
+          className="mb-0 flex cursor-pointer gap-5 sm:text-sm lg:text-md"
           htmlFor="private-profile"
         >
           <Ghost
@@ -48,7 +48,7 @@ const Account = () => {
       </div>
       <div className="flex items-center justify-between">
         <label
-          className="lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm"
+          className="mb-0 flex cursor-pointer gap-5 sm:text-sm lg:text-md"
           htmlFor="auto-scroll"
         >
           <Scroll
@@ -71,7 +71,7 @@ const Account = () => {
       </div>
       <div className="flex items-center justify-between">
         <label
-          className="lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm"
+          className="mb-0 flex cursor-pointer gap-5 sm:text-sm lg:text-md"
           htmlFor="song-preview"
         >
           <MusicPlay
@@ -97,7 +97,7 @@ const Account = () => {
       </div>
       <div className="flex items-center justify-between">
         <label
-          className="lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm"
+          className="mb-0 flex cursor-pointer gap-5 sm:text-sm lg:text-md"
           htmlFor="home-miniplayer"
         >
           <PlayCricle
@@ -122,7 +122,7 @@ const Account = () => {
 
       <div className="flex items-center justify-between">
         <label
-          className="lg:text-md mb-0 flex cursor-pointer gap-5 sm:text-sm"
+          className="mb-0 flex cursor-pointer gap-5 sm:text-sm lg:text-md"
           htmlFor="dev-mode"
         >
           <Code1

@@ -35,7 +35,7 @@ const PlaylistOutlet = () => {
   });
 
   return (
-    <div className="z-5 relative">
+    <div className="relative z-5">
       <div className="flex">
         <button
           aria-label="Back"
@@ -72,7 +72,7 @@ const PlaylistOutlet = () => {
               )}
             </tr>
           </thead>
-          <tbody className="stack-3 z-5 relative">
+          <tbody className="stack-3 relative z-5">
             {playlist.tracks.items.map(({ added_at, track }, index) => {
               if (!track) return null;
 

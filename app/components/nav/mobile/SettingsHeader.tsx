@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSaveState, useSetShowAlert } from "~/hooks/useSaveTheme";
 
 const SettingsHeader = () => {
-  const [show, setShow] = useState(0);
+  const [_show, setShow] = useState(0);
   const navigate = useNavigate();
 
   const disable = useSaveState();
@@ -30,8 +30,8 @@ const SettingsHeader = () => {
   return (
     <div className="h-full w-full">
       <div className="stack-h-2 w-full justify-center">
-        <h1 className="ml-5 mt-4 text-[13px]">Settings</h1>
-        <button className="fixed right-0 top-1" onClick={handleClick}>
+        <h1 className="mt-4 ml-5 text-[13px]">Settings</h1>
+        <button className="fixed top-1 right-0" onClick={handleClick}>
           Done
         </button>
       </div>

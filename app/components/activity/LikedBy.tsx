@@ -1,8 +1,6 @@
+import type { Profile } from "@prisma/client";
 import { useState } from "react";
 import { Heart } from "react-feather";
-
-import type { Profile } from "@prisma/client";
-
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/lib/ui/tooltip";
 import { shortenUsername } from "~/lib/utils";
 
@@ -17,7 +15,8 @@ const LikedBy = (props: {
 
   if (!props.liked?.length) return null;
   return (
-    <div
+    <button
+      type="button"
       className="stack-h-1"
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
@@ -26,7 +25,7 @@ const LikedBy = (props: {
       <Heart size={15} />
       <Tooltip open={isLabelOpen}>
         <TooltipTrigger>
-          <div className="flex -space-x-2 overflow-hidden">
+          <div className="-space-x-2 flex overflow-hidden">
             {props.liked.slice(0, slice).map(({ user }) => (
               <img
                 alt="user-avatar"
@@ -53,7 +52,7 @@ const LikedBy = (props: {
           })}
         </TooltipContent>
       </Tooltip>
-    </div>
+    </button>
   );
 };
 

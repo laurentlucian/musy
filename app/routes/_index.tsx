@@ -20,7 +20,7 @@ const Index = () => {
           draggable={false}
           src="/musylogo1.svg"
         />
-        <h1 className="text-6xl font-semibold">musy</h1>
+        <h1 className="font-semibold text-6xl">musy</h1>
         <Form action="/api/auth/spotify" method="post">
           <button
             className={cn(

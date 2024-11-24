@@ -20,7 +20,7 @@ const MobileNavBar = () => {
 
   if (!isSmallScreen) return null;
 
-  const hideButton = pathname === "/settings" || !show ? true : false;
+  const hideButton = !!(pathname === "/settings" || !show);
 
   const isHomeLoading = navigation.location?.pathname === "/home";
   const isExploreLoading = navigation.location?.pathname === "/explore";
@@ -41,7 +41,7 @@ const MobileNavBar = () => {
         none: components.length || hideButton,
       })}
     >
-      <header className="fixed bottom-0 left-0 right-0 z-10 grid min-h-20 w-full grid-cols-3 bg-musy-900">
+      <header className="fixed right-0 bottom-0 left-0 z-10 grid min-h-20 w-full grid-cols-3 bg-musy-900">
         <div className="flex items-center justify-center">
           <Link
             className={cn("w-12 py-6 opacity-40", {

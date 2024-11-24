@@ -71,7 +71,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         },
       });
       return typedjson("Removed");
-    } catch (error) {
+    } catch (_error) {
       return typedjson("error: Reauthenticate");
     }
   } else {
@@ -81,7 +81,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         data,
       });
       return typedjson("Saved");
-    } catch (error) {
+    } catch (_error) {
       return typedjson("error: Reauthenticate");
     }
   }

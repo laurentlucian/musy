@@ -70,7 +70,7 @@ export class UserSyncScheduler extends BaseScheduler {
     });
   }
 
-  private initUserScheduler(userId: string, baseDelay: number) {
+  private initUserScheduler(userId: string, _baseDelay: number) {
     const scheduler = new UserTaskScheduler(userId);
     scheduler.start("*/10 * * * *", true);
     this.userSchedulers.set(userId, scheduler);

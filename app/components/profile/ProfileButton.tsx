@@ -17,7 +17,7 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
   const loading = navigation.location?.pathname.includes(user.userId);
   const isFollowing = useIsFollowing(user.userId);
 
-  const Username = <p className="text-sm font-bold">{name}</p>;
+  const Username = <p className="font-bold text-sm">{name}</p>;
 
   const Actions = (
     <div className="max-w-[130px]">
@@ -55,7 +55,7 @@ const ProfileButton = ({ user }: { user: ProfileWithInfo }) => {
     <Link
       to={`/${user.userId}`}
       prefetch="intent"
-      className="flex h-16 items-center rounded-sm pl-[2px] pr-0 hover:bg-[#10101066] hover:backdrop-blur-[27px] md:pl-2"
+      className="flex h-16 items-center rounded-sm pr-0 pl-[2px] hover:bg-[#10101066] hover:backdrop-blur-[27px] md:pl-2"
     >
       {User}
     </Link>

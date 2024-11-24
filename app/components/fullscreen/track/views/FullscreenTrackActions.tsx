@@ -1,9 +1,9 @@
+import FullscreenFadeLayout from "../../shared/FullscreenFadeLayout";
 import AddToSelf from "../../shared/actions/AddToSelf";
 import AnalyzeTrack from "../../shared/actions/Analyze";
 import CopyLink from "../../shared/actions/CopyLink";
 import Recommend from "../../shared/actions/Recommend";
 import SaveToLiked from "../../shared/actions/SaveToLiked";
-import FullscreenFadeLayout from "../../shared/FullscreenFadeLayout";
 import { useFullscreenTrack } from "../FullscreenTrack";
 import PlayPreview from "./actions/PlayPreview";
 import SendToFriends from "./actions/SendToFriends";

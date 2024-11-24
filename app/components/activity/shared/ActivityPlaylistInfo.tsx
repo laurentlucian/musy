@@ -12,7 +12,7 @@ const ActivityPlaylistInfo = ({ playlist }: { playlist: Playlist }) => {
       </div>
       <Link to={`/${playlist.userId}/${playlist.id}`}>
         <div className="group space-y-0">
-          <p className="text-xs font-bold group-hover:underline">
+          <p className="font-bold text-xs group-hover:underline">
             {playlist.name}
           </p>
           <p className="line-clamp-2 break-all text-[9px]">

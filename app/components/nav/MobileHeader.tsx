@@ -16,7 +16,7 @@ const MobileHeader = () => {
   const isExplore = pathname === "/explore";
   const isSettings = pathname === "/settings";
   const isProfile = !isHome && !isExplore && !isSettings;
-  const isOwnProfile = currentUser?.userId === pathname.split("/")[1];
+  const _isOwnProfile = currentUser?.userId === pathname.split("/")[1];
 
   const Header = isHome ? (
     <img src="/musylogo1.svg" className="-mb-2 w-[35px]" alt="musy-logo" />

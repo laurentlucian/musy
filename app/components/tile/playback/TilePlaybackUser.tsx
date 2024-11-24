@@ -30,7 +30,7 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
         alt="user-profile"
       />
       <div className="absolute inset-0 rounded-full border-[3px] border-black" />
-      <div className="duration-140 linear absolute inset-0 flex flex-col items-center justify-center space-y-2 bg-[#10101066] opacity-0 backdrop-blur-sm backdrop-filter transition-opacity group-hover:opacity-100 md:backdrop-blur">
+      <div className="linear absolute inset-0 flex flex-col items-center justify-center space-y-2 bg-[#10101066] opacity-0 backdrop-blur-sm backdrop-filter transition-opacity duration-140 group-hover:opacity-100 md:backdrop-blur">
         {user.playback ? (
           <TileTrackImage
             box="w-20 md:w-24"
@@ -40,7 +40,7 @@ const TilePlaybackUser = ({ user }: { user: ProfileWithInfo }) => {
             }}
           />
         ) : (
-          <p className="text-[12px] font-semibold uppercase sm:text-xs">
+          <p className="font-semibold text-[12px] uppercase sm:text-xs">
             LISTENED FOR{" "}
             {timeBetween({
               endDate: user.playbacks[0]?.endedAt,

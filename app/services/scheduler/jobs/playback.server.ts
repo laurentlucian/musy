@@ -56,7 +56,7 @@ export async function syncPlaybacks() {
 }
 
 function schedulePlaybackCheck(userId: string, delay: number) {
-  const job = new Cron(
+  const _job = new Cron(
     new Date(Date.now() + delay),
     () => {
       checkUserPlayback(userId);

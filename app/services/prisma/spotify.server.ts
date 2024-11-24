@@ -74,7 +74,7 @@ export const getUserCachedTop = async (userId: string, url: URL) => {
     | "long_term"
     | "short_term";
 
-  const cacheKeyTop = `profile_top_prisma${topFilter}_${userId}`;
+  const _cacheKeyTop = `profile_top_prisma${topFilter}_${userId}`;
   // const cachedDataTop = await redis.get(cacheKeyTop);
 
   // if (cachedDataTop) {

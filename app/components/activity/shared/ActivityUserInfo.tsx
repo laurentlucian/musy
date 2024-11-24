@@ -8,7 +8,7 @@ const ActivityUserInfo = ({ user }: { user: ProfileWithInfo }) => {
     <div className="stack-h-2">
       <TileUserImage user={user} size="35px" />
       <Link className="stack group" to={`/${user.userId}`}>
-        <p className="line-clamp-1 text-xs font-bold group-hover:underline">
+        <p className="line-clamp-1 font-bold text-xs group-hover:underline">
           {user.name}
         </p>
         <p className="line-clamp-2 shrink break-all text-[9px]">{user.bio}</p>

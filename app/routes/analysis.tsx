@@ -26,7 +26,7 @@ const Analysis = () => {
   const ref = useRef<HTMLFormElement>(null);
   const submit = useSubmit();
   const transition = useNavigation();
-  const busy = transition.formData?.has("spotify") ?? false;
+  const _busy = transition.formData?.has("spotify") ?? false;
 
   useEffect(() => {
     const delaySubmit = setTimeout(() => {
@@ -62,7 +62,7 @@ const Analysis = () => {
         <div className="stack-h-2 mb-0 flex-1 items-center">
           <div className="relative isolate z-10 flex w-full overflow-y-hidden">
             <input
-              className="w-full border-b border-b-musy-200 bg-transparent py-2 pl-2 pr-9 text-[14px] text-musy-200 transition-all duration-300 ease-in-out placeholder:text-musy-200 placeholder:opacity-70 focus:outline-musy-200"
+              className="w-full border-b border-b-musy-200 bg-transparent py-2 pr-9 pl-2 text-[14px] text-musy-200 transition-all duration-300 ease-in-out placeholder:text-musy-200 placeholder:opacity-70 focus:outline-musy-200"
               name="spotify"
               value={search}
               placeholder="Search for a song"
@@ -114,7 +114,7 @@ const Analysis = () => {
           </div>
           <div className="stack justify-between">
             <div className="stack">
-              <p className="line-clamp-3 break-all text-[13px] font-bold">
+              <p className="line-clamp-3 break-all font-bold text-[13px]">
                 {track.name}
               </p>
               <div className="flex items-center">
@@ -164,7 +164,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
         title: "musy Analysis",
       },
       {
-        description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+        description:
+          "musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.",
       },
     ];
   }
@@ -176,7 +177,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
       title: `${track?.name} | musy Analysis`,
     },
     {
-      description: `musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.`,
+      description:
+        "musy is a powerful song analysis tool that helps you unlock the secrets of your favorite tracks.",
     },
   ];
 };

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import {
-  ChevronsLeft,
   ChevronLeft,
-  ChevronsRight,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "react-feather";
 
 import useIsMobile from "~/hooks/useIsMobile";

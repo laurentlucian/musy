@@ -2,11 +2,11 @@ import { useParams } from "@remix-run/react";
 import { AlertCircle, Check } from "react-feather";
 
 import {
-  DirectInbox,
   CloseSquare,
+  DirectInbox,
   Send2,
-  TickSquare,
   Star1,
+  TickSquare,
 } from "iconsax-react";
 import { useTypedFetcher } from "remix-typedjson";
 

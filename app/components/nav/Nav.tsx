@@ -17,19 +17,19 @@ const Nav = () => {
         <div className="flex items-center space-x-3">
           <Link className="group flex items-center space-x-2" to="/">
             <img className="w-[28px]" src="/musylogo1.svg" alt="musy-logo" />
-            <h1 className="text-md font-semibold group-hover:text-neutral-300">
+            <h1 className="font-semibold text-md group-hover:text-neutral-300">
               musy
             </h1>
           </Link>
           <Link
             to="/explore"
-            className="text-sm font-extralight hover:underline"
+            className="font-extralight text-sm hover:underline"
           >
             explore
           </Link>
           <Link
             to="/analysis"
-            className="text-sm font-extralight hover:underline"
+            className="font-extralight text-sm hover:underline"
           >
             analyze
           </Link>

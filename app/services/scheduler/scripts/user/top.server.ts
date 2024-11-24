@@ -28,7 +28,7 @@ export async function syncUserTop(userId: string) {
     };
   };
 
-  const [short, medium, long] = await Promise.all([
+  const [_short, _medium, _long] = await Promise.all([
     getUserSpotifyTop("short_term"),
     getUserSpotifyTop("medium_term"),
     getUserSpotifyTop("long_term"),

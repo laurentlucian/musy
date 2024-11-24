@@ -10,7 +10,7 @@ import Tiles from "./Tiles";
 const TilesPlayback = () => {
   const users = useFollowing();
   const currentUser = useRequiredCurrentUser();
-  const [tile, setTile] = useState(false);
+  const [tile, _setTile] = useState(false);
 
   const active = users.filter((user) => user.playback);
   const inactive = users

@@ -10,9 +10,9 @@ import usePlaybackTracks from "~/hooks/usePlaybackTracks";
 import type { ProfileWithInfo } from "~/lib/types/types";
 import { timeBetween } from "~/lib/utils";
 
+import TrackInfo from "../shared/FullscreenTrackInfo";
 import AddToUserQueue from "../shared/actions/AddToUserQueue";
 import ViewTrack from "../shared/actions/ViewTrack";
-import TrackInfo from "../shared/FullscreenTrackInfo";
 import PlaybackListenAlong from "./PlaybackListenAlong";
 
 const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
@@ -30,7 +30,7 @@ const FullscreenPlaybackActive = ({ user }: { user: ProfileWithInfo }) => {
         >
           <ActivityUserInfo user={user} />
           <div className="stack-h-2 shrink-0">
-            <p className="text-[10px] font-bold uppercase">
+            <p className="font-bold text-[10px] uppercase">
               LISTENING FOR{" "}
               {timeBetween({
                 endDate: new Date(),

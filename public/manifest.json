@@ -6,6 +6,12 @@
   "start_url": "/",
   "background_color": "#050404",
   "display": "standalone",
-  "categories": ["music", "music share", "music taste", "spotify", "spotify share"],
+  "categories": [
+    "music",
+    "music share",
+    "music taste",
+    "spotify",
+    "spotify share"
+  ],
   "scope": "/"
 }

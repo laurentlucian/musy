@@ -7,7 +7,7 @@ const FavoriteButton = (props: { id?: string }) => {
   const currentUser = useCurrentUser();
   const params = useParams();
   const userId = (props.id || params.id) ?? "";
-  const fetcher = useTypedFetcher<typeof favoriteAction>();
+  const _fetcher = useTypedFetcher<typeof favoriteAction>();
 
   const isOwnProfile = currentUser?.userId === userId;
   if (isOwnProfile) return null;
@@ -16,7 +16,7 @@ const FavoriteButton = (props: { id?: string }) => {
     (fav) => fav.favoriteId === userId,
   );
 
-  const label = currentUser
+  const _label = currentUser
     ? isFavorited
       ? "unfavorite"
       : "favorite"

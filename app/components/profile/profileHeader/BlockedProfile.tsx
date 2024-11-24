@@ -8,7 +8,7 @@ import useCurrentUser from "~/hooks/useCurrentUser";
 const block = (
   <motion.div
     animate={{ opacity: [0, 1, 0, 1] }}
-    transition={{ duration: 5, loop: Infinity }}
+    transition={{ duration: 5, loop: Number.POSITIVE_INFINITY }}
   >
     <Forbidden size="30" color="red" />
   </motion.div>
@@ -33,7 +33,7 @@ const BlockedProfile = ({ name }: { name: string }) => {
         </p>
       </div>
       <button
-        className="md:w-300px text-md w-72"
+        className="w-72 text-md md:w-300px"
         onClick={() => window.history.back()}
       >
         go back

@@ -19,21 +19,21 @@ const TileTrackInfo = ({
       <div className="stack flex-grow">
         <a
           href={track.uri}
-          className="line-clamp-1 w-44 overflow-hidden whitespace-normal break-all text-xs font-extralight hover:underline md:text-[13px]"
+          className="line-clamp-1 w-44 overflow-hidden whitespace-normal break-all font-extralight text-xs hover:underline md:text-[13px]"
         >
           {track.name}
         </a>
         <div className="stack-h-1 items-baseline">
           <a
             href={track.artistUri}
-            className="line-clamp-1 overflow-hidden break-all text-[9px] font-extralight opacity-60 hover:underline md:text-[10px]"
+            className="line-clamp-1 overflow-hidden break-all font-extralight text-[9px] opacity-60 hover:underline md:text-[10px]"
           >
             {track.artist}
           </a>
           <span className="-translate-y-px opacity-60">•</span>
           <a
             href={track.albumUri}
-            className="line-clamp-1 overflow-hidden text-[9px] font-extralight opacity-60 hover:underline md:text-[10px]"
+            className="line-clamp-1 overflow-hidden font-extralight text-[9px] opacity-60 hover:underline md:text-[10px]"
           >
             {track.albumName}
           </a>

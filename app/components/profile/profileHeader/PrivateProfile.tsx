@@ -5,7 +5,7 @@ const PrivateProfile = ({ name }: { name: string }) => {
   const ghost = (
     <motion.div
       animate={{ opacity: [0, 1, 0, 1] }}
-      transition={{ duration: 5, loop: Infinity }}
+      transition={{ duration: 5, loop: Number.POSITIVE_INFINITY }}
     >
       <Ghost size="210" />
     </motion.div>
@@ -22,7 +22,7 @@ const PrivateProfile = ({ name }: { name: string }) => {
           {name}&apos;s profile is private
         </p>
         <button
-          className="md:w-300px w-72"
+          className="w-72 md:w-300px"
           onClick={() => window.history.back()}
         >
           go back
