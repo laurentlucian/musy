@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import type { Profile, Track } from '@prisma/client';
-import { useTypedFetcher } from 'remix-typedjson';
-import { shallow } from 'zustand/shallow';
-import { createWithEqualityFn } from 'zustand/traditional';
+import type { Profile, Track } from "@prisma/client";
+import { useTypedFetcher } from "remix-typedjson";
+import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
 
-import type { loader } from '~/routes/api+/search+/results';
+import type { loader } from "~/routes/api+/search+/results";
 
 type SearchResult = Track | Profile;
 
@@ -19,7 +19,7 @@ interface SearchStoreType {
 const useSearchStore = createWithEqualityFn<SearchStoreType>()(
   (set) => ({
     results: [],
-    search: '',
+    search: "",
     setResults: (results) => set({ results }),
     setSearch: (search) => set({ search }),
   }),
@@ -43,7 +43,7 @@ export const useSearch = (param: string) => {
 
   const { data, load, state } = useTypedFetcher<typeof loader>();
 
-  const busy = state === 'loading' ?? false;
+  const busy = state === "loading";
 
   const timeoutRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
@@ -70,7 +70,7 @@ export const useSearch = (param: string) => {
   }, [data]);
 
   const onClose = () => {
-    setSearch('');
+    setSearch("");
     setResults([]);
   };
 

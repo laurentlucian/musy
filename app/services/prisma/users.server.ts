@@ -1,7 +1,13 @@
-import type { Playback, Prisma, Profile, Settings, Track } from '@prisma/client';
-import { prisma } from '~/services/db.server';
-import { authenticator } from '../auth.server';
-import { profileWithInfo, trackWithInfo } from './tracks.server';
+import type {
+  Playback,
+  Prisma,
+  Profile,
+  Settings,
+  Track,
+} from "@prisma/client";
+import { prisma } from "~/services/db.server";
+import { authenticator } from "../auth.server";
+import { profileWithInfo, trackWithInfo } from "./tracks.server";
 
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
 
@@ -47,7 +53,10 @@ export const updateToken = async (
     data: { accessToken: token, expiresAt, refreshToken, revoked: false },
     where: { id },
   });
-  console.log('updatedToken -> expires at:', new Date(data.expiresAt).toLocaleTimeString('en-US'));
+  console.log(
+    "updatedToken -> expires at:",
+    new Date(data.expiresAt).toLocaleTimeString("en-US"),
+  );
   return data.expiresAt;
 };
 
@@ -69,7 +78,8 @@ export const updateUserName = async (id: string, name: string) => {
 
 export const getCurrentUserId = async (request: Request) => {
   const session = await authenticator.isAuthenticated(request);
-  if (!session || !session.user) throw new Response('Unauthorized', { status: 401 });
+  if (!session || !session.user)
+    throw new Response("Unauthorized", { status: 401 });
   return session.user.id;
 };
 
@@ -111,7 +121,7 @@ export const getUserProfile = async (userId: string) => {
   });
 
   if (!user /* || (!session && user.settings?.isPrivate) */)
-    throw new Response('Not found', { status: 404 });
+    throw new Response("Not found", { status: 404 });
 
   return user;
 };
@@ -151,7 +161,7 @@ export const getAllUsers = async (id: string) => {
 
   const users = await prisma.profile.findMany({
     include: profileWithInfo.include,
-    orderBy: [{ playback: { updatedAt: 'desc' } }, { name: 'asc' }],
+    orderBy: [{ playback: { updatedAt: "desc" } }, { name: "asc" }],
     where: { user: { NOT: { id }, revoked: false } },
   });
 
@@ -161,7 +171,7 @@ export const getAllUsers = async (id: string) => {
 export const getQueueableUsers = async (id: string | null = null) => {
   if (id) {
     return prisma.profile.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
       select: {
         followers: {
           where: { followingId: id },
@@ -175,7 +185,7 @@ export const getQueueableUsers = async (id: string | null = null) => {
     });
   }
   return prisma.profile.findMany({
-    orderBy: { name: 'asc' },
+    orderBy: { name: "asc" },
     select: {
       image: true,
       name: true,

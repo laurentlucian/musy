@@ -1,9 +1,10 @@
-import { useTypedRouteLoaderData } from 'remix-typedjson';
+import { useTypedRouteLoaderData } from "remix-typedjson";
 
-import type { loader } from '~/root';
+import type { loader } from "~/root";
 
 const useCurrentUser = () => {
-  const currentUser = useTypedRouteLoaderData<typeof loader>('root')?.currentUser;
+  const currentUser =
+    useTypedRouteLoaderData<typeof loader>("root")?.currentUser;
 
   return currentUser;
 };
@@ -11,7 +12,7 @@ const useCurrentUser = () => {
 export const useRequiredCurrentUser = () => {
   const currentUser = useCurrentUser();
 
-  if (!currentUser) throw new Error('No current user');
+  if (!currentUser) throw new Error("No current user");
 
   return currentUser;
 };

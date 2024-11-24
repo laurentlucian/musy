@@ -1,19 +1,19 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
-import { typedjson } from 'remix-typedjson';
-import invariant from 'tiny-invariant';
+import { typedjson } from "remix-typedjson";
+import invariant from "tiny-invariant";
 
-import { getMoodFromPrisma, getMoodFromSpotify } from '~/services/ai.server';
-import { prisma } from '~/services/db.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import { getMoodFromPrisma, getMoodFromSpotify } from "~/services/ai.server";
+import { prisma } from "~/services/db.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
-  const userId = body.get('userId');
+  const userId = body.get("userId");
 
-  if (typeof userId !== 'string') {
-    return typedjson('Request Error');
+  if (typeof userId !== "string") {
+    return typedjson("Request Error");
   }
 
   const recent = await prisma.recentSongs.findMany({
@@ -30,7 +30,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     response = await getMoodFromPrisma(recent);
   } else {
     const { spotify } = await getSpotifyClient(userId);
-    invariant(spotify, 'Spotify API Error');
+    invariant(spotify, "Spotify API Error");
     const recent = await spotify.getMyRecentlyPlayedTracks({ limit: 25 });
     response = await getMoodFromSpotify(recent.body);
   }

@@ -1,9 +1,9 @@
-import type { Activity } from '~/lib/types/types';
+import type { Activity } from "~/lib/types/types";
 
-import TileTrackImage from '../tile/track/TileTrackImage';
-import TileTrackInfo from '../tile/track/TileTrackInfo';
-import ActivityInfo from './shared/ActivityInfo';
-import ActivityTrackInfo from './shared/ActivityTrackInfo';
+import TileTrackImage from "../tile/track/TileTrackImage";
+import TileTrackInfo from "../tile/track/TileTrackInfo";
+import ActivityInfo from "./shared/ActivityInfo";
+import ActivityTrackInfo from "./shared/ActivityTrackInfo";
 
 const ActivityTile = ({ activity }: { activity: Activity }) => {
   const track =
@@ -15,10 +15,10 @@ const ActivityTile = ({ activity }: { activity: Activity }) => {
   if (!track) return null;
 
   return (
-    <div className='stack-2 w-full max-w-xl self-center'>
+    <div className="stack-2 w-full max-w-xl self-center">
       <ActivityInfo activity={activity} />
-      <div className='stack-1 w-full'>
-        <div className='stack-3'>
+      <div className="stack-1 w-full">
+        <div className="stack-3">
           <TileTrackImage
             fullscreen={{
               originUserId: activity.userId,
@@ -32,7 +32,11 @@ const ActivityTile = ({ activity }: { activity: Activity }) => {
           <ActivityTrackInfo track={track} />
         </div>
 
-        <TileTrackInfo track={track} createdAt={activity.createdAt} icon={false} />
+        <TileTrackInfo
+          track={track}
+          createdAt={activity.createdAt}
+          icon={false}
+        />
       </div>
     </div>
   );

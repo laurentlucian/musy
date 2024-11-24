@@ -1,6 +1,6 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from "react";
 
-import type { TrackWithInfo } from '~/lib/types/types';
+import type { TrackWithInfo } from "~/lib/types/types";
 
 const TileContext = createContext<{
   index: number;
@@ -12,7 +12,9 @@ const TileContext = createContext<{
 export function useTileContext() {
   const context = useContext(TileContext);
   if (!context) {
-    throw new Error('Tile.* component muse be rendered as a child of Tile component');
+    throw new Error(
+      "Tile.* component muse be rendered as a child of Tile component",
+    );
   }
   return context;
 }

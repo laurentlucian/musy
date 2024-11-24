@@ -1,7 +1,7 @@
-import { shallow } from 'zustand/shallow';
-import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
 
-import useCurrentUser from './useCurrentUser';
+import useCurrentUser from "./useCurrentUser";
 
 type UserLibraryStore = {
   library: Map<string, boolean> | null;
@@ -64,7 +64,10 @@ export const useUserRecommended = (trackId: string) => {
     }
   }
 
-  const recommended = useUserLibraryStore((state) => state.recommended, shallow);
+  const recommended = useUserLibraryStore(
+    (state) => state.recommended,
+    shallow,
+  );
   const setRecommended = useUserLibraryStore((state) => state.setRecommended);
 
   const toggleRecommend = () => {

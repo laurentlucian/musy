@@ -1,19 +1,19 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import type { MetaFunction } from '@remix-run/react';
-import { Outlet } from '@remix-run/react';
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
 
-import { typedjson, useTypedLoaderData } from 'remix-typedjson';
-import invariant from 'tiny-invariant';
+import { typedjson, useTypedLoaderData } from "remix-typedjson";
+import invariant from "tiny-invariant";
 
-import BlockedProfile from '~/components/profile/profileHeader/BlockedProfile';
-import PrivateProfile from '~/components/profile/profileHeader/PrivateProfile';
-import ProfileHeader from '~/components/profile/profileHeader/ProfileHeader';
-import useCurrentUser from '~/hooks/useCurrentUser';
-import useRevalidateOnFocus from '~/hooks/useRevalidateOnFocus';
-import { msToString } from '~/lib/utils';
-import { authenticator } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
-import { getTheme } from '~/services/prisma/theme.server';
+import BlockedProfile from "~/components/profile/profileHeader/BlockedProfile";
+import PrivateProfile from "~/components/profile/profileHeader/PrivateProfile";
+import ProfileHeader from "~/components/profile/profileHeader/ProfileHeader";
+import useCurrentUser from "~/hooks/useCurrentUser";
+import useRevalidateOnFocus from "~/hooks/useRevalidateOnFocus";
+import { msToString } from "~/lib/utils";
+import { authenticator } from "~/services/auth.server";
+import { prisma } from "~/services/db.server";
+import { getTheme } from "~/services/prisma/theme.server";
 
 const Profile = () => {
   const { user } = useTypedLoaderData<typeof loader>();
@@ -23,7 +23,9 @@ const Profile = () => {
   const isDev = currentUser?.settings?.dev === true;
   const isOwnProfile = currentUser?.userId === user.userId;
   const isPrivate = user.settings?.isPrivate && !isOwnProfile && isDev;
-  const isBlocked = currentUser?.block.find((blocked) => blocked.blockedId === user.userId);
+  const isBlocked = currentUser?.block.find(
+    (blocked) => blocked.blockedId === user.userId,
+  );
 
   const Profile = isPrivate ? (
     <PrivateProfile name={user.name} />
@@ -34,7 +36,7 @@ const Profile = () => {
   );
 
   return (
-    <article className='stack-3 z-10 px-1 md:px-0'>
+    <article className="stack-3 z-10 px-1 md:px-0">
       <ProfileHeader />
       {Profile}
     </article>
@@ -44,7 +46,7 @@ const Profile = () => {
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     {
-      title: `${data?.user?.name.split(' ')[0] ?? ''} | musy`,
+      title: `${data?.user?.name.split(" ")[0] ?? ""} | musy`,
     },
   ];
 };
@@ -63,11 +65,11 @@ const day = () => {
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const id = params.id;
-  invariant(id, 'Missing params Id');
+  invariant(id, "Missing params Id");
   const { searchParams } = new URL(request.url);
-  const listenedTimeframe = searchParams.get('listened');
+  const listenedTimeframe = searchParams.get("listened");
 
-  const dateToCompare = listenedTimeframe === 'week' ? week() : day();
+  const dateToCompare = listenedTimeframe === "week" ? week() : day();
 
   const [session, user, recentDb, theme] = await Promise.all([
     authenticator.isAuthenticated(request),
@@ -80,7 +82,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
       where: { userId: id },
     }),
     prisma.recentSongs.findMany({
-      orderBy: { playedAt: 'desc' },
+      orderBy: { playedAt: "desc" },
       select: { playedAt: true, track: { select: { duration: true } } },
       where: { playedAt: { gt: dateToCompare }, userId: id },
     }),
@@ -88,7 +90,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   ]);
 
   if (!user || (!session && user.settings?.isPrivate)) {
-    throw new Response('Not found', { status: 404 });
+    throw new Response("Not found", { status: 404 });
   }
 
   const listened = msToString(
@@ -102,5 +104,5 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   });
 };
 
-export { ErrorBoundary } from '~/components/error/ErrorBoundary';
+export { ErrorBoundary } from "~/components/error/ErrorBoundary";
 export default Profile;

@@ -1,21 +1,21 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json, redirect } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 
-import { spotifyStrategy } from '~/services/auth.server';
-import { prisma } from '~/services/db.server';
+import { spotifyStrategy } from "~/services/auth.server";
+import { prisma } from "~/services/db.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
-  const ownerId = body.get('userId');
-  console.log('Leaving party...');
-  if (typeof ownerId !== 'string') {
-    console.log('Leave failed -> missing ownerId parameter');
-    throw redirect('/');
+  const ownerId = body.get("userId");
+  console.log("Leaving party...");
+  if (typeof ownerId !== "string") {
+    console.log("Leave failed -> missing ownerId parameter");
+    throw redirect("/");
   }
   const session = await spotifyStrategy.getSession(request);
 
   if (!session || !session.user) {
-    console.log('Leave failed -> no authentication');
+    console.log("Leave failed -> no authentication");
     return redirect(`/${ownerId}`);
   }
 
@@ -24,12 +24,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   // shouldn't be here if not in party
   if (!party) {
-    console.log('Leave failed -> not in a party');
+    console.log("Leave failed -> not in a party");
     return redirect(`/${ownerId}`);
   }
   await prisma.party.delete({ where: { userId } });
 
-  console.log('Left party');
+  console.log("Left party");
   return redirect(`/${ownerId}`);
 };
 

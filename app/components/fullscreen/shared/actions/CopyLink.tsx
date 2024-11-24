@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Link2, Link21 } from 'iconsax-react';
+import { Link2, Link21 } from "iconsax-react";
 
-import ActionButton from '../FullscreenActionButton';
+import ActionButton from "../FullscreenActionButton";
 
 const CopyLink = ({ trackLink }: { trackLink: string }) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -13,7 +13,7 @@ const CopyLink = ({ trackLink }: { trackLink: string }) => {
       await navigator.clipboard.writeText(trackLink);
       setIsCopied(true);
     } catch (err) {
-      console.error('Failed to copy link: ', err);
+      console.error("Failed to copy link: ", err);
     }
   }
 
@@ -25,7 +25,7 @@ const CopyLink = ({ trackLink }: { trackLink: string }) => {
       onMouseUp={() => setMouseDown(false)}
       onMouseLeave={() => setIsCopied(false)}
     >
-      {isCopied ? 'Copied!' : 'Copy Link'}
+      {isCopied ? "Copied!" : "Copy Link"}
     </ActionButton>
   );
 };

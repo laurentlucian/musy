@@ -1,5 +1,5 @@
-import { shallow } from 'zustand/shallow';
-import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from "zustand/shallow";
+import { createWithEqualityFn } from "zustand/traditional";
 
 interface DrawerStateConfig {
   actions: {
@@ -32,4 +32,5 @@ export const usePlaylistDrawerStore = () =>
     shallow,
   );
 
-export const usePlaylistDrawerActions = () => useDrawerStore((state) => state.actions);
+export const usePlaylistDrawerActions = () =>
+  useDrawerStore((state) => state.actions);

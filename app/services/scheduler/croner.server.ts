@@ -1,5 +1,5 @@
-import { FeedScheduler } from './jobs/feed.scheduler';
-import { UserSyncScheduler } from './jobs/user.scheduler';
+import { FeedScheduler } from "./jobs/feed.scheduler";
+import { UserSyncScheduler } from "./jobs/user.scheduler";
 
 declare global {
   var schedulers: {
@@ -21,10 +21,10 @@ export async function initCron() {
   }
 
   const feedScheduler = new FeedScheduler();
-  feedScheduler.start('*/5 * * * *', true);
+  feedScheduler.start("*/5 * * * *", true);
   globalThis.schedulers.feed = feedScheduler;
 
   const userSyncScheduler = new UserSyncScheduler();
-  userSyncScheduler.start('0 * * * *', true);
+  userSyncScheduler.start("0 * * * *", true);
   globalThis.schedulers.userSync = userSyncScheduler;
 }

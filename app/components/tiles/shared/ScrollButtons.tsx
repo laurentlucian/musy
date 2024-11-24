@@ -1,7 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'react-feather';
+import { useEffect, useRef } from "react";
+import {
+  ChevronsLeft,
+  ChevronLeft,
+  ChevronsRight,
+  ChevronRight,
+} from "react-feather";
 
-import useIsMobile from '~/hooks/useIsMobile';
+import useIsMobile from "~/hooks/useIsMobile";
 
 const ScrollButtons = ({
   scrollRef,
@@ -17,18 +22,20 @@ const ScrollButtons = ({
 
   const scrollToEnd = () => {
     if (scrollRef.current) {
-      scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+      scrollPosRef.current =
+        scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
-        behavior: 'smooth',
+        behavior: "smooth",
         left: scrollPosRef.current,
       });
     }
   };
   const scrollToStart = () => {
     if (scrollRef.current) {
-      scrollPosRef.current = -scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+      scrollPosRef.current =
+        -scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       scrollRef.current.scrollTo({
-        behavior: 'smooth',
+        behavior: "smooth",
         left: scrollPosRef.current,
       });
     }
@@ -40,7 +47,7 @@ const ScrollButtons = ({
       if (scrollPosRef.current <= 0) scrollPosRef.current = 0;
       else scrollPosRef.current -= scrollRef.current.clientWidth + offset;
       scrollRef.current.scrollTo({
-        behavior: 'smooth',
+        behavior: "smooth",
         left: scrollPosRef.current,
       });
     }
@@ -54,11 +61,15 @@ const ScrollButtons = ({
     buttonPressedRef.current = true;
     if (scrollRef.current) {
       if (scrollPosRef.current <= 0) scrollPosRef.current = 0;
-      if (scrollPosRef.current >= scrollRef.current.scrollWidth - scrollRef.current.clientWidth)
-        scrollPosRef.current = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+      if (
+        scrollPosRef.current >=
+        scrollRef.current.scrollWidth - scrollRef.current.clientWidth
+      )
+        scrollPosRef.current =
+          scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
       else scrollPosRef.current += scrollRef.current.clientWidth + offset;
       scrollRef.current.scrollTo({
-        behavior: 'smooth',
+        behavior: "smooth",
         left: scrollPosRef.current,
       });
     }
@@ -77,25 +88,25 @@ const ScrollButtons = ({
       if (buttonPressedRef.current) return;
       scrollPosRef.current = ref.scrollLeft;
     };
-    ref.addEventListener('scroll', syncScroll);
+    ref.addEventListener("scroll", syncScroll);
     return () => {
-      ref.removeEventListener('scroll', syncScroll);
+      ref.removeEventListener("scroll", syncScroll);
     };
   }, [scrollRef]);
 
   return (
-    <div className='ml-auto flex space-x-7'>
+    <div className="ml-auto flex space-x-7">
       <button onClick={scrollToStart}>
-        <ChevronsLeft size='14px' className='opacity-50 hover:opacity-100' />
+        <ChevronsLeft size="14px" className="opacity-50 hover:opacity-100" />
       </button>
       <button onClick={scrollToPrevPage}>
-        <ChevronLeft size='14px' className='opacity-50 hover:opacity-100' />
+        <ChevronLeft size="14px" className="opacity-50 hover:opacity-100" />
       </button>
       <button onClick={scrollToNextPage}>
-        <ChevronRight size='14px' className='opacity-50 hover:opacity-100' />
+        <ChevronRight size="14px" className="opacity-50 hover:opacity-100" />
       </button>
       <button onClick={scrollToEnd}>
-        <ChevronsRight size='14px' className='opacity-50 hover:opacity-100' />
+        <ChevronsRight size="14px" className="opacity-50 hover:opacity-100" />
       </button>
     </div>
   );

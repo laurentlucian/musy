@@ -1,7 +1,7 @@
-import Grok from 'groq-sdk';
-import { singleton } from '../singleton.server';
+import Grok from "groq-sdk";
+import { singleton } from "../singleton.server";
 
-const grok = singleton('groq', () => {
+const grok = singleton("groq", () => {
   const client = new Grok({
     apiKey: process.env.GROQ_API_KEY,
   });
@@ -15,11 +15,11 @@ const system = `You are 'Maestro', a master of music AI assistant, with access t
 export async function askGroq(content: string) {
   const completion = await grok.chat.completions.create({
     messages: [
-      { content: system, role: 'system' },
-      { content, role: 'user' },
+      { content: system, role: "system" },
+      { content, role: "user" },
     ],
-    model: 'llama3-8b-8192',
+    model: "llama3-8b-8192",
   });
 
-  return completion.choices[0].message?.content ?? 'No reply';
+  return completion.choices[0].message?.content ?? "No reply";
 }

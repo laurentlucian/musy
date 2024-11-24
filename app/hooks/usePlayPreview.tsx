@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { createWithEqualityFn } from 'zustand/traditional';
+import { createWithEqualityFn } from "zustand/traditional";
 
 type PlayPreviewStore = {
   preview: string | null;
@@ -47,9 +47,13 @@ export const PlayPreviewRenderer = () => {
     const audio = ref.current;
     if (audio) {
       audio.volume = 0.05;
-      audio.addEventListener('ended', () => setPlayPreviewStore(() => ({ preview: null })));
+      audio.addEventListener("ended", () =>
+        setPlayPreviewStore(() => ({ preview: null })),
+      );
       return () => {
-        audio.removeEventListener('ended', () => setPlayPreviewStore(() => ({ preview: null })));
+        audio.removeEventListener("ended", () =>
+          setPlayPreviewStore(() => ({ preview: null })),
+        );
       };
     }
   }, [preview]);

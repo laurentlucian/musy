@@ -1,11 +1,11 @@
-import { useFetcher } from '@remix-run/react';
+import { useFetcher } from "@remix-run/react";
 
-import { Music } from 'iconsax-react';
+import { Music } from "iconsax-react";
 
-import useCurrentUser from '~/hooks/useCurrentUser';
+import useCurrentUser from "~/hooks/useCurrentUser";
 
-import ActionButton from '../../../shared/FullscreenActionButton';
-import { useFullscreenTrack } from '../../FullscreenTrack';
+import ActionButton from "../../../shared/FullscreenActionButton";
+import { useFullscreenTrack } from "../../FullscreenTrack";
 
 const ProfileSong = () => {
   const currentUser = useCurrentUser();
@@ -15,10 +15,10 @@ const ProfileSong = () => {
   const setAsProfileSong = () => {
     const data = {
       trackId: track.id,
-      userId: currentUser?.userId ?? '',
+      userId: currentUser?.userId ?? "",
     };
 
-    fetcher.submit(data, { action: 'api/track/profile', method: 'POST' });
+    fetcher.submit(data, { action: "api/track/profile", method: "POST" });
   };
 
   return (

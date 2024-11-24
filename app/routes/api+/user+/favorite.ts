@@ -1,22 +1,22 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
-import { typedjson } from 'remix-typedjson';
+import { typedjson } from "remix-typedjson";
 
-import { prisma } from '~/services/db.server';
-import { getCurrentUserId } from '~/services/prisma/users.server';
+import { prisma } from "~/services/db.server";
+import { getCurrentUserId } from "~/services/prisma/users.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const body = await request.formData();
-  const userId = body.get('userId');
-  const isFavorited = body.get('isFavorited');
+  const userId = body.get("userId");
+  const isFavorited = body.get("isFavorited");
 
-  if (typeof userId !== 'string' || typeof isFavorited !== 'string') {
-    return typedjson('Bad Request');
+  if (typeof userId !== "string" || typeof isFavorited !== "string") {
+    return typedjson("Bad Request");
   }
 
-  if (isFavorited === 'true') {
+  if (isFavorited === "true") {
     await prisma.favorite.create({
       data: {
         favorite: {
@@ -27,7 +27,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         },
       },
     });
-  } else if (isFavorited === 'false') {
+  } else if (isFavorited === "false") {
     await prisma.favorite.delete({
       where: {
         userId_favoriteId: { favoriteId: userId, userId: currentUserId },

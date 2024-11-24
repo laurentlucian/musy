@@ -4,15 +4,15 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import { PassThrough } from 'node:stream';
-import type { AppLoadContext, EntryContext } from '@remix-run/node';
-import { createReadableStreamFromReadable } from '@remix-run/node';
-import { RemixServer } from '@remix-run/react';
-import { isbot } from 'isbot';
-import morgan from 'morgan';
-import { renderToPipeableStream } from 'react-dom/server';
-import { createExpressApp } from 'remix-create-express-app';
-import { initCron } from './services/scheduler/croner.server';
+import { PassThrough } from "node:stream";
+import type { AppLoadContext, EntryContext } from "@remix-run/node";
+import { createReadableStreamFromReadable } from "@remix-run/node";
+import { RemixServer } from "@remix-run/react";
+import { isbot } from "isbot";
+import morgan from "morgan";
+import { renderToPipeableStream } from "react-dom/server";
+import { createExpressApp } from "remix-create-express-app";
+import { initCron } from "./services/scheduler/croner.server";
 
 export const streamTimeout = 5000;
 
@@ -26,9 +26,9 @@ export default function handleRequest(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext,
 ) {
-  const handlerName = isbot(request.headers.get('user-agent') || '')
-    ? 'onAllReady'
-    : 'onShellReady';
+  const handlerName = isbot(request.headers.get("user-agent") || "")
+    ? "onAllReady"
+    : "onShellReady";
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
@@ -39,7 +39,7 @@ export default function handleRequest(
           const body = new PassThrough();
           const stream = createReadableStreamFromReadable(body);
 
-          responseHeaders.set('Content-Type', 'text/html');
+          responseHeaders.set("Content-Type", "text/html");
 
           resolve(
             new Response(stream, {
@@ -73,7 +73,7 @@ export default function handleRequest(
 export const musy = createExpressApp({
   configure: async (app) => {
     // customize your express app with additional middleware
-    app.use(morgan('tiny'));
+    app.use(morgan("tiny"));
     await initCron();
   },
   getLoadContext: () => {

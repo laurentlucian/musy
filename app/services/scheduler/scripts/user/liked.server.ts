@@ -1,20 +1,20 @@
-import type { Prisma } from '@prisma/client';
-import debug from 'debug';
-import { isProduction } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
-import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getSpotifyClient } from '~/services/spotify.server';
-import { libraryQ } from '../../scripts/scraper.server';
+import type { Prisma } from "@prisma/client";
+import debug from "debug";
+import { isProduction } from "~/lib/utils";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
+import { libraryQ } from "../../scripts/scraper.server";
 
-const debugLikedQ = debug('userQ:likedQ');
+const debugLikedQ = debug("userQ:likedQ");
 
 export async function syncUserLiked(userId: string) {
-  debugLikedQ('starting...', userId);
+  debugLikedQ("starting...", userId);
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    debugLikedQ('no spotify client');
+    debugLikedQ("no spotify client");
     return;
   }
 
@@ -26,7 +26,7 @@ export async function syncUserLiked(userId: string) {
     const trackDb = createTrackModel(track);
 
     const data: Prisma.LikedSongsCreateInput = {
-      action: 'liked',
+      action: "liked",
       createdAt: new Date(added_at),
       track: {
         connectOrCreate: {
@@ -52,5 +52,5 @@ export async function syncUserLiked(userId: string) {
   }
 
   // Rest of the existing logic...
-  debugLikedQ('completed');
+  debugLikedQ("completed");
 }

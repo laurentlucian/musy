@@ -1,16 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useInterval } from 'ahooks';
+import { useInterval } from "ahooks";
 
-type scrollBehavior = 'natural' | 'reverse';
-export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => {
+type scrollBehavior = "natural" | "reverse";
+export const useMouseScroll = (
+  behavior: scrollBehavior,
+  autoScroll = false,
+) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [clickStartX, setClickStartX] = useState<number | null>(null);
   const [clickStartY, setClickStartY] = useState<number | null>(null);
   const [scrollStartX, setScrollStartX] = useState<number | null>(null);
   const [scrollStartY, setScrollStartY] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [navigator] = useState(typeof window !== 'undefined' ? window.navigator : null);
+  const [navigator] = useState(
+    typeof window !== "undefined" ? window.navigator : null,
+  );
   // disables autoscroll for 2 seconds after user interacts with the scroll
   const hasRecentlyDragged = useRef(false);
   const recentlyDraggedTimeout = useRef<ReturnType<typeof setTimeout>>();
@@ -23,10 +28,10 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       if (!el || hasRecentlyDragged.current) return;
 
       // Check if 'scrollBehavior' is supported
-      if ('scrollBehavior' in Element.prototype) {
+      if ("scrollBehavior" in Element.prototype) {
         // Use 'smooth' scrolling if supported
         el.scrollTo({
-          behavior: 'smooth',
+          behavior: "smooth",
           left: el.scrollLeft + 1,
           top: el.scrollTop + 1,
         });
@@ -39,9 +44,9 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       }
 
       if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
-        if ('scrollBehavior' in Element.prototype) {
+        if ("scrollBehavior" in Element.prototype) {
           el.scrollTo({
-            behavior: 'smooth',
+            behavior: "smooth",
             left: 0,
           });
         } else {
@@ -51,9 +56,9 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
         }
       }
       if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
-        if ('scrollBehavior' in Element.prototype) {
+        if ("scrollBehavior" in Element.prototype) {
           el.scrollTo({
-            behavior: 'smooth',
+            behavior: "smooth",
             top: 0,
           });
         } else {
@@ -85,23 +90,26 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
           2000,
         );
       };
-      el.addEventListener('wheel', onWheel);
-      return () => el.removeEventListener('wheel', onWheel);
+      el.addEventListener("wheel", onWheel);
+      return () => el.removeEventListener("wheel", onWheel);
     }
   }, []);
 
-  const handleDragStart = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (scrollRef.current) {
-      setClickStartX(e.screenX);
-      setClickStartY(e.screenY);
-      setScrollStartX(scrollRef.current.scrollLeft);
-      setScrollStartY(scrollRef.current.scrollTop);
-      setIsDragging(true);
+  const handleDragStart = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (scrollRef.current) {
+        setClickStartX(e.screenX);
+        setClickStartY(e.screenY);
+        setScrollStartX(scrollRef.current.scrollLeft);
+        setScrollStartY(scrollRef.current.scrollTop);
+        setIsDragging(true);
 
-      clearTimeout(recentlyDraggedTimeout.current);
-      hasRecentlyDragged.current = true;
-    }
-  }, []);
+        clearTimeout(recentlyDraggedTimeout.current);
+        hasRecentlyDragged.current = true;
+      }
+    },
+    [],
+  );
 
   const handleDragMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -112,16 +120,27 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
         if (clickStartX !== null && scrollStartX !== null && isDragging) {
           const touchDelta = clickStartX - e.screenX;
           scrollRef.current.scrollLeft =
-            behavior === 'natural' ? scrollStartX - touchDelta : scrollStartX + touchDelta;
+            behavior === "natural"
+              ? scrollStartX - touchDelta
+              : scrollStartX + touchDelta;
         }
         if (clickStartY !== null && scrollStartY !== null && isDragging) {
           const touchDelta = clickStartY - e.screenY;
           scrollRef.current.scrollTop =
-            behavior === 'natural' ? scrollStartY - touchDelta : scrollStartY + touchDelta;
+            behavior === "natural"
+              ? scrollStartY - touchDelta
+              : scrollStartY + touchDelta;
         }
       }
     },
-    [clickStartX, clickStartY, isDragging, scrollStartX, scrollStartY, behavior],
+    [
+      clickStartX,
+      clickStartY,
+      isDragging,
+      scrollStartX,
+      scrollStartY,
+      behavior,
+    ],
   );
 
   const handleDragEnd = useCallback(() => {
@@ -133,7 +152,10 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
       setIsDragging(false);
 
       clearTimeout(recentlyDraggedTimeout.current);
-      recentlyDraggedTimeout.current = setTimeout(() => (hasRecentlyDragged.current = false), 2000);
+      recentlyDraggedTimeout.current = setTimeout(
+        () => (hasRecentlyDragged.current = false),
+        2000,
+      );
     }
   }, [isDragging]);
 
@@ -144,7 +166,10 @@ export const useMouseScroll = (behavior: scrollBehavior, autoScroll = false) => 
 
   const handleTouchEnd = useCallback(() => {
     clearTimeout(recentlyDraggedTimeout.current);
-    recentlyDraggedTimeout.current = setTimeout(() => (hasRecentlyDragged.current = false), 2000);
+    recentlyDraggedTimeout.current = setTimeout(
+      () => (hasRecentlyDragged.current = false),
+      2000,
+    );
   }, []);
 
   const props = {

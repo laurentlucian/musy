@@ -1,7 +1,7 @@
-import { useQueueToSelfData } from '~/hooks/useSendButton';
-import Waver from '~/lib/icons/Waver';
+import { useQueueToSelfData } from "~/hooks/useSendButton";
+import Waver from "~/lib/icons/Waver";
 
-import ActionButton from '../FullscreenActionButton';
+import ActionButton from "../FullscreenActionButton";
 
 type QueueToSelfProps = {
   originUserId?: string;
@@ -10,10 +10,11 @@ type QueueToSelfProps = {
 };
 
 const AddToSelf = ({ originUserId, trackId, withIcon }: QueueToSelfProps) => {
-  const { addToSelfQueue, icon, isAdding, isDone, isError, text } = useQueueToSelfData({
-    originUserId,
-    trackId: trackId,
-  });
+  const { addToSelfQueue, icon, isAdding, isDone, isError, text } =
+    useQueueToSelfData({
+      originUserId,
+      trackId: trackId,
+    });
 
   return (
     <ActionButton

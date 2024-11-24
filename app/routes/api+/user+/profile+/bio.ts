@@ -1,18 +1,18 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
-import { typedjson } from 'remix-typedjson';
+import { typedjson } from "remix-typedjson";
 
-import { prisma } from '~/services/db.server';
-import { getCurrentUserId } from '~/services/prisma/users.server';
+import { prisma } from "~/services/db.server";
+import { getCurrentUserId } from "~/services/prisma/users.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const body = await request.formData();
-  const bio = body.get('bio');
+  const bio = body.get("bio");
 
-  if (typeof bio !== 'string') {
-    return typedjson('Request Error');
+  if (typeof bio !== "string") {
+    return typedjson("Request Error");
   }
 
   await prisma.profile.update({

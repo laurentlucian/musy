@@ -1,8 +1,8 @@
-import type { Track } from '@prisma/client';
+import type { Track } from "@prisma/client";
 
-import { prisma } from '../db.server';
-import { getUserSpotify } from '../spotify.server';
-import { profileWithInfo } from './tracks.server';
+import { prisma } from "../db.server";
+import { getUserSpotify } from "../spotify.server";
+import { profileWithInfo } from "./tracks.server";
 
 export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
   albumName: track.album.name,
@@ -26,18 +26,20 @@ export const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
     where: { id: { in: trackIds } },
   });
 
-  const newTracks = tracks.filter((track) => !existingTracks.find((t) => t.id === track.id));
+  const newTracks = tracks.filter(
+    (track) => !existingTracks.find((t) => t.id === track.id),
+  );
   const prismaTracks = await Promise.all(
     newTracks
-      .filter((t) => t.name !== '') // tracks removed by spotify have empty names
+      .filter((t) => t.name !== "") // tracks removed by spotify have empty names
       .map((track) => prisma.track.create({ data: createTrackModel(track) })),
   ).catch(() => []);
 
   return (
     await prisma.track.findMany({
       include: {
-        liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
-        recent: { orderBy: { playedAt: 'desc' }, select: { user: true } },
+        liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
+        recent: { orderBy: { playedAt: "desc" }, select: { user: true } },
       },
       where: {
         id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
@@ -67,10 +69,10 @@ export const getUserSpotifyLiked = async (userId: string) => {
 };
 
 export const getUserCachedTop = async (userId: string, url: URL) => {
-  const topFilter = (url.searchParams.get('top-filter') || 'medium_term') as
-    | 'medium_term'
-    | 'long_term'
-    | 'short_term';
+  const topFilter = (url.searchParams.get("top-filter") || "medium_term") as
+    | "medium_term"
+    | "long_term"
+    | "short_term";
 
   const cacheKeyTop = `profile_top_prisma${topFilter}_${userId}`;
   // const cachedDataTop = await redis.get(cacheKeyTop);
@@ -83,7 +85,9 @@ export const getUserCachedTop = async (userId: string, url: URL) => {
 
 export const getUserSpotifyPlayback = async (userId: string) => {
   const { spotify } = await getUserSpotify(userId);
-  const playback = await spotify.getMyCurrentPlayingTrack().then((data) => data.body);
+  const playback = await spotify
+    .getMyCurrentPlayingTrack()
+    .then((data) => data.body);
 
   return playback;
 };
@@ -101,15 +105,15 @@ export const getSpotifyTracks = async (keyword: string, userId: string) => {
 export const getDbTracks = async (keyword: string) => {
   return prisma.track.findMany({
     include: {
-      liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+      liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
       recent: {
-        orderBy: { playedAt: 'desc' },
+        orderBy: { playedAt: "desc" },
         select: { user: true },
       },
     },
     orderBy: {
       recent: {
-        _count: 'desc',
+        _count: "desc",
       },
     },
     where: { name: { contains: keyword } },
@@ -134,7 +138,10 @@ export const getSearchResults = async ({
 }) => {
   const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
-  const [tracks, users] = await Promise.all([getDbTracks(keyword), getUsers(keyword, userId)]);
+  const [tracks, users] = await Promise.all([
+    getDbTracks(keyword),
+    getUsers(keyword, userId),
+  ]);
 
   return { spotify: getSpotifyTracks(keyword, userId), tracks, users };
 };
@@ -150,7 +157,7 @@ export const getUserPlaylists = async (userId: string) => {
   return prisma.playlist.findMany({
     orderBy: {
       tracks: {
-        _count: 'desc',
+        _count: "desc",
       },
     },
     take: 20,

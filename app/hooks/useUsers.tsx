@@ -1,11 +1,12 @@
-import { useTypedRouteLoaderData } from 'remix-typedjson';
+import { useTypedRouteLoaderData } from "remix-typedjson";
 
-import type { loader } from '~/root';
+import type { loader } from "~/root";
 
-import useCurrentUser from './useCurrentUser';
-import useFriends from './useFollowing';
+import useCurrentUser from "./useCurrentUser";
+import useFriends from "./useFollowing";
 
-const useUsers = () => useTypedRouteLoaderData<typeof loader>('root')?.users ?? [];
+const useUsers = () =>
+  useTypedRouteLoaderData<typeof loader>("root")?.users ?? [];
 
 export const useRestOfUsers = () => {
   const users = useUsers();
@@ -20,7 +21,11 @@ export const useRestOfUsers = () => {
     })
     .sort((user, prevUser) => {
       if (user.playback === null && prevUser.playback !== null) return 0;
-      return currentUser?.favorite?.some(({ favoriteId }) => favoriteId === user.userId) ? -1 : 1;
+      return currentUser?.favorite?.some(
+        ({ favoriteId }) => favoriteId === user.userId,
+      )
+        ? -1
+        : 1;
     });
   return restOfUsers;
 };

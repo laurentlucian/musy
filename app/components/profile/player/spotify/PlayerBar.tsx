@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-const PlayerBar = ({ playback }: { playback: SpotifyApi.CurrentlyPlayingResponse }) => {
+const PlayerBar = ({
+  playback,
+}: { playback: SpotifyApi.CurrentlyPlayingResponse }) => {
   const [shouldRefresh, setToRefresh] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
@@ -37,8 +39,8 @@ const PlayerBar = ({ playback }: { playback: SpotifyApi.CurrentlyPlayingResponse
     <div
       ref={boxRef}
       style={{
-        background: 'var(--bg-musy)',
-        height: '2px',
+        background: "var(--bg-musy)",
+        height: "2px",
         width: initial,
       }}
     />

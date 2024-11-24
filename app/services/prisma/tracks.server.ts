@@ -1,16 +1,16 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from "@prisma/client";
 
-import type { Activity } from '~/lib/types/types';
-import { prisma } from '~/services/db.server';
+import type { Activity } from "~/lib/types/types";
+import { prisma } from "~/services/db.server";
 
 export const trackWithInfo = {
   include: {
-    liked: { orderBy: { createdAt: 'asc' }, select: { user: true } },
+    liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
     queue: {
       select: { owner: { select: { user: true } } },
-      where: { action: 'add' },
+      where: { action: "add" },
     }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-    recent: { orderBy: { playedAt: 'asc' }, select: { user: true } },
+    recent: { orderBy: { playedAt: "asc" }, select: { user: true } },
   },
 } as const;
 
@@ -22,7 +22,7 @@ export const profileWithInfo = {
       },
     },
     playbacks: {
-      orderBy: { endedAt: 'desc' },
+      orderBy: { endedAt: "desc" },
       take: 1,
     },
   },
@@ -69,7 +69,7 @@ export const getFeed = async (userId: string, limit = 10, offset = 0) => {
       user: profileWithInfo,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     skip: offset * limit,
     take: limit,
@@ -91,7 +91,7 @@ export const getUserRecommended = async (userId: string) => {
     include: {
       track: trackWithInfo,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     where: { userId },
   });
 
@@ -104,7 +104,7 @@ export const getUserRecent = async (userId: string) => {
       track: trackWithInfo,
     },
     orderBy: {
-      playedAt: 'desc',
+      playedAt: "desc",
     },
     take: 50,
     where: {
@@ -121,7 +121,7 @@ export const getUserLiked = async (userId: string) => {
       track: trackWithInfo,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     take: 50,
     where: { userId },
@@ -133,8 +133,8 @@ export const getUserLiked = async (userId: string) => {
 export const getTopLeaderboard = async () => {
   const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
   const trackIds = await prisma.recentSongs.groupBy({
-    by: ['trackId'],
-    orderBy: { _count: { trackId: 'desc' } },
+    by: ["trackId"],
+    orderBy: { _count: { trackId: "desc" } },
     take: 10,
     where: { playedAt: { gte: SEVEN_DAYS } },
   });
@@ -173,7 +173,7 @@ export const getSessions = () => {
           track: true,
         },
         orderBy: {
-          playedAt: 'desc',
+          playedAt: "desc",
         },
         take: 50,
       },
@@ -184,7 +184,7 @@ export const getSessions = () => {
       },
     },
     orderBy: {
-      startTime: 'desc',
+      startTime: "desc",
     },
     take: 30,
   });

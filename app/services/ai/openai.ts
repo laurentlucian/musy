@@ -1,7 +1,7 @@
-import OpenAI from 'openai';
-import { singleton } from '../singleton.server';
+import OpenAI from "openai";
+import { singleton } from "../singleton.server";
 
-const openai = singleton('openai', () => {
+const openai = singleton("openai", () => {
   return new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -9,9 +9,9 @@ const openai = singleton('openai', () => {
 
 export async function askGPT(content: string) {
   const completion = await openai.chat.completions.create({
-    messages: [{ content, role: 'user' }],
-    model: 'gpt-3.5-turbo',
+    messages: [{ content, role: "user" }],
+    model: "gpt-3.5-turbo",
   });
 
-  return completion.choices[0].message?.content ?? 'No reply';
+  return completion.choices[0].message?.content ?? "No reply";
 }

@@ -1,4 +1,4 @@
-import { createWithEqualityFn } from 'zustand/traditional';
+import { createWithEqualityFn } from "zustand/traditional";
 interface DrawerStateConfig {
   actions: {
     hideMenu: () => void;
@@ -7,17 +7,20 @@ interface DrawerStateConfig {
   show: boolean;
 }
 
-const useMobileKeyboardCheck = createWithEqualityFn<DrawerStateConfig>()((set) => ({
-  actions: {
-    hideMenu: () => set({ show: false }),
-    showMenu: () => set({ show: true }),
-  },
-  show: true,
-}));
+const useMobileKeyboardCheck = createWithEqualityFn<DrawerStateConfig>()(
+  (set) => ({
+    actions: {
+      hideMenu: () => set({ show: false }),
+      showMenu: () => set({ show: true }),
+    },
+    show: true,
+  }),
+);
 
 export const useMobileKeyboard = () =>
   useMobileKeyboardCheck((state) => ({
     show: state.show,
   }));
 
-export const useMobileKeyboardActions = () => useMobileKeyboardCheck((state) => state.actions);
+export const useMobileKeyboardActions = () =>
+  useMobileKeyboardCheck((state) => state.actions);

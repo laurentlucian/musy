@@ -1,15 +1,21 @@
-import type { Prisma } from '@prisma/client';
-import invariant from 'tiny-invariant';
-import { prisma } from '~/services/db.server';
-import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import type { Prisma } from "@prisma/client";
+import invariant from "tiny-invariant";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 export const upsertPlayback = async (
   userId: string,
   playback: SpotifyApi.CurrentPlaybackResponse,
 ) => {
   const { progress_ms: progress, timestamp } = playback;
-  if (!playback.item || playback.item.type !== 'track' || !progress || !timestamp) return;
+  if (
+    !playback.item ||
+    playback.item.type !== "track" ||
+    !progress ||
+    !timestamp
+  )
+    return;
 
   const track = createTrackModel(playback.item);
   const data = {
@@ -56,7 +62,7 @@ export const upsertPlayback = async (
 
   if (!recentlyAdded) {
     const recentSongs: Prisma.RecentSongsCreateInput = {
-      action: 'played',
+      action: "played",
       playedAt: endedAt,
       track: {
         connectOrCreate: {
@@ -85,13 +91,14 @@ export const upsertPlayback = async (
 export const getPlaybackState = async (id: string) => {
   try {
     const { spotify } = await getSpotifyClient(id);
-    invariant(spotify, 'Spotify API not found');
+    invariant(spotify, "Spotify API not found");
     const { body: playback } = await spotify.getMyCurrentPlaybackState();
     const { is_playing, item } = playback;
-    if (!is_playing || !item || item.type !== 'track') return { id, playback: null };
+    if (!is_playing || !item || item.type !== "track")
+      return { id, playback: null };
     return { id, playback };
   } catch (e) {
-    if (e instanceof Error && e.message.includes('revoked')) {
+    if (e instanceof Error && e.message.includes("revoked")) {
       await prisma.user.update({ data: { revoked: true }, where: { id } });
       await prisma.queue.deleteMany({
         where: { OR: [{ userId: id }, { ownerId: id }] },

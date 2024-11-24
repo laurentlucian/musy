@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useTypedFetcher } from 'remix-typedjson';
+import { useTypedFetcher } from "remix-typedjson";
 
-import type { ProfileWithInfo } from '~/lib/types/types';
-import type { loader } from '~/routes/api+/playback+/$playbackId';
+import type { ProfileWithInfo } from "~/lib/types/types";
+import type { loader } from "~/routes/api+/playback+/$playbackId";
 
 const usePlaybackTracks = (user: ProfileWithInfo) => {
   const { data, load } = useTypedFetcher<typeof loader | undefined>();

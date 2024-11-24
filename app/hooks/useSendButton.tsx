@@ -1,16 +1,22 @@
-import { useParams } from '@remix-run/react';
-import { AlertCircle, Check } from 'react-feather';
+import { useParams } from "@remix-run/react";
+import { AlertCircle, Check } from "react-feather";
 
-import { DirectInbox, CloseSquare, Send2, TickSquare, Star1 } from 'iconsax-react';
-import { useTypedFetcher } from 'remix-typedjson';
+import {
+  DirectInbox,
+  CloseSquare,
+  Send2,
+  TickSquare,
+  Star1,
+} from "iconsax-react";
+import { useTypedFetcher } from "remix-typedjson";
 
-import Waver from '~/lib/icons/Waver';
-import type { action as addAction } from '~/routes/api+/queue+/add';
-import type { action as sendAction } from '~/routes/api+/queue+/send';
-import type { action as recommendAction } from '~/routes/api+/recommend+/add';
+import Waver from "~/lib/icons/Waver";
+import type { action as addAction } from "~/routes/api+/queue+/add";
+import type { action as sendAction } from "~/routes/api+/queue+/send";
+import type { action as recommendAction } from "~/routes/api+/recommend+/add";
 
-import { useCurrentUserId } from './useCurrentUser';
-import { useUserRecommended } from './useUserLibrary';
+import { useCurrentUserId } from "./useCurrentUser";
+import { useUserRecommended } from "./useUserLibrary";
 
 type SelfQueueData = {
   originUserId?: string;
@@ -27,16 +33,16 @@ export const useRecommendData = (trackId: string) => {
   const fetcher = useTypedFetcher<typeof recommendAction>();
   const { isRecommended, toggleRecommend } = useUserRecommended(trackId);
 
-  const action = isRecommended ? 'api/recommend/remove' : 'api/recommend/add';
+  const action = isRecommended ? "api/recommend/remove" : "api/recommend/add";
 
   const handleRecommend = (): void => {
     toggleRecommend();
-    fetcher.submit({ trackId }, { action, method: 'POST' });
+    fetcher.submit({ trackId }, { action, method: "POST" });
   };
 
-  const isAdding = fetcher.formData?.get('trackId') === trackId;
-  const isDone = fetcher.state === 'idle' && fetcher.data != null;
-  const isError = fetcher.data?.includes('Error') ? fetcher.data : null;
+  const isAdding = fetcher.formData?.get("trackId") === trackId;
+  const isDone = fetcher.state === "idle" && fetcher.data != null;
+  const isError = fetcher.data?.includes("Error") ? fetcher.data : null;
 
   const isDisabled = !!isError || !!isAdding;
 
@@ -47,55 +53,70 @@ export const useRecommendData = (trackId: string) => {
   ) : isError ? (
     <AlertCircle />
   ) : (
-    <Send2 variant='Bold' />
+    <Send2 variant="Bold" />
   );
 
-  const leftIcon = isRecommended ? <Star1 variant='Bold' /> : <Star1 />;
+  const leftIcon = isRecommended ? <Star1 variant="Bold" /> : <Star1 />;
 
   const child = isAdding ? (
     <Waver />
   ) : isRecommended ? (
-    'Recommended'
+    "Recommended"
   ) : fetcher.data ? (
     fetcher.data
   ) : (
-    'Recommend'
+    "Recommend"
   );
 
   return { child, handleRecommend, icon, isDisabled, leftIcon };
 };
 
-export const useQueueToSelfData = ({ originUserId, trackId }: SelfQueueData) => {
+export const useQueueToSelfData = ({
+  originUserId,
+  trackId,
+}: SelfQueueData) => {
   const currentUserId = useCurrentUserId();
   const { id } = useParams();
   const data = {
-    fromId: originUserId ?? id ?? currentUserId ?? '',
+    fromId: originUserId ?? id ?? currentUserId ?? "",
     trackId,
   };
 
   const fetcher = useTypedFetcher<typeof addAction>();
 
   const addToSelfQueue = () => {
-    fetcher.submit(data, { action: '/api/queue/add', method: 'POST' });
+    fetcher.submit(data, { action: "/api/queue/add", method: "POST" });
   };
-  const isAdding = fetcher.formData?.get('trackId') === trackId;
+  const isAdding = fetcher.formData?.get("trackId") === trackId;
 
-  const isDone = fetcher.state === 'idle' && fetcher.data != null;
-  const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
+  const isDone = fetcher.state === "idle" && fetcher.data != null;
+  const isError = fetcher.data
+    ? fetcher.data.includes("Error")
+      ? fetcher.data
+      : null
+    : null;
   const icon = isDone ? (
-    <TickSquare size='25px' />
+    <TickSquare size="25px" />
   ) : isError ? (
-    <CloseSquare size='25px' />
+    <CloseSquare size="25px" />
   ) : (
     <DirectInbox />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Timeout') : 'Add to queue';
+  const text = isDone
+    ? fetcher.data
+      ? fetcher.data
+      : "Timeout"
+    : "Add to queue";
 
   return { addToSelfQueue, icon, isAdding, isDone, isError, text };
 };
 
-export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: SendData) => {
+export const useQueueToFriendData = ({
+  trackId,
+  userId: toId,
+  username = "",
+}: SendData) => {
   const data = {
     toId,
     trackId,
@@ -104,23 +125,31 @@ export const useQueueToFriendData = ({ trackId, userId: toId, username = '' }: S
   const fetcher = useTypedFetcher<typeof sendAction>();
 
   const addToFriendsQueue = () => {
-    fetcher.submit(data, { action: '/api/queue/send', method: 'POST' });
+    fetcher.submit(data, { action: "/api/queue/send", method: "POST" });
   };
-  const isAdding = fetcher.formData?.get('trackId') === trackId;
+  const isAdding = fetcher.formData?.get("trackId") === trackId;
 
-  const isDone = fetcher.state === 'idle' && fetcher.data != null;
+  const isDone = fetcher.state === "idle" && fetcher.data != null;
 
-  const isError = fetcher.data ? (fetcher.data.includes('Error') ? fetcher.data : null) : null;
+  const isError = fetcher.data
+    ? fetcher.data.includes("Error")
+      ? fetcher.data
+      : null
+    : null;
 
   const icon = isDone ? (
-    <TickSquare size='25px' />
+    <TickSquare size="25px" />
   ) : isError ? (
-    <CloseSquare size='25px' />
+    <CloseSquare size="25px" />
   ) : (
-    <Send2 variant='Outline' size='25px' />
+    <Send2 variant="Outline" size="25px" />
   );
 
-  const text = isDone ? (fetcher.data ? fetcher.data : 'Timeout') : username.split(/[ .]/)[0];
+  const text = isDone
+    ? fetcher.data
+      ? fetcher.data
+      : "Timeout"
+    : username.split(/[ .]/)[0];
 
   return { addToFriendsQueue, icon, isAdding, isDone, isError, text };
 };

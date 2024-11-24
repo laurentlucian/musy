@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import type { Track } from '~/lib/types/types';
+import type { Track } from "~/lib/types/types";
 
-import TileTrackInfo from './TileTrackInfo';
+import TileTrackInfo from "./TileTrackInfo";
 
 type TileTrackListProps = {
   action?: ReactNode;
@@ -11,13 +11,18 @@ type TileTrackListProps = {
   track: Track;
 };
 
-const TileTrackList = ({ action, image, onClick, track }: TileTrackListProps) => {
+const TileTrackList = ({
+  action,
+  image,
+  onClick,
+  track,
+}: TileTrackListProps) => {
   return (
-    <div className='stack-h-2'>
+    <div className="stack-h-2">
       {image}
-      <div className='stack w-full justify-between' onClick={onClick}>
+      <div className="stack w-full justify-between" onClick={onClick}>
         <TileTrackInfo track={track} />
-        <div className='flex'>{action}</div>
+        <div className="flex">{action}</div>
       </div>
     </div>
   );

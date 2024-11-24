@@ -1,6 +1,6 @@
-import { useRevalidator } from '@remix-run/react';
+import { useRevalidator } from "@remix-run/react";
 
-import useVisibilityChange from './useVisibilityChange';
+import useVisibilityChange from "./useVisibilityChange";
 
 const useRevalidateOnFocus = () => {
   const { revalidate } = useRevalidator();

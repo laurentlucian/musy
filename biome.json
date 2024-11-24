@@ -7,31 +7,37 @@
     "enabled": true,
     "indentWidth": 2,
     "indentStyle": "space",
-    "lineWidth": 100,
-    "lineEnding": "lf"
+    "formatWithErrors": true
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "style": {
-        "noUnusedTemplateLiteral": "off"
-      },
       "complexity": {
-        "noBannedTypes": "off"
+        "noForEach": "warn"
+      },
+      "recommended": true,
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "off",
+        "useExhaustiveDependencies": "off"
       },
       "nursery": {
-        "useSortedClasses": "warn"
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "functions": ["cva", "cn", "cx"]
+          }
+        }
       },
-      "performance": {
-        "recommended": true
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "useImportType": "error",
+        "useExportType": "error"
       }
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "single",
-      "jsxQuoteStyle": "single"
     }
   },
   "vcs": {
@@ -39,9 +45,9 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "css": {
+  "javascript": {
     "formatter": {
-      "enabled": true
+      "quoteStyle": "double"
     }
   }
 }

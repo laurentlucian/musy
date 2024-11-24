@@ -1,16 +1,16 @@
-import debug from 'debug';
-import { prisma } from '~/services/db.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import debug from "debug";
+import { prisma } from "~/services/db.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugFollowQ = debug('userQ:followQ');
+const debugFollowQ = debug("userQ:followQ");
 
 export async function syncUserFollow(userId: string) {
-  debugFollowQ('starting...');
+  debugFollowQ("starting...");
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    debugFollowQ('no spotify client');
+    debugFollowQ("no spotify client");
     return;
   }
 
@@ -24,7 +24,7 @@ export async function syncUserFollow(userId: string) {
   const { body: isFollowing } = await spotify.isFollowingUsers(users);
   const following = users.filter((_, i) => isFollowing[i]);
 
-  debugFollowQ('adding following to db', following.length);
+  debugFollowQ("adding following to db", following.length);
 
   for (const followingId of following) {
     await prisma.follow.upsert({
@@ -42,5 +42,5 @@ export async function syncUserFollow(userId: string) {
     });
   }
 
-  debugFollowQ('completed');
+  debugFollowQ("completed");
 }

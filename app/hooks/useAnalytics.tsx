@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { posthog } from 'posthog-js';
-import { useTypedRouteLoaderData } from 'remix-typedjson';
+import { posthog } from "posthog-js";
+import { useTypedRouteLoaderData } from "remix-typedjson";
 
-import { isProduction } from '~/lib/utils';
-import type { loader } from '~/root';
+import { isProduction } from "~/lib/utils";
+import type { loader } from "~/root";
 
-import useCurrentUser from './useCurrentUser';
+import useCurrentUser from "./useCurrentUser";
 
 const useAnalytics = () => {
-  const ENV = useTypedRouteLoaderData<typeof loader>('root')?.ENV;
+  const ENV = useTypedRouteLoaderData<typeof loader>("root")?.ENV;
   const currentUser = useCurrentUser();
 
   useEffect(() => {
-    if (!isProduction || typeof ENV?.PUBLIC_POSTHOG_KEY !== 'string') return;
+    if (!isProduction || typeof ENV?.PUBLIC_POSTHOG_KEY !== "string") return;
 
     posthog.init(ENV.PUBLIC_POSTHOG_KEY, {
-      api_host: 'https://app.posthog.com',
+      api_host: "https://app.posthog.com",
     });
   }, [ENV?.PUBLIC_POSTHOG_KEY]);
 

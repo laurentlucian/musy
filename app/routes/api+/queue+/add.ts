@@ -1,24 +1,28 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
-import type { Prisma } from '@prisma/client';
-import { typedjson } from 'remix-typedjson';
+import type { Prisma } from "@prisma/client";
+import { typedjson } from "remix-typedjson";
 
-import { prisma } from '~/services/db.server';
-import { createTrackModel, getSpotifyTrack } from '~/services/prisma/spotify.server';
-import { getTrack } from '~/services/prisma/tracks.server';
-import { getCurrentUserId } from '~/services/prisma/users.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import { prisma } from "~/services/db.server";
+import {
+  createTrackModel,
+  getSpotifyTrack,
+} from "~/services/prisma/spotify.server";
+import { getTrack } from "~/services/prisma/tracks.server";
+import { getCurrentUserId } from "~/services/prisma/users.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const currentUserId = await getCurrentUserId(request);
   const body = await request.formData();
-  const fromId = body.get('fromId');
-  const trackId = body.get('trackId');
+  const fromId = body.get("fromId");
+  const trackId = body.get("trackId");
 
-  const invalidFormData = typeof trackId !== 'string' || typeof fromId !== 'string';
+  const invalidFormData =
+    typeof trackId !== "string" || typeof fromId !== "string";
 
-  if (invalidFormData) return typedjson('Request Error');
+  if (invalidFormData) return typedjson("Request Error");
 
   const track = await getTrack(trackId).then(async (track) => {
     if (!track) {
@@ -33,7 +37,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   });
 
   const data: Prisma.QueueCreateInput = {
-    action: 'add',
+    action: "add",
     owner: {
       connect: {
         id: currentUserId,
@@ -59,29 +63,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (playback) {
     try {
       const { spotify } = await getSpotifyClient(currentUserId);
-      if (!spotify) return typedjson('Error: no access to API');
+      if (!spotify) return typedjson("Error: no access to API");
       await spotify.addToQueue(track.uri);
     } catch (err) {
       console.error(err);
       if (err instanceof Error) {
-        const details = err.message.split('Details: ')[1].split('.')[0];
+        const details = err.message.split("Details: ")[1].split(".")[0];
 
         return typedjson(`Error: ${details}`);
       }
-      return typedjson('Error: Premium required');
+      return typedjson("Error: Premium required");
     }
 
     try {
       await prisma.queue.create({ data });
     } catch (err) {
       console.error(err);
-      return typedjson('Queued (Prisma Error)');
+      return typedjson("Queued (Prisma Error)");
     }
   } else {
     await prisma.queue.create({ data: { pending: true, ...data } });
   }
 
-  return typedjson('Queued');
+  return typedjson("Queued");
 };
 
 export const loader = () => {

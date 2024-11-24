@@ -1,16 +1,16 @@
-import debug from 'debug';
-import invariant from 'tiny-invariant';
-import { notNull } from '~/lib/utils';
-import { prisma } from '~/services/db.server';
-import { createTrackModel } from '~/services/prisma/spotify.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import debug from "debug";
+import invariant from "tiny-invariant";
+import { notNull } from "~/lib/utils";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugPlaylistQ = debug('userQ:playlistQ');
+const debugPlaylistQ = debug("userQ:playlistQ");
 
 export async function syncUserPlaylist(userId: string) {
-  debugPlaylistQ('starting...', userId);
+  debugPlaylistQ("starting...", userId);
   const { spotify } = await getSpotifyClient(userId);
-  invariant(spotify, 'Spotify client not found');
+  invariant(spotify, "Spotify client not found");
 
   const response = await spotify.getUserPlaylists(userId, {
     limit: 50,
@@ -30,7 +30,7 @@ export async function syncUserPlaylist(userId: string) {
   });
 
   debugPlaylistQ(
-    'playlists',
+    "playlists",
     playlists.map((p) => p.name),
   );
 
@@ -44,7 +44,7 @@ export async function syncUserPlaylist(userId: string) {
   );
 
   debugPlaylistQ(
-    'playlistTracks',
+    "playlistTracks",
     playlistsTracks.map((p) => p.body.items.length),
   );
 
@@ -75,7 +75,7 @@ export async function syncUserPlaylist(userId: string) {
       },
       where: { id: playlist.id },
     });
-    debugPlaylistQ('playlist - added playlist', playlist.name);
+    debugPlaylistQ("playlist - added playlist", playlist.name);
 
     const tracks = playlistsTracks[index];
 
@@ -89,7 +89,7 @@ export async function syncUserPlaylist(userId: string) {
       )
       .filter(notNull);
 
-    debugPlaylistQ('playlist - adding tracks', tracks.body.items.length);
+    debugPlaylistQ("playlist - adding tracks", tracks.body.items.length);
     try {
       for (const { addedAt, track } of trackModels) {
         await prisma.track.upsert({
@@ -115,11 +115,11 @@ export async function syncUserPlaylist(userId: string) {
           },
         });
       }
-      debugPlaylistQ('playlist - added tracks');
+      debugPlaylistQ("playlist - added tracks");
     } catch (e) {
-      debugPlaylistQ('playlist - error adding tracks', e);
+      debugPlaylistQ("playlist - error adding tracks", e);
     }
   }
 
-  debugPlaylistQ('completed');
+  debugPlaylistQ("completed");
 }

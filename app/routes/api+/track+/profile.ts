@@ -1,17 +1,17 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
-import { typedjson } from 'remix-typedjson';
+import { typedjson } from "remix-typedjson";
 
-import { prisma } from '~/services/db.server';
+import { prisma } from "~/services/db.server";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
-  const id = body.get('userId');
-  const trackId = body.get('trackId');
+  const id = body.get("userId");
+  const trackId = body.get("trackId");
 
-  if (typeof id !== 'string' || typeof trackId !== 'string') {
-    return typedjson('Request Error');
+  if (typeof id !== "string" || typeof trackId !== "string") {
+    return typedjson("Request Error");
   }
 
   const data = {
@@ -29,9 +29,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
   } catch (error) {
     console.error(error);
-    return 'Failed to add profile song';
+    return "Failed to add profile song";
   }
-  return typedjson('Sent');
+  return typedjson("Sent");
 };
 
 export const loader = () => {

@@ -1,6 +1,6 @@
-import type { TrackWithInfo } from '~/lib/types/types';
+import type { TrackWithInfo } from "~/lib/types/types";
 
-import TileTrackImage from '../../track/TileTrackImage';
+import TileTrackImage from "../../track/TileTrackImage";
 
 const TilePlaybackTracksImage = ({
   fullscreen,
@@ -23,7 +23,7 @@ const TilePlaybackTracksImage = ({
     );
 
   return (
-    <div className='grid grid-cols-2'>
+    <div className="grid grid-cols-2">
       {tracks.slice(0, 4).map((track, index) => (
         <TileTrackImage
           key={index}

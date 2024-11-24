@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Heart } from 'react-feather';
+import { useState } from "react";
+import { Heart } from "react-feather";
 
-import type { Profile } from '@prisma/client';
+import type { Profile } from "@prisma/client";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/lib/ui/tooltip';
-import { shortenUsername } from '~/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/lib/ui/tooltip";
+import { shortenUsername } from "~/lib/utils";
 
 const LikedBy = (props: {
   liked?: {
@@ -18,7 +18,7 @@ const LikedBy = (props: {
   if (!props.liked?.length) return null;
   return (
     <div
-      className='stack-h-1'
+      className="stack-h-1"
       onMouseEnter={() => setIsLabelOpen(true)}
       onMouseLeave={() => setIsLabelOpen(false)}
       onClick={() => setIsLabelOpen((prev) => !prev)}
@@ -26,11 +26,11 @@ const LikedBy = (props: {
       <Heart size={15} />
       <Tooltip open={isLabelOpen}>
         <TooltipTrigger>
-          <div className='flex -space-x-2 overflow-hidden'>
+          <div className="flex -space-x-2 overflow-hidden">
             {props.liked.slice(0, slice).map(({ user }) => (
               <img
-                alt='user-avatar'
-                className='w-5 rounded-full'
+                alt="user-avatar"
+                className="w-5 rounded-full"
                 key={user?.userId}
                 src={user?.image}
               />
@@ -41,8 +41,12 @@ const LikedBy = (props: {
           {props.liked.map(({ user }, index) => {
             const name = shortenUsername(user?.name);
             return (
-              <div className='stack-h-2' key={index}>
-                <img className='w-5 rounded-full' alt={user?.name} src={user?.image} />
+              <div className="stack-h-2" key={index}>
+                <img
+                  className="w-5 rounded-full"
+                  alt={user?.name}
+                  src={user?.image}
+                />
                 <p>{name}</p>
               </div>
             );

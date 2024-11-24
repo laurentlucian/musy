@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from "react";
 
 const useIsVisible = () => {
   const ref = useRef<HTMLDivElement | null>(null);

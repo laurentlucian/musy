@@ -1,8 +1,8 @@
-import type { ProfileWithInfo } from '~/lib/types/types';
+import type { ProfileWithInfo } from "~/lib/types/types";
 
-import FullscreenFadeLayout from '../shared/FullscreenFadeLayout';
-import FullscreenPlaybackActive from './FullscreenPlaybackActive';
-import FullscreenPlaybackInactive from './FullscreenPlaybackInactive';
+import FullscreenFadeLayout from "../shared/FullscreenFadeLayout";
+import FullscreenPlaybackActive from "./FullscreenPlaybackActive";
+import FullscreenPlaybackInactive from "./FullscreenPlaybackInactive";
 
 const FullscreenPlayback = ({ user }: { user: ProfileWithInfo }) => {
   return (

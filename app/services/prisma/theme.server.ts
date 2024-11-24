@@ -1,4 +1,4 @@
-import { prisma } from '../db.server';
+import { prisma } from "../db.server";
 
 export const upsertThemeField = async (
   field: string,
@@ -8,7 +8,7 @@ export const upsertThemeField = async (
 ) => {
   if (!data) return;
 
-  const value = isToggle ? data === 'true' : data;
+  const value = isToggle ? data === "true" : data;
 
   await prisma.theme.upsert({
     create: { [field]: value, userId },
@@ -25,7 +25,7 @@ export const upsertSettingsField = async (
 ) => {
   if (!data) return;
 
-  const value = isToggle ? data === 'true' : data;
+  const value = isToggle ? data === "true" : data;
 
   await prisma.settings.upsert({
     create: { [field]: value, userId },

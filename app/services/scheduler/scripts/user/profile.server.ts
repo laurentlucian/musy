@@ -1,16 +1,19 @@
-import debug from 'debug';
-import { updateUserImage, updateUserName } from '~/services/prisma/users.server';
-import { getSpotifyClient } from '~/services/spotify.server';
+import debug from "debug";
+import {
+  updateUserImage,
+  updateUserName,
+} from "~/services/prisma/users.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugProfileQ = debug('userQ:profileQ');
+const debugProfileQ = debug("userQ:profileQ");
 
 export async function syncUserProfile(userId: string) {
-  debugProfileQ('starting...');
+  debugProfileQ("starting...");
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    debugProfileQ('no spotify client');
+    debugProfileQ("no spotify client");
     return;
   }
 
@@ -26,5 +29,5 @@ export async function syncUserProfile(userId: string) {
     await updateUserName(userId, name);
   }
 
-  debugProfileQ('completed');
+  debugProfileQ("completed");
 }

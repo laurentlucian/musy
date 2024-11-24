@@ -1,5 +1,5 @@
-import { Cron } from 'croner';
-import debug from 'debug';
+import { Cron } from "croner";
+import debug from "debug";
 
 export abstract class BaseScheduler {
   protected cron: Cron | null = null;
@@ -13,7 +13,7 @@ export abstract class BaseScheduler {
 
   public start(schedule: string | Date, runOnStart = false) {
     if (this.cron) {
-      this.debugger('Scheduler already running');
+      this.debugger("Scheduler already running");
       return;
     }
 
@@ -21,16 +21,16 @@ export abstract class BaseScheduler {
       schedule,
       async () => {
         try {
-          this.debugger('Starting execution');
+          this.debugger("Starting execution");
           await this.execute();
-          this.debugger('Execution completed');
+          this.debugger("Execution completed");
         } catch (error) {
-          this.debugger('Execution failed:', error);
+          this.debugger("Execution failed:", error);
         }
       },
       {
         protect: true,
-        timezone: 'America/Los_Angeles',
+        timezone: "America/Los_Angeles",
       },
     );
 
@@ -43,7 +43,7 @@ export abstract class BaseScheduler {
     if (this.cron) {
       this.cron.stop();
       this.cron = null;
-      this.debugger('Scheduler stopped');
+      this.debugger("Scheduler stopped");
     }
   }
 }
