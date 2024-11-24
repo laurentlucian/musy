@@ -70,29 +70,23 @@ const Analysis = () => {
               onChange={onChange}
             />
             {search && (
-              <div
-                className="absolute right-1 flex h-9 w-16 justify-end pr-1"
-                children={
-                  <>
-                    {/* {busy && <Spinner size="xs" mr={2} />} */}
-                    <button
-                      type="button"
-                      aria-label="close"
-                      className="rounded"
-                      onClick={() => {
-                        setSearch("");
-                        searchParams.delete("spotify");
-                        setSearchParams(searchParams, {
-                          replace: true,
-                          state: { scroll: false },
-                        });
-                      }}
-                    >
-                      <X />
-                    </button>
-                  </>
-                }
-              />
+              <div className="absolute right-1 flex h-9 w-16 justify-end pr-1">
+                <button
+                  type="button"
+                  aria-label="close"
+                  className="rounded"
+                  onClick={() => {
+                    setSearch("");
+                    searchParams.delete("spotify");
+                    setSearchParams(searchParams, {
+                      replace: true,
+                      state: { scroll: false },
+                    });
+                  }}
+                >
+                  <X />
+                </button>
+              </div>
             )}
           </div>
         </div>

@@ -61,6 +61,7 @@ const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
     >
       <div className="absolute inset-0 top-0 left-2 flex w-fit items-center justify-start">
         <button
+          type="button"
           aria-label="search"
           className="flex cursor-pointer select-none items-center justify-center whitespace-nowrap p-0 text-musy"
         >
@@ -89,24 +90,20 @@ const SearchInput = ({ autoFocus, className, ...props }: SearchInputProps) => {
         onBlur={showMenu}
       />
       {search && (
-        <div
-          className="absolute top-0 right-1 bottom-0 flex items-center justify-center"
-          children={
-            <>
-              {isLoading && <Waver />}
-              <button
-                className="mr-1 rounded"
-                aria-label="close"
-                onClick={() => {
-                  setSearch("");
-                  removeSearchURL();
-                }}
-              >
-                <X />
-              </button>
-            </>
-          }
-        />
+        <div className="absolute top-0 right-1 bottom-0 flex items-center justify-center">
+          {isLoading && <Waver />}
+          <button
+            type="button"
+            className="mr-1 rounded"
+            aria-label="close"
+            onClick={() => {
+              setSearch("");
+              removeSearchURL();
+            }}
+          >
+            <X />
+          </button>
+        </div>
       )}
     </div>
   );

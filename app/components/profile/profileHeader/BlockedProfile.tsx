@@ -33,6 +33,7 @@ const BlockedProfile = ({ name }: { name: string }) => {
         </p>
       </div>
       <button
+        type="button"
         className="w-72 text-md md:w-300px"
         onClick={() => window.history.back()}
       >
