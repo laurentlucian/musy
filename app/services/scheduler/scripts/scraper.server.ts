@@ -4,11 +4,11 @@ import { prisma } from "~/services/db.server";
 import { createTrackModel } from "~/services/prisma/spotify.server";
 import { getSpotifyClient } from "~/services/spotify.server";
 
-export const libraryQ = async (userId: string) => {
+export const scraper = async (userId: string) => {
   const limit = 50;
   const pages = 10;
   const { spotify } = await getSpotifyClient(userId);
-  invariant(spotify, "libraryQ -> spotify api not found");
+  invariant(spotify, "scraper -> spotify api not found");
 
   // loop through pages backwards; cases where user has too many liked songs;
   // ideally, we'd want to put this in a higher time out so api limit doesn't fail the job
@@ -16,7 +16,7 @@ export const libraryQ = async (userId: string) => {
     const {
       body: { items: liked },
     } = await spotify.getMySavedTracks({ limit, offset: i * limit });
-    console.log("libraryQ -> adding page", i);
+    console.log("scraper -> adding page", i);
     for (const { added_at, track } of liked) {
       const trackDb = createTrackModel(track);
       const data: Prisma.LikedSongsCreateInput = {
@@ -50,7 +50,7 @@ export const libraryQ = async (userId: string) => {
     }
 
     // sleep for 5 seconds to avoid api limit
-    console.log("libraryQ -> sleeping for 5 seconds");
+    console.log("scraper -> sleeping for 5 seconds");
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 };

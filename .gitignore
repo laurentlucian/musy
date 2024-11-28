@@ -4,10 +4,8 @@ node_modules
 .output
 /build/
 /public/build
-*.db
-/prisma/data.db
-/prisma/data.db-journal
 .env
 wireguard.conf
-fly_backup*.db
+*.db
+*.db-journal
 .DS_Store

@@ -28,9 +28,7 @@ type CreateUser = {
 
 export const createUser = async (data: CreateUser) => {
   const newUser = await prisma.user.create({ data, include: { user: true } });
-  if (globalThis.schedulers?.userSync) {
-    globalThis.schedulers.userSync.addUserSchedulers(newUser.id);
-  }
+  // @todo create scraper for user
   return newUser;
 };
 
@@ -55,7 +53,7 @@ export const updateToken = async (
   });
   console.log(
     "updatedToken -> expires at:",
-    new Date(data.expiresAt).toLocaleTimeString("en-US"),
+    new Date(Number(data.expiresAt)).toLocaleTimeString("en-US"),
   );
   return data.expiresAt;
 };
@@ -155,10 +153,6 @@ export const getAllUsersId = async () =>
     .then((users) => users.map((u) => u.id));
 
 export const getAllUsers = async (id: string) => {
-  // const restrict = !isAuthenticated
-  //   ? { user: { settings: { isNot: { isPrivate: true } } } }
-  //   : undefined;
-
   const users = await prisma.profile.findMany({
     include: profileWithInfo.include,
     orderBy: [{ playback: { updatedAt: "desc" } }, { name: "asc" }],

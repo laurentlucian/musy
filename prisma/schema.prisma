@@ -15,7 +15,7 @@ model User {
   updatedAt    DateTime @default(now()) @updatedAt
   accessToken  String
   refreshToken String
-  expiresAt    Int
+  expiresAt    BigInt
   tokenType    String
   revoked      Boolean  @default(false)
   //

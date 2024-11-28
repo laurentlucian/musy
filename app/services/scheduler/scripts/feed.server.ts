@@ -1,10 +1,10 @@
 import debug from "debug";
 import { prisma } from "~/services/db.server";
 
-const debugFeedQ = debug("feedQ");
+const log = debug("musy:feed");
 
 export const syncFeed = async () => {
-  debugFeedQ("starting...");
+  log("starting...");
 
   const [liked, queue, recommended, playlistTracks] = await Promise.all([
     prisma.likedSongs.findMany({
@@ -116,20 +116,20 @@ export const syncFeed = async () => {
   }
 
   if (liked.length > 0) {
-    debugFeedQ("liked items processed", liked.length);
+    log("liked items processed", liked.length);
   }
 
   if (queue.length > 0) {
-    debugFeedQ("queue items processed", queue.length);
+    log("queue items processed", queue.length);
   }
 
   if (recommended.length > 0) {
-    debugFeedQ("recommended items processed", recommended.length);
+    log("recommended items processed", recommended.length);
   }
 
   if (playlistTracks.length > 0) {
-    debugFeedQ("playlist tracks processed", playlistTracks.length);
+    log("playlist tracks processed", playlistTracks.length);
   }
 
-  debugFeedQ("completed");
+  log("completed");
 };

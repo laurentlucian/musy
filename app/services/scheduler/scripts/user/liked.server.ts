@@ -1,20 +1,18 @@
 import type { Prisma } from "@prisma/client";
 import debug from "debug";
-import { isProduction } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { createTrackModel } from "~/services/prisma/spotify.server";
 import { getSpotifyClient } from "~/services/spotify.server";
-import { libraryQ } from "../../scripts/scraper.server";
 
-const debugLikedQ = debug("userQ:likedQ");
+const log = debug("musy:liked");
 
 export async function syncUserLiked(userId: string) {
-  debugLikedQ("starting...", userId);
+  log("starting...", userId);
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    debugLikedQ("no spotify client");
+    log("no spotify client");
     return;
   }
 
@@ -52,5 +50,5 @@ export async function syncUserLiked(userId: string) {
   }
 
   // Rest of the existing logic...
-  debugLikedQ("completed");
+  log("completed");
 }

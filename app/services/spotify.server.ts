@@ -52,7 +52,7 @@ export const getSpotifyClient = async (id: string) => {
   spotifyClient.setAccessToken(data.accessToken);
 
   const now = new Date();
-  const isExpired = new Date(data.expiresAt) < now;
+  const isExpired = new Date(Number(data.expiresAt)) < now;
   let newToken = data.accessToken;
   if (isExpired) {
     console.log("Access Token expired");

@@ -2,14 +2,14 @@ import debug from "debug";
 import { transformTracks } from "~/services/prisma/spotify.server";
 import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugTopQ = debug("userQ:topQ");
+const log = debug("musy:top");
 
 export async function syncUserTop(userId: string) {
-  debugTopQ("starting...", userId);
+  log("starting...", userId);
 
   const { spotify } = await getSpotifyClient(userId);
   if (!spotify) {
-    debugTopQ("no spotify client");
+    log("no spotify client");
     return;
   }
 
@@ -37,5 +37,5 @@ export async function syncUserTop(userId: string) {
   // TODO: Implement storage mechanism for top tracks
   // Could use Redis or database storage depending on requirements
 
-  debugTopQ("completed", userId);
+  log("completed", userId);
 }

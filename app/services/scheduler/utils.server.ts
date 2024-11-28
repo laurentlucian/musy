@@ -20,7 +20,7 @@ export const upsertPlayback = async (
   const track = createTrackModel(playback.item);
   const data = {
     progress,
-    timestamp,
+    timestamp: BigInt(timestamp),
     track: {
       connectOrCreate: {
         create: track,
@@ -100,10 +100,10 @@ export const getPlaybackState = async (id: string) => {
   } catch (e) {
     if (e instanceof Error && e.message.includes("revoked")) {
       await prisma.user.update({ data: { revoked: true }, where: { id } });
-      await prisma.queue.deleteMany({
-        where: { OR: [{ userId: id }, { ownerId: id }] },
-      });
-      await prisma.likedSongs.deleteMany({ where: { userId: id } });
+      // await prisma.queue.deleteMany({
+      //   where: { OR: [{ userId: id }, { ownerId: id }] },
+      // });
+      // await prisma.likedSongs.deleteMany({ where: { userId: id } });
     }
 
     // @ts-expect-error e is ResponseError

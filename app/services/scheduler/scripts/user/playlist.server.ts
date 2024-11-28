@@ -5,10 +5,10 @@ import { prisma } from "~/services/db.server";
 import { createTrackModel } from "~/services/prisma/spotify.server";
 import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugPlaylistQ = debug("userQ:playlistQ");
+const log = debug("musy:playlist");
 
 export async function syncUserPlaylist(userId: string) {
-  debugPlaylistQ("starting...", userId);
+  log("starting...", userId);
   const { spotify } = await getSpotifyClient(userId);
   invariant(spotify, "Spotify client not found");
 
@@ -29,7 +29,7 @@ export async function syncUserPlaylist(userId: string) {
     },
   });
 
-  debugPlaylistQ(
+  log(
     "playlists",
     playlists.map((p) => p.name),
   );
@@ -43,7 +43,7 @@ export async function syncUserPlaylist(userId: string) {
     onlyPlaylistsNeededToUpdate.map((p) => spotify.getPlaylistTracks(p.id)),
   );
 
-  debugPlaylistQ(
+  log(
     "playlistTracks",
     playlistsTracks.map((p) => p.body.items.length),
   );
@@ -75,7 +75,7 @@ export async function syncUserPlaylist(userId: string) {
       },
       where: { id: playlist.id },
     });
-    debugPlaylistQ("playlist - added playlist", playlist.name);
+    log("playlist - added playlist", playlist.name);
 
     const tracks = playlistsTracks[index];
 
@@ -89,7 +89,7 @@ export async function syncUserPlaylist(userId: string) {
       )
       .filter(notNull);
 
-    debugPlaylistQ("playlist - adding tracks", tracks.body.items.length);
+    log("playlist - adding tracks", tracks.body.items.length);
     try {
       for (const { addedAt, track } of trackModels) {
         await prisma.track.upsert({
@@ -115,11 +115,11 @@ export async function syncUserPlaylist(userId: string) {
           },
         });
       }
-      debugPlaylistQ("playlist - added tracks");
+      log("playlist - added tracks");
     } catch (e) {
-      debugPlaylistQ("playlist - error adding tracks", e);
+      log("playlist - error adding tracks", e);
     }
   }
 
-  debugPlaylistQ("completed");
+  log("completed");
 }

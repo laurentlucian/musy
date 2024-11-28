@@ -4,19 +4,19 @@ import { prisma } from "~/services/db.server";
 import { createTrackModel } from "~/services/prisma/spotify.server";
 import { getSpotifyClient } from "~/services/spotify.server";
 
-const debugRecentQ = debug("userQ:recentQ");
+const log = debug("musy:recent");
 
 export async function syncUserRecent(userId: string) {
-  debugRecentQ("starting...");
+  log("starting...");
 
   const { spotify } = await getSpotifyClient(userId);
 
   if (!spotify) {
-    debugRecentQ("no spotify client");
+    log("no spotify client");
     return;
   }
 
-  debugRecentQ("adding recent tracks to db");
+  log("adding recent tracks to db");
   const {
     body: { items: recent },
   } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
@@ -55,5 +55,5 @@ export async function syncUserRecent(userId: string) {
     });
   }
 
-  debugRecentQ("completed");
+  log("completed");
 }
