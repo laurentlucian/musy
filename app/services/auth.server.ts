@@ -1,9 +1,7 @@
 import { Authenticator } from "remix-auth";
 import type { Session } from "remix-auth-spotify";
 import { SpotifyStrategy } from "remix-auth-spotify";
-
 import { sessionStorage } from "~/services/session.server";
-
 import { createUser, getUser, updateToken } from "./prisma/users.server";
 
 if (!process.env.SPOTIFY_CLIENT_ID) {

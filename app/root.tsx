@@ -2,7 +2,7 @@ import "./globals.css";
 import "./lib/fonts.css";
 import "./lib/icons/waver.css";
 
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
+import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -10,80 +10,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
-import { AnimatePresence } from "framer-motion";
-import { redirect, typedjson } from "remix-typedjson";
-
-import Layout from "~/components/Layout";
-import { authenticator } from "~/services/auth.server";
-import { getAllUsers, getCurrentUser } from "~/services/prisma/users.server";
-
-import {
-  FullscreenRenderer,
-  useFullscreenOpen,
-} from "./components/fullscreen/Fullscreen";
-import useAnalytics from "./hooks/useAnalytics";
-import { PlayPreviewRenderer } from "./hooks/usePlayPreview";
-import { TooltipProvider } from "./lib/ui/tooltip";
 import { iosSplashScreens } from "./lib/utils";
 
 const App = () => {
-  useAnalytics();
-
   return (
     <Document>
-      <TooltipProvider>
-        <AnimatePresence mode="wait" initial={false}>
-          <Layout>
-            <Outlet />
-          </Layout>
-        </AnimatePresence>
-        <FullscreenRenderer />
-        <PlayPreviewRenderer />
-      </TooltipProvider>
+      <Outlet />
     </Document>
   );
-};
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const session = await authenticator.isAuthenticated(request);
-  const url = new URL(request.url);
-
-  if (
-    !session &&
-    url.pathname !== "/" &&
-    !url.pathname.includes("/api/auth/spotify/callback")
-  ) {
-    return redirect("/");
-  }
-
-  const id = session?.user?.id;
-  const isMobile =
-    request.headers.get("user-agent")?.includes("Mobile") ?? false;
-
-  const ENV = {
-    PUBLIC_POSTHOG_KEY: process.env.PUBLIC_POSTHOG_KEY,
-  };
-
-  if (!session || !id)
-    return typedjson({
-      ENV,
-      currentUser: null,
-      isMobile,
-      users: [],
-    });
-
-  const [currentUser, users] = await Promise.all([
-    getCurrentUser(request),
-    getAllUsers(id),
-  ]);
-
-  return typedjson({
-    ENV,
-    currentUser,
-    isMobile,
-    users,
-  });
 };
 
 export const links: LinksFunction = () => {
@@ -107,16 +41,8 @@ type DocumentProps = {
 };
 
 const Document = ({ children, title = "musy" }: DocumentProps) => {
-  const fullscreen = useFullscreenOpen();
-
   return (
-    <html
-      lang="en"
-      style={{
-        overflowY: fullscreen ? "hidden" : undefined,
-        touchAction: fullscreen ? "none" : undefined,
-      }}
-    >
+    <html lang="en">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta
@@ -157,5 +83,4 @@ const Document = ({ children, title = "musy" }: DocumentProps) => {
   );
 };
 
-export { ErrorBoundary } from "~/components/error/ErrorBoundary";
 export default App;
