@@ -1,3 +1,5 @@
+@import "./components/icons/waver-styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,26 +8,33 @@
   :root {
     --background: 359 8% 3%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    --card: 240 10% 6.9%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 6% 3%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --popover: 243 11% 4%;
+    --popover-foreground: 40 22% 97%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 30 0% 11%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 10.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
 
-    --radius: 0.4rem;
+    --radius: 0.7rem;
   }
 }
+
 
 @media (prefers-color-scheme: dark) {
   html {
@@ -45,13 +54,14 @@
   body {
     @apply bg-background text-foreground;
     min-height: 100dvh;
-    /* font-feature-settings:
-      "rlig" 1,
-      "calt" 1; */
   }
 
-  p {
-    @apply text-pretty;
+  ul, p {
+    @apply text-pretty select-none md:select-text;
+  }
+
+  img {
+    @apply select-none;
   }
 
   h1,

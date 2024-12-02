@@ -1,6 +1,9 @@
-import { cn } from "~/components/cn";
+import { cn } from "~/lib/utils";
 
-const Waver = ({ className, dark }: { className?: string; dark?: boolean }) => {
+export function Waver({
+  className,
+  dark,
+}: { className?: string; dark?: boolean }) {
   return (
     <div
       className={cn(
@@ -16,6 +19,4 @@ const Waver = ({ className, dark }: { className?: string; dark?: boolean }) => {
       <div />
     </div>
   );
-};
-
-export default Waver;
+}

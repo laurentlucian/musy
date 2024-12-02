@@ -7,8 +7,7 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
-import waver from "./components/icons/waver.css?url";
-import stylesheet from "./global.css?url";
+import stylesheet from "./globals.css?url";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,22 +21,20 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
   },
   { rel: "stylesheet", href: stylesheet },
-  { rel: "stylesheet", href: waver },
   { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
   { rel: "manifest", href: "/manifest.json" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="flex">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="flex flex-1">
         {children}
         <ScrollRestoration />
         <Scripts />
