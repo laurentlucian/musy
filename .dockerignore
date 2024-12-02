@@ -1,8 +1,5 @@
+prisma/*.db
+.react-router
+build
 node_modules
-*.log
-.DS_Store
-.env
-/.cache
-/public/build
-/build
-/prisma/*.db
+README.md

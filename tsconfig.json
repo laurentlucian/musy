@@ -1,34 +1,15 @@
 {
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/.server/**/*.ts",
-    "**/.server/**/*.tsx",
-    "**/.client/**/*.ts",
-    "**/.client/**/*.tsx"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.vite.json" }
   ],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "isolatedModules": true,
-    "types": [
-      "@remix-run/node",
-      "vite/client",
-      "@remix-run/react/dist/single-fetch"
-    ],
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "skipLibCheck": true,
-    "moduleResolution": "Bundler",
-    "module": "ESNext",
-    "resolveJsonModule": true,
-    "target": "ES2022",
-    "strict": true,
-    "allowJs": true,
+    "checkJs": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "strict": true,
     "noEmit": true
   }
 }

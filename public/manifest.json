@@ -1,17 +1,11 @@
 {
   "short_name": "musy",
   "name": "musy",
-  "description": "music sharing platform",
+  "description": "music sharing",
   "id": "/",
   "start_url": "/",
   "background_color": "#050404",
   "display": "standalone",
-  "categories": [
-    "music",
-    "music share",
-    "music taste",
-    "spotify",
-    "spotify share"
-  ],
+  "categories": ["music"],
   "scope": "/"
 }

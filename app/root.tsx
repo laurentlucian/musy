@@ -1,78 +1,39 @@
-import "./globals.css";
-import "./lib/fonts.css";
-import "./lib/icons/waver.css";
-
-import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
-import { iosSplashScreens } from "./lib/utils";
+  isRouteErrorResponse,
+} from "react-router";
+import type { Route } from "./+types/root";
+import stylesheet from "./global.css?url";
 
-const App = () => {
+export const links: Route.LinksFunction = () => [
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous",
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
+  },
+  { rel: "stylesheet", href: stylesheet },
+  { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+  { rel: "manifest", href: "/manifest.json" },
+];
+
+export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <Document>
-      <Outlet />
-    </Document>
-  );
-};
-
-export const links: LinksFunction = () => {
-  return [
-    {
-      as: "manifest",
-      href: "/manifest.json",
-      rel: "manifest",
-    },
-    {
-      href: "/apple-touch-icon.png",
-      rel: "apple-touch-icon",
-    },
-    ...iosSplashScreens,
-  ];
-};
-
-type DocumentProps = {
-  children: React.ReactNode;
-  title?: string;
-};
-
-const Document = ({ children, title = "musy" }: DocumentProps) => {
-  return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
         <meta charSet="utf-8" />
-        <meta name="description" content="Music shared easy" />
-        <meta
-          name="keywords"
-          content="music, discover, spotify, playlist, share, friends"
-        />
-        <meta property="og:description" content="Music shared easy" />
-        <meta property="og:image" content="/meta-image.png" />
-        <meta property="og:image:alt" content="musy" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:title" content="musy" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:description" content="Music shared easy" />
-        <meta name="twitter:image" content="/meta-image.png" />
-        <meta name="twitter:title" content="musy" />
-        <meta
-          name="viewport"
-          content="width=device-width,initial-scale=1,user-scalable=no"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         <Meta />
         <Links />
-        <title>{title}</title>
       </head>
       <body>
         {children}
@@ -81,6 +42,37 @@ const Document = ({ children, title = "musy" }: DocumentProps) => {
       </body>
     </html>
   );
-};
+}
 
-export default App;
+export default function App() {
+  return <Outlet />;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main className="container mx-auto p-4 pt-16">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre className="w-full overflow-x-auto p-4">
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}

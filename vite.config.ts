@@ -1,31 +1,21 @@
-import { vitePlugin as remix } from "@remix-run/dev";
-import { expressDevServer } from "remix-express-dev-server";
+import { reactRouter } from "@react-router/dev/vite";
+import autoprefixer from "autoprefixer";
+import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   build: {
-    target: "esnext",
+    rollupOptions: isSsrBuild
+      ? {
+          input: "./server/app.ts",
+        }
+      : undefined,
   },
-  server: {
-    port: 3000,
+  css: {
+    postcss: {
+      plugins: [tailwindcss, autoprefixer],
+    },
   },
-  plugins: [
-    expressDevServer({ exportName: "musy" }),
-    tsconfigPaths(),
-    remix({
-      ignoredRouteFiles: ["**/.*"],
-
-      future: {
-        v3_singleFetch: true,
-        unstable_optimizeDeps: true,
-        v3_fetcherPersist: true,
-        v3_throwAbortReason: true,
-        v3_lazyRouteDiscovery: true,
-        v3_relativeSplatPath: true,
-        v3_routeConfig: true,
-      },
-      serverModuleFormat: "esm",
-    }),
-  ],
-});
+  plugins: [reactRouter(), tsconfigPaths()],
+}));
