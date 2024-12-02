@@ -1,4 +1,4 @@
-import { prisma } from "server/services/db.server";
+import { prisma } from "../db.server";
 
 export const trackWithInfo = {
   include: {

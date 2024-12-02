@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
-import { prisma } from "server/services/db.server";
-import { createTrackModel } from "server/services/prisma/spotify.server";
-import { getSpotifyClient } from "server/services/spotify.server";
 import invariant from "tiny-invariant";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 export const scraper = async (userId: string) => {
   const limit = 50;

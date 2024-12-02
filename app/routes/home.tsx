@@ -1,4 +1,4 @@
-import { getTopLeaderboard } from "server/services/prisma/tracks.server";
+import { getTopLeaderboard } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/home";
 
 export function meta({ data }: Route.MetaArgs) {

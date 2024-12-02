@@ -1,11 +1,14 @@
 import debug from "debug";
-import { prisma } from "server/services/db.server";
-import { createTrackModel } from "server/services/prisma/spotify.server";
-import { getSpotifyClient } from "server/services/spotify.server";
 import invariant from "tiny-invariant";
-import { notNull } from "~/lib/utils";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 const log = debug("musy:playlist");
+
+const notNull = <T>(val: T | null): val is T => {
+  return val !== null;
+};
 
 export async function syncUserPlaylist(userId: string) {
   log("starting...", userId);

@@ -1,9 +1,9 @@
 import { Cron } from "croner";
 import debug from "debug";
-import { prisma } from "server/services/db.server";
-import { getAllUsersId } from "server/services/prisma/users.server";
-import { getSpotifyClient } from "server/services/spotify.server";
 import { msToString, notNull } from "~/lib/utils";
+import { prisma } from "~/services/db.server";
+import { getAllUsersId } from "~/services/prisma/users.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 import { getPlaybackState, upsertPlayback } from "../../utils.server";
 
 const log = debug("musy:playback");

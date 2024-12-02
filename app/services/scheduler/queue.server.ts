@@ -1,6 +1,6 @@
 import { Cron } from "croner";
 import debug from "debug";
-import { getAllUsersId } from "server/services/prisma/users.server";
+import { getAllUsersId } from "../prisma/users.server";
 
 const log = debug("musy:queue");
 

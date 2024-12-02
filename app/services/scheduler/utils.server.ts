@@ -1,8 +1,7 @@
-import type { Prisma } from "@prisma/client";
-import { prisma } from "server/services/db.server";
-import { createTrackModel } from "server/services/prisma/spotify.server";
-import { getSpotifyClient } from "server/services/spotify.server";
 import invariant from "tiny-invariant";
+import { prisma } from "../db.server";
+import { createTrackModel } from "../prisma/spotify.server";
+import { getSpotifyClient } from "../spotify.server";
 
 export const upsertPlayback = async (
   userId: string,
@@ -48,44 +47,9 @@ export const upsertPlayback = async (
     },
   });
 
-  const endedAt = new Date(timestamp + track.duration);
-
-  const recentlyAdded = await prisma.recentSongs.findFirst({
-    where: {
-      playedAt: {
-        gte: new Date(endedAt.getTime() - 1000 * 60 * 2),
-        lte: new Date(endedAt.getTime() + 1000 * 60 * 2),
-      },
-      trackId: track.id,
-    },
+  await prisma.recentSongs.deleteMany({
+    where: { verifiedFromSpotify: false },
   });
-
-  if (!recentlyAdded) {
-    const recentSongs: Prisma.RecentSongsCreateInput = {
-      action: "played",
-      playedAt: endedAt,
-      track: {
-        connectOrCreate: {
-          create: track,
-          where: {
-            id: track.id,
-          },
-        },
-      },
-      user: {
-        connect: {
-          userId,
-        },
-      },
-      verifiedFromSpotify: false,
-    };
-
-    await prisma.recentSongs.upsert({
-      create: recentSongs,
-      update: recentSongs,
-      where: { playedAt_userId: { playedAt: endedAt, userId } },
-    });
-  }
 };
 
 export const getPlaybackState = async (id: string) => {

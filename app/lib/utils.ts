@@ -4,6 +4,16 @@ export const notNull = <T>(val: T | null): val is T => {
   return val !== null;
 };
 
+export const msToString = (ms: number) => {
+  if (ms < 6000) {
+    return `${ms / 1000}s`;
+  }
+  if (ms < 3600000) {
+    return `${Math.floor(ms / 60000)}m`;
+  }
+  return `${Math.floor(ms / 3600000)}h`;
+};
+
 export const minutesToMs = (minutes: number) => minutes * 60 * 1000;
 export const secondsToMinutes = (seconds: number) => seconds / 60 / 60;
 export const msToHours = (ms: number) => ms / 1000 / 60 / 60;
@@ -66,16 +76,6 @@ export const timeBetween = ({
   }
   const diffInHours = Math.floor(diffInMilliseconds / (1000 * 60 * 60));
   return `${diffInHours}h`;
-};
-
-export const msToString = (ms: number) => {
-  if (ms < 6000) {
-    return `${ms / 1000}s`;
-  }
-  if (ms < 3600000) {
-    return `${Math.floor(ms / 60000)}m`;
-  }
-  return `${Math.floor(ms / 3600000)}h`;
 };
 
 export const iosSplashScreens = [

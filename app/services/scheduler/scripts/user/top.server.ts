@@ -1,6 +1,6 @@
 import debug from "debug";
-import { transformTracks } from "server/services/prisma/spotify.server";
-import { getSpotifyClient } from "server/services/spotify.server";
+import { transformTracks } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 const log = debug("musy:top");
 

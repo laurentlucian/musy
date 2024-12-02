@@ -12,7 +12,7 @@ app.use(compression());
 app.disable("x-powered-by");
 
 if (DEVELOPMENT) {
-  console.log("Starting development server");
+  console.log("\x1b[36m%s\x1b[0m", "initializing development");
   const viteDevServer = await import("vite").then((vite) =>
     vite.createServer({
       server: { middlewareMode: true },
@@ -31,7 +31,7 @@ if (DEVELOPMENT) {
     }
   });
 } else {
-  console.log("Starting production server");
+  console.log("\x1b[36m%s\x1b[0m", "initializing production");
   app.use(
     "/assets",
     express.static("build/client/assets", { immutable: true, maxAge: "1y" }),
@@ -43,5 +43,5 @@ if (DEVELOPMENT) {
 app.use(morgan("tiny"));
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log("\x1b[32m%s\x1b[0m", `server running @ http://localhost:${PORT}`);
 });

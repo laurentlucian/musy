@@ -5,8 +5,7 @@ import type {
   Settings,
   Track,
 } from "@prisma/client";
-import { prisma } from "server/services/db.server";
-import { authenticator } from "../auth.server";
+import { prisma } from "../db.server";
 import { profileWithInfo, trackWithInfo } from "./tracks.server";
 
 export type UserProfile = Prisma.PromiseReturnType<typeof getUser>;
@@ -71,36 +70,6 @@ export const updateUserName = async (id: string, name: string) => {
     data: { name },
     where: { userId: id },
   });
-  return data;
-};
-
-export const getCurrentUserId = async (request: Request) => {
-  const session = await authenticator.isAuthenticated(request);
-  if (!session || !session.user)
-    throw new Response("Unauthorized", { status: 401 });
-  return session.user.id;
-};
-
-export const getCurrentUser = async (request: Request) => {
-  const session = await authenticator.isAuthenticated(request);
-  if (!session || !session.user) return null;
-  const userId = session.user.id;
-  const data = await prisma.profile.findUnique({
-    include: {
-      block: { select: { blockedId: true } },
-      favorite: { select: { favoriteId: true } },
-      followers: { select: { followerId: true } },
-      following: { select: { followingId: true } },
-      liked: { select: { trackId: true } },
-      mute: true,
-      recommended: { select: { trackId: true } },
-      settings: { include: { profileSong: true } },
-      ...profileWithInfo.include,
-    },
-
-    where: { userId },
-  });
-  if (!data) return null;
   return data;
 };
 

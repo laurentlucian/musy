@@ -1,8 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import debug from "debug";
-import { prisma } from "server/services/db.server";
-import { createTrackModel } from "server/services/prisma/spotify.server";
-import { getSpotifyClient } from "server/services/spotify.server";
+import { prisma } from "~/services/db.server";
+import { createTrackModel } from "~/services/prisma/spotify.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 const log = debug("musy:liked");
 

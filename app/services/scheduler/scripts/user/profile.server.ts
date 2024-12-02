@@ -2,8 +2,8 @@ import debug from "debug";
 import {
   updateUserImage,
   updateUserName,
-} from "server/services/prisma/users.server";
-import { getSpotifyClient } from "server/services/spotify.server";
+} from "~/services/prisma/users.server";
+import { getSpotifyClient } from "~/services/spotify.server";
 
 const log = debug("musy:profile");
 

@@ -1,5 +1,5 @@
 import debug from "debug";
-import { prisma } from "server/services/db.server";
+import { prisma } from "~/services/db.server";
 
 const log = debug("musy:feed");
 
