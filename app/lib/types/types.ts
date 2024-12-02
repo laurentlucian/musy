@@ -1,6 +1,6 @@
 import type { Prisma, Profile, Track } from "@prisma/client";
-import type { getFeed } from "../../server/services/prisma/tracks.server";
-import type { getAllUsers } from "../../server/services/prisma/users.server";
+import type { getFeed } from "~/services/prisma/tracks.server";
+import type { getAllUsers } from "~/services/prisma/users.server";
 
 export type { Track } from "@prisma/client";
 

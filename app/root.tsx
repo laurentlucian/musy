@@ -7,6 +7,7 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
+import waver from "./components/icons/waver.css?url";
 import stylesheet from "./global.css?url";
 
 export const links: Route.LinksFunction = () => [
@@ -21,6 +22,7 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
   },
   { rel: "stylesheet", href: stylesheet },
+  { rel: "stylesheet", href: waver },
   { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
   { rel: "manifest", href: "/manifest.json" },
 ];

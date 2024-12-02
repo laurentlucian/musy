@@ -34,5 +34,6 @@
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "tailwindCSS.classAttributes": ["class", "className", "textClassName"]
+  "tailwindCSS.classAttributes": ["class", "className"],
+  "typescript.preferences.preferTypeOnlyAutoImports": true
 }
