@@ -1,24 +1,22 @@
 import type { Prisma } from "@prisma/client";
 import debug from "debug";
+import invariant from "tiny-invariant";
 import { prisma } from "~/services/db.server";
 import { createTrackModel } from "~/services/prisma/spotify.server";
-import { getSpotifyClient } from "~/services/spotify.server";
+import { SpotifyService } from "~/services/sdk/spotify.server";
 
 const log = debug("musy:liked");
 
 export async function syncUserLiked(userId: string) {
   log("starting...", userId);
 
-  const { spotify } = await getSpotifyClient(userId);
-
-  if (!spotify) {
-    log("no spotify client");
-    return;
-  }
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  invariant(client, "spotify client not found");
 
   const {
     body: { items: liked, total },
-  } = await spotify.getMySavedTracks({ limit: 50 });
+  } = await client.getMySavedTracks({ limit: 50 });
 
   for (const { added_at, track } of liked) {
     const trackDb = createTrackModel(track);
@@ -33,7 +31,7 @@ export async function syncUserLiked(userId: string) {
         },
       },
       user: {
-        connect: { userId },
+        connect: { id: userId },
       },
     };
 
@@ -49,6 +47,5 @@ export async function syncUserLiked(userId: string) {
     });
   }
 
-  // Rest of the existing logic...
   log("completed");
 }

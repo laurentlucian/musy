@@ -1,27 +1,21 @@
 import debug from "debug";
+import invariant from "tiny-invariant";
 import { prisma } from "~/services/db.server";
-import { getSpotifyClient } from "~/services/spotify.server";
+import { getAllUsersId } from "~/services/prisma/users.server";
+import { SpotifyService } from "~/services/sdk/spotify.server";
 
 const log = debug("musy:follow");
 
 export async function syncUserFollow(userId: string) {
   log("starting...");
 
-  const { spotify } = await getSpotifyClient(userId);
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  invariant(client, "spotify client not found");
 
-  if (!spotify) {
-    log("no spotify client");
-    return;
-  }
+  const users = await getAllUsersId();
 
-  const users = await prisma.user
-    .findMany({
-      select: { id: true },
-      where: { revoked: false },
-    })
-    .then((users) => users.map((u) => u.id));
-
-  const { body: isFollowing } = await spotify.isFollowingUsers(users);
+  const { body: isFollowing } = await client.isFollowingUsers(users);
   const following = users.filter((_, i) => isFollowing[i]);
 
   log("adding following to db", following.length);

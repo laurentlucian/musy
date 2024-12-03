@@ -9,21 +9,31 @@ import {
 import type { Route } from "./+types/root";
 import stylesheet from "./globals.css?url";
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
-  },
-  { rel: "stylesheet", href: stylesheet },
-  { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-  { rel: "manifest", href: "/manifest.json" },
-];
+export function links() {
+  return [
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap",
+    },
+    { rel: "stylesheet", href: stylesheet },
+    { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+    { rel: "icon", type: "image/png", href: "/musylogo.png" },
+    { rel: "manifest", href: "/manifest.json" },
+  ] as Route.LinkDescriptors;
+}
+
+export function meta() {
+  return [
+    { title: "musy" },
+    { name: "description", content: "music sharing" },
+  ] as Route.MetaDescriptors;
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

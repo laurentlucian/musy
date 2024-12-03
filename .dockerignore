@@ -3,3 +3,7 @@ prisma/*.db
 build
 node_modules
 README.md
+.vscode
+.cache
+wireguard.config
+.env

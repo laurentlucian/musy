@@ -1,15 +1,13 @@
+import type { Prisma } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { prisma } from "../db.server";
 
 export const trackWithInfo = {
   include: {
-    liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
-    queue: {
-      select: { owner: { select: { user: true } } },
-      where: { action: "add" },
-    }, // @todo: filter queue by same userId as recommended tile (idk how yet)  },
-    recent: { orderBy: { playedAt: "asc" }, select: { user: true } },
+    liked: { orderBy: { createdAt: "asc" } },
+    recent: { orderBy: { playedAt: "asc" } },
   },
-} as const;
+} satisfies Prisma.TrackDefaultArgs<DefaultArgs>;
 
 export const profileWithInfo = {
   include: {
@@ -23,9 +21,9 @@ export const profileWithInfo = {
       take: 1,
     },
   },
-} as const;
+} satisfies Prisma.ProfileDefaultArgs<DefaultArgs>;
 
-export const getFeed = async (userId: string, limit = 10, offset = 0) => {
+export async function getFeed(userId: string, limit = 10, offset = 0) {
   const following = await prisma.follow.findMany({
     select: {
       followingId: true,
@@ -52,7 +50,7 @@ export const getFeed = async (userId: string, limit = 10, offset = 0) => {
       },
       queue: {
         include: {
-          owner: { include: { user: profileWithInfo } },
+          owner: { include: { profile: profileWithInfo } },
           track: trackWithInfo,
           user: profileWithInfo,
         },
@@ -71,9 +69,6 @@ export const getFeed = async (userId: string, limit = 10, offset = 0) => {
     skip: offset * limit,
     take: limit,
     where: {
-      // NOT: {
-      //   queue: null,
-      // },
       userId: {
         in: userIds,
       },
@@ -81,9 +76,9 @@ export const getFeed = async (userId: string, limit = 10, offset = 0) => {
   });
 
   return feed;
-};
+}
 
-export const getUserRecommended = async (userId: string) => {
+export async function getUserRecommended(userId: string) {
   const recommended = await prisma.recommended.findMany({
     include: {
       track: trackWithInfo,
@@ -93,9 +88,9 @@ export const getUserRecommended = async (userId: string) => {
   });
 
   return recommended.map((t) => t.track);
-};
+}
 
-export const getUserRecent = async (userId: string) => {
+export async function getUserRecent(userId: string) {
   const recent = await prisma.recentSongs.findMany({
     include: {
       track: trackWithInfo,
@@ -110,9 +105,9 @@ export const getUserRecent = async (userId: string) => {
   });
 
   return recent.map((t) => t.track);
-};
+}
 
-export const getUserLiked = async (userId: string) => {
+export async function getUserLiked(userId: string) {
   const liked = await prisma.likedSongs.findMany({
     include: {
       track: trackWithInfo,
@@ -125,10 +120,10 @@ export const getUserLiked = async (userId: string) => {
   });
 
   return liked.map((t) => t.track);
-};
+}
 
 export type TopLeaderboard = Awaited<ReturnType<typeof getTopLeaderboard>>;
-export const getTopLeaderboard = async () => {
+export async function getTopLeaderboard() {
   const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
   const trackIds = await prisma.recentSongs.groupBy({
     by: ["trackId"],
@@ -142,7 +137,6 @@ export const getTopLeaderboard = async () => {
       _count: {
         select: { recent: true },
       },
-      ...trackWithInfo.include,
     },
     where: { id: { in: trackIds.map((t) => t.trackId) } },
   });
@@ -160,17 +154,17 @@ export const getTopLeaderboard = async () => {
     plays: t._count.recent,
     uri: t.uri,
   }));
-};
+}
 
-export const getTrack = async (trackId: string) => {
+export async function getTrack(trackId: string) {
   const track = await prisma.track.findUnique({
     where: { id: trackId },
   });
 
   return track;
-};
+}
 
-export const getSessions = () => {
+export function getSessions() {
   return prisma.sessions.findMany({
     include: {
       songs: {
@@ -193,4 +187,4 @@ export const getSessions = () => {
     },
     take: 30,
   });
-};
+}

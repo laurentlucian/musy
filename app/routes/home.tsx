@@ -1,5 +1,5 @@
-import React, { Suspense } from "react";
-import { Link, data } from "react-router";
+import { Suspense, use } from "react";
+import { Link } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { RootMenu } from "~/components/menu/root";
 import { TrackMenu } from "~/components/menu/track";
@@ -7,10 +7,6 @@ import { Image } from "~/components/ui/image";
 import { getCacheControl } from "~/lib/utils";
 import { getTopLeaderboard } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/home";
-
-export function meta({ data }: Route.MetaArgs) {
-  return [{ title: "musy" }, { name: "description", content: "music sharing" }];
-}
 
 export function headers(_: Route.HeadersArgs) {
   return {
@@ -37,14 +33,11 @@ export default function Home({
     </main>
   );
 }
-declare module "react" {
-  function use<T>(promise: Promise<T>): T;
-}
 
 function Leaderboard(props: {
   leaderboard: ReturnType<typeof getTopLeaderboard>;
 }) {
-  const leaderboard = React.use(props.leaderboard);
+  const leaderboard = use(props.leaderboard);
 
   return leaderboard.map((track, index) => {
     return (

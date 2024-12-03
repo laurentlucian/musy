@@ -1,7 +1,7 @@
 import invariant from "tiny-invariant";
 import { prisma } from "../db.server";
 import { createTrackModel } from "../prisma/spotify.server";
-import { getSpotifyClient } from "../spotify.server";
+import { SpotifyService } from "../sdk/spotify.server";
 
 export const upsertPlayback = async (
   userId: string,
@@ -35,7 +35,7 @@ export const upsertPlayback = async (
       ...data,
       user: {
         connect: {
-          userId,
+          id: userId,
         },
       },
     },
@@ -46,24 +46,24 @@ export const upsertPlayback = async (
       userId,
     },
   });
-
-  await prisma.recentSongs.deleteMany({
-    where: { verifiedFromSpotify: false },
-  });
 };
 
 export const getPlaybackState = async (id: string) => {
   try {
-    const { spotify } = await getSpotifyClient(id);
-    invariant(spotify, "Spotify API not found");
-    const { body: playback } = await spotify.getMyCurrentPlaybackState();
+    const spotify = await SpotifyService.createFromUserId(id);
+    const client = spotify.getClient();
+    invariant(client, "Spotify API not found");
+    const { body: playback } = await client.getMyCurrentPlaybackState();
     const { is_playing, item } = playback;
     if (!is_playing || !item || item.type !== "track")
       return { id, playback: null };
     return { id, playback };
   } catch (e) {
     if (e instanceof Error && e.message.includes("revoked")) {
-      await prisma.user.update({ data: { revoked: true }, where: { id } });
+      await prisma.provider.update({
+        data: { revoked: true },
+        where: { userId_type: { userId: id, type: "spotify" } },
+      });
       // await prisma.queue.deleteMany({
       //   where: { OR: [{ userId: id }, { ownerId: id }] },
       // });
@@ -72,7 +72,10 @@ export const getPlaybackState = async (id: string) => {
 
     // @ts-expect-error e is ResponseError
     if (e?.statusCode === 403) {
-      await prisma.user.update({ data: { revoked: true }, where: { id } });
+      await prisma.provider.update({
+        data: { revoked: true },
+        where: { userId_type: { userId: id, type: "spotify" } },
+      });
       // await prisma.queue.deleteMany({ where: { OR: [{ userId: id }, { ownerId: id }] } });
       // await prisma.likedSongs.deleteMany({ where: { userId: id } });
       // await prisma.recentSongs.deleteMany({ where: { userId: id } });

@@ -1,0 +1,15 @@
+model Party {
+  // refactor to be a self relation on the Profile model
+  owner        User   @relation(fields: [ownerId], references: [id])
+  ownerId      String
+  currentTrack String
+
+  user      Profile @relation(fields: [userId], references: [id])
+  userId    String  @unique
+  userName  String
+  userImage String
+
+  assignedAt DateTime @default(now())
+
+  @@id([ownerId, userId])
+}

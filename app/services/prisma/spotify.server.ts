@@ -1,23 +1,24 @@
 import { prisma } from "../db.server";
-import { getUserSpotify } from "../spotify.server";
-import { profileWithInfo } from "./tracks.server";
+import { SpotifyService } from "../sdk/spotify.server";
 
-export const createTrackModel = (track: SpotifyApi.TrackObjectFull) => ({
-  albumName: track.album.name,
-  albumUri: track.album.uri,
-  artist: track.artists[0].name,
-  artistUri: track.artists[0].uri,
-  duration: track.duration_ms,
-  explicit: track.explicit,
-  id: track.id,
-  image: track.album.images[0].url,
-  link: track.external_urls.spotify,
-  name: track.name,
-  preview_url: track.preview_url,
-  uri: track.uri,
-});
+export function createTrackModel(track: SpotifyApi.TrackObjectFull) {
+  return {
+    albumName: track.album.name,
+    albumUri: track.album.uri,
+    artist: track.artists[0].name,
+    artistUri: track.artists[0].uri,
+    duration: track.duration_ms,
+    explicit: track.explicit,
+    id: track.id,
+    image: track.album.images[0].url,
+    link: track.external_urls.spotify,
+    name: track.name,
+    preview_url: track.preview_url,
+    uri: track.uri,
+  };
+}
 
-export const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
+export async function transformTracks(tracks: SpotifyApi.TrackObjectFull[]) {
   const trackIds = tracks.map((track) => track.id);
   const existingTracks = await prisma.track.findMany({
     select: { id: true },
@@ -44,63 +45,52 @@ export const transformTracks = async (tracks: SpotifyApi.TrackObjectFull[]) => {
       },
     })
   ).sort((a, b) => trackIds.indexOf(a.id) - trackIds.indexOf(b.id));
-};
+}
 
-export const getUserSpotifyRecent = async (userId: string) => {
-  const { spotify } = await getUserSpotify(userId);
-  const recent = await spotify
+export async function getUserSpotifyRecent(userId: string) {
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  const recent = await client
     .getMyRecentlyPlayedTracks({ limit: 50 })
     .then((data) => data.body.items)
     .catch(() => []);
 
   return transformTracks(recent.map((track: any) => track.track));
-};
+}
 
-export const getUserSpotifyLiked = async (userId: string) => {
-  const { spotify } = await getUserSpotify(userId);
-  const liked = await spotify
+export async function getUserSpotifyLiked(userId: string) {
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  const liked = await client
     .getMySavedTracks({ limit: 50 })
     .then((data) => data.body.items)
     .catch(() => []);
 
   return transformTracks(liked.map((track) => track.track));
-};
+}
 
-export const getUserCachedTop = async (userId: string, url: URL) => {
-  const topFilter = (url.searchParams.get("top-filter") || "medium_term") as
-    | "medium_term"
-    | "long_term"
-    | "short_term";
-
-  const _cacheKeyTop = `profile_top_prisma${topFilter}_${userId}`;
-  // const cachedDataTop = await redis.get(cacheKeyTop);
-
-  // if (cachedDataTop) {
-  //   return JSON.parse(cachedDataTop) as Track[];
-  // }
-  return [];
-};
-
-export const getUserSpotifyPlayback = async (userId: string) => {
-  const { spotify } = await getUserSpotify(userId);
-  const playback = await spotify
+export async function getUserSpotifyPlayback(userId: string) {
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  const playback = await client
     .getMyCurrentPlayingTrack()
     .then((data) => data.body);
 
   return playback;
-};
+}
 
-export const getSpotifyTracks = async (keyword: string, userId: string) => {
-  const { spotify } = await getUserSpotify(userId);
+export async function getSpotifyTracks(keyword: string, userId: string) {
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
 
-  return spotify.searchTracks(keyword).then((res) => {
+  return client.searchTracks(keyword).then((res) => {
     if (res.statusCode !== 200) return [];
     if (!res.body.tracks) return [];
     return transformTracks(res.body.tracks.items);
   });
-};
+}
 
-export const getDbTracks = async (keyword: string) => {
+export async function getDbTracks(keyword: string) {
   return prisma.track.findMany({
     include: {
       liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
@@ -116,16 +106,15 @@ export const getDbTracks = async (keyword: string) => {
     },
     where: { name: { contains: keyword } },
   });
-};
+}
 
-export const getUsers = async (keyword: string, userId: string) => {
+export async function getUsers(keyword: string, userId: string) {
   return prisma.profile.findMany({
-    include: profileWithInfo.include,
-    where: { AND: { NOT: { userId } }, name: { contains: keyword } },
+    where: { AND: { NOT: { id: userId } }, name: { contains: keyword } },
   });
-};
+}
 
-export const getSearchResults = async ({
+export async function getSearchResults({
   param,
   url,
   userId,
@@ -133,7 +122,7 @@ export const getSearchResults = async ({
   param: string;
   url: URL;
   userId: string;
-}) => {
+}) {
   const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
   const [tracks, users] = await Promise.all([
@@ -142,16 +131,17 @@ export const getSearchResults = async ({
   ]);
 
   return { spotify: getSpotifyTracks(keyword, userId), tracks, users };
-};
+}
 
-export const getSpotifyTrack = async (trackId: string, userId: string) => {
-  const { spotify } = await getUserSpotify(userId);
-  const track = await spotify.getTrack(trackId).then((res) => res.body);
+export async function getSpotifyTrack(trackId: string, userId: string) {
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  const track = await client.getTrack(trackId).then((res) => res.body);
 
   return track;
-};
+}
 
-export const getUserPlaylists = async (userId: string) => {
+export async function getUserPlaylists(userId: string) {
   return prisma.playlist.findMany({
     orderBy: {
       tracks: {
@@ -161,4 +151,4 @@ export const getUserPlaylists = async (userId: string) => {
     take: 20,
     where: { userId },
   });
-};
+}

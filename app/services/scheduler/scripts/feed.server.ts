@@ -50,7 +50,7 @@ export const syncFeed = async () => {
         },
         user: {
           connect: {
-            userId: item.userId,
+            id: item.userId,
           },
         },
       },
@@ -69,7 +69,7 @@ export const syncFeed = async () => {
         },
         user: {
           connect: {
-            userId: item.userId,
+            id: item.userId,
           },
         },
       },
@@ -87,7 +87,7 @@ export const syncFeed = async () => {
         },
         user: {
           connect: {
-            userId: item.userId,
+            id: item.userId,
           },
         },
       },
@@ -108,7 +108,7 @@ export const syncFeed = async () => {
         },
         user: {
           connect: {
-            userId: item.playlist.userId,
+            id: item.playlist.userId,
           },
         },
       },

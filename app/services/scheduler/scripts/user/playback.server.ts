@@ -1,9 +1,10 @@
 import { Cron } from "croner";
 import debug from "debug";
+import invariant from "tiny-invariant";
 import { msToString, notNull } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { getAllUsersId } from "~/services/prisma/users.server";
-import { getSpotifyClient } from "~/services/spotify.server";
+import { SpotifyService } from "~/services/sdk/spotify.server";
 import { getPlaybackState, upsertPlayback } from "../../utils.server";
 
 const log = debug("musy:playback");
@@ -12,6 +13,7 @@ export async function syncPlaybacks() {
   log("starting...");
 
   const users = await getAllUsersId();
+
   const playbacks = await Promise.all(
     users.map((userId) => getPlaybackState(userId)),
   );
@@ -54,13 +56,11 @@ function _schedulePlaybackCheck(userId: string, delay: number) {
   new Cron(
     new Date(Date.now() + delay),
     async () => {
-      const { spotify } = await getSpotifyClient(userId);
-      if (!spotify) {
-        log(`exiting; spotify client not found for user ${userId}`);
-        return;
-      }
+      const spotify = await SpotifyService.createFromUserId(userId);
+      const client = spotify.getClient();
+      invariant(client, "spotify client not found");
 
-      const { body: playback } = await spotify.getMyCurrentPlaybackState();
+      const { body: playback } = await client.getMyCurrentPlaybackState();
 
       if (!playback || !playback.is_playing) {
         log("user not playing, will be cleaned up on next createPlaybackQ run");

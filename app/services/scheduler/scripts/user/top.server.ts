@@ -1,22 +1,21 @@
 import debug from "debug";
+import invariant from "tiny-invariant";
 import { transformTracks } from "~/services/prisma/spotify.server";
-import { getSpotifyClient } from "~/services/spotify.server";
+import { SpotifyService } from "~/services/sdk/spotify.server";
 
 const log = debug("musy:top");
 
 export async function syncUserTop(userId: string) {
   log("starting...", userId);
 
-  const { spotify } = await getSpotifyClient(userId);
-  if (!spotify) {
-    log("no spotify client");
-    return;
-  }
+  const spotify = await SpotifyService.createFromUserId(userId);
+  const client = spotify.getClient();
+  invariant(client, "spotify client not found");
 
   const getUserSpotifyTop = async (
     range: "short_term" | "medium_term" | "long_term",
   ) => {
-    const response = await spotify
+    const response = await client
       .getMyTopTracks({ limit: 50, time_range: range })
       .then((data) => data.body.items)
       .catch(() => []);
@@ -33,9 +32,6 @@ export async function syncUserTop(userId: string) {
     getUserSpotifyTop("medium_term"),
     getUserSpotifyTop("long_term"),
   ]);
-
-  // TODO: Implement storage mechanism for top tracks
-  // Could use Redis or database storage depending on requirements
 
   log("completed", userId);
 }
