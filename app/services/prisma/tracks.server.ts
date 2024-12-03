@@ -153,6 +153,7 @@ export const getTopLeaderboard = async () => {
     return aIndex - bIndex;
   });
   return top.map((t) => ({
+    id: t.id,
     name: t.name,
     artist: t.artist,
     image: t.image,

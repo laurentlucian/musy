@@ -14,7 +14,7 @@ export function TrackMenu(
 ) {
   return (
     <ContextMenu>
-      <ContextMenuTrigger>{props.children}</ContextMenuTrigger>
+      <ContextMenuTrigger asChild>{props.children}</ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuSub>
           <ContextMenuSubTrigger>Open with</ContextMenuSubTrigger>

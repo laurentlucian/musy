@@ -115,12 +115,53 @@ export const shortenUsername = (username?: string) => {
     : [first, second].join(" ");
 };
 
-export const getCacheControl = (minutes = 1) => ({
-  "Cache-Control": `private, stale-while-revalidate, max-age=${minutes * 60}`,
-});
-
 export const decodeHtmlEntity = (str?: string | null) => {
   return str?.replace(/&#x([0-9A-Fa-f]+);/g, (_, dec) => {
     return String.fromCharCode(Number.parseInt(dec, 16));
   });
 };
+
+export function ellipsis(str: string, maxLength: number) {
+  return str.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
+}
+
+type Duration =
+  | "minute"
+  | "half-minute"
+  | "hour"
+  | "half-hour"
+  | "day"
+  | "half-day"
+  | "week"
+  | "half-week"
+  | "year"
+  | "half-year";
+
+function durationToSeconds(duration: Duration): number {
+  switch (duration) {
+    case "half-minute":
+      return 30;
+    case "minute":
+      return 60;
+    case "half-hour":
+      return 30 * 60;
+    case "hour":
+      return 60 * 60;
+    case "half-day":
+      return 12 * 60 * 60;
+    case "day":
+      return 24 * 60 * 60;
+    case "half-week":
+      return 3.5 * 24 * 60 * 60;
+    case "week":
+      return 7 * 24 * 60 * 60;
+    case "half-year":
+      return 182.5 * 24 * 60 * 60;
+    case "year":
+      return 365 * 24 * 60 * 60;
+  }
+}
+
+export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
+  return `max-age=${durationToSeconds(args.browser)}, s-maxage=${durationToSeconds(args.cdn)}`;
+}
