@@ -2,8 +2,8 @@ import type { Prisma } from "@prisma/client";
 import debug from "debug";
 import invariant from "tiny-invariant";
 import { prisma } from "~/services/db.server";
-import { createTrackModel } from "~/services/prisma/spotify.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
+import { createTrackModel } from "~/services/sdk/spotify/spotify.server";
 
 const log = debug("musy:liked");
 

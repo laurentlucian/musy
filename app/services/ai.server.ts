@@ -1,7 +1,7 @@
 import type { RecentSongs } from "@prisma/client";
 import { askGroq } from "./ai/groq";
 
-export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
+export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   const {
     artists: [{ name: artist }],
     name,
@@ -9,11 +9,11 @@ export const getAnalysis = async (track: SpotifyApi.SingleTrackResponse) => {
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
 
   return askGroq(prompt);
-};
+}
 
-export const getMoodFromSpotify = async (
+export async function getMoodFromSpotify(
   recent: SpotifyApi.UsersRecentlyPlayedTracksResponse,
-) => {
+) {
   const tracks = recent.items.map((item) => ({
     album_name: item.track.album.name,
     artist_name: item.track.artists[0].name,
@@ -25,8 +25,8 @@ export const getMoodFromSpotify = async (
 
   const response = (await askGroq(prompt)).split(".")[0];
   return response;
-};
-export const getMoodFromPrisma = async (
+}
+export async function getMoodFromPrisma(
   recent: (RecentSongs & {
     track: {
       albumName: string;
@@ -34,7 +34,7 @@ export const getMoodFromPrisma = async (
       name: string;
     };
   })[],
-) => {
+) {
   const tracks = recent.map((item) => ({
     album_name: item.track.albumName,
     artist_name: item.track.artist,
@@ -46,9 +46,9 @@ export const getMoodFromPrisma = async (
 
   const response = (await askGroq(prompt)).split(".")[0];
   return response;
-};
+}
 
-export const getStory = async (track: SpotifyApi.SingleTrackResponse) => {
+export async function getStory(track: SpotifyApi.SingleTrackResponse) {
   const {
     artists: [{ name: artist }],
     name,
@@ -59,4 +59,4 @@ export const getStory = async (track: SpotifyApi.SingleTrackResponse) => {
     `;
 
   return askGroq(prompt);
-};
+}

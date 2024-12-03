@@ -1,4 +1,4 @@
-import type { GoogleService } from "../sdk/google.server";
+import type { GoogleService } from "../google.server";
 
 export async function createPlaylist(
   service: GoogleService,

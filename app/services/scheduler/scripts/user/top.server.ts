@@ -1,7 +1,7 @@
 import debug from "debug";
 import invariant from "tiny-invariant";
-import { transformTracks } from "~/services/prisma/spotify.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
+import { transformTracks } from "~/services/sdk/spotify/spotify.server";
 
 const log = debug("musy:top");
 

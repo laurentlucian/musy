@@ -2,10 +2,10 @@ import {
   type SessionIdStorageStrategy,
   createCookieSessionStorage,
 } from "react-router";
+import invariant from "tiny-invariant";
 
 const sessionSecret = process.env.SESSION_SECRET;
-if (!sessionSecret)
-  throw new Error("Must set environment variable SESSION_SECRET");
+invariant(sessionSecret, "Missing SESSION_SECRET env");
 
 export const cookieOptions = {
   httpOnly: true,

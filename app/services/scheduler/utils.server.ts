@@ -1,7 +1,7 @@
 import invariant from "tiny-invariant";
 import { prisma } from "../db.server";
-import { createTrackModel } from "../prisma/spotify.server";
 import { SpotifyService } from "../sdk/spotify.server";
+import { createTrackModel } from "../sdk/spotify/spotify.server";
 
 export const upsertPlayback = async (
   userId: string,

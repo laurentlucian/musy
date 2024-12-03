@@ -1,5 +1,9 @@
-import { prisma } from "../db.server";
-import { SpotifyService } from "../sdk/spotify.server";
+import {
+  getTracksByKeyword,
+  getUsersByKeyword,
+} from "~/services/prisma/search.server";
+import { prisma } from "../../db.server";
+import { SpotifyService } from "../spotify.server";
 
 export function createTrackModel(track: SpotifyApi.TrackObjectFull) {
   return {
@@ -90,30 +94,6 @@ export async function getSpotifyTracks(keyword: string, userId: string) {
   });
 }
 
-export async function getDbTracks(keyword: string) {
-  return prisma.track.findMany({
-    include: {
-      liked: { orderBy: { createdAt: "asc" }, select: { user: true } },
-      recent: {
-        orderBy: { playedAt: "desc" },
-        select: { user: true },
-      },
-    },
-    orderBy: {
-      recent: {
-        _count: "desc",
-      },
-    },
-    where: { name: { contains: keyword } },
-  });
-}
-
-export async function getUsers(keyword: string, userId: string) {
-  return prisma.profile.findMany({
-    where: { AND: { NOT: { id: userId } }, name: { contains: keyword } },
-  });
-}
-
 export async function getSearchResults({
   param,
   url,
@@ -126,8 +106,8 @@ export async function getSearchResults({
   const keyword = url.searchParams.get(param);
   if (!keyword) return { tracks: [], users: [] };
   const [tracks, users] = await Promise.all([
-    getDbTracks(keyword),
-    getUsers(keyword, userId),
+    getTracksByKeyword(keyword),
+    getUsersByKeyword(keyword, userId),
   ]);
 
   return { spotify: getSpotifyTracks(keyword, userId), tracks, users };

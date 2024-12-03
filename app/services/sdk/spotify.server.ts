@@ -41,10 +41,20 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
       throw new Error("No Spotify provider found for user");
     }
 
+    invariant(process.env.SPOTIFY_CLIENT_ID, "Missing SPOTIFY_CLIENT_ID env");
+    invariant(
+      process.env.SPOTIFY_CLIENT_SECRET,
+      "Missing SPOTIFY_CLIENT_SECRET env",
+    );
+    invariant(
+      process.env.SPOTIFY_CALLBACK_URL,
+      "Missing SPOTIFY_CALLBACK_URL env",
+    );
+
     const config = {
-      clientId: process.env.SPOTIFY_CLIENT_ID!,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
-      redirectUri: process.env.SPOTIFY_CALLBACK_URL!,
+      clientId: process.env.SPOTIFY_CLIENT_ID,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+      redirectUri: process.env.SPOTIFY_CALLBACK_URL,
     };
 
     const instanceKey = `user:${userId}`;
@@ -128,10 +138,3 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     return this.client;
   }
 }
-
-invariant(process.env.SPOTIFY_CLIENT_ID, "Missing SPOTIFY_CLIENT_ID env");
-invariant(
-  process.env.SPOTIFY_CLIENT_SECRET,
-  "Missing SPOTIFY_CLIENT_SECRET env",
-);
-invariant(process.env.SPOTIFY_CALLBACK_URL, "Missing SPOTIFY_CALLBACK_URL env");
