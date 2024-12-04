@@ -48,13 +48,6 @@ export async function getFeed(userId: string, limit = 10, offset = 0) {
           track: true,
         },
       },
-      queue: {
-        include: {
-          owner: { include: { profile: profileWithInfo } },
-          track: trackWithInfo,
-          user: profileWithInfo,
-        },
-      },
       recommend: {
         include: {
           track: trackWithInfo,
@@ -107,29 +100,50 @@ export async function getUserRecent(userId: string) {
   return recent.map((t) => t.track);
 }
 
-export async function getUserLiked(userId: string) {
+export type UserLiked = ReturnType<typeof getUserLiked>;
+export async function getUserLiked({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}) {
   const liked = await prisma.likedSongs.findMany({
-    include: {
-      track: trackWithInfo,
+    select: {
+      track: {
+        select: {
+          _count: true,
+          id: true,
+          name: true,
+          artist: true,
+          image: true,
+          uri: true,
+        },
+      },
+
+      userId: true,
     },
     orderBy: {
       createdAt: "desc",
     },
-    take: 50,
-    where: { userId },
+    take: 10,
+    where: { userId, track: { provider } },
+  });
+  const count = await prisma.likedSongs.count({
+    where: { userId, track: { provider } },
   });
 
-  return liked.map((t) => t.track);
+  return { count, tracks: liked.map((t) => t.track) };
 }
 
 export type TopLeaderboard = Awaited<ReturnType<typeof getTopLeaderboard>>;
 export async function getTopLeaderboard() {
-  const SEVEN_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 7);
+  const LAST_24 = new Date(Date.now() - 1000 * 60 * 60 * 24);
   const trackIds = await prisma.recentSongs.groupBy({
     by: ["trackId"],
     orderBy: { _count: { trackId: "desc" } },
     take: 20,
-    where: { playedAt: { gte: SEVEN_DAYS } },
+    where: { playedAt: { gte: LAST_24 } },
   });
 
   const top = await prisma.track.findMany({
@@ -162,29 +176,4 @@ export async function getTrack(trackId: string) {
   });
 
   return track;
-}
-
-export function getSessions() {
-  return prisma.sessions.findMany({
-    include: {
-      songs: {
-        include: {
-          track: true,
-        },
-        orderBy: {
-          playedAt: "desc",
-        },
-        take: 50,
-      },
-      user: {
-        include: {
-          playback: true,
-        },
-      },
-    },
-    orderBy: {
-      startTime: "desc",
-    },
-    take: 30,
-  });
 }

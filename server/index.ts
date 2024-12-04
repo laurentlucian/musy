@@ -1,7 +1,6 @@
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
-import { generatePrisma } from "./cwd";
 
 const BUILD_PATH = "../build/server/index.js";
 const DEVELOPMENT = process.env.NODE_ENV === "development";
@@ -14,6 +13,7 @@ app.disable("x-powered-by");
 
 if (DEVELOPMENT) {
   console.log("\x1b[36m%s\x1b[0m", "initializing development");
+  const { generatePrisma } = await import("./cwd");
   await generatePrisma();
 
   const viteDevServer = await import("vite").then((vite) =>

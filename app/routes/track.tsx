@@ -1,7 +1,11 @@
 import { ChevronLeft } from "lucide-react";
-import { Link, data, useNavigate } from "react-router";
-import { TrackMenu } from "~/components/menu/track";
-import { Image } from "~/components/ui/image";
+import { data, useNavigate } from "react-router";
+import {
+  TrackArtist,
+  TrackImage,
+  TrackMenu,
+  TrackName,
+} from "~/components/domain/track";
 import { ellipsis, getCacheControl } from "~/lib/utils";
 import { getTrack } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/track";
@@ -48,19 +52,10 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
           >
             <ChevronLeft /> Back
           </button>
-          <Image
-            src={track.image}
-            alt={track.name}
-            style={{
-              viewTransitionName: `track-image-${track.id}`,
-            }}
-          />
+          <TrackImage id={track.id} src={track.image} alt={track.name} />
           <div className="mt-2 flex flex-col gap-y-0.5">
-            <p className="line-clamp-2 text-ellipsis font-medium text-lg">
-              {track.name} I Smoked Away My Brain (I'm God x Demons Mashup)
-              (feat. Imogen Heap & Clams Casino)
-            </p>
-            <p className="text-muted-foreground text-sm">{track.artist}</p>
+            <TrackName name={track.name} />
+            <TrackArtist artist={track.artist} />
           </div>
         </div>
       </main>

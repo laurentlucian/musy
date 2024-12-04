@@ -1,8 +1,7 @@
 import { Suspense, use } from "react";
-import { Link } from "react-router";
+import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { RootMenu } from "~/components/menu/root";
-import { TrackMenu } from "~/components/menu/track";
 import { Image } from "~/components/ui/image";
 import { getCacheControl } from "~/lib/utils";
 import { getTopLeaderboard } from "~/services/prisma/tracks.server";
@@ -41,39 +40,16 @@ function Leaderboard(props: {
 
   return leaderboard.map((track, index) => {
     return (
-      <TrackMenu
-        key={track.name}
-        query={encodeURIComponent(`${track.name} ${track.artist}`)}
-        uri={track.uri}
-      >
-        <li>
-          <Link
-            className="group flex items-center gap-x-2"
-            to={`/track/${track.id}`}
-            viewTransition
-          >
-            <span className="basis-6">{index + 1}.</span>
-            <div className="flex flex-1 gap-x-2 rounded bg-card p-3 transition-colors duration-150 group-hover:bg-accent">
-              <Image
-                src={track.image}
-                alt={track.name}
-                height={80}
-                width={80}
-                className="self-start"
-                style={{
-                  viewTransitionName: `track-image-${track.id}`,
-                }}
-              />
-              <div>
-                <p className="line-clamp-2 text-ellipsis">{track.name}</p>
-                <p className="line-clamp-1 text-ellipsis text-muted-foreground text-sm">
-                  {track.artist}
-                </p>
-              </div>
-            </div>
-          </Link>
-        </li>
-      </TrackMenu>
+      <li key={track.id} className="flex items-center gap-x-2">
+        <span className="basis-6 font-bold">{index + 1}.</span>
+        <Track
+          id={track.id}
+          uri={track.uri}
+          image={track.image}
+          artist={track.artist}
+          name={track.name}
+        />
+      </li>
     );
   });
 }

@@ -1,6 +1,17 @@
 import type { Session } from "react-router";
 import { prisma } from "../db.server";
-import type { SessionData } from "../session.server";
+import { type SessionData, sessionStorage } from "../session.server";
+
+export async function getUserFromRequest(request: Request) {
+  let session = await sessionStorage.getSession(request.headers.get("cookie"));
+
+  const newSession = await migrateLegacySession(session);
+  if (newSession) session = newSession;
+
+  const userId = session.get("data")?.id;
+
+  return { userId, session, migrated: !!newSession };
+}
 
 export async function migrateLegacySession(
   session: Session<SessionData, SessionData>,

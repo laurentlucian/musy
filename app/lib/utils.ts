@@ -165,3 +165,7 @@ function durationToSeconds(duration: Duration): number {
 export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
   return `max-age=${durationToSeconds(args.browser)}, s-maxage=${durationToSeconds(args.cdn)}`;
 }
+
+export function logError(error: unknown) {
+  console.error("\x1b[31merror:\x1b[0m", error);
+}
