@@ -1,8 +1,10 @@
+import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
 import { Suspense, use } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { RootMenu } from "~/components/menu/root";
+import { ContextMenu } from "~/components/ui/context-menu";
 import { Image } from "~/components/ui/image";
 import { getCacheControl } from "~/lib/utils";
 import { getTopLeaderboard } from "~/services/prisma/tracks.server";
@@ -24,15 +26,47 @@ export default function Home({
   return (
     <main className="relative isolate flex flex-1 flex-col items-center gap-y-10 py-10">
       <RootMenu />
-      <Link to="/account">
-        <Image src="/musylogo.png" height={200} width={200} alt="musy" />
-      </Link>
+
+      <Logo />
       <ul className="flex w-full max-w-md flex-col gap-y-2">
         <Suspense fallback={<Waver />}>
           <Leaderboard leaderboard={leaderboard} />
         </Suspense>
       </ul>
     </main>
+  );
+}
+
+const VARIATIONS = {
+  "1": "/logo/musy-1.png",
+} as const;
+
+function Logo() {
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+
+  const variation = params.get("v");
+  let url = "/logo/musy.png";
+  if (variation && variation in VARIATIONS) {
+    url = VARIATIONS[variation as keyof typeof VARIATIONS];
+  }
+
+  return (
+    <ContextMenu
+      onOpenChange={(open) => {
+        open && variation !== "1" ? navigate("/?v=1") : navigate("/");
+      }}
+    >
+      <ContextMenuTrigger asChild>
+        <Link to="/account">
+          <Image
+            src={url}
+            className="h-[150px] w-[200px] object-contain"
+            alt="musy"
+          />
+        </Link>
+      </ContextMenuTrigger>
+    </ContextMenu>
   );
 }
 

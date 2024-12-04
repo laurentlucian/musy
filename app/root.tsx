@@ -24,7 +24,7 @@ export function links() {
     },
     { rel: "stylesheet", href: stylesheet },
     { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-    { rel: "icon", type: "image/png", href: "/musylogo.png" },
+    { rel: "icon", type: "image/png", href: "/logo/musy.png" },
     { rel: "manifest", href: "/manifest.json" },
   ] as Route.LinkDescriptors;
 }
