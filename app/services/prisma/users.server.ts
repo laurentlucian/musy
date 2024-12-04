@@ -1,11 +1,11 @@
 import { prisma } from "../db.server";
 
 export async function getProvider(args: {
-  accountId: string;
+  userId: string;
   type: "spotify" | "google";
 }) {
   const data = await prisma.provider.findUnique({
-    where: { accountId_type: args },
+    where: { userId_type: args },
   });
   return data;
 }

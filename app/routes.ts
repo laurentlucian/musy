@@ -15,4 +15,5 @@ export default [
       route("liked", "routes/account.provider.liked.tsx"),
     ]),
   ]),
+  route("actions/like", "routes/actions/like.tsx"),
 ] satisfies RouteConfig;

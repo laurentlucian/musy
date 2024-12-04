@@ -33,7 +33,7 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
 
   static async createFromUserId(userId: string): Promise<SpotifyService> {
     const provider = await getProvider({
-      accountId: userId,
+      userId: userId,
       type: "spotify",
     });
 
@@ -73,13 +73,14 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     );
 
     SpotifyService.instances.set(instanceKey, instance);
+    await instance.refreshTokenIfNeeded();
     return instance;
   }
 
-  static createFromToken(
+  static async createFromToken(
     accessToken: string,
     config?: Partial<ServiceConfig>,
-  ): SpotifyService {
+  ): Promise<SpotifyService> {
     invariant(process.env.SPOTIFY_CLIENT_ID, "missing SPOTIFY_CLIENT_ID env");
     invariant(
       process.env.SPOTIFY_CLIENT_SECRET,
@@ -103,6 +104,7 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
 
     const instance = new SpotifyService(fullConfig, { accessToken });
     SpotifyService.instances.set(instanceKey, instance);
+    await instance.refreshTokenIfNeeded();
     return instance;
   }
 

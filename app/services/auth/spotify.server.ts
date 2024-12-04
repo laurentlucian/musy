@@ -21,7 +21,9 @@ export function getSpotifyStrategy() {
       scopes,
     },
     async ({ tokens }) => {
-      const spotify = SpotifyService.createFromToken(tokens.accessToken());
+      const spotify = await SpotifyService.createFromToken(
+        tokens.accessToken(),
+      );
       const client = spotify.getClient();
 
       const response = await client.getMe();

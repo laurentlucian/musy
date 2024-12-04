@@ -7,6 +7,7 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
+import { Toaster } from "./components/ui/sonner";
 import stylesheet from "./globals.css?url";
 
 export function links() {
@@ -48,6 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Toaster />
       </body>
     </html>
   );

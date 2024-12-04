@@ -81,7 +81,7 @@ export class GoogleService
 
   static async createFromUserId(userId: string): Promise<GoogleService> {
     const provider = await getProvider({
-      accountId: userId,
+      userId,
       type: "google",
     });
 
