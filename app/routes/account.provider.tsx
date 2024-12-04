@@ -12,11 +12,16 @@ export default function AccountProvider({
           to={{
             pathname: `/account/${provider}/liked`,
           }}
-          className="[&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
-              <Button key={provider} disabled={isActive} className="capitalize">
+              <Button
+                key={provider}
+                disabled={isActive}
+                variant="ghost"
+                className="capitalize"
+              >
                 <p>Liked</p>
               </Button>
             );
@@ -26,11 +31,16 @@ export default function AccountProvider({
           to={{
             pathname: `/account/${provider}/recent`,
           }}
-          className="[&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
-              <Button key={provider} disabled={isActive} className="capitalize">
+              <Button
+                key={provider}
+                disabled={isActive}
+                variant="ghost"
+                className="capitalize"
+              >
                 <p>Recent</p>
               </Button>
             );

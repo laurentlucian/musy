@@ -1,4 +1,5 @@
 import { Suspense, use } from "react";
+import { Link } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { RootMenu } from "~/components/menu/root";
@@ -23,7 +24,9 @@ export default function Home({
   return (
     <main className="relative isolate flex flex-1 flex-col items-center gap-y-10 py-10">
       <RootMenu />
-      <Image src="/musylogo.png" height={200} width={200} alt="musy" />
+      <Link to="/account">
+        <Image src="/musylogo.png" height={200} width={200} alt="musy" />
+      </Link>
       <ul className="flex w-full max-w-md flex-col gap-y-2">
         <Suspense fallback={<Waver />}>
           <Leaderboard leaderboard={leaderboard} />

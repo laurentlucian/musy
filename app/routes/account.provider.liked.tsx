@@ -1,16 +1,13 @@
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
-import { getUserFromRequest } from "~/services/auth/helpers.server";
 import { type UserLiked, getUserLiked } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/account.provider.liked";
 
 export async function loader({
-  request,
+  context: { userId },
   params: { provider },
 }: Route.LoaderArgs) {
-  const { userId } = await getUserFromRequest(request);
-
   return { liked: userId ? getUserLiked({ userId, provider }) : null };
 }
 

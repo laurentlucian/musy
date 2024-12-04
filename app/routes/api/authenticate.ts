@@ -15,6 +15,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       },
     });
   } catch (error) {
+    if (error instanceof Response) throw error;
     console.error("auth/callback/error", error);
     return redirect("/account");
   }

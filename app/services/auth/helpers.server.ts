@@ -1,21 +1,8 @@
-import type { Session } from "react-router";
 import { prisma } from "../db.server";
-import { type SessionData, sessionStorage } from "../session.server";
+import type { SessionTyped } from "../session.server";
 
-export async function getUserFromRequest(request: Request) {
-  let session = await sessionStorage.getSession(request.headers.get("cookie"));
-
-  const newSession = await migrateLegacySession(session);
-  if (newSession) session = newSession;
-
-  const userId = session.get("data")?.id;
-
-  return { userId, session, migrated: !!newSession };
-}
-
-export async function migrateLegacySession(
-  session: Session<SessionData, SessionData>,
-) {
+export async function migrateLegacySession(session?: SessionTyped) {
+  if (!session) return null;
   const user = session.get("spotify:session");
   if (!user) return null;
 
@@ -30,5 +17,5 @@ export async function migrateLegacySession(
     session.unset("spotify:session");
   }
 
-  return session;
+  return { session, userId: session.get("data")?.id };
 }

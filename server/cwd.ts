@@ -1,3 +1,4 @@
+// @todo make it work on prod to replace start.sh; errors with module not found
 import { execSync } from "node:child_process";
 import { logError } from "~/lib/utils";
 

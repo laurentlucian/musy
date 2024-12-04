@@ -1,7 +1,6 @@
-import { Suspense, use } from "react";
+import { use } from "react";
 import {
   Form,
-  Link,
   NavLink,
   Outlet,
   data,
@@ -9,26 +8,32 @@ import {
   useLocation,
   useParams,
 } from "react-router";
-import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { authenticator } from "~/services/auth.server";
 import { PROVIDERS } from "~/services/auth/const";
-import { getUserFromRequest } from "~/services/auth/helpers.server";
+import { migrateLegacySession } from "~/services/auth/helpers.server";
 import { type Providers, getProviders } from "~/services/prisma/users.server";
 import { sessionStorage } from "~/services/session.server";
 import type { Route } from "./+types/account";
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const { userId, session, migrated } = await getUserFromRequest(request);
-  const response = { userId, providers: userId ? getProviders(userId) : null };
+export async function loader({
+  context: { userId, session },
+}: Route.LoaderArgs) {
+  const migrated = await migrateLegacySession(session);
+  if (!migrated)
+    return { userId, providers: userId ? getProviders(userId) : null };
 
-  if (migrated) {
-    return data(response, {
-      headers: { "Set-Cookie": await sessionStorage.commitSession(session) },
-    });
-  }
-
-  return response;
+  return data(
+    {
+      userId: migrated.userId,
+      providers: userId ? getProviders(userId) : null,
+    },
+    {
+      headers: {
+        "Set-Cookie": await sessionStorage.commitSession(migrated.session),
+      },
+    },
+  );
 }
 
 export default function AccountPage({
@@ -46,9 +51,7 @@ export default function AccountPage({
           </Form>
         )}
 
-        <Suspense fallback={<Waver />}>
-          <ProviderList providers={providers} />
-        </Suspense>
+        <ProviderList providers={providers} />
       </div>
       {userId && <Outlet />}
     </main>
@@ -73,11 +76,16 @@ function ProviderList(props: {
           to={{
             pathname: `/account/${provider + rest}`,
           }}
-          className="[&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
-              <Button key={provider} disabled={isActive} className="capitalize">
+              <Button
+                key={provider}
+                disabled={isActive}
+                variant="ghost"
+                className="capitalize"
+              >
                 <p>{provider}</p>
               </Button>
             );
@@ -100,6 +108,7 @@ function ProviderList(props: {
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  const cloned = request.clone();
   const data = await request.formData();
   const mode = data.get("mode");
   if (typeof mode !== "string") throw new Error("mode not found");
@@ -116,7 +125,6 @@ export async function action({ request }: Route.ActionArgs) {
   if (mode === "authorize") {
     const provider = data.get("provider");
     if (typeof provider !== "string") throw new Error("invalid data");
-
-    await authenticator.authenticate(provider, request);
+    await authenticator.authenticate(provider, cloned);
   }
 }

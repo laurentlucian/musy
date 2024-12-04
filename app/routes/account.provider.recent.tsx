@@ -1,7 +1,6 @@
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
-import { getUserFromRequest } from "~/services/auth/helpers.server";
 import {
   type UserRecent,
   getUserRecent,
@@ -9,11 +8,9 @@ import {
 import type { Route } from "./+types/account.provider.recent";
 
 export async function loader({
-  request,
+  context: { userId },
   params: { provider },
 }: Route.LoaderArgs) {
-  const { userId } = await getUserFromRequest(request);
-
   return { recent: userId ? getUserRecent({ userId, provider }) : null };
 }
 

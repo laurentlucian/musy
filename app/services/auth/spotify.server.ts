@@ -17,8 +17,8 @@ export function getSpotifyStrategy() {
       redirectURI,
       authorizationEndpoint: "https://accounts.spotify.com/authorize",
       tokenEndpoint: "https://accounts.spotify.com/api/token",
-
       scopes,
+      cookie: "spotify:session",
     },
     async ({ tokens }) => {
       const spotify = await SpotifyService.createFromToken(

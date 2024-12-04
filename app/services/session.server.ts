@@ -1,4 +1,5 @@
 import {
+  type Session,
   type SessionIdStorageStrategy,
   createCookieSessionStorage,
 } from "react-router";
@@ -33,6 +34,8 @@ export type SessionData = {
     };
   };
 };
+
+export type SessionTyped = Session<SessionData>;
 
 export const sessionStorage = createCookieSessionStorage<SessionData>({
   cookie: cookieOptions,

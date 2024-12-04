@@ -20,6 +20,7 @@ export function getGoogleStrategy() {
         "https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent",
       tokenEndpoint: "https://oauth2.googleapis.com/token",
       scopes,
+      cookie: "google:session",
     },
     async ({ tokens }) => {
       const google = await GoogleService.createFromCredentials({
