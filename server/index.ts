@@ -45,6 +45,10 @@ if (DEVELOPMENT) {
 
 app.use(morgan("tiny"));
 
-app.listen(PORT, () => {
-  console.log("\x1b[32m%s\x1b[0m", `server running @ http://localhost:${PORT}`);
+const hostname = DEVELOPMENT ? "localhost" : "0.0.0.0";
+app.listen(PORT, hostname, () => {
+  console.log(
+    "\x1b[32m%s\x1b[0m",
+    `server running @ http://${hostname}:${PORT}`,
+  );
 });

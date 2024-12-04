@@ -12,7 +12,7 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { cn } from "~/lib/utils";
-import type { action } from "~/routes/actions/like";
+import type { action } from "~/routes/actions";
 import { Image } from "../ui/image";
 
 export function Track(
@@ -26,7 +26,10 @@ export function Track(
 ) {
   const { image, artist, name, id, uri, className, ...rest } = props;
   return (
-    <TrackMenu query={encodeURIComponent(`${name} ${artist}`)} uri={uri}>
+    <TrackMenu
+      query={encodeURIComponent(`${name} ${artist}`.toLowerCase())}
+      uri={uri}
+    >
       <Link
         className={cn(
           "flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
@@ -92,7 +95,7 @@ export function TrackMenu(
       <ContextMenuTrigger asChild>{props.children}</ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuSub>
-          <ContextMenuSubTrigger>Open with</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>Open</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
             <ContextMenuItem
               onClick={() => {
@@ -120,7 +123,7 @@ export function TrackMenu(
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSub>
-          <ContextMenuSubTrigger>Like on</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger>Like</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
             <LikeOnSpotify uri={props.uri} />
             <LikeOnYoutube uri={props.uri} />

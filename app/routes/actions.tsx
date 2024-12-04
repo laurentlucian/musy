@@ -4,7 +4,7 @@ import { prisma } from "~/services/db.server";
 import { GoogleService } from "~/services/sdk/google.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 import { youtube } from "~/services/sdk/youtube/helpers.server";
-import type { Route } from "../+types/account.provider.liked";
+import type { Route } from "./+types/actions";
 
 export function loader() {
   throw redirect("/");
@@ -13,9 +13,17 @@ export function loader() {
 export async function action({
   request,
   context: { userId },
+  params: { action },
 }: Route.ActionArgs) {
   if (!userId) return data({ error: "no user" }, { status: 400 });
 
+  if (action === "like") return like({ request, userId });
+
+  return data({ error: "no action" }, { status: 400 });
+}
+
+async function like(args: { request: Request; userId: string }) {
+  const { request, userId } = args;
   const formData = await request.formData();
   const provider = formData.get("provider");
   if (typeof provider !== "string")

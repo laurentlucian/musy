@@ -1,4 +1,9 @@
 #!/bin/sh
 set -ex
-bunx prisma migrate deploy
-bun run start
+
+until bunx prisma migrate deploy; do
+  echo "migrating..."
+  sleep 5
+done
+
+exec bun run start

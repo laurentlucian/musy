@@ -18,7 +18,7 @@ export default function AccountProviderRecent({
   loaderData: { recent },
 }: Route.ComponentProps) {
   return (
-    <article className="flex flex-1 gap-3 rounded-lg bg-card p-4 sm:flex-col">
+    <article className="flex gap-3 rounded-lg bg-card p-4 sm:flex-1 sm:flex-col">
       {recent && (
         <Suspense fallback={<Waver />}>
           <RecentList tracks={recent} />

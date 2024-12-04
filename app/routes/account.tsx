@@ -1,6 +1,7 @@
 import { use } from "react";
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   data,
@@ -40,16 +41,21 @@ export default function AccountPage({
   loaderData: { userId, providers },
 }: Route.ComponentProps) {
   return (
-    <main className="flex flex-1 flex-col items-center gap-4 p-10 font-medium sm:flex-row sm:items-start sm:justify-center">
-      <div className="flex w-full max-w-xs gap-3 rounded-lg bg-card p-4 sm:flex-col">
-        {userId && (
-          <Form method="post">
-            <input type="hidden" name="mode" value="logout" />
-            <Button type="submit" variant="secondary">
-              Logout
-            </Button>
-          </Form>
-        )}
+    <main className="flex w-full flex-1 flex-col items-center gap-4 px-8 font-medium sm:flex-row sm:items-start sm:justify-center">
+      <div className="flex gap-3 rounded-lg bg-card p-4 sm:flex-1 sm:flex-col">
+        <div className="flex gap-3 *:*:w-full *:flex-1">
+          <Link to="/">
+            <Button variant="secondary">Home</Button>
+          </Link>
+          {userId && (
+            <Form method="post">
+              <input type="hidden" name="mode" value="logout" />
+              <Button type="submit" variant="secondary">
+                Logout
+              </Button>
+            </Form>
+          )}
+        </div>
 
         <ProviderList providers={providers} />
       </div>
@@ -84,7 +90,7 @@ function ProviderList(props: {
                 key={provider}
                 disabled={isActive}
                 variant="ghost"
-                className="capitalize"
+                className="w-full capitalize"
               >
                 <p>{provider}</p>
               </Button>
