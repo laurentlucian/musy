@@ -18,6 +18,7 @@ export async function action({
   if (!userId) return data({ error: "no user" }, { status: 400 });
 
   if (action === "like") return like({ request, userId });
+  if (action === "thanks") return thanks({ request, userId });
 
   return data({ error: "no action" }, { status: 400 });
 }
@@ -69,4 +70,26 @@ async function like(args: { request: Request; userId: string }) {
     logError(error instanceof Error ? error.message : error);
     return data({ error: "failure to like" }, { status: 500 });
   }
+}
+
+async function thanks(args: { request: Request; userId: string }) {
+  const { request, userId } = args;
+  const formData = await request.formData();
+
+  const uri = formData.get("uri");
+  if (typeof uri !== "string")
+    return data({ error: "no uri" }, { status: 400 });
+
+  const track = await prisma.track.findFirst({
+    select: { id: true },
+    where: { uri },
+  });
+
+  if (!track) return data({ error: "no track" }, { status: 400 });
+
+  await prisma.thanks.create({
+    data: { trackId: track.id, userId },
+  });
+
+  return data({ error: null });
 }

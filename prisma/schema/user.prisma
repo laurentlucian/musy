@@ -49,6 +49,7 @@ model Profile {
   playbacks   PlaybackHistory[]
   playlists   Playlist[]
   feed        Feed[]
+  thanks      Thanks[]
 }
 
 model Follow {

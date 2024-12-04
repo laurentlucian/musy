@@ -6,11 +6,13 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
+import { useFetcherToast } from "~/hooks/useFetcherToast";
 import { cn } from "~/lib/utils";
 import type { action } from "~/routes/actions";
 import { Image } from "../ui/image";
@@ -130,6 +132,8 @@ export function TrackMenu(
             <ContextMenuItem disabled>Apple</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
+        <ContextMenuSeparator />
+        <Thanks uri={props.uri} />
       </ContextMenuContent>
     </ContextMenu>
   );
@@ -137,16 +141,7 @@ export function TrackMenu(
 
 function LikeOnSpotify(props: { uri: string }) {
   const fetcher = useFetcher<typeof action>();
-  const busy = fetcher.state !== "idle";
-
-  const error = fetcher.data?.error;
-  useLayoutEffect(() => {
-    if (error) {
-      toast.error(error);
-    } else if (error === null) {
-      toast.success("liked");
-    }
-  }, [error]);
+  useFetcherToast(fetcher.data?.error, "liked");
 
   return (
     <ContextMenuItem
@@ -163,23 +158,14 @@ function LikeOnSpotify(props: { uri: string }) {
         );
       }}
     >
-      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Spotify"}
+      Spotify
     </ContextMenuItem>
   );
 }
 
 function LikeOnYoutube(props: { uri: string }) {
   const fetcher = useFetcher<typeof action>();
-  const busy = fetcher.state !== "idle";
-
-  const error = fetcher.data?.error;
-  useLayoutEffect(() => {
-    if (error) {
-      toast.error(error);
-    } else if (error === null) {
-      toast.success("liked");
-    }
-  }, [error]);
+  useFetcherToast(fetcher.data?.error, "liked");
 
   return (
     <ContextMenuItem
@@ -196,7 +182,31 @@ function LikeOnYoutube(props: { uri: string }) {
         );
       }}
     >
-      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Youtube"}
+      Youtube
+    </ContextMenuItem>
+  );
+}
+
+function Thanks(props: { uri: string }) {
+  const fetcher = useFetcher<typeof action>();
+  useFetcherToast(fetcher.data?.error, "thanked");
+
+  return (
+    <ContextMenuItem
+      onClick={() => {
+        fetcher.submit(
+          {
+            uri: props.uri,
+            provider: "google",
+          },
+          {
+            action: "/actions/thanks",
+            method: "post",
+          },
+        );
+      }}
+    >
+      Thanks
     </ContextMenuItem>
   );
 }

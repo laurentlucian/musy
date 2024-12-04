@@ -19,6 +19,19 @@ model Track {
   playback    Playback[]
   recommended Recommended[]
   playlists   PlaylistTrack[]
+  //
+  thanks      Thanks[]
+}
+
+model Thanks {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  //
+  track     Track    @relation(fields: [trackId], references: [id])
+  trackId   String
+  //
+  user      Profile? @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Playback {
