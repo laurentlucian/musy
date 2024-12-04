@@ -7,8 +7,6 @@ model Feed {
   //
   recommend Recommended?
   //
-  queue     Queue?
-  //
   liked     LikedSongs?
   //
   playback  PlaybackHistory?

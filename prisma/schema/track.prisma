@@ -1,5 +1,5 @@
 model Track {
-  id          String          @id @unique
+  id          String  @id @unique
   uri         String
   name        String
   image       String
@@ -11,8 +11,9 @@ model Track {
   preview_url String?
   link        String
   duration    Int
+
+  provider    String          @default("spotify")
   //
-  queue       Queue[]
   liked       LikedSongs[]
   recent      RecentSongs[]
   playback    Playback[]
@@ -48,16 +49,15 @@ model PlaybackHistory {
 }
 
 model RecentSongs {
-  id        Int       @id @default(autoincrement())
-  playedAt  DateTime  @default(now())
+  id        Int      @id @default(autoincrement())
+  playedAt  DateTime @default(now())
   //
-  track     Track     @relation(fields: [trackId], references: [id])
+  track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
   //
-  user      Profile   @relation(fields: [userId], references: [id])
+  user      Profile  @relation(fields: [userId], references: [id])
   userId    String
-  action    String    @default("recent")
-  session   Sessions? @relation(fields: [sessionId], references: [id])
+  action    String   @default("recent")
   sessionId Int?
 
   @@unique([playedAt, userId])

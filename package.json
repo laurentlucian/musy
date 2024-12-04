@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "react-router build",
-    "dev": "bunx prisma migrate dev && bunx prisma generate && cross-env NODE_ENV=development bun server/index.ts",
+    "dev": "cross-env NODE_ENV=development bun server/index.ts",
     "start": "node --experimental-strip-types server/index.ts",
     "deploy": "fly deploy --remote-only",
     "format": "biome format --write ./app",

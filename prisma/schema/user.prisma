@@ -6,9 +6,6 @@ model User {
   providers Provider[]
   //
   profile   Profile?
-  party     Party[]
-  //
-  queue     Queue[]
 }
 
 model Provider {
@@ -42,23 +39,23 @@ model Profile {
   email       String            @unique
   image       String?
   //
-  party       Party?
-  queue       Queue[]
   liked       LikedSongs[]
   recent      RecentSongs[]
   recommended Recommended[]
   ai          AI?
   playback    Playback?
-  Sessions    Sessions[]
-  favorite    Favorite[]        @relation("userToFavorite")
-  favBy       Favorite[]        @relation("favoriteToUser")
-  block       Block[]           @relation("userToBlock")
-  blockBy     Block[]           @relation("blockToUser")
-  mute        Mute[]            @relation("userToMute")
-  muteBy      Mute[]            @relation("muteToUser")
   following   Follow[]          @relation("follower")
   followers   Follow[]          @relation("following")
   playbacks   PlaybackHistory[]
   playlists   Playlist[]
   feed        Feed[]
+}
+
+model Follow {
+  following   Profile @relation("following", fields: [followingId], references: [id])
+  followingId String
+  follower    Profile @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+
+  @@id([followingId, followerId])
 }
