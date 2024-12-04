@@ -13,6 +13,7 @@ export default [
   route("account", "routes/account.tsx", [
     route(":provider", "routes/account.provider.tsx", [
       route("liked", "routes/account.provider.liked.tsx"),
+      route("recent", "routes/account.provider.recent.tsx"),
     ]),
   ]),
   route("actions/like", "routes/actions/like.tsx"),

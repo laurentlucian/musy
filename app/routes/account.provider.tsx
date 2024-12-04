@@ -9,7 +9,6 @@ export default function AccountProvider({
     <article className="flex flex-1 items-start gap-4">
       <div className="flex w-full max-w-xs gap-3 rounded-lg bg-card p-4 sm:flex-col">
         <NavLink
-          key={provider}
           to={{
             pathname: `/account/${provider}/liked`,
           }}
@@ -18,7 +17,21 @@ export default function AccountProvider({
           {({ isActive }) => {
             return (
               <Button key={provider} disabled={isActive} className="capitalize">
-                <p>Liked Songs</p>
+                <p>Liked</p>
+              </Button>
+            );
+          }}
+        </NavLink>
+        <NavLink
+          to={{
+            pathname: `/account/${provider}/recent`,
+          }}
+          className="[&[aria-current]]:pointer-events-none"
+        >
+          {({ isActive }) => {
+            return (
+              <Button key={provider} disabled={isActive} className="capitalize">
+                <p>Recent</p>
               </Button>
             );
           }}

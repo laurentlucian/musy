@@ -2,27 +2,6 @@ import type { Prisma } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { prisma } from "../db.server";
 
-export const trackWithInfo = {
-  include: {
-    liked: { orderBy: { createdAt: "asc" } },
-    recent: { orderBy: { playedAt: "asc" } },
-  },
-} satisfies Prisma.TrackDefaultArgs<DefaultArgs>;
-
-export const profileWithInfo = {
-  include: {
-    playback: {
-      include: {
-        track: trackWithInfo,
-      },
-    },
-    playbacks: {
-      orderBy: { endedAt: "desc" },
-      take: 1,
-    },
-  },
-} satisfies Prisma.ProfileDefaultArgs<DefaultArgs>;
-
 export async function getFeed(userId: string, limit = 10, offset = 0) {
   const following = await prisma.follow.findMany({
     select: {
@@ -38,8 +17,8 @@ export async function getFeed(userId: string, limit = 10, offset = 0) {
     include: {
       liked: {
         include: {
-          track: trackWithInfo,
-          user: profileWithInfo,
+          track: true,
+          user: true,
         },
       },
       playlist: {
@@ -50,11 +29,11 @@ export async function getFeed(userId: string, limit = 10, offset = 0) {
       },
       recommend: {
         include: {
-          track: trackWithInfo,
-          user: profileWithInfo,
+          track: true,
+          user: true,
         },
       },
-      user: profileWithInfo,
+      user: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -74,7 +53,7 @@ export async function getFeed(userId: string, limit = 10, offset = 0) {
 export async function getUserRecommended(userId: string) {
   const recommended = await prisma.recommended.findMany({
     include: {
-      track: trackWithInfo,
+      track: true,
     },
     orderBy: { createdAt: "desc" },
     where: { userId },
@@ -83,31 +62,39 @@ export async function getUserRecommended(userId: string) {
   return recommended.map((t) => t.track);
 }
 
-export async function getUserRecent(userId: string) {
+export type UserRecent = ReturnType<typeof getUserRecent>;
+export async function getUserRecent(args: {
+  userId: string;
+  provider: string;
+}) {
+  const { userId, provider } = args;
   const recent = await prisma.recentSongs.findMany({
     include: {
-      track: trackWithInfo,
+      track: true,
     },
     orderBy: {
       playedAt: "desc",
     },
-    take: 50,
+    take: 10,
     where: {
       userId,
+      track: { provider },
     },
   });
 
-  return recent.map((t) => t.track);
+  const count = await prisma.recentSongs.count({
+    where: { userId, track: { provider } },
+  });
+
+  return { count, tracks: recent.map((t) => t.track) };
 }
 
 export type UserLiked = ReturnType<typeof getUserLiked>;
-export async function getUserLiked({
-  userId,
-  provider,
-}: {
+export async function getUserLiked(args: {
   userId: string;
   provider: string;
 }) {
+  const { userId, provider } = args;
   const liked = await prisma.likedSongs.findMany({
     select: {
       track: {
@@ -138,12 +125,12 @@ export async function getUserLiked({
 
 export type TopLeaderboard = Awaited<ReturnType<typeof getTopLeaderboard>>;
 export async function getTopLeaderboard() {
-  const LAST_24 = new Date(Date.now() - 1000 * 60 * 60 * 24);
+  const LAST_3_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 3);
   const trackIds = await prisma.recentSongs.groupBy({
     by: ["trackId"],
     orderBy: { _count: { trackId: "desc" } },
     take: 20,
-    where: { playedAt: { gte: LAST_24 } },
+    where: { playedAt: { gte: LAST_3_DAYS } },
   });
 
   const top = await prisma.track.findMany({
