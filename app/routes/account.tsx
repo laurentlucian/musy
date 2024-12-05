@@ -42,7 +42,7 @@ export default function AccountPage({
 }: Route.ComponentProps) {
   return (
     <main className="flex w-full flex-1 flex-col items-center gap-4 px-8 font-medium sm:flex-row sm:items-start sm:justify-center">
-      <div className="flex gap-3 rounded-lg bg-card p-4 sm:flex-1 sm:flex-col">
+      <div className="flex max-w-sm flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
         <div className="flex gap-3 *:*:w-full *:flex-1">
           <Link to="/">
             <Button variant="secondary">Home</Button>

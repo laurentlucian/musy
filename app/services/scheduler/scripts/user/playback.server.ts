@@ -1,10 +1,7 @@
-import { Cron } from "croner";
 import debug from "debug";
-import invariant from "tiny-invariant";
-import { msToString, notNull } from "~/lib/utils";
+import { notNull } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { getAllUsersId } from "~/services/prisma/users.server";
-import { SpotifyService } from "~/services/sdk/spotify.server";
 import { getPlaybackState, upsertPlayback } from "../../utils.server";
 
 const log = debug("musy:playback");
@@ -50,58 +47,4 @@ export async function syncPlaybacks() {
 
 async function handleInactiveUsers(users: string[]) {
   await prisma.playback.deleteMany({ where: { userId: { in: users } } });
-}
-
-function _schedulePlaybackCheck(userId: string, delay: number) {
-  new Cron(
-    new Date(Date.now() + delay),
-    async () => {
-      const spotify = await SpotifyService.createFromUserId(userId);
-      const client = spotify.getClient();
-      invariant(client, "spotify client not found");
-
-      const { body: playback } = await client.getMyCurrentPlaybackState();
-
-      if (!playback || !playback.is_playing) {
-        log("user not playing, will be cleaned up on next createPlaybackQ run");
-        return;
-      }
-
-      const { item: track, progress_ms } = playback;
-
-      if (!track || track.type !== "track" || !progress_ms) {
-        log(
-          "user not playing a track, will be cleaned up on next createPlaybackQ run",
-        );
-        return;
-      }
-
-      await upsertPlayback(userId, playback);
-      log("playback upserted for user", userId);
-
-      const remaining = track.duration_ms - progress_ms;
-      let delay: number;
-
-      if (playback.repeat_state === "track") {
-        delay = 1000 * 60 * 5; // Check again in 5 minutes for repeated tracks
-        log("track on repeat, will check again in 5 minutes");
-      } else {
-        delay = remaining + 1000; // Add 1 second buffer
-        log("will check again at the end of the track");
-      }
-
-      // Schedule the next check
-      _schedulePlaybackCheck(userId, delay);
-
-      log(
-        "completed check for",
-        userId,
-        "will check again in",
-        msToString(delay),
-      );
-    },
-    {
-      maxRuns: 1,
-    },
-  );
 }

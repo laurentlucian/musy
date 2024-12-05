@@ -1,7 +1,5 @@
-import { Loader2 } from "lucide-react";
-import { type PropsWithChildren, useLayoutEffect } from "react";
+import type { PropsWithChildren } from "react";
 import { Link, useFetcher } from "react-router";
-import { toast } from "sonner";
 import {
   ContextMenu,
   ContextMenuContent,

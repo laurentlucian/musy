@@ -8,7 +8,7 @@ export default function AccountProvider({
 }: Route.ComponentProps) {
   return (
     <Fragment>
-      <div className="flex gap-3 rounded-lg bg-card p-4 sm:flex-1 sm:flex-col">
+      <div className="flex max-w-md gap-3 rounded-lg bg-card p-4 sm:flex-1 sm:flex-col">
         <NavLink
           to={{
             pathname: `/account/${provider}/liked`,
