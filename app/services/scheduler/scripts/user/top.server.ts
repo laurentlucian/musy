@@ -1,12 +1,10 @@
-import debug from "debug";
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 import { transformTracks } from "~/services/sdk/spotify/spotify.server";
 
-const log = debug("musy:top");
-
 export async function syncUserTop(userId: string) {
-  log("starting...", userId);
+  log("starting...", "top");
 
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
@@ -33,5 +31,5 @@ export async function syncUserTop(userId: string) {
     getUserSpotifyTop("long_term"),
   ]);
 
-  log("completed", userId);
+  log("completed", "top");
 }

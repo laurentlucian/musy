@@ -169,3 +169,12 @@ export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
 export function logError(error: unknown) {
   console.error("\x1b[31merror:\x1b[0m", error);
 }
+
+export function log(message: string, label?: string) {
+  // console.timeEnd(label);
+  console.log(
+    `\x1b[90m${label?.padEnd(10)}:\x1b[0m`,
+    `\x1b[33m${message}\x1b[0m`,
+  );
+  // console.time(label);
+}

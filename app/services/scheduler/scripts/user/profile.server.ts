@@ -1,15 +1,13 @@
-import debug from "debug";
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import {
   updateUserImage,
   updateUserName,
 } from "~/services/prisma/users.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 
-const log = debug("musy:profile");
-
 export async function syncUserProfile(userId: string) {
-  log("starting...");
+  log("starting...", "profile");
 
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
@@ -27,5 +25,5 @@ export async function syncUserProfile(userId: string) {
     await updateUserName(userId, name);
   }
 
-  log("completed");
+  log("completed", "profile");
 }

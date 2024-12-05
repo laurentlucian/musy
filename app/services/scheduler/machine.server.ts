@@ -1,15 +1,12 @@
-import debug from "debug";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
-import { logError } from "~/lib/utils";
+import { log, logError } from "~/lib/utils";
 import { singleton } from "~/services/singleton.server";
 import { getAllUsersId } from "../prisma/users.server";
 import { syncUserLiked } from "./scripts/user/liked.server";
 import { syncPlaybacks } from "./scripts/user/playback.server";
 import { syncUserProfile } from "./scripts/user/profile.server";
 import { syncUserRecent } from "./scripts/user/recent.server";
-
-const log = debug("musy:machine");
 
 type CronerContext = {
   users: string[];
@@ -29,7 +26,8 @@ export const CRONER_MACHINE = setup({
     events: CronerEvents;
   },
   actors: {
-    populator: fromPromise(async () => {
+    populator: fromPromise(() => {
+      log("populating users", "croner");
       return getAllUsersId();
     }),
     recent: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
@@ -71,8 +69,8 @@ export const CRONER_MACHINE = setup({
     }),
   },
   delays: {
-    RETRY_DELAY: 5000, // 5 seconds
-    CYCLE_INTERVAL: 1 * 60 * 1000, // 1 minute
+    RETRY_DELAY: 5000, // 5 seconds (in milliseconds)
+    CYCLE_INTERVAL: 1 * 60 * 1000, // 1 minute (in milliseconds)
   },
 }).createMachine({
   id: "root",
@@ -109,7 +107,7 @@ export const CRONER_MACHINE = setup({
       always: [
         {
           guard: ({ context }) => context.users.length === 0,
-          target: "waiting",
+          target: "populating",
         },
         {
           actions: assign({
@@ -122,6 +120,9 @@ export const CRONER_MACHINE = setup({
     },
     syncing: {
       type: "parallel",
+      entry: ({ context }) => {
+        log(`syncing ${context.current}`, "croner");
+      },
       invoke: [
         {
           src: "recent",
@@ -185,7 +186,7 @@ export const CRONER_MACHINE = setup({
         },
       ],
       onDone: {
-        target: "#root.processing",
+        target: "waiting",
         actions: assign({
           current: null,
         }),
@@ -193,7 +194,7 @@ export const CRONER_MACHINE = setup({
     },
     waiting: {
       after: {
-        CYCLE_INTERVAL: "populating",
+        CYCLE_INTERVAL: "processing",
       },
     },
     failure: {
@@ -206,7 +207,7 @@ export const CRONER_MACHINE = setup({
 
 export function initializeCronerMachine() {
   return singleton("CRONER_MACHINE", () => {
-    log("initializing croner machine");
+    log("initializing machine", "croner");
     const actor = createActor(CRONER_MACHINE);
 
     actor.start();

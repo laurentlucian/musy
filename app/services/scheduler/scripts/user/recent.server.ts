@@ -1,20 +1,19 @@
 import type { Prisma } from "@prisma/client";
-import debug from "debug";
+
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 import { createTrackModel } from "~/services/sdk/spotify/spotify.server";
 
-const log = debug("musy:recent");
-
 export async function syncUserRecent(userId: string) {
-  log("starting...");
+  log("starting...", "recent");
 
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
   invariant(client, "spotify client not found");
 
-  log("adding recent tracks to db");
+  log("adding recent tracks to db", "recent");
   const {
     body: { items: recent },
   } = await client.getMyRecentlyPlayedTracks({ limit: 50 });
@@ -52,5 +51,5 @@ export async function syncUserRecent(userId: string) {
     });
   }
 
-  log("completed");
+  log("completed", "recent");
 }

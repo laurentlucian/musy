@@ -1,13 +1,10 @@
-import debug from "debug";
-import { notNull } from "~/lib/utils";
+import { log, notNull } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { getAllUsersId } from "~/services/prisma/users.server";
 import { getPlaybackState, upsertPlayback } from "../../utils.server";
 
-const log = debug("musy:playback");
-
 export async function syncPlaybacks() {
-  log("starting...");
+  log("starting...", "playback");
 
   const users = await getAllUsersId();
 
@@ -16,21 +13,21 @@ export async function syncPlaybacks() {
   );
   const active = playbacks.filter((u) => notNull(u.playback));
 
-  log("users active", active.length, active.map(({ id }) => id).join(", "));
+  log(`users active: ${active.length}`, "playback");
 
   for (const { id: userId, playback } of active) {
     if (!playback) continue;
     const { item: track, progress_ms } = playback;
     const current = await prisma.playback.findUnique({ where: { userId } });
     const isSameTrack = current?.trackId === track?.id;
-    if (isSameTrack) log("same track", userId);
+    if (isSameTrack) log("same track", "playback");
     if (!track || track.type !== "track" || isSameTrack) continue;
-    log("new track", userId);
+    log("new track", "playback");
 
-    await upsertPlayback(userId, playback).catch((e) =>
-      log("prisma update failed: ", e),
+    await upsertPlayback(userId, playback).catch(() =>
+      log("prisma update failed", "playback"),
     );
-    log("prisma updated");
+    log("prisma updated", "playback");
     // const remaining = track.duration_ms - progress_ms;
 
     // schedulePlaybackCheck(userId, remaining);
@@ -42,7 +39,7 @@ export async function syncPlaybacks() {
     playbacks.filter((u) => !notNull(u.playback)).map((u) => u.id),
   );
 
-  log("completed");
+  log("completed", "playback");
 }
 
 async function handleInactiveUsers(users: string[]) {

@@ -1,14 +1,13 @@
 import type { Prisma } from "@prisma/client";
-import debug from "debug";
+
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 import { createTrackModel } from "~/services/sdk/spotify/spotify.server";
 
-const log = debug("musy:liked");
-
 export async function syncUserLiked(userId: string) {
-  log("starting...", userId);
+  log("starting...", "liked");
 
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
@@ -47,5 +46,5 @@ export async function syncUserLiked(userId: string) {
     });
   }
 
-  log("completed");
+  log("completed", "liked");
 }

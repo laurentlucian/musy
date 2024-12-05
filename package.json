@@ -27,7 +27,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "compression": "^1.7.5",
-    "debug": "^4.3.7",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "framer-motion": "^11.12.0",

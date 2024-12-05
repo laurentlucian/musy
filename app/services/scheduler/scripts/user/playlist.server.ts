@@ -1,17 +1,15 @@
-import debug from "debug";
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 import { createTrackModel } from "~/services/sdk/spotify/spotify.server";
-
-const log = debug("musy:playlist");
 
 const notNull = <T>(val: T | null): val is T => {
   return val !== null;
 };
 
 export async function syncUserPlaylist(userId: string) {
-  log("starting...", userId);
+  log("starting...", "playlist");
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
   invariant(client, "spotify client not found");
@@ -33,10 +31,7 @@ export async function syncUserPlaylist(userId: string) {
     },
   });
 
-  log(
-    "playlists",
-    playlists.map((p) => p.name),
-  );
+  log(`playlists: ${playlists.length}`, "playlist");
 
   const onlyPlaylistsNeededToUpdate = playlists.filter((p) => {
     const savedPlaylist = saved.find((s) => s.id === p.id);
@@ -48,8 +43,10 @@ export async function syncUserPlaylist(userId: string) {
   );
 
   log(
-    "playlistTracks",
-    playlistsTracks.map((p) => p.body.items.length),
+    `playlistTracks: ${playlistsTracks
+      .map((p) => p.body.items.length)
+      .join(", ")}`,
+    "playlist",
   );
 
   for (const [index, playlist] of onlyPlaylistsNeededToUpdate.entries()) {
@@ -93,7 +90,7 @@ export async function syncUserPlaylist(userId: string) {
       )
       .filter(notNull);
 
-    log("playlist - adding tracks", tracks.body.items.length);
+    log(`playlist - adding tracks: ${tracks.body.items.length}`, "playlist");
     try {
       for (const { addedAt, track } of trackModels) {
         await prisma.track.upsert({
@@ -119,11 +116,11 @@ export async function syncUserPlaylist(userId: string) {
           },
         });
       }
-      log("playlist - added tracks");
+      log("playlist - added tracks", "playlist");
     } catch (e) {
-      log("playlist - error adding tracks", e);
+      log("playlist - error adding tracks", "playlist");
     }
   }
 
-  log("completed");
+  log("completed", "playlist");
 }

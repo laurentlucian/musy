@@ -1,23 +1,13 @@
-import debug from "debug";
+import { log } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 
-const log = debug("musy:feed");
-
 export const syncFeed = async () => {
-  log("starting...");
+  log("starting...", "feed");
 
-  const [liked, queue, recommended, playlistTracks] = await Promise.all([
+  const [liked, recommended, playlistTracks] = await Promise.all([
     prisma.likedSongs.findMany({
       where: {
         feedId: null,
-      },
-    }),
-    prisma.queue.findMany({
-      where: {
-        AND: {
-          action: "send",
-          feedId: null,
-        },
       },
     }),
     prisma.recommended.findMany({
@@ -44,25 +34,6 @@ export const syncFeed = async () => {
       data: {
         createdAt: item.createdAt,
         liked: {
-          connect: {
-            id: item.id,
-          },
-        },
-        user: {
-          connect: {
-            id: item.userId,
-          },
-        },
-      },
-    });
-  }
-
-  for (const item of queue) {
-    if (!item.userId) continue;
-    await prisma.feed.create({
-      data: {
-        createdAt: item.createdAt,
-        queue: {
           connect: {
             id: item.id,
           },
@@ -116,20 +87,16 @@ export const syncFeed = async () => {
   }
 
   if (liked.length > 0) {
-    log("liked items processed", liked.length);
-  }
-
-  if (queue.length > 0) {
-    log("queue items processed", queue.length);
+    log(`liked items processed: ${liked.length}`, "feed");
   }
 
   if (recommended.length > 0) {
-    log("recommended items processed", recommended.length);
+    log(`recommended items processed: ${recommended.length}`, "feed");
   }
 
   if (playlistTracks.length > 0) {
-    log("playlist tracks processed", playlistTracks.length);
+    log(`playlist tracks processed: ${playlistTracks.length}`, "feed");
   }
 
-  log("completed");
+  log("completed", "feed");
 };

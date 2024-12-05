@@ -1,13 +1,11 @@
-import debug from "debug";
 import invariant from "tiny-invariant";
+import { log } from "~/lib/utils";
 import { prisma } from "~/services/db.server";
 import { getAllUsersId } from "~/services/prisma/users.server";
 import { SpotifyService } from "~/services/sdk/spotify.server";
 
-const log = debug("musy:follow");
-
 export async function syncUserFollow(userId: string) {
-  log("starting...");
+  log("starting...", "follow");
 
   const spotify = await SpotifyService.createFromUserId(userId);
   const client = spotify.getClient();
@@ -18,7 +16,7 @@ export async function syncUserFollow(userId: string) {
   const { body: isFollowing } = await client.isFollowingUsers(users);
   const following = users.filter((_, i) => isFollowing[i]);
 
-  log("adding following to db", following.length);
+  log(`adding following to db: ${following.length}`, "follow");
 
   for (const followingId of following) {
     await prisma.follow.upsert({
@@ -36,5 +34,5 @@ export async function syncUserFollow(userId: string) {
     });
   }
 
-  log("completed");
+  log("completed", "follow");
 }
