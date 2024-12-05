@@ -2,8 +2,7 @@ import "react-router";
 import Headers from "@mjackson/headers";
 import { createRequestHandler } from "@react-router/express";
 import express from "express";
-import { isProduction } from "~/lib/utils";
-import { initCron } from "~/services/scheduler/croner.server";
+import { initializeCronerMachine } from "~/services/scheduler/machine.server";
 import { type SessionTyped, sessionStorage } from "~/services/session.server";
 
 declare module "react-router" {
@@ -15,7 +14,7 @@ declare module "react-router" {
 
 export const app = express();
 
-if (isProduction) void initCron();
+initializeCronerMachine();
 
 app.use(
   createRequestHandler({
