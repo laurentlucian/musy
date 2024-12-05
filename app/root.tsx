@@ -7,7 +7,6 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
-import { RootMenu } from "./components/menu/root";
 import { Toaster } from "./components/ui/sonner";
 import stylesheet from "./globals.css?url";
 

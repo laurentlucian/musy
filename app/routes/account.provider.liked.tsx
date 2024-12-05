@@ -1,7 +1,10 @@
+import {
+  type UserLiked,
+  getUserLiked,
+} from "@lib/services/prisma/tracks.server";
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
-import { type UserLiked, getUserLiked } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/account.provider.liked";
 
 export async function loader({

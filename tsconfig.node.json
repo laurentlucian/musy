@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["server/index.ts", "tailwind.config.ts", "vite.config.ts"],
+  "include": ["server/**/*", "tailwind.config.ts", "vite.config.ts"],
   "compilerOptions": {
     "composite": true,
     "strict": true,
@@ -8,6 +8,10 @@
     "lib": ["ES2022"],
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "moduleDetection": "force"
   }
 }

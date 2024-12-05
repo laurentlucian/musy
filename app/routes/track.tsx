@@ -1,3 +1,5 @@
+import { getTrack } from "@lib/services/prisma/tracks.server";
+import { ellipsis, getCacheControl } from "@lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import {
@@ -6,8 +8,6 @@ import {
   TrackMenu,
   TrackName,
 } from "~/components/domain/track";
-import { ellipsis, getCacheControl } from "~/lib/utils";
-import { getTrack } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/track";
 
 export function meta({ data }: Route.MetaArgs) {

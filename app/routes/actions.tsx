@@ -1,9 +1,9 @@
+import { prisma } from "@lib/services/db.server";
+import { GoogleService } from "@lib/services/sdk/google.server";
+import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { youtube } from "@lib/services/sdk/youtube/helpers.server";
+import { logError } from "@lib/utils";
 import { data, redirect } from "react-router";
-import { logError } from "~/lib/utils";
-import { prisma } from "~/services/db.server";
-import { GoogleService } from "~/services/sdk/google.server";
-import { SpotifyService } from "~/services/sdk/spotify.server";
-import { youtube } from "~/services/sdk/youtube/helpers.server";
 import type { Route } from "./+types/actions";
 
 export function loader() {

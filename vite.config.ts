@@ -1,4 +1,4 @@
-import path from "node:path";
+import { resolve } from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
 import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
@@ -9,7 +9,7 @@ export default defineConfig(({ isSsrBuild }) => ({
   build: {
     rollupOptions: isSsrBuild
       ? {
-          input: "./server/app.ts",
+          input: "./app/express.server.ts",
         }
       : undefined,
   },
@@ -21,7 +21,8 @@ export default defineConfig(({ isSsrBuild }) => ({
   plugins: [reactRouter(), tsconfigPaths()],
   resolve: {
     alias: {
-      "~": path.resolve(__dirname, "./app"),
+      "~": resolve(__dirname, "./app"),
+      "@shared": resolve(__dirname, "./shared"),
     },
   },
 }));

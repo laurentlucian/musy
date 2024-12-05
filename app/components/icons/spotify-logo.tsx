@@ -1,8 +1,3 @@
-import Spotify_Logo_Black from "~/lib/assets/Spotify_Logo_Black.png";
-import Spotify_Logo_White from "~/lib/assets/Spotify_Logo_White.png";
-import spotify_icon_black from "~/lib/assets/spotify_icon_black.png";
-import spotify_icon_white from "~/lib/assets/spotify_icon_white.png";
-
 type SpotifyLogoProps = {
   h?: string;
   icon?: boolean;
@@ -18,8 +13,6 @@ const SpotifyLogo = ({
   w = icon ? "25px" : "80px",
   white,
 }: SpotifyLogoProps) => {
-  const spotify = icon ? spotify_icon_white : Spotify_Logo_White;
-
   return (
     <button
       type="button"
@@ -38,7 +31,9 @@ const SpotifyLogo = ({
           minHeight: h,
           minWidth: w,
         }}
-        src={spotify}
+        src={
+          white ? "/spotity/wordmark-white.png" : "/spotity/wordmark-black.png"
+        }
       />
     </button>
   );

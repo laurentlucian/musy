@@ -1,10 +1,10 @@
-import { Suspense, use } from "react";
-import { Track } from "~/components/domain/track";
-import { Waver } from "~/components/icons/waver";
 import {
   type UserRecent,
   getUserRecent,
-} from "~/services/prisma/tracks.server";
+} from "@lib/services/prisma/tracks.server";
+import { Suspense, use } from "react";
+import { Track } from "~/components/domain/track";
+import { Waver } from "~/components/icons/waver";
 import type { Route } from "./+types/account.provider.recent";
 
 export async function loader({

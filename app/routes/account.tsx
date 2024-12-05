@@ -1,3 +1,10 @@
+import { authenticator } from "@lib/services/auth.server";
+import { PROVIDERS } from "@lib/services/auth/const";
+import { migrateLegacySession } from "@lib/services/auth/helpers.server";
+import {
+  type Providers,
+  getProviders,
+} from "@lib/services/prisma/users.server";
 import { use } from "react";
 import {
   Form,
@@ -10,11 +17,6 @@ import {
   useParams,
 } from "react-router";
 import { Button } from "~/components/ui/button";
-import { authenticator } from "~/services/auth.server";
-import { PROVIDERS } from "~/services/auth/const";
-import { migrateLegacySession } from "~/services/auth/helpers.server";
-import { type Providers, getProviders } from "~/services/prisma/users.server";
-import { sessionStorage } from "~/services/session.server";
 import type { Route } from "./+types/account";
 
 export async function loader({

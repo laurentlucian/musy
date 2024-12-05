@@ -12,7 +12,8 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@lib/*": ["./shared/*"]
     }
   }
 }

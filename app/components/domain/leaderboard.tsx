@@ -1,5 +1,5 @@
+import type { getTopLeaderboard } from "@lib/services/prisma/tracks.server";
 import { use } from "react";
-import type { getTopLeaderboard } from "~/services/prisma/tracks.server";
 import { Track } from "./track";
 
 export function Leaderboard(props: {

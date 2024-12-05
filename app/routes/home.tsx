@@ -1,9 +1,8 @@
+import { getTopLeaderboard } from "@lib/services/prisma/tracks.server";
+import { getCacheControl } from "@lib/utils";
 import { Suspense } from "react";
 import { Leaderboard } from "~/components/domain/leaderboard";
-
 import { Waver } from "~/components/icons/waver";
-import { getCacheControl } from "~/lib/utils";
-import { getTopLeaderboard } from "~/services/prisma/tracks.server";
 import type { Route } from "./+types/home";
 
 export function headers(_: Route.HeadersArgs) {
