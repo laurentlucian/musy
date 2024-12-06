@@ -64,7 +64,9 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
 
     const instanceKey = `user:${userId}`;
     if (SpotifyService.instances.has(instanceKey)) {
-      return SpotifyService.instances.get(instanceKey)!;
+      const instance = SpotifyService.instances.get(instanceKey)!;
+      await instance.refreshTokenIfNeeded();
+      return instance;
     }
 
     const instance = new SpotifyService(
@@ -115,15 +117,16 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
 
   async refreshTokenIfNeeded() {
     if (!this.tokenInfo?.expiresAt || !this.userId) return;
-    log("refreshing token", "spotify");
+    log("token refresh", "spotify");
 
     const now = Date.now();
     if (this.tokenInfo.expiresAt > now) {
-      log("token is still valid", "spotify");
+      log("reusing token", "spotify");
       return;
     }
 
     const { body } = await this.client.refreshAccessToken();
+    log("refreshing token", "spotify");
     this.client.setAccessToken(body.access_token);
 
     const newTokenInfo = {
@@ -135,6 +138,7 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     this.tokenInfo = newTokenInfo;
 
     if (this.userId) {
+      log("updating token in db", "spotify");
       await updateToken({
         id: this.userId,
         token: body.access_token,
