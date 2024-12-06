@@ -17,6 +17,8 @@ export default [
   ]),
   route("track/:trackId", "routes/track.tsx"),
 
+  route(":rest", "routes/404.tsx"),
+
   route("actions/:action", "routes/actions.tsx"),
   route("api/auth/:provider/callback", "routes/api/authenticate.ts"),
 ] satisfies RouteConfig;

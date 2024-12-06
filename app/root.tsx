@@ -1,3 +1,4 @@
+import { log } from "@lib/utils";
 import {
   Links,
   Meta,
@@ -67,16 +68,15 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
     details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+      error.status === 404 ? "page not found" : error.statusText || details;
+    log(message, "error");
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
   }
 
   return (
-    <main className="container mx-auto p-4 pt-16">
+    <main className="container mx-auto p-4 pt-16 text-center">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
