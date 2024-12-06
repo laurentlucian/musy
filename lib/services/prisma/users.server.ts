@@ -1,4 +1,5 @@
 import { prisma } from "@lib/services/db.server";
+import { log } from "@lib/utils";
 
 export async function getProvider(args: {
   userId: string;
@@ -30,9 +31,9 @@ export async function updateToken(args: {
     data: { accessToken: token, expiresAt, refreshToken, revoked: false },
     where: { userId_type: { userId: id, type } },
   });
-  console.log(
-    "updatedToken -> expires at:",
-    new Date(Number(data.expiresAt)).toLocaleTimeString("en-US"),
+  log(
+    `updatedToken -> expires at: ${new Date(Number(data.expiresAt)).toLocaleTimeString("en-US")}`,
+    "spotify:service",
   );
   return data.expiresAt;
 }

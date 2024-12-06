@@ -121,83 +121,126 @@ export const CRONER_MACHINE = setup({
     syncing: {
       type: "parallel",
       entry: ({ context }) => {
-        log(`syncing ${context.current}`, "croner");
+        const remaining = context.users.length;
+        log(`syncing ${context.current} (${remaining} remaining)`, "croner");
       },
-      invoke: [
-        {
-          src: "recent",
-          input: ({ context }) => ({
-            userId: context.current as string,
-            lastRunAt: context.tasks.get(`recent:${context.current}`),
-          }),
-          onDone: {
-            actions: assign({
-              tasks: ({ context, event }) => {
-                if (!event.output) return context.tasks;
-
-                const tasks = new Map(context.tasks);
-                tasks.set(`recent:${context.current}`, event.output);
-                return tasks;
+      states: {
+        "sync.recent": {
+          initial: "running",
+          states: {
+            running: {
+              invoke: {
+                src: "recent",
+                input: ({ context }) => ({
+                  userId: context.current as string,
+                  lastRunAt: context.tasks.get(`recent:${context.current}`),
+                }),
+                onDone: {
+                  target: "complete",
+                  actions: assign({
+                    tasks: ({ context, event }) => {
+                      if (!event.output) return context.tasks;
+                      const tasks = new Map(context.tasks);
+                      tasks.set(`recent:${context.current}`, event.output);
+                      return tasks;
+                    },
+                  }),
+                },
               },
-            }),
+            },
+            complete: { type: "final" },
           },
         },
-        {
-          src: "profile",
-          input: ({ context }) => ({
-            userId: context.current as string,
-            lastRunAt: context.tasks.get(`profile:${context.current}`),
-          }),
-          onDone: {
-            actions: assign({
-              tasks: ({ context, event }) => {
-                if (!event.output) return context.tasks;
-
-                const tasks = new Map(context.tasks);
-                tasks.set(`profile:${context.current}`, event.output);
-                return tasks;
+        "sync.profile": {
+          initial: "running",
+          states: {
+            running: {
+              invoke: {
+                src: "profile",
+                input: ({ context }) => ({
+                  userId: context.current as string,
+                  lastRunAt: context.tasks.get(`profile:${context.current}`),
+                }),
+                onDone: {
+                  target: "complete",
+                  actions: assign({
+                    tasks: ({ context, event }) => {
+                      if (!event.output) return context.tasks;
+                      const tasks = new Map(context.tasks);
+                      tasks.set(`profile:${context.current}`, event.output);
+                      return tasks;
+                    },
+                  }),
+                },
               },
-            }),
+            },
+            complete: { type: "final" },
           },
         },
-        {
-          src: "liked",
-          input: ({ context }) => ({
-            userId: context.current as string,
-            lastRunAt: context.tasks.get(`liked:${context.current}`),
-          }),
-          onDone: {
-            actions: assign({
-              tasks: ({ context, event }) => {
-                if (!event.output) return context.tasks;
-
-                const tasks = new Map(context.tasks);
-                tasks.set(`liked:${context.current}`, event.output);
-                return tasks;
+        "sync.liked": {
+          initial: "running",
+          states: {
+            running: {
+              invoke: {
+                src: "liked",
+                input: ({ context }) => ({
+                  userId: context.current as string,
+                  lastRunAt: context.tasks.get(`liked:${context.current}`),
+                }),
+                onDone: {
+                  target: "complete",
+                  actions: assign({
+                    tasks: ({ context, event }) => {
+                      if (!event.output) return context.tasks;
+                      const tasks = new Map(context.tasks);
+                      tasks.set(`liked:${context.current}`, event.output);
+                      return tasks;
+                    },
+                  }),
+                },
               },
-            }),
+            },
+            complete: { type: "final" },
           },
         },
-        {
-          src: "playback",
-          input: ({ context }) => ({
-            userId: context.current as string,
-          }),
+        "sync.playback": {
+          initial: "running",
+          states: {
+            running: {
+              invoke: {
+                src: "playback",
+                input: ({ context }) => ({
+                  userId: context.current as string,
+                }),
+                onDone: "complete",
+              },
+            },
+            complete: { type: "final" },
+          },
         },
-      ],
+      },
       onDone: {
         target: "waiting",
-        actions: assign({
-          current: null,
+        actions: assign(() => {
+          log("syncing done", "croner");
+          return {
+            current: null,
+          };
         }),
       },
     },
     waiting: {
+      entry: () => {
+        log("waiting", "croner");
+      },
       after: {
         CYCLE_INTERVAL: "processing",
       },
     },
     failure: {
+      entry: () => {
+        log("failure", "croner");
+      },
       after: {
         RETRY_DELAY: "populating",
       },
