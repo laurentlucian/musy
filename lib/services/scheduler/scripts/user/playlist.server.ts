@@ -1,12 +1,8 @@
 import { prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
-import { log } from "@lib/utils";
+import { log, notNull } from "@lib/utils";
 import invariant from "tiny-invariant";
-
-const notNull = <T>(val: T | null): val is T => {
-  return val !== null;
-};
 
 export async function syncUserPlaylist(userId: string) {
   try {

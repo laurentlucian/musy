@@ -8,10 +8,10 @@ model Playlist {
   userId      String
   tracks      PlaylistTrack[]
   total       Int             @default(0) // spotify's total
+  provider    String          @default("spotify")
 }
 
 model PlaylistTrack {
-  // id         Int      @id @default(autoincrement())
   addedAt    DateTime
   //
   playlist   Playlist @relation(fields: [playlistId], references: [id])

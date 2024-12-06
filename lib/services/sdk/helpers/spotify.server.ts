@@ -121,14 +121,18 @@ export async function getSpotifyTrack(trackId: string, userId: string) {
   return track;
 }
 
-export async function getUserPlaylists(userId: string) {
-  return prisma.playlist.findMany({
+export async function getUserPlaylists({
+  userId,
+  provider,
+}: { userId: string; provider: string }) {
+  const response = await prisma.playlist.findMany({
     orderBy: {
       tracks: {
         _count: "desc",
       },
     },
-    take: 20,
-    where: { userId },
+    where: { userId, provider },
   });
+
+  return response;
 }

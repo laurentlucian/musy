@@ -4,6 +4,7 @@ import {
   type SessionTyped,
   sessionStorage,
 } from "@lib/services/session.server";
+import { isProduction } from "@lib/utils";
 import Headers from "@mjackson/headers";
 import { createRequestHandler } from "@react-router/express";
 import express from "express";
@@ -17,7 +18,7 @@ declare module "react-router" {
 
 export const app = express();
 
-initializeCronerMachine();
+if (isProduction) initializeCronerMachine();
 
 app.use(
   createRequestHandler({

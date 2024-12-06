@@ -1,1 +1,1 @@
-export const PROVIDERS = ["spotify", "google"] as const;
+export const PROVIDERS = ["spotify", "google"];
