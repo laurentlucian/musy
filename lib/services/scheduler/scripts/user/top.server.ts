@@ -1,5 +1,5 @@
+import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
-import { transformTracks } from "@lib/services/sdk/spotify/spotify.server";
 import { log } from "@lib/utils";
 import invariant from "tiny-invariant";
 

@@ -4,7 +4,6 @@ import {
   getUsersByKeyword,
 } from "@lib/services/db/search.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
-import { logError } from "@lib/utils";
 
 export function createTrackModel(track: SpotifyApi.TrackObjectFull) {
   return {

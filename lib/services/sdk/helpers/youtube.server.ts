@@ -66,8 +66,31 @@ async function createPlaylist(
   return response.data;
 }
 
+async function addToPlaylist(
+  service: GoogleService,
+  playlistId: string,
+  videoId: string,
+) {
+  const { youtube } = service.getClient();
+  const response = await youtube.playlistItems.insert({
+    part: ["snippet"],
+    requestBody: {
+      snippet: {
+        playlistId,
+        resourceId: {
+          kind: "youtube#video",
+          videoId,
+        },
+      },
+    },
+  });
+
+  return response.data;
+}
+
 export const youtube = {
   search,
   addToLibrary,
   createPlaylist,
+  addToPlaylist,
 };

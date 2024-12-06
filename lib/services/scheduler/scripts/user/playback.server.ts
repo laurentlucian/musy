@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
+import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
-import { createTrackModel } from "@lib/services/sdk/spotify/spotify.server";
 import { log, notNull } from "@lib/utils";
 import invariant from "tiny-invariant";
 
