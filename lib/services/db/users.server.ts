@@ -31,10 +31,6 @@ export async function updateToken(args: {
     data: { accessToken: token, expiresAt, refreshToken, revoked: false },
     where: { userId_type: { userId: id, type } },
   });
-  log(
-    `updatedToken -> expires at: ${new Date(Number(data.expiresAt)).toLocaleTimeString("en-US")}`,
-    "spotify:service",
-  );
   return data.expiresAt;
 }
 

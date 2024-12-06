@@ -2,7 +2,7 @@ import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { createTrackModel } from "@lib/services/sdk/spotify/spotify.server";
-import { log, logError, notNull } from "@lib/utils";
+import { log, notNull } from "@lib/utils";
 import invariant from "tiny-invariant";
 
 export async function syncPlaybacks() {
@@ -19,21 +19,16 @@ export async function syncPlaybacks() {
 
   for (const { id: userId, playback } of active) {
     if (!playback) continue;
-    const { item: track, progress_ms } = playback;
+    const { item } = playback;
     const current = await prisma.playback.findUnique({ where: { userId } });
-    const isSameTrack = current?.trackId === track?.id;
-    if (isSameTrack) log("same track", "playback");
-    if (!track || track.type !== "track" || isSameTrack) continue;
+    const isSameTrack = current?.trackId === item?.id;
+    if (!item || item.type !== "track" || isSameTrack) continue;
     log("new track", "playback");
 
-    await upsertPlayback(userId, playback).catch(() =>
-      log("prisma update failed", "playback"),
-    );
-    log("prisma updated", "playback");
+    await upsertPlayback(userId, playback);
+
     // const remaining = track.duration_ms - progress_ms;
-
     // schedulePlaybackCheck(userId, remaining);
-
     // log("created playbackQ job with delay", msToString(remaining));
   }
 
@@ -52,45 +47,50 @@ const upsertPlayback = async (
   userId: string,
   playback: SpotifyApi.CurrentPlaybackResponse,
 ) => {
-  const { progress_ms: progress, timestamp } = playback;
-  if (
-    !playback.item ||
-    playback.item.type !== "track" ||
-    !progress ||
-    !timestamp
-  )
-    return;
+  try {
+    log("upserting playback", "playback");
+    const { progress_ms: progress, timestamp } = playback;
+    if (
+      !playback.item ||
+      playback.item.type !== "track" ||
+      !progress ||
+      !timestamp
+    )
+      return;
 
-  const track = createTrackModel(playback.item);
-  const data = {
-    progress,
-    timestamp: BigInt(timestamp),
-    track: {
-      connectOrCreate: {
-        create: track,
-        where: {
-          id: track.id,
+    const track = createTrackModel(playback.item);
+    const data = {
+      progress,
+      timestamp: BigInt(timestamp),
+      track: {
+        connectOrCreate: {
+          create: track,
+          where: {
+            id: track.id,
+          },
         },
       },
-    },
-  };
+    };
 
-  await prisma.playback.upsert({
-    create: {
-      ...data,
-      user: {
-        connect: {
-          id: userId,
+    await prisma.playback.upsert({
+      create: {
+        ...data,
+        user: {
+          connect: {
+            id: userId,
+          },
         },
       },
-    },
-    update: {
-      ...data,
-    },
-    where: {
-      userId,
-    },
-  });
+      update: {
+        ...data,
+      },
+      where: {
+        userId,
+      },
+    });
+  } catch {
+    log("failure upserting playback", "playback");
+  }
 };
 
 async function getPlaybackState(id: string) {
@@ -105,23 +105,20 @@ async function getPlaybackState(id: string) {
 
     return { id, playback };
   } catch (error) {
-    logError(`error getting playback state for ${id}`);
-    if (error instanceof Error && error.message.includes("revoked")) {
-      logError(error.message);
-      await prisma.provider.update({
-        data: { revoked: true },
-        where: { userId_type: { userId: id, type: "spotify" } },
-      });
+    if (error instanceof Error) {
+      if (error.message.includes("revoked")) {
+        log(`revoked token for ${id}`, "playback");
+        await prisma.provider.update({
+          data: { revoked: true },
+          where: { userId_type: { userId: id, type: "spotify" } },
+        });
+      } else {
+        log(`unknown: ${error.message}`, "playback");
+      }
+    } else {
+      log(`unknown: ${error}`, "playback");
     }
-
-    // @ts-expect-error e is ResponseError
-    if (error?.statusCode === 403) {
-      await prisma.provider.update({
-        data: { revoked: true },
-        where: { userId_type: { userId: id, type: "spotify" } },
-      });
-    }
-
-    return { id, playback: null };
   }
+
+  return { id, playback: null };
 }

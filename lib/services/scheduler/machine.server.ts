@@ -38,7 +38,7 @@ export const CRONER_MACHINE = setup({
         )
           return lastRunAt;
 
-        await syncUserRecent(userId).catch(logError);
+        await syncUserRecent(userId);
         return new Date();
       },
     ),
@@ -50,7 +50,7 @@ export const CRONER_MACHINE = setup({
         )
           return lastRunAt;
 
-        await syncUserProfile(userId).catch(logError);
+        await syncUserProfile(userId);
         return new Date();
       },
     ),
@@ -59,12 +59,12 @@ export const CRONER_MACHINE = setup({
         if (lastRunAt && Date.now() - lastRunAt.getTime() < LIKED_SYNC_INTERVAL)
           return lastRunAt;
 
-        await syncUserLiked(userId).catch(logError);
+        await syncUserLiked(userId);
         return new Date();
       },
     ),
     playback: fromPromise<Date | null>(async () => {
-      await syncPlaybacks().catch(logError);
+      await syncPlaybacks();
       return new Date();
     }),
   },

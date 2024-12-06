@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { log } from "@lib/utils";
 
-export const syncFeed = async () => {
+export async function syncFeed() {
   log("starting...", "feed");
 
   const [liked, recommended, playlistTracks] = await Promise.all([
@@ -99,4 +99,4 @@ export const syncFeed = async () => {
   }
 
   log("completed", "feed");
-};
+}

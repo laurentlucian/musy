@@ -117,16 +117,12 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
 
   async refreshTokenIfNeeded() {
     if (!this.tokenInfo?.expiresAt || !this.userId) return;
-    log("token refresh", "spotify");
 
     const now = Date.now();
-    if (this.tokenInfo.expiresAt > now) {
-      log("reusing token", "spotify");
-      return;
-    }
+    if (this.tokenInfo.expiresAt > now) return;
 
-    const { body } = await this.client.refreshAccessToken();
     log("refreshing token", "spotify");
+    const { body } = await this.client.refreshAccessToken();
     this.client.setAccessToken(body.access_token);
 
     const newTokenInfo = {
@@ -138,7 +134,7 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     this.tokenInfo = newTokenInfo;
 
     if (this.userId) {
-      log("updating token in db", "spotify");
+      log("storing new token", "spotify");
       await updateToken({
         id: this.userId,
         token: body.access_token,
