@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import { getAllUsersId } from "@lib/services/prisma/users.server";
+import { getAllUsersId } from "@lib/services/db/users.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { createTrackModel } from "@lib/services/sdk/spotify/spotify.server";
 import { log, logError, notNull } from "@lib/utils";

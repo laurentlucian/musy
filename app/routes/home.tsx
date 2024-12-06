@@ -1,4 +1,4 @@
-import { getTopLeaderboard } from "@lib/services/prisma/tracks.server";
+import { getTopLeaderboard } from "@lib/services/db/tracks.server";
 import { getCacheControl } from "@lib/utils";
 import { Suspense } from "react";
 import { Leaderboard } from "~/components/domain/leaderboard";

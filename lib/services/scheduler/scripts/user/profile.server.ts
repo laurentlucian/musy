@@ -1,7 +1,4 @@
-import {
-  updateUserImage,
-  updateUserName,
-} from "@lib/services/prisma/users.server";
+import { updateUserImage, updateUserName } from "@lib/services/db/users.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
 import invariant from "tiny-invariant";

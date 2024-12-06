@@ -1,9 +1,10 @@
-import { getProvider, updateToken } from "@lib/services/prisma/users.server";
+import { getProvider, updateToken } from "@lib/services/db/users.server";
 import type {
   BaseService,
   ServiceConfig,
   TokenInfo,
 } from "@lib/services/sdk/base.server";
+import { log } from "@lib/utils";
 import SpotifyWebApi from "spotify-web-api-node";
 import invariant from "tiny-invariant";
 
@@ -112,11 +113,15 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     return instance;
   }
 
-  async refreshTokenIfNeeded(): Promise<void> {
+  async refreshTokenIfNeeded() {
     if (!this.tokenInfo?.expiresAt || !this.userId) return;
+    log("refreshing token", "spotify");
 
     const now = Date.now();
-    if (this.tokenInfo.expiresAt > now) return;
+    if (this.tokenInfo.expiresAt > now) {
+      log("token is still valid", "spotify");
+      return;
+    }
 
     const { body } = await this.client.refreshAccessToken();
     this.client.setAccessToken(body.access_token);

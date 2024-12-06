@@ -1,7 +1,4 @@
-import {
-  type UserRecent,
-  getUserRecent,
-} from "@lib/services/prisma/tracks.server";
+import { type UserRecent, getUserRecent } from "@lib/services/db/tracks.server";
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";

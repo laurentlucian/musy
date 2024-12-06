@@ -1,10 +1,7 @@
 import { authenticator } from "@lib/services/auth.server";
 import { PROVIDERS } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
-import {
-  type Providers,
-  getProviders,
-} from "@lib/services/prisma/users.server";
+import { type Providers, getProviders } from "@lib/services/db/users.server";
 import { use } from "react";
 import {
   Form,

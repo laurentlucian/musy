@@ -1,4 +1,4 @@
-import { getAllUsersId } from "@lib/services/prisma/users.server";
+import { getAllUsersId } from "@lib/services/db/users.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/user/liked.server";
 import { syncPlaybacks } from "@lib/services/scheduler/scripts/user/playback.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/user/profile.server";

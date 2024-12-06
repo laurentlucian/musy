@@ -1,7 +1,4 @@
-import {
-  type UserLiked,
-  getUserLiked,
-} from "@lib/services/prisma/tracks.server";
+import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/user/liked.server";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";

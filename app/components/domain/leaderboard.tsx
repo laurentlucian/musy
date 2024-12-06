@@ -1,4 +1,4 @@
-import type { getTopLeaderboard } from "@lib/services/prisma/tracks.server";
+import type { getTopLeaderboard } from "@lib/services/db/tracks.server";
 import { use } from "react";
 import { Track } from "./track";
 

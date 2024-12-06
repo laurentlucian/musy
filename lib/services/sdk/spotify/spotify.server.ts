@@ -2,7 +2,7 @@ import { prisma } from "@lib/services/db.server";
 import {
   getTracksByKeyword,
   getUsersByKeyword,
-} from "@lib/services/prisma/search.server";
+} from "@lib/services/db/search.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 
 export function createTrackModel(track: SpotifyApi.TrackObjectFull) {

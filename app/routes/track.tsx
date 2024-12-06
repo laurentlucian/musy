@@ -1,4 +1,4 @@
-import { getTrack } from "@lib/services/prisma/tracks.server";
+import { getTrack } from "@lib/services/db/tracks.server";
 import { ellipsis, getCacheControl } from "@lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";

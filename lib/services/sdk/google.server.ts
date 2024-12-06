@@ -1,4 +1,4 @@
-import { getProvider } from "@lib/services/prisma/users.server";
+import { getProvider } from "@lib/services/db/users.server";
 import type { BaseService, ServiceConfig } from "@lib/services/sdk/base.server";
 import type { Credentials, OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
