@@ -1,51 +1,49 @@
-import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
-import { syncUserLiked } from "@lib/services/scheduler/scripts/user/liked.server";
+import { syncUserPlaylist } from "@lib/services/scheduler/scripts/user/playlist.server";
+import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
+import type { Playlist } from "@prisma/client";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";
-import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { useFetcherToast } from "~/hooks/useFetcherToast";
-import type { Route } from "./+types/account.provider.liked";
+import type { Route } from "./+types/account.provider.playlist";
 
 export async function loader({
   context: { userId },
   params: { provider },
 }: Route.LoaderArgs) {
-  return { liked: userId ? getUserLiked({ userId, provider }) : null };
+  return { playlists: userId ? getUserPlaylists({ userId, provider }) : null };
 }
 
-export default function AccountProviderLiked({
-  loaderData: { liked },
+export default function AccountProviderPlaylists({
+  loaderData: { playlists },
 }: Route.ComponentProps) {
   return (
     <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
       <SyncButton />
-      {liked && (
+      {playlists && (
         <Suspense fallback={<Waver />}>
-          <LikedList tracks={liked} />
+          <PlaylistList playlists={playlists} />
         </Suspense>
       )}
     </article>
   );
 }
 
-function LikedList(props: { tracks: UserLiked }) {
-  const { tracks, count } = use(props.tracks);
-  const rest = count - tracks.length;
+function PlaylistList(props: { playlists: Promise<Playlist[]> }) {
+  const playlists = use(props.playlists);
+  const rest = playlists.length;
 
   return (
     <div className="flex flex-col gap-y-2">
-      {tracks.map((track) => {
+      {playlists.map((playlist) => {
         return (
-          <Track
-            key={track.name}
-            id={track.id}
-            uri={track.uri}
-            image={track.image}
-            artist={track.artist}
-            name={track.name}
-          />
+          <div
+            key={playlist.id}
+            className="flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150"
+          >
+            {playlist.name}
+          </div>
         );
       })}
 
@@ -59,7 +57,7 @@ function LikedList(props: { tracks: UserLiked }) {
 function SyncButton() {
   const fetcher = useFetcher<typeof action>();
   const busy = fetcher.state !== "idle";
-  useFetcherToast(fetcher.data?.error, "synced all liked songs");
+  useFetcherToast(fetcher.data?.error, "synced all playlists");
 
   return (
     <fetcher.Form method="post">
@@ -77,6 +75,6 @@ export async function action({
   if (!userId) return { error: "no user" };
   if (provider !== "spotify") return { error: "no support yet" };
 
-  await syncUserLiked(userId, true);
+  await syncUserPlaylist(userId);
   return { error: null };
 }

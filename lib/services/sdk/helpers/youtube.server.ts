@@ -7,7 +7,7 @@ async function search(service: GoogleService, query: string) {
     part: ["snippet"],
     q: query,
     type: ["video"],
-    videoCategoryId: "10", // Music category
+    videoCategoryId: "10", // music
     maxResults: 10,
   });
 
@@ -41,6 +41,17 @@ async function addToLibrary(service: GoogleService, videoId: string) {
     id: videoId,
     rating: "like",
   });
+}
+
+async function getPlaylists(service: GoogleService) {
+  const { youtube } = service.getClient();
+  const response = await youtube.playlists.list({
+    part: ["snippet", "contentDetails"],
+    mine: true,
+    maxResults: 50,
+  });
+
+  return response.data.items;
 }
 
 async function createPlaylist(
@@ -91,6 +102,7 @@ async function addToPlaylist(
 export const youtube = {
   search,
   addToLibrary,
+  getPlaylists,
   createPlaylist,
   addToPlaylist,
 };
