@@ -43,7 +43,9 @@ export async function syncUserTop(userId: string) {
       update: {
         state: "success",
       },
-      where: { userId_type: { userId, type: "top" } },
+      where: {
+        userId_type_state: { userId, type: "top", state: "success" },
+      },
     });
   } catch {
     await prisma.sync.upsert({
@@ -55,7 +57,9 @@ export async function syncUserTop(userId: string) {
       update: {
         state: "failure",
       },
-      where: { userId_type: { userId, type: "top" } },
+      where: {
+        userId_type_state: { userId, type: "top", state: "failure" },
+      },
     });
     log("failure", "top");
   }

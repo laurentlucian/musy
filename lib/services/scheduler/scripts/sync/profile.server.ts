@@ -35,7 +35,9 @@ export async function syncUserProfile(userId: string) {
       update: {
         state: "success",
       },
-      where: { userId_type: { userId, type: "profile" } },
+      where: {
+        userId_type_state: { userId, type: "profile", state: "success" },
+      },
     });
   } catch (error: unknown) {
     log("failure", "profile");
@@ -48,7 +50,9 @@ export async function syncUserProfile(userId: string) {
       update: {
         state: "failure",
       },
-      where: { userId_type: { userId, type: "profile" } },
+      where: {
+        userId_type_state: { userId, type: "profile", state: "failure" },
+      },
     });
     throw error;
   }

@@ -1,5 +1,5 @@
-import { transferUserLikedToYoutube } from "@lib/services/actions/transfer";
 import { prisma } from "@lib/services/db.server";
+import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
 import type { Transfer } from "@prisma/client";

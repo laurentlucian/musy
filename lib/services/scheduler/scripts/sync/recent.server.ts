@@ -61,7 +61,9 @@ export async function syncUserRecent(userId: string) {
       update: {
         state: "success",
       },
-      where: { userId_type: { userId, type: "recent" } },
+      where: {
+        userId_type_state: { userId, type: "recent", state: "success" },
+      },
     });
   } catch (error: unknown) {
     log("failure", "recent");
@@ -74,7 +76,9 @@ export async function syncUserRecent(userId: string) {
       update: {
         state: "failure",
       },
-      where: { userId_type: { userId, type: "recent" } },
+      where: {
+        userId_type_state: { userId, type: "recent", state: "failure" },
+      },
     });
 
     throw error; // Re-throw to let the machine handle the failure state

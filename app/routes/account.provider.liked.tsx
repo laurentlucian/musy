@@ -1,6 +1,6 @@
-import { transferUserLikedToYoutube } from "@lib/services/actions/transfer";
 import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
+import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
 import { logError } from "@lib/utils";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";
@@ -114,11 +114,12 @@ export async function action({
 
   try {
     if (intent === "sync") {
-      await syncUserLiked(userId, true);
+      await syncUserLiked(userId);
     }
 
     if (intent === "transfer") {
-      await transferUserLikedToYoutube(userId, {
+      await transferUserLikedToYoutube({
+        userId,
         skip: Number(formData.get("skip")),
       });
     }

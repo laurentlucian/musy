@@ -43,7 +43,9 @@ export async function syncUserFollow(userId: string) {
       update: {
         state: "success",
       },
-      where: { userId_type: { userId, type: "follow" } },
+      where: {
+        userId_type_state: { userId, type: "follow", state: "success" },
+      },
     });
     log("completed", "follow");
   } catch {
@@ -56,7 +58,9 @@ export async function syncUserFollow(userId: string) {
       update: {
         state: "failure",
       },
-      where: { userId_type: { userId, type: "follow" } },
+      where: {
+        userId_type_state: { userId, type: "follow", state: "failure" },
+      },
     });
     log("failure", "follow");
   }

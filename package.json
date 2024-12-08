@@ -10,7 +10,7 @@
     "dev": "cross-env NODE_ENV=development bun server/index.ts",
     "start": "node --experimental-strip-types server/index.ts",
     "deploy": "fly deploy --remote-only",
-    "deploy:local": "fly deploy --local-only",
+    "deploy:local": "tsc --noEmit && fly deploy --local-only",
     "format": "biome format --write ./app",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "prod:db": "fly ssh console -C database-cli",

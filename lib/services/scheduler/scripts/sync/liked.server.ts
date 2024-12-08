@@ -56,7 +56,9 @@ export async function syncUserLiked(userId: string) {
       update: {
         state: "success",
       },
-      where: { userId_type: { userId, type: "liked" } },
+      where: {
+        userId_type_state: { userId, type: "liked", state: "success" },
+      },
     });
   } catch (error: unknown) {
     log("failure", "liked");
@@ -69,7 +71,9 @@ export async function syncUserLiked(userId: string) {
       update: {
         state: "failure",
       },
-      where: { userId_type: { userId, type: "liked" } },
+      where: {
+        userId_type_state: { userId, type: "liked", state: "failure" },
+      },
     });
     throw error;
   }
