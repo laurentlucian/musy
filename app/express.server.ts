@@ -1,10 +1,10 @@
 import "react-router";
-import { initializeCronerMachine } from "@lib/services/scheduler/machine.server";
+
+import { initializeMachines } from "@lib/services/scheduler/machines/helpers.server";
 import {
   type SessionTyped,
   sessionStorage,
 } from "@lib/services/session.server";
-import { isProduction } from "@lib/utils";
 import Headers from "@mjackson/headers";
 import { createRequestHandler } from "@react-router/express";
 import express from "express";
@@ -18,7 +18,7 @@ declare module "react-router" {
 
 export const app = express();
 
-if (isProduction) initializeCronerMachine();
+initializeMachines();
 
 app.use(
   createRequestHandler({

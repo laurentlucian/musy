@@ -1,0 +1,24 @@
+model Sync {
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  state     String // "success" or "failure"
+  type      String // "recent", "playback", etc.
+
+  @@id([userId, type, state])
+}
+
+model Transfer {
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  state       String
+  type        String
+  source      String
+  destination String
+  skip        Int       @default(0)
+  total       Int
+  nextAfter   DateTime?
+
+  @@id([userId, source, destination, type])
+}

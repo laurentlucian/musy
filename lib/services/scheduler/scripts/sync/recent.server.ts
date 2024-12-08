@@ -52,7 +52,31 @@ export async function syncUserRecent(userId: string) {
     }
 
     log("completed", "recent");
-  } catch {
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "success",
+        type: "recent",
+      },
+      update: {
+        state: "success",
+      },
+      where: { userId_type: { userId, type: "recent" } },
+    });
+  } catch (error: unknown) {
     log("failure", "recent");
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "failure",
+        type: "recent",
+      },
+      update: {
+        state: "failure",
+      },
+      where: { userId_type: { userId, type: "recent" } },
+    });
+
+    throw error; // Re-throw to let the machine handle the failure state
   }
 }

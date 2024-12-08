@@ -34,9 +34,30 @@ export async function syncUserFollow(userId: string) {
         },
       });
     }
-
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "success",
+        type: "follow",
+      },
+      update: {
+        state: "success",
+      },
+      where: { userId_type: { userId, type: "follow" } },
+    });
     log("completed", "follow");
   } catch {
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "failure",
+        type: "follow",
+      },
+      update: {
+        state: "failure",
+      },
+      where: { userId_type: { userId, type: "follow" } },
+    });
     log("failure", "follow");
   }
 }

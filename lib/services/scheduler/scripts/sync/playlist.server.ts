@@ -118,9 +118,22 @@ export async function syncUserPlaylist(userId: string) {
         log("playlist - error adding tracks", "playlist");
       }
     }
-
+    await prisma.sync.create({
+      data: {
+        userId,
+        state: "success",
+        type: "playlist",
+      },
+    });
     log("completed", "playlist");
   } catch {
+    await prisma.sync.create({
+      data: {
+        userId,
+        state: "failure",
+        type: "playlist",
+      },
+    });
     log("failure", "playlist");
   }
 }

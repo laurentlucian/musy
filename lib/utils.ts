@@ -172,9 +172,20 @@ export function logError(error: unknown) {
 
 export function log(message: string, label?: string) {
   // console.timeEnd(label);
+  const prefix = !isProduction
+    ? [
+        `\x1b[90m${new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" })}\x1b[0m`,
+        "\x1b[1;34m[musy]\x1b[0m",
+      ]
+    : [];
+
   console.log(
+    ...prefix,
     `\x1b[90m${label?.padEnd(10)}:\x1b[0m`,
     `\x1b[33m${message}\x1b[0m`,
   );
   // console.time(label);
 }
+
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

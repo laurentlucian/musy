@@ -1,5 +1,6 @@
 import { prisma } from "@lib/services/db.server";
 import { log } from "@lib/utils";
+import type { Prisma } from "@prisma/client";
 
 export async function getProvider(args: {
   userId: string;
@@ -32,22 +33,6 @@ export async function updateToken(args: {
     where: { userId_type: { userId: id, type } },
   });
   return data.expiresAt;
-}
-
-export async function updateUserImage(id: string, image: string) {
-  const data = await prisma.profile.update({
-    data: { image },
-    where: { id },
-  });
-  return data;
-}
-
-export async function updateUserName(id: string, name: string) {
-  const data = await prisma.profile.update({
-    data: { name },
-    where: { id },
-  });
-  return data;
 }
 
 export async function getAllUsersId() {

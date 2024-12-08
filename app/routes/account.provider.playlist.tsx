@@ -1,4 +1,4 @@
-import { syncUserPlaylist } from "@lib/services/scheduler/scripts/user/playlist.server";
+import { syncUserPlaylist } from "@lib/services/scheduler/scripts/sync/playlist.server";
 import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
 import type { Playlist } from "@prisma/client";
 import { Suspense, use } from "react";

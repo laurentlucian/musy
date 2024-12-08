@@ -1,10 +1,13 @@
+import { transferUserLikedToYoutube } from "@lib/services/actions/transfer";
 import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
-import { syncUserLiked } from "@lib/services/scheduler/scripts/user/liked.server";
+import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
+import { logError } from "@lib/utils";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { useFetcherToast } from "~/hooks/useFetcherToast";
 import type { Route } from "./+types/account.provider.liked";
 
@@ -20,7 +23,10 @@ export default function AccountProviderLiked({
 }: Route.ComponentProps) {
   return (
     <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
-      <SyncButton />
+      <div className="flex gap-x-2">
+        <SyncButton />
+        <TransferButton />
+      </div>
       {liked && (
         <Suspense fallback={<Waver />}>
           <LikedList tracks={liked} />
@@ -63,6 +69,7 @@ function SyncButton() {
 
   return (
     <fetcher.Form method="post">
+      <input type="hidden" name="intent" value="sync" />
       <Button type="submit" disabled={busy} size="sm">
         {busy ? "Syncing..." : "Sync"}
       </Button>
@@ -70,13 +77,55 @@ function SyncButton() {
   );
 }
 
+function TransferButton() {
+  const fetcher = useFetcher<typeof action>();
+  const busy = fetcher.state !== "idle";
+  useFetcherToast(fetcher.data?.error, "copied all liked songs");
+
+  return (
+    <fetcher.Form method="post">
+      <input type="hidden" name="intent" value="transfer" />
+      <div className="flex gap-x-2">
+        <Button type="submit" disabled={busy} size="sm">
+          {busy ? "Transferring..." : "Transfer"}
+        </Button>
+        <Input
+          name="skip"
+          placeholder="skip"
+          type="number"
+          className="h-9 w-20"
+          defaultValue={0}
+        />
+      </div>
+    </fetcher.Form>
+  );
+}
+
 export async function action({
+  request,
   context: { userId },
   params: { provider },
 }: Route.ActionArgs) {
   if (!userId) return { error: "no user" };
   if (provider !== "spotify") return { error: "no support yet" };
 
-  await syncUserLiked(userId, true);
-  return { error: null };
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  try {
+    if (intent === "sync") {
+      await syncUserLiked(userId, true);
+    }
+
+    if (intent === "transfer") {
+      await transferUserLikedToYoutube(userId, {
+        skip: Number(formData.get("skip")),
+      });
+    }
+
+    return { error: null };
+  } catch (error) {
+    logError(error);
+    return { error: error instanceof Error ? error.message : "unknown error" };
+  }
 }

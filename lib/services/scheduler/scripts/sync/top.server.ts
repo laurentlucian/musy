@@ -1,3 +1,4 @@
+import { prisma } from "@lib/services/db.server";
 import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
@@ -33,7 +34,29 @@ export async function syncUserTop(userId: string) {
     ]);
 
     log("completed", "top");
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "success",
+        type: "top",
+      },
+      update: {
+        state: "success",
+      },
+      where: { userId_type: { userId, type: "top" } },
+    });
   } catch {
+    await prisma.sync.upsert({
+      create: {
+        userId,
+        state: "failure",
+        type: "top",
+      },
+      update: {
+        state: "failure",
+      },
+      where: { userId_type: { userId, type: "top" } },
+    });
     log("failure", "top");
   }
 }

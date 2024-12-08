@@ -8,7 +8,7 @@ async function search(service: GoogleService, query: string) {
     q: query,
     type: ["video"],
     videoCategoryId: "10", // music
-    maxResults: 10,
+    maxResults: 1,
   });
 
   return (

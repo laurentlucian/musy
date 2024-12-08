@@ -1,34 +1,61 @@
+import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
-import { syncUserLiked } from "@lib/services/scheduler/scripts/user/liked.server";
-import { syncPlaybacks } from "@lib/services/scheduler/scripts/user/playback.server";
-import { syncUserProfile } from "@lib/services/scheduler/scripts/user/profile.server";
-import { syncUserRecent } from "@lib/services/scheduler/scripts/user/recent.server";
+import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
+import { syncPlaybacks } from "@lib/services/scheduler/scripts/sync/playback.server";
+import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
+import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 
-type CronerContext = {
+type SyncerContext = {
   users: string[];
   current: string | null;
   tasks: Map<`${string}:${string}`, Date>;
 };
 
-type CronerEvents = { type: "START" } | { type: "STOP" };
+type SyncerEvents = { type: "START" } | { type: "STOP" };
 
 const RECENT_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const PROFILE_SYNC_INTERVAL = 24 * 60 * 60 * 1000; // 1 day
 const LIKED_SYNC_INTERVAL = 60 * 60 * 1000; // 1 hour
 
-export const CRONER_MACHINE = setup({
+export const SYNC_MACHINE = setup({
   types: {} as {
-    context: CronerContext;
-    events: CronerEvents;
+    context: SyncerContext;
+    events: SyncerEvents;
   },
   actors: {
-    populator: fromPromise(() => {
-      log("populating users", "croner");
-      return getAllUsersId();
+    populator: fromPromise(async () => {
+      log("populating users", "sync");
+      const users = await getAllUsersId();
+
+      const latestSyncs = await prisma.sync.groupBy({
+        by: ["userId"],
+        _max: {
+          updatedAt: true,
+        },
+      });
+
+      const syncMap = new Map(
+        latestSyncs.map(
+          (sync: { userId: string; _max: { updatedAt: Date | null } }) => [
+            sync.userId,
+            sync._max.updatedAt,
+          ],
+        ),
+      );
+
+      return users.sort((a, b) => {
+        const aSync = syncMap.get(a);
+        const bSync = syncMap.get(b);
+
+        if (!aSync) return -1;
+        if (!bSync) return 1;
+
+        return aSync.getTime() - bSync.getTime();
+      });
     }),
     recent: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
       async ({ input: { lastRunAt, userId } }) => {
@@ -122,7 +149,7 @@ export const CRONER_MACHINE = setup({
       type: "parallel",
       entry: ({ context }) => {
         const remaining = context.users.length;
-        log(`syncing ${context.current} (${remaining} remaining)`, "croner");
+        log(`syncing ${context.current} (${remaining} remaining)`, "sync");
       },
       states: {
         "sync.recent": {
@@ -222,7 +249,7 @@ export const CRONER_MACHINE = setup({
       onDone: {
         target: "waiting",
         actions: assign(() => {
-          log("syncing done", "croner");
+          log("syncing done", "sync");
           return {
             current: null,
           };
@@ -231,7 +258,7 @@ export const CRONER_MACHINE = setup({
     },
     waiting: {
       entry: () => {
-        log("waiting", "croner");
+        log("waiting", "sync");
       },
       after: {
         CYCLE_INTERVAL: "processing",
@@ -239,7 +266,7 @@ export const CRONER_MACHINE = setup({
     },
     failure: {
       entry: () => {
-        log("failure", "croner");
+        log("failure", "sync");
       },
       after: {
         RETRY_DELAY: "populating",
@@ -248,10 +275,10 @@ export const CRONER_MACHINE = setup({
   },
 });
 
-export function initializeCronerMachine() {
-  return singleton("CRONER_MACHINE", () => {
-    log("initializing machine", "croner");
-    const actor = createActor(CRONER_MACHINE);
+export function getSyncMachine() {
+  return singleton("SYNC_MACHINE", () => {
+    log("initializing", "sync");
+    const actor = createActor(SYNC_MACHINE);
 
     actor.start();
     actor.send({ type: "START" });
