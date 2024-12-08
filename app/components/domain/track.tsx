@@ -12,7 +12,7 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { useFetcherToast } from "~/hooks/useFetcherToast";
-import type { action } from "~/routes/actions";
+import type { action } from "~/routes/resources/actions";
 import { Image } from "../ui/image";
 
 export function Track(

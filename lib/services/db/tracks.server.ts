@@ -1,34 +1,22 @@
 import { prisma } from "@lib/services/db.server";
 
-export async function getFeed(userId: string, limit = 10, offset = 0) {
-  const following = await prisma.follow.findMany({
-    select: {
-      followingId: true,
-    },
-    where: {
-      followerId: userId,
-    },
-  });
-  const userIds = [...following.map((f) => f.followingId), userId];
-
+export async function getFeed(args?: { limit?: number; offset?: number }) {
+  const { limit = 20, offset = 0 } = args ?? {};
   const feed = await prisma.feed.findMany({
     include: {
       liked: {
         include: {
           track: true,
-          user: true,
         },
       },
       playlist: {
         include: {
-          playlist: true,
           track: true,
         },
       },
       recommend: {
         include: {
           track: true,
-          user: true,
         },
       },
       user: true,
@@ -38,11 +26,6 @@ export async function getFeed(userId: string, limit = 10, offset = 0) {
     },
     skip: offset * limit,
     take: limit,
-    where: {
-      userId: {
-        in: userIds,
-      },
-    },
   });
 
   return feed;

@@ -3,7 +3,7 @@ import { getCacheControl } from "@lib/utils";
 import { Suspense } from "react";
 import { Leaderboard } from "~/components/domain/leaderboard";
 import { Waver } from "~/components/icons/waver";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/leaderboard";
 
 export function headers(_: Route.HeadersArgs) {
   return {
@@ -11,11 +11,11 @@ export function headers(_: Route.HeadersArgs) {
   };
 }
 
-export function loader(_: Route.LoaderArgs) {
+export async function loader(_: Route.LoaderArgs) {
   return { leaderboard: getTopLeaderboard() };
 }
 
-export default function Home({
+export default function LeaderboardComponent({
   loaderData: { leaderboard },
 }: Route.ComponentProps) {
   return (

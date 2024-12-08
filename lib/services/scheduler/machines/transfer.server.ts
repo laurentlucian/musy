@@ -108,7 +108,7 @@ export const TRANSFER_MACHINE = setup({
         log("waiting", "transfer");
       },
       after: {
-        CYCLE_INTERVAL: "processing",
+        CYCLE_INTERVAL: "transfering",
       },
     },
     failure: {
