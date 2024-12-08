@@ -19,7 +19,10 @@ export default [
         route("playlist", "routes/account.provider.playlist.tsx"),
       ]),
 
-      ...prefix("admin", [route("transfers", "routes/admin/transfers.tsx")]),
+      ...prefix("admin", [
+        route("transfers", "routes/admin/transfers.tsx"),
+        route("syncs", "routes/admin/syncs.tsx"),
+      ]),
     ]),
   ]),
   route("track/:trackId", "routes/track.tsx"),
