@@ -1,4 +1,5 @@
 import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
+import { getTransferMachine } from "@lib/services/scheduler/machines/transfer.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
 import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
 import { logError } from "@lib/utils";
@@ -80,7 +81,6 @@ function SyncButton() {
 function TransferButton() {
   const fetcher = useFetcher<typeof action>();
   const busy = fetcher.state !== "idle";
-  useFetcherToast(fetcher.data?.error, "copied all liked songs");
 
   return (
     <fetcher.Form method="post">
@@ -122,6 +122,8 @@ export async function action({
         userId,
         skip: Number(formData.get("skip")),
       });
+      const transfer = getTransferMachine();
+      transfer.send({ type: "REFRESH" });
     }
 
     return { error: null };

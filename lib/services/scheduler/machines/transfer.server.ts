@@ -10,7 +10,10 @@ type TransferContext = {
   transfers: Transfer[];
 };
 
-type TransferEvents = { type: "START" } | { type: "STOP" };
+type TransferEvents =
+  | { type: "START" }
+  | { type: "STOP" }
+  | { type: "REFRESH" };
 
 export const TRANSFER_MACHINE = setup({
   types: {} as {
@@ -51,6 +54,11 @@ export const TRANSFER_MACHINE = setup({
   initial: "idle",
   context: {
     transfers: [],
+  },
+  on: {
+    REFRESH: {
+      target: "populating",
+    },
   },
   states: {
     idle: {
