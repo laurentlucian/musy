@@ -69,7 +69,11 @@ export async function transferUserLikedToYoutube(args: {
           type: "liked",
         },
       },
-      update: { state: "failure" },
+      update: {
+        state: "failure",
+        skip: args.skip + processed,
+        total: liked.length,
+      },
       create: {
         userId: args.userId,
         skip: args.skip + processed,
