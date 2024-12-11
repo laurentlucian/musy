@@ -11,6 +11,7 @@ export default [
     layout("routes/layout.index.tsx", [
       index("routes/leaderboard.tsx"),
       route("new", "routes/new.tsx"),
+      route("listening", "routes/listening.tsx"),
     ]),
     route("account", "routes/account.tsx", [
       route(":provider", "routes/account.provider.tsx", [

@@ -1,6 +1,4 @@
 import { prisma } from "@lib/services/db.server";
-import { log } from "@lib/utils";
-import type { Prisma } from "@prisma/client";
 
 export async function getProvider(args: {
   userId: string;

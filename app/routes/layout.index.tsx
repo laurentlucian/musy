@@ -41,6 +41,23 @@ export default function LayoutIndex() {
             );
           }}
         </NavLink>
+        <NavLink
+          to="/listening"
+          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          end
+        >
+          {({ isActive }) => {
+            return (
+              <Button
+                disabled={isActive}
+                variant="ghost"
+                className="w-full capitalize"
+              >
+                Listening
+              </Button>
+            );
+          }}
+        </NavLink>
       </div>
       <Outlet />
     </Fragment>
