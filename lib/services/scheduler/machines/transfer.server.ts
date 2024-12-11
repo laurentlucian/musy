@@ -57,7 +57,7 @@ export const TRANSFER_MACHINE = setup({
   },
   on: {
     REFRESH: {
-      target: "populating",
+      target: ".populating",
     },
   },
   states: {
