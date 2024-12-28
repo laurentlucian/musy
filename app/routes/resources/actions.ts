@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import { GoogleService } from "@lib/services/sdk/google.server";
+import { getGoogleClientsFromUserId } from "@lib/services/sdk/google.server";
 import { youtube } from "@lib/services/sdk/helpers/youtube.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { logError } from "@lib/utils";
@@ -56,13 +56,13 @@ async function like(args: { request: Request; userId: string }) {
       if (typeof uri !== "string")
         return data({ error: "no uri" }, { status: 400 });
 
-      const google = await GoogleService.createFromUserId(userId);
+      const { youtube: yt } = await getGoogleClientsFromUserId(userId);
       const search = await youtube.search(
-        google,
+        yt,
         `${track.name} - ${track.artist}`,
       );
       const first = search[0];
-      await youtube.addToLibrary(google, first.videoId);
+      await youtube.addToLibrary(yt, first.videoId);
 
       return data({ error: null });
     }

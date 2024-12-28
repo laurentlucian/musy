@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import { GoogleService } from "@lib/services/sdk/google.server";
+import { getGoogleClientsFromCredentials } from "@lib/services/sdk/google.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import invariant from "tiny-invariant";
 
@@ -23,7 +23,7 @@ export function getGoogleStrategy() {
       cookie: "google:session",
     },
     async ({ tokens }) => {
-      const google = await GoogleService.createFromCredentials({
+      const { oauth } = getGoogleClientsFromCredentials({
         access_token: tokens.accessToken(),
         refresh_token: tokens.refreshToken(),
         expiry_date: tokens.accessTokenExpiresAt()?.getTime(),
@@ -32,7 +32,6 @@ export function getGoogleStrategy() {
         token_type: tokens.tokenType(),
       });
 
-      const { oauth } = google.getClient();
       const { data } = await oauth.userinfo.get();
 
       invariant(data.id, "missing google profile");
@@ -43,7 +42,21 @@ export function getGoogleStrategy() {
         },
       });
 
-      if (user) return { id: user.userId };
+      if (user) {
+        await prisma.provider.update({
+          data: {
+            accessToken: tokens.accessToken(),
+            refreshToken: tokens.refreshToken(),
+            expiresAt: BigInt(
+              Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
+            ),
+            tokenType: tokens.tokenType(),
+          },
+          where: { id: user.id, type: "google" },
+        });
+
+        return { id: user.userId };
+      }
 
       invariant(data.email, "missing google email");
       let profile = await prisma.profile.findFirst({

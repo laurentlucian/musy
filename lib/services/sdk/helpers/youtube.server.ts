@@ -1,8 +1,6 @@
-import type { GoogleService } from "@lib/services/sdk/google.server";
+import type { GoogleClients } from "@lib/services/sdk/google.server";
 
-async function search(service: GoogleService, query: string) {
-  const { youtube } = service.getClient();
-
+async function search(youtube: GoogleClients["youtube"], query: string) {
   const response = await youtube.search.list({
     part: ["snippet"],
     q: query,
@@ -34,17 +32,17 @@ async function search(service: GoogleService, query: string) {
   );
 }
 
-async function addToLibrary(service: GoogleService, videoId: string) {
-  const { youtube } = service.getClient();
-
+async function addToLibrary(
+  youtube: GoogleClients["youtube"],
+  videoId: string,
+) {
   return youtube.videos.rate({
     id: videoId,
     rating: "like",
   });
 }
 
-async function getPlaylists(service: GoogleService) {
-  const { youtube } = service.getClient();
+async function getPlaylists(youtube: GoogleClients["youtube"]) {
   const response = await youtube.playlists.list({
     part: ["snippet", "contentDetails"],
     mine: true,
@@ -55,12 +53,11 @@ async function getPlaylists(service: GoogleService) {
 }
 
 async function createPlaylist(
-  service: GoogleService,
+  youtube: GoogleClients["youtube"],
   title: string,
   description = "",
   privacyStatus: "private" | "public" | "unlisted" = "private",
 ) {
-  const { youtube } = service.getClient();
   const response = await youtube.playlists.insert({
     part: ["snippet", "status"],
     requestBody: {
@@ -78,11 +75,10 @@ async function createPlaylist(
 }
 
 async function addToPlaylist(
-  service: GoogleService,
+  youtube: GoogleClients["youtube"],
   playlistId: string,
   videoId: string,
 ) {
-  const { youtube } = service.getClient();
   const response = await youtube.playlistItems.insert({
     part: ["snippet"],
     requestBody: {

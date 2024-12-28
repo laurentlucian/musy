@@ -1,130 +1,101 @@
-import { getProvider } from "@lib/services/db/users.server";
-import type { BaseService, ServiceConfig } from "@lib/services/sdk/base.server";
+import { getProvider, updateToken } from "@lib/services/db/users.server";
+import type { ServiceConfig } from "@lib/services/sdk/base.server";
 import type { Credentials, OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
 import invariant from "tiny-invariant";
 
-interface GoogleClients {
+export type GoogleClients = {
   youtube: ReturnType<typeof google.youtube>;
   oauth: ReturnType<typeof google.oauth2>;
   auth: OAuth2Client;
+};
+
+function getConfig() {
+  invariant(process.env.GOOGLE_CLIENT_ID, "missing GOOGLE_CLIENT_ID env");
+  invariant(
+    process.env.GOOGLE_CLIENT_SECRET,
+    "missing GOOGLE_CLIENT_SECRET env",
+  );
+  invariant(process.env.GOOGLE_CALLBACK_URL, "missing GOOGLE_CALLBACK_URL env");
+
+  return {
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: process.env.GOOGLE_CALLBACK_URL,
+  };
 }
 
-export class GoogleService
-  implements BaseService<ReturnType<typeof google.youtube>, GoogleClients>
-{
-  private static instances: Map<string, GoogleService> = new Map();
-  private youtube;
-  private oauth;
-  private auth;
+function createGoogleAuth(config: ServiceConfig, credentials?: Credentials) {
+  const auth = new google.auth.OAuth2(
+    config.clientId,
+    config.clientSecret,
+    config.redirectUri,
+  );
 
-  private constructor(
-    private readonly config: ServiceConfig,
-    credentials?: Credentials,
-  ) {
-    this.auth = new google.auth.OAuth2(
-      config.clientId,
-      config.clientSecret,
-      config.redirectUri,
-    );
-
-    if (credentials) {
-      this.auth.setCredentials(credentials);
-    }
-
-    this.oauth = google.oauth2({ version: "v2", auth: this.auth });
-    this.youtube = google.youtube({ version: "v3", auth: this.auth });
+  if (credentials) {
+    auth.setCredentials(credentials);
   }
 
-  static async createFromCredentials(credentials: Credentials) {
-    invariant(credentials?.access_token, "missing access token");
-    invariant(process.env.GOOGLE_CLIENT_ID, "missing GOOGLE_CLIENT_ID env");
-    invariant(
-      process.env.GOOGLE_CLIENT_SECRET,
-      "missing GOOGLE_CLIENT_SECRET env",
-    );
-    invariant(
-      process.env.GOOGLE_CALLBACK_URL,
-      "missing GOOGLE_CALLBACK_URL env",
-    );
+  return auth;
+}
 
-    const config = {
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      redirectUri: process.env.GOOGLE_CALLBACK_URL,
-    };
+async function refreshAccessTokenIfNeeded(
+  auth: OAuth2Client,
+  credentials: Credentials,
+  userId: string,
+) {
+  if (credentials.refresh_token && credentials.expiry_date) {
+    const expiryDate = Number(credentials.expiry_date);
+    console.log("token expiryDate", expiryDate);
+    const fiveMinutes = 5 * 60 * 1000;
 
-    const tempKey = `temp:${credentials.access_token}`;
-    const instance = GoogleService.getInstance(tempKey, config, credentials);
+    if (Date.now() >= expiryDate - fiveMinutes) {
+      const tokens = await auth.refreshAccessToken();
+      auth.setCredentials(tokens.credentials);
 
-    return instance;
+      await updateToken({
+        id: userId,
+        token: tokens.credentials.access_token!,
+        expiresAt: tokens.credentials.expiry_date!,
+        refreshToken: tokens.credentials.refresh_token || undefined,
+        type: "google",
+      });
+    }
+  }
+}
+
+export function createGoogleClients(auth: OAuth2Client) {
+  return {
+    youtube: google.youtube({ version: "v3", auth }),
+    oauth: google.oauth2({ version: "v2", auth }),
+    auth,
+  };
+}
+
+export async function getGoogleClientsFromUserId(userId: string) {
+  const provider = await getProvider({ userId, type: "google" });
+  if (!provider) {
+    throw new Error("No Google provider found for user");
   }
 
-  static getInstance(
-    instanceKey: string,
-    config: ServiceConfig,
-    credentials?: Credentials,
-  ): GoogleService {
-    if (!GoogleService.instances.has(instanceKey)) {
-      const instance = new GoogleService(config, credentials);
-      GoogleService.instances.set(instanceKey, instance);
-    }
+  const config = getConfig();
+  const credentials = {
+    access_token: provider.accessToken,
+    refresh_token: provider.refreshToken,
+    expiry_date: Number(provider.expiresAt),
+  };
 
-    const instance = GoogleService.instances.get(instanceKey)!;
+  const auth = createGoogleAuth(config, credentials);
+  await refreshAccessTokenIfNeeded(auth, credentials, userId);
 
-    if (credentials) {
-      instance.auth.setCredentials(credentials);
-    }
+  return createGoogleClients(auth);
+}
 
-    return instance;
-  }
+export function getGoogleClientsFromCredentials(credentials: Credentials) {
+  invariant(credentials.access_token, "missing access token");
 
-  static async createFromUserId(userId: string): Promise<GoogleService> {
-    const provider = await getProvider({
-      userId,
-      type: "google",
-    });
+  const config = getConfig();
+  const auth = createGoogleAuth(config, credentials);
 
-    if (!provider) {
-      throw new Error("No Google provider found for user");
-    }
-
-    invariant(process.env.GOOGLE_CLIENT_ID, "missing GOOGLE_CLIENT_ID env");
-    invariant(
-      process.env.GOOGLE_CLIENT_SECRET,
-      "missing GOOGLE_CLIENT_SECRET env",
-    );
-    invariant(
-      process.env.GOOGLE_CALLBACK_URL,
-      "missing GOOGLE_CALLBACK_URL env",
-    );
-
-    const config = {
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      redirectUri: process.env.GOOGLE_CALLBACK_URL,
-    };
-
-    const instanceKey = `user:${userId}`;
-    if (GoogleService.instances.has(instanceKey)) {
-      return GoogleService.instances.get(instanceKey)!;
-    }
-
-    const instance = new GoogleService(config, {
-      access_token: provider.accessToken,
-      refresh_token: provider.refreshToken,
-      expiry_date: Number(provider.expiresAt),
-    });
-
-    GoogleService.instances.set(instanceKey, instance);
-    return instance;
-  }
-
-  getClient() {
-    return {
-      youtube: this.youtube,
-      oauth: this.oauth,
-      auth: this.auth,
-    };
-  }
+  return createGoogleClients(auth);
 }

@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import { GoogleService } from "@lib/services/sdk/google.server";
+import { getGoogleClientsFromUserId } from "@lib/services/sdk/google.server";
 import { youtube } from "@lib/services/sdk/helpers/youtube.server";
 import { log, sleep } from "@lib/utils";
 import YTMusic from "ytmusic-api";
@@ -31,7 +31,7 @@ export async function transferUserLikedToYoutube(args: {
 
   let processed = 0;
   try {
-    const google = await GoogleService.createFromUserId(userId);
+    const { youtube: yt } = await getGoogleClientsFromUserId(userId);
 
     const ytmusic = new YTMusic();
     await ytmusic.initialize();
@@ -52,13 +52,14 @@ export async function transferUserLikedToYoutube(args: {
 
       if (!videoId) continue;
 
-      await youtube.addToLibrary(google, videoId);
+      await youtube.addToLibrary(yt, videoId);
       processed++;
       log(`transferred ${track.track.name}`, "transfer");
 
       await sleep(DELAY_BETWEEN_REQUESTS);
     }
-  } catch {
+  } catch (error) {
+    console.log("error", error);
     log(`processing ${processed} liked songs for ${args.userId}`, "transfer");
     await prisma.transfer.upsert({
       where: {

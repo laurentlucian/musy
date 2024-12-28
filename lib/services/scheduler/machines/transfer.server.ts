@@ -45,10 +45,6 @@ export const TRANSFER_MACHINE = setup({
       );
     }),
   },
-  delays: {
-    RETRY_DELAY: 5000, // 5 seconds (in milliseconds)
-    CYCLE_INTERVAL: 1 * 60 * 1000, // 1 minute (in milliseconds)
-  },
 }).createMachine({
   id: "root",
   initial: "idle",
@@ -74,12 +70,6 @@ export const TRANSFER_MACHINE = setup({
           actions: assign({
             transfers: ({ event }) => event.output,
           }),
-        },
-        onError: {
-          target: "failure",
-          actions: () => {
-            logError("populator failed");
-          },
         },
       },
     },
@@ -116,15 +106,7 @@ export const TRANSFER_MACHINE = setup({
         log("waiting", "transfer");
       },
       after: {
-        CYCLE_INTERVAL: "transfering",
-      },
-    },
-    failure: {
-      entry: () => {
-        log("failure", "transfer");
-      },
-      after: {
-        RETRY_DELAY: "populating",
+        [24 * 60 * 60 * 1000]: "transfering", // 1 day
       },
     },
   },
