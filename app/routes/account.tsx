@@ -2,7 +2,8 @@ import { authenticator } from "@lib/services/auth.server";
 import { ADMIN_USER_ID, PROVIDERS } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
 import { type Providers, getProviders } from "@lib/services/db/users.server";
-import { Fragment, use } from "react";
+import { sessionStorage } from "@lib/services/session.server";
+import { use } from "react";
 import {
   Form,
   Link,
