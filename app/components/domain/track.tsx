@@ -90,6 +90,16 @@ export function TrackImage(
 export function TrackMenu(
   props: { query: string; uri: string } & PropsWithChildren,
 ) {
+  const fetcher = useFetcher<typeof action>();
+  useFetcherToast(fetcher.data?.error, fetcher.data?.type);
+
+  const submit = (action: string, provider: string) => {
+    fetcher.submit(
+      { provider, uri: props.uri },
+      { method: "post", action: `/actions/${action}` },
+    );
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{props.children}</ContextMenuTrigger>
@@ -125,86 +135,30 @@ export function TrackMenu(
         <ContextMenuSub>
           <ContextMenuSubTrigger>Like</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <LikeOnSpotify uri={props.uri} />
-            <LikeOnYoutube uri={props.uri} />
+            <ContextMenuItem onClick={() => submit("like", "spotify")}>
+              Spotify
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => submit("like", "google")}>
+              Youtube
+            </ContextMenuItem>
+            <ContextMenuItem disabled>Apple</ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>Queue</ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-48">
+            <ContextMenuItem onClick={() => submit("queue", "spotify")}>
+              Spotify
+            </ContextMenuItem>
+            <ContextMenuItem disabled>Youtube</ContextMenuItem>
             <ContextMenuItem disabled>Apple</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
-        <Thanks uri={props.uri} />
+        <ContextMenuItem onClick={() => submit("thanks", "google")}>
+          Thanks
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
-  );
-}
-
-function LikeOnSpotify(props: { uri: string }) {
-  const fetcher = useFetcher<typeof action>();
-  useFetcherToast(fetcher.data?.error, "liked");
-
-  return (
-    <ContextMenuItem
-      onClick={() => {
-        fetcher.submit(
-          {
-            uri: props.uri,
-            provider: "spotify",
-          },
-          {
-            action: "/actions/like",
-            method: "post",
-          },
-        );
-      }}
-    >
-      Spotify
-    </ContextMenuItem>
-  );
-}
-
-function LikeOnYoutube(props: { uri: string }) {
-  const fetcher = useFetcher<typeof action>();
-  useFetcherToast(fetcher.data?.error, "liked");
-
-  return (
-    <ContextMenuItem
-      onClick={() => {
-        fetcher.submit(
-          {
-            uri: props.uri,
-            provider: "google",
-          },
-          {
-            action: "/actions/like",
-            method: "post",
-          },
-        );
-      }}
-    >
-      Youtube
-    </ContextMenuItem>
-  );
-}
-
-function Thanks(props: { uri: string }) {
-  const fetcher = useFetcher<typeof action>();
-  useFetcherToast(fetcher.data?.error, "thanked");
-
-  return (
-    <ContextMenuItem
-      onClick={() => {
-        fetcher.submit(
-          {
-            uri: props.uri,
-            provider: "google",
-          },
-          {
-            action: "/actions/thanks",
-            method: "post",
-          },
-        );
-      }}
-    >
-      Thanks
-    </ContextMenuItem>
   );
 }

@@ -15,24 +15,33 @@ export async function action({
   context: { userId },
   params: { action },
 }: Route.ActionArgs) {
-  if (!userId) return data({ error: "no user" }, { status: 400 });
+  const form = await request.formData();
 
-  if (action === "like") return like({ request, userId });
-  if (action === "thanks") return thanks({ request, userId });
+  if (!userId) return data({ error: "no user", type: action }, { status: 400 });
 
-  return data({ error: "no action" }, { status: 400 });
+  if (action === "like") {
+    const error = await like({ form, userId });
+    return data({ error, type: "liked" });
+  }
+  if (action === "thanks") {
+    const error = await thanks({ form, userId });
+    return data({ error, type: "thanked" });
+  }
+  if (action === "queue") {
+    const error = await queue({ form, userId });
+    return data({ error, type: "queued" });
+  }
+
+  return data({ error: "no action", type: action }, { status: 400 });
 }
 
-async function like(args: { request: Request; userId: string }) {
-  const { request, userId } = args;
-  const formData = await request.formData();
-  const provider = formData.get("provider");
-  if (typeof provider !== "string")
-    return data({ error: "no provider" }, { status: 400 });
+async function like(args: { form: FormData; userId: string }) {
+  const { userId, form } = args;
+  const provider = form.get("provider");
+  if (typeof provider !== "string") return "no provider";
 
-  const uri = formData.get("uri");
-  if (typeof uri !== "string")
-    return data({ error: "no uri" }, { status: 400 });
+  const uri = form.get("uri");
+  if (typeof uri !== "string") return "no uri";
 
   const track = await prisma.track.findFirst({
     select: { id: true, name: true, artist: true },
@@ -41,20 +50,19 @@ async function like(args: { request: Request; userId: string }) {
     },
   });
 
-  if (!track) return data({ error: "no track" }, { status: 400 });
+  if (!track) return "no track";
 
   try {
     if (provider === "spotify") {
       const spotify = await SpotifyService.createFromUserId(userId);
       const client = spotify.getClient();
       await client.addToMySavedTracks([track.id]);
-      return data({ error: null });
+      return null;
     }
 
     if (provider === "google") {
-      const uri = formData.get("uri");
-      if (typeof uri !== "string")
-        return data({ error: "no uri" }, { status: 400 });
+      const uri = form.get("uri");
+      if (typeof uri !== "string") return "no uri";
 
       const { youtube: yt } = await getGoogleClientsFromUserId(userId);
       const search = await youtube.search(
@@ -64,32 +72,53 @@ async function like(args: { request: Request; userId: string }) {
       const first = search[0];
       await youtube.addToLibrary(yt, first.videoId);
 
-      return data({ error: null });
+      return null;
     }
   } catch (error) {
     logError(error instanceof Error ? error.message : error);
-    return data({ error: "failure to like" }, { status: 500 });
+    return "failure to like";
   }
 }
 
-async function thanks(args: { request: Request; userId: string }) {
-  const { request, userId } = args;
-  const formData = await request.formData();
+async function thanks(args: { form: FormData; userId: string }) {
+  const { form, userId } = args;
 
-  const uri = formData.get("uri");
-  if (typeof uri !== "string")
-    return data({ error: "no uri" }, { status: 400 });
+  const uri = form.get("uri");
+  if (typeof uri !== "string") return "no uri";
 
   const track = await prisma.track.findFirst({
     select: { id: true },
     where: { uri },
   });
 
-  if (!track) return data({ error: "no track" }, { status: 400 });
+  if (!track) return "no track";
 
   await prisma.thanks.create({
     data: { trackId: track.id, userId },
   });
 
-  return data({ error: null });
+  return null;
+}
+
+async function queue(args: { form: FormData; userId: string }) {
+  const { form, userId } = args;
+  const uri = form.get("uri");
+  if (typeof uri !== "string") return "no uri";
+
+  const provider = form.get("provider");
+  if (typeof provider !== "string") return "no provider";
+
+  if (provider === "spotify") {
+    const spotify = await SpotifyService.createFromUserId(userId);
+    const client = spotify.getClient();
+    try {
+      await client.addToQueue(uri);
+      return null;
+    } catch (error) {
+      logError(error instanceof Error ? error.message : error);
+      return "not listening";
+    }
+  }
+
+  return "provider not supported";
 }
