@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
-import tailwindcss from "@tailwindcss/postcss";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -12,12 +12,7 @@ export default defineConfig(({ isSsrBuild }) => ({
         }
       : undefined,
   },
-  css: {
-    postcss: {
-      plugins: [tailwindcss],
-    },
-  },
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [reactRouter(), tsconfigPaths(), tailwindcss()],
   resolve: {
     alias: {
       "~": resolve(__dirname, "./app"),
