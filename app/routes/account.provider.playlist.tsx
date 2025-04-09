@@ -20,7 +20,6 @@ export default function AccountProviderPlaylists({
 }: Route.ComponentProps) {
   return (
     <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
-      <SyncButton />
       {playlists && (
         <Suspense fallback={<Waver />}>
           <PlaylistList playlists={playlists} />

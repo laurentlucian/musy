@@ -3,17 +3,18 @@ import { ADMIN_USER_ID, PROVIDERS } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
 import { type Providers, getProviders } from "@lib/services/db/users.server";
 import { sessionStorage } from "@lib/services/session.server";
+import { ArrowLeft, ChevronLeft } from "lucide-react";
 import { use } from "react";
 import {
   Form,
   Link,
-  NavLink,
   Outlet,
   data,
   redirect,
   useLocation,
   useParams,
 } from "react-router";
+import { NavLinkSub } from "~/components/domain/nav";
 import { Button } from "~/components/ui/button";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/account";
@@ -41,28 +42,37 @@ export async function loader({
 export default function AccountPage({
   loaderData: { userId, providers },
 }: Route.ComponentProps) {
+  const { pathname } = useLocation();
+  const root = pathname === "/account";
+
   return (
-    <main className="flex w-full flex-1 flex-col items-center gap-4 px-8 font-medium sm:flex-row sm:items-start sm:justify-center">
-      <div className="flex max-w-sm flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
-        <div className="flex gap-3 *:*:w-full *:flex-1">
-          <Link to="/">
-            <Button variant="secondary">Home</Button>
+    <main className="flex w-full flex-1 flex-col gap-4 px-8 font-medium">
+      <div className="relative w-full">
+        {!root && (
+          <Link to="/account" className="absolute top-0 left-0 sm:hidden">
+            <ArrowLeft />
           </Link>
+        )}
+        <h1 className="text-center">settings</h1>
+      </div>
+      <div className="flex flex-1 flex-col gap-4 sm:flex-row">
+        <div
+          className="hidden flex-col gap-3 data-root:flex md:flex"
+          data-root={root ? 1 : undefined}
+        >
+          <ProviderList providers={providers} />
+          {userId === ADMIN_USER_ID && <AdminNav />}
           {userId && (
             <Form method="post">
               <input type="hidden" name="mode" value="logout" />
-              <Button type="submit" variant="secondary">
-                Logout
+              <Button type="submit" variant="nav-sub">
+                logout
               </Button>
             </Form>
           )}
         </div>
-
-        <ProviderList providers={providers} />
-
-        {userId === ADMIN_USER_ID && <AdminNav />}
+        <Outlet />
       </div>
-      {userId && <Outlet />}
     </main>
   );
 }
@@ -80,33 +90,21 @@ function ProviderList(props: {
 
     if (isConnected)
       return (
-        <NavLink
+        <NavLinkSub
           key={provider}
           to={{
             pathname: `/account/${provider + rest}`,
           }}
-          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
         >
-          {({ isActive }) => {
-            return (
-              <Button
-                key={provider}
-                disabled={isActive}
-                variant="ghost"
-                className="w-full capitalize"
-              >
-                <p>{provider}</p>
-              </Button>
-            );
-          }}
-        </NavLink>
+          {provider}
+        </NavLinkSub>
       );
 
     return (
-      <Form key={provider} method="post">
+      <Form key={provider} method="post" className="w-full">
         <input type="hidden" name="mode" value="authorize" />
         <input type="hidden" name="provider" value={provider} />
-        <Button type="submit">
+        <Button type="submit" variant="nav-sub" size="lg">
           <p className="flex items-center gap-x-1 font-medium">
             Login with <span className="capitalize">{provider}</span>
           </p>

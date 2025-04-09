@@ -24,10 +24,6 @@ export default function AccountProviderLiked({
 }: Route.ComponentProps) {
   return (
     <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
-      <div className="flex gap-x-2">
-        <SyncButton />
-        <TransferButton />
-      </div>
       {liked && (
         <Suspense fallback={<Waver />}>
           <LikedList tracks={liked} />
