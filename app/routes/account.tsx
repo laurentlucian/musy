@@ -85,7 +85,7 @@ function ProviderList(props: {
           to={{
             pathname: `/account/${provider + rest}`,
           }}
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
         >
           {({ isActive }) => {
             return (

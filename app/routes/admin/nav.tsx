@@ -7,7 +7,7 @@ export function AdminNav() {
     <Fragment>
       <NavLink
         to="/account/admin/transfers"
-        className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+        className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
       >
         {({ isActive }) => {
           return (
@@ -23,7 +23,7 @@ export function AdminNav() {
       </NavLink>
       <NavLink
         to="/account/admin/syncs"
-        className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+        className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
       >
         {({ isActive }) => {
           return (

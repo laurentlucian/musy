@@ -8,7 +8,7 @@ export default function LayoutIndex() {
       <div className="flex gap-3 *:*:w-full *:flex-1">
         <NavLink
           to="/"
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
           end
         >
           {({ isActive }) => {
@@ -26,7 +26,7 @@ export default function LayoutIndex() {
         </NavLink>
         <NavLink
           to="/new"
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
           end
         >
           {({ isActive }) => {
@@ -43,7 +43,7 @@ export default function LayoutIndex() {
         </NavLink>
         <NavLink
           to="/listening"
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
           end
         >
           {({ isActive }) => {

@@ -18,7 +18,7 @@ export default function AccountProvider({
           to={{
             pathname: `/account/${provider}/liked`,
           }}
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
@@ -37,7 +37,7 @@ export default function AccountProvider({
           to={{
             pathname: `/account/${provider}/recent`,
           }}
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
@@ -56,7 +56,7 @@ export default function AccountProvider({
           to={{
             pathname: `/account/${provider}/playlist`,
           }}
-          className="[&[aria-current]>button]:bg-secondary [&[aria-current]]:pointer-events-none"
+          className="[&[aria-current]>button]:bg-secondary aria-[current]:pointer-events-none"
         >
           {({ isActive }) => {
             return (
