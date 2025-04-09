@@ -12,12 +12,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
   return (
-    <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
+    <article className="flex flex-col gap-3 sm:flex-1">
       {syncs.map((sync) => {
         return (
           <div
             key={`${sync.userId}-${sync.type}`}
-            className="flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150 hover:bg-accent"
+            className="flex gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent"
           >
             <div className="flex flex-col gap-y-2">
               <div className="flex gap-x-4">

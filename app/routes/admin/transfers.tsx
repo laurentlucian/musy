@@ -1,4 +1,6 @@
 import { prisma } from "@lib/services/db.server";
+import * as v from "valibot";
+import { Button } from "~/components/ui/button";
 import type { Route } from ".react-router/types/app/routes/admin/+types/transfers";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -10,12 +12,12 @@ export default function Transfers({
   loaderData: { transfers },
 }: Route.ComponentProps) {
   return (
-    <article className="flex flex-col gap-3 rounded-lg bg-card p-4 sm:flex-1">
+    <article className="flex flex-col gap-3 rounded-lg sm:flex-1">
       {transfers.map((transfer) => {
         return (
           <div
             key={`${transfer.userId}-${transfer.type}`}
-            className="flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150 hover:bg-accent"
+            className="flex gap-x-2 rounded-md bg-card p-6 transition-colors duration-150"
           >
             <div className="flex flex-col gap-y-2">
               <div className="flex gap-x-4">
@@ -71,6 +73,18 @@ export default function Transfers({
                   </p>
                 </div>
               </div>
+              <form method="post" className="mt-2 ml-auto">
+                <input type="hidden" name="intent" value="delete" />
+                <input type="hidden" name="userId" value={transfer.userId} />
+                <input type="hidden" name="source" value={transfer.source} />
+                <input
+                  type="hidden"
+                  name="destination"
+                  value={transfer.destination}
+                />
+                <input type="hidden" name="type" value={transfer.type} />
+                <Button type="submit">Delete</Button>
+              </form>
             </div>
           </div>
         );
@@ -82,4 +96,47 @@ export default function Transfers({
       )}
     </article>
   );
+}
+
+export async function action({
+  request,
+  context: { userId },
+  params: { provider },
+}: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "delete") {
+    const result = v.safeParse(
+      v.object({
+        userId: v.string(),
+        source: v.string(),
+        destination: v.string(),
+        type: v.string(),
+      }),
+      {
+        userId: formData.get("userId"),
+        source: formData.get("source"),
+        destination: formData.get("destination"),
+        type: formData.get("type"),
+      },
+    );
+
+    if (!result.success) {
+      return { error: "invalid transfer data" };
+    }
+
+    await prisma.transfer.delete({
+      where: {
+        userId_source_destination_type: {
+          userId: result.output.userId,
+          source: result.output.source,
+          destination: result.output.destination,
+          type: result.output.type,
+        },
+      },
+    });
+  }
+
+  return { error: null };
 }
