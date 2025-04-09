@@ -35,7 +35,6 @@
   }
 }
 
-
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -48,7 +47,7 @@
   }
 
   html {
-    font-family: "Montserrat", system-ui, sans-serif;
+    font-family: "IBM Plex Mono", "Montserrat", system-ui, sans-serif;
     scrollbar-gutter: stable;
   }
 
@@ -57,7 +56,8 @@
     min-height: 100dvh;
   }
 
-  ul, p {
+  ul,
+  p {
     @apply text-pretty select-none md:select-text;
   }
 
@@ -88,4 +88,3 @@
   background: transparent;
   margin: 2px;
 }
-
