@@ -1,4 +1,8 @@
-FROM oven/bun:1 AS dependencies-env
+FROM oven/bun AS dependencies-env
+
+# set ulimit for memory locking
+# RUN ulimit -l unlimited
+
 COPY . /app
 
 FROM dependencies-env AS development-dependencies-env
@@ -9,6 +13,10 @@ RUN bun i --frozen-lockfile
 FROM dependencies-env AS production-dependencies-env
 COPY ./package.json bun.lock /app/
 WORKDIR /app
+
+# install openssl for prisma generate
+RUN apt-get update -y && apt-get install -y openssl
+
 RUN bun i --production
 RUN bunx prisma generate
 
@@ -18,16 +26,18 @@ COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
 RUN bun run build
 
-# bun runtime crashes on production when running react@19
-FROM node:23 AS runtime-env
+FROM oven/bun AS runtime-env
 WORKDIR /app
+
+# copy openssl to runtime stage
+COPY --from=production-dependencies-env /usr/lib /usr/lib
+COPY --from=production-dependencies-env /usr/bin/openssl /usr/bin/
+COPY --from=production-dependencies-env /etc/ssl /etc/ssl
+
 COPY --from=dependencies-env /app /app
 COPY ./package.json bun.lock server/index.ts /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
-
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:$PATH"
 
 WORKDIR /app
 

@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({ isSsrBuild }) => ({
+export default defineConfig(({ isSsrBuild, command }) => ({
   build: {
     rollupOptions: isSsrBuild
       ? {
@@ -17,6 +17,11 @@ export default defineConfig(({ isSsrBuild }) => ({
     alias: {
       "~": resolve(__dirname, "./app"),
       "@shared": resolve(__dirname, "./shared"),
+      ...(command === "build" && {
+        // bun & react production fix
+        // https://github.com/remix-run/react-router/issues/12568#issuecomment-2692406113
+        "react-dom/server": "react-dom/server.node",
+      }),
     },
   },
 }));
