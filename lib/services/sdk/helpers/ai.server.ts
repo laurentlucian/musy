@@ -1,4 +1,4 @@
-import { askGroq } from "@lib/services/ai/groq";
+import { askAI } from "@lib/services/sdk/ai.server";
 import type { RecentSongs } from "@prisma/client";
 
 export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
@@ -8,7 +8,7 @@ export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   } = track;
   const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
 
-  return askGroq(prompt);
+  return askAI(prompt);
 }
 
 export async function getMoodFromSpotify(
@@ -23,7 +23,7 @@ export async function getMoodFromSpotify(
   const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
     ${JSON.stringify(tracks)}`;
 
-  const response = (await askGroq(prompt)).split(".")[0];
+  const response = (await askAI(prompt)).split(".")[0];
   return response;
 }
 export async function getMoodFromPrisma(
@@ -44,7 +44,7 @@ export async function getMoodFromPrisma(
   const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
     ${JSON.stringify(tracks)}`;
 
-  const response = (await askGroq(prompt)).split(".")[0];
+  const response = (await askAI(prompt)).split(".")[0];
   return response;
 }
 
@@ -58,5 +58,5 @@ export async function getStory(track: SpotifyApi.SingleTrackResponse) {
     Encourage ChatGPT to use descriptive language to help the reader imagine the setting, and to touch on the song's songwriting, vocal, instrumental, bpm, and genre in a way that enhances the environment.
     `;
 
-  return askGroq(prompt);
+  return askAI(prompt);
 }
