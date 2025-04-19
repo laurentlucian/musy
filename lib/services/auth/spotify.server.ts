@@ -1,5 +1,7 @@
 import { prisma } from "@lib/services/db.server";
+import { getOnboardingCoordinator } from "@lib/services/scheduler/machines/onboarding";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import type { Prisma } from "@prisma/client";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
@@ -40,43 +42,71 @@ export function getSpotifyStrategy() {
         select: { userId: true },
       });
 
-      if (provider) return { id: provider.userId };
+      const PROVIDER_DATA: Prisma.ProviderCreateWithoutUserInput = {
+        type: "spotify",
+        accountId: data.id,
+        accessToken: tokens.accessToken(),
+        refreshToken: tokens.refreshToken(),
+        expiresAt: BigInt(
+          Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
+        ),
+        tokenType: tokens.tokenType(),
+      };
 
-      let profile = await prisma.profile.findFirst({
-        where: { email: data.email },
-        select: { user: { select: { id: true } } },
-      });
-
-      if (!profile) {
-        profile = await prisma.profile.create({
-          data: {
-            email: data.email,
-            image: data.images?.[0]?.url,
-            name: data.display_name,
-            user: {
-              create: {},
+      if (provider) {
+        await prisma.provider.update({
+          where: {
+            accountId_type: {
+              accountId: data.id,
+              type: "spotify",
             },
           },
-          select: { user: { select: { id: true } } },
+          data: PROVIDER_DATA,
         });
+
+        return { id: provider.userId };
       }
 
-      await prisma.provider.create({
-        data: {
-          type: "spotify",
-          accountId: data.id,
-          accessToken: tokens.accessToken(),
-          refreshToken: tokens.refreshToken(),
-          expiresAt: BigInt(
-            Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
-          ),
-          tokenType: tokens.tokenType(),
+      const profile = await prisma.profile.upsert({
+        where: { email: data.email },
+        update: {
+          image: data.images?.[0]?.url,
+          name: data.display_name,
           user: {
-            connect: {
-              id: profile.user.id,
+            upsert: {
+              where: { id: data.id },
+              update: {
+                providers: {
+                  create: PROVIDER_DATA,
+                },
+              },
+              create: {
+                providers: {
+                  create: PROVIDER_DATA,
+                },
+              },
             },
           },
         },
+        create: {
+          email: data.email,
+          image: data.images?.[0]?.url,
+          name: data.display_name,
+          user: {
+            create: {
+              providers: {
+                create: PROVIDER_DATA,
+              },
+            },
+          },
+        },
+        select: { user: { select: { id: true } } },
+      });
+
+      const coordinator = getOnboardingCoordinator();
+      coordinator.send({
+        type: "START_ONBOARDING",
+        userId: profile.user.id,
       });
 
       return { id: profile.user.id };

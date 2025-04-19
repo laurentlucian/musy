@@ -106,7 +106,7 @@ function ProviderList(props: {
         <input type="hidden" name="provider" value={provider} />
         <Button type="submit" variant="nav-sub" size="lg">
           <p className="flex items-center gap-x-1 font-medium">
-            Login with <span className="capitalize">{provider}</span>
+            login with <span className="capitalize">{provider}</span>
           </p>
         </Button>
       </Form>

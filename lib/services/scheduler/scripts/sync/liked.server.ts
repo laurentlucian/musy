@@ -78,3 +78,48 @@ export async function syncUserLiked(userId: string) {
     throw error;
   }
 }
+
+export async function syncUserLikedPage(userId: string, offset: number) {
+  try {
+    const spotify = await SpotifyService.createFromUserId(userId);
+    const client = spotify.getClient();
+    invariant(client, "spotify client not found");
+
+    const { body } = await client.getMySavedTracks({ limit: 50, offset });
+
+    for (const item of body.items) {
+      const track = item.track;
+      const trackModel = createTrackModel(track);
+
+      // first ensure track exists
+      await prisma.track.upsert({
+        create: trackModel,
+        update: trackModel,
+        where: { id: track.id },
+      });
+
+      // then create/update liked relationship
+      await prisma.likedSongs.upsert({
+        create: {
+          trackId: track.id,
+          userId,
+        },
+        update: {},
+        where: {
+          trackId_userId: {
+            trackId: track.id,
+            userId,
+          },
+        },
+      });
+    }
+
+    return {
+      nextOffset: offset + body.items.length,
+      total: body.total,
+    };
+  } catch (error) {
+    log("failure", "liked-page");
+    throw error;
+  }
+}

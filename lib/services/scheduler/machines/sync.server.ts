@@ -1,11 +1,12 @@
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
+import { syncFeed } from "@lib/services/scheduler/feed.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
 import { syncPlaybacks } from "@lib/services/scheduler/scripts/sync/playback.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
 import { singleton } from "@lib/services/singleton.server";
-import { log, logError } from "@lib/utils";
+import { isProduction, log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 
@@ -15,7 +16,7 @@ type SyncerContext = {
   tasks: Map<`${string}:${string}`, Date>;
 };
 
-type SyncerEvents = { type: "START" } | { type: "STOP" };
+type SyncerEvents = { type: "START" } | { type: "STOP" } | { type: "WAIT" };
 
 const RECENT_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const PROFILE_SYNC_INTERVAL = 24 * 60 * 60 * 1000; // 1 day
@@ -30,6 +31,11 @@ export const SYNC_MACHINE = setup({
     populator: fromPromise(async () => {
       log("populating users", "sync");
       const users = await getAllUsersId();
+
+      if (users.length === 0) {
+        log("no users found", "sync");
+        throw new Error("no users found");
+      }
 
       const latestSyncs = await prisma.sync.groupBy({
         by: ["userId"],
@@ -47,7 +53,7 @@ export const SYNC_MACHINE = setup({
         ),
       );
 
-      return users.sort((a, b) => {
+      return users.slice(0, !isProduction ? 1 : undefined).sort((a, b) => {
         const aSync = syncMap.get(a);
         const bSync = syncMap.get(b);
 
@@ -62,8 +68,10 @@ export const SYNC_MACHINE = setup({
         if (
           lastRunAt &&
           Date.now() - lastRunAt.getTime() < RECENT_SYNC_INTERVAL
-        )
+        ) {
+          log("recent sync not due", "sync");
           return lastRunAt;
+        }
 
         await syncUserRecent(userId);
         return new Date();
@@ -74,8 +82,10 @@ export const SYNC_MACHINE = setup({
         if (
           lastRunAt &&
           Date.now() - lastRunAt.getTime() < PROFILE_SYNC_INTERVAL
-        )
+        ) {
+          log("profile sync not due", "sync");
           return lastRunAt;
+        }
 
         await syncUserProfile(userId);
         return new Date();
@@ -83,8 +93,13 @@ export const SYNC_MACHINE = setup({
     ),
     liked: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
       async ({ input: { lastRunAt, userId } }) => {
-        if (lastRunAt && Date.now() - lastRunAt.getTime() < LIKED_SYNC_INTERVAL)
+        if (
+          lastRunAt &&
+          Date.now() - lastRunAt.getTime() < LIKED_SYNC_INTERVAL
+        ) {
+          log("liked sync not due", "sync");
           return lastRunAt;
+        }
 
         await syncUserLiked(userId);
         return new Date();
@@ -92,6 +107,10 @@ export const SYNC_MACHINE = setup({
     ),
     playback: fromPromise<Date | null>(async () => {
       await syncPlaybacks();
+      return new Date();
+    }),
+    feed: fromPromise(async () => {
+      await syncFeed();
       return new Date();
     }),
   },
@@ -247,13 +266,22 @@ export const SYNC_MACHINE = setup({
         },
       },
       onDone: {
-        target: "waiting",
+        target: "feed",
         actions: assign(() => {
           log("syncing done", "sync");
           return {
             current: null,
           };
         }),
+      },
+    },
+    feed: {
+      invoke: {
+        src: "feed",
+        onDone: "waiting",
+      },
+      onError: {
+        target: "waiting",
       },
     },
     waiting: {
