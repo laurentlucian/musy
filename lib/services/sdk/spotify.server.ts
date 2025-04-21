@@ -10,6 +10,7 @@ import invariant from "tiny-invariant";
 
 export class SpotifyService implements BaseService<SpotifyWebApi> {
   private static instances: Map<string, SpotifyService> = new Map();
+  private static refreshes: Map<string, Promise<void>> = new Map(); // prevent multiple token refreshes at once for same instance
   private client: SpotifyWebApi;
   private userId?: string;
   private tokenInfo?: TokenInfo;
@@ -121,28 +122,42 @@ export class SpotifyService implements BaseService<SpotifyWebApi> {
     const now = Date.now();
     if (this.tokenInfo.expiresAt > now) return;
 
-    log("refreshing token", "spotify");
-    const { body } = await this.client.refreshAccessToken();
-    this.client.setAccessToken(body.access_token);
+    const instanceKey = `user:${this.userId}`;
 
-    const newTokenInfo = {
-      accessToken: body.access_token,
-      refreshToken: body.refresh_token,
-      expiresAt: Date.now() + body.expires_in * 1000,
-    };
+    let promise = SpotifyService.refreshes.get(instanceKey);
+    if (promise) return promise;
 
-    this.tokenInfo = newTokenInfo;
+    promise = (async () => {
+      try {
+        log("refreshing token", "spotify");
+        const { body } = await this.client.refreshAccessToken();
+        this.client.setAccessToken(body.access_token);
 
-    if (this.userId) {
-      log("storing new token", "spotify");
-      await updateToken({
-        id: this.userId,
-        token: body.access_token,
-        expiresAt: newTokenInfo.expiresAt,
-        refreshToken: body.refresh_token,
-        type: "spotify",
-      });
-    }
+        const newTokenInfo = {
+          accessToken: body.access_token,
+          refreshToken: body.refresh_token,
+          expiresAt: Date.now() + body.expires_in * 1000,
+        };
+
+        this.tokenInfo = newTokenInfo;
+
+        if (this.userId) {
+          log("storing new token", "spotify");
+          await updateToken({
+            id: this.userId,
+            token: body.access_token,
+            expiresAt: newTokenInfo.expiresAt,
+            refreshToken: body.refresh_token,
+            type: "spotify",
+          });
+        }
+      } finally {
+        SpotifyService.refreshes.delete(instanceKey);
+      }
+    })();
+
+    SpotifyService.refreshes.set(instanceKey, promise);
+    return promise;
   }
 
   getClient(): SpotifyWebApi {
