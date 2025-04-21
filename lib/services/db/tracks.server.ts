@@ -145,3 +145,18 @@ export async function getTrack(trackId: string) {
 
   return track;
 }
+
+export async function getPlaybacks() {
+  return prisma.playback.findMany({
+    select: {
+      track: true,
+    },
+    orderBy: {
+      track: {
+        recent: {
+          _count: "desc",
+        },
+      },
+    },
+  });
+}

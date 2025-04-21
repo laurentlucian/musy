@@ -1,22 +1,13 @@
-import { prisma } from "@lib/services/db.server";
+import { getPlaybacks } from "@lib/services/db/tracks.server";
+import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
+import { Waver } from "~/components/icons/waver";
 import type { Route } from "./+types/listening";
 
-export async function loader(_: Route.LoaderArgs) {
-  const playbacks = await prisma.playback.findMany({
-    select: {
-      track: true,
-    },
-    orderBy: {
-      track: {
-        recent: {
-          _count: "desc",
-        },
-      },
-    },
-  });
-
-  return { playbacks };
+export function loader(_: Route.LoaderArgs) {
+  return {
+    playbacks: getPlaybacks(),
+  };
 }
 
 export default function Listening({
@@ -24,20 +15,30 @@ export default function Listening({
 }: Route.ComponentProps) {
   return (
     <ul className="flex w-full max-w-md flex-col gap-y-2">
-      {playbacks.map(({ track }, index) => {
-        return (
-          <li key={track.id} className="flex items-center gap-x-2">
-            <span className="basis-6 font-bold">{index + 1}.</span>
-            <Track
-              id={track.id}
-              uri={track.uri}
-              image={track.image}
-              artist={track.artist}
-              name={track.name}
-            />
-          </li>
-        );
-      })}
+      <Suspense fallback={<Waver />}>
+        <ListeningTracks playbacks={playbacks} />
+      </Suspense>
     </ul>
   );
+}
+
+function ListeningTracks(props: {
+  playbacks: ReturnType<typeof loader>["playbacks"];
+}) {
+  const tracks = use(props.playbacks);
+
+  return tracks.map(({ track }, index) => {
+    return (
+      <li key={track.id} className="flex items-center gap-x-2">
+        <span className="basis-6 font-bold">{index + 1}.</span>
+        <Track
+          id={track.id}
+          uri={track.uri}
+          image={track.image}
+          artist={track.artist}
+          name={track.name}
+        />
+      </li>
+    );
+  });
 }
