@@ -1,21 +1,14 @@
 {
-  "include": [
-    ".react-router/types/**/*",
-    "app/**/*",
-    "app/**/.server/**/*",
-    "app/**/.client/**/*",
-    "lib/**/*"
-  ],
+  "include": [".react-router/types/**/*", "app/**/*", "lib/**/*"],
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "composite": true,
-    "strict": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["vite/client"],
-    "target": "ES2022",
-    "module": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["bun-types", "vite/client"],
+    "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "~/*": ["./app/*"],

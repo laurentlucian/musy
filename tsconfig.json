@@ -10,10 +10,6 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"],
-      "@lib/*": ["./shared/*"]
-    }
+    "baseUrl": "."
   }
 }

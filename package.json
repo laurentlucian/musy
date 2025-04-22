@@ -72,6 +72,7 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/spotify-web-api-node": "^5.0.11",
+    "bun-types": "^1.2.10",
     "cross-env": "^7.0.3",
     "lint-staged": "^15.5.1",
     "prisma": "^6.6.0",

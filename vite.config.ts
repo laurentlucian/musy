@@ -16,7 +16,6 @@ export default defineConfig(({ isSsrBuild, command }) => ({
   resolve: {
     alias: {
       "~": resolve(__dirname, "./app"),
-      "@shared": resolve(__dirname, "./shared"),
       ...(command === "build" && {
         // bun & react production fix
         // https://github.com/remix-run/react-router/issues/12568#issuecomment-2692406113

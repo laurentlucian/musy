@@ -24,7 +24,6 @@ app.use(
   createRequestHandler({
     build: () => import("virtual:react-router/server-build"),
     async getLoadContext({ headers }) {
-      // @ts-expect-error - no types for IncomingHttpHeaders but works
       const h = new Headers(headers);
       const cookie = h.get("cookie");
       if (!cookie) return {};
