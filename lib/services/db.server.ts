@@ -8,3 +8,4 @@ const prisma = singleton("prisma", () => {
 });
 
 export { prisma };
+export type * from "@prisma/client";

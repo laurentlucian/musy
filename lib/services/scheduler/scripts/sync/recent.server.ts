@@ -1,8 +1,7 @@
-import { prisma } from "@lib/services/db.server";
+import { prisma, type Prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { SpotifyService } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import type { Prisma } from "@prisma/client";
 import invariant from "tiny-invariant";
 
 export async function syncUserRecent(userId: string) {

@@ -1,5 +1,5 @@
+import type { RecentSongs } from "@lib/services/db.server";
 import { askAI } from "@lib/services/sdk/ai.server";
-import type { RecentSongs } from "@prisma/client";
 
 export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   const {

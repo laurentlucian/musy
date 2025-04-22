@@ -1,6 +1,5 @@
 import { syncUserPlaylist } from "@lib/services/scheduler/scripts/sync/playlist.server";
 import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
-import type { Playlist } from "@prisma/client";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";

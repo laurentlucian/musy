@@ -4,6 +4,11 @@ generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["prismaSchemaFolder"]
   binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  // output              = "../client"
+  // provider            = "bun"
+  // moduleFormat        = "esm"
+  // engineType          = "binary"
+  // binaryTargets       = ["native"]
 }
 
 datasource db {

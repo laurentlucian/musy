@@ -1,8 +1,7 @@
-import { prisma } from "@lib/services/db.server";
+import { type Transfer, prisma } from "@lib/services/db.server";
 import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
 import { singleton } from "@lib/services/singleton.server";
-import { log, logError } from "@lib/utils";
-import type { Transfer } from "@prisma/client";
+import { log } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 
