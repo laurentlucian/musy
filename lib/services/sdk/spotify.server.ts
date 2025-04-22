@@ -1,166 +1,161 @@
 import { getProvider, updateToken } from "@lib/services/db/users.server";
-import type {
-  BaseService,
-  ServiceConfig,
-  TokenInfo,
-} from "@lib/services/sdk/base.server";
 import { log } from "@lib/utils";
 import SpotifyWebApi from "spotify-web-api-node";
-import invariant from "tiny-invariant";
 
-export class SpotifyService implements BaseService<SpotifyWebApi> {
-  private static instances: Map<string, SpotifyService> = new Map();
-  private static refreshes: Map<string, Promise<void>> = new Map(); // prevent multiple token refreshes at once for same instance
-  private client: SpotifyWebApi;
-  private userId?: string;
-  private tokenInfo?: TokenInfo;
+type Tokens = {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number;
+};
 
-  private constructor(
-    private readonly config: ServiceConfig,
-    tokenInfo?: TokenInfo,
-    userId?: string,
-  ) {
-    this.client = new SpotifyWebApi({
-      clientId: config.clientId,
-      clientSecret: config.clientSecret,
-      redirectUri: config.redirectUri,
+type Config = {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+};
+
+type SpotifyInstance = {
+  client: SpotifyWebApi;
+  tokens: Tokens;
+  userId: string;
+  config: Config;
+};
+
+const instances: Map<string, SpotifyInstance> = new Map();
+const refreshes: Map<string, Promise<void>> = new Map(); // prevent multiple token refreshes at once for same instance
+
+const config: Config = {
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  redirectUri: process.env.SPOTIFY_CALLBACK_URL,
+};
+
+type GetSpotifyClientOptions = {
+  userId?: string;
+  token?: string;
+} & ({ userId: string } | { token: string });
+
+export async function getSpotifyClient({
+  userId,
+  token,
+}: GetSpotifyClientOptions) {
+  if (token) {
+    return new SpotifyWebApi({
+      ...config,
+      accessToken: token,
     });
+  }
 
-    if (tokenInfo) {
-      this.tokenInfo = tokenInfo;
-      this.client.setAccessToken(tokenInfo.accessToken);
-      if (tokenInfo.refreshToken) {
-        this.client.setRefreshToken(tokenInfo.refreshToken);
+  if (instances.has(userId)) {
+    const instance = instances.get(userId)!;
+    await refreshTokenIfNeeded({ instance });
+    return instance.client;
+  }
+
+  const provider = await getProvider({
+    userId,
+    type: "spotify",
+  });
+
+  if (!provider) throw new Error("No Spotify provider found for user");
+
+  const client = new SpotifyWebApi({
+    ...config,
+    accessToken: provider.accessToken,
+    refreshToken: provider.refreshToken,
+  });
+
+  const instance = {
+    client,
+    tokens: {
+      accessToken: provider.accessToken,
+      refreshToken: provider.refreshToken,
+      expiresAt: Number(provider.expiresAt),
+    },
+    userId,
+    config,
+  };
+
+  instances.set(userId, instance);
+
+  await refreshTokenIfNeeded({ instance });
+
+  return client;
+}
+
+async function refreshTokenIfNeeded({
+  instance,
+}: {
+  instance: SpotifyInstance;
+}) {
+  const { client, tokens: tokenInfo, userId } = instance;
+  const now = Date.now();
+
+  const buffer = 60 * 1000; // 60 seconds buffer
+  if (tokenInfo.expiresAt > now + buffer) {
+    return;
+  }
+
+  let refreshPromise = refreshes.get(userId);
+  if (refreshPromise) return refreshPromise;
+
+  const performRefresh = async () => {
+    try {
+      log(`refreshing token for ${userId}`, "spotify");
+      const { body } = await client.refreshAccessToken();
+      const newAccessToken = body.access_token;
+      // Persist the refresh token if the API returned a new one, otherwise keep the old one
+      const newRefreshToken = body.refresh_token ?? tokenInfo.refreshToken;
+      const newExpiresAt = Date.now() + body.expires_in * 1000;
+
+      // Update the client instance immediately with the new token
+      client.setAccessToken(newAccessToken);
+      if (body.refresh_token) {
+        // Also update the refresh token on the client if a new one was provided
+        client.setRefreshToken(newRefreshToken);
       }
+
+      // Update the cached token information in our instances map
+      instance.tokens = {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+        expiresAt: newExpiresAt,
+      };
+
+      // Trigger the database update asynchronously (fire and forget style)
+      // We don't await this here to resolve the main promise faster.
+      log(`storing new token for ${userId} in background`, "spotify");
+      updateToken({
+        id: userId,
+        token: newAccessToken,
+        expiresAt: newExpiresAt,
+        refreshToken: newRefreshToken,
+        type: "spotify",
+      })
+        .then(() => {
+          log(`token refreshed and stored for ${userId}`, "spotify");
+        })
+        .catch((dbError) => {
+          log(
+            `error: failed to store refreshed token for ${userId} in db: ${dbError}`,
+            "spotify",
+          );
+          // Consider adding more robust error handling/retry logic for DB updates if needed
+        });
+
+      // The promise resolves now, allowing waiting callers to proceed with the updated client/token info
+    } catch (error) {
+      log(`error: token refresh failed for ${userId}: ${error}`, "spotify");
+      // Ensure the error is thrown so awaiting callers are notified of failure
+      throw error;
+    } finally {
+      refreshes.delete(userId);
     }
+  };
 
-    this.userId = userId;
-  }
+  refreshPromise = performRefresh();
 
-  static async createFromUserId(userId: string): Promise<SpotifyService> {
-    const provider = await getProvider({
-      userId: userId,
-      type: "spotify",
-    });
+  refreshes.set(userId, refreshPromise);
 
-    if (!provider) {
-      throw new Error("No Spotify provider found for user");
-    }
-
-    invariant(process.env.SPOTIFY_CLIENT_ID, "Missing SPOTIFY_CLIENT_ID env");
-    invariant(
-      process.env.SPOTIFY_CLIENT_SECRET,
-      "Missing SPOTIFY_CLIENT_SECRET env",
-    );
-    invariant(
-      process.env.SPOTIFY_CALLBACK_URL,
-      "Missing SPOTIFY_CALLBACK_URL env",
-    );
-
-    const config = {
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-      redirectUri: process.env.SPOTIFY_CALLBACK_URL,
-    };
-
-    const instanceKey = `user:${userId}`;
-    if (SpotifyService.instances.has(instanceKey)) {
-      const instance = SpotifyService.instances.get(instanceKey)!;
-      await instance.refreshTokenIfNeeded();
-      return instance;
-    }
-
-    const instance = new SpotifyService(
-      config,
-      {
-        accessToken: provider.accessToken,
-        refreshToken: provider.refreshToken,
-        expiresAt: Number(provider.expiresAt),
-      },
-      userId,
-    );
-
-    SpotifyService.instances.set(instanceKey, instance);
-    await instance.refreshTokenIfNeeded();
-    return instance;
-  }
-
-  static async createFromToken(
-    accessToken: string,
-    config?: Partial<ServiceConfig>,
-  ): Promise<SpotifyService> {
-    invariant(process.env.SPOTIFY_CLIENT_ID, "missing SPOTIFY_CLIENT_ID env");
-    invariant(
-      process.env.SPOTIFY_CLIENT_SECRET,
-      "missing SPOTIFY_CLIENT_SECRET env",
-    );
-    invariant(
-      process.env.SPOTIFY_CALLBACK_URL,
-      "missing SPOTIFY_CALLBACK_URL env",
-    );
-
-    const fullConfig = {
-      clientId: config?.clientId ?? process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: config?.clientSecret ?? process.env.SPOTIFY_CLIENT_SECRET,
-      redirectUri: config?.redirectUri ?? process.env.SPOTIFY_CALLBACK_URL,
-    };
-
-    const instanceKey = `token:${accessToken}`;
-    if (SpotifyService.instances.has(instanceKey)) {
-      return SpotifyService.instances.get(instanceKey)!;
-    }
-
-    const instance = new SpotifyService(fullConfig, { accessToken });
-    SpotifyService.instances.set(instanceKey, instance);
-    await instance.refreshTokenIfNeeded();
-    return instance;
-  }
-
-  async refreshTokenIfNeeded() {
-    if (!this.tokenInfo?.expiresAt || !this.userId) return;
-
-    const now = Date.now();
-    if (this.tokenInfo.expiresAt > now) return;
-
-    const instanceKey = `user:${this.userId}`;
-
-    let promise = SpotifyService.refreshes.get(instanceKey);
-    if (promise) return promise;
-
-    promise = (async () => {
-      try {
-        log("refreshing token", "spotify");
-        const { body } = await this.client.refreshAccessToken();
-        this.client.setAccessToken(body.access_token);
-
-        const newTokenInfo = {
-          accessToken: body.access_token,
-          refreshToken: body.refresh_token,
-          expiresAt: Date.now() + body.expires_in * 1000,
-        };
-
-        this.tokenInfo = newTokenInfo;
-
-        if (this.userId) {
-          log("storing new token", "spotify");
-          await updateToken({
-            id: this.userId,
-            token: body.access_token,
-            expiresAt: newTokenInfo.expiresAt,
-            refreshToken: body.refresh_token,
-            type: "spotify",
-          });
-        }
-      } finally {
-        SpotifyService.refreshes.delete(instanceKey);
-      }
-    })();
-
-    SpotifyService.refreshes.set(instanceKey, promise);
-    return promise;
-  }
-
-  getClient(): SpotifyWebApi {
-    return this.client;
-  }
+  return refreshPromise;
 }

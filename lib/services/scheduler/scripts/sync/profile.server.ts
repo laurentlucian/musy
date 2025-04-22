@@ -1,17 +1,14 @@
 import { prisma } from "@lib/services/db.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import invariant from "tiny-invariant";
 
 export async function syncUserProfile(userId: string) {
   try {
     log("starting...", "profile");
 
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
-    const spotifyProfile = await client.getMe();
+    const spotifyProfile = await spotify.getMe();
 
     const images = spotifyProfile?.body.images;
     const image = images?.[0]?.url || images?.[1]?.url;

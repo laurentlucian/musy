@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import type { Route } from ".react-router/types/app/routes/admin/+types/syncs";
+import type { Route } from "./+types/syncs";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const syncs = await prisma.sync.findMany({

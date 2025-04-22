@@ -1,6 +1,6 @@
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
 import invariant from "tiny-invariant";
 
@@ -8,12 +8,10 @@ export async function syncUserLiked(userId: string) {
   try {
     log("starting...", "liked");
 
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
     log("getting liked tracks", "liked");
-    const { body } = await client.getMySavedTracks({ limit: 50 });
+    const { body } = await spotify.getMySavedTracks({ limit: 50 });
 
     for (const { added_at, track } of body.items) {
       const trackDb = createTrackModel(track);
@@ -80,11 +78,9 @@ export async function syncUserLiked(userId: string) {
 
 export async function syncUserLikedPage(userId: string, offset: number) {
   try {
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
-    const { body } = await client.getMySavedTracks({ limit: 50, offset });
+    const { body } = await spotify.getMySavedTracks({ limit: 50, offset });
 
     for (const item of body.items) {
       const track = item.track;

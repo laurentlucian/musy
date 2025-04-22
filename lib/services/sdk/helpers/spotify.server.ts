@@ -3,7 +3,7 @@ import {
   getTracksByKeyword,
   getUsersByKeyword,
 } from "@lib/services/db/search.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 
 export function createTrackModel(track: SpotifyApi.TrackObjectFull) {
   return {
@@ -52,9 +52,9 @@ export async function transformTracks(tracks: SpotifyApi.TrackObjectFull[]) {
 }
 
 export async function getUserSpotifyRecent(userId: string) {
-  const spotify = await SpotifyService.createFromUserId(userId);
-  const client = spotify.getClient();
-  const recent = await client
+  const spotify = await getSpotifyClient({ userId });
+
+  const recent = await spotify
     .getMyRecentlyPlayedTracks({ limit: 50 })
     .then((data) => data.body.items)
     .catch(() => []);
@@ -63,9 +63,9 @@ export async function getUserSpotifyRecent(userId: string) {
 }
 
 export async function getUserSpotifyLiked(userId: string) {
-  const spotify = await SpotifyService.createFromUserId(userId);
-  const client = spotify.getClient();
-  const liked = await client
+  const spotify = await getSpotifyClient({ userId });
+
+  const liked = await spotify
     .getMySavedTracks({ limit: 50 })
     .then((data) => data.body.items)
     .catch(() => []);
@@ -74,9 +74,9 @@ export async function getUserSpotifyLiked(userId: string) {
 }
 
 export async function getUserSpotifyPlayback(userId: string) {
-  const spotify = await SpotifyService.createFromUserId(userId);
-  const client = spotify.getClient();
-  const playback = await client
+  const spotify = await getSpotifyClient({ userId });
+
+  const playback = await spotify
     .getMyCurrentPlayingTrack()
     .then((data) => data.body);
 
@@ -84,10 +84,9 @@ export async function getUserSpotifyPlayback(userId: string) {
 }
 
 export async function getSpotifyTracks(keyword: string, userId: string) {
-  const spotify = await SpotifyService.createFromUserId(userId);
-  const client = spotify.getClient();
+  const spotify = await getSpotifyClient({ userId });
 
-  return client.searchTracks(keyword).then((res) => {
+  return spotify.searchTracks(keyword).then((res) => {
     if (res.statusCode !== 200) return [];
     if (!res.body.tracks) return [];
     return transformTracks(res.body.tracks.items);
@@ -114,9 +113,9 @@ export async function getSearchResults({
 }
 
 export async function getSpotifyTrack(trackId: string, userId: string) {
-  const spotify = await SpotifyService.createFromUserId(userId);
-  const client = spotify.getClient();
-  const track = await client.getTrack(trackId).then((res) => res.body);
+  const spotify = await getSpotifyClient({ userId });
+
+  const track = await spotify.getTrack(trackId).then((res) => res.body);
 
   return track;
 }

@@ -1,17 +1,14 @@
 import { prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log, notNull } from "@lib/utils";
-import invariant from "tiny-invariant";
 
 export async function syncUserPlaylist(userId: string) {
   try {
     log("starting...", "playlist");
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
-    const response = await client.getUserPlaylists(userId, {
+    const response = await spotify.getUserPlaylists(userId, {
       limit: 50,
     });
 
@@ -36,7 +33,7 @@ export async function syncUserPlaylist(userId: string) {
     });
 
     const playlistsTracks = await Promise.all(
-      onlyPlaylistsNeededToUpdate.map((p) => client.getPlaylistTracks(p.id)),
+      onlyPlaylistsNeededToUpdate.map((p) => spotify.getPlaylistTracks(p.id)),
     );
 
     log(

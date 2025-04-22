@@ -1,5 +1,4 @@
 import { getProvider, updateToken } from "@lib/services/db/users.server";
-import type { ServiceConfig } from "@lib/services/sdk/base.server";
 import type { Credentials, OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
 import invariant from "tiny-invariant";
@@ -10,22 +9,19 @@ export type GoogleClients = {
   auth: OAuth2Client;
 };
 
-function getConfig() {
-  invariant(process.env.GOOGLE_CLIENT_ID, "missing GOOGLE_CLIENT_ID env");
-  invariant(
-    process.env.GOOGLE_CLIENT_SECRET,
-    "missing GOOGLE_CLIENT_SECRET env",
-  );
-  invariant(process.env.GOOGLE_CALLBACK_URL, "missing GOOGLE_CALLBACK_URL env");
+type Config = {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+};
 
-  return {
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri: process.env.GOOGLE_CALLBACK_URL,
-  };
-}
+const config: Config = {
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  redirectUri: process.env.GOOGLE_CALLBACK_URL,
+};
 
-function createGoogleAuth(config: ServiceConfig, credentials?: Credentials) {
+function createGoogleAuth(config: Config, credentials?: Credentials) {
   const auth = new google.auth.OAuth2(
     config.clientId,
     config.clientSecret,
@@ -78,7 +74,6 @@ export async function getGoogleClientsFromUserId(userId: string) {
     throw new Error("No Google provider found for user");
   }
 
-  const config = getConfig();
   const credentials = {
     access_token: provider.accessToken,
     refresh_token: provider.refreshToken,
@@ -94,7 +89,6 @@ export async function getGoogleClientsFromUserId(userId: string) {
 export function getGoogleClientsFromCredentials(credentials: Credentials) {
   invariant(credentials.access_token, "missing access token");
 
-  const config = getConfig();
   const auth = createGoogleAuth(config, credentials);
 
   return createGoogleClients(auth);

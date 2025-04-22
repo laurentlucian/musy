@@ -1,6 +1,6 @@
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { getOnboardingCoordinator } from "@lib/services/scheduler/machines/onboarding";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
@@ -22,12 +22,9 @@ export function getSpotifyStrategy() {
       cookie: "spotify:session",
     },
     async ({ tokens }) => {
-      const spotify = await SpotifyService.createFromToken(
-        tokens.accessToken(),
-      );
-      const client = spotify.getClient();
+      const spotify = await getSpotifyClient({ token: tokens.accessToken() });
 
-      const response = await client.getMe();
+      const response = await spotify.getMe();
 
       const data = response.body;
 

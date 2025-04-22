@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { getGoogleClientsFromUserId } from "@lib/services/sdk/google.server";
 import { youtube } from "@lib/services/sdk/helpers/youtube.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { logError } from "@lib/utils";
 import { data, redirect } from "react-router";
 import type { Route } from "./+types/actions";
@@ -54,9 +54,9 @@ async function like(args: { form: FormData; userId: string }) {
 
   try {
     if (provider === "spotify") {
-      const spotify = await SpotifyService.createFromUserId(userId);
-      const client = spotify.getClient();
-      await client.addToMySavedTracks([track.id]);
+      const spotify = await getSpotifyClient({ userId });
+
+      await spotify.addToMySavedTracks([track.id]);
       return null;
     }
 
@@ -109,10 +109,10 @@ async function queue(args: { form: FormData; userId: string }) {
   if (typeof provider !== "string") return "no provider";
 
   if (provider === "spotify") {
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
+    const spotify = await getSpotifyClient({ userId });
+
     try {
-      await client.addToQueue(uri);
+      await spotify.addToQueue(uri);
       return null;
     } catch (error) {
       logError(error instanceof Error ? error.message : error);

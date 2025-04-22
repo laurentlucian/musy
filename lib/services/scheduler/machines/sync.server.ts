@@ -9,6 +9,7 @@ import { singleton } from "@lib/services/singleton.server";
 import { isProduction, log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
+import "xstate/guards"; // https://github.com/statelyai/xstate/issues/5090
 
 type SyncerContext = {
   users: string[];

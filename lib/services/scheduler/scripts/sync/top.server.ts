@@ -1,24 +1,21 @@
 import { prisma } from "@lib/services/db.server";
 import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import invariant from "tiny-invariant";
 
 export async function syncUserTop(userId: string) {
   try {
     log("starting...", "top");
 
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
     const getUserSpotifyTop = async (
       range: "short_term" | "medium_term" | "long_term",
     ) => {
-      const response = await client
+      const response = await spotify
         .getMyTopTracks({ limit: 50, time_range: range })
-        .then((data) => data.body.items)
-        .catch(() => []);
+        .then((data) => data.body.items);
+
       const tracks = await transformTracks(response.map((track) => track));
 
       return {

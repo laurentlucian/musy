@@ -1,21 +1,18 @@
-import { prisma, type Prisma } from "@lib/services/db.server";
+import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import invariant from "tiny-invariant";
 
 export async function syncUserRecent(userId: string) {
   try {
     log("starting...", "recent");
 
-    const spotify = await SpotifyService.createFromUserId(userId);
-    const client = spotify.getClient();
-    invariant(client, "spotify client not found");
+    const spotify = await getSpotifyClient({ userId });
 
     log("adding recent tracks to db", "recent");
     const {
       body: { items: recent },
-    } = await client.getMyRecentlyPlayedTracks({ limit: 50 });
+    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
 
     for (const { played_at, track } of recent) {
       const trackDb = createTrackModel(track);

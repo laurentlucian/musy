@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import * as v from "valibot";
 import { Button } from "~/components/ui/button";
-import type { Route } from ".react-router/types/app/routes/admin/+types/transfers";
+import type { Route } from "./+types/transfers";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const transfers = await prisma.transfer.findMany();

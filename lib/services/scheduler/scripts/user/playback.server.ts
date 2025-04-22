@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { SpotifyService } from "@lib/services/sdk/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log, notNull } from "@lib/utils";
 import invariant from "tiny-invariant";
 
@@ -95,10 +95,9 @@ const upsertPlayback = async (
 
 async function getPlaybackState(id: string) {
   try {
-    const spotify = await SpotifyService.createFromUserId(id);
-    const client = spotify.getClient();
-    invariant(client, "Spotify API not found");
-    const { body: playback } = await client.getMyCurrentPlaybackState();
+    const spotify = await getSpotifyClient({ userId: id });
+
+    const { body: playback } = await spotify.getMyCurrentPlaybackState();
     const { is_playing, item } = playback;
     if (!is_playing || !item || item.type !== "track")
       return { id, playback: null };
