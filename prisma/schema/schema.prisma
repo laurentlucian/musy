@@ -1,14 +1,13 @@
 // https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
   previewFeatures = ["prismaSchemaFolder"]
+  output          = "../../lib/services/db/generated.server"
+  runtime         = "bun"
+  moduleFormat    = "esm"
+  engineType      = "binary"
   binaryTargets   = ["native", "debian-openssl-3.0.x"]
-  // output              = "../client"
-  // provider            = "bun"
-  // moduleFormat        = "esm"
-  // engineType          = "binary"
-  // binaryTargets       = ["native"]
 }
 
 datasource db {

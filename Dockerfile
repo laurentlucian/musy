@@ -14,11 +14,10 @@ FROM dependencies-env AS production-dependencies-env
 COPY ./package.json bun.lock /app/
 WORKDIR /app
 
-# install openssl for prisma generate
+# # install openssl for prisma
 RUN apt-get update -y && apt-get install -y openssl
 
 RUN bun i --production
-RUN bunx prisma generate
 
 FROM dependencies-env AS build-env
 COPY ./package.json bun.lock /app/
@@ -38,6 +37,8 @@ COPY --from=dependencies-env /app /app
 COPY ./package.json bun.lock server/index.ts /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
+COPY --from=dependencies-env /app/lib/services/db/generated.server/query-engine-debian-openssl-3.0.x /app/build/server/assets/
+
 
 WORKDIR /app
 

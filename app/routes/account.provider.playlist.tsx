@@ -1,3 +1,4 @@
+import type { Playlist } from "@lib/services/db.server";
 import { syncUserPlaylist } from "@lib/services/scheduler/scripts/sync/playlist.server";
 import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
 import { Suspense, use } from "react";

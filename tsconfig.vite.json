@@ -1,6 +1,5 @@
 {
   "include": [".react-router/types/**/*", "app/**/*", "lib/**/*"],
-  "exclude": ["node_modules"],
   "compilerOptions": {
     "composite": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],

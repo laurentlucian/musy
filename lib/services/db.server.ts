@@ -1,5 +1,5 @@
+import { PrismaClient } from "@lib/services/db/generated.server";
 import { singleton } from "@lib/services/singleton.server";
-import { PrismaClient } from "@prisma/client";
 
 const prisma = singleton("prisma", () => {
   const client = new PrismaClient();
@@ -8,4 +8,4 @@ const prisma = singleton("prisma", () => {
 });
 
 export { prisma };
-export type * from "@prisma/client";
+export type * from "@lib/services/db/generated.server";

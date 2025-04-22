@@ -11,4 +11,4 @@ node_modules
 *.db-journal
 wireguard.conf
 .DS_Store
-prisma/client
+generated.server/
