@@ -7,7 +7,8 @@ export function Nav() {
   return (
     <nav className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-y-3 bg-[#101010] p-2 sm:top-0 sm:left-0 sm:w-fit! sm:flex-col sm:py-4!">
       <Logo />
-      <NavLink to="/">trending</NavLink>
+      <NavLink to="/">create</NavLink>
+      <NavLink to="/trending">trending</NavLink>
       <NavLink to="/new">new</NavLink>
       <NavLink to="/listening">listening</NavLink>
       <NavLink to="/account">settings</NavLink>

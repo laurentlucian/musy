@@ -4,7 +4,7 @@ import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server
 import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
 import { logError } from "@lib/utils";
 import { Suspense, use } from "react";
-import { useFetcher } from "react-router";
+import { redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -16,7 +16,9 @@ export async function loader({
   context: { userId },
   params: { provider },
 }: Route.LoaderArgs) {
-  return { liked: userId ? getUserLiked({ userId, provider }) : null };
+  if (!userId) throw redirect("/account");
+
+  return { liked: getUserLiked({ userId, provider }) };
 }
 
 export default function AccountProviderLiked({
@@ -59,7 +61,7 @@ function LikedList(props: { tracks: UserLiked }) {
   );
 }
 
-function SyncButton() {
+function _SyncButton() {
   const fetcher = useFetcher<typeof action>();
   const busy = fetcher.state !== "idle";
   useFetcherToast(fetcher.data?.error, "synced all liked songs");
@@ -74,7 +76,7 @@ function SyncButton() {
   );
 }
 
-function TransferButton() {
+function _TransferButton() {
   const fetcher = useFetcher<typeof action>();
   const busy = fetcher.state !== "idle";
 

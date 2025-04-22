@@ -1,10 +1,13 @@
 import { PROVIDERS } from "@lib/services/auth/const";
 import { Outlet, redirect } from "react-router";
-import { Fragment } from "react/jsx-runtime";
 import { NavLinkSub } from "~/components/domain/nav";
 import type { Route } from "./+types/account.provider";
 
-export function loader({ params: { provider } }: Route.LoaderArgs) {
+export function loader({
+  context: { userId },
+  params: { provider },
+}: Route.LoaderArgs) {
+  if (!userId) throw redirect("/account");
   if (!PROVIDERS.includes(provider)) throw redirect("/account");
 }
 

@@ -1,14 +1,10 @@
-import { openai } from "@ai-sdk/openai";
+import { groq } from "@ai-sdk/groq";
 import { generateText } from "ai";
 
 export async function askAI(prompt: string) {
   const completion = await generateText({
-    model: openai("o4-mini"),
+    model: groq("llama3-8b-8192"),
     prompt,
-    headers: {
-      "x-api-key": process.env.OPENAI_API_KEY,
-    },
   });
-
   return completion.text;
 }

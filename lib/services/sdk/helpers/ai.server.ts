@@ -1,5 +1,8 @@
-import type { RecentSongs } from "@lib/services/db.server";
+import { type RecentSongs, prisma } from "@lib/services/db.server";
 import { askAI } from "@lib/services/sdk/ai.server";
+import { askAITaste } from "@lib/services/sdk/helpers/ai/taste.server";
+import { askAITracks } from "@lib/services/sdk/helpers/ai/track.server";
+import { getTrackFromSpotify } from "@lib/services/sdk/helpers/spotify.server";
 
 export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   const {
@@ -59,4 +62,87 @@ export async function getStory(track: SpotifyApi.SingleTrackResponse) {
     `;
 
   return askAI(prompt);
+}
+
+async function getTasteFromUser(userId: string) {
+  const existing = await prisma.aI.findUnique({
+    where: { userId },
+  });
+
+  if (existing?.taste) {
+    return existing.taste;
+  }
+
+  const recents = await prisma.recentSongs.findMany({
+    where: { userId },
+    include: {
+      track: true,
+    },
+    orderBy: {
+      playedAt: "desc",
+    },
+    take: 20,
+  });
+
+  const liked = await prisma.likedSongs.findMany({
+    where: { userId },
+    include: {
+      track: true,
+    },
+    take: 20,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const tracks = [...recents, ...liked].map((item) => ({
+    name: item.track.name,
+    artist: item.track.artist,
+  }));
+
+  const prompt = `Based on these 20 songs, create a concise taste profile that captures the user's musical preferences. Focus on genres, moods, and sonic characteristics. Make it consumable by an LLM. Keep it natural and descriptive:
+    ${JSON.stringify(tracks.join("\n"))}`;
+
+  const taste = await askAITaste(prompt);
+  console.info("taste", taste);
+
+  await prisma.aI.upsert({
+    where: { userId },
+    update: { taste: JSON.stringify(taste) },
+    create: { userId, taste: JSON.stringify(taste) },
+  });
+
+  return JSON.stringify(taste);
+}
+
+export async function getTracksFromMood(mood: string, userId: string) {
+  const taste = await getTasteFromUser(userId);
+
+  const prompt = `Based on your taste profile ('${taste}') and your current mood ${mood} (EMPHASIS ON THE MOOD), here are 10 track recommendations:`;
+  const result = await askAITracks(prompt);
+  console.info("result", result);
+
+  const promises = result.map(async (track) => {
+    const exists = await prisma.track.findFirst({
+      where: {
+        name: track.name,
+        artist: track.artist,
+      },
+    });
+
+    if (exists) {
+      return exists;
+    }
+
+    const created = await getTrackFromSpotify(
+      `${track.name} ${track.artist}`,
+      userId,
+    );
+
+    return created;
+  });
+
+  const tracks = await Promise.all(promises);
+
+  return tracks;
 }

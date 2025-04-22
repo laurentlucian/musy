@@ -8,9 +8,11 @@ import {
 
 export default [
   layout("routes/layout.root.tsx", [
-    index("routes/leaderboard.tsx"),
+    index("routes/create.tsx"),
+    route("trending", "routes/leaderboard.tsx"),
     route("new", "routes/new.tsx"),
     route("listening", "routes/listening.tsx"),
+
     route("account", "routes/account.tsx", [
       route(":provider", "routes/account.provider.tsx", [
         route("liked", "routes/account.provider.liked.tsx"),
