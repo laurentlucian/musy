@@ -84,7 +84,7 @@ export async function getTrackFromSpotify(keyword: string, userId: string) {
 
   const result = await spotify.searchTracks(keyword);
 
-  const first = result.body.tracks.items[0];
+  const first = result.body.tracks?.items[0];
 
   if (!first) return null;
   const tracks = await transformTracks([first]);
