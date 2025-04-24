@@ -108,11 +108,11 @@ async function getTasteFromUser(userId: string) {
 
   await prisma.aI.upsert({
     where: { userId },
-    update: { taste: JSON.stringify(taste) },
-    create: { userId, taste: JSON.stringify(taste) },
+    update: { taste },
+    create: { userId, taste },
   });
 
-  return JSON.stringify(taste);
+  return taste;
 }
 
 export async function getTracksFromMood(mood: string, userId: string) {
@@ -144,5 +144,5 @@ export async function getTracksFromMood(mood: string, userId: string) {
 
   const tracks = await Promise.all(promises);
 
-  return tracks;
+  return tracks.filter((track) => track !== null);
 }

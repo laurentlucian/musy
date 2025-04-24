@@ -1,12 +1,10 @@
+import { env } from "@lib/env.server";
+import { isProduction } from "@lib/utils";
 import {
   type Session,
   type SessionIdStorageStrategy,
   createCookieSessionStorage,
 } from "react-router";
-import invariant from "tiny-invariant";
-
-const sessionSecret = process.env.SESSION_SECRET;
-invariant(sessionSecret, "Missing SESSION_SECRET env");
 
 export const cookieOptions = {
   httpOnly: true,
@@ -14,8 +12,8 @@ export const cookieOptions = {
   name: "_musy-session",
   path: "/",
   sameSite: "lax",
-  secrets: [sessionSecret],
-  secure: process.env.NODE_ENV === "production",
+  secrets: [env.SESSION_SECRET],
+  secure: isProduction,
 } satisfies SessionIdStorageStrategy["cookie"];
 
 export type SessionData = {

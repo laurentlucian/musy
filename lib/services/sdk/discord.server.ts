@@ -1,6 +1,7 @@
+import { env } from "@lib/env.server";
 import { type APIEmbed, type APIMessage, REST, Routes } from "discord.js";
 
-const token = process.env.DISCORD_BOT_TOKEN;
+const token = env.DISCORD_BOT_TOKEN;
 const discord = token ? new REST({ version: "10" }).setToken(token) : null;
 
 const CHANNEL = "1314314082232303656";

@@ -1,11 +1,12 @@
+import { env } from "@lib/env.server";
 import { prisma } from "@lib/services/db.server";
 import { getGoogleClientsFromCredentials } from "@lib/services/sdk/google.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import invariant from "tiny-invariant";
 
-const clientId = process.env.GOOGLE_CLIENT_ID;
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const redirectURI = process.env.GOOGLE_CALLBACK_URL;
+const clientId = env.GOOGLE_CLIENT_ID;
+const clientSecret = env.GOOGLE_CLIENT_SECRET;
+const redirectURI = env.GOOGLE_CALLBACK_URL;
 
 export function getGoogleStrategy() {
   if (!clientId || !clientSecret || !redirectURI)

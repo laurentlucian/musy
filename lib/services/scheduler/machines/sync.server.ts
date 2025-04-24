@@ -5,6 +5,7 @@ import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server
 import { syncPlaybacks } from "@lib/services/scheduler/scripts/sync/playback.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
 import { isProduction, log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
@@ -27,6 +28,13 @@ export const SYNC_MACHINE = setup({
   types: {} as {
     context: SyncerContext;
     events: SyncerEvents;
+  },
+  actions: {
+    client: async ({ context }) => {
+      if (!context.current) return null;
+      await getSpotifyClient({ userId: context.current });
+      return null;
+    },
   },
   actors: {
     populator: fromPromise(async () => {
@@ -157,14 +165,18 @@ export const SYNC_MACHINE = setup({
           target: "populating",
         },
         {
-          actions: assign({
-            current: ({ context }) => context.users[0],
-            users: ({ context }) => context.users.slice(1),
-          }),
+          actions: [
+            assign({
+              current: ({ context }) => context.users[0],
+              users: ({ context }) => context.users.slice(1),
+            }),
+            "client",
+          ],
           target: "syncing",
         },
       ],
     },
+
     syncing: {
       type: "parallel",
       entry: ({ context }) => {
@@ -274,6 +286,12 @@ export const SYNC_MACHINE = setup({
             current: null,
           };
         }),
+      },
+      onError: {
+        target: "feed",
+        actions: () => {
+          logError("syncing failed");
+        },
       },
     },
     feed: {

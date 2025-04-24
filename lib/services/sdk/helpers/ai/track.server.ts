@@ -1,4 +1,5 @@
 import { xai } from "@ai-sdk/xai";
+import { env } from "@lib/env.server";
 import { generateObject, jsonSchema } from "ai";
 
 const trackSchema = jsonSchema<{
@@ -32,7 +33,7 @@ export async function askAITracks(prompt: string) {
     prompt,
     schema: trackSchema,
     headers: {
-      "x-api-key": process.env.XAI_API_KEY,
+      "x-api-key": env.XAI_API_KEY,
     },
   });
 

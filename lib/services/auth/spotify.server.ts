@@ -1,11 +1,12 @@
+import { env } from "@lib/env.server";
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { getOnboardingCoordinator } from "@lib/services/scheduler/machines/onboarding";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
-const clientId = process.env.SPOTIFY_CLIENT_ID;
-const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const redirectURI = process.env.SPOTIFY_CALLBACK_URL;
+const clientId = env.SPOTIFY_CLIENT_ID;
+const clientSecret = env.SPOTIFY_CLIENT_SECRET;
+const redirectURI = env.SPOTIFY_CALLBACK_URL;
 
 export function getSpotifyStrategy() {
   if (!clientId || !clientSecret || !redirectURI)

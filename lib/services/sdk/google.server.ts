@@ -1,3 +1,4 @@
+import { env } from "@lib/env.server";
 import { getProvider, updateToken } from "@lib/services/db/users.server";
 import type { Credentials, OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
@@ -16,9 +17,9 @@ type Config = {
 };
 
 const config: Config = {
-  clientId: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  redirectUri: process.env.GOOGLE_CALLBACK_URL,
+  clientId: env.GOOGLE_CLIENT_ID,
+  clientSecret: env.GOOGLE_CLIENT_SECRET,
+  redirectUri: env.GOOGLE_CALLBACK_URL,
 };
 
 function createGoogleAuth(config: Config, credentials?: Credentials) {

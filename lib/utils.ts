@@ -1,3 +1,4 @@
+import { env } from "@lib/env.server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -5,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const isProduction = process.env.NODE_ENV === "production";
+export const isProduction = env.NODE_ENV === "production";
 
 export const notNull = <T>(val: T | null): val is T => {
   return val !== null;
