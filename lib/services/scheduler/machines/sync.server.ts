@@ -1,3 +1,4 @@
+import { env } from "@lib/env.server";
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
 import { syncFeed } from "@lib/services/scheduler/feed.server";
@@ -5,9 +6,8 @@ import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server
 import { syncPlaybacks } from "@lib/services/scheduler/scripts/sync/playback.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
-import { isProduction, log, logError } from "@lib/utils";
+import { log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 import "xstate/guards"; // https://github.com/statelyai/xstate/issues/5090
@@ -24,17 +24,12 @@ const RECENT_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
 const PROFILE_SYNC_INTERVAL = 24 * 60 * 60 * 1000; // 1 day
 const LIKED_SYNC_INTERVAL = 60 * 60 * 1000; // 1 hour
 
+const isProduction = env.NODE_ENV === "production";
+
 export const SYNC_MACHINE = setup({
   types: {} as {
     context: SyncerContext;
     events: SyncerEvents;
-  },
-  actions: {
-    client: async ({ context }) => {
-      if (!context.current) return null;
-      await getSpotifyClient({ userId: context.current });
-      return null;
-    },
   },
   actors: {
     populator: fromPromise(async () => {
@@ -82,8 +77,13 @@ export const SYNC_MACHINE = setup({
           return lastRunAt;
         }
 
-        await syncUserRecent(userId);
-        return new Date();
+        try {
+          await syncUserRecent(userId);
+          return new Date();
+        } catch (error) {
+          logError(`recent sync failed for ${userId}: ${error}`);
+          return null;
+        }
       },
     ),
     profile: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
@@ -96,8 +96,13 @@ export const SYNC_MACHINE = setup({
           return lastRunAt;
         }
 
-        await syncUserProfile(userId);
-        return new Date();
+        try {
+          await syncUserProfile(userId);
+          return new Date();
+        } catch (error) {
+          logError(`profile sync failed for ${userId}: ${error}`);
+          return null;
+        }
       },
     ),
     liked: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
@@ -110,13 +115,23 @@ export const SYNC_MACHINE = setup({
           return lastRunAt;
         }
 
-        await syncUserLiked(userId);
-        return new Date();
+        try {
+          await syncUserLiked(userId);
+          return new Date();
+        } catch (error) {
+          logError(`liked sync failed for ${userId}: ${error}`);
+          return null;
+        }
       },
     ),
     playback: fromPromise<Date | null>(async () => {
-      await syncPlaybacks();
-      return new Date();
+      try {
+        await syncPlaybacks();
+        return new Date();
+      } catch (error) {
+        logError(`playback sync failed: ${error}`);
+        return null;
+      }
     }),
     feed: fromPromise(async () => {
       await syncFeed();
@@ -170,7 +185,6 @@ export const SYNC_MACHINE = setup({
               current: ({ context }) => context.users[0],
               users: ({ context }) => context.users.slice(1),
             }),
-            "client",
           ],
           target: "syncing",
         },

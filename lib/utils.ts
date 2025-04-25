@@ -1,12 +1,9 @@
-import { env } from "@lib/env.server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export const isProduction = env.NODE_ENV === "production";
 
 export const notNull = <T>(val: T | null): val is T => {
   return val !== null;
@@ -173,12 +170,10 @@ export function logError(error: unknown) {
 
 export function log(message: string, label?: string) {
   // console.timeEnd(label);
-  const prefix = !isProduction
-    ? [
-        `\x1b[90m${new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" })}\x1b[0m`,
-        "\x1b[1;34m[musy]\x1b[0m",
-      ]
-    : [];
+  const prefix = [
+    `\x1b[90m${new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" })}\x1b[0m`,
+    "\x1b[1;34m[musy]\x1b[0m",
+  ];
 
   console.log(
     ...prefix,

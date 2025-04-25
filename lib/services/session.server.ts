@@ -1,5 +1,5 @@
 import { env } from "@lib/env.server";
-import { isProduction } from "@lib/utils";
+
 import {
   type Session,
   type SessionIdStorageStrategy,
@@ -13,7 +13,7 @@ export const cookieOptions = {
   path: "/",
   sameSite: "lax",
   secrets: [env.SESSION_SECRET],
-  secure: isProduction,
+  secure: env.NODE_ENV === "production",
 } satisfies SessionIdStorageStrategy["cookie"];
 
 export type SessionData = {
