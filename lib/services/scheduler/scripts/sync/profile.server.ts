@@ -1,13 +1,16 @@
 import { prisma } from "@lib/services/db.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserProfile(userId: string) {
+export async function syncUserProfile({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "profile");
-
-    const spotify = await getSpotifyClient({ userId });
-
     const spotifyProfile = await spotify.getMe();
 
     const images = spotifyProfile?.body.images;

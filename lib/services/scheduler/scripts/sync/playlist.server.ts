@@ -1,13 +1,17 @@
 import { prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log, notNull } from "@lib/utils";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserPlaylist(userId: string) {
+export async function syncUserPlaylist({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "playlist");
-    const spotify = await getSpotifyClient({ userId });
-
     const response = await spotify.getUserPlaylists(userId, {
       limit: 50,
     });
@@ -115,20 +119,32 @@ export async function syncUserPlaylist(userId: string) {
         log("playlist - error adding tracks", "playlist");
       }
     }
-    await prisma.sync.create({
-      data: {
+    await prisma.sync.upsert({
+      create: {
         userId,
         state: "success",
         type: "playlist",
       },
+      update: {
+        state: "success",
+      },
+      where: {
+        userId_type_state: { userId, type: "playlist", state: "success" },
+      },
     });
     log("completed", "playlist");
   } catch {
-    await prisma.sync.create({
-      data: {
+    await prisma.sync.upsert({
+      create: {
         userId,
         state: "failure",
         type: "playlist",
+      },
+      update: {
+        state: "failure",
+      },
+      where: {
+        userId_type_state: { userId, type: "playlist", state: "failure" },
       },
     });
     log("failure", "playlist");

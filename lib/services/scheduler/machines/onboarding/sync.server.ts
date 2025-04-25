@@ -1,49 +1,58 @@
-import { log, logError } from "@lib/utils";
-import { assign, fromPromise, sendParent, setup } from "xstate";
-
 import { syncUserLikedPage } from "@lib/services/scheduler/scripts/sync/liked.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
-import type {
-  OnboardingContext,
-  OnboardingError,
-  OnboardingEvents,
-} from "./types";
+import { log } from "@lib/utils";
+import type SpotifyWebApi from "spotify-web-api-node";
+import { assign, fromPromise, sendParent, setup } from "xstate";
 
-const syncUserLikedPageActor = fromPromise(
-  async ({ input }: { input: { userId: string; offset: number } }) => {
-    log("syncing liked page", "onboarding-sync");
-    const result = await syncUserLikedPage(input.userId, input.offset);
-    log("synced liked page", "onboarding-sync");
-    return result;
-  },
-);
+export type OnboardingContext = {
+  spotify: SpotifyWebApi | null;
+  userId: string;
+  progress: number;
+  liked: {
+    offset: number;
+    total: number;
+  };
+  error: string | null;
+};
 
-const syncUserProfileActor = fromPromise(
-  async ({ input }: { input: { userId: string } }) => {
-    log("syncing user profile", "onboarding-sync");
-    const result = await syncUserProfile(input.userId);
-    log("synced user profile", "onboarding-sync");
-    return result;
-  },
-);
+export type OnboardingEvents =
+  | { type: "START"; userId: string }
+  | { type: "RETRY" }
+  | { type: "CANCEL" };
 
-const syncTopTracksActor = fromPromise(
-  async ({ input }: { input: { userId: string } }) => {
-    log("syncing top tracks", "onboarding-sync");
-    const result = await syncUserTop(input.userId);
-    log("synced top tracks", "onboarding-sync");
-    return result;
-  },
-);
+export type OnboardingError = {
+  type: "error.platform";
+  message: string;
+};
 
-const syncRecentTracksActor = fromPromise(
-  async ({ input }: { input: { userId: string } }) => {
-    log("syncing recent tracks", "onboarding-sync");
-    const result = await syncUserRecent(input.userId);
-    log("synced recent tracks", "onboarding-sync");
-    return result;
+type SyncArgs = {
+  userId: string;
+  type: string;
+  spotify: SpotifyWebApi | null;
+  offset: number;
+};
+
+const syncActor = fromPromise(
+  async ({
+    input,
+  }: {
+    input: SyncArgs;
+  }) => {
+    const { userId, type, spotify, offset } = input;
+    if (!spotify) throw new Error("No Spotify client provided");
+
+    switch (type) {
+      case "profile":
+        return syncUserProfile({ userId, spotify });
+      case "recent":
+        return syncUserRecent({ userId, spotify });
+      case "top":
+        return syncUserTop({ userId, spotify });
+      case "liked":
+        return syncUserLikedPage({ userId, offset, spotify });
+    }
   },
 );
 
@@ -54,15 +63,13 @@ export const OnboardingSyncMachine = setup({
     input: {} as { userId: string },
   },
   actors: {
-    syncUserProfile: syncUserProfileActor,
-    syncUserTop: syncTopTracksActor,
-    syncUserRecent: syncRecentTracksActor,
-    syncUserLikedPage: syncUserLikedPageActor,
+    syncActor,
   },
 }).createMachine({
   id: "onboarding-sync",
   initial: "idle",
   context: ({ input }) => ({
+    spotify: null,
     userId: input.userId,
     progress: 0,
     error: null,
@@ -84,8 +91,13 @@ export const OnboardingSyncMachine = setup({
         progress: 10,
       })),
       invoke: {
-        src: "syncUserProfile",
-        input: ({ context }) => ({ userId: context.userId }),
+        src: "syncActor",
+        input: ({ context }) => ({
+          userId: context.userId,
+          type: "profile",
+          spotify: context.spotify,
+          offset: 0,
+        }),
         onDone: {
           target: "sync_top",
         },
@@ -105,8 +117,13 @@ export const OnboardingSyncMachine = setup({
         progress: 30,
       })),
       invoke: {
-        src: "syncUserTop",
-        input: ({ context }) => ({ userId: context.userId }),
+        src: "syncActor",
+        input: ({ context }) => ({
+          userId: context.userId,
+          type: "top",
+          spotify: context.spotify,
+          offset: 0,
+        }),
         onDone: {
           target: "sync_recent",
         },
@@ -126,8 +143,13 @@ export const OnboardingSyncMachine = setup({
         progress: 50,
       })),
       invoke: {
-        src: "syncUserRecent",
-        input: ({ context }) => ({ userId: context.userId }),
+        src: "syncActor",
+        input: ({ context }) => ({
+          userId: context.userId,
+          type: "recent",
+          spotify: context.spotify,
+          offset: 0,
+        }),
         onDone: {
           target: "sync_liked",
         },
@@ -147,17 +169,19 @@ export const OnboardingSyncMachine = setup({
         progress: 70,
       })),
       invoke: {
-        src: "syncUserLikedPage",
+        src: "syncActor",
         input: ({ context }) => ({
           userId: context.userId,
+          type: "liked",
+          spotify: context.spotify,
           offset: context.liked.offset,
         }),
         onDone: {
           target: "success",
           actions: assign({
             liked: ({ event }) => ({
-              offset: event.output.nextOffset,
-              total: event.output.total,
+              offset: event.output?.nextOffset ?? 0,
+              total: event.output?.total ?? 0,
             }),
             progress: ({ context }) =>
               Math.min(

@@ -1,14 +1,17 @@
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import invariant from "tiny-invariant";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserFollow(userId: string) {
+export async function syncUserFollow({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "follow");
-
-    const spotify = await getSpotifyClient({ userId });
 
     const users = await getAllUsersId();
 

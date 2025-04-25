@@ -2,13 +2,17 @@ import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import invariant from "tiny-invariant";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserLiked(userId: string) {
+export async function syncUserLiked({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "liked");
-
-    const spotify = await getSpotifyClient({ userId });
 
     log("getting liked tracks", "liked");
     const { body } = await spotify.getMySavedTracks({ limit: 50 });
@@ -76,10 +80,16 @@ export async function syncUserLiked(userId: string) {
   }
 }
 
-export async function syncUserLikedPage(userId: string, offset: number) {
+export async function syncUserLikedPage({
+  userId,
+  spotify,
+  offset,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+  offset: number;
+}) {
   try {
-    const spotify = await getSpotifyClient({ userId });
-
     const { body } = await spotify.getMySavedTracks({ limit: 50, offset });
 
     for (const item of body.items) {

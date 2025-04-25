@@ -3,7 +3,6 @@ import { getAllUsersId } from "@lib/services/db/users.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log, notNull } from "@lib/utils";
-import invariant from "tiny-invariant";
 
 export async function syncPlaybacks() {
   log("starting...", "playback");

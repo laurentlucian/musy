@@ -1,6 +1,6 @@
 import { OnboardingSyncMachine } from "@lib/services/scheduler/machines/onboarding/sync.server";
 import { log, logError } from "@lib/utils";
-import { assign, setup, spawnChild } from "xstate";
+import { assign, setup } from "xstate";
 import type { CoordinatorContext, CoordinatorEvents } from "./types";
 
 export const OnboardingCoordinatorMachine = setup({

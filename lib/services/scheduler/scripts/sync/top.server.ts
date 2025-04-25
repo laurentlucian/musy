@@ -1,13 +1,17 @@
 import { prisma } from "@lib/services/db.server";
 import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserTop(userId: string) {
+export async function syncUserTop({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "top");
-
-    const spotify = await getSpotifyClient({ userId });
 
     const getUserSpotifyTop = async (
       range: "short_term" | "medium_term" | "long_term",

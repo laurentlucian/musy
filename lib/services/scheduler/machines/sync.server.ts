@@ -1,28 +1,22 @@
 import { env } from "@lib/env.server";
 import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
-import { syncFeed } from "@lib/services/scheduler/feed.server";
-import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
-import { syncPlaybacks } from "@lib/services/scheduler/scripts/sync/playback.server";
-import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
-import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
+import { SYNC_USER_MACHINE } from "@lib/services/scheduler/machines/sync-user.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
-import "xstate/guards"; // https://github.com/statelyai/xstate/issues/5090
 
 type SyncerContext = {
   users: string[];
   current: string | null;
-  tasks: Map<`${string}:${string}`, Date>;
 };
 
-type SyncerEvents = { type: "START" } | { type: "STOP" } | { type: "WAIT" };
-
-const RECENT_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
-const PROFILE_SYNC_INTERVAL = 24 * 60 * 60 * 1000; // 1 day
-const LIKED_SYNC_INTERVAL = 60 * 60 * 1000; // 1 hour
+type SyncerEvents =
+  | { type: "START" }
+  | { type: "STOP" }
+  | { type: "WAIT" }
+  | { type: "DONE" };
 
 const isProduction = env.NODE_ENV === "production";
 
@@ -67,80 +61,10 @@ export const SYNC_MACHINE = setup({
         return aSync.getTime() - bSync.getTime();
       });
     }),
-    recent: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
-      async ({ input: { lastRunAt, userId } }) => {
-        if (
-          lastRunAt &&
-          Date.now() - lastRunAt.getTime() < RECENT_SYNC_INTERVAL
-        ) {
-          log("recent sync not due", "sync");
-          return lastRunAt;
-        }
-
-        try {
-          await syncUserRecent(userId);
-          return new Date();
-        } catch (error) {
-          logError(`recent sync failed for ${userId}: ${error}`);
-          return null;
-        }
-      },
-    ),
-    profile: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
-      async ({ input: { lastRunAt, userId } }) => {
-        if (
-          lastRunAt &&
-          Date.now() - lastRunAt.getTime() < PROFILE_SYNC_INTERVAL
-        ) {
-          log("profile sync not due", "sync");
-          return lastRunAt;
-        }
-
-        try {
-          await syncUserProfile(userId);
-          return new Date();
-        } catch (error) {
-          logError(`profile sync failed for ${userId}: ${error}`);
-          return null;
-        }
-      },
-    ),
-    liked: fromPromise<Date | null, { userId: string; lastRunAt?: Date }>(
-      async ({ input: { lastRunAt, userId } }) => {
-        if (
-          lastRunAt &&
-          Date.now() - lastRunAt.getTime() < LIKED_SYNC_INTERVAL
-        ) {
-          log("liked sync not due", "sync");
-          return lastRunAt;
-        }
-
-        try {
-          await syncUserLiked(userId);
-          return new Date();
-        } catch (error) {
-          logError(`liked sync failed for ${userId}: ${error}`);
-          return null;
-        }
-      },
-    ),
-    playback: fromPromise<Date | null>(async () => {
-      try {
-        await syncPlaybacks();
-        return new Date();
-      } catch (error) {
-        logError(`playback sync failed: ${error}`);
-        return null;
-      }
-    }),
-    feed: fromPromise(async () => {
-      await syncFeed();
-      return new Date();
-    }),
   },
   delays: {
-    RETRY_DELAY: 5000, // 5 seconds (in milliseconds)
-    CYCLE_INTERVAL: 1 * 60 * 1000, // 1 minute (in milliseconds)
+    RETRY_DELAY: 5 * 60 * 1000, // 1 minute (in milliseconds)
+    CYCLE_INTERVAL: 5 * 60 * 1000, // 5 minutes (in milliseconds)
   },
 }).createMachine({
   id: "root",
@@ -148,7 +72,6 @@ export const SYNC_MACHINE = setup({
   context: {
     users: [],
     current: null,
-    tasks: new Map(),
   },
   states: {
     idle: {
@@ -192,129 +115,24 @@ export const SYNC_MACHINE = setup({
     },
 
     syncing: {
-      type: "parallel",
       entry: ({ context }) => {
         const remaining = context.users.length;
         log(`syncing ${context.current} (${remaining} remaining)`, "sync");
       },
-      states: {
-        "sync.recent": {
-          initial: "running",
-          states: {
-            running: {
-              invoke: {
-                src: "recent",
-                input: ({ context }) => ({
-                  userId: context.current as string,
-                  lastRunAt: context.tasks.get(`recent:${context.current}`),
-                }),
-                onDone: {
-                  target: "complete",
-                  actions: assign({
-                    tasks: ({ context, event }) => {
-                      if (!event.output) return context.tasks;
-                      const tasks = new Map(context.tasks);
-                      tasks.set(`recent:${context.current}`, event.output);
-                      return tasks;
-                    },
-                  }),
-                },
-              },
-            },
-            complete: { type: "final" },
-          },
-        },
-        "sync.profile": {
-          initial: "running",
-          states: {
-            running: {
-              invoke: {
-                src: "profile",
-                input: ({ context }) => ({
-                  userId: context.current as string,
-                  lastRunAt: context.tasks.get(`profile:${context.current}`),
-                }),
-                onDone: {
-                  target: "complete",
-                  actions: assign({
-                    tasks: ({ context, event }) => {
-                      if (!event.output) return context.tasks;
-                      const tasks = new Map(context.tasks);
-                      tasks.set(`profile:${context.current}`, event.output);
-                      return tasks;
-                    },
-                  }),
-                },
-              },
-            },
-            complete: { type: "final" },
-          },
-        },
-        "sync.liked": {
-          initial: "running",
-          states: {
-            running: {
-              invoke: {
-                src: "liked",
-                input: ({ context }) => ({
-                  userId: context.current as string,
-                  lastRunAt: context.tasks.get(`liked:${context.current}`),
-                }),
-                onDone: {
-                  target: "complete",
-                  actions: assign({
-                    tasks: ({ context, event }) => {
-                      if (!event.output) return context.tasks;
-                      const tasks = new Map(context.tasks);
-                      tasks.set(`liked:${context.current}`, event.output);
-                      return tasks;
-                    },
-                  }),
-                },
-              },
-            },
-            complete: { type: "final" },
-          },
-        },
-        "sync.playback": {
-          initial: "running",
-          states: {
-            running: {
-              invoke: {
-                src: "playback",
-                input: ({ context }) => ({
-                  userId: context.current as string,
-                }),
-                onDone: "complete",
-              },
-            },
-            complete: { type: "final" },
-          },
-        },
-      },
-      onDone: {
-        target: "feed",
-        actions: assign(() => {
-          log("syncing done", "sync");
-          return {
-            current: null,
-          };
-        }),
-      },
-      onError: {
-        target: "feed",
-        actions: () => {
-          logError("syncing failed");
-        },
-      },
-    },
-    feed: {
       invoke: {
-        src: "feed",
-        onDone: "waiting",
-      },
-      onError: {
-        target: "waiting",
+        src: SYNC_USER_MACHINE,
+        input: ({ context }) => ({
+          userId: context.current as string,
+        }),
+        onDone: {
+          target: "waiting",
+          actions: assign(() => {
+            log("syncing done", "sync");
+            return {
+              current: null,
+            };
+          }),
+        },
       },
     },
     waiting: {

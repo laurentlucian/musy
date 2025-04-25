@@ -1,13 +1,17 @@
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
+import type SpotifyWebApi from "spotify-web-api-node";
 
-export async function syncUserRecent(userId: string) {
+export async function syncUserRecent({
+  userId,
+  spotify,
+}: {
+  userId: string;
+  spotify: SpotifyWebApi;
+}) {
   try {
     log("starting...", "recent");
-
-    const spotify = await getSpotifyClient({ userId });
 
     log("adding recent tracks to db", "recent");
     const {
