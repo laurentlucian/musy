@@ -11,10 +11,7 @@ export async function syncUserFollow({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "follow");
-
     const users = await getAllUsersId();
-
     const { body: isFollowing } = await spotify.isFollowingUsers(users);
     const following = users.filter((_, i) => isFollowing[i]);
 

@@ -11,8 +11,6 @@ export async function syncUserTop({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "top");
-
     const getUserSpotifyTop = async (
       range: "short_term" | "medium_term" | "long_term",
     ) => {

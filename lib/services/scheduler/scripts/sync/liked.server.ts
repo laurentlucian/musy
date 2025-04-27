@@ -12,9 +12,6 @@ export async function syncUserLiked({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "liked");
-
-    log("getting liked tracks", "liked");
     const { body } = await spotify.getMySavedTracks({ limit: 50 });
 
     for (const { added_at, track } of body.items) {

@@ -10,7 +10,6 @@ export async function syncUserProfile({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "profile");
     const spotifyProfile = await spotify.getMe();
 
     const images = spotifyProfile?.body.images;

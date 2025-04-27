@@ -1,154 +1,106 @@
-import { env } from "@lib/env.server";
-import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
-import { SYNC_USER_MACHINE } from "@lib/services/scheduler/machines/sync-user.server";
+import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
+import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
+import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
+// import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
+import { addMilliseconds, isAfter } from "date-fns";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 
-type SyncerContext = {
-  users: string[];
-  current: string | null;
+const syncs = {
+  profile: syncUserProfile,
+  recent: syncUserRecent,
+  // playlist: syncUserPlaylist,
+  liked: syncUserLiked,
+  // top: syncUserTop,
 };
 
-type SyncerEvents =
-  | { type: "START" }
-  | { type: "STOP" }
-  | { type: "WAIT" }
-  | { type: "DONE" };
+type SyncKeys = keyof typeof syncs;
+export const types = Object.keys(syncs) as SyncKeys[];
+export type SyncTypes = typeof types;
+export type SyncType = SyncTypes[number];
 
-const isProduction = env.NODE_ENV === "production";
+const SYNC_INTERVALS = {
+  recent: 60 * 5000, // 5 minute
+  liked: 10 * 60 * 1000, // 10 minutes
+  // top: 24 * 60 * 60 * 1000, // 1 day
+  profile: 24 * 60 * 60 * 1000, // 1 day
+} as const;
+
+type SyncerContext = {
+  lastSync: Map<SyncType, Date>;
+};
+
+const isDue = (type: SyncType, lastSync: Map<SyncType, Date>) => {
+  const last = lastSync.get(type) ?? new Date(0);
+  const now = new Date();
+  const nextDueDate = addMilliseconds(last, SYNC_INTERVALS[type]);
+  return isAfter(now, nextDueDate);
+};
 
 export const SYNC_MACHINE = setup({
   types: {} as {
     context: SyncerContext;
-    events: SyncerEvents;
   },
   actors: {
-    populator: fromPromise(async () => {
-      log("populating users", "sync");
-      const users = await getAllUsersId();
+    sync: fromPromise(
+      async ({ input: { lastSync } }: { input: SyncerContext }) => {
+        const users = await getAllUsersId();
+        log(`syncing ${users.length} users`, "sync");
 
-      if (users.length === 0) {
-        log("no users found", "sync");
-        throw new Error("no users found");
-      }
+        const typesToSync = types.filter((type) => isDue(type, lastSync));
+        log(`${typesToSync.length} types due`, "sync");
 
-      const latestSyncs = await prisma.sync.groupBy({
-        by: ["userId"],
-        _max: {
-          updatedAt: true,
-        },
-      });
+        for (const type of typesToSync) {
+          log(`syncing ${type}`, "sync");
+          for (const [i, userId] of users.entries()) {
+            log(`${i + 1} / ${users.length} users synced`, "sync");
+            const spotify = await getSpotifyClient({ userId });
+            await syncs[type]({ userId, spotify });
+          }
+          lastSync.set(type, new Date());
+          log(`synced ${type}`, "sync");
+        }
 
-      const syncMap = new Map(
-        latestSyncs.map(
-          (sync: { userId: string; _max: { updatedAt: Date | null } }) => [
-            sync.userId,
-            sync._max.updatedAt,
-          ],
-        ),
-      );
-
-      return users.slice(0, !isProduction ? 1 : undefined).sort((a, b) => {
-        const aSync = syncMap.get(a);
-        const bSync = syncMap.get(b);
-
-        if (!aSync) return -1;
-        if (!bSync) return 1;
-
-        return aSync.getTime() - bSync.getTime();
-      });
-    }),
-  },
-  delays: {
-    RETRY_DELAY: 5 * 60 * 1000, // 1 minute (in milliseconds)
-    CYCLE_INTERVAL: 5 * 60 * 1000, // 5 minutes (in milliseconds)
+        log("sync complete", "sync");
+        return lastSync;
+      },
+    ),
   },
 }).createMachine({
   id: "root",
-  initial: "idle",
+  initial: "running",
   context: {
-    users: [],
-    current: null,
+    lastSync: new Map(),
   },
   states: {
-    idle: {
-      on: {
-        START: "populating",
-      },
-    },
-    populating: {
-      invoke: {
-        src: "populator",
-        onDone: {
-          target: "processing",
-          actions: assign({
-            users: ({ event }) => event.output,
-          }),
-        },
-        onError: {
-          target: "failure",
-          actions: () => {
-            logError("populator failed");
+    running: {
+      initial: "syncing",
+      states: {
+        syncing: {
+          invoke: {
+            src: "sync",
+            input: ({ context }) => context,
+            onDone: {
+              actions: assign({
+                lastSync: ({ event }) => event.output,
+              }),
+              target: "waiting",
+            },
+            onError: {
+              actions: () => logError("sync failed"),
+              target: "waiting",
+            },
           },
         },
-      },
-    },
-    processing: {
-      always: [
-        {
-          guard: ({ context }) => context.users.length === 0,
-          target: "populating",
+        waiting: {
+          after: {
+            "60000": "syncing", // check every minute
+          },
         },
-        {
-          actions: [
-            assign({
-              current: ({ context }) => context.users[0],
-              users: ({ context }) => context.users.slice(1),
-            }),
-          ],
-          target: "syncing",
-        },
-      ],
-    },
-
-    syncing: {
-      entry: ({ context }) => {
-        const remaining = context.users.length;
-        log(`syncing ${context.current} (${remaining} remaining)`, "sync");
-      },
-      invoke: {
-        src: SYNC_USER_MACHINE,
-        input: ({ context }) => ({
-          userId: context.current as string,
-        }),
-        onDone: {
-          target: "waiting",
-          actions: assign(() => {
-            log("syncing done", "sync");
-            return {
-              current: null,
-            };
-          }),
-        },
-      },
-    },
-    waiting: {
-      entry: () => {
-        log("waiting", "sync");
-      },
-      after: {
-        CYCLE_INTERVAL: "processing",
-      },
-    },
-    failure: {
-      entry: () => {
-        log("failure", "sync");
-      },
-      after: {
-        RETRY_DELAY: "populating",
       },
     },
   },
@@ -158,12 +110,9 @@ export function getSyncMachine() {
   return singleton("SYNC_MACHINE", () => {
     log("initializing", "sync");
     const actor = createActor(SYNC_MACHINE);
-
     actor.start();
-    actor.send({ type: "START" });
 
     process.on("SIGTERM", () => {
-      actor.send({ type: "STOP" });
       actor.stop();
     });
 

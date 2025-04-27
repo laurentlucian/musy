@@ -6,11 +6,11 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ isSsrBuild, command }) => ({
   build: {
-    rollupOptions: isSsrBuild
-      ? {
-          input: "./app/express.server.ts",
-        }
-      : undefined,
+    ...(isSsrBuild && {
+      rollupOptions: {
+        input: "./app/express.server.ts",
+      },
+    }),
   },
   plugins: [reactRouter(), tsconfigPaths(), tailwindcss()],
   resolve: {

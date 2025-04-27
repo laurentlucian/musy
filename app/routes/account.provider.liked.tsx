@@ -1,14 +1,12 @@
 import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
-import { getTransferMachine } from "@lib/services/scheduler/machines/transfer.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
-import { transferUserLikedToYoutube } from "@lib/services/scheduler/scripts/transfer/liked";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { logError } from "@lib/utils";
 import { Suspense, use } from "react";
 import { redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { useFetcherToast } from "~/hooks/useFetcherToast";
 import type { Route } from "./+types/account.provider.liked";
 
@@ -76,29 +74,6 @@ function _SyncButton() {
   );
 }
 
-function _TransferButton() {
-  const fetcher = useFetcher<typeof action>();
-  const busy = fetcher.state !== "idle";
-
-  return (
-    <fetcher.Form method="post">
-      <input type="hidden" name="intent" value="transfer" />
-      <div className="flex gap-x-2">
-        <Button type="submit" disabled={busy} size="sm">
-          {busy ? "Transferring..." : "Transfer"}
-        </Button>
-        <Input
-          name="skip"
-          placeholder="skip"
-          type="number"
-          className="h-9 w-20"
-          defaultValue={0}
-        />
-      </div>
-    </fetcher.Form>
-  );
-}
-
 export async function action({
   request,
   context: { userId },
@@ -112,16 +87,8 @@ export async function action({
 
   try {
     if (intent === "sync") {
-      await syncUserLiked(userId);
-    }
-
-    if (intent === "transfer") {
-      await transferUserLikedToYoutube({
-        userId,
-        skip: Number(formData.get("skip")),
-      });
-      const transfer = getTransferMachine();
-      transfer.send({ type: "REFRESH" });
+      const spotify = await getSpotifyClient({ userId });
+      await syncUserLiked({ userId, spotify });
     }
 
     return { error: null };

@@ -11,7 +11,6 @@ export async function syncUserPlaylist({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "playlist");
     const response = await spotify.getUserPlaylists(userId, {
       limit: 50,
     });

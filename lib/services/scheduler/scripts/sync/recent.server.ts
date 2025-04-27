@@ -11,9 +11,6 @@ export async function syncUserRecent({
   spotify: SpotifyWebApi;
 }) {
   try {
-    log("starting...", "recent");
-
-    log("adding recent tracks to db", "recent");
     const {
       body: { items: recent },
     } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
