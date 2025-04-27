@@ -1,5 +1,5 @@
 import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
-import { useFetcher } from "react-router";
+import { redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -8,7 +8,13 @@ import type { Route } from "./+types/create";
 
 const examples = ["happy", "chill", "energetic", "focus", "sad"] as const;
 
-export default function Mood() {
+export async function loader({ context: { userId } }: Route.LoaderArgs) {
+  if (!userId) return redirect("/account");
+
+  return null;
+}
+
+export default function Mood(_props: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>();
 
   return (
@@ -41,6 +47,8 @@ export async function action({
   request,
   context: { userId },
 }: Route.ActionArgs) {
+  if (!userId) return redirect("/account");
+
   const form = await request.formData();
   const mood = form.get("mood");
 

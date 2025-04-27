@@ -67,20 +67,19 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404 ? "page not found" : error.statusText || details;
+    details = error.status === 404 ? "page not found" : error.status.toString();
     log(message, "error");
   } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
+    details = error.name;
     stack = error.stack;
   }
 
   return (
     <main className="container mx-auto p-4 pt-16 text-center">
       <h1>{message}</h1>
-      <p>{details}</p>
+      <p className="mt-2 text-muted-foreground">{details}</p>
       {stack && (
-        <pre className="w-full overflow-x-auto p-4">
+        <pre className="w-full overflow-x-auto p-4 text-muted-foreground text-xs">
           <code>{stack}</code>
         </pre>
       )}

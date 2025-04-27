@@ -12,6 +12,9 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./app/*"]
+    }
   }
 }

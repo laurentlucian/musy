@@ -25,12 +25,12 @@ export default [
         route("syncs", "routes/admin/syncs.tsx"),
       ]),
     ]),
+    route("profile/:userId?", "routes/profile.tsx"),
   ]),
   route("track/:trackId", "routes/track.tsx"),
-
-  route(":rest", "routes/404.tsx"),
 
   route("actions/:action", "routes/resources/actions.ts"),
   route("api/auth/:provider/callback", "routes/resources/authenticate.ts"),
   route("api/onboarding", "routes/resources/onboarding.ts"),
+  route("api/stats/:userId", "routes/resources/stats.ts"),
 ] satisfies RouteConfig;

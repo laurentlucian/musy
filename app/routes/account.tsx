@@ -46,7 +46,7 @@ export default function AccountPage({
   const root = pathname === "/account";
 
   return (
-    <main className="flex w-full flex-1 flex-col gap-4 px-8 font-medium">
+    <main className="flex w-full max-w-dvw flex-1 flex-col gap-4 px-8 font-medium">
       <div className="relative w-full">
         {!root && (
           <Link to="/account" className="absolute top-0 left-0 sm:hidden">

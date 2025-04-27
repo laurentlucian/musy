@@ -1,0 +1,10 @@
+user-agent: *
+disallow: /api/
+disallow: /actions/
+disallow: /account/
+disallow: /profile/
+disallow: /track/
+
+# allow necessary static assets if needed
+# allow: /fonts/
+# allow: /favicon/ 
