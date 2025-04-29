@@ -104,61 +104,89 @@ export function TrackMenu(
     <ContextMenu>
       <ContextMenuTrigger asChild>{props.children}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Open</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-48">
-            <ContextMenuItem
-              onClick={() => {
-                window.open(props.uri, "_blank");
-              }}
-            >
-              Spotify
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => {
-                const url = `https://music.youtube.com/search?q=${props.query}`;
-                window.open(url, "_blank");
-              }}
-            >
-              Youtube
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => {
-                const url = `https://music.apple.com/search?term=${props.query}`;
-                window.open(url, "_blank");
-              }}
-            >
-              Apple
-            </ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Like</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-48">
-            <ContextMenuItem onClick={() => submit("like", "spotify")}>
-              Spotify
-            </ContextMenuItem>
-            <ContextMenuItem onClick={() => submit("like", "google")}>
-              Youtube
-            </ContextMenuItem>
-            <ContextMenuItem disabled>Apple</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger>Queue</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-48">
-            <ContextMenuItem onClick={() => submit("queue", "spotify")}>
-              Spotify
-            </ContextMenuItem>
-            <ContextMenuItem disabled>Youtube</ContextMenuItem>
-            <ContextMenuItem disabled>Apple</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
+        {/* <_TrackMenuWithProviders submit={submit} {...props} /> */}
+        <ContextMenuItem
+          onClick={() => {
+            window.open(props.uri, "_blank");
+          }}
+        >
+          Open
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => submit("like", "spotify")}>
+          Like
+        </ContextMenuItem>{" "}
+        <ContextMenuItem onClick={() => submit("queue", "spotify")}>
+          Queue
+        </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem onClick={() => submit("thanks", "google")}>
           Thanks
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
+  );
+}
+
+function _TrackMenuWithProviders({
+  submit,
+  ...props
+}: {
+  query: string;
+  uri: string;
+  submit: (action: string, provider: string) => void;
+}) {
+  return (
+    <>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Open</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-48">
+          <ContextMenuItem
+            onClick={() => {
+              window.open(props.uri, "_blank");
+            }}
+          >
+            Spotify
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => {
+              const url = `https://music.youtube.com/search?q=${props.query}`;
+              window.open(url, "_blank");
+            }}
+          >
+            Youtube
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => {
+              const url = `https://music.apple.com/search?term=${props.query}`;
+              window.open(url, "_blank");
+            }}
+          >
+            Apple
+          </ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Like</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-48">
+          <ContextMenuItem onClick={() => submit("like", "spotify")}>
+            Spotify
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => submit("like", "google")}>
+            Youtube
+          </ContextMenuItem>
+          <ContextMenuItem disabled>Apple</ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>Queue</ContextMenuSubTrigger>
+        <ContextMenuSubContent className="w-48">
+          <ContextMenuItem onClick={() => submit("queue", "spotify")}>
+            Spotify
+          </ContextMenuItem>
+          <ContextMenuItem disabled>Youtube</ContextMenuItem>
+          <ContextMenuItem disabled>Apple</ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+    </>
   );
 }
