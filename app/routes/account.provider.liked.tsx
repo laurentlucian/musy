@@ -1,4 +1,4 @@
-import { type UserLiked, getUserLiked } from "@lib/services/db/tracks.server";
+import { getUserLiked, type UserLiked } from "@lib/services/db/tracks.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { logError } from "@lib/utils";
@@ -40,16 +40,7 @@ function LikedList(props: { tracks: UserLiked }) {
   return (
     <div className="flex flex-col gap-y-2">
       {tracks.map((track) => {
-        return (
-          <Track
-            key={track.name}
-            id={track.id}
-            uri={track.uri}
-            image={track.image}
-            artist={track.artist}
-            name={track.name}
-          />
-        );
+        return <Track key={track.name} track={track} />;
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">

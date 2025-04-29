@@ -1,3 +1,4 @@
+import type { Track as TrackType } from "@lib/services/db.server";
 import { cn } from "@lib/utils";
 import type { PropsWithChildren } from "react";
 import { Link, useFetcher } from "react-router";
@@ -17,32 +18,34 @@ import { Image } from "../ui/image";
 
 export function Track(
   props: {
-    image: string;
-    artist: string;
-    name: string;
-    id: string;
-    uri: string;
+    track: TrackType;
   } & React.ComponentProps<"a">,
 ) {
-  const { image, artist, name, id, uri, className, ...rest } = props;
+  const { track, className, ...rest } = props;
   return (
     <TrackMenu
-      query={encodeURIComponent(`${name} ${artist}`.toLowerCase())}
-      uri={uri}
+      query={encodeURIComponent(`${track.name} ${track.artist}`.toLowerCase())}
+      uri={track.uri}
     >
       <Link
         className={cn(
           "flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
           className,
         )}
-        to={`/track/${id}`}
+        to={`/track/${track.id}`}
         viewTransition
         {...rest}
       >
-        <TrackImage id={id} src={image} alt={name} width={80} height={80} />
+        <TrackImage
+          id={track.id}
+          src={track.image}
+          alt={track.name}
+          width={80}
+          height={80}
+        />
         <div>
-          <TrackName name={name} />
-          <TrackArtist artist={artist} />
+          <TrackName name={track.name} />
+          <TrackArtist artist={track.artist} />
         </div>
       </Link>
     </TrackMenu>

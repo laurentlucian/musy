@@ -71,24 +71,11 @@ export async function getUserRecent(args: {
 }
 
 export type UserLiked = ReturnType<typeof getUserLiked>;
-export async function getUserLiked(args: {
-  userId: string;
-  provider: string;
-}) {
+export async function getUserLiked(args: { userId: string; provider: string }) {
   const { userId, provider } = args;
   const liked = await prisma.likedSongs.findMany({
     select: {
-      track: {
-        select: {
-          _count: true,
-          id: true,
-          name: true,
-          artist: true,
-          image: true,
-          uri: true,
-        },
-      },
-
+      track: true,
       userId: true,
     },
     orderBy: {
@@ -135,6 +122,14 @@ export async function getTopLeaderboard() {
     image: t.image,
     plays: t._count.recent,
     uri: t.uri,
+    provider: t.provider,
+    albumName: t.albumName,
+    albumUri: t.albumUri,
+    artistUri: t.artistUri,
+    explicit: t.explicit,
+    duration: t.duration,
+    preview_url: t.preview_url,
+    link: t.link,
   }));
 }
 

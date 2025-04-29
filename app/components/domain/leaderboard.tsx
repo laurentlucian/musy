@@ -11,13 +11,7 @@ export function Leaderboard(props: {
     return (
       <li key={track.id} className="flex items-center gap-x-2">
         <span className="basis-6 font-bold">{index + 1}.</span>
-        <Track
-          id={track.id}
-          uri={track.uri}
-          image={track.image}
-          artist={track.artist}
-          name={track.name}
-        />
+        <Track id={track.id} track={track} />
       </li>
     );
   });

@@ -1,4 +1,4 @@
-import { type UserRecent, getUserRecent } from "@lib/services/db/tracks.server";
+import { getUserRecent, type UserRecent } from "@lib/services/db/tracks.server";
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
@@ -32,16 +32,7 @@ function RecentList(props: { tracks: UserRecent }) {
   return (
     <div className="flex flex-col gap-y-2">
       {tracks.map((track) => {
-        return (
-          <Track
-            key={track.name}
-            id={track.id}
-            uri={track.uri}
-            image={track.image}
-            artist={track.artist}
-            name={track.name}
-          />
-        );
+        return <Track key={track.name} track={track} />;
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">
