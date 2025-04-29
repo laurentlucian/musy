@@ -1,8 +1,6 @@
 import { prisma } from "@lib/services/db.server";
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import { useEffect, useState } from "react";
 import { data, redirect, useNavigate, useNavigation } from "react-router";
-import { useEventSource } from "remix-utils/sse/react";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import {
@@ -12,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { TAKE } from "~/routes/resources/stats";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
@@ -32,31 +29,6 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
   const year = +(url.searchParams.get("year") ?? "2025");
   const date = setYear(new Date(), year);
 
-  const played = await prisma.recentSongs.findMany({
-    where: {
-      userId,
-      playedAt: {
-        gte: startOfYear(date),
-        lte: endOfYear(date),
-      },
-    },
-    take: TAKE,
-    orderBy: {
-      playedAt: "desc",
-    },
-    select: {
-      track: {
-        select: {
-          uri: true,
-          name: true,
-          artist: true,
-          albumName: true,
-          duration: true,
-        },
-      },
-    },
-  });
-
   const liked = await prisma.likedSongs.count({
     where: {
       userId,
@@ -67,42 +39,87 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     },
   });
 
+  let length = 0;
+  let minutes = 0;
+  const artists: Record<string, number> = {};
+  const albums: Record<string, number> = {};
+  const songs: Record<string, number> = {};
+
+  const take = 2500;
+  let skip = 0;
+  let all = false;
+
+  while (!all) {
+    const played = await prisma.recentSongs.findMany({
+      where: {
+        userId,
+        playedAt: {
+          gte: startOfYear(date),
+          lte: endOfYear(date),
+        },
+      },
+      take,
+      skip,
+      orderBy: {
+        playedAt: "desc",
+      },
+      select: {
+        track: {
+          select: {
+            uri: true,
+            name: true,
+            artist: true,
+            albumName: true,
+            duration: true,
+          },
+        },
+      },
+    });
+
+    if (played.length < take) {
+      all = true;
+    }
+
+    skip += played.length;
+    const batch = calculateStats(played);
+    length += batch.played;
+    minutes += batch.minutes;
+
+    for (const [artist, count] of Object.entries(batch.artists)) {
+      artists[artist] = (artists[artist] ?? 0) + count;
+    }
+    for (const [album, count] of Object.entries(batch.albums)) {
+      albums[album] = (albums[album] ?? 0) + count;
+    }
+    for (const [song, count] of Object.entries(batch.songs)) {
+      songs[song] = (songs[song] ?? 0) + count;
+    }
+  }
+
+  const { artist, album, song } = getTopItems({
+    songs: songs,
+    albums: albums,
+    artists: artists,
+  });
+
   return {
     userId,
     profile,
-    played,
     liked,
     year,
+    played: length,
+    minutes,
+    artist,
+    album,
+    song,
   };
 }
 
 export default function Profile({
-  loaderData: { profile, liked, userId, year, ...props },
+  loaderData: { profile, liked, year, played, minutes, artist, album, song },
 }: Route.ComponentProps) {
   const navigate = useNavigate();
   const navigation = useNavigation();
-  const [played, setPlayed] = useState(props.played);
-  const streamed = useEventSource(
-    `/api/stats/${userId}?year=${year}&skip=${props.played.length}`,
-    {
-      event: "stats",
-    },
-  );
-
-  useEffect(() => {
-    if (streamed) {
-      const parsed = JSON.parse(streamed) as Awaited<
-        ReturnType<typeof loader>
-      >["played"];
-      setPlayed((prev) => [...prev, ...parsed]);
-    }
-  }, [streamed]);
-
-  useEffect(() => {
-    setPlayed(props.played);
-  }, [year]);
-
-  const { minutes, artist, album, song } = getStatsFromPlayed(played);
 
   return (
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
@@ -146,7 +163,7 @@ export default function Profile({
         <div className="flex flex-wrap gap-4 whitespace-nowrap">
           <div className="rounded-lg bg-card p-4">
             <p className="font-bold text-3xl">
-              <NumberAnimated value={played.length} key={year} />
+              <NumberAnimated value={played} key={year} />
             </p>
             <p className="text-muted-foreground text-sm">songs played</p>
           </div>
@@ -193,7 +210,30 @@ export default function Profile({
   );
 }
 
-function getStatsFromPlayed(
+function getTopItems(arg: {
+  artists: Record<string, number>;
+  albums: Record<string, number>;
+  songs: Record<string, number>;
+}) {
+  const artist = Object.entries(arg.artists).reduce(
+    (a, b) => (b[1] > a[1] ? b : a),
+    ["", 0],
+  )[0];
+
+  const album = Object.entries(arg.albums).reduce(
+    (a, b) => (b[1] > a[1] ? b : a),
+    ["", 0],
+  )[0];
+
+  const song = Object.entries(arg.songs).reduce(
+    (a, b) => (b[1] > a[1] ? b : a),
+    ["", 0],
+  )[0];
+
+  return { artist, album, song };
+}
+
+function calculateStats(
   played: {
     track: {
       name: string;
@@ -216,11 +256,6 @@ function getStatsFromPlayed(
     {} as Record<string, number>,
   );
 
-  const artist = Object.entries(artists).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
   const albums = played.reduce(
     (acc, { track }) => {
       acc[track.albumName] = (acc[track.albumName] || 0) + 1;
@@ -228,11 +263,6 @@ function getStatsFromPlayed(
     },
     {} as Record<string, number>,
   );
-
-  const album = Object.entries(albums).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
 
   const songs = played.reduce(
     (acc, { track }) => {
@@ -242,15 +272,5 @@ function getStatsFromPlayed(
     {} as Record<string, number>,
   );
 
-  const song = Object.entries(songs).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  return {
-    minutes,
-    artist,
-    album,
-    song,
-  };
+  return { minutes, artists, albums, songs, played: played.length };
 }
