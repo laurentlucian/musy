@@ -42,7 +42,7 @@ model Profile {
   liked       LikedSongs[]
   recent      RecentSongs[]
   recommended Recommended[]
-  ai          AI?
+  generated   Generated?
   playback    Playback?
   following   Follow[]          @relation("follower")
   followers   Follow[]          @relation("following")

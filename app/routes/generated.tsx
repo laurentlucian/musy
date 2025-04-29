@@ -9,7 +9,7 @@ export async function loader({
 }: Route.LoaderArgs) {
   if (!userId) return redirect("/account");
 
-  const playlist = await prisma.aIPlaylist.findUnique({
+  const playlist = await prisma.generatedPlaylist.findUnique({
     include: {
       tracks: true,
       owner: {
@@ -48,7 +48,7 @@ export default function Mood({
         </div>
 
         {playlist.tracks.map((track) => (
-          <Track key={track.id} {...track} />
+          <Track key={track.id} track={track} />
         ))}
       </div>
     </div>

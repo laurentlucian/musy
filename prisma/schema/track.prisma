@@ -12,7 +12,7 @@ model Track {
   link        String
   duration    Int
 
-  provider    String          @default("spotify")
+  provider    String              @default("spotify")
   //
   liked       LikedSongs[]
   recent      RecentSongs[]
@@ -22,7 +22,7 @@ model Track {
   //
   thanks      Thanks[]
   //
-  playlistAI  AIPlaylist[]
+  playlistAI  GeneratedPlaylist[]
 }
 
 model Thanks {

@@ -12,7 +12,9 @@
     "lint": "biome lint",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "prod:db": "fly ssh console -C database-cli",
-    "docker:build": "docker build -t musy ."
+    "docker:build": "docker build -t musy .",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:create": "prisma migrate dev --create-only"
   },
   "engines": {
     "bun": ">=1.0.0"

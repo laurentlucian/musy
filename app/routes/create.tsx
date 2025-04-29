@@ -16,7 +16,7 @@ const years = Array.from(
 export async function loader({ context: { userId } }: Route.LoaderArgs) {
   if (!userId) return redirect("/account");
 
-  const playlists = await prisma.aIPlaylist.findMany({
+  const playlists = await prisma.generatedPlaylist.findMany({
     where: {
       owner: {
         userId,

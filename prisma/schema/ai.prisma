@@ -1,4 +1,4 @@
-model AI {
+model Generated {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -8,10 +8,10 @@ model AI {
 
   mood     String?
   taste    String?
-  playlist AIPlaylist[]
+  playlist GeneratedPlaylist[]
 }
 
-model AIPlaylist {
+model GeneratedPlaylist {
   id        String   @id @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -21,6 +21,6 @@ model AIPlaylist {
 
   tracks Track[]
 
-  owner   AI  @relation(fields: [ownerId], references: [id])
+  owner   Generated @relation(fields: [ownerId], references: [id])
   ownerId Int
 }

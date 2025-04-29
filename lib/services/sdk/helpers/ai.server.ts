@@ -66,7 +66,7 @@ export async function getStory(track: SpotifyApi.SingleTrackResponse) {
 }
 
 async function getTasteFromUser(userId: string) {
-  const existing = await prisma.aI.findUnique({
+  const existing = await prisma.generated.findUnique({
     where: { userId },
   });
 
@@ -107,7 +107,7 @@ async function getTasteFromUser(userId: string) {
   const taste = await askAITaste(prompt);
   console.info("taste", taste);
 
-  await prisma.aI.upsert({
+  await prisma.generated.upsert({
     where: { userId },
     update: { taste },
     create: { userId, taste },
@@ -151,7 +151,7 @@ export async function getTracksFromMood(
     (track) => track !== null,
   );
 
-  const existing = await prisma.aIPlaylist.findFirst({
+  const existing = await prisma.generatedPlaylist.findFirst({
     where: {
       mood,
       year: parseInt(year),
@@ -162,7 +162,7 @@ export async function getTracksFromMood(
   });
 
   if (existing) {
-    await prisma.aIPlaylist.update({
+    await prisma.generatedPlaylist.update({
       where: { id: existing.id },
       data: {
         tracks: {
@@ -174,7 +174,7 @@ export async function getTracksFromMood(
     return existing;
   }
 
-  await prisma.aIPlaylist.create({
+  await prisma.generatedPlaylist.create({
     data: {
       id: generateId(),
       mood,
