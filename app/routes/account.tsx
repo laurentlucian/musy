@@ -1,15 +1,15 @@
-import { authenticator } from "@lib/services/auth.server";
 import { ADMIN_USER_ID, PROVIDERS } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
-import { type Providers, getProviders } from "@lib/services/db/users.server";
+import { authenticator } from "@lib/services/auth.server";
+import { getProviders, type Providers } from "@lib/services/db/users.server";
 import { sessionStorage } from "@lib/services/session.server";
 import { ArrowLeft, ChevronLeft } from "lucide-react";
 import { use } from "react";
 import {
+  data,
   Form,
   Link,
   Outlet,
-  data,
   redirect,
   useLocation,
   useParams,
@@ -77,9 +77,7 @@ export default function AccountPage({
   );
 }
 
-function ProviderList(props: {
-  providers: Providers | null;
-}) {
+function ProviderList(props: { providers: Providers | null }) {
   const { pathname } = useLocation();
   const { provider } = useParams();
   const rest = provider ? pathname.split(provider)[1] : "";

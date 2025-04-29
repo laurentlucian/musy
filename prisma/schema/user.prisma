@@ -1,5 +1,6 @@
 model User {
   id        String     @id
+  newId     String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now()) @updatedAt
   //
@@ -50,6 +51,7 @@ model Profile {
   playlists   Playlist[]
   feed        Feed[]
   thanks      Thanks[]
+  top         TopSongs[]
 }
 
 model Follow {

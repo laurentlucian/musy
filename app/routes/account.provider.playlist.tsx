@@ -1,6 +1,7 @@
 import type { Playlist } from "@lib/services/db.server";
 import { syncUserPlaylist } from "@lib/services/scheduler/scripts/sync/playlist.server";
 import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { Suspense, use } from "react";
 import { useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";
@@ -74,6 +75,7 @@ export async function action({
   if (!userId) return { error: "no user" };
   if (provider !== "spotify") return { error: "no support yet" };
 
-  await syncUserPlaylist(userId);
+  const spotify = await getSpotifyClient({ userId });
+  await syncUserPlaylist({ userId, spotify });
   return { error: null };
 }
