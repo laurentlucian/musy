@@ -1,17 +1,22 @@
-export function generateId(length = 10) {
-  if (length % 2) length++;
-  const lower = "abcdefghijklmnopqrstuvwxyz";
-  const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const bytes = new Uint8Array(length);
-  crypto.getRandomValues(bytes);
+import { createIdGenerator } from "ai";
 
-  let id = "";
-  for (let i = 0; i < length; i++) {
-    const alphabet = i % 2 ? upper : lower;
-    id += alphabet[bytes[i] % alphabet.length];
-  }
+type GenerateIdOptions = {
+  prefix?: string;
+  separator?: string;
+  size?: number;
+};
 
-  return id;
+export function generateId(args?: GenerateIdOptions) {
+  const { prefix, separator, size = 10 } = args ?? {};
+
+  const generator = createIdGenerator({
+    prefix,
+    separator,
+    size,
+    alphabet: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  });
+
+  return generator();
 }
 
 export function getMemoryStats() {

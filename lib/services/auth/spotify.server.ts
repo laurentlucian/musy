@@ -2,6 +2,7 @@ import { env } from "@lib/env.server";
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { getOnboardingCoordinator } from "@lib/services/scheduler/machines/onboarding";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
+import { generateId } from "@lib/utils.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 
 const clientId = env.SPOTIFY_CLIENT_ID;
@@ -78,6 +79,7 @@ export function getSpotifyStrategy() {
                 },
               },
               create: {
+                id: generateId(),
                 providers: {
                   create: PROVIDER_DATA,
                 },
@@ -91,6 +93,7 @@ export function getSpotifyStrategy() {
           name: data.display_name,
           user: {
             create: {
+              id: generateId(),
               providers: {
                 create: PROVIDER_DATA,
               },
