@@ -23,6 +23,7 @@ model Track {
   thanks      Thanks[]
   //
   playlistAI  GeneratedPlaylist[]
+  top         TopSongs[]
 }
 
 model Thanks {
@@ -92,4 +93,16 @@ model LikedSongs {
   feedId    Int?     @unique
 
   @@unique([trackId, userId])
+}
+
+model TopSongs {
+  id        String   @id @unique
+  createdAt DateTime @default(now())
+  type      String
+
+  trackIds String // comma-separated track ids in order
+  tracks   Track[]
+
+  user   Profile @relation(fields: [userId], references: [id])
+  userId String
 }

@@ -7,7 +7,16 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import type { Route } from "./+types/create";
 
-const moods = ["happy", "chill", "energetic", "focus", "sad"] as const;
+const moods = [
+  "happy",
+  "chill",
+  "energetic",
+  "focus",
+  "sad",
+  "romantic",
+  "upbeat",
+  "sleep",
+] as const;
 const years = Array.from(
   { length: new Date().getFullYear() - 2020 },
   (_, i) => 2020 + i,

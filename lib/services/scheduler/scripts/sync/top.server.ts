@@ -1,8 +1,10 @@
 import { prisma } from "@lib/services/db.server";
 import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
 import { log } from "@lib/utils";
+import { generateId } from "@lib/utils.server";
 import type SpotifyWebApi from "spotify-web-api-node";
 
+const ranges = ["short_term", "medium_term", "long_term"] as const;
 export async function syncUserTop({
   userId,
   spotify,
@@ -11,26 +13,58 @@ export async function syncUserTop({
   spotify: SpotifyWebApi;
 }) {
   try {
-    const getUserSpotifyTop = async (
-      range: "short_term" | "medium_term" | "long_term",
-    ) => {
+    for (const range of ranges) {
+      log("syncing", `top_${range}`);
       const response = await spotify
         .getMyTopTracks({ limit: 50, time_range: range })
         .then((data) => data.body.items);
 
       const tracks = await transformTracks(response.map((track) => track));
 
-      return {
-        key: `profile_top_prisma${range}_${userId}`,
-        tracks,
-      };
-    };
+      const existing = await prisma.topSongs.findFirst({
+        where: {
+          userId,
+          type: range,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
 
-    const [_short, _medium, _long] = await Promise.all([
-      getUserSpotifyTop("short_term"),
-      getUserSpotifyTop("medium_term"),
-      getUserSpotifyTop("long_term"),
-    ]);
+      const newList = tracks.map((track) => track.id).join(",");
+      if (existing) {
+        const existingList = existing.trackIds;
+
+        if (existingList === newList) {
+          log("skipped", `top_${range}`);
+          continue;
+        }
+
+        await prisma.topSongs.create({
+          data: {
+            id: generateId(),
+            type: range,
+            trackIds: newList,
+            tracks: {
+              connect: tracks.map((track) => ({ id: track.id })),
+            },
+            userId,
+          },
+        });
+      } else {
+        await prisma.topSongs.create({
+          data: {
+            id: generateId(),
+            type: range,
+            trackIds: newList,
+            tracks: {
+              connect: tracks.map((track) => ({ id: track.id })),
+            },
+            userId,
+          },
+        });
+      }
+    }
 
     log("completed", "top");
     await prisma.sync.upsert({

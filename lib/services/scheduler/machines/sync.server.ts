@@ -2,6 +2,7 @@ import { getAllUsersId } from "@lib/services/db/users.server";
 import { syncUserLiked } from "@lib/services/scheduler/scripts/sync/liked.server";
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
+import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
 // import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
@@ -16,7 +17,7 @@ const syncs = {
   recent: syncUserRecent,
   // playlist: syncUserPlaylist,
   liked: syncUserLiked,
-  // top: syncUserTop,
+  top: syncUserTop,
 } as const;
 
 type SyncKeys = keyof typeof syncs;
@@ -27,7 +28,7 @@ export type SyncType = SyncTypes[number];
 const SYNC_INTERVALS = {
   recent: 60 * 5000, // 5 minute
   liked: 10 * 60 * 1000, // 10 minutes
-  // top: 24 * 60 * 60 * 1000, // 1 day
+  top: 24 * 60 * 60 * 1000, // 1 day
   profile: 24 * 60 * 60 * 1000, // 1 day
 } as const;
 

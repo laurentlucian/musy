@@ -1,6 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import { data, redirect, useNavigate, useNavigation } from "react-router";
+import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import {
@@ -102,6 +103,32 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     artists: artists,
   });
 
+  const range = url.searchParams.get("range") ?? "long_term";
+  const topUnsorted = await prisma.topSongs.findFirst({
+    include: {
+      tracks: true,
+    },
+    where: {
+      userId,
+      type: range,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const positions = topUnsorted?.trackIds.split(",").reduce(
+    (acc, id, i) => {
+      acc[id] = i;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const top = topUnsorted?.tracks.sort(
+    (a, b) => (positions?.[a.id] ?? 0) - (positions?.[b.id] ?? 0),
+  );
+
   return {
     userId,
     profile,
@@ -112,29 +139,73 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     artist,
     album,
     song,
+    top,
+    range,
   };
 }
 
 export default function Profile({
-  loaderData: { profile, liked, year, played, minutes, artist, album, song },
+  loaderData: {
+    profile,
+    liked,
+    year,
+    played,
+    minutes,
+    artist,
+    album,
+    song,
+    top,
+    range,
+  },
 }: Route.ComponentProps) {
   const navigate = useNavigate();
   const navigation = useNavigation();
 
   return (
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
-      <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
-        <div className="flex items-center gap-2">
-          {profile.image && (
-            <img
-              className="size-10 rounded-full"
-              src={profile.image}
-              alt={profile.name ?? "pp"}
-            />
-          )}
-          <h1 className="font-bold text-2xl">{profile.name}</h1>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
+          <div className="flex items-center gap-2">
+            {profile.image && (
+              <img
+                className="size-10 rounded-full"
+                src={profile.image}
+                alt={profile.name ?? "pp"}
+              />
+            )}
+            <h1 className="font-bold text-2xl">{profile.name}</h1>
+          </div>
+          <p className="text-muted-foreground text-sm">{profile.bio}</p>
         </div>
-        <p className="text-muted-foreground text-sm">{profile.bio}</p>
+        {top && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground text-sm">Top tracks</p>
+              <Select
+                defaultValue={range}
+                onValueChange={(data) => {
+                  navigate({
+                    search: `?range=${data}`,
+                  });
+                }}
+              >
+                <SelectTrigger className="min-w-[100px]">
+                  <SelectValue placeholder="Range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="long_term">Year</SelectItem>
+                  <SelectItem value="medium_term">Half Year</SelectItem>
+                  <SelectItem value="short_term">Month</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-2">
+              {top.map((track) => (
+                <Track track={track} key={track.id} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
