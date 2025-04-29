@@ -21,6 +21,8 @@ model Track {
   playlists   PlaylistTrack[]
   //
   thanks      Thanks[]
+  //
+  playlistAI  AIPlaylist[]
 }
 
 model Thanks {

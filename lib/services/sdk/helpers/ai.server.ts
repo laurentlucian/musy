@@ -1,8 +1,9 @@
-import { type RecentSongs, prisma } from "@lib/services/db.server";
+import { prisma, type RecentSongs } from "@lib/services/db.server";
 import { askAI } from "@lib/services/sdk/ai.server";
 import { askAITaste } from "@lib/services/sdk/helpers/ai/taste.server";
 import { askAITracks } from "@lib/services/sdk/helpers/ai/track.server";
 import { getTrackFromSpotify } from "@lib/services/sdk/helpers/spotify.server";
+import { generateId } from "@lib/utils.server";
 
 export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   const {
@@ -115,10 +116,14 @@ async function getTasteFromUser(userId: string) {
   return taste;
 }
 
-export async function getTracksFromMood(mood: string, userId: string) {
+export async function getTracksFromMood(
+  mood: string,
+  year: string,
+  userId: string,
+) {
   const taste = await getTasteFromUser(userId);
 
-  const prompt = `Based on your taste profile ('${taste}') and your current mood ${mood} (EMPHASIS ON THE MOOD), here are 10 track recommendations:`;
+  const prompt = `Based on your taste profile ('${taste}') and your current mood ${mood} (EMPHASIS ON THE MOOD), here are 10 track recommendations from the year ${year}:`;
   const result = await askAITracks(prompt);
   console.info("result", result);
 
@@ -142,7 +147,46 @@ export async function getTracksFromMood(mood: string, userId: string) {
     return created;
   });
 
-  const tracks = await Promise.all(promises);
+  const tracks = (await Promise.all(promises)).filter(
+    (track) => track !== null,
+  );
 
-  return tracks.filter((track) => track !== null);
+  const existing = await prisma.aIPlaylist.findFirst({
+    where: {
+      mood,
+      year: parseInt(year),
+      owner: {
+        userId,
+      },
+    },
+  });
+
+  if (existing) {
+    await prisma.aIPlaylist.update({
+      where: { id: existing.id },
+      data: {
+        tracks: {
+          connect: tracks.map((track) => ({ id: track.id })),
+        },
+      },
+    });
+
+    return existing;
+  }
+
+  await prisma.aIPlaylist.create({
+    data: {
+      id: generateId(),
+      mood,
+      year: parseInt(year),
+      tracks: {
+        connect: tracks.map((track) => ({ id: track.id })),
+      },
+      owner: {
+        connect: {
+          userId,
+        },
+      },
+    },
+  });
 }
