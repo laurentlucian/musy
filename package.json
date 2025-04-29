@@ -9,6 +9,7 @@
     "release": "fly deploy --remote-only",
     "release:local": "tsc --noEmit && fly deploy --local-only",
     "format": "biome format --write ./app",
+    "lint": "biome lint",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "prod:db": "fly ssh console -C database-cli",
     "docker:build": "docker build -t musy ."
@@ -65,7 +66,7 @@
     "ytmusic-api": "^5.3.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0-beta.2",
     "@react-router/dev": "^7.5.2",
     "@types/compression": "^1.7.5",
     "@types/debug": "^4.1.12",
