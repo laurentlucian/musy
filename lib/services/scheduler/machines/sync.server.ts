@@ -6,6 +6,7 @@ import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.serv
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
+import { getMemoryStats } from "@lib/utils.server";
 import { addMilliseconds, isAfter } from "date-fns";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
@@ -16,7 +17,7 @@ const syncs = {
   // playlist: syncUserPlaylist,
   liked: syncUserLiked,
   // top: syncUserTop,
-};
+} as const;
 
 type SyncKeys = keyof typeof syncs;
 export const types = Object.keys(syncs) as SyncKeys[];
@@ -57,15 +58,27 @@ export const SYNC_MACHINE = setup({
         for (const type of typesToSync) {
           log(`syncing ${type}`, "sync");
           for (const [i, userId] of users.entries()) {
-            log(`${i + 1} / ${users.length} users synced`, "sync");
+            log("before spotify client creation", "sync");
+            console.info(getMemoryStats());
             const spotify = await getSpotifyClient({ userId });
+            log("after spotify client creation", "sync");
+            console.info(getMemoryStats());
+
             await syncs[type]({ userId, spotify });
+
+            // monitor memory every 10 users
+            if (i > 0 && i % 10 === 0) {
+              log("every 10 users", "sync");
+              console.info(getMemoryStats());
+            }
           }
           lastSync.set(type, new Date());
           log(`synced ${type}`, "sync");
+          console.info(getMemoryStats());
         }
 
         log("sync complete", "sync");
+        console.info(getMemoryStats());
         return lastSync;
       },
     ),
@@ -112,9 +125,12 @@ export function getSyncMachine() {
     const actor = createActor(SYNC_MACHINE);
     actor.start();
 
-    process.on("SIGTERM", () => {
+    const cleanup = () => {
       actor.stop();
-    });
+      process.removeListener("SIGTERM", cleanup);
+    };
+
+    process.once("SIGTERM", cleanup);
 
     return actor;
   });
