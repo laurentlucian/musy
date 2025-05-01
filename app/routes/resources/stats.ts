@@ -83,7 +83,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
       }
     }
 
-    run();
+    void run();
 
     return () => {
       log(`cleaned up stats stream for ${userId}`, "stats");

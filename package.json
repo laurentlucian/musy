@@ -10,6 +10,7 @@
     "release:local": "tsc --noEmit && fly deploy --local-only",
     "format": "biome format --write ./app",
     "lint": "biome lint",
+    "lint:fix": "biome lint --write --unsafe",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "prod:db": "fly ssh console -C database-cli",
     "docker:build": "docker build -t musy .",
