@@ -1,29 +1,52 @@
 import { prisma } from "@lib/services/db.server";
-import {
-  getTracksByKeyword,
-  getUsersByKeyword,
-} from "@lib/services/db/search.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
+import type { Track } from "spotified";
+import { boolean, number, object, optional, safeParse, string } from "valibot";
 
-export function createTrackModel(track: SpotifyApi.TrackObjectFull) {
-  return {
-    albumName: track.album.name,
-    albumUri: track.album.uri,
-    artist: track.artists[0].name,
-    artistUri: track.artists[0].uri,
-    duration: track.duration_ms,
-    explicit: track.explicit,
-    id: track.id,
-    image: track.album.images[0].url,
-    link: track.external_urls.spotify,
-    name: track.name,
-    preview_url: track.preview_url,
-    uri: track.uri,
+const trackSchema = object({
+  id: string(),
+  uri: string(),
+  name: string(),
+  albumName: string(),
+  albumUri: string(),
+  artist: string(),
+  artistUri: string(),
+  duration: number(),
+  explicit: boolean(),
+  image: string(),
+  link: string(),
+  preview_url: string(),
+});
+
+export function createTrackModel(track: Track) {
+  const trackData = {
+    albumName: track.album?.name ?? "",
+    albumUri: track.album?.uri ?? "",
+    artist: track.artists?.[0]?.name ?? "",
+    artistUri: track.artists?.[0]?.uri ?? "",
+    duration: track.duration_ms ?? 0,
+    explicit: track.explicit ?? false,
+    id: track.id ?? "",
+    image: track.album?.images?.[0]?.url ?? "",
+    link: track.external_urls?.spotify ?? "",
+    name: track.name ?? "",
+    preview_url: track.preview_url ?? "",
+    uri: track.uri ?? "",
   };
+
+  const result = safeParse(trackSchema, trackData);
+
+  if (!result.success) {
+    throw new Error(`invalid track data: ${result.issues[0].message}`);
+  }
+
+  return result.output;
 }
 
-export async function transformTracks(tracks: SpotifyApi.TrackObjectFull[]) {
-  const trackIds = tracks.map((track) => track.id);
+export async function transformTracks(tracks: Track[]) {
+  const trackIds = tracks
+    .map((track) => track.id)
+    .filter((id) => id !== undefined);
   const existingTracks = await prisma.track.findMany({
     select: { id: true },
     where: { id: { in: trackIds } },
@@ -47,44 +70,12 @@ export async function transformTracks(tracks: SpotifyApi.TrackObjectFull[]) {
   ).sort((a, b) => trackIds.indexOf(a.id) - trackIds.indexOf(b.id));
 }
 
-export async function getUserSpotifyRecent(userId: string) {
-  const spotify = await getSpotifyClient({ userId });
-
-  const recent = await spotify
-    .getMyRecentlyPlayedTracks({ limit: 50 })
-    .then((data) => data.body.items)
-    .catch(() => []);
-
-  return transformTracks(recent.map((track: any) => track.track));
-}
-
-export async function getUserSpotifyLiked(userId: string) {
-  const spotify = await getSpotifyClient({ userId });
-
-  const liked = await spotify
-    .getMySavedTracks({ limit: 50 })
-    .then((data) => data.body.items)
-    .catch(() => []);
-
-  return transformTracks(liked.map((track) => track.track));
-}
-
-export async function getUserSpotifyPlayback(userId: string) {
-  const spotify = await getSpotifyClient({ userId });
-
-  const playback = await spotify
-    .getMyCurrentPlayingTrack()
-    .then((data) => data.body);
-
-  return playback;
-}
-
 export async function getTrackFromSpotify(keyword: string, userId: string) {
   const spotify = await getSpotifyClient({ userId });
 
-  const result = await spotify.searchTracks(keyword);
+  const result = await spotify.search.searchForItem(keyword, ["track"]);
 
-  const first = result.body.tracks?.items[0];
+  const first = result.tracks?.items[0];
 
   if (!first) return null;
   const tracks = await transformTracks([first]);
@@ -92,18 +83,13 @@ export async function getTrackFromSpotify(keyword: string, userId: string) {
   return tracks[0];
 }
 
-export async function getSpotifyTrack(trackId: string, userId: string) {
-  const spotify = await getSpotifyClient({ userId });
-
-  const track = await spotify.getTrack(trackId).then((res) => res.body);
-
-  return track;
-}
-
 export async function getUserPlaylists({
   userId,
   provider,
-}: { userId: string; provider: string }) {
+}: {
+  userId: string;
+  provider: string;
+}) {
   const response = await prisma.playlist.findMany({
     orderBy: {
       tracks: {

@@ -56,7 +56,7 @@ async function like(args: { form: FormData; userId: string }) {
     if (provider === "spotify") {
       const spotify = await getSpotifyClient({ userId });
 
-      await spotify.addToMySavedTracks([track.id]);
+      await spotify.track.saveTracksforCurrentUser([track.id]);
       return null;
     }
 
@@ -112,7 +112,7 @@ async function queue(args: { form: FormData; userId: string }) {
     const spotify = await getSpotifyClient({ userId });
 
     try {
-      await spotify.addToQueue(uri);
+      spotify.player.addItemToPlaybackQueue(uri, {});
       return null;
     } catch (error) {
       logError(error instanceof Error ? error.message : error);

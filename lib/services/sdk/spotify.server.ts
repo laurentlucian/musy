@@ -1,22 +1,24 @@
 import { env } from "@lib/env.server";
 import { getProvider, updateToken } from "@lib/services/db/users.server";
+import { singleton } from "@lib/services/singleton.server";
 import { log } from "@lib/utils";
-import SpotifyWebApi from "spotify-web-api-node";
-
-const config = {
-  clientId: env.SPOTIFY_CLIENT_ID,
-  clientSecret: env.SPOTIFY_CLIENT_SECRET,
-  redirectUri: env.SPOTIFY_CALLBACK_URL,
-};
+import Spotified from "spotified";
 
 type GetSpotifyClientOptions = { userId: string } | { token: string };
 
+const spotify = singleton("spotify", () => {
+  const spotified = new Spotified({
+    clientId: env.SPOTIFY_CLIENT_ID,
+    clientSecret: env.SPOTIFY_CLIENT_SECRET,
+  });
+  return spotified;
+});
+
 export async function getSpotifyClient(args: GetSpotifyClientOptions) {
   if ("token" in args) {
-    return new SpotifyWebApi({
-      ...config,
-      accessToken: args.token,
-    });
+    spotify.setBearerToken(args.token);
+
+    return spotify;
   }
 
   const provider = await getProvider({
@@ -26,11 +28,7 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
 
   if (!provider) throw new Error("No Spotify provider found for user");
 
-  const client = new SpotifyWebApi({
-    ...config,
-    accessToken: provider.accessToken,
-    refreshToken: provider.refreshToken,
-  });
+  spotify.setBearerToken(provider.accessToken);
 
   // check if token needs refresh
   const buffer = 60 * 1000; // 60 seconds buffer
@@ -38,16 +36,18 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
   const expiresAt = Number(provider.expiresAt);
 
   if (expiresAt && expiresAt > now + buffer) {
-    return client;
+    return spotify;
   }
 
   try {
     log(`refreshing token for ${args.userId}`, "spotify");
-    const { body } = await client.refreshAccessToken();
+    const response = await spotify.auth.AuthorizationCode.refreshAccessToken(
+      provider.refreshToken,
+    );
 
-    const newAccessToken = body.access_token;
-    const newRefreshToken = body.refresh_token ?? provider.refreshToken;
-    const newExpiresAt = Date.now() + body.expires_in * 1000;
+    const newAccessToken = response.access_token;
+    const newRefreshToken = response.refresh_token ?? provider.refreshToken;
+    const newExpiresAt = Date.now() + response.expires_in * 1000;
 
     await updateToken({
       id: args.userId,
@@ -57,10 +57,9 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
       type: "spotify",
     });
 
-    client.setAccessToken(newAccessToken);
-    client.setRefreshToken(newRefreshToken);
+    spotify.setBearerToken(newAccessToken);
 
-    return client;
+    return spotify;
   } catch (error) {
     log(`error: token refresh failed for ${args.userId}: ${error}`, "spotify");
     throw error;

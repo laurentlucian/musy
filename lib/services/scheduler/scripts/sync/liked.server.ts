@@ -1,20 +1,19 @@
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log } from "@lib/utils";
-import type SpotifyWebApi from "spotify-web-api-node";
+import type Spotified from "spotified";
 
 export async function syncUserLiked({
   userId,
   spotify,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
 }) {
   try {
-    const { body } = await spotify.getMySavedTracks({ limit: 50 });
+    const { items } = await spotify.track.getUsersSavedTracks({ limit: 50 });
 
-    for (const { added_at, track } of body.items) {
+    for (const { added_at, track } of items) {
       const trackDb = createTrackModel(track);
       const data: Prisma.LikedSongsCreateInput = {
         track: {
@@ -31,6 +30,8 @@ export async function syncUserLiked({
           },
         },
       };
+
+      if (!track.id) continue;
 
       await prisma.likedSongs.upsert({
         create: data,
@@ -83,15 +84,20 @@ export async function syncUserLikedPage({
   offset,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
   offset: number;
 }) {
   try {
-    const { body } = await spotify.getMySavedTracks({ limit: 50, offset });
+    const { items, total } = await spotify.track.getUsersSavedTracks({
+      limit: 50,
+      offset,
+    });
 
-    for (const item of body.items) {
+    for (const item of items) {
       const track = item.track;
       const trackModel = createTrackModel(track);
+
+      if (!track.id) continue;
 
       // first ensure track exists
       await prisma.track.upsert({
@@ -117,8 +123,8 @@ export async function syncUserLikedPage({
     }
 
     return {
-      nextOffset: offset + body.items.length,
-      total: body.total,
+      nextOffset: offset + items.length,
+      total,
     };
   } catch (error) {
     log("failure", "liked-page");

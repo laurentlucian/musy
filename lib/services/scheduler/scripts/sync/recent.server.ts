@@ -1,22 +1,27 @@
 import { type Prisma, prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { log } from "@lib/utils";
-import type SpotifyWebApi from "spotify-web-api-node";
+import type Spotified from "spotified";
 
 export async function syncUserRecent({
   userId,
   spotify,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
 }) {
   try {
-    const {
-      body: { items: recent },
-    } = await spotify.getMyRecentlyPlayedTracks({ limit: 50 });
+    const { items: recent } = await spotify.player.getRecentlyPlayedTracks({
+      limit: 50,
+    });
+
+    if (!recent) throw new Error("No recent tracks found");
 
     for (const { played_at, track } of recent) {
+      if (!track) throw new Error("No track found");
       const trackDb = createTrackModel(track);
+      if (!played_at) throw new Error("No played at found");
+
       const data: Prisma.RecentSongsCreateInput = {
         action: "played",
         playedAt: new Date(played_at),

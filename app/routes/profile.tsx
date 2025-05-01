@@ -1,6 +1,13 @@
 import { prisma } from "@lib/services/db.server";
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import { data, redirect, useNavigate, useNavigation } from "react-router";
+import {
+  data,
+  href,
+  redirect,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
@@ -160,6 +167,7 @@ export default function Profile({
 }: Route.ComponentProps) {
   const navigate = useNavigate();
   const navigation = useNavigation();
+  const location = useLocation();
 
   return (
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">

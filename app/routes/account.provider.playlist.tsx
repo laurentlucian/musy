@@ -1,12 +1,8 @@
 import type { Playlist } from "@lib/services/db.server";
-import { syncUserPlaylist } from "@lib/services/scheduler/scripts/sync/playlist.server";
 import { getUserPlaylists } from "@lib/services/sdk/helpers/spotify.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { Suspense, use } from "react";
-import { useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";
-import { Button } from "~/components/ui/button";
-import { useFetcherToast } from "~/hooks/useFetcherToast";
+
 import type { Route } from "./+types/account.provider.playlist";
 
 export async function loader({
@@ -52,30 +48,4 @@ function PlaylistList(props: { playlists: Promise<Playlist[]> }) {
       </p>
     </div>
   );
-}
-
-function SyncButton() {
-  const fetcher = useFetcher<typeof action>();
-  const busy = fetcher.state !== "idle";
-  useFetcherToast(fetcher.data?.error, "synced all playlists");
-
-  return (
-    <fetcher.Form method="post">
-      <Button type="submit" disabled={busy} size="sm">
-        {busy ? "Syncing..." : "Sync"}
-      </Button>
-    </fetcher.Form>
-  );
-}
-
-export async function action({
-  context: { userId },
-  params: { provider },
-}: Route.ActionArgs) {
-  if (!userId) return { error: "no user" };
-  if (provider !== "spotify") return { error: "no support yet" };
-
-  const spotify = await getSpotifyClient({ userId });
-  await syncUserPlaylist({ userId, spotify });
-  return { error: null };
 }

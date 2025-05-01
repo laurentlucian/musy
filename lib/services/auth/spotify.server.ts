@@ -10,9 +10,6 @@ const clientSecret = env.SPOTIFY_CLIENT_SECRET;
 const redirectURI = env.SPOTIFY_CALLBACK_URL;
 
 export function getSpotifyStrategy() {
-  if (!clientId || !clientSecret || !redirectURI)
-    throw new Error("SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET not set");
-
   return new OAuth2Strategy(
     {
       clientId,
@@ -26,9 +23,7 @@ export function getSpotifyStrategy() {
     async ({ tokens }) => {
       const spotify = await getSpotifyClient({ token: tokens.accessToken() });
 
-      const response = await spotify.getMe();
-
-      const data = response.body;
+      const data = await spotify.user.getCurrentUserProfile();
 
       const provider = await prisma.provider.findUnique({
         where: {

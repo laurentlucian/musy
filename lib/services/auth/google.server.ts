@@ -1,6 +1,7 @@
 import { env } from "@lib/env.server";
 import { prisma } from "@lib/services/db.server";
 import { getGoogleClientsFromCredentials } from "@lib/services/sdk/google.server";
+import { generateId } from "@lib/utils.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import invariant from "tiny-invariant";
 
@@ -72,7 +73,9 @@ export function getGoogleStrategy() {
             name: data.name,
             image: data.picture,
             user: {
-              create: {},
+              create: {
+                id: generateId(),
+              },
             },
           },
           select: { user: { select: { id: true } } },

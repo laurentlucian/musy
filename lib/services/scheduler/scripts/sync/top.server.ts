@@ -2,7 +2,7 @@ import { prisma } from "@lib/services/db.server";
 import { transformTracks } from "@lib/services/sdk/helpers/spotify.server";
 import { log } from "@lib/utils";
 import { generateId } from "@lib/utils.server";
-import type SpotifyWebApi from "spotify-web-api-node";
+import type Spotified from "spotified";
 
 const ranges = ["short_term", "medium_term", "long_term"] as const;
 export async function syncUserTop({
@@ -10,21 +10,22 @@ export async function syncUserTop({
   spotify,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
 }) {
   try {
     for (const range of ranges) {
       log("syncing", `top_${range}`);
-      const response = await spotify
-        .getMyTopTracks({ limit: 50, time_range: range })
-        .then((data) => data.body.items);
+      const response = await spotify.user.getUserTopItems("tracks", {
+        limit: 50,
+        time_range: range,
+      });
 
-      const tracks = await transformTracks(response.map((track) => track));
+      const tracks = await transformTracks(response.items);
 
       const existing = await prisma.topSongs.findFirst({
         where: {
           userId,
-          type: range,
+          type: "tracks",
         },
         orderBy: {
           createdAt: "desc",

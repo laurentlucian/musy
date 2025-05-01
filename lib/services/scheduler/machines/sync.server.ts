@@ -58,28 +58,15 @@ export const SYNC_MACHINE = setup({
 
         for (const type of typesToSync) {
           log(`syncing ${type}`, "sync");
-          for (const [i, userId] of users.entries()) {
-            log("before spotify client creation", "sync");
-            console.info(getMemoryStats());
+          for (const userId of users) {
             const spotify = await getSpotifyClient({ userId });
-            log("after spotify client creation", "sync");
-            console.info(getMemoryStats());
-
             await syncs[type]({ userId, spotify });
-
-            // monitor memory every 10 users
-            if (i > 0 && i % 10 === 0) {
-              log("every 10 users", "sync");
-              console.info(getMemoryStats());
-            }
           }
           lastSync.set(type, new Date());
           log(`synced ${type}`, "sync");
-          console.info(getMemoryStats());
         }
 
         log("sync complete", "sync");
-        console.info(getMemoryStats());
         return lastSync;
       },
     ),

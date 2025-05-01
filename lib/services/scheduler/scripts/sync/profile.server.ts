@@ -1,20 +1,20 @@
 import { prisma } from "@lib/services/db.server";
 import { log } from "@lib/utils";
-import type SpotifyWebApi from "spotify-web-api-node";
+import type Spotified from "spotified";
 
 export async function syncUserProfile({
   userId,
   spotify,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
 }) {
   try {
-    const spotifyProfile = await spotify.getMe();
+    const response = await spotify.user.getCurrentUserProfile();
 
-    const images = spotifyProfile?.body.images;
+    const images = response.images;
     const image = images?.[0]?.url || images?.[1]?.url;
-    const name = spotifyProfile?.body.display_name;
+    const name = response.display_name;
 
     await prisma.profile.update({
       where: { id: userId },

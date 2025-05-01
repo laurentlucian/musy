@@ -1,8 +1,9 @@
-import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
+import { prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { log, notNull } from "@lib/utils";
+import type { PlaybackState } from "spotified";
 
 export async function syncPlaybacks() {
   log("starting...", "playback");
@@ -31,7 +32,7 @@ export async function syncPlaybacks() {
     // log("created playbackQ job with delay", msToString(remaining));
   }
 
-  handleInactiveUsers(
+  await handleInactiveUsers(
     playbacks.filter((u) => !notNull(u.playback)).map((u) => u.id),
   );
 
@@ -42,10 +43,7 @@ async function handleInactiveUsers(users: string[]) {
   await prisma.playback.deleteMany({ where: { userId: { in: users } } });
 }
 
-const upsertPlayback = async (
-  userId: string,
-  playback: SpotifyApi.CurrentPlaybackResponse,
-) => {
+const upsertPlayback = async (userId: string, playback: PlaybackState) => {
   try {
     log("upserting playback", "playback");
     const { progress_ms: progress, timestamp } = playback;
@@ -96,7 +94,7 @@ async function getPlaybackState(userId: string) {
   try {
     const spotify = await getSpotifyClient({ userId });
 
-    const { body: playback } = await spotify.getMyCurrentPlaybackState();
+    const playback = await spotify.player.getPlaybackState();
     const { is_playing, item } = playback;
     if (!is_playing || !item || item.type !== "track")
       return { id: userId, playback: null };

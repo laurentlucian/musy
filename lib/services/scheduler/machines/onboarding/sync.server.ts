@@ -3,11 +3,11 @@ import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.se
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
 import { log } from "@lib/utils";
-import type SpotifyWebApi from "spotify-web-api-node";
+import type Spotified from "spotified";
 import { assign, fromPromise, sendParent, setup } from "xstate";
 
 export type OnboardingContext = {
-  spotify: SpotifyWebApi | null;
+  spotify: Spotified | null;
   userId: string;
   progress: number;
   liked: {
@@ -30,31 +30,25 @@ export type OnboardingError = {
 type SyncArgs = {
   userId: string;
   type: string;
-  spotify: SpotifyWebApi | null;
+  spotify: Spotified | null;
   offset: number;
 };
 
-const syncActor = fromPromise(
-  async ({
-    input,
-  }: {
-    input: SyncArgs;
-  }) => {
-    const { userId, type, spotify, offset } = input;
-    if (!spotify) throw new Error("No Spotify client provided");
+const syncActor = fromPromise(async ({ input }: { input: SyncArgs }) => {
+  const { userId, type, spotify, offset } = input;
+  if (!spotify) throw new Error("No Spotify client provided");
 
-    switch (type) {
-      case "profile":
-        return syncUserProfile({ userId, spotify });
-      case "recent":
-        return syncUserRecent({ userId, spotify });
-      case "top":
-        return syncUserTop({ userId, spotify });
-      case "liked":
-        return syncUserLikedPage({ userId, offset, spotify });
-    }
-  },
-);
+  switch (type) {
+    case "profile":
+      return syncUserProfile({ userId, spotify });
+    case "recent":
+      return syncUserRecent({ userId, spotify });
+    case "top":
+      return syncUserTop({ userId, spotify });
+    case "liked":
+      return syncUserLikedPage({ userId, offset, spotify });
+  }
+});
 
 export const OnboardingSyncMachine = setup({
   types: {
