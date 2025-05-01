@@ -2,7 +2,7 @@
 
 generator client {
   provider        = "prisma-client"
-  previewFeatures = ["prismaSchemaFolder"]
+  previewFeatures = []
   output          = "../../lib/services/db/generated.server"
   runtime         = "bun"
   moduleFormat    = "esm"
