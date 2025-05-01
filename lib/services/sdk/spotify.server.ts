@@ -1,20 +1,16 @@
 import { env } from "@lib/env.server";
 import { getProvider, updateToken } from "@lib/services/db/users.server";
-import { singleton } from "@lib/services/singleton.server";
 import { log } from "@lib/utils";
 import Spotified from "spotified";
 
 type GetSpotifyClientOptions = { userId: string } | { token: string };
 
-const spotify = singleton("spotify", () => {
-  const spotified = new Spotified({
+export async function getSpotifyClient(args: GetSpotifyClientOptions) {
+  const spotify = new Spotified({
     clientId: env.SPOTIFY_CLIENT_ID,
     clientSecret: env.SPOTIFY_CLIENT_SECRET,
   });
-  return spotified;
-});
 
-export async function getSpotifyClient(args: GetSpotifyClientOptions) {
   if ("token" in args) {
     spotify.setBearerToken(args.token);
 
