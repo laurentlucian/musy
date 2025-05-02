@@ -1,20 +1,34 @@
 import { env } from "@lib/env.server";
 import { getProvider, updateToken } from "@lib/services/db/users.server";
+import { singleton } from "@lib/services/singleton.server";
 import { log } from "@lib/utils";
 import Spotified from "spotified";
+
+const spotifies = singleton("spotifies", () => {
+  return new Map<string, Spotified>();
+});
 
 type GetSpotifyClientOptions = { userId: string } | { token: string };
 
 export async function getSpotifyClient(args: GetSpotifyClientOptions) {
-  const spotify = new Spotified({
-    clientId: env.SPOTIFY_CLIENT_ID,
-    clientSecret: env.SPOTIFY_CLIENT_SECRET,
-  });
-
   if ("token" in args) {
+    const spotify = new Spotified({
+      clientId: env.SPOTIFY_CLIENT_ID,
+      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+    });
     spotify.setBearerToken(args.token);
 
     return spotify;
+  }
+
+  let spotify = spotifies.get(args.userId);
+
+  if (!spotify) {
+    spotify = new Spotified({
+      clientId: env.SPOTIFY_CLIENT_ID,
+      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+    });
+    spotifies.set(args.userId, spotify);
   }
 
   const provider = await getProvider({
@@ -57,6 +71,7 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
 
     return spotify;
   } catch (error) {
+    spotifies.delete(args.userId);
     log(`error: token refresh failed for ${args.userId}: ${error}`, "spotify");
     throw error;
   }
