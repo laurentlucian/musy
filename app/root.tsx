@@ -1,11 +1,11 @@
 import { log } from "@lib/utils";
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
-  isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
 import { Toaster } from "./components/ui/sonner";

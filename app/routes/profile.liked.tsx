@@ -7,7 +7,7 @@ import type { Route } from "./+types/profile.liked";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.userId;
-  if (!userId) throw redirect("/account");
+  if (!userId) throw redirect("/settings");
 
   return { liked: getUserLiked({ userId, provider: "spotify" }) };
 }

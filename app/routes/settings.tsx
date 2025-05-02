@@ -1,7 +1,6 @@
 import { ADMIN_USER_ID } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
 import { authenticator } from "@lib/services/auth.server";
-import { getProviders } from "@lib/services/db/users.server";
 import { sessionStorage } from "@lib/services/session.server";
 import { ArrowLeft } from "lucide-react";
 import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
@@ -13,13 +12,11 @@ export async function loader({
   context: { userId, session },
 }: Route.LoaderArgs) {
   const migrated = await migrateLegacySession(session);
-  if (!migrated)
-    return { userId, providers: userId ? getProviders(userId) : null };
+  if (!migrated) return { userId };
 
   return data(
     {
       userId: migrated.userId,
-      providers: userId ? getProviders(userId) : null,
     },
     {
       headers: {
@@ -33,13 +30,13 @@ export default function Settings({
   loaderData: { userId },
 }: Route.ComponentProps) {
   const { pathname } = useLocation();
-  const root = pathname === "/account";
+  const root = pathname === "/settings";
 
   return (
     <main className="flex w-full max-w-dvw flex-1 flex-col gap-4 px-8 font-medium">
       <div className="relative w-full">
         {!root && (
-          <Link to="/account" className="absolute top-0 left-0 sm:hidden">
+          <Link to="/settings" className="absolute top-0 left-0 sm:hidden">
             <ArrowLeft />
           </Link>
         )}
@@ -49,12 +46,23 @@ export default function Settings({
           className="hidden flex-col gap-3 data-root:flex md:flex"
           data-root={root ? 1 : undefined}
         >
-          {userId === ADMIN_USER_ID && <AdminNav />}
-          {userId && (
+          {(userId === ADMIN_USER_ID ||
+            process.env.NODE_ENV === "development") && <AdminNav />}
+          {userId ? (
             <Form method="post">
               <input type="hidden" name="mode" value="logout" />
               <Button type="submit" variant="nav-sub">
                 logout
+              </Button>
+            </Form>
+          ) : (
+            <Form method="post" className="w-full">
+              <input type="hidden" name="mode" value="authorize" />
+              <input type="hidden" name="provider" value="spotify" />
+              <Button type="submit" variant="nav-sub" size="lg">
+                <p className="flex items-center gap-x-1 font-medium">
+                  login with spotify
+                </p>
               </Button>
             </Form>
           )}
@@ -75,7 +83,7 @@ export async function action({ request }: Route.ActionArgs) {
     const session = await sessionStorage.getSession(
       request.headers.get("cookie"),
     );
-    return redirect("/account", {
+    return redirect("/settings", {
       headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
     });
   }

@@ -7,7 +7,7 @@ export async function loader({
   params,
   context: { userId },
 }: Route.LoaderArgs) {
-  if (!userId) return redirect("/account");
+  if (!userId) return redirect("/settings");
 
   const playlist = await prisma.generatedPlaylist.findUnique({
     include: {

@@ -27,7 +27,7 @@ import type { Route } from "./+types/profile";
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.userId;
 
-  if (!userId) throw redirect("/account");
+  if (!userId) throw redirect("/settings");
 
   const profile = await prisma.profile.findFirst({
     where: {

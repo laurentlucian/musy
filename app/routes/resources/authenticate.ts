@@ -9,7 +9,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     const session = await getSession(request.headers.get("cookie"));
     session.set("data", user);
 
-    return redirect("/account", {
+    return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
@@ -17,6 +17,6 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   } catch (error) {
     if (error instanceof Response) throw error;
     console.error("auth/callback/error", error);
-    return redirect("/account");
+    return redirect("/settings");
   }
 }

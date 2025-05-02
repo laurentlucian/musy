@@ -23,7 +23,7 @@ const years = Array.from(
 );
 
 export async function loader({ context: { userId } }: Route.LoaderArgs) {
-  if (!userId) return redirect("/account");
+  if (!userId) return redirect("/settings");
 
   const playlists = await prisma.generatedPlaylist.findMany({
     where: {
@@ -109,7 +109,7 @@ export async function action({
   request,
   context: { userId },
 }: Route.ActionArgs) {
-  if (!userId) return redirect("/account");
+  if (!userId) return redirect("/settings");
 
   const form = await request.formData();
   const mood = form.get("mood");
