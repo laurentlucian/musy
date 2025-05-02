@@ -20,6 +20,10 @@ model Track {
   thanks      Thanks[]
   playlistAI  GeneratedPlaylist[]
   top         TopSongs[]
+  // artist      Artist?             @relation(fields: [artistId], references: [id])
+  // artistId    String?
+  // album       Album?              @relation(fields: [albumId], references: [id])
+  // albumId     String?
 }
 
 model Thanks {
