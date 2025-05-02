@@ -177,106 +177,109 @@ export default function Profile({
           </div>
           <p className="text-muted-foreground text-sm">{profile.bio}</p>
         </div>
-        {top && (
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <p className="text-muted-foreground text-sm">Top tracks</p>
-              <Select
-                defaultValue={range}
-                onValueChange={(data) => {
-                  navigate({
-                    search: `?range=${data}`,
-                  });
-                }}
-              >
-                <SelectTrigger className="min-w-[100px]">
-                  <SelectValue placeholder="Range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="long_term">Year</SelectItem>
-                  <SelectItem value="medium_term">Half Year</SelectItem>
-                  <SelectItem value="short_term">Month</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              {top.map((track) => (
-                <Track track={track} key={track.id} />
-              ))}
-            </div>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Select
+              defaultValue={year.toString()}
+              onValueChange={(data) => {
+                navigate({
+                  search: `?year=${data}`,
+                });
+              }}
+            >
+              <SelectTrigger className="min-w-[100px]">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="2025">2025</SelectItem>
+                <SelectItem value="2024">2024</SelectItem>
+                <SelectItem value="2023">2023</SelectItem>
+                <SelectItem value="2022">2022</SelectItem>
+                <SelectItem value="2021">2021</SelectItem>
+              </SelectContent>
+            </Select>
+            <div>{navigation.state === "loading" && <Waver />}</div>
           </div>
-        )}
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Select
-            defaultValue={year.toString()}
-            onValueChange={(data) => {
-              navigate({
-                search: `?year=${data}`,
-              });
-            }}
-          >
-            <SelectTrigger className="min-w-[100px]">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2025">2025</SelectItem>
-              <SelectItem value="2024">2024</SelectItem>
-              <SelectItem value="2023">2023</SelectItem>
-              <SelectItem value="2022">2022</SelectItem>
-              <SelectItem value="2021">2021</SelectItem>
-            </SelectContent>
-          </Select>
-          <div>{navigation.state === "loading" && <Waver />}</div>
-        </div>
-        <div className="flex flex-wrap gap-4 whitespace-nowrap">
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-3xl">
-              <NumberAnimated value={played} key={year} />
-            </p>
-            <p className="text-muted-foreground text-sm">songs played</p>
-          </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 whitespace-nowrap">
             <div className="rounded-lg bg-card p-4">
               <p className="font-bold text-3xl">
-                <NumberAnimated value={liked} key={year} />
+                <NumberAnimated value={played} key={year} />
               </p>
-              <p className="text-muted-foreground text-sm">songs liked</p>
+              <p className="text-muted-foreground text-sm">songs played</p>
+            </div>
+            <div className="flex gap-4">
+              <div className="rounded-lg bg-card p-4">
+                <p className="font-bold text-3xl">
+                  <NumberAnimated value={liked} key={year} />
+                </p>
+                <p className="text-muted-foreground text-sm">songs liked</p>
+              </div>
+            </div>
+            <div className="rounded-lg bg-card p-4">
+              <p className="font-bold text-3xl">
+                <NumberAnimated value={minutes} key={year} />
+              </p>
+              <p className="text-muted-foreground text-sm">minutes listened</p>
             </div>
           </div>
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-3xl">
-              <NumberAnimated value={minutes} key={year} />
-            </p>
-            <p className="text-muted-foreground text-sm">minutes listened</p>
+
+          {song && (
+            <div className="rounded-lg bg-card p-4">
+              <p className="font-bold text-2xl">{song}</p>
+              <p className="text-muted-foreground text-sm">
+                most listened song
+              </p>
+            </div>
+          )}
+
+          {artist && (
+            <div className="rounded-lg bg-card p-4">
+              <p className="font-bold text-2xl">{artist}</p>
+              <p className="text-muted-foreground text-sm">
+                most listened artist
+              </p>
+            </div>
+          )}
+
+          {album && (
+            <div className="rounded-lg bg-card p-4">
+              <p className="font-bold text-2xl">{album}</p>
+              <p className="text-muted-foreground text-sm">
+                most listened album
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+      {top && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <p className="text-muted-foreground text-sm">Top</p>
+            <Select
+              defaultValue={range}
+              onValueChange={(data) => {
+                navigate({
+                  search: `?range=${data}`,
+                });
+              }}
+            >
+              <SelectTrigger className="min-w-[100px]">
+                <SelectValue placeholder="Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="long_term">Year</SelectItem>
+                <SelectItem value="medium_term">Half Year</SelectItem>
+                <SelectItem value="short_term">Month</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-2">
+            {top.map((track) => (
+              <Track track={track} key={track.id} />
+            ))}
           </div>
         </div>
-
-        {song && (
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-2xl">{song}</p>
-            <p className="text-muted-foreground text-sm">most listened song</p>
-          </div>
-        )}
-
-        {artist && (
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-2xl">{artist}</p>
-            <p className="text-muted-foreground text-sm">
-              most listened artist
-            </p>
-          </div>
-        )}
-
-        {album && (
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-2xl">{album}</p>
-            <p className="text-muted-foreground text-sm">most listened album</p>
-          </div>
-        )}
-      </div>
+      )}
     </article>
   );
 }
