@@ -1,3 +1,4 @@
+import { getProvider } from "@lib/services/db/users.server";
 import { prisma } from "@lib/services/db.server";
 import { getGoogleClientsFromUserId } from "@lib/services/sdk/google.server";
 import { youtube } from "@lib/services/sdk/helpers/youtube.server";
@@ -109,10 +110,25 @@ async function queue(args: { form: FormData; userId: string }) {
   if (typeof provider !== "string") return "no provider";
 
   if (provider === "spotify") {
-    const spotify = await getSpotifyClient({ userId });
-
     try {
-      spotify.player.addItemToPlaybackQueue(uri, {});
+      const provider = await getProvider({
+        userId,
+        type: "spotify",
+      });
+
+      if (!provider) return "no provider";
+
+      const url = new URL("https://api.spotify.com/v1/me/player/queue");
+      url.searchParams.set("uri", uri);
+      const result = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${provider.accessToken}`,
+        },
+      });
+
+      if (!result.ok) return "no player found";
+
       return null;
     } catch (error) {
       logError(error instanceof Error ? error.message : error);
