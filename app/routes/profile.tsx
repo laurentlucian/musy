@@ -1,6 +1,16 @@
 import { prisma } from "@lib/services/db.server";
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import { data, redirect, useNavigate, useNavigation } from "react-router";
+import {
+  data,
+  href,
+  Outlet,
+  redirect,
+  useMatches,
+  useNavigate,
+  useNavigation,
+  useParams,
+} from "react-router";
+import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
@@ -15,6 +25,7 @@ import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.userId;
+  console.log("userId", userId);
 
   if (!userId) throw redirect("/account");
 
@@ -160,6 +171,9 @@ export default function Profile({
 }: Route.ComponentProps) {
   const navigate = useNavigate();
   const navigation = useNavigation();
+  const { userId } = useParams();
+  const matches = useMatches();
+  const root = matches.length === 3;
 
   return (
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
@@ -176,11 +190,20 @@ export default function Profile({
             <h1 className="font-bold text-2xl">{profile.name}</h1>
           </div>
           <p className="text-muted-foreground text-sm">{profile.bio}</p>
+          <NavLinkSub
+            to={href("/profile/:userId?", {
+              userId,
+            })}
+          >
+            Top
+          </NavLinkSub>
+          <NavLinkSub to="liked">Liked</NavLinkSub>
+          <NavLinkSub to="recent">Listened</NavLinkSub>
         </div>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Select
-              defaultValue={year.toString()}
+              value={year.toString()}
               onValueChange={(data) => {
                 navigate({
                   search: `?year=${data}`,
@@ -251,9 +274,9 @@ export default function Profile({
           )}
         </div>
       </div>
-      {top && (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
+      {top && root && (
+        <div className="flex flex-col gap-2">
+          <div className="flex h-12 items-center gap-2">
             <p className="text-muted-foreground text-sm">Top</p>
             <Select
               defaultValue={range}
@@ -280,6 +303,7 @@ export default function Profile({
           </div>
         </div>
       )}
+      {!root && <Outlet />}
     </article>
   );
 }

@@ -27,7 +27,10 @@ export default [
         route("scripts", "routes/admin/scripts.tsx"),
       ]),
     ]),
-    route("profile/:userId?", "routes/profile.tsx"),
+    route("profile/:userId?", "routes/profile.tsx", [
+      route("liked", "routes/profile.liked.tsx"),
+      route("recent", "routes/profile.recent.tsx"),
+    ]),
   ]),
   route("track/:trackId", "routes/track.tsx"),
 

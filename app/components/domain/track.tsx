@@ -122,7 +122,7 @@ export function TrackMenu(
           Queue
         </ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => submit("thanks", "google")}>
+        <ContextMenuItem onClick={() => submit("thanks", "spotify")}>
           Thanks
         </ContextMenuItem>
       </ContextMenuContent>
