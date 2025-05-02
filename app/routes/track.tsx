@@ -54,8 +54,8 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
           </button>
           <TrackImage id={track.id} src={track.image} alt={track.name} />
           <div className="mt-2 flex flex-col gap-y-0.5">
-            <TrackName name={track.name} />
-            <TrackArtist artist={track.artist} />
+            <TrackName name={track.name} uri={track.uri} />
+            <TrackArtist artist={track.artist} uri={track.artistUri} />
           </div>
         </div>
       </main>

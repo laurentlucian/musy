@@ -44,34 +44,57 @@ export function Track(
           height={80}
         />
         <div>
-          <TrackName name={track.name} />
-          <TrackArtist artist={track.artist} />
+          <TrackName name={track.name} uri={track.uri} />
+          <TrackArtist artist={track.artist} uri={track.artistUri} />
         </div>
       </Link>
     </TrackMenu>
   );
 }
 
-export function TrackName(props: { name: string } & React.ComponentProps<"p">) {
-  const { name, className, ...rest } = props;
+export function TrackName(
+  props: { name: string; uri: string } & React.ComponentProps<"a">,
+) {
+  const { name, className, uri, ...rest } = props;
   return (
-    <p
-      className={cn("line-clamp-2 text-ellipsis font-medium", className)}
+    <a
+      className={cn(
+        "line-clamp-2 cursor-pointer text-ellipsis font-medium hover:underline",
+        className,
+      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      href={uri}
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
       {...rest}
     >
       {name}
-    </p>
+    </a>
   );
 }
 
 export function TrackArtist(
-  props: { artist: string } & React.ComponentProps<"p">,
+  props: { artist: string; uri: string } & React.ComponentProps<"a">,
 ) {
-  const { artist, className, ...rest } = props;
+  const { artist, className, uri, ...rest } = props;
   return (
-    <p className={cn("text-muted-foreground text-sm", className)} {...rest}>
+    <a
+      className={cn(
+        "cursor-pointer text-muted-foreground text-sm hover:underline",
+        className,
+      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      href={uri}
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
+      {...rest}
+    >
       {artist}
-    </p>
+    </a>
   );
 }
 
