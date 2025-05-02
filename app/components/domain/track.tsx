@@ -29,7 +29,7 @@ export function Track(
     >
       <Link
         className={cn(
-          "flex flex-1 gap-x-2 rounded-md bg-primary-foreground px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
+          "flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
           className,
         )}
         to={`/track/${track.id}`}

@@ -9,7 +9,7 @@ export function Nav() {
       <Logo />
       <NavLink to="/">create</NavLink>
       <NavLink to="/profile">profile</NavLink>
-      <NavLink to="/account">settings</NavLink>
+      <NavLink to="/settings">settings</NavLink>
     </nav>
   );
 }
@@ -32,7 +32,11 @@ export function NavLinkSub({
   to,
   children,
   icon,
-}: { to: To; children: React.ReactNode; icon?: React.ReactNode }) {
+}: {
+  to: To;
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
   return (
     <RouterNavLink to={to} end>
       {({ isActive }) => {

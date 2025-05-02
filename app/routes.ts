@@ -14,22 +14,17 @@ export default [
     route("listening", "routes/listening.tsx"),
     route("generated/:id", "routes/generated.tsx"),
 
-    route("account", "routes/account.tsx", [
-      route(":provider", "routes/account.provider.tsx", [
-        route("liked", "routes/account.provider.liked.tsx"),
-        route("recent", "routes/account.provider.recent.tsx"),
-        route("playlist", "routes/account.provider.playlist.tsx"),
-      ]),
+    route("profile/:userId?", "routes/profile.tsx", [
+      route("liked", "routes/profile.liked.tsx"),
+      route("recent", "routes/profile.recent.tsx"),
+    ]),
 
+    route("settings", "routes/settings.tsx", [
       ...prefix("admin", [
         route("transfers", "routes/admin/transfers.tsx"),
         route("syncs", "routes/admin/syncs.tsx"),
         route("scripts", "routes/admin/scripts.tsx"),
       ]),
-    ]),
-    route("profile/:userId?", "routes/profile.tsx", [
-      route("liked", "routes/profile.liked.tsx"),
-      route("recent", "routes/profile.recent.tsx"),
     ]),
   ]),
   route("track/:trackId", "routes/track.tsx"),

@@ -1,23 +1,13 @@
-import { ADMIN_USER_ID, PROVIDERS } from "@lib/services/auth/const";
+import { ADMIN_USER_ID } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
 import { authenticator } from "@lib/services/auth.server";
-import { getProviders, type Providers } from "@lib/services/db/users.server";
+import { getProviders } from "@lib/services/db/users.server";
 import { sessionStorage } from "@lib/services/session.server";
-import { ArrowLeft, ChevronLeft } from "lucide-react";
-import { use } from "react";
-import {
-  data,
-  Form,
-  Link,
-  Outlet,
-  redirect,
-  useLocation,
-  useParams,
-} from "react-router";
-import { NavLinkSub } from "~/components/domain/nav";
+import { ArrowLeft } from "lucide-react";
+import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { AdminNav } from "~/routes/admin/nav";
-import type { Route } from "./+types/account";
+import type { Route } from "./+types/settings";
 
 export async function loader({
   context: { userId, session },
@@ -39,8 +29,8 @@ export async function loader({
   );
 }
 
-export default function AccountPage({
-  loaderData: { userId, providers },
+export default function Settings({
+  loaderData: { userId },
 }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const root = pathname === "/account";
@@ -53,14 +43,12 @@ export default function AccountPage({
             <ArrowLeft />
           </Link>
         )}
-        <h1 className="text-center">settings</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4 sm:flex-row">
         <div
           className="hidden flex-col gap-3 data-root:flex md:flex"
           data-root={root ? 1 : undefined}
         >
-          <ProviderList providers={providers} />
           {userId === ADMIN_USER_ID && <AdminNav />}
           {userId && (
             <Form method="post">
@@ -75,41 +63,6 @@ export default function AccountPage({
       </div>
     </main>
   );
-}
-
-function ProviderList(props: { providers: Providers | null }) {
-  const { pathname } = useLocation();
-  const { provider } = useParams();
-  const rest = provider ? pathname.split(provider)[1] : "";
-
-  const providers = props.providers ? use(props.providers) : [];
-  return PROVIDERS.map((provider) => {
-    const isConnected = providers.some((p) => p.type === provider);
-
-    if (isConnected)
-      return (
-        <NavLinkSub
-          key={provider}
-          to={{
-            pathname: `/account/${provider + rest}`,
-          }}
-        >
-          {provider}
-        </NavLinkSub>
-      );
-
-    return (
-      <Form key={provider} method="post" className="w-full">
-        <input type="hidden" name="mode" value="authorize" />
-        <input type="hidden" name="provider" value={provider} />
-        <Button type="submit" variant="nav-sub" size="lg">
-          <p className="flex items-center gap-x-1 font-medium">
-            login with <span className="capitalize">{provider}</span>
-          </p>
-        </Button>
-      </Form>
-    );
-  });
 }
 
 export async function action({ request }: Route.ActionArgs) {

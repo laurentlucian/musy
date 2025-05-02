@@ -187,7 +187,10 @@ export default function Profile({
                 alt={profile.name ?? "pp"}
               />
             )}
-            <h1 className="font-bold text-2xl">{profile.name}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-bold text-2xl">{profile.name}</h1>
+              <div>{navigation.state === "loading" && <Waver />}</div>
+            </div>
           </div>
           <p className="text-muted-foreground text-sm">{profile.bio}</p>
           <NavLinkSub
@@ -221,7 +224,6 @@ export default function Profile({
                 <SelectItem value="2021">2021</SelectItem>
               </SelectContent>
             </Select>
-            <div>{navigation.state === "loading" && <Waver />}</div>
           </div>
           <div className="flex flex-wrap gap-4 whitespace-nowrap">
             <div className="rounded-lg bg-card p-4">

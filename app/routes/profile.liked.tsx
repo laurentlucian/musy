@@ -3,7 +3,6 @@ import { Suspense, use } from "react";
 import { redirect } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
-
 import type { Route } from "./+types/profile.liked";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
