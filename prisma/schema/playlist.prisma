@@ -13,13 +13,10 @@ model Playlist {
 
 model PlaylistTrack {
   addedAt    DateTime
-  //
   playlist   Playlist @relation(fields: [playlistId], references: [id])
   playlistId String
-  //
   track      Track    @relation(fields: [trackId], references: [id])
   trackId    String
-  //
   feed       Feed?    @relation(fields: [feedId], references: [id])
   feedId     Int?     @unique
 

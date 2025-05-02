@@ -1,5 +1,5 @@
 model Track {
-  id          String  @id @unique
+  id          String              @id @unique
   uri         String
   name        String
   image       String
@@ -11,17 +11,13 @@ model Track {
   preview_url String?
   link        String
   duration    Int
-
   provider    String              @default("spotify")
-  //
   liked       LikedSongs[]
   recent      RecentSongs[]
   playback    Playback[]
   recommended Recommended[]
   playlists   PlaylistTrack[]
-  //
   thanks      Thanks[]
-  //
   playlistAI  GeneratedPlaylist[]
   top         TopSongs[]
 }
@@ -29,10 +25,8 @@ model Track {
 model Thanks {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  //
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
-  //
   user      Profile? @relation(fields: [userId], references: [id])
   userId    String?
 }
@@ -41,13 +35,10 @@ model Playback {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  //
   user      Profile  @relation(fields: [userId], references: [id])
   userId    String   @unique
-  //
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
-  //
   timestamp BigInt   @default(0) // timestamp from spotify response
   progress  Int
 }
@@ -56,10 +47,8 @@ model PlaybackHistory {
   id        Int      @id @default(autoincrement())
   startedAt DateTime @default(now())
   endedAt   DateTime @default(now())
-  //
   user      Profile  @relation(fields: [userId], references: [id])
   userId    String
-  //
   feed      Feed?    @relation(fields: [feedId], references: [id])
   feedId    Int?     @unique
 }
@@ -67,10 +56,8 @@ model PlaybackHistory {
 model RecentSongs {
   id        Int      @id @default(autoincrement())
   playedAt  DateTime @default(now())
-  //
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
-  //
   user      Profile  @relation(fields: [userId], references: [id])
   userId    String
   action    String   @default("recent")
@@ -82,10 +69,8 @@ model RecentSongs {
 model LikedSongs {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  //
   track     Track    @relation(fields: [trackId], references: [id])
   trackId   String
-  //
   user      Profile  @relation(fields: [userId], references: [id])
   userId    String
   action    String   @default("liked")
@@ -99,10 +84,8 @@ model TopSongs {
   id        String   @id @unique
   createdAt DateTime @default(now())
   type      String
-
-  trackIds String // comma-separated track ids in order
-  tracks   Track[]
-
-  user   Profile @relation(fields: [userId], references: [id])
-  userId String
+  trackIds  String // comma-separated track ids in order
+  tracks    Track[]
+  user      Profile  @relation(fields: [userId], references: [id])
+  userId    String
 }
