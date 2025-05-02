@@ -59,7 +59,8 @@ export async function syncUserLiked({
         userId_type_state: { userId, type: "liked", state: "success" },
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
+    console.log("error", error);
     log("failure", "liked");
     await prisma.sync.upsert({
       create: {
@@ -74,7 +75,6 @@ export async function syncUserLiked({
         userId_type_state: { userId, type: "liked", state: "failure" },
       },
     });
-    throw error;
   }
 }
 

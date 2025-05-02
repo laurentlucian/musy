@@ -144,7 +144,15 @@ export async function getTracksFromMood(
       userId,
     );
 
-    return created;
+    if (!created) return null;
+
+    const result = await prisma.track.findFirst({
+      where: {
+        id: created,
+      },
+    });
+
+    return result;
   });
 
   const tracks = (await Promise.all(promises)).filter(

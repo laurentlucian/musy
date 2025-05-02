@@ -6,18 +6,23 @@ import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log, logError } from "@lib/utils";
-import { addMilliseconds, isAfter } from "date-fns";
+import {
+  addMilliseconds,
+  hoursToMilliseconds,
+  isAfter,
+  minutesToMilliseconds,
+} from "date-fns";
 import { assign, createActor, setup } from "xstate";
 import { fromPromise } from "xstate/actors";
 
-const SYNC_TYPES = ["profile", "recent", "liked", "top"] as const;
+const SYNC_TYPES = ["top", "recent", "liked", "profile"] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
 const SYNC_INTERVALS = {
-  recent: 60 * 5000, // 5 minute
-  liked: 10 * 60 * 1000, // 10 minutes
-  top: 24 * 60 * 60 * 1000, // 1 day
-  profile: 24 * 60 * 60 * 1000, // 1 day
+  recent: minutesToMilliseconds(10),
+  liked: minutesToMilliseconds(30),
+  top: hoursToMilliseconds(1),
+  profile: hoursToMilliseconds(6),
 } as const;
 
 type SyncerContext = {

@@ -1,5 +1,5 @@
 model Artist {
-  id         String  @id
+  id         String       @id
   uri        String
   name       String
   image      String
@@ -7,18 +7,19 @@ model Artist {
   followers  Int
   genres     String
   albums     Album[]
+  top        TopArtists[]
   // tracks     Track[]
 }
 
 model Album {
-  id       String  @id
+  id       String @id
   uri      String
   type     String
   total    String
   image    String
   name     String
   date     String
-  artist   Artist  @relation(fields: [artistId], references: [id])
+  artist   Artist @relation(fields: [artistId], references: [id])
   artistId String
   // tracks   Track[]
 }

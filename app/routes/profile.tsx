@@ -10,6 +10,7 @@ import {
   useNavigation,
   useParams,
 } from "react-router";
+import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
@@ -25,7 +26,6 @@ import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.userId;
-  console.log("userId", userId);
 
   if (!userId) throw redirect("/account");
 
@@ -115,30 +115,39 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
   });
 
   const range = url.searchParams.get("range") ?? "long_term";
-  const topUnsorted = await prisma.topSongs.findFirst({
+  const type = url.searchParams.get("type") ?? "songs";
+
+  const top = await prisma.top.findUnique({
     include: {
-      tracks: true,
+      songs: {
+        include: {
+          tracks: true,
+        },
+        take: 1,
+        where: {
+          type: range,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
+      artists: {
+        include: {
+          artists: true,
+        },
+        take: 1,
+        where: {
+          type: range,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     },
     where: {
       userId,
-      type: range,
-    },
-    orderBy: {
-      createdAt: "desc",
     },
   });
-
-  const positions = topUnsorted?.trackIds.split(",").reduce(
-    (acc, id, i) => {
-      acc[id] = i;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const top = topUnsorted?.tracks.sort(
-    (a, b) => (positions?.[a.id] ?? 0) - (positions?.[b.id] ?? 0),
-  );
 
   return {
     userId,
@@ -151,6 +160,7 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     album,
     song,
     top,
+    type,
     range,
   };
 }
@@ -166,6 +176,7 @@ export default function Profile({
     album,
     song,
     top,
+    type,
     range,
   },
 }: Route.ComponentProps) {
@@ -281,7 +292,23 @@ export default function Profile({
           <div className="flex h-12 items-center gap-2">
             <p className="text-muted-foreground text-sm">Top</p>
             <Select
-              defaultValue={range}
+              defaultValue={type}
+              onValueChange={(data) => {
+                navigate({
+                  search: `?type=${data}`,
+                });
+              }}
+            >
+              <SelectTrigger className="min-w-[100px]">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="songs">Songs</SelectItem>
+                <SelectItem value="artists">Artists</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={range}
               onValueChange={(data) => {
                 navigate({
                   search: `?range=${data}`,
@@ -299,14 +326,54 @@ export default function Profile({
             </Select>
           </div>
           <div className="flex flex-col gap-2">
-            {top.map((track) => (
-              <Track track={track} key={track.id} />
-            ))}
+            <Top top={top} type={type} />
           </div>
         </div>
       )}
       {!root && <Outlet />}
     </article>
+  );
+}
+
+function Top(props: {
+  top: NonNullable<Awaited<ReturnType<typeof loader>>["top"]>;
+  type: string;
+}) {
+  const sPos = props.top?.songs[0].trackIds.split(",").reduce(
+    (acc, id, i) => {
+      acc[id] = i;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const songs = props.top?.songs[0]?.tracks.sort(
+    (a, b) => (sPos?.[a.id] ?? 0) - (sPos?.[b.id] ?? 0),
+  );
+
+  const SONGS = songs.map((track) => <Track track={track} key={track.id} />);
+
+  const aPos = props.top?.artists[0]?.artistIds.split(",").reduce(
+    (acc, id, i) => {
+      acc[id] = i;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const artists =
+    props.top?.artists[0]?.artists.sort(
+      (a, b) => (aPos?.[a.id] ?? 0) - (aPos?.[b.id] ?? 0),
+    ) || [];
+
+  const ARTISTS = artists.map((artist) => (
+    <Artist artist={artist} key={artist.id} />
+  ));
+
+  return (
+    <div className="flex flex-col gap-2">
+      {props.type === "songs" ? SONGS : ARTISTS}
+    </div>
   );
 }
 

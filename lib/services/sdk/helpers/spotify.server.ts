@@ -1,7 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
-import type { Track } from "spotified";
-import { boolean, number, object, optional, safeParse, string } from "valibot";
+import type { Artist, Track } from "spotified";
+import { boolean, nullable, number, object, parse, string } from "valibot";
 
 const trackSchema = object({
   id: string(),
@@ -15,59 +15,41 @@ const trackSchema = object({
   explicit: boolean(),
   image: string(),
   link: string(),
-  preview_url: string(),
+  preview_url: nullable(string()),
 });
 
 export function createTrackModel(track: Track) {
   const trackData = {
-    albumName: track.album?.name ?? "",
-    albumUri: track.album?.uri ?? "",
-    artist: track.artists?.[0]?.name ?? "",
-    artistUri: track.artists?.[0]?.uri ?? "",
+    albumName: track.album?.name,
+    albumUri: track.album?.uri,
+    artist: track.artists?.[0]?.name,
+    artistUri: track.artists?.[0]?.uri,
     duration: track.duration_ms ?? 0,
     explicit: track.explicit ?? false,
-    id: track.id ?? "",
-    image: track.album?.images?.[0]?.url ?? "",
-    link: track.external_urls?.spotify ?? "",
-    name: track.name ?? "",
-    preview_url: track.preview_url ?? "",
-    uri: track.uri ?? "",
+    id: track.id,
+    image: track.album?.images?.[0]?.url,
+    link: track.external_urls?.spotify,
+    name: track.name,
+    preview_url: track.preview_url,
+    uri: track.uri,
   };
 
-  const result = safeParse(trackSchema, trackData);
-
-  if (!result.success) {
-    throw new Error(`invalid track data: ${result.issues[0].message}`);
-  }
-
-  return result.output;
+  return parse(trackSchema, trackData);
 }
 
 export async function transformTracks(tracks: Track[]) {
-  const trackIds = tracks
-    .map((track) => track.id)
-    .filter((id) => id !== undefined);
-  const existingTracks = await prisma.track.findMany({
-    select: { id: true },
+  const trackIds = tracks.map((t) => t.id).filter((id) => id !== undefined);
+  const existing = await prisma.track.findMany({
     where: { id: { in: trackIds } },
   });
 
-  const newTracks = tracks.filter(
-    (track) => !existingTracks.find((t) => t.id === track.id),
-  );
-  const prismaTracks = await Promise.all(
-    newTracks
-      .filter((t) => t.name !== "") // tracks removed by spotify have empty names
-      .map((track) => prisma.track.create({ data: createTrackModel(track) })),
-  ).catch(() => []);
+  const newTracks = tracks.filter((t) => !existing.find((e) => e.id === t.id));
 
-  return (
-    await prisma.track.findMany({
-      where: {
-        id: { in: [...existingTracks, ...prismaTracks].map((t) => t.id) },
-      },
-    })
-  ).sort((a, b) => trackIds.indexOf(a.id) - trackIds.indexOf(b.id));
+  await prisma.track.createMany({
+    data: newTracks.map(createTrackModel),
+  });
+
+  return trackIds;
 }
 
 export async function getTrackFromSpotify(keyword: string, userId: string) {
@@ -83,21 +65,43 @@ export async function getTrackFromSpotify(keyword: string, userId: string) {
   return tracks[0];
 }
 
-export async function getUserPlaylists({
-  userId,
-  provider,
-}: {
-  userId: string;
-  provider: string;
-}) {
-  const response = await prisma.playlist.findMany({
-    orderBy: {
-      tracks: {
-        _count: "desc",
-      },
-    },
-    where: { userId, provider },
+const artistSchema = object({
+  id: string(),
+  followers: number(),
+  uri: string(),
+  popularity: number(),
+  genres: string(),
+  name: string(),
+  image: string(),
+});
+
+export function createArtistModel(artist: Artist) {
+  const data = {
+    id: artist.id,
+    followers: artist.followers?.total,
+    uri: artist.uri,
+    popularity: artist.popularity,
+    genres: JSON.stringify(artist.genres ?? []),
+    name: artist.name,
+    image: artist.images?.[0]?.url,
+  };
+
+  return parse(artistSchema, data);
+}
+
+export async function transformArtists(artists: Artist[]) {
+  const artistIds = artists.map((a) => a.id).filter((id) => id !== undefined);
+  const existing = await prisma.artist.findMany({
+    where: { id: { in: artistIds } },
   });
 
-  return response;
+  const newArtists = artists.filter(
+    (a) => !existing.find((e) => e.id === a.id),
+  );
+
+  await prisma.artist.createMany({
+    data: newArtists.map(createArtistModel),
+  });
+
+  return artistIds;
 }

@@ -1,0 +1,26 @@
+model Top {
+  userId  String       @id @unique
+  user    Profile      @relation(fields: [userId], references: [id])
+  songs   TopSongs[]
+  artists TopArtists[]
+}
+
+model TopSongs {
+  id        String   @id @unique
+  createdAt DateTime @default(now())
+  type      String
+  trackIds  String // comma-separated track ids in order
+  tracks    Track[]
+  top       Top      @relation(fields: [userId], references: [userId])
+  userId    String
+}
+
+model TopArtists {
+  id        String   @id @unique
+  createdAt DateTime @default(now())
+  type      String
+  artistIds String // comma-separated artist ids in order
+  artists   Artist[]
+  top       Top      @relation(fields: [userId], references: [userId])
+  userId    String
+}

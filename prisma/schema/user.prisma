@@ -45,7 +45,7 @@ model Profile {
   playlists   Playlist[]
   feed        Feed[]
   thanks      Thanks[]
-  top         TopSongs[]
+  top         Top[]
 }
 
 model Follow {

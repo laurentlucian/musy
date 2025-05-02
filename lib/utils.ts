@@ -19,9 +19,7 @@ export const msToString = (ms: number) => {
   return `${Math.floor(ms / 3600000)}h`;
 };
 
-export const minutesToMs = (minutes: number) => minutes * 60 * 1000;
 export const secondsToMinutes = (seconds: number) => seconds / 60 / 60;
-export const msToHours = (ms: number) => ms / 1000 / 60 / 60;
 
 export const lessThanAWeek = (date: Date) => {
   const aWeekAgo = new Date();
@@ -71,7 +69,10 @@ export const timeSince = (date: Date | null, type?: string) => {
 export const timeBetween = ({
   endDate,
   startDate,
-}: { endDate?: Date; startDate?: Date }) => {
+}: {
+  endDate?: Date;
+  startDate?: Date;
+}) => {
   if (!endDate || !startDate) return "";
   const diffInMilliseconds = Math.abs(endDate.getTime() - startDate.getTime());
 
