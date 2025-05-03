@@ -45,41 +45,45 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
           </tr>
         </thead>
         <tbody>
-          {users.map((profile) => (
-            <tr
-              key={profile.id}
-              className="bg-card transition-colors duration-150 *:p-3"
-            >
-              <td className="capitalize">{profile.name}</td>
-              <td>{profile.email}</td>
-              <td>{format(profile.createdAt, "MMM d y")}</td>
-              <td>{format(profile.updatedAt, "MMM d h:m a")}</td>
-              <td>{profile.user.providers[0]?.revoked ? "Yes" : "No"}</td>
-              <td className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  onClick={() => {
-                    navigator.clipboard.writeText(profile.id);
-                    toast.success("Copied");
-                  }}
-                >
-                  <ClipboardCopy />
-                </Button>
-                {profile.user.providers[0]?.revoked && (
+          {users.map((profile) => {
+            const provider = profile.user.providers[0];
+            const revoked = !provider || provider?.revoked;
+            return (
+              <tr
+                key={profile.id}
+                className="bg-card transition-colors duration-150 *:p-3"
+              >
+                <td className="capitalize">{profile.name}</td>
+                <td>{profile.email}</td>
+                <td>{format(profile.createdAt, "MMM d y")}</td>
+                <td>{format(profile.updatedAt, "MMM d h:m a")}</td>
+                <td>{revoked ? "Yes" : "No"}</td>
+                <td className="flex items-center gap-2">
                   <Button
-                    variant="destructive"
                     size="icon"
-                    disabled={userId === profile.id}
                     onClick={() => {
-                      submit({ userId: profile.id }, { method: "post" });
+                      navigator.clipboard.writeText(profile.id);
+                      toast.success("Copied");
                     }}
                   >
-                    {userId === profile.id ? <Waver /> : <TrashIcon />}
+                    <ClipboardCopy />
                   </Button>
-                )}
-              </td>
-            </tr>
-          ))}
+                  {revoked && (
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      disabled={userId === profile.id}
+                      onClick={() => {
+                        submit({ userId: profile.id }, { method: "post" });
+                      }}
+                    >
+                      {userId === profile.id ? <Waver /> : <TrashIcon />}
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
       {users.length === 0 && (
@@ -104,7 +108,7 @@ export async function action({ request }: Route.ActionArgs) {
     prisma.recommended.deleteMany({ where: { userId } }),
     prisma.playback.deleteMany({ where: { userId } }),
     prisma.playbackHistory.deleteMany({ where: { userId } }),
-    prisma.playlist.deleteMany({ where: { userId } }),
+    prisma.playlistTrack.deleteMany({ where: { playlist: { userId } } }),
     prisma.feed.deleteMany({ where: { userId } }),
     prisma.thanks.deleteMany({ where: { userId } }),
     prisma.topSongs.deleteMany({ where: { userId } }),
@@ -112,19 +116,19 @@ export async function action({ request }: Route.ActionArgs) {
     prisma.follow.deleteMany({
       where: { OR: [{ followerId: userId }, { followingId: userId }] },
     }),
+    prisma.generatedPlaylist.deleteMany({
+      where: {
+        owner: {
+          userId,
+        },
+      },
+    }),
   ]);
 
-  const generated = await prisma.generated.findUnique({
-    where: { userId },
-    include: { playlist: true },
-  });
-  await prisma.generatedPlaylist.deleteMany({
-    where: { id: { in: generated?.playlist.map((p) => p.id) } },
-  });
-
   await Promise.all([
-    await prisma.generated.deleteMany({ where: { userId } }),
-    await prisma.top.deleteMany({ where: { userId } }),
+    prisma.generated.deleteMany({ where: { userId } }),
+    prisma.top.deleteMany({ where: { userId } }),
+    prisma.playlist.deleteMany({ where: { userId } }),
   ]);
 
   await prisma.profile.delete({ where: { id: userId } });
