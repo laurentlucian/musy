@@ -24,9 +24,11 @@ export function links() {
       href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
     },
     { rel: "stylesheet", href: stylesheet },
-    { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+    { rel: "icon", type: "image/x-icon", href: "/logo/musy.png" },
     { rel: "icon", type: "image/png", href: "/logo/musy.png" },
     { rel: "manifest", href: "/manifest.json" },
+    { rel: "apple-mobile-web-app-capable", content: "yes" },
+    { name: "apple-mobile-web-app-status-bar-style", content: "transparent" },
   ] as Route.LinkDescriptors;
 }
 
