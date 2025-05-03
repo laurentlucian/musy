@@ -219,7 +219,12 @@ export default function Profile({
             <Select
               value={year.toString()}
               onValueChange={(data) => {
-                setParams({ ...Object.fromEntries(params), year: data });
+                setParams(
+                  { ...Object.fromEntries(params), year: data },
+                  {
+                    preventScrollReset: true,
+                  },
+                );
               }}
             >
               <SelectTrigger className="min-w-[100px]">
@@ -292,7 +297,12 @@ export default function Profile({
             <Select
               defaultValue={type}
               onValueChange={(data) => {
-                setParams({ ...Object.fromEntries(params), type: data });
+                setParams(
+                  { ...Object.fromEntries(params), type: data },
+                  {
+                    preventScrollReset: true,
+                  },
+                );
               }}
             >
               <SelectTrigger className="min-w-[100px]">
@@ -306,7 +316,12 @@ export default function Profile({
             <Select
               value={range}
               onValueChange={(data) => {
-                setParams({ ...Object.fromEntries(params), range: data });
+                setParams(
+                  { ...Object.fromEntries(params), range: data },
+                  {
+                    preventScrollReset: true,
+                  },
+                );
               }}
             >
               <SelectTrigger className="min-w-[100px]">
