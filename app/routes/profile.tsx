@@ -6,9 +6,9 @@ import {
   Outlet,
   redirect,
   useMatches,
-  useNavigate,
   useNavigation,
   useParams,
+  useSearchParams,
 } from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
@@ -180,7 +180,7 @@ export default function Profile({
     range,
   },
 }: Route.ComponentProps) {
-  const navigate = useNavigate();
+  const [params, setParams] = useSearchParams();
   const navigation = useNavigation();
   const { userId } = useParams();
   const matches = useMatches();
@@ -219,9 +219,7 @@ export default function Profile({
             <Select
               value={year.toString()}
               onValueChange={(data) => {
-                navigate({
-                  search: `?year=${data}`,
-                });
+                setParams({ ...Object.fromEntries(params), year: data });
               }}
             >
               <SelectTrigger className="min-w-[100px]">
@@ -294,9 +292,7 @@ export default function Profile({
             <Select
               defaultValue={type}
               onValueChange={(data) => {
-                navigate({
-                  search: `?type=${data}`,
-                });
+                setParams({ ...Object.fromEntries(params), type: data });
               }}
             >
               <SelectTrigger className="min-w-[100px]">
@@ -310,9 +306,7 @@ export default function Profile({
             <Select
               value={range}
               onValueChange={(data) => {
-                navigate({
-                  search: `?range=${data}`,
-                });
+                setParams({ ...Object.fromEntries(params), range: data });
               }}
             >
               <SelectTrigger className="min-w-[100px]">
