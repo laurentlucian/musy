@@ -13,6 +13,7 @@
     "lint:fix": "biome lint --write --unsafe",
     "typecheck": "react-router typegen && tsc --build --noEmit",
     "prod:db": "fly ssh console -C database-cli",
+    "prod:backup": "fly sftp get /data/sqlite.db ./prisma/backup.db",
     "docker:build": "docker build -t musy .",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:create": "prisma migrate dev --create-only"
