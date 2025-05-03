@@ -4,9 +4,11 @@ import { NavLinkSub } from "~/components/domain/nav";
 export function AdminNav() {
   return (
     <Fragment>
-      <NavLinkSub to="/account/admin/syncs">syncs</NavLinkSub>
-      <NavLinkSub to="/account/admin/scripts">scripts</NavLinkSub>
-      {/* <NavLinkSub to="/account/admin/transfers">transfers</NavLinkSub> */}
+      <NavLinkSub to="/settings/admin/users">users</NavLinkSub>
+      <NavLinkSub to="/settings/admin/tracks">tracks</NavLinkSub>
+      <NavLinkSub to="/settings/admin/syncs">syncs</NavLinkSub>
+      <NavLinkSub to="/settings/admin/scripts">scripts</NavLinkSub>
+      {/* <NavLinkSub to="/settings/admin/transfers">transfers</NavLinkSub> */}
     </Fragment>
   );
 }

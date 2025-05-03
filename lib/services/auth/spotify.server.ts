@@ -44,6 +44,7 @@ export function getSpotifyStrategy() {
           Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
         ),
         tokenType: tokens.tokenType(),
+        revoked: false,
       };
 
       if (provider) {
