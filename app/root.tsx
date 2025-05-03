@@ -27,8 +27,18 @@ export function links() {
     { rel: "icon", type: "image/x-icon", href: "/logo/musy.png" },
     { rel: "icon", type: "image/png", href: "/logo/musy.png" },
     { rel: "manifest", href: "/manifest.json" },
-    { rel: "apple-mobile-web-app-capable", content: "yes" },
-    { name: "apple-mobile-web-app-status-bar-style", content: "transparent" },
+    {
+      name: "viewport",
+      content: "width=device-width, initial-scale=1, viewport-fit=cover",
+    },
+    { name: "mobile-web-app-capable", content: "yes" },
+    { name: "apple-mobile-web-app-capable", content: "yes" },
+    { name: "apple-touch-fullscreen", content: "yes" },
+    {
+      name: "apple-mobile-web-app-status-bar-style",
+      content: "black-translucent",
+    },
+    { rel: "apple-touch-icon", href: "/logo/musy.png" },
   ] as Route.LinkDescriptors;
 }
 
@@ -41,7 +51,7 @@ export function meta() {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="flex">
+    <html lang="en" className="flex bg-background">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

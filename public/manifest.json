@@ -5,7 +5,8 @@
   "id": "/",
   "start_url": "/",
   "background_color": "#050404",
-  "display": "standalone",
+  "display": "fullscreen",
   "categories": ["music"],
-  "scope": "/"
+  "scope": "/",
+  "theme_color": "transparent"
 }

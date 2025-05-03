@@ -1,3 +1,4 @@
+import { pwa } from "@lib/utils";
 import { ChevronRight } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
@@ -5,7 +6,10 @@ import { Button } from "~/components/ui/button";
 
 export function Nav() {
   return (
-    <nav className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-y-3 bg-[#101010] p-2 sm:top-0 sm:left-0 sm:w-fit! sm:flex-col sm:py-4!">
+    <nav
+      className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-y-3 bg-[#101010] p-2 py-4 data-[pwa=true]:pb-8! sm:top-0 sm:left-0 sm:w-fit! sm:flex-col"
+      data-pwa={pwa}
+    >
       <Logo />
       <NavLink to="/">create</NavLink>
       <NavLink to="/profile">profile</NavLink>
