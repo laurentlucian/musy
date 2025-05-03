@@ -1,6 +1,10 @@
 import { prisma } from "@lib/services/db.server";
-import { data, redirect } from "react-router";
+import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
+import { RefreshCwIcon } from "lucide-react";
+import { data, Form, href, Link, redirect, useNavigation } from "react-router";
 import { Track } from "~/components/domain/track";
+import { Waver } from "~/components/icons/waver";
+import { Button } from "~/components/ui/button";
 import type { Route } from "./+types/generated";
 
 export async function loader({
@@ -16,6 +20,7 @@ export async function loader({
         select: {
           user: {
             select: {
+              id: true,
               name: true,
             },
           },
@@ -29,12 +34,16 @@ export async function loader({
 
   if (!playlist) throw data("not found", { status: 404 });
 
-  return { playlist };
+  return { playlist, userId };
 }
 
 export default function Mood({
-  loaderData: { playlist },
+  loaderData: { playlist, userId },
 }: Route.ComponentProps) {
+  const navigation = useNavigation();
+  const isOwner = userId === playlist.owner.user.id;
+  const loading = navigation.state === "submitting";
+
   return (
     <div className="flex flex-col items-center gap-6 py-6">
       <div className="flex w-full max-w-md flex-col gap-2">
@@ -43,8 +52,23 @@ export default function Mood({
             {playlist.mood} {playlist.year}
           </p>
           <p className="text-muted-foreground text-sm">
-            by {playlist.owner.user.name}
+            by{" "}
+            <Link
+              to={href("/profile/:userId?", { userId: playlist.owner.user.id })}
+              className="hover:underline"
+            >
+              {playlist.owner.user.name}
+            </Link>
           </p>
+          {isOwner && (
+            <Form method="post" className="ml-auto">
+              <input type="hidden" value={playlist.mood} name="mood" />
+              <input type="hidden" value={playlist.year} name="year" />
+              <Button size="icon" className="ml-auto" disabled={loading}>
+                {loading ? <Waver /> : <RefreshCwIcon />}
+              </Button>
+            </Form>
+          )}
         </div>
 
         {playlist.tracks.map((track) => (
@@ -53,4 +77,19 @@ export default function Mood({
       </div>
     </div>
   );
+}
+
+export async function action({
+  params,
+  request,
+  context: { userId },
+}: Route.ActionArgs) {
+  if (!userId) return redirect("/settings");
+  const form = await request.formData();
+  const mood = form.get("mood");
+  const year = form.get("year");
+
+  if (typeof mood !== "string" || typeof year !== "string") return null;
+
+  await getTracksFromMood(mood, year, userId);
 }

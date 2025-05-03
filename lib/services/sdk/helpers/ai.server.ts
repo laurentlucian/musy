@@ -1,4 +1,4 @@
-import { prisma, type RecentSongs } from "@lib/services/db.server";
+import { prisma } from "@lib/services/db.server";
 import { askAI } from "@lib/services/sdk/ai.server";
 import { askAITaste } from "@lib/services/sdk/helpers/ai/taste.server";
 import { askAITracks } from "@lib/services/sdk/helpers/ai/track.server";
@@ -15,57 +15,7 @@ export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
   return askAI(prompt);
 }
 
-export async function getMoodFromSpotify(
-  recent: SpotifyApi.UsersRecentlyPlayedTracksResponse,
-) {
-  const tracks = recent.items.map((item) => ({
-    album_name: item.track.album.name,
-    artist_name: item.track.artists[0].name,
-    song_name: item.track.name,
-  }));
-
-  const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
-    ${JSON.stringify(tracks)}`;
-
-  const response = (await askAI(prompt)).split(".")[0];
-  return response;
-}
-export async function getMoodFromPrisma(
-  recent: (RecentSongs & {
-    track: {
-      albumName: string;
-      artist: string;
-      name: string;
-    };
-  })[],
-) {
-  const tracks = recent.map((item) => ({
-    album_name: item.track.albumName,
-    artist_name: item.track.artist,
-    song_name: item.track.name,
-  }));
-
-  const prompt = `Based on the songs given below, describe my current mood in one word. Choose fun and uncommon words. 
-    ${JSON.stringify(tracks)}`;
-
-  const response = (await askAI(prompt)).split(".")[0];
-  return response;
-}
-
-export async function getStory(track: SpotifyApi.SingleTrackResponse) {
-  const {
-    artists: [{ name: artist }],
-    name,
-  } = track;
-
-  const prompt = `Based on the song ${name} by ${artist}, craft me a scenario. The scenario should be atmospheric, vivid, and transport the reader to a specific place and vibe. 
-    Encourage ChatGPT to use descriptive language to help the reader imagine the setting, and to touch on the song's songwriting, vocal, instrumental, bpm, and genre in a way that enhances the environment.
-    `;
-
-  return askAI(prompt);
-}
-
-async function getTasteFromUser(userId: string) {
+async function _getTasteFromUser(userId: string) {
   const existing = await prisma.generated.findUnique({
     where: { userId },
   });
@@ -121,17 +71,57 @@ export async function getTracksFromMood(
   year: string,
   userId: string,
 ) {
-  const taste = await getTasteFromUser(userId);
+  const songs = await prisma.topSongs.findFirst({
+    include: {
+      tracks: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId,
+      type: "long_term",
+    },
+  });
 
-  const prompt = `Based on your taste profile ('${taste}') and your current mood ${mood} (EMPHASIS ON THE MOOD), here are 10 track recommendations from the year ${year}:`;
-  const result = await askAITracks(prompt);
-  console.info("result", result);
+  const artists = await prisma.topArtists.findFirst({
+    include: {
+      artists: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId,
+      type: "long_term",
+    },
+  });
+
+  const result = await askAITracks({
+    mood,
+    year,
+    top: {
+      songs:
+        songs?.tracks.map((track) => ({
+          name: track.name,
+          artist: track.artist,
+        })) ?? [],
+      artists:
+        artists?.artists.map((artist) => ({
+          name: artist.name,
+        })) ?? [],
+    },
+  });
 
   const promises = result.map(async (track) => {
     const exists = await prisma.track.findFirst({
       where: {
-        name: track.name,
-        artist: track.artist,
+        name: {
+          contains: track.name,
+        },
+        artist: {
+          contains: track.artist,
+        },
       },
     });
 
@@ -174,15 +164,27 @@ export async function getTracksFromMood(
       where: { id: existing.id },
       data: {
         tracks: {
-          connect: tracks.map((track) => ({ id: track.id })),
+          set: tracks.map((track) => ({ id: track.id })),
         },
       },
     });
 
-    return existing;
+    return existing.id;
   }
 
-  await prisma.generatedPlaylist.create({
+  let ai = await prisma.generated.findUnique({
+    where: { userId },
+  });
+
+  if (!ai) {
+    ai = await prisma.generated.create({
+      data: {
+        userId,
+      },
+    });
+  }
+
+  const { id } = await prisma.generatedPlaylist.create({
     data: {
       id: generateId(),
       mood,
@@ -192,9 +194,11 @@ export async function getTracksFromMood(
       },
       owner: {
         connect: {
-          userId,
+          id: ai.id,
         },
       },
     },
   });
+
+  return id;
 }

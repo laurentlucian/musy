@@ -26,9 +26,15 @@ export async function loader({ context: { userId } }: Route.LoaderArgs) {
   if (!userId) return redirect("/settings");
 
   const playlists = await prisma.generatedPlaylist.findMany({
-    where: {
+    include: {
       owner: {
-        userId,
+        select: {
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
       },
     },
     orderBy: {
@@ -87,17 +93,21 @@ export default function Mood({
         </div>
       </fetcher.Form>
 
-      <div className="flex w-full flex-col items-stretch gap-2">
+      <div className="flex w-full flex-col items-center gap-2">
         {playlists.map((playlist) => (
           <Link
             key={playlist.id}
             to={href("/generated/:id", {
               id: playlist.id,
             })}
-            className="flex flex-col rounded-lg bg-card p-4 hover:bg-card/80"
+            className="flex w-full max-w-sm flex-col rounded-lg bg-card p-4 hover:bg-card/80"
           >
-            <p>{playlist.mood}</p>
-            <p className="text-muted-foreground text-sm">{playlist.year}</p>
+            <p>
+              {playlist.mood} {playlist.year}
+            </p>
+            <p className="text-muted-foreground text-sm">
+              by {playlist.owner.user.name}
+            </p>
           </Link>
         ))}
       </div>
@@ -119,5 +129,6 @@ export async function action({
 
   if (typeof year !== "string") return null;
 
-  await getTracksFromMood(mood, year, userId);
+  const id = await getTracksFromMood(mood, year, userId);
+  return redirect(href("/generated/:id", { id }));
 }
