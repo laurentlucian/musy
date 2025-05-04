@@ -23,6 +23,7 @@ FROM dependencies-env AS build-env
 COPY ./package.json bun.lock /app/
 COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
+RUN bun prisma generate
 RUN bun run build
 
 FROM oven/bun AS runtime-env
@@ -37,8 +38,7 @@ COPY --from=dependencies-env /app /app
 COPY ./package.json bun.lock server/index.ts /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
-COPY --from=dependencies-env /app/lib/services/db/generated.server/query-engine-debian-openssl-3.0.x /app/build/server/assets/
-
+COPY --from=build-env /app/lib/services/db/generated.server /app/lib/services/db/generated.server
 
 WORKDIR /app
 
