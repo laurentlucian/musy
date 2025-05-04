@@ -1,9 +1,10 @@
-prisma/*.db
+**/*.db
 .react-router
 build
-node_modules
+node_modules/
+prisma/sqlite/
 README.md
 .vscode
-.cache
 wireguard.config
 .env
+Dockerfile

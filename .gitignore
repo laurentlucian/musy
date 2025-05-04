@@ -3,12 +3,12 @@
 .DS_Store
 .react-router
 build
-node_modules
+node_modules/
 *.tsbuildinfo
-
 .cache
 *.db
 *.db-journal
 wireguard.conf
 .DS_Store
 generated.server/
+prisma/sqlite/

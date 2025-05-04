@@ -46,5 +46,4 @@ EXPOSE 3000
 
 ENV DATABASE_URL=file:/data/sqlite.db
 
-RUN chmod +x /app/start.sh
-ENTRYPOINT [ "/app/start.sh" ]
+CMD ["bun", "start"]

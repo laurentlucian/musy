@@ -1,9 +1,9 @@
+import { $ } from "bun";
 import type { Express } from "./index.ts";
 
 export async function development(app: Express) {
   console.log("\x1b[36m%s\x1b[0m", "initializing development");
-  const { generatePrisma } = await import("./cwd.js");
-  await generatePrisma();
+  await $`bun prisma migrate dev`;
 
   const viteDevServer = await import("vite").then((vite) =>
     vite.createServer({
