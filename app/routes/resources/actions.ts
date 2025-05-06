@@ -111,23 +111,8 @@ async function queue(args: { form: FormData; userId: string }) {
 
   if (provider === "spotify") {
     try {
-      const provider = await getProvider({
-        userId,
-        type: "spotify",
-      });
-
-      if (!provider) return "no provider";
-
-      const url = new URL("https://api.spotify.com/v1/me/player/queue");
-      url.searchParams.set("uri", uri);
-      const result = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${provider.accessToken}`,
-        },
-      });
-
-      if (!result.ok) return "no player found";
+      const spotify = await getSpotifyClient({ userId });
+      await spotify.player.addItemToPlaybackQueue(uri);
 
       return null;
     } catch (error) {
