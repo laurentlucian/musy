@@ -19,10 +19,10 @@ const SYNC_TYPES = ["top", "recent", "liked", "profile"] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
 const SYNC_INTERVALS = {
-  recent: minutesToMilliseconds(10),
-  liked: minutesToMilliseconds(30),
-  top: hoursToMilliseconds(1),
-  profile: hoursToMilliseconds(6),
+  recent: minutesToMilliseconds(30),
+  liked: hoursToMilliseconds(12),
+  top: hoursToMilliseconds(24),
+  profile: hoursToMilliseconds(24),
 } as const;
 
 type SyncerContext = {
@@ -130,7 +130,7 @@ export const SYNC_MACHINE = setup({
         },
         waiting: {
           after: {
-            "60000": "syncing", // check every minute
+            [minutesToMilliseconds(5)]: "syncing",
           },
         },
       },

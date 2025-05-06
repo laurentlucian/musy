@@ -1,6 +1,6 @@
 import { prisma } from "@lib/services/db.server";
+import type Spotified from "@lib/services/sdk/spotified";
 import { log } from "@lib/utils";
-import type Spotified from "spotified";
 
 export async function syncUserProfile({
   userId,
@@ -38,7 +38,7 @@ export async function syncUserProfile({
         userId_type_state: { userId, type: "profile", state: "success" },
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
     log("failure", "profile");
     await prisma.sync.upsert({
       create: {

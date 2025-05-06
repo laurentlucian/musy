@@ -1,7 +1,7 @@
-import { type Prisma, prisma } from "@lib/services/db.server";
+import { prisma } from "@lib/services/db.server";
 import { createTrackModel } from "@lib/services/sdk/helpers/spotify.server";
-import { log } from "@lib/utils";
-import type Spotified from "spotified";
+import type Spotified from "@lib/services/sdk/spotified";
+import { log, notNull } from "@lib/utils";
 
 export async function syncUserLiked({
   userId,
@@ -13,36 +13,68 @@ export async function syncUserLiked({
   try {
     const { items } = await spotify.track.getUsersSavedTracks({ limit: 50 });
 
-    for (const { added_at, track } of items) {
-      const trackDb = createTrackModel(track);
-      const data: Prisma.LikedSongsCreateInput = {
-        track: {
-          connectOrCreate: {
-            create: trackDb,
-            where: {
-              id: track.id,
-            },
-          },
-        },
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-      };
+    // prepare tracks for batch creation/update
+    const tracks = items
+      .map(({ track }) => {
+        if (!track) return null;
+        return createTrackModel(track);
+      })
+      .filter(notNull);
 
-      if (!track.id) continue;
+    // find existing tracks
+    const trackIds = tracks.map((t) => t.id);
+    const existingTracks = await prisma.track.findMany({
+      where: { id: { in: trackIds } },
+      select: { id: true },
+    });
+    const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
-      await prisma.likedSongs.upsert({
-        create: data,
-        update: data,
-        where: {
-          trackId_userId: {
-            trackId: track.id,
-            userId,
-          },
-        },
-      });
+    // split into new and existing tracks
+    const newTracks = tracks.filter((t) => !existingTrackIds.has(t.id));
+    // const tracksToUpdate = tracks.filter((t) => existingTrackIds.has(t.id));
+
+    // batch create new tracks
+    if (newTracks.length) {
+      await prisma.track.createMany({ data: newTracks });
+    }
+
+    // batch update existing tracks
+    // if (tracksToUpdate.length) {
+    //   await prisma.$transaction(
+    //     tracksToUpdate.map((track) =>
+    //       prisma.track.update({
+    //         where: { id: track.id },
+    //         data: track,
+    //       }),
+    //     ),
+    //   );
+    // }
+
+    // prepare liked songs data
+    const likedSongs = items
+      .map(({ track }) => {
+        if (!track?.id) return null;
+        return {
+          trackId: track.id,
+          userId,
+        };
+      })
+      .filter(notNull);
+
+    // find existing liked songs
+    const existingLiked = await prisma.likedSongs.findMany({
+      where: {
+        userId,
+        trackId: { in: trackIds },
+      },
+      select: { trackId: true },
+    });
+    const existingLikedIds = new Set(existingLiked.map((l) => l.trackId));
+
+    // create new liked songs
+    const newLiked = likedSongs.filter((l) => !existingLikedIds.has(l.trackId));
+    if (newLiked.length) {
+      await prisma.likedSongs.createMany({ data: newLiked });
     }
 
     log("completed", "liked");
@@ -93,33 +125,68 @@ export async function syncUserLikedPage({
       offset,
     });
 
-    for (const item of items) {
-      const track = item.track;
-      const trackModel = createTrackModel(track);
+    // prepare tracks for batch creation/update
+    const tracks = items
+      .map(({ track }) => {
+        if (!track) return null;
+        return createTrackModel(track);
+      })
+      .filter(notNull);
 
-      if (!track.id) continue;
+    // find existing tracks
+    const trackIds = tracks.map((t) => t.id);
+    const existingTracks = await prisma.track.findMany({
+      where: { id: { in: trackIds } },
+      select: { id: true },
+    });
+    const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
-      // first ensure track exists
-      await prisma.track.upsert({
-        create: trackModel,
-        update: trackModel,
-        where: { id: track.id },
-      });
+    // split into new and existing tracks
+    const newTracks = tracks.filter((t) => !existingTrackIds.has(t.id));
+    const tracksToUpdate = tracks.filter((t) => existingTrackIds.has(t.id));
 
-      // then create/update liked relationship
-      await prisma.likedSongs.upsert({
-        create: {
+    // batch create new tracks
+    if (newTracks.length) {
+      await prisma.track.createMany({ data: newTracks });
+    }
+
+    // batch update existing tracks
+    if (tracksToUpdate.length) {
+      await prisma.$transaction(
+        tracksToUpdate.map((track) =>
+          prisma.track.update({
+            where: { id: track.id },
+            data: track,
+          }),
+        ),
+      );
+    }
+
+    // prepare liked songs data
+    const likedSongs = items
+      .map(({ track }) => {
+        if (!track?.id) return null;
+        return {
           trackId: track.id,
           userId,
-        },
-        update: {},
-        where: {
-          trackId_userId: {
-            trackId: track.id,
-            userId,
-          },
-        },
-      });
+        };
+      })
+      .filter(notNull);
+
+    // find existing liked songs
+    const existingLiked = await prisma.likedSongs.findMany({
+      where: {
+        userId,
+        trackId: { in: trackIds },
+      },
+      select: { trackId: true },
+    });
+    const existingLikedIds = new Set(existingLiked.map((l) => l.trackId));
+
+    // create new liked songs
+    const newLiked = likedSongs.filter((l) => !existingLikedIds.has(l.trackId));
+    if (newLiked.length) {
+      await prisma.likedSongs.createMany({ data: newLiked });
     }
 
     return {
