@@ -2,7 +2,7 @@ import { env } from "@lib/env.server";
 import { getProvider, updateToken } from "@lib/services/db/users.server";
 import { singleton } from "@lib/services/singleton.server";
 import { log } from "@lib/utils";
-import Spotified from "spotified";
+import Spotified from "./spotified";
 
 const spotifies = singleton("spotifies", () => {
   return new Map<string, Spotified>();
