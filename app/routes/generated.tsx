@@ -1,7 +1,18 @@
 import { prisma } from "@lib/services/db.server";
 import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
-import { RefreshCwIcon } from "lucide-react";
-import { data, Form, href, Link, redirect, useNavigation } from "react-router";
+import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
+import { PlayIcon, RefreshCwIcon } from "lucide-react";
+import { useEffect } from "react";
+import {
+  data,
+  Form,
+  href,
+  Link,
+  redirect,
+  useFetcher,
+  useNavigation,
+} from "react-router";
+import { toast } from "sonner";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -40,9 +51,7 @@ export async function loader({
 export default function Mood({
   loaderData: { playlist, userId },
 }: Route.ComponentProps) {
-  const navigation = useNavigation();
   const isOwner = userId === playlist.owner.user.id;
-  const loading = navigation.state === "submitting";
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
@@ -60,15 +69,10 @@ export default function Mood({
               {playlist.owner.user.name}
             </Link>
           </p>
-          {isOwner && (
-            <Form method="post" className="ml-auto">
-              <input type="hidden" value={playlist.mood} name="mood" />
-              <input type="hidden" value={playlist.year} name="year" />
-              <Button size="icon" className="ml-auto" disabled={loading}>
-                {loading ? <Waver /> : <RefreshCwIcon />}
-              </Button>
-            </Form>
-          )}
+          <div className="flex flex-1 items-center justify-end gap-2">
+            <PlayButton />
+            {isOwner && <RefreshButton />}
+          </div>
         </div>
 
         {playlist.tracks.map((track) => (
@@ -79,6 +83,38 @@ export default function Mood({
   );
 }
 
+function RefreshButton() {
+  const navigation = useNavigation();
+  const loading = navigation.formData?.get("intent") === "refresh";
+
+  return (
+    <Form method="post">
+      <input type="hidden" value="refresh" name="intent" />
+      <Button size="icon" disabled={loading}>
+        {loading ? <Waver /> : <RefreshCwIcon />}
+      </Button>
+    </Form>
+  );
+}
+
+function PlayButton() {
+  const fetcher = useFetcher<typeof action>();
+  const loading = fetcher.formData?.get("intent") === "play";
+
+  useEffect(() => {
+    if (fetcher.data) toast.error(fetcher.data);
+  }, [fetcher.data]);
+
+  return (
+    <fetcher.Form method="post">
+      <input type="hidden" value="play" name="intent" />
+      <Button size="icon" disabled={loading}>
+        {loading ? <Waver /> : <PlayIcon />}
+      </Button>
+    </fetcher.Form>
+  );
+}
+
 export async function action({
   params,
   request,
@@ -86,10 +122,45 @@ export async function action({
 }: Route.ActionArgs) {
   if (!userId) return redirect("/settings");
   const form = await request.formData();
-  const mood = form.get("mood");
-  const year = form.get("year");
+  const intent = form.get("intent");
 
-  if (typeof mood !== "string" || typeof year !== "string") return null;
+  if (intent === "refresh") {
+    const playlist = await prisma.generatedPlaylist.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+    if (!playlist) return "not found";
 
-  await getTracksFromMood(mood, year, userId);
+    await getTracksFromMood(playlist.mood, playlist.year.toString(), userId);
+  }
+
+  if (intent === "play") {
+    const spotify = await getSpotifyClient({ userId });
+    const playing = await spotify.player.getPlaybackState();
+
+    if (!playing) return "play a song first";
+
+    const deviceId = playing.device?.id;
+    if (typeof deviceId !== "string") {
+      return "device not found";
+    }
+
+    const playlist = await prisma.generatedPlaylist.findUnique({
+      include: {
+        tracks: true,
+      },
+      where: {
+        id: params.id,
+      },
+    });
+
+    const trackUris = playlist?.tracks.map((track) => track.uri);
+
+    if (!trackUris) return "no tracks in playlist";
+
+    await spotify.player.startResumePlayback(deviceId, {
+      uris: trackUris,
+    });
+  }
 }
