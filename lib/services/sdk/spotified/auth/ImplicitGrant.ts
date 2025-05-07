@@ -1,6 +1,6 @@
-import OAuth2Helper from '../client-helpers/OAuth2Helper.js';
-import { ImplicitGrantURLData, OAuth2AuthArgs } from '../types/index.js';
-import { AUTHORIZE_URL } from '../constants.js';
+import OAuth2Helper from "../client-helpers/OAuth2Helper.js";
+import { AUTHORIZE_URL } from "../constants.js";
+import type { ImplicitGrantURLData, OAuth2AuthArgs } from "../types/index.js";
 
 export class ImplicitGrant {
   protected clientId?: string;
@@ -9,24 +9,27 @@ export class ImplicitGrant {
     this.clientId = clientId;
   }
 
-  generateAuthorizationURL(redirectUri: string, options: Partial<OAuth2AuthArgs> = {}): ImplicitGrantURLData {
+  generateAuthorizationURL(
+    redirectUri: string,
+    options: Partial<OAuth2AuthArgs> = {},
+  ): ImplicitGrantURLData {
     const state = options.state ?? OAuth2Helper.generateRandomString(64);
-    const scope = options.scope ?? '';
+    const scope = options.scope ?? "";
     const showDialog = options.show_dialog ?? false;
 
     const params = new URLSearchParams({
-      response_type: 'token',
+      response_type: "token",
       client_id: this.clientId as string,
       redirect_uri: redirectUri,
       state,
     });
 
     if (scope) {
-      params.append('scope', Array.isArray(scope) ? scope.join(' ') : scope);
+      params.append("scope", Array.isArray(scope) ? scope.join(" ") : scope);
     }
 
     if (showDialog) {
-      params.append('show_dialog', showDialog.toString());
+      params.append("show_dialog", showDialog.toString());
     }
 
     const url = `${AUTHORIZE_URL}?${params.toString()}`;

@@ -90,7 +90,7 @@ export default class RequestMaker {
         );
       }
 
-      const data = await res.json().catch(() => null);
+      const data = await res.json().catch(() => ({}));
       const { headers } = res;
       return { data, headers } as SpotifiedResponse<T>;
     } catch (err) {
