@@ -2,8 +2,8 @@ import { syncUserLikedPage } from "@lib/services/scheduler/scripts/sync/liked.se
 import { syncUserProfile } from "@lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "@lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "@lib/services/scheduler/scripts/sync/top.server";
+import type Spotified from "@lib/services/sdk/spotified/client/Spotified";
 import { log } from "@lib/utils";
-import type Spotified from "spotified";
 import { assign, fromPromise, sendParent, setup } from "xstate";
 
 export type OnboardingContext = {
