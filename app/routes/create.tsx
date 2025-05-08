@@ -1,7 +1,7 @@
-import { prisma } from "@lib/services/db.server";
 import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
+import { getYear } from "date-fns";
 import { useState } from "react";
-import { href, Link, redirect, useFetcher } from "react-router";
+import { href, redirect, useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -16,102 +16,82 @@ const moods = [
   "romantic",
   "upbeat",
   "sleep",
+  "work",
+  "relax",
 ] as const;
+
 const years = Array.from(
-  { length: new Date().getFullYear() - 2020 },
+  { length: getYear(new Date()) - 2020 + 1 },
   (_, i) => 2020 + i,
 );
 
-export async function loader({ context: { userId } }: Route.LoaderArgs) {
-  if (!userId) return redirect("/settings");
+// const genres = [
+//   "acoustic",
+//   "electronic",
+//   "rock",
+//   "pop",
+//   "hip-hop",
+//   "any",
+// ];
 
-  const playlists = await prisma.generatedPlaylist.findMany({
-    include: {
-      owner: {
-        select: {
-          user: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  return { playlists };
-}
-
-export default function Mood({
-  loaderData: { playlists },
-}: Route.ComponentProps) {
+export default function Mood(_: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>();
   const [mood, setMood] = useState("");
   const [year, setYear] = useState("");
 
   const generating = fetcher.state !== "idle";
   return (
-    <div className="flex w-full flex-col items-center gap-6 px-12 py-6">
-      <fetcher.Form key={mood} method="post">
-        <Input type="hidden" name="mood" value={mood} />
-        <Input type="hidden" name="year" value={year} />
+    <fetcher.Form
+      key={mood}
+      method="post"
+      className="flex w-full max-w-sm flex-col gap-4 px-12 py-6"
+    >
+      <Input type="hidden" name="mood" value={mood} />
+      <Input type="hidden" name="year" value={year} />
+      {mood && (
+        <Button type="button" variant="outline" size="lg" disabled>
+          {mood}
+        </Button>
+      )}
+      {year && (
+        <Button type="button" variant="outline" size="lg" disabled>
+          {year}
+        </Button>
+      )}
 
-        <div className="flex flex-wrap justify-center gap-3">
-          {!mood &&
-            moods.map((mood) => (
-              <Button type="button" key={mood} onClick={() => setMood(mood)}>
-                {mood}
-              </Button>
-            ))}
-
-          {mood &&
-            !year &&
-            years.map((year) => (
-              <Button
-                type="button"
-                key={year}
-                onClick={() => setYear(year.toString())}
-              >
-                {year}
-              </Button>
-            ))}
-
-          {mood && year && (
-            <Button type="submit" disabled={generating}>
-              {generating ? (
-                <>
-                  Generating <Waver />
-                </>
-              ) : (
-                "Generate"
-              )}
-            </Button>
-          )}
-        </div>
-      </fetcher.Form>
-
-      <div className="flex w-full flex-col items-center gap-2">
-        {playlists.map((playlist) => (
-          <Link
-            key={playlist.id}
-            to={href("/generated/:id", {
-              id: playlist.id,
-            })}
-            className="flex w-full max-w-sm flex-col rounded-lg bg-card p-4 hover:bg-card/80"
+      {!mood &&
+        moods.map((mood) => (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            key={mood}
+            onClick={() => setMood(mood)}
           >
-            <p>
-              {playlist.mood} {playlist.year}
-            </p>
-            <p className="text-muted-foreground text-sm">
-              by {playlist.owner.user.name}
-            </p>
-          </Link>
+            {mood}
+          </Button>
         ))}
-      </div>
-    </div>
+
+      {mood &&
+        !year &&
+        years.map((year) => (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            key={year}
+            onClick={() => setYear(year.toString())}
+          >
+            {year}
+          </Button>
+        ))}
+
+      {mood && year && (
+        <Button type="submit" size="lg" disabled={generating}>
+          {generating ? <Waver /> : "Generate"}
+        </Button>
+      )}
+    </fetcher.Form>
   );
 }
 

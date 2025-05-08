@@ -12,6 +12,7 @@ export function Nav() {
     >
       <Logo />
       <NavLink to="/">create</NavLink>
+      <NavLink to="/playlists">playlists</NavLink>
       <NavLink to="/profile">profile</NavLink>
       <NavLink to="/settings">settings</NavLink>
     </nav>
