@@ -182,7 +182,7 @@ export class Player extends ReadWriteBaseClient {
   ) {
     return this.post(
       `/me/player/queue${generateQueryParametersString({
-        uri: encodeURIComponent(uri),
+        uri,
         ...optionalParams,
       })}`,
     );

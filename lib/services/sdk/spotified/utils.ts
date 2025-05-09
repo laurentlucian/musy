@@ -13,7 +13,9 @@ export function generateQueryParametersString(
     }
   }
 
-  return queryParams.toString() ? `?${queryParams.toString()}` : "";
+  const string = queryParams.toString();
+
+  return string ? `?${string}` : "";
 }
 
 export function encodeStringToBase64(str: string): string {
