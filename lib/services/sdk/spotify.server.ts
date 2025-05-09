@@ -1,5 +1,10 @@
 import { env } from "@lib/env.server";
-import { getProvider, updateToken } from "@lib/services/db/users.server";
+import {
+  getProvider,
+  revokeUser,
+  updateToken,
+} from "@lib/services/db/users.server";
+import { SpotifyApiError } from "@lib/services/sdk/spotified";
 import Spotified from "@lib/services/sdk/spotified/client/Spotified";
 import { log } from "@lib/utils";
 
@@ -61,7 +66,13 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
 
     return spotify;
   } catch (error) {
-    log(`error: token refresh failed for ${args.userId}: ${error}`, "spotify");
+    log(`token refresh failed for ${args.userId}: ${error}`, "spotify");
+    if (error instanceof SpotifyApiError) {
+      console.log("spotify error", error.message);
+      if (error.message.includes("Revoked")) {
+        await revokeUser(args.userId, "spotify");
+      }
+    }
     throw error;
   }
 }

@@ -87,7 +87,7 @@ export const SYNC_MACHINE = setup({
         const syncFn = getSyncFunction(typeToSync);
         for (const userId of users) {
           const spotify = await getSpotifyClient({ userId });
-          await syncFn({ userId, spotify });
+          await syncFn({ userId, spotify }).catch(() => null);
         }
 
         const newLastSync = new Map(lastSync);
