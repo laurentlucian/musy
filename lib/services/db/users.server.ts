@@ -49,3 +49,48 @@ export async function getAllUsersId() {
     })
     .then((users) => users.map((u) => u.id));
 }
+
+export async function revokeUser(
+  userId: string,
+  provider: "spotify" | "google",
+) {
+  await prisma.provider.update({
+    where: { userId_type: { userId, type: provider } },
+    data: { revoked: true },
+  });
+}
+
+export async function deleteUser(userId: string) {
+  await Promise.all([
+    prisma.provider.deleteMany({ where: { userId } }),
+    prisma.likedSongs.deleteMany({ where: { userId } }),
+    prisma.recentSongs.deleteMany({ where: { userId } }),
+    prisma.recommended.deleteMany({ where: { userId } }),
+    prisma.playback.deleteMany({ where: { userId } }),
+    prisma.playbackHistory.deleteMany({ where: { userId } }),
+    prisma.playlistTrack.deleteMany({ where: { playlist: { userId } } }),
+    prisma.feed.deleteMany({ where: { userId } }),
+    prisma.thanks.deleteMany({ where: { userId } }),
+    prisma.topSongs.deleteMany({ where: { userId } }),
+    prisma.topArtists.deleteMany({ where: { userId } }),
+    prisma.follow.deleteMany({
+      where: { OR: [{ followerId: userId }, { followingId: userId }] },
+    }),
+    prisma.generatedPlaylist.deleteMany({
+      where: {
+        owner: {
+          userId,
+        },
+      },
+    }),
+  ]);
+
+  await Promise.all([
+    prisma.generated.deleteMany({ where: { userId } }),
+    prisma.top.deleteMany({ where: { userId } }),
+    prisma.playlist.deleteMany({ where: { userId } }),
+  ]);
+
+  await prisma.profile.delete({ where: { id: userId } });
+  await prisma.user.delete({ where: { id: userId } });
+}

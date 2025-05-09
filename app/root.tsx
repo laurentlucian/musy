@@ -1,9 +1,11 @@
+import { ADMIN_USER_ID, DEV } from "@lib/services/auth/const";
 import { log } from "@lib/utils";
 import {
   isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
 } from "react-router";
@@ -47,6 +49,17 @@ export function meta() {
     { title: "musy" },
     { name: "description", content: "music sharing" },
   ] as Route.MetaDescriptors;
+}
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const accessingAdmin = url.pathname.includes("/admin");
+  if (accessingAdmin && !DEV) {
+    const userId = context.userId;
+    if (userId !== ADMIN_USER_ID) {
+      throw redirect("/");
+    }
+  }
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

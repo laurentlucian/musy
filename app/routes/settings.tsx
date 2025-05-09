@@ -1,4 +1,4 @@
-import { ADMIN_USER_ID } from "@lib/services/auth/const";
+import { ADMIN_USER_ID, DEV } from "@lib/services/auth/const";
 import { migrateLegacySession } from "@lib/services/auth/helpers.server";
 import { authenticator } from "@lib/services/auth.server";
 import { sessionStorage } from "@lib/services/session.server";
@@ -46,8 +46,7 @@ export default function Settings({
           className="hidden flex-col gap-3 data-root:flex md:flex"
           data-root={root ? 1 : undefined}
         >
-          {(userId === ADMIN_USER_ID ||
-            process.env.NODE_ENV === "development") && <AdminNav />}
+          {(userId === ADMIN_USER_ID || DEV) && <AdminNav />}
           {userId ? (
             <Form method="post">
               <input type="hidden" name="mode" value="logout" />
