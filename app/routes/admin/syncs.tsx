@@ -1,5 +1,7 @@
 import { prisma } from "@lib/services/db.server";
 import { format } from "date-fns";
+import { href, useNavigate, useNavigation, useSubmit } from "react-router";
+import { Button } from "~/components/ui/button";
 import type { Route } from "./+types/syncs";
 
 export async function loader(_: Route.LoaderArgs) {
@@ -12,6 +14,9 @@ export async function loader(_: Route.LoaderArgs) {
 }
 
 export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
+  const navigation = useNavigation();
+  const submit = useSubmit();
+  const navigate = useNavigate();
   return (
     <article className="flex flex-col gap-3 sm:flex-1">
       <div className="overflow-y-hidden">
@@ -30,6 +35,13 @@ export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
               <tr
                 key={`${sync.userId}-${sync.type}`}
                 className="bg-card transition-colors duration-150 *:p-3 hover:bg-accent"
+                onClick={() => {
+                  navigate(
+                    href("/profile/:userId?", {
+                      userId: sync.userId,
+                    }),
+                  );
+                }}
               >
                 <td className="text-sm">{sync.userId}</td>
                 <td className="">{format(sync.createdAt, "MMM d")}</td>
@@ -46,6 +58,29 @@ export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
           NONE
         </p>
       )}
+      {syncs.length > 0 && (
+        <Button
+          className="w-fit"
+          name="intent"
+          value="clear"
+          disabled={navigation.formData?.get("intent") === "clear"}
+          onClick={() => {
+            submit({ intent: "clear" }, { method: "post" });
+          }}
+        >
+          {navigation.formData?.get("intent") === "clear"
+            ? "Clearing..."
+            : "Clear"}
+        </Button>
+      )}
     </article>
   );
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  if (intent === "clear") {
+    await prisma.sync.deleteMany();
+  }
 }
