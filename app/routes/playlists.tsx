@@ -39,10 +39,25 @@ export default function Playlists({
             })}
             className="flex w-full max-w-sm flex-col rounded-lg bg-card p-4 hover:bg-card/80"
           >
-            <p>
-              {playlist.mood} {playlist.year}
-            </p>
-            <p className="text-muted-foreground text-sm">
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                {playlist.mood}
+              </span>
+              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                {playlist.year}
+              </span>
+              {typeof playlist.familiar === "boolean" && (
+                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                  {playlist.familiar ? "familiar" : "fresh"}
+                </span>
+              )}
+              {typeof playlist.popular === "boolean" && (
+                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
+                  {playlist.popular ? "popular" : "unknown"}
+                </span>
+              )}
+            </div>
+            <p className="mt-1 text-muted-foreground text-sm">
               by {playlist.owner.user.name}
             </p>
           </Link>

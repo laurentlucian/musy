@@ -1,19 +1,8 @@
 import { prisma } from "@lib/services/db.server";
-import { askAI } from "@lib/services/sdk/ai.server";
 import { askAITaste } from "@lib/services/sdk/helpers/ai/taste.server";
 import { askAITracks } from "@lib/services/sdk/helpers/ai/track.server";
 import { getTrackFromSpotify } from "@lib/services/sdk/helpers/spotify.server";
 import { generateId } from "@lib/utils.server";
-
-export async function getAnalysis(track: SpotifyApi.SingleTrackResponse) {
-  const {
-    artists: [{ name: artist }],
-    name,
-  } = track;
-  const prompt = `Elaborate on songwriting, vocal, instrumental, production, bpm, genre, chords, and mixing detail for ${artist}'s ${name}`;
-
-  return askAI(prompt);
-}
 
 async function _getTasteFromUser(userId: string) {
   const existing = await prisma.generated.findUnique({
@@ -66,9 +55,13 @@ async function _getTasteFromUser(userId: string) {
   return taste;
 }
 
-export async function getTracksFromMood(
-  mood: string,
-  year: string,
+export async function generatePlaylist(
+  args: {
+    mood: string;
+    year: string;
+    familiar: boolean | null;
+    popular: boolean | null;
+  },
   userId: string,
 ) {
   const songs = await prisma.topSongs.findFirst({
@@ -97,9 +90,12 @@ export async function getTracksFromMood(
     },
   });
 
+  const { mood, year, familiar, popular } = args;
   const result = await askAITracks({
     mood,
     year,
+    familiar,
+    popular,
     top: {
       songs:
         songs?.tracks.map((track) => ({
@@ -153,6 +149,8 @@ export async function getTracksFromMood(
     where: {
       mood,
       year: parseInt(year),
+      familiar,
+      popular,
       owner: {
         userId,
       },
@@ -189,6 +187,8 @@ export async function getTracksFromMood(
       id: generateId(),
       mood,
       year: parseInt(year),
+      familiar,
+      popular,
       tracks: {
         connect: tracks.map((track) => ({ id: track.id })),
       },

@@ -1,5 +1,5 @@
 import { prisma } from "@lib/services/db.server";
-import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
+import { generatePlaylist } from "@lib/services/sdk/helpers/ai.server";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { PlayIcon, RefreshCwIcon } from "lucide-react";
 import { useEffect } from "react";
@@ -132,7 +132,15 @@ export async function action({
     });
     if (!playlist) return "not found";
 
-    await getTracksFromMood(playlist.mood, playlist.year.toString(), userId);
+    await generatePlaylist(
+      {
+        mood: playlist.mood,
+        year: playlist.year.toString(),
+        familiar: playlist.familiar,
+        popular: playlist.popular,
+      },
+      userId,
+    );
   }
 
   if (intent === "play") {

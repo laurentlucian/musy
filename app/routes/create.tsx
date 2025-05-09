@@ -1,7 +1,8 @@
-import { getTracksFromMood } from "@lib/services/sdk/helpers/ai.server";
+import { generatePlaylist } from "@lib/services/sdk/helpers/ai.server";
+import { useMachine } from "@xstate/react";
 import { getYear } from "date-fns";
-import { useState } from "react";
 import { href, redirect, useFetcher } from "react-router";
+import { assign, setup } from "xstate";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -25,6 +26,10 @@ const years = Array.from(
   (_, i) => 2020 + i,
 );
 
+const familiar = ["familiar", "fresh"];
+
+const popular = ["popular", "unknown"];
+
 // const genres = [
 //   "acoustic",
 //   "electronic",
@@ -36,57 +41,114 @@ const years = Array.from(
 
 export default function Mood(_: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>();
-  const [mood, setMood] = useState("");
-  const [year, setYear] = useState("");
+  const [{ value, context }, send] = useMachine(machine);
 
   const generating = fetcher.state !== "idle";
   return (
     <fetcher.Form
-      key={mood}
       method="post"
       className="flex w-full max-w-sm flex-col gap-4 px-12 py-6"
     >
-      <Input type="hidden" name="mood" value={mood} />
-      <Input type="hidden" name="year" value={year} />
-      {mood && (
+      <Input type="hidden" name="mood" value={context.mood} />
+      <Input type="hidden" name="year" value={context.year} />
+      {context.mood && (
         <Button type="button" variant="outline" size="lg" disabled>
-          {mood}
+          {context.mood}
         </Button>
       )}
-      {year && (
+      {context.year && (
         <Button type="button" variant="outline" size="lg" disabled>
-          {year}
+          {context.year}
         </Button>
+      )}
+      {context.familiar && (
+        <>
+          <Input
+            type="hidden"
+            name="familiar"
+            value={context.familiar === "familiar" ? "true" : "false"}
+          />
+          <Button type="button" variant="outline" size="lg" disabled>
+            {context.familiar}
+          </Button>
+        </>
+      )}
+      {context.popular && (
+        <>
+          <Input
+            type="hidden"
+            name="popular"
+            value={context.popular === "popular" ? "true" : "false"}
+          />
+          <Button type="button" variant="outline" size="lg" disabled>
+            {context.popular}
+          </Button>
+        </>
       )}
 
-      {!mood &&
+      {value === "idle" &&
         moods.map((mood) => (
           <Button
             type="button"
             variant="outline"
             size="lg"
             key={mood}
-            onClick={() => setMood(mood)}
+            onClick={() => send({ type: "input", data: mood })}
           >
             {mood}
           </Button>
         ))}
 
-      {mood &&
-        !year &&
+      {value === "year" &&
         years.map((year) => (
           <Button
             type="button"
             variant="outline"
             size="lg"
             key={year}
-            onClick={() => setYear(year.toString())}
+            onClick={() => send({ type: "input", data: year.toString() })}
           >
             {year}
           </Button>
         ))}
 
-      {mood && year && (
+      {value === "familiar" &&
+        familiar.map((familiar) => (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            key={familiar}
+            onClick={() =>
+              send({
+                type: "input",
+                data: familiar,
+              })
+            }
+          >
+            {familiar}
+          </Button>
+        ))}
+
+      {value === "popular" &&
+        popular.map((popular) => (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            key={popular}
+            onClick={() =>
+              send({
+                type: "input",
+                data: popular,
+              })
+            }
+          >
+            {popular}
+          </Button>
+        ))}
+
+      {value === "generate" && (
         <Button type="submit" size="lg" disabled={generating}>
           {generating ? <Waver /> : "Generate"}
         </Button>
@@ -109,6 +171,67 @@ export async function action({
 
   if (typeof year !== "string") return null;
 
-  const id = await getTracksFromMood(mood, year, userId);
+  let familiarEntry = form.get("familiar");
+  let popularEntry = form.get("popular");
+  let familiar: boolean | null = null;
+  let popular: boolean | null = null;
+
+  if (typeof familiarEntry === "string") familiar = familiarEntry === "true";
+  if (typeof popularEntry === "string") popular = popularEntry === "true";
+
+  const id = await generatePlaylist({ mood, year, familiar, popular }, userId);
   return redirect(href("/generated/:id", { id }));
 }
+
+type Context = {
+  mood?: string;
+  year?: string;
+  familiar?: string;
+  popular?: string;
+};
+
+const machine = setup({
+  types: {
+    context: {} as Context,
+    events: {} as { type: "input"; data: string },
+  },
+}).createMachine({
+  initial: "idle",
+  states: {
+    idle: {
+      on: {
+        input: {
+          target: "year",
+          actions: assign({ mood: ({ event }) => event.data }),
+        },
+      },
+    },
+    year: {
+      on: {
+        input: {
+          target: "familiar",
+          actions: assign({ year: ({ event }) => event.data }),
+        },
+      },
+    },
+    familiar: {
+      on: {
+        input: {
+          target: "popular",
+          actions: assign({ familiar: ({ event }) => event.data }),
+        },
+      },
+    },
+    popular: {
+      on: {
+        input: {
+          target: "generate",
+          actions: assign({ popular: ({ event }) => event.data }),
+        },
+      },
+    },
+    generate: {
+      type: "final",
+    },
+  },
+});
