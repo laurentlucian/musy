@@ -180,7 +180,7 @@ export async function action({
   if (typeof popularEntry === "string") popular = popularEntry === "true";
 
   const id = await generatePlaylist({ mood, year, familiar, popular }, userId);
-  return redirect(href("/generated/:id", { id }));
+  return redirect(href("/playlists/:id", { id }));
 }
 
 type Context = {

@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
-import type { Route } from "./+types/generated";
+import type { Route } from "./+types/playlist";
 
 export async function loader({
   params,
@@ -48,37 +48,35 @@ export async function loader({
   return { playlist, userId };
 }
 
-export default function Mood({
+export default function Playlist({
   loaderData: { playlist, userId },
 }: Route.ComponentProps) {
   const isOwner = userId === playlist.owner.user.id;
 
   return (
-    <div className="flex flex-col items-center gap-6 py-6">
-      <div className="flex w-full max-w-md flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <p className="w-fit rounded-lg bg-card px-3 py-2 text-sm">
-            {playlist.mood} {playlist.year}
-          </p>
-          <p className="text-muted-foreground text-sm">
-            by{" "}
-            <Link
-              to={href("/profile/:userId?", { userId: playlist.owner.user.id })}
-              className="hover:underline"
-            >
-              {playlist.owner.user.name}
-            </Link>
-          </p>
-          <div className="flex flex-1 items-center justify-end gap-2">
-            <PlayButton />
-            {isOwner && <RefreshButton />}
-          </div>
+    <div className="flex w-full max-w-md flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <p className="w-fit rounded-lg bg-card px-3 py-2 text-sm">
+          {playlist.mood} {playlist.year}
+        </p>
+        <p className="text-muted-foreground text-sm">
+          by{" "}
+          <Link
+            to={href("/profile/:userId?", { userId: playlist.owner.user.id })}
+            className="hover:underline"
+          >
+            {playlist.owner.user.name}
+          </Link>
+        </p>
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <PlayButton />
+          {isOwner && <RefreshButton />}
         </div>
-
-        {playlist.tracks.map((track) => (
-          <Track key={track.id} track={track} />
-        ))}
       </div>
+
+      {playlist.tracks.map((track) => (
+        <Track key={track.id} track={track} />
+      ))}
     </div>
   );
 }

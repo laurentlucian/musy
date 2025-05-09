@@ -13,7 +13,7 @@ export default [
     route("trending", "routes/leaderboard.tsx"),
     route("new", "routes/new.tsx"),
     route("listening", "routes/listening.tsx"),
-    route("generated/:id", "routes/generated.tsx"),
+    route("playlists/:id", "routes/playlist.tsx"),
 
     route("profile/:userId?", "routes/profile.tsx", [
       route("liked", "routes/profile.liked.tsx"),

@@ -34,30 +34,22 @@ export default function Playlists({
         {playlists.map((playlist) => (
           <Link
             key={playlist.id}
-            to={href("/generated/:id", {
+            to={href("/playlists/:id", {
               id: playlist.id,
             })}
-            className="flex w-full max-w-sm flex-col rounded-lg bg-card p-4 hover:bg-card/80"
+            className="flex w-full max-w-sm flex-col gap-3 rounded-lg bg-card p-4 hover:bg-card/80"
           >
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
-                {playlist.mood}
-              </span>
-              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
-                {playlist.year}
-              </span>
+            <div className="flex items-center gap-2 *:rounded-full *:bg-primary/10 *:px-2.5 *:py-1 *:font-medium *:text-xs">
+              <span>{playlist.mood}</span>
+              <span>{playlist.year}</span>
               {typeof playlist.familiar === "boolean" && (
-                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
-                  {playlist.familiar ? "familiar" : "fresh"}
-                </span>
+                <span>{playlist.familiar ? "familiar" : "fresh"}</span>
               )}
               {typeof playlist.popular === "boolean" && (
-                <span className="rounded-full bg-primary/10 px-2 py-1 text-xs">
-                  {playlist.popular ? "popular" : "unknown"}
-                </span>
+                <span>{playlist.popular ? "popular" : "unknown"}</span>
               )}
             </div>
-            <p className="mt-1 text-muted-foreground text-sm">
+            <p className="w-fit rounded-full bg-foreground px-2.5 py-1 font-semibold text-background text-xs">
               by {playlist.owner.user.name}
             </p>
           </Link>
