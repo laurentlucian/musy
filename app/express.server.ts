@@ -1,6 +1,5 @@
 import "react-router";
-
-import { initializeMachines } from "@lib/services/scheduler/machines/helpers.server";
+import { startSync } from "@lib/services/scheduler/sync.server";
 import {
   type SessionTyped,
   sessionStorage,
@@ -18,7 +17,7 @@ declare module "react-router" {
 
 export const app = express();
 
-initializeMachines();
+startSync();
 
 app.use(
   createRequestHandler({

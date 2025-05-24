@@ -1,18 +1,22 @@
-import { prisma } from "@lib/services/db.server";
 import { getAllUsersId } from "@lib/services/db/users.server";
+import { prisma } from "@lib/services/db.server";
+import type Spotified from "@lib/services/sdk/spotified/client/Spotified";
 import { log } from "@lib/utils";
-import type SpotifyWebApi from "spotify-web-api-node";
 
 export async function syncUserFollow({
   userId,
   spotify,
 }: {
   userId: string;
-  spotify: SpotifyWebApi;
+  spotify: Spotified;
 }) {
   try {
     const users = await getAllUsersId();
-    const { body: isFollowing } = await spotify.isFollowingUsers(users);
+    const isFollowing = await spotify.user.checkIfUserFollowsArtistsOrUsers(
+      "user",
+      users,
+    );
+
     const following = users.filter((_, i) => isFollowing[i]);
 
     log(`adding following to db: ${following.length}`, "follow");

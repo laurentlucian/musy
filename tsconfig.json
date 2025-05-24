@@ -8,6 +8,7 @@
   "compilerOptions": {
     "checkJs": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "skipLibCheck": true,
     "strict": true,

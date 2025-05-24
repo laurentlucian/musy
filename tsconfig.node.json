@@ -8,7 +8,6 @@
     "lib": ["ESNext"],
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "bundler",
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,

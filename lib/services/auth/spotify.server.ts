@@ -1,6 +1,5 @@
 import { env } from "@lib/env.server";
 import { type Prisma, prisma } from "@lib/services/db.server";
-import { getOnboardingCoordinator } from "@lib/services/scheduler/machines/onboarding";
 import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { generateId } from "@lib/utils.server";
 import { OAuth2Strategy } from "remix-auth-oauth2";
@@ -97,12 +96,6 @@ export function getSpotifyStrategy() {
           },
         },
         select: { user: { select: { id: true } } },
-      });
-
-      const coordinator = getOnboardingCoordinator();
-      coordinator.send({
-        type: "START_ONBOARDING",
-        userId: profile.user.id,
       });
 
       return { id: profile.user.id };
