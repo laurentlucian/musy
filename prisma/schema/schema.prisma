@@ -1,16 +1,11 @@
-// https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client"
-  previewFeatures = []
-  output          = "../../lib/services/db/generated.server"
-  runtime         = "bun"
-  moduleFormat    = "esm"
-  engineType      = "binary"
-  binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  provider   = "prisma-client"
+  engineType = "client"
+  runtime    = "cloudflare"
+  output     = "../../app/lib/services/db/generated.server"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./prisma/db.sqlite"
 }

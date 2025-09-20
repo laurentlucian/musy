@@ -1,5 +1,5 @@
-import { prisma } from "@lib/services/db.server";
 import { format, millisecondsToMinutes } from "date-fns";
+import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/tracks";
 
 export async function loader(_: Route.LoaderArgs) {

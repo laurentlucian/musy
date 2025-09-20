@@ -1,5 +1,5 @@
-import type { getFeed } from "@lib/services/db/tracks.server";
 import { use } from "react";
+import type { getFeed } from "~/lib/services/db/tracks.server";
 import { Track } from "./track";
 
 export function Feed(props: { feed: ReturnType<typeof getFeed> }) {

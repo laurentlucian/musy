@@ -1,8 +1,8 @@
-import { getUserLiked, type UserLiked } from "@lib/services/db/tracks.server";
 import { Suspense, use } from "react";
 import { redirect } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
+import { getUserLiked, type UserLiked } from "~/lib/services/db/tracks.server";
 import type { Route } from "./+types/profile.liked";
 
 export async function loader({ context, params }: Route.LoaderArgs) {

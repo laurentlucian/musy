@@ -1,10 +1,10 @@
-import { ADMIN_USER_ID, DEV } from "@lib/services/auth/const";
-import { migrateLegacySession } from "@lib/services/auth/helpers.server";
-import { authenticator } from "@lib/services/auth.server";
-import { sessionStorage } from "@lib/services/session.server";
 import { ArrowLeft } from "lucide-react";
 import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
+import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
+import { migrateLegacySession } from "~/lib/services/auth/helpers.server";
+import { authenticator } from "~/lib/services/auth.server";
+import { sessionStorage } from "~/lib/services/session.server";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
 

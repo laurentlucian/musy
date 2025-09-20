@@ -1,4 +1,3 @@
-import { generatePlaylist } from "@lib/services/sdk/helpers/ai.server";
 import { useMachine } from "@xstate/react";
 import { getYear } from "date-fns";
 import { href, redirect, useFetcher } from "react-router";
@@ -6,6 +5,7 @@ import { assign, setup } from "xstate";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { generatePlaylist } from "~/lib/services/sdk/helpers/ai.server";
 import type { Route } from "./+types/create";
 
 const moods = [

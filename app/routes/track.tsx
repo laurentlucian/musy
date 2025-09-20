@@ -1,5 +1,3 @@
-import { getTrack } from "@lib/services/db/tracks.server";
-import { ellipsis, getCacheControl } from "@lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import {
@@ -8,6 +6,8 @@ import {
   TrackMenu,
   TrackName,
 } from "~/components/domain/track";
+import { getTrack } from "~/lib/services/db/tracks.server";
+import { ellipsis, getCacheControl } from "~/lib/utils";
 import type { Route } from "./+types/track";
 
 export function meta({ data }: Route.MetaArgs) {

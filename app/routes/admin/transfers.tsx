@@ -1,6 +1,6 @@
-import { prisma } from "@lib/services/db.server";
 import * as v from "valibot";
 import { Button } from "~/components/ui/button";
+import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/transfers";
 
 export async function loader({ request }: Route.LoaderArgs) {

@@ -1,6 +1,3 @@
-import { prisma } from "@lib/services/db.server";
-import { generatePlaylist } from "@lib/services/sdk/helpers/ai.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
 import { PlayIcon, RefreshCwIcon } from "lucide-react";
 import { useEffect } from "react";
 import {
@@ -16,6 +13,9 @@ import { toast } from "sonner";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import { prisma } from "~/lib/services/db.server";
+import { generatePlaylist } from "~/lib/services/sdk/helpers/ai.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/playlist";
 
 export async function loader({

@@ -1,9 +1,9 @@
-import { prisma } from "@lib/services/db.server";
-import { log } from "@lib/utils";
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import { data } from "react-router";
 import { eventStream } from "remix-utils/sse/server";
 import { interval } from "remix-utils/timers";
+import { prisma } from "~/lib/services/db.server";
+import { log } from "~/lib/utils";
 import type { Route } from "./+types/stats";
 
 export const TAKE = 2000;

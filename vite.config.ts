@@ -1,26 +1,21 @@
-import { resolve } from "node:path";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig(({ isSsrBuild, command }) => ({
-  build: {
-    ...(isSsrBuild && {
-      rollupOptions: {
-        input: "./app/express.server.ts",
+export default defineConfig(() => ({
+  server: {
+    port: 3000,
+  },
+  plugins: [
+    cloudflare({
+      viteEnvironment: {
+        name: "ssr",
       },
     }),
-  },
-  plugins: [reactRouter(), tsconfigPaths(), tailwindcss()],
-  resolve: {
-    alias: {
-      "~": resolve(__dirname, "./app"),
-      ...(command === "build" && {
-        // bun & react production fix
-        // https://github.com/remix-run/react-router/issues/12568#issuecomment-2692406113
-        "react-dom/server": "react-dom/server.node",
-      }),
-    },
-  },
+    tailwindcss(),
+    reactRouter(),
+    tsconfigPaths(),
+  ],
 }));

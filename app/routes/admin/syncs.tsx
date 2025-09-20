@@ -1,7 +1,7 @@
-import { prisma } from "@lib/services/db.server";
 import { format } from "date-fns";
 import { href, useNavigate, useNavigation, useSubmit } from "react-router";
 import { Button } from "~/components/ui/button";
+import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/syncs";
 
 export async function loader(_: Route.LoaderArgs) {

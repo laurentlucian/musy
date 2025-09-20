@@ -1,4 +1,3 @@
-import { prisma } from "@lib/services/db.server";
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import {
   data,
@@ -22,12 +21,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { prisma } from "~/lib/services/db.server";
+import { syncUserLiked } from "~/lib/services/scheduler/scripts/sync/liked.server";
+import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { log } from "~/lib/utils";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.userId;
 
   if (!userId) throw redirect("/settings");
+
+  try {
+    const lastSync = await prisma.sync.findFirst({
+      where: {
+        userId,
+        type: { in: ["profile", "liked"] },
+        state: "success",
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    const shouldSync =
+      !lastSync || Date.now() - lastSync.updatedAt.getTime() > 10 * 60 * 1000; // 10 minutes
+
+    if (shouldSync) {
+      const spotify = await getSpotifyClient({ userId });
+
+      await Promise.allSettled([
+        syncUserProfile({ userId, spotify }),
+        syncUserLiked({ userId, spotify }),
+      ]);
+    }
+  } catch (error) {
+    log(
+      "profile/sync",
+      `profile sync failed, ${error instanceof Error ? error.message : "unknown error"}`,
+    );
+  }
 
   const profile = await prisma.profile.findFirst({
     where: {

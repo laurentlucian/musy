@@ -1,19 +1,20 @@
 {
   "files": [],
-  "exclude": ["node_modules", "generated.server"],
   "references": [
     { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.vite.json" }
+    { "path": "./tsconfig.cloudflare.json" }
   ],
   "compilerOptions": {
     "checkJs": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "strict": true,
+    "noEmit": true,
     "strictNullChecks": true,
-    "baseUrl": ".",
+    "types": ["./worker-configuration.d.ts"],
     "paths": {
       "~/*": ["./app/*"]
     }

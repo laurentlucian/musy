@@ -1,8 +1,8 @@
-import { getFeed } from "@lib/services/db/tracks.server";
-import { getCacheControl } from "@lib/utils";
 import { Suspense } from "react";
 import { Feed } from "~/components/domain/feed";
 import { Waver } from "~/components/icons/waver";
+import { getFeed } from "~/lib/services/db/tracks.server";
+import { getCacheControl } from "~/lib/utils";
 import type { Route } from "./+types/new";
 
 export function headers(_: Route.HeadersArgs) {

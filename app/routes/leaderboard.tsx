@@ -1,8 +1,8 @@
-import { getTopLeaderboard } from "@lib/services/db/tracks.server";
-import { getCacheControl } from "@lib/utils";
 import { Suspense } from "react";
 import { Leaderboard } from "~/components/domain/leaderboard";
 import { Waver } from "~/components/icons/waver";
+import { getTopLeaderboard } from "~/lib/services/db/tracks.server";
+import { getCacheControl } from "~/lib/utils";
 import type { Route } from "./+types/leaderboard";
 
 export function headers(_: Route.HeadersArgs) {

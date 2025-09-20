@@ -1,5 +1,5 @@
-import { prisma } from "@lib/services/db.server";
 import { href, Link, redirect } from "react-router";
+import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/playlists";
 
 export async function loader({ context: { userId } }: Route.LoaderArgs) {

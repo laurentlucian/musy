@@ -1,7 +1,7 @@
-import { getPlaybacks } from "@lib/services/db/tracks.server";
 import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
+import { getPlaybacks } from "~/lib/services/db/tracks.server";
 import type { Route } from "./+types/listening";
 
 export function loader(_: Route.LoaderArgs) {

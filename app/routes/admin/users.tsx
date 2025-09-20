@@ -1,12 +1,12 @@
-import { ADMIN_USER_ID, DEV } from "@lib/services/auth/const";
-import { deleteUser } from "@lib/services/db/users.server";
-import { prisma } from "@lib/services/db.server";
 import { format } from "date-fns";
 import { ClipboardCopy, TrashIcon } from "lucide-react";
 import { data, useNavigation, useSubmit } from "react-router";
 import { toast } from "sonner";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
+import { deleteUser } from "~/lib/services/db/users.server";
+import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/users";
 
 export async function loader(_: Route.LoaderArgs) {

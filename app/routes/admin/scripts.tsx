@@ -1,5 +1,5 @@
-import { migrateUserIds } from "@lib/services/scripts/migrate-user-ids";
 import { Button } from "~/components/ui/button";
+import { migrateUserIds } from "~/lib/services/scripts/migrate-user-ids";
 import type { Route } from "./+types/scripts";
 
 export default function Scripts(_: Route.ComponentProps) {

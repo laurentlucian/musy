@@ -1,10 +1,7 @@
-import { getProvider } from "@lib/services/db/users.server";
-import { prisma } from "@lib/services/db.server";
-import { getGoogleClientsFromUserId } from "@lib/services/sdk/google.server";
-import { youtube } from "@lib/services/sdk/helpers/youtube.server";
-import { getSpotifyClient } from "@lib/services/sdk/spotify.server";
-import { logError } from "@lib/utils";
 import { data, redirect } from "react-router";
+import { prisma } from "~/lib/services/db.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { logError } from "~/lib/utils";
 import type { Route } from "./+types/actions";
 
 export function loader() {
@@ -58,21 +55,6 @@ async function like(args: { form: FormData; userId: string }) {
       const spotify = await getSpotifyClient({ userId });
 
       await spotify.track.saveTracksforCurrentUser([track.id]);
-      return null;
-    }
-
-    if (provider === "google") {
-      const uri = form.get("uri");
-      if (typeof uri !== "string") return "no uri";
-
-      const { youtube: yt } = await getGoogleClientsFromUserId(userId);
-      const search = await youtube.search(
-        yt,
-        `${track.name} - ${track.artist}`,
-      );
-      const first = search[0];
-      await youtube.addToLibrary(yt, first.videoId);
-
       return null;
     }
   } catch (error) {

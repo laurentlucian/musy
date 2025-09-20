@@ -1,5 +1,8 @@
-import { ADMIN_USER_ID, DEV } from "@lib/services/auth/const";
-import { log } from "@lib/utils";
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "react-router";
 import {
   isRouteErrorResponse,
   Links,
@@ -9,49 +12,49 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import type { Route } from "./+types/root";
-import { Toaster } from "./components/ui/sonner";
-import stylesheet from "./globals.css?url";
+import { Toaster } from "~/components/ui/sonner";
+import stylesheet from "~/globals.css?url";
+import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
+import { log } from "~/lib/utils";
 
-export function links() {
-  return [
-    { rel: "preconnect", href: "https://fonts.googleapis.com" },
-    {
-      rel: "preconnect",
-      href: "https://fonts.gstatic.com",
-      crossOrigin: "anonymous",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
-    },
-    { rel: "stylesheet", href: stylesheet },
-    { rel: "icon", type: "image/x-icon", href: "/logo/musy.png" },
-    { rel: "icon", type: "image/png", href: "/logo/musy.png" },
-    { rel: "manifest", href: "/manifest.json" },
-    {
-      name: "viewport",
-      content: "width=device-width, initial-scale=1, viewport-fit=cover",
-    },
-    { name: "mobile-web-app-capable", content: "yes" },
-    { name: "apple-mobile-web-app-capable", content: "yes" },
-    { name: "apple-touch-fullscreen", content: "yes" },
-    {
-      name: "apple-mobile-web-app-status-bar-style",
-      content: "black-translucent",
-    },
-    { rel: "apple-touch-icon", href: "/logo/musy.png" },
-  ] as Route.LinkDescriptors;
-}
+export const links: LinksFunction = () => [
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous",
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
+  },
+  { rel: "stylesheet", href: stylesheet },
+  { rel: "icon", type: "image/x-icon", href: "/logo/musy.png" },
+  { rel: "icon", type: "image/png", href: "/logo/musy.png" },
+  { rel: "manifest", href: "/manifest.json" },
+  { rel: "apple-touch-icon", href: "/logo/musy.png" },
+];
 
-export function meta() {
-  return [
-    { title: "musy" },
-    { name: "description", content: "music sharing" },
-  ] as Route.MetaDescriptors;
-}
+export const meta: MetaFunction = () => [
+  { title: "musy" },
+  { name: "description", content: "music sharing" },
+  {
+    name: "viewport",
+    content: "width=device-width, initial-scale=1, viewport-fit=cover",
+  },
+  { name: "mobile-web-app-capable", content: "yes" },
+  { name: "apple-mobile-web-app-capable", content: "yes" },
+  { name: "apple-touch-fullscreen", content: "yes" },
+  {
+    name: "apple-mobile-web-app-status-bar-style",
+    content: "black-translucent",
+  },
+];
 
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({
+  request,
+  context,
+}: LoaderFunctionArgs & { context: { userId?: string } }) {
   const url = new URL(request.url);
   const accessingAdmin = url.pathname.includes("/admin");
   if (accessingAdmin && !DEV) {
@@ -67,7 +70,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en" className="flex bg-background">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
@@ -85,7 +88,7 @@ export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error }: { error: unknown }) {
   let message = "unexpected error";
   let details = "";
   let stack: string | undefined;

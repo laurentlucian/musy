@@ -1,8 +1,8 @@
-import { pwa } from "@lib/utils";
 import { ChevronRight } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
 import { Button } from "~/components/ui/button";
+import { pwa } from "~/lib/utils";
 
 export function Nav() {
   return (
