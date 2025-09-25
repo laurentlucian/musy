@@ -5,6 +5,7 @@ import { assign, setup } from "xstate";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { userContext } from "~/context";
 import { generatePlaylist } from "~/lib/services/sdk/helpers/ai.server";
 import type { Route } from "./+types/create";
 
@@ -157,10 +158,8 @@ export default function Mood(_: Route.ComponentProps) {
   );
 }
 
-export async function action({
-  request,
-  context: { userId },
-}: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
+  const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
 
   const form = await request.formData();
@@ -171,8 +170,8 @@ export async function action({
 
   if (typeof year !== "string") return null;
 
-  let familiarEntry = form.get("familiar");
-  let popularEntry = form.get("popular");
+  const familiarEntry = form.get("familiar");
+  const popularEntry = form.get("popular");
   let familiar: boolean | null = null;
   let popular: boolean | null = null;
 

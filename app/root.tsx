@@ -1,3 +1,4 @@
+import type { Route } from ".react-router/types/app/+types/root";
 import type {
   LinksFunction,
   LoaderFunctionArgs,
@@ -9,12 +10,13 @@ import {
   Meta,
   Outlet,
   redirect,
-  Scripts,
   ScrollRestoration,
 } from "react-router";
 import { Toaster } from "~/components/ui/sonner";
+import { userContext } from "~/context";
 import stylesheet from "~/globals.css?url";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
+import { sessionStorage } from "~/lib/services/session.server";
 import { log } from "~/lib/utils";
 
 export const links: LinksFunction = () => [
@@ -51,6 +53,18 @@ export const meta: MetaFunction = () => [
   },
 ];
 
+export const middleware: Route.MiddlewareFunction[] = [
+  async ({ request, context }) => {
+    const headers = request.headers;
+    const session = await sessionStorage.getSession(headers.get("cookie"));
+    const user = session.get("data");
+
+    if (user) {
+      context.set(userContext, user.id);
+    }
+  },
+];
+
 export async function loader({
   request,
   context,
@@ -58,7 +72,7 @@ export async function loader({
   const url = new URL(request.url);
   const accessingAdmin = url.pathname.includes("/admin");
   if (accessingAdmin && !DEV) {
-    const userId = context.userId;
+    const userId = context.get(userContext);
     if (userId !== ADMIN_USER_ID) {
       throw redirect("/");
     }
@@ -77,7 +91,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body className="flex flex-1">
         {children}
         <ScrollRestoration />
-        <Scripts />
         <Toaster />
       </body>
     </html>

@@ -1,0 +1,951 @@
+diff --git a/node_modules/spotified/.bun-tag-ef77caac500e4523 b/.bun-tag-ef77caac500e4523
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/cjs/endpoints/Audiobook.js b/dist/cjs/endpoints/Audiobook.js
+index 6e42af29375c2ee2304d37e67345112a02532a33..2b40ef9c3d674ebf08c00249420fa4207744458f 100644
+--- a/dist/cjs/endpoints/Audiobook.js
++++ b/dist/cjs/endpoints/Audiobook.js
+@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
+ }) : function(o, v) {
+     o["default"] = v;
+ });
+-var __importStar = (this && this.__importStar) || function (mod) {
+-    if (mod && mod.__esModule) return mod;
+-    var result = {};
+-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+-    __setModuleDefault(result, mod);
+-    return result;
+-};
++var __importStar = (this && this.__importStar) || (function () {
++    var ownKeys = function(o) {
++        ownKeys = Object.getOwnPropertyNames || function (o) {
++            var ar = [];
++            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
++            return ar;
++        };
++        return ownKeys(o);
++    };
++    return function (mod) {
++        if (mod && mod.__esModule) return mod;
++        var result = {};
++        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
++        __setModuleDefault(result, mod);
++        return result;
++    };
++})();
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Audiobook = void 0;
+ const ReadWriteBaseClient_js_1 = require("../client/ReadWriteBaseClient.js");
+diff --git a/dist/cjs/endpoints/Audiobook.js.map b/dist/cjs/endpoints/Audiobook.js.map
+index 0f08f11b4f5dae894e26ffec47fdf3ea0efb8b95..9dc31882c597df81cc3eded88a356700d271b797 100644
+--- a/dist/cjs/endpoints/Audiobook.js.map
++++ b/dist/cjs/endpoints/Audiobook.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"Audiobook.js","sourceRoot":"","sources":["../../../src/endpoints/Audiobook.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,6EAAuE;AAUvE,wDAAkF;AAElF,MAAa,SAAU,SAAQ,4CAAmB;IAChD;;;;OAIG;IACH,YAAY,CAAC,EAAU,EAAE,cAA2C;QAClE,OAAO,IAAI,CAAC,GAAG,CAAkB,eAAe,EAAE,EAAE,EAAE,cAAc,CAAC,CAAC;IACxE,CAAC;IAED;;;;OAIG;IACH,oBAAoB,CAAC,GAAa,EAAE,cAA2C;QAC7E,OAAO,IAAI,CAAC,GAAG,CAAa,aAAa,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,CAAC;IACpG,CAAC;IAED;;;;OAIG;IACH,oBAAoB,CAAC,EAAU,EAAE,cAAmD;QAClF,OAAO,IAAI,CAAC,GAAG,CAAoB,eAAe,EAAE,WAAW,EAAE,cAAc,CAAC,CAAC;IACnF,CAAC;IAED;;;OAGG;IACH,qBAAqB,CAAC,cAAqD;QACzE,OAAO,IAAI,CAAC,GAAG,CAAsB,gBAAgB,EAAE,cAAc,CAAC,CAAC;IACzE,CAAC;IAED;;;OAGG;IACH,4BAA4B,CAAC,GAAa;QACxC,OAAO,IAAI,CAAC,GAAG,CAAC,iBAAiB,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IACxG,CAAC;IAED;;;OAGG;IACH,yBAAyB,CAAC,GAAa;QACrC,OAAO,IAAI,CAAC,MAAM,CAAC,iBAAiB,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IAC3G,CAAC;IAED;;;OAGG;IACH,wBAAwB,CAAC,GAAa;QACpC,OAAO,IAAI,CAAC,GAAG,CACb,0BAA0B,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAC9F,CAAC;IACJ,CAAC;CACF;AA7DD,8BA6DC;AAED,kBAAe,SAAS,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"Audiobook.js","sourceRoot":"","sources":["../../../src/endpoints/Audiobook.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,6EAAuE;AAUvE,wDAAkF;AAElF,MAAa,SAAU,SAAQ,4CAAmB;IAChD;;;;OAIG;IACH,YAAY,CAAC,EAAU,EAAE,cAA2C;QAClE,OAAO,IAAI,CAAC,GAAG,CAAkB,eAAe,EAAE,EAAE,EAAE,cAAc,CAAC,CAAC;IACxE,CAAC;IAED;;;;OAIG;IACH,oBAAoB,CAAC,GAAa,EAAE,cAA2C;QAC7E,OAAO,IAAI,CAAC,GAAG,CAAa,aAAa,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,CAAC;IACpG,CAAC;IAED;;;;OAIG;IACH,oBAAoB,CAAC,EAAU,EAAE,cAAmD;QAClF,OAAO,IAAI,CAAC,GAAG,CAAoB,eAAe,EAAE,WAAW,EAAE,cAAc,CAAC,CAAC;IACnF,CAAC;IAED;;;OAGG;IACH,qBAAqB,CAAC,cAAqD;QACzE,OAAO,IAAI,CAAC,GAAG,CAAsB,gBAAgB,EAAE,cAAc,CAAC,CAAC;IACzE,CAAC;IAED;;;OAGG;IACH,4BAA4B,CAAC,GAAa;QACxC,OAAO,IAAI,CAAC,GAAG,CAAC,iBAAiB,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IACxG,CAAC;IAED;;;OAGG;IACH,yBAAyB,CAAC,GAAa;QACrC,OAAO,IAAI,CAAC,MAAM,CAAC,iBAAiB,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IAC3G,CAAC;IAED;;;OAGG;IACH,wBAAwB,CAAC,GAAa;QACpC,OAAO,IAAI,CAAC,GAAG,CACb,0BAA0B,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAC9F,CAAC;IACJ,CAAC;CACF;AA7DD,8BA6DC;AAED,kBAAe,SAAS,CAAC"}
+\ No newline at end of file
+diff --git a/dist/cjs/endpoints/Player.d.ts b/dist/cjs/endpoints/Player.d.ts
+index 851fd95384d1d9b5fa9686cadf1c1984baf09082..bd65fc2f4648af0a2b11639b59afea7a9d86f48a 100644
+--- a/dist/cjs/endpoints/Player.d.ts
++++ b/dist/cjs/endpoints/Player.d.ts
+@@ -1,80 +1,96 @@
+ import { ReadWriteBaseClient } from '../client/ReadWriteBaseClient.js';
+-import { AddItemToPlaybackQueueOptionalParams, CurrentlyPlayingTrackParams, Devices, GetPlaybackStateParams, GetRecentlyPlayedTracksOptionalParams, PlaybackState, RepeatState, ResumePlaybackParams, RecentlyPlayedTracks, SeekToPositionOptionalParam, SetPlaybackVolumeOptionalParams, SetRepeatModeOptionalParams, TogglePlaybackShuffleOptionalParams, TransferPlaybackOptionalParams, UserTrackEpisodeQueue } from '../types/index.js';
++import {
++  AddItemToPlaybackQueueOptionalParams,
++  CurrentlyPlayingTrackParams,
++  Devices,
++  GetPlaybackStateParams,
++  GetRecentlyPlayedTracksOptionalParams,
++  PlaybackState,
++  RepeatState,
++  ResumePlaybackParams,
++  RecentlyPlayedTracks,
++  SeekToPositionOptionalParam,
++  SetPlaybackVolumeOptionalParams,
++  SetRepeatModeOptionalParams,
++  TogglePlaybackShuffleOptionalParams,
++  TransferPlaybackOptionalParams,
++  UserTrackEpisodeQueue,
++} from '../types/index.js';
+ export declare class Player extends ReadWriteBaseClient {
+-    /**
+-     * Get information about the user’s current playback state, including track or episode, progress, and active device
+-     * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+-     */
+-    getPlaybackState(optionalParams?: GetPlaybackStateParams): Promise<PlaybackState>;
+-    /**
+-     * Transfer playback to a new device and determine if it should start playing
+-     * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+-     */
+-    transferPlayback(deviceIds: string[], optionalParams: TransferPlaybackOptionalParams): Promise<unknown>;
+-    /**
+-     * Get information about a user’s available devices
+-     * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+-     */
+-    getAvailableDevices(): Promise<Devices>;
+-    /**
+-     * Get the object currently being played on the user's Spotify account
+-     * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
+-     */
+-    getCurrentlyPlayingTrack(optionalParams?: CurrentlyPlayingTrackParams): Promise<PlaybackState>;
+-    /**
+-     * Start a new context or resume current playback on the user's active device
+-     * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+-     */
+-    startResumePlayback(deviceId: string, params: ResumePlaybackParams): void;
+-    /**
+-     * Pause playback on the user's account
+-     * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
+-     */
+-    pausePlayback(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Skips to next track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+-     */
+-    skipToNext(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Skips to previous track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+-     */
+-    skipToPrevious(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Seeks to the given position in the user’s currently playing track
+-     * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+-     */
+-    seekToPosition(positionMS: number, optionalParams?: SeekToPositionOptionalParam): Promise<unknown>;
+-    /**
+-     * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
+-     * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+-     */
+-    setRepeatMode(state: RepeatState, optionalParams?: SetRepeatModeOptionalParams): Promise<unknown>;
+-    /**
+-     * Set the volume for the user’s current playback device
+-     * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+-     */
+-    setPlaybackVolume(volume: number, optionalParams?: SetPlaybackVolumeOptionalParams): Promise<unknown>;
+-    /**
+-     * Toggle shuffle on or off for user’s playback
+-     * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+-     */
+-    togglePlaybackShuffle(state: boolean, optionalParams: TogglePlaybackShuffleOptionalParams): Promise<unknown>;
+-    /**
+-     * Get tracks from the current user's recently played tracks
+-     * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+-     */
+-    getRecentlyPlayedTracks(optionalParams: GetRecentlyPlayedTracksOptionalParams): Promise<RecentlyPlayedTracks>;
+-    /**
+-     * Get the list of objects that make up the user's queue
+-     * https://developer.spotify.com/documentation/web-api/reference/get-queue
+-     */
+-    getTheUserQueue(): Promise<UserTrackEpisodeQueue>;
+-    /**
+-     * Add an item to the end of the user's current playback queue
+-     * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+-     */
+-    addItemToPlaybackQueue(uri: string, optionalParams: AddItemToPlaybackQueueOptionalParams): void;
++  /**
++   * Get information about the user’s current playback state, including track or episode, progress, and active device
++   * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
++   */
++  getPlaybackState(optionalParams?: GetPlaybackStateParams): Promise<PlaybackState>;
++  /**
++   * Transfer playback to a new device and determine if it should start playing
++   * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
++   */
++  transferPlayback(deviceIds: string[], optionalParams: TransferPlaybackOptionalParams): Promise<unknown>;
++  /**
++   * Get information about a user’s available devices
++   * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
++   */
++  getAvailableDevices(): Promise<Devices>;
++  /**
++   * Get the object currently being played on the user's Spotify account
++   * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
++   */
++  getCurrentlyPlayingTrack(optionalParams?: CurrentlyPlayingTrackParams): Promise<PlaybackState>;
++  /**
++   * Start a new context or resume current playback on the user's active device
++   * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
++   */
++  startResumePlayback(deviceId: string, params: ResumePlaybackParams): void;
++  /**
++   * Pause playback on the user's account
++   * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
++   */
++  pausePlayback(deviceId?: string): Promise<unknown>;
++  /**
++   * Skips to next track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
++   */
++  skipToNext(deviceId?: string): Promise<unknown>;
++  /**
++   * Skips to previous track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
++   */
++  skipToPrevious(deviceId?: string): Promise<unknown>;
++  /**
++   * Seeks to the given position in the user’s currently playing track
++   * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
++   */
++  seekToPosition(positionMS: number, optionalParams?: SeekToPositionOptionalParam): Promise<unknown>;
++  /**
++   * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
++   * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
++   */
++  setRepeatMode(state: RepeatState, optionalParams?: SetRepeatModeOptionalParams): Promise<unknown>;
++  /**
++   * Set the volume for the user’s current playback device
++   * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
++   */
++  setPlaybackVolume(volume: number, optionalParams?: SetPlaybackVolumeOptionalParams): Promise<unknown>;
++  /**
++   * Toggle shuffle on or off for user’s playback
++   * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
++   */
++  togglePlaybackShuffle(state: boolean, optionalParams: TogglePlaybackShuffleOptionalParams): Promise<unknown>;
++  /**
++   * Get tracks from the current user's recently played tracks
++   * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
++   */
++  getRecentlyPlayedTracks(optionalParams: GetRecentlyPlayedTracksOptionalParams): Promise<RecentlyPlayedTracks>;
++  /**
++   * Get the list of objects that make up the user's queue
++   * https://developer.spotify.com/documentation/web-api/reference/get-queue
++   */
++  getTheUserQueue(): Promise<UserTrackEpisodeQueue>;
++  /**
++   * Add an item to the end of the user's current playback queue
++   * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
++   */
++  addItemToPlaybackQueue(uri: string, optionalParams?: AddItemToPlaybackQueueOptionalParams): Promise<void>;
+ }
+ export default Player;
+diff --git a/dist/cjs/endpoints/Player.js b/dist/cjs/endpoints/Player.js
+index 3f8384d438bd4f053faad5e8f360846f42f0e722..c5988e226609f8b24268ab7581554df341269eb6 100644
+--- a/dist/cjs/endpoints/Player.js
++++ b/dist/cjs/endpoints/Player.js
+@@ -1,114 +1,120 @@
+-"use strict";
+-Object.defineProperty(exports, "__esModule", { value: true });
++'use strict';
++Object.defineProperty(exports, '__esModule', { value: true });
+ exports.Player = void 0;
+-const ReadWriteBaseClient_js_1 = require("../client/ReadWriteBaseClient.js");
+-const utils_js_1 = require("../utils.js");
++const ReadWriteBaseClient_js_1 = require('../client/ReadWriteBaseClient.js');
++const utils_js_1 = require('../utils.js');
+ class Player extends ReadWriteBaseClient_js_1.ReadWriteBaseClient {
+-    /**
+-     * Get information about the user’s current playback state, including track or episode, progress, and active device
+-     * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+-     */
+-    getPlaybackState(optionalParams) {
+-        return this.get('/me/player', optionalParams);
+-    }
+-    /**
+-     * Transfer playback to a new device and determine if it should start playing
+-     * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+-     */
+-    transferPlayback(deviceIds, optionalParams) {
+-        return this.put('/me/player', { device_ids: deviceIds, ...optionalParams });
+-    }
+-    /**
+-     * Get information about a user’s available devices
+-     * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+-     */
+-    getAvailableDevices() {
+-        return this.get('/me/player/devices');
+-    }
+-    /**
+-     * Get the object currently being played on the user's Spotify account
+-     * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
+-     */
+-    getCurrentlyPlayingTrack(optionalParams) {
+-        return this.get('/me/player/currently-playing', optionalParams);
+-    }
+-    /**
+-     * Start a new context or resume current playback on the user's active device
+-     * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+-     */
+-    startResumePlayback(deviceId, params) {
+-        this.put(`/me/player/play${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`, params);
+-    }
+-    /**
+-     * Pause playback on the user's account
+-     * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
+-     */
+-    pausePlayback(deviceId) {
+-        return this.put(`/me/player/pause${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Skips to next track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+-     */
+-    skipToNext(deviceId) {
+-        return this.post(`/me/player/next${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Skips to previous track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+-     */
+-    skipToPrevious(deviceId) {
+-        return this.post(`/me/player/previous${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Seeks to the given position in the user’s currently playing track
+-     * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+-     */
+-    seekToPosition(positionMS, optionalParams) {
+-        return this.put(`/me/player/seek${(0, utils_js_1.generateQueryParametersString)({ position_ms: positionMS, ...optionalParams })}`);
+-    }
+-    /**
+-     * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
+-     * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+-     */
+-    setRepeatMode(state, optionalParams) {
+-        return this.put(`/me/player/repeat${(0, utils_js_1.generateQueryParametersString)({ state, ...optionalParams })}`);
+-    }
+-    /**
+-     * Set the volume for the user’s current playback device
+-     * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+-     */
+-    setPlaybackVolume(volume, optionalParams) {
+-        return this.put(`/me/player/volume${(0, utils_js_1.generateQueryParametersString)({ volume_percent: volume, ...optionalParams })}`);
+-    }
+-    /**
+-     * Toggle shuffle on or off for user’s playback
+-     * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+-     */
+-    togglePlaybackShuffle(state, optionalParams) {
+-        return this.put(`/me/player/shuffle${(0, utils_js_1.generateQueryParametersString)({ state, ...optionalParams })}`);
+-    }
+-    /**
+-     * Get tracks from the current user's recently played tracks
+-     * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+-     */
+-    getRecentlyPlayedTracks(optionalParams) {
+-        return this.get(`/me/player/recently-played`, optionalParams);
+-    }
+-    /**
+-     * Get the list of objects that make up the user's queue
+-     * https://developer.spotify.com/documentation/web-api/reference/get-queue
+-     */
+-    getTheUserQueue() {
+-        return this.get('/me/player/queue');
+-    }
+-    /**
+-     * Add an item to the end of the user's current playback queue
+-     * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+-     */
+-    addItemToPlaybackQueue(uri, optionalParams) {
+-        this.post(`/me/player/queue${(0, utils_js_1.generateQueryParametersString)({ uri: encodeURIComponent(uri), ...optionalParams })}}`);
+-    }
++  /**
++   * Get information about the user’s current playback state, including track or episode, progress, and active device
++   * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
++   */
++  getPlaybackState(optionalParams) {
++    return this.get('/me/player', optionalParams);
++  }
++  /**
++   * Transfer playback to a new device and determine if it should start playing
++   * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
++   */
++  transferPlayback(deviceIds, optionalParams) {
++    return this.put('/me/player', { device_ids: deviceIds, ...optionalParams });
++  }
++  /**
++   * Get information about a user’s available devices
++   * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
++   */
++  getAvailableDevices() {
++    return this.get('/me/player/devices');
++  }
++  /**
++   * Get the object currently being played on the user's Spotify account
++   * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
++   */
++  getCurrentlyPlayingTrack(optionalParams) {
++    return this.get('/me/player/currently-playing', optionalParams);
++  }
++  /**
++   * Start a new context or resume current playback on the user's active device
++   * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
++   */
++  startResumePlayback(deviceId, params) {
++    this.put(`/me/player/play${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`, params);
++  }
++  /**
++   * Pause playback on the user's account
++   * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
++   */
++  pausePlayback(deviceId) {
++    return this.put(`/me/player/pause${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
++  }
++  /**
++   * Skips to next track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
++   */
++  skipToNext(deviceId) {
++    return this.post(`/me/player/next${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
++  }
++  /**
++   * Skips to previous track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
++   */
++  skipToPrevious(deviceId) {
++    return this.post(`/me/player/previous${(0, utils_js_1.generateQueryParametersString)({ device_id: deviceId })}`);
++  }
++  /**
++   * Seeks to the given position in the user’s currently playing track
++   * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
++   */
++  seekToPosition(positionMS, optionalParams) {
++    return this.put(
++      `/me/player/seek${(0, utils_js_1.generateQueryParametersString)({ position_ms: positionMS, ...optionalParams })}`
++    );
++  }
++  /**
++   * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
++   * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
++   */
++  setRepeatMode(state, optionalParams) {
++    return this.put(`/me/player/repeat${(0, utils_js_1.generateQueryParametersString)({ state, ...optionalParams })}`);
++  }
++  /**
++   * Set the volume for the user’s current playback device
++   * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
++   */
++  setPlaybackVolume(volume, optionalParams) {
++    return this.put(
++      `/me/player/volume${(0, utils_js_1.generateQueryParametersString)({ volume_percent: volume, ...optionalParams })}`
++    );
++  }
++  /**
++   * Toggle shuffle on or off for user’s playback
++   * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
++   */
++  togglePlaybackShuffle(state, optionalParams) {
++    return this.put(`/me/player/shuffle${(0, utils_js_1.generateQueryParametersString)({ state, ...optionalParams })}`);
++  }
++  /**
++   * Get tracks from the current user's recently played tracks
++   * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
++   */
++  getRecentlyPlayedTracks(optionalParams) {
++    return this.get(`/me/player/recently-played`, optionalParams);
++  }
++  /**
++   * Get the list of objects that make up the user's queue
++   * https://developer.spotify.com/documentation/web-api/reference/get-queue
++   */
++  getTheUserQueue() {
++    return this.get('/me/player/queue');
++  }
++  /**
++   * Add an item to the end of the user's current playback queue
++   * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
++   */
++  addItemToPlaybackQueue(uri, optionalParams) {
++    return this.post(
++      `/me/player/queue${(0, utils_js_1.generateQueryParametersString)({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++    );
++  }
+ }
+ exports.Player = Player;
+ exports.default = Player;
+diff --git a/dist/cjs/endpoints/Show.js b/dist/cjs/endpoints/Show.js
+index 610edad9e02b9044a53ff8b3aeb78164c4fb40fb..d959bc9b5c9be061f8f8095e96142cb704a05713 100644
+--- a/dist/cjs/endpoints/Show.js
++++ b/dist/cjs/endpoints/Show.js
+@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
+ }) : function(o, v) {
+     o["default"] = v;
+ });
+-var __importStar = (this && this.__importStar) || function (mod) {
+-    if (mod && mod.__esModule) return mod;
+-    var result = {};
+-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+-    __setModuleDefault(result, mod);
+-    return result;
+-};
++var __importStar = (this && this.__importStar) || (function () {
++    var ownKeys = function(o) {
++        ownKeys = Object.getOwnPropertyNames || function (o) {
++            var ar = [];
++            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
++            return ar;
++        };
++        return ownKeys(o);
++    };
++    return function (mod) {
++        if (mod && mod.__esModule) return mod;
++        var result = {};
++        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
++        __setModuleDefault(result, mod);
++        return result;
++    };
++})();
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Show = void 0;
+ const utils_js_1 = __importStar(require("../utils.js"));
+diff --git a/dist/cjs/endpoints/Show.js.map b/dist/cjs/endpoints/Show.js.map
+index 541e46340dcf62e35f3f54fddb627c592edf8e21..365fc0a57bcc0d971f97a0d67c93f9de6a0f2bb6 100644
+--- a/dist/cjs/endpoints/Show.js.map
++++ b/dist/cjs/endpoints/Show.js.map
+@@ -1 +1 @@
+-{"version":3,"file":"Show.js","sourceRoot":"","sources":["../../../src/endpoints/Show.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,wDAAkF;AAClF,6EAAuE;AAYvE,MAAa,IAAK,SAAQ,4CAAmB;IAC3C;;;OAGG;IACH,OAAO,CAAC,EAAU,EAAE,cAA8B;QAChD,OAAO,IAAI,CAAC,GAAG,CAAa,UAAU,EAAE,EAAE,EAAE,cAAc,CAAC,CAAC;IAC9D,CAAC;IAED;;;OAGG;IACH,eAAe,CAAC,GAAa,EAAE,cAA8B;QAC3D,OAAO,IAAI,CAAC,GAAG,CAAQ,QAAQ,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,CAAC;IAC1F,CAAC;IAED;;;;OAIG;IACH,gBAAgB,CAAC,EAAU,EAAE,cAA6C;QACxE,OAAO,IAAI,CAAC,GAAG,CAAe,UAAU,EAAE,WAAW,EAAE,cAAc,CAAC,CAAC;IACzE,CAAC;IAED;;;;OAIG;IACH,kBAAkB,CAAC,cAAiD;QAClE,OAAO,IAAI,CAAC,GAAG,CAAiB,WAAW,EAAE,cAAc,CAAC,CAAC;IAC/D,CAAC;IAED;;;OAGG;IACH,uBAAuB,CAAC,GAAa;QACnC,OAAO,IAAI,CAAC,GAAG,CAAC,YAAY,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IACnG,CAAC;IAED;;;OAGG;IACH,oBAAoB,CAAC,GAAa,EAAE,cAA8C;QAChF,OAAO,IAAI,CAAC,MAAM,CAChB,YAAY,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,EAAE,CACnG,CAAC;IACJ,CAAC;IAED;;;OAGG;IACH,mBAAmB,CAAC,GAAa;QAC/B,OAAO,IAAI,CAAC,GAAG,CAAiB,oBAAoB,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,CAAC;IAC5F,CAAC;CACF;AA5DD,oBA4DC;AAED,kBAAe,IAAI,CAAC"}
+\ No newline at end of file
++{"version":3,"file":"Show.js","sourceRoot":"","sources":["../../../src/endpoints/Show.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA,wDAAkF;AAClF,6EAAuE;AAYvE,MAAa,IAAK,SAAQ,4CAAmB;IAC3C;;;OAGG;IACH,OAAO,CAAC,EAAU,EAAE,cAA8B;QAChD,OAAO,IAAI,CAAC,GAAG,CAAa,UAAU,EAAE,EAAE,EAAE,cAAc,CAAC,CAAC;IAC9D,CAAC;IAED;;;OAGG;IACH,eAAe,CAAC,GAAa,EAAE,cAA8B;QAC3D,OAAO,IAAI,CAAC,GAAG,CAAQ,QAAQ,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,CAAC;IAC1F,CAAC;IAED;;;;OAIG;IACH,gBAAgB,CAAC,EAAU,EAAE,cAA6C;QACxE,OAAO,IAAI,CAAC,GAAG,CAAe,UAAU,EAAE,WAAW,EAAE,cAAc,CAAC,CAAC;IACzE,CAAC;IAED;;;;OAIG;IACH,kBAAkB,CAAC,cAAiD;QAClE,OAAO,IAAI,CAAC,GAAG,CAAiB,WAAW,EAAE,cAAc,CAAC,CAAC;IAC/D,CAAC;IAED;;;OAGG;IACH,uBAAuB,CAAC,GAAa;QACnC,OAAO,IAAI,CAAC,GAAG,CAAC,YAAY,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,EAAE,CAAC,CAAC;IACnG,CAAC;IAED;;;OAGG;IACH,oBAAoB,CAAC,GAAa,EAAE,cAA8C;QAChF,OAAO,IAAI,CAAC,MAAM,CAChB,YAAY,IAAA,wCAA6B,EAAC,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,GAAG,cAAc,EAAE,CAAC,EAAE,CACnG,CAAC;IACJ,CAAC;IAED;;;OAGG;IACH,mBAAmB,CAAC,GAAa;QAC/B,OAAO,IAAI,CAAC,GAAG,CAAiB,oBAAoB,EAAE,EAAE,GAAG,EAAE,IAAA,kBAAoB,EAAC,GAAG,CAAC,EAAE,CAAC,CAAC;IAC5F,CAAC;CACF;AA5DD,oBA4DC;AAED,kBAAe,IAAI,CAAC"}
+\ No newline at end of file
+diff --git a/dist/cjs/errors/SpotifyApiError.d.ts b/dist/cjs/errors/SpotifyApiError.d.ts
+index e5086dbc781e23569d11e26b61aac3bdc00b1322..6b528baf43cf5e1ed7e554f4e891510b354c565d 100644
+--- a/dist/cjs/errors/SpotifyApiError.d.ts
++++ b/dist/cjs/errors/SpotifyApiError.d.ts
+@@ -3,9 +3,9 @@ export declare class SpotifyApiError extends Error implements SpotifyApiErrorPro
+     status: number;
+     statusText: string;
+     endpoint: string;
+-    requestParams?: any;
+-    details?: any;
++    requestParams?: any | undefined;
++    details?: any | undefined;
+     retryAfter?: number | undefined;
+-    constructor(status: number, statusText: string, endpoint: string, requestParams?: any, details?: any, retryAfter?: number | undefined);
++    constructor(status: number, statusText: string, endpoint: string, requestParams?: any | undefined, details?: any | undefined, retryAfter?: number | undefined);
+ }
+ export default SpotifyApiError;
+diff --git a/dist/mjs/endpoints/Player.d.ts b/dist/mjs/endpoints/Player.d.ts
+index 851fd95384d1d9b5fa9686cadf1c1984baf09082..bd65fc2f4648af0a2b11639b59afea7a9d86f48a 100644
+--- a/dist/mjs/endpoints/Player.d.ts
++++ b/dist/mjs/endpoints/Player.d.ts
+@@ -1,80 +1,96 @@
+ import { ReadWriteBaseClient } from '../client/ReadWriteBaseClient.js';
+-import { AddItemToPlaybackQueueOptionalParams, CurrentlyPlayingTrackParams, Devices, GetPlaybackStateParams, GetRecentlyPlayedTracksOptionalParams, PlaybackState, RepeatState, ResumePlaybackParams, RecentlyPlayedTracks, SeekToPositionOptionalParam, SetPlaybackVolumeOptionalParams, SetRepeatModeOptionalParams, TogglePlaybackShuffleOptionalParams, TransferPlaybackOptionalParams, UserTrackEpisodeQueue } from '../types/index.js';
++import {
++  AddItemToPlaybackQueueOptionalParams,
++  CurrentlyPlayingTrackParams,
++  Devices,
++  GetPlaybackStateParams,
++  GetRecentlyPlayedTracksOptionalParams,
++  PlaybackState,
++  RepeatState,
++  ResumePlaybackParams,
++  RecentlyPlayedTracks,
++  SeekToPositionOptionalParam,
++  SetPlaybackVolumeOptionalParams,
++  SetRepeatModeOptionalParams,
++  TogglePlaybackShuffleOptionalParams,
++  TransferPlaybackOptionalParams,
++  UserTrackEpisodeQueue,
++} from '../types/index.js';
+ export declare class Player extends ReadWriteBaseClient {
+-    /**
+-     * Get information about the user’s current playback state, including track or episode, progress, and active device
+-     * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+-     */
+-    getPlaybackState(optionalParams?: GetPlaybackStateParams): Promise<PlaybackState>;
+-    /**
+-     * Transfer playback to a new device and determine if it should start playing
+-     * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+-     */
+-    transferPlayback(deviceIds: string[], optionalParams: TransferPlaybackOptionalParams): Promise<unknown>;
+-    /**
+-     * Get information about a user’s available devices
+-     * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+-     */
+-    getAvailableDevices(): Promise<Devices>;
+-    /**
+-     * Get the object currently being played on the user's Spotify account
+-     * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
+-     */
+-    getCurrentlyPlayingTrack(optionalParams?: CurrentlyPlayingTrackParams): Promise<PlaybackState>;
+-    /**
+-     * Start a new context or resume current playback on the user's active device
+-     * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+-     */
+-    startResumePlayback(deviceId: string, params: ResumePlaybackParams): void;
+-    /**
+-     * Pause playback on the user's account
+-     * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
+-     */
+-    pausePlayback(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Skips to next track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+-     */
+-    skipToNext(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Skips to previous track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+-     */
+-    skipToPrevious(deviceId?: string): Promise<unknown>;
+-    /**
+-     * Seeks to the given position in the user’s currently playing track
+-     * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+-     */
+-    seekToPosition(positionMS: number, optionalParams?: SeekToPositionOptionalParam): Promise<unknown>;
+-    /**
+-     * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
+-     * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+-     */
+-    setRepeatMode(state: RepeatState, optionalParams?: SetRepeatModeOptionalParams): Promise<unknown>;
+-    /**
+-     * Set the volume for the user’s current playback device
+-     * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+-     */
+-    setPlaybackVolume(volume: number, optionalParams?: SetPlaybackVolumeOptionalParams): Promise<unknown>;
+-    /**
+-     * Toggle shuffle on or off for user’s playback
+-     * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+-     */
+-    togglePlaybackShuffle(state: boolean, optionalParams: TogglePlaybackShuffleOptionalParams): Promise<unknown>;
+-    /**
+-     * Get tracks from the current user's recently played tracks
+-     * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+-     */
+-    getRecentlyPlayedTracks(optionalParams: GetRecentlyPlayedTracksOptionalParams): Promise<RecentlyPlayedTracks>;
+-    /**
+-     * Get the list of objects that make up the user's queue
+-     * https://developer.spotify.com/documentation/web-api/reference/get-queue
+-     */
+-    getTheUserQueue(): Promise<UserTrackEpisodeQueue>;
+-    /**
+-     * Add an item to the end of the user's current playback queue
+-     * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+-     */
+-    addItemToPlaybackQueue(uri: string, optionalParams: AddItemToPlaybackQueueOptionalParams): void;
++  /**
++   * Get information about the user’s current playback state, including track or episode, progress, and active device
++   * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
++   */
++  getPlaybackState(optionalParams?: GetPlaybackStateParams): Promise<PlaybackState>;
++  /**
++   * Transfer playback to a new device and determine if it should start playing
++   * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
++   */
++  transferPlayback(deviceIds: string[], optionalParams: TransferPlaybackOptionalParams): Promise<unknown>;
++  /**
++   * Get information about a user’s available devices
++   * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
++   */
++  getAvailableDevices(): Promise<Devices>;
++  /**
++   * Get the object currently being played on the user's Spotify account
++   * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
++   */
++  getCurrentlyPlayingTrack(optionalParams?: CurrentlyPlayingTrackParams): Promise<PlaybackState>;
++  /**
++   * Start a new context or resume current playback on the user's active device
++   * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
++   */
++  startResumePlayback(deviceId: string, params: ResumePlaybackParams): void;
++  /**
++   * Pause playback on the user's account
++   * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
++   */
++  pausePlayback(deviceId?: string): Promise<unknown>;
++  /**
++   * Skips to next track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
++   */
++  skipToNext(deviceId?: string): Promise<unknown>;
++  /**
++   * Skips to previous track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
++   */
++  skipToPrevious(deviceId?: string): Promise<unknown>;
++  /**
++   * Seeks to the given position in the user’s currently playing track
++   * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
++   */
++  seekToPosition(positionMS: number, optionalParams?: SeekToPositionOptionalParam): Promise<unknown>;
++  /**
++   * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
++   * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
++   */
++  setRepeatMode(state: RepeatState, optionalParams?: SetRepeatModeOptionalParams): Promise<unknown>;
++  /**
++   * Set the volume for the user’s current playback device
++   * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
++   */
++  setPlaybackVolume(volume: number, optionalParams?: SetPlaybackVolumeOptionalParams): Promise<unknown>;
++  /**
++   * Toggle shuffle on or off for user’s playback
++   * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
++   */
++  togglePlaybackShuffle(state: boolean, optionalParams: TogglePlaybackShuffleOptionalParams): Promise<unknown>;
++  /**
++   * Get tracks from the current user's recently played tracks
++   * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
++   */
++  getRecentlyPlayedTracks(optionalParams: GetRecentlyPlayedTracksOptionalParams): Promise<RecentlyPlayedTracks>;
++  /**
++   * Get the list of objects that make up the user's queue
++   * https://developer.spotify.com/documentation/web-api/reference/get-queue
++   */
++  getTheUserQueue(): Promise<UserTrackEpisodeQueue>;
++  /**
++   * Add an item to the end of the user's current playback queue
++   * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
++   */
++  addItemToPlaybackQueue(uri: string, optionalParams?: AddItemToPlaybackQueueOptionalParams): Promise<void>;
+ }
+ export default Player;
+diff --git a/dist/mjs/endpoints/Player.js b/dist/mjs/endpoints/Player.js
+index 86b01a1a38d3218bff1419b47d2af0e08bbd5a7a..2be0587750afcf494672530f9b4b230d4fcd225c 100644
+--- a/dist/mjs/endpoints/Player.js
++++ b/dist/mjs/endpoints/Player.js
+@@ -1,111 +1,113 @@
+ import { ReadWriteBaseClient } from '../client/ReadWriteBaseClient.js';
+ import { generateQueryParametersString } from '../utils.js';
+ export class Player extends ReadWriteBaseClient {
+-    /**
+-     * Get information about the user’s current playback state, including track or episode, progress, and active device
+-     * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+-     */
+-    getPlaybackState(optionalParams) {
+-        return this.get('/me/player', optionalParams);
+-    }
+-    /**
+-     * Transfer playback to a new device and determine if it should start playing
+-     * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
+-     */
+-    transferPlayback(deviceIds, optionalParams) {
+-        return this.put('/me/player', { device_ids: deviceIds, ...optionalParams });
+-    }
+-    /**
+-     * Get information about a user’s available devices
+-     * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
+-     */
+-    getAvailableDevices() {
+-        return this.get('/me/player/devices');
+-    }
+-    /**
+-     * Get the object currently being played on the user's Spotify account
+-     * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
+-     */
+-    getCurrentlyPlayingTrack(optionalParams) {
+-        return this.get('/me/player/currently-playing', optionalParams);
+-    }
+-    /**
+-     * Start a new context or resume current playback on the user's active device
+-     * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+-     */
+-    startResumePlayback(deviceId, params) {
+-        this.put(`/me/player/play${generateQueryParametersString({ device_id: deviceId })}`, params);
+-    }
+-    /**
+-     * Pause playback on the user's account
+-     * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
+-     */
+-    pausePlayback(deviceId) {
+-        return this.put(`/me/player/pause${generateQueryParametersString({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Skips to next track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
+-     */
+-    skipToNext(deviceId) {
+-        return this.post(`/me/player/next${generateQueryParametersString({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Skips to previous track in the user’s queue
+-     * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
+-     */
+-    skipToPrevious(deviceId) {
+-        return this.post(`/me/player/previous${generateQueryParametersString({ device_id: deviceId })}`);
+-    }
+-    /**
+-     * Seeks to the given position in the user’s currently playing track
+-     * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
+-     */
+-    seekToPosition(positionMS, optionalParams) {
+-        return this.put(`/me/player/seek${generateQueryParametersString({ position_ms: positionMS, ...optionalParams })}`);
+-    }
+-    /**
+-     * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
+-     * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
+-     */
+-    setRepeatMode(state, optionalParams) {
+-        return this.put(`/me/player/repeat${generateQueryParametersString({ state, ...optionalParams })}`);
+-    }
+-    /**
+-     * Set the volume for the user’s current playback device
+-     * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
+-     */
+-    setPlaybackVolume(volume, optionalParams) {
+-        return this.put(`/me/player/volume${generateQueryParametersString({ volume_percent: volume, ...optionalParams })}`);
+-    }
+-    /**
+-     * Toggle shuffle on or off for user’s playback
+-     * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
+-     */
+-    togglePlaybackShuffle(state, optionalParams) {
+-        return this.put(`/me/player/shuffle${generateQueryParametersString({ state, ...optionalParams })}`);
+-    }
+-    /**
+-     * Get tracks from the current user's recently played tracks
+-     * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
+-     */
+-    getRecentlyPlayedTracks(optionalParams) {
+-        return this.get(`/me/player/recently-played`, optionalParams);
+-    }
+-    /**
+-     * Get the list of objects that make up the user's queue
+-     * https://developer.spotify.com/documentation/web-api/reference/get-queue
+-     */
+-    getTheUserQueue() {
+-        return this.get('/me/player/queue');
+-    }
+-    /**
+-     * Add an item to the end of the user's current playback queue
+-     * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+-     */
+-    addItemToPlaybackQueue(uri, optionalParams) {
+-        this.post(`/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`);
+-    }
++  /**
++   * Get information about the user’s current playback state, including track or episode, progress, and active device
++   * https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
++   */
++  getPlaybackState(optionalParams) {
++    return this.get('/me/player', optionalParams);
++  }
++  /**
++   * Transfer playback to a new device and determine if it should start playing
++   * https://developer.spotify.com/documentation/web-api/reference/transfer-a-users-playback
++   */
++  transferPlayback(deviceIds, optionalParams) {
++    return this.put('/me/player', { device_ids: deviceIds, ...optionalParams });
++  }
++  /**
++   * Get information about a user’s available devices
++   * https://developer.spotify.com/documentation/web-api/reference/get-a-users-available-devices
++   */
++  getAvailableDevices() {
++    return this.get('/me/player/devices');
++  }
++  /**
++   * Get the object currently being played on the user's Spotify account
++   * https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track
++   */
++  getCurrentlyPlayingTrack(optionalParams) {
++    return this.get('/me/player/currently-playing', optionalParams);
++  }
++  /**
++   * Start a new context or resume current playback on the user's active device
++   * https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
++   */
++  startResumePlayback(deviceId, params) {
++    this.put(`/me/player/play${generateQueryParametersString({ device_id: deviceId })}`, params);
++  }
++  /**
++   * Pause playback on the user's account
++   * https://developer.spotify.com/documentation/web-api/reference/pause-a-users-playback
++   */
++  pausePlayback(deviceId) {
++    return this.put(`/me/player/pause${generateQueryParametersString({ device_id: deviceId })}`);
++  }
++  /**
++   * Skips to next track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-next-track
++   */
++  skipToNext(deviceId) {
++    return this.post(`/me/player/next${generateQueryParametersString({ device_id: deviceId })}`);
++  }
++  /**
++   * Skips to previous track in the user’s queue
++   * https://developer.spotify.com/documentation/web-api/reference/skip-users-playback-to-previous-track
++   */
++  skipToPrevious(deviceId) {
++    return this.post(`/me/player/previous${generateQueryParametersString({ device_id: deviceId })}`);
++  }
++  /**
++   * Seeks to the given position in the user’s currently playing track
++   * https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track
++   */
++  seekToPosition(positionMS, optionalParams) {
++    return this.put(`/me/player/seek${generateQueryParametersString({ position_ms: positionMS, ...optionalParams })}`);
++  }
++  /**
++   * Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off
++   * https://developer.spotify.com/documentation/web-api/reference/set-repeat-mode-on-users-playback
++   */
++  setRepeatMode(state, optionalParams) {
++    return this.put(`/me/player/repeat${generateQueryParametersString({ state, ...optionalParams })}`);
++  }
++  /**
++   * Set the volume for the user’s current playback device
++   * https://developer.spotify.com/documentation/web-api/reference/set-volume-for-users-playback
++   */
++  setPlaybackVolume(volume, optionalParams) {
++    return this.put(`/me/player/volume${generateQueryParametersString({ volume_percent: volume, ...optionalParams })}`);
++  }
++  /**
++   * Toggle shuffle on or off for user’s playback
++   * https://developer.spotify.com/documentation/web-api/reference/toggle-shuffle-for-users-playback
++   */
++  togglePlaybackShuffle(state, optionalParams) {
++    return this.put(`/me/player/shuffle${generateQueryParametersString({ state, ...optionalParams })}`);
++  }
++  /**
++   * Get tracks from the current user's recently played tracks
++   * https://developer.spotify.com/documentation/web-api/reference/get-recently-played
++   */
++  getRecentlyPlayedTracks(optionalParams) {
++    return this.get(`/me/player/recently-played`, optionalParams);
++  }
++  /**
++   * Get the list of objects that make up the user's queue
++   * https://developer.spotify.com/documentation/web-api/reference/get-queue
++   */
++  getTheUserQueue() {
++    return this.get('/me/player/queue');
++  }
++  /**
++   * Add an item to the end of the user's current playback queue
++   * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
++   */
++  addItemToPlaybackQueue(uri, optionalParams) {
++    return this.post(
++      `/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++    );
++  }
+ }
+ export default Player;
+ //# sourceMappingURL=Player.js.map
+diff --git a/dist/mjs/errors/SpotifyApiError.d.ts b/dist/mjs/errors/SpotifyApiError.d.ts
+index e5086dbc781e23569d11e26b61aac3bdc00b1322..6b528baf43cf5e1ed7e554f4e891510b354c565d 100644
+--- a/dist/mjs/errors/SpotifyApiError.d.ts
++++ b/dist/mjs/errors/SpotifyApiError.d.ts
+@@ -3,9 +3,9 @@ export declare class SpotifyApiError extends Error implements SpotifyApiErrorPro
+     status: number;
+     statusText: string;
+     endpoint: string;
+-    requestParams?: any;
+-    details?: any;
++    requestParams?: any | undefined;
++    details?: any | undefined;
+     retryAfter?: number | undefined;
+-    constructor(status: number, statusText: string, endpoint: string, requestParams?: any, details?: any, retryAfter?: number | undefined);
++    constructor(status: number, statusText: string, endpoint: string, requestParams?: any | undefined, details?: any | undefined, retryAfter?: number | undefined);
+ }
+ export default SpotifyApiError;
+diff --git a/src/endpoints/Player.ts b/src/endpoints/Player.ts
+index e172c270da74c109e6f8418b2717aad9a1382afc..e4e830c4a7aa8392298eae71474d2f2e072c5ae1 100644
+--- a/src/endpoints/Player.ts
++++ b/src/endpoints/Player.ts
+@@ -137,7 +137,9 @@ export class Player extends ReadWriteBaseClient {
+    * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
+    */
+   addItemToPlaybackQueue(uri: string, optionalParams: AddItemToPlaybackQueueOptionalParams) {
+-    this.post(`/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`);
++    return this.post(
++      `/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++    );
+   }
+ }
+ 

@@ -1,5 +1,5 @@
+import type Spotified from "spotified";
 import { prisma } from "~/lib/services/db.server";
-import type Spotified from "~/lib/services/sdk/spotified";
 import { log } from "~/lib/utils";
 
 export async function syncUserProfile({

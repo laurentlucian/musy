@@ -1,4 +1,3 @@
-// import path from "node:path";
 import { PrismaD1 } from "@prisma/adapter-d1";
 import type { PrismaConfig } from "prisma";
 

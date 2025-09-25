@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { Button } from "~/components/ui/button";
+import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/transfers";
 
@@ -98,11 +99,8 @@ export default function Transfers({
   );
 }
 
-export async function action({
-  request,
-  context: { userId },
-  params: { provider },
-}: Route.ActionArgs) {
+export async function action({ request, context }: Route.ActionArgs) {
+  const _userId = context.get(userContext);
   const formData = await request.formData();
   const intent = formData.get("intent");
 

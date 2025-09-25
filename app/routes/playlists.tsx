@@ -1,8 +1,10 @@
 import { href, Link, redirect } from "react-router";
+import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
 import type { Route } from "./+types/playlists";
 
-export async function loader({ context: { userId } }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
+  const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
 
   const playlists = await prisma.generatedPlaylist.findMany({
@@ -25,7 +27,7 @@ export async function loader({ context: { userId } }: Route.LoaderArgs) {
   return { playlists };
 }
 
-export default function Playlists({
+export function ServerComponent({
   loaderData: { playlists },
 }: Route.ComponentProps) {
   return (

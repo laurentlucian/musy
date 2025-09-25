@@ -12,7 +12,7 @@ export const cookieOptions = {
   path: "/",
   sameSite: "lax",
   secrets: [env.SESSION_SECRET],
-  secure: env.NODE_ENV === "production",
+  secure: process.env.NODE_ENV === "production",
 } satisfies SessionIdStorageStrategy["cookie"];
 
 export type SessionData = {

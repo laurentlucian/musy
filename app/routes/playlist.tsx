@@ -13,15 +13,14 @@ import { toast } from "sonner";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
 import { generatePlaylist } from "~/lib/services/sdk/helpers/ai.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/playlist";
 
-export async function loader({
-  params,
-  context: { userId },
-}: Route.LoaderArgs) {
+export async function loader({ params, context }: Route.LoaderArgs) {
+  const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
 
   const playlist = await prisma.generatedPlaylist.findUnique({
@@ -113,11 +112,8 @@ function PlayButton() {
   );
 }
 
-export async function action({
-  params,
-  request,
-  context: { userId },
-}: Route.ActionArgs) {
+export async function action({ params, request, context }: Route.ActionArgs) {
+  const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
   const form = await request.formData();
   const intent = form.get("intent");

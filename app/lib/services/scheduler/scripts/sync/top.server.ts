@@ -1,9 +1,9 @@
+import type Spotified from "spotified";
 import { prisma } from "~/lib/services/db.server";
 import {
   transformArtists,
   transformTracks,
 } from "~/lib/services/sdk/helpers/spotify.server";
-import type Spotified from "~/lib/services/sdk/spotified";
 import { log } from "~/lib/utils";
 import { generateId } from "~/lib/utils.server";
 
@@ -37,7 +37,7 @@ export async function syncUserTop({
       },
     });
   } catch (error) {
-    log("failure:" + error, "top");
+    log(`failure:${error}`, "top");
     await prisma.sync.upsert({
       create: {
         userId,

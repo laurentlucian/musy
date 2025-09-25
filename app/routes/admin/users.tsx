@@ -4,6 +4,7 @@ import { data, useNavigation, useSubmit } from "react-router";
 import { toast } from "sonner";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
 import { deleteUser } from "~/lib/services/db/users.server";
 import { prisma } from "~/lib/services/db.server";
@@ -101,7 +102,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   if (typeof userId !== "string")
     return data("User ID required", { status: 400 });
 
-  if (context.userId !== ADMIN_USER_ID && !DEV)
+  if (context.get(userContext) !== ADMIN_USER_ID && !DEV)
     return data("unauthorized", { status: 401 });
 
   await deleteUser(userId);

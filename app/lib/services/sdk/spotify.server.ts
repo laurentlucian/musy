@@ -1,11 +1,10 @@
+import Spotified, { SpotifyApiError } from "spotified";
 import { env } from "~/lib/env.server";
 import {
   getProvider,
   revokeUser,
   updateToken,
 } from "~/lib/services/db/users.server";
-import { SpotifyApiError } from "~/lib/services/sdk/spotified";
-import Spotified from "~/lib/services/sdk/spotified/client/Spotified";
 import { log } from "~/lib/utils";
 
 type GetSpotifyClientOptions = { userId: string } | { token: string };

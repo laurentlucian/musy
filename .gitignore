@@ -12,5 +12,5 @@ node_modules/
 *.db-journal
 wireguard.conf
 .DS_Store
-generated.server/
+generated/
 prisma/sqlite/

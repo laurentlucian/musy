@@ -1,6 +1,6 @@
+import type Spotified from "spotified";
 import { prisma } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
-import type Spotified from "~/lib/services/sdk/spotified";
 import { log, notNull } from "~/lib/utils";
 
 export async function syncUserLiked({

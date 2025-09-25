@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
+import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
 import { migrateLegacySession } from "~/lib/services/auth/helpers.server";
 import { authenticator } from "~/lib/services/auth.server";
@@ -8,9 +9,11 @@ import { sessionStorage } from "~/lib/services/session.server";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
 
-export async function loader({
-  context: { userId, session },
-}: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const userId = context.get(userContext);
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
   const migrated = await migrateLegacySession(session);
   if (!migrated) return { userId };
 
@@ -90,6 +93,6 @@ export async function action({ request }: Route.ActionArgs) {
   if (mode === "authorize") {
     const provider = data.get("provider");
     if (typeof provider !== "string") throw new Error("invalid data");
-    await authenticator.authenticate(provider, cloned);
+    await authenticator.authenticate(provider, cloned as Request);
   }
 }

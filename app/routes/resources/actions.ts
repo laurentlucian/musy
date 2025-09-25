@@ -1,4 +1,5 @@
 import { data, redirect } from "react-router";
+import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { logError } from "~/lib/utils";
@@ -10,9 +11,10 @@ export function loader() {
 
 export async function action({
   request,
-  context: { userId },
+  context,
   params: { action },
 }: Route.ActionArgs) {
+  const userId = context.get(userContext);
   const form = await request.formData();
 
   if (!userId) return data({ error: "no user", type: action }, { status: 400 });
@@ -94,7 +96,7 @@ async function queue(args: { form: FormData; userId: string }) {
   if (provider === "spotify") {
     try {
       const spotify = await getSpotifyClient({ userId });
-      await spotify.player.addItemToPlaybackQueue(uri);
+      await spotify.player.addItemToPlaybackQueue(uri, {});
 
       return null;
     } catch (error) {

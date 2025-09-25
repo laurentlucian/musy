@@ -10,10 +10,11 @@ export default [
   layout("routes/layout.root.tsx", [
     index("routes/create.tsx"),
     route("playlists", "routes/playlists.tsx"),
-    route("trending", "routes/leaderboard.tsx"),
+    route("leaderboard", "routes/leaderboard.tsx"),
     route("new", "routes/new.tsx"),
-    route("listening", "routes/listening.tsx"),
+
     route("playlists/:id", "routes/playlist.tsx"),
+    route("listening", "routes/listening.tsx"),
 
     route("profile/:userId?", "routes/profile.tsx", [
       route("liked", "routes/profile.liked.tsx"),

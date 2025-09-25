@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
 import { syncUserLiked } from "~/lib/services/scheduler/scripts/sync/liked.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
@@ -29,7 +30,7 @@ import { log } from "~/lib/utils";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.userId;
+  const userId = params.userId ?? context.get(userContext);
 
   if (!userId) throw redirect("/settings");
 
