@@ -16,10 +16,10 @@ export default [
     route("playlists/:id", "routes/playlist.tsx"),
     route("listening", "routes/listening.tsx"),
 
-    route("profile/:userId?", "routes/profile.tsx", [
-      index("routes/profile.index.tsx"),
-      route("liked", "routes/profile.liked.tsx"),
-      route("recent", "routes/profile.recent.tsx"),
+    route("profile/:userId?", "routes/profile/profile.tsx", [
+      index("routes/profile/profile.index.tsx"),
+      route("liked", "routes/profile/profile.liked.tsx"),
+      route("recent", "routes/profile/profile.recent.tsx"),
     ]),
 
     route("settings", "routes/settings.tsx", [

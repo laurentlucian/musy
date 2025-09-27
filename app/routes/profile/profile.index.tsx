@@ -5,7 +5,7 @@ import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
-import { TopSelector } from "~/routes/profile.client";
+import { TopSelector } from "~/routes/profile/profile.client";
 import type { Route } from "./+types/profile.index";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {

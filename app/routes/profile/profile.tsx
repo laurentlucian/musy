@@ -5,7 +5,7 @@ import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
-import { Links, Loader, Selector } from "~/routes/profile.client";
+import { Links, Loader, Selector } from "~/routes/profile/profile.client";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
