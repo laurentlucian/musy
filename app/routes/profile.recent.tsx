@@ -20,7 +20,7 @@ export default function ProfileRecent({
   loaderData: { recent },
 }: Route.ComponentProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <>
       <p className="flex h-12 items-center text-muted-foreground text-sm">
         Listened
       </p>
@@ -29,7 +29,7 @@ export default function ProfileRecent({
           <RecentList tracks={recent} />
         </Suspense>
       )}
-    </div>
+    </>
   );
 }
 

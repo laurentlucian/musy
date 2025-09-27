@@ -17,7 +17,7 @@ export default function ProfileLiked({
   loaderData: { liked },
 }: Route.ComponentProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <>
       <p className="flex h-12 items-center text-muted-foreground text-sm">
         Liked
       </p>
@@ -26,7 +26,7 @@ export default function ProfileLiked({
           <LikedList tracks={liked} />
         </Suspense>
       )}
-    </div>
+    </>
   );
 }
 

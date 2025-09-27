@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import {
@@ -42,11 +44,11 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
         <div className="max-w-[640px]">
           <button
             type="button"
-            onClick={() => {
+            onClick={async () => {
               const canReturn = window.history.state?.idx !== undefined;
 
-              if (canReturn) navigate(-1);
-              else navigate("/");
+              if (canReturn) await navigate(-1);
+              else await navigate("/");
             }}
             className="flex py-5 pr-3"
           >

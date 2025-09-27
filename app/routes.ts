@@ -17,6 +17,7 @@ export default [
     route("listening", "routes/listening.tsx"),
 
     route("profile/:userId?", "routes/profile.tsx", [
+      index("routes/profile.index.tsx"),
       route("liked", "routes/profile.liked.tsx"),
       route("recent", "routes/profile.recent.tsx"),
     ]),
@@ -35,5 +36,4 @@ export default [
 
   route("actions/:action", "routes/resources/actions.ts"),
   route("api/auth/:provider/callback", "routes/resources/authenticate.ts"),
-  route("api/stats/:userId", "routes/resources/stats.ts"),
 ] satisfies RouteConfig;

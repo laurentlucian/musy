@@ -1,13 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "musy",
-  "main": "./workers/app.ts",
+  "main": "./app/worker.ts",
   "compatibility_date": "2025-06-17",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
-  // "vars": {
-  //   "VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
-  // },
   "observability": {
     "enabled": true
   },

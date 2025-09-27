@@ -1,32 +1,11 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import {
-  data,
-  href,
-  Outlet,
-  redirect,
-  useMatches,
-  useNavigation,
-  useParams,
-  useSearchParams,
-} from "react-router";
-import { Artist } from "~/components/domain/artist";
-import { NavLinkSub } from "~/components/domain/nav";
-import { Track } from "~/components/domain/track";
+import { Suspense } from "react";
+import { Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { userContext } from "~/context";
 import { prisma } from "~/lib/services/db.server";
-import { syncUserLiked } from "~/lib/services/scheduler/scripts/sync/liked.server";
-import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
-import { log } from "~/lib/utils";
+import { Links, Loader, Selector } from "~/routes/profile.client";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
@@ -34,44 +13,41 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
 
   if (!userId) throw redirect("/settings");
 
-  try {
-    const lastSync = await prisma.sync.findFirst({
-      where: {
-        userId,
-        type: { in: ["profile", "liked"] },
-        state: "success",
-      },
-      orderBy: { updatedAt: "desc" },
-    });
-
-    const shouldSync =
-      !lastSync || Date.now() - lastSync.updatedAt.getTime() > 10 * 60 * 1000; // 10 minutes
-
-    if (shouldSync) {
-      const spotify = await getSpotifyClient({ userId });
-
-      await Promise.allSettled([
-        syncUserProfile({ userId, spotify }),
-        syncUserLiked({ userId, spotify }),
-      ]);
-    }
-  } catch (error) {
-    log(
-      "profile/sync",
-      `profile sync failed, ${error instanceof Error ? error.message : "unknown error"}`,
-    );
-  }
-
-  const profile = await prisma.profile.findFirst({
-    where: {
-      id: userId,
-    },
-  });
-
-  if (!profile) throw data("not found", { status: 404 });
-
   const url = new URL(request.url);
   const year = +(url.searchParams.get("year") ?? "2025");
+  const range = url.searchParams.get("range") ?? "long_term";
+  const type = url.searchParams.get("type") ?? "songs";
+
+  return {
+    userId,
+    year,
+    range,
+    type,
+  };
+}
+
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
+  return (
+    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
+      <div className="flex flex-1 flex-col gap-4">
+        <Avatar userId={loaderData.userId} />
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Selector year={loaderData.year} />
+          </div>
+          <Suspense fallback={<Waver />}>
+            <Stats userId={loaderData.userId} year={loaderData.year} />
+          </Suspense>
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col gap-2">
+        <Outlet />
+      </div>
+    </article>
+  );
+}
+
+async function Stats({ userId, year }: { userId: string; year: number }) {
   const date = setYear(new Date(), year);
 
   const liked = await prisma.likedSongs.count({
@@ -147,274 +123,80 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     artists: artists,
   });
 
-  const range = url.searchParams.get("range") ?? "long_term";
-  const type = url.searchParams.get("type") ?? "songs";
+  return (
+    <>
+      <div className="flex flex-wrap gap-4 whitespace-nowrap">
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-3xl">
+            <NumberAnimated value={length} key={year} />
+          </p>
+          <p className="text-muted-foreground text-sm">songs played</p>
+        </div>
+        <div className="flex gap-4">
+          <div className="rounded-lg bg-card p-4">
+            <p className="font-bold text-3xl">
+              <NumberAnimated value={liked} key={year} />
+            </p>
+            <p className="text-muted-foreground text-sm">songs liked</p>
+          </div>
+        </div>
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-3xl">
+            <NumberAnimated value={minutes} key={year} />
+          </p>
+          <p className="text-muted-foreground text-sm">minutes listened</p>
+        </div>
+      </div>
+      {song && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{song}</p>
+          <p className="text-muted-foreground text-sm">most listened song</p>
+        </div>
+      )}
 
-  const top = await prisma.top.findUnique({
-    include: {
-      songs: {
-        include: {
-          tracks: true,
-        },
-        take: 1,
-        where: {
-          type: range,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-      artists: {
-        include: {
-          artists: true,
-        },
-        take: 1,
-        where: {
-          type: range,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
+      {artist && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{artist}</p>
+          <p className="text-muted-foreground text-sm">most listened artist</p>
+        </div>
+      )}
+
+      {album && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{album}</p>
+          <p className="text-muted-foreground text-sm">most listened album</p>
+        </div>
+      )}
+    </>
+  );
+}
+
+async function Avatar({ userId }: { userId: string }) {
+  const profile = await prisma.profile.findFirst({
     where: {
-      userId,
+      id: userId,
     },
   });
 
-  return {
-    userId,
-    profile,
-    liked,
-    year,
-    played: length,
-    minutes,
-    artist,
-    album,
-    song,
-    top,
-    type,
-    range,
-  };
-}
-
-export default function Profile({
-  loaderData: {
-    profile,
-    liked,
-    year,
-    played,
-    minutes,
-    artist,
-    album,
-    song,
-    top,
-    type,
-    range,
-  },
-}: Route.ComponentProps) {
-  const [params, setParams] = useSearchParams();
-  const navigation = useNavigation();
-  const { userId } = useParams();
-  const matches = useMatches();
-  const root = matches.length === 3;
+  if (!profile) return null;
 
   return (
-    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
-          <div className="flex items-center gap-2">
-            {profile.image && (
-              <img
-                className="size-10 rounded-full"
-                src={profile.image}
-                alt={profile.name ?? "pp"}
-              />
-            )}
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-2xl">{profile.name}</h1>
-              <div>{navigation.state === "loading" && <Waver />}</div>
-            </div>
-          </div>
-          <p className="text-muted-foreground text-sm">{profile.bio}</p>
-          <NavLinkSub
-            to={href("/profile/:userId?", {
-              userId,
-            })}
-          >
-            Top
-          </NavLinkSub>
-          <NavLinkSub to="liked">Liked</NavLinkSub>
-          <NavLinkSub to="recent">Listened</NavLinkSub>
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Select
-              value={year.toString()}
-              onValueChange={(data) => {
-                setParams(
-                  { ...Object.fromEntries(params), year: data },
-                  {
-                    preventScrollReset: true,
-                  },
-                );
-              }}
-            >
-              <SelectTrigger className="min-w-[100px]">
-                <SelectValue placeholder="Year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="2025">2025</SelectItem>
-                <SelectItem value="2024">2024</SelectItem>
-                <SelectItem value="2023">2023</SelectItem>
-                <SelectItem value="2022">2022</SelectItem>
-                <SelectItem value="2021">2021</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-wrap gap-4 whitespace-nowrap">
-            <div className="rounded-lg bg-card p-4">
-              <p className="font-bold text-3xl">
-                <NumberAnimated value={played} key={year} />
-              </p>
-              <p className="text-muted-foreground text-sm">songs played</p>
-            </div>
-            <div className="flex gap-4">
-              <div className="rounded-lg bg-card p-4">
-                <p className="font-bold text-3xl">
-                  <NumberAnimated value={liked} key={year} />
-                </p>
-                <p className="text-muted-foreground text-sm">songs liked</p>
-              </div>
-            </div>
-            <div className="rounded-lg bg-card p-4">
-              <p className="font-bold text-3xl">
-                <NumberAnimated value={minutes} key={year} />
-              </p>
-              <p className="text-muted-foreground text-sm">minutes listened</p>
-            </div>
-          </div>
-
-          {song && (
-            <div className="rounded-lg bg-card p-4">
-              <p className="font-bold text-2xl">{song}</p>
-              <p className="text-muted-foreground text-sm">
-                most listened song
-              </p>
-            </div>
-          )}
-
-          {artist && (
-            <div className="rounded-lg bg-card p-4">
-              <p className="font-bold text-2xl">{artist}</p>
-              <p className="text-muted-foreground text-sm">
-                most listened artist
-              </p>
-            </div>
-          )}
-
-          {album && (
-            <div className="rounded-lg bg-card p-4">
-              <p className="font-bold text-2xl">{album}</p>
-              <p className="text-muted-foreground text-sm">
-                most listened album
-              </p>
-            </div>
-          )}
+    <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
+      <div className="flex items-center gap-2">
+        {profile.image && (
+          <img
+            className="size-10 rounded-full"
+            src={profile.image}
+            alt={profile.name ?? "pp"}
+          />
+        )}
+        <div className="flex items-center gap-2">
+          <h1 className="font-bold text-2xl">{profile.name}</h1>
+          <Loader />
         </div>
       </div>
-      {top && root && (
-        <div className="flex flex-col gap-2">
-          <div className="flex h-12 items-center gap-2">
-            <p className="text-muted-foreground text-sm">Top</p>
-            <Select
-              defaultValue={type}
-              onValueChange={(data) => {
-                setParams(
-                  { ...Object.fromEntries(params), type: data },
-                  {
-                    preventScrollReset: true,
-                  },
-                );
-              }}
-            >
-              <SelectTrigger className="min-w-[100px]">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="songs">Songs</SelectItem>
-                <SelectItem value="artists">Artists</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select
-              value={range}
-              onValueChange={(data) => {
-                setParams(
-                  { ...Object.fromEntries(params), range: data },
-                  {
-                    preventScrollReset: true,
-                  },
-                );
-              }}
-            >
-              <SelectTrigger className="min-w-[100px]">
-                <SelectValue placeholder="Range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="long_term">Year</SelectItem>
-                <SelectItem value="medium_term">Half Year</SelectItem>
-                <SelectItem value="short_term">Month</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Top top={top} type={type} />
-          </div>
-        </div>
-      )}
-      {!root && <Outlet />}
-    </article>
-  );
-}
-
-function Top(props: {
-  top: NonNullable<Awaited<ReturnType<typeof loader>>["top"]>;
-  type: string;
-}) {
-  const sPos = props.top?.songs[0].trackIds.split(",").reduce(
-    (acc, id, i) => {
-      acc[id] = i;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const songs = props.top?.songs[0]?.tracks.sort(
-    (a, b) => (sPos?.[a.id] ?? 0) - (sPos?.[b.id] ?? 0),
-  );
-
-  const SONGS = songs.map((track) => <Track track={track} key={track.id} />);
-
-  const aPos = props.top?.artists[0]?.artistIds.split(",").reduce(
-    (acc, id, i) => {
-      acc[id] = i;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const artists =
-    props.top?.artists[0]?.artists.sort(
-      (a, b) => (aPos?.[a.id] ?? 0) - (aPos?.[b.id] ?? 0),
-    ) || [];
-
-  const ARTISTS = artists.map((artist) => (
-    <Artist artist={artist} key={artist.id} />
-  ));
-
-  return (
-    <div className="flex flex-col gap-2">
-      {props.type === "songs" ? SONGS : ARTISTS}
+      <p className="text-muted-foreground text-sm">{profile.bio}</p>
+      <Links userId={userId} />
     </div>
   );
 }
