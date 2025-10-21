@@ -1,5 +1,3 @@
-"use client";
-
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import {

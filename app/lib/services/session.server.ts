@@ -3,7 +3,6 @@ import {
   type Session,
   type SessionIdStorageStrategy,
 } from "react-router";
-import { env } from "~/lib/env.server";
 
 export const cookieOptions = {
   httpOnly: true,
@@ -11,8 +10,8 @@ export const cookieOptions = {
   name: "_musy-session",
   path: "/",
   sameSite: "lax",
-  secrets: [env.SESSION_SECRET],
-  secure: process.env.NODE_ENV === "production",
+  secrets: ["d00cd8153c10e47afa1b7a8f41b3dbc2"],
+  secure: !import.meta.env.DEV,
 } satisfies SessionIdStorageStrategy["cookie"];
 
 export type SessionData = {

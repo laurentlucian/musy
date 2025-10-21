@@ -3,30 +3,17 @@ import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
-import { migrateLegacySession } from "~/lib/services/auth/helpers.server";
 import { authenticator } from "~/lib/services/auth.server";
 import { sessionStorage } from "~/lib/services/session.server";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
 
-export async function loader({ request, context }: Route.LoaderArgs) {
+export async function loader({ context }: Route.LoaderArgs) {
   const userId = context.get(userContext);
-  const session = await sessionStorage.getSession(
-    request.headers.get("cookie"),
-  );
-  const migrated = await migrateLegacySession(session);
-  if (!migrated) return { userId };
 
-  return data(
-    {
-      userId: migrated.userId,
-    },
-    {
-      headers: {
-        "Set-Cookie": await sessionStorage.commitSession(migrated.session),
-      },
-    },
-  );
+  return data({
+    userId,
+  });
 }
 
 export default function Settings({

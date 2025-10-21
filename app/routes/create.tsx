@@ -40,6 +40,10 @@ const popular = ["popular", "unknown"];
 //   "any",
 // ];
 
+export function loader(_: Route.LoaderArgs) {
+  return null;
+}
+
 export default function Mood(_: Route.ComponentProps) {
   const fetcher = useFetcher<typeof action>();
   const [{ value, context }, send] = useMachine(machine);

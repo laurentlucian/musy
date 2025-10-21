@@ -1,6 +1,5 @@
 import { xai } from "@ai-sdk/xai";
 import { generateText } from "ai";
-import { env } from "~/lib/env.server";
 
 export async function askAITaste(prompt: string) {
   const completion = await generateText({
@@ -37,7 +36,7 @@ export async function askAITaste(prompt: string) {
       </listening_patterns>
     </music_preferences>`,
     headers: {
-      "x-api-key": env.XAI_API_KEY,
+      "x-api-key": process.env.XAI_API_KEY,
     },
   });
 

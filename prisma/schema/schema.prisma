@@ -1,11 +1,10 @@
 generator client {
   provider = "prisma-client"
-  // engineType = "client"
-  // runtime    = "cloudflare"
+  runtime  = "cloudflare"
   output   = "../../app/generated/prisma/client"
 }
 
-// datasource db {
-//   provider = "sqlite"
-//   url      = "file:./prisma/db.sqlite"
-// }
+datasource db {
+  provider = "sqlite"
+  url      = "file:./prisma/db.sqlite"
+}

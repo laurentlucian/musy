@@ -14,3 +14,6 @@ wireguard.conf
 .DS_Store
 generated/
 prisma/sqlite/
+.output
+.nitro
+.dev.vars

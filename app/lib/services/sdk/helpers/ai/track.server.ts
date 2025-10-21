@@ -1,6 +1,5 @@
 import { xai } from "@ai-sdk/xai";
 import { generateObject, jsonSchema } from "ai";
-import { env } from "~/lib/env.server";
 
 const trackSchema = jsonSchema<{
   tracks: {
@@ -78,7 +77,7 @@ be thoughtful, precise, and emotionally aware in every selection
 </mood matching>
 `,
     headers: {
-      "x-api-key": env.XAI_API_KEY,
+      "x-api-key": process.env.XAI_API_KEY,
     },
   });
 
