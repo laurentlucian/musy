@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { and, eq } from "drizzle-orm";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import { profile, provider, user } from "~/lib/db/schema";
@@ -5,9 +6,9 @@ import { db } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { generateId } from "~/lib/utils.server";
 
-const clientId = process.env.SPOTIFY_CLIENT_ID;
-const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-const redirectURI = process.env.SPOTIFY_CALLBACK_URL;
+const clientId = env.SPOTIFY_CLIENT_ID;
+const clientSecret = env.SPOTIFY_CLIENT_SECRET;
+const redirectURI = env.SPOTIFY_CALLBACK_URL;
 
 export function getSpotifyStrategy() {
   return new OAuth2Strategy(
@@ -41,7 +42,7 @@ export function getSpotifyStrategy() {
           Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
         ),
         tokenType: tokens.tokenType(),
-        revoked: 0,
+        revoked: "0",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

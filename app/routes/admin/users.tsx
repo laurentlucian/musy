@@ -33,14 +33,14 @@ export async function loader(_: Route.LoaderArgs) {
   const groupedUsers = users.reduce((acc, user) => {
     const existing = acc.find((u) => u.id === user.id);
     if (existing) {
-      if (user.providers.revoked !== null) {
+      if (user.providers?.revoked !== null) {
         existing.user.providers.push(user.providers);
       }
     } else {
       acc.push({
         ...user,
         user: {
-          providers: user.providers.revoked !== null ? [user.providers] : [],
+          providers: user.providers?.revoked !== null ? [user.providers] : [],
         },
       });
     }
@@ -96,7 +96,7 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
                     size="icon"
                     disabled={userId === profile.id}
                     onClick={() => {
-                      submit({ userId: profile.id }, { method: "post" });
+                      void submit({ userId: profile.id }, { method: "post" });
                     }}
                   >
                     {userId === profile.id ? <Waver /> : <TrashIcon />}

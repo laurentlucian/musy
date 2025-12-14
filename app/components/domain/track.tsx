@@ -7,20 +7,16 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
-import { useFetcherToast } from "~/hooks/useFetcherToast";
-import type { Track } from "~/lib/services/db.server";
+import type { Track as TrackType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import type { action } from "~/routes/resources/actions";
 import { Image } from "../ui/image";
 
 export function Track(
   props: {
-    track: Track;
+    track: TrackType;
   } & React.ComponentProps<"a">,
 ) {
   const { track, className, ...rest } = props;
@@ -119,7 +115,6 @@ export function TrackMenu(
   props: { query: string; uri: string } & PropsWithChildren,
 ) {
   const fetcher = useFetcher<typeof action>();
-  useFetcherToast(fetcher.data?.error, fetcher.data?.type);
 
   const submit = (action: string, provider: string) => {
     fetcher.submit(
@@ -152,69 +147,5 @@ export function TrackMenu(
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
-  );
-}
-
-function _TrackMenuWithProviders({
-  submit,
-  ...props
-}: {
-  query: string;
-  uri: string;
-  submit: (action: string, provider: string) => void;
-}) {
-  return (
-    <>
-      <ContextMenuSub>
-        <ContextMenuSubTrigger>Open</ContextMenuSubTrigger>
-        <ContextMenuSubContent className="w-48">
-          <ContextMenuItem
-            onClick={() => {
-              window.open(props.uri, "_blank");
-            }}
-          >
-            Spotify
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => {
-              const url = `https://music.youtube.com/search?q=${props.query}`;
-              window.open(url, "_blank");
-            }}
-          >
-            Youtube
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() => {
-              const url = `https://music.apple.com/search?term=${props.query}`;
-              window.open(url, "_blank");
-            }}
-          >
-            Apple
-          </ContextMenuItem>
-        </ContextMenuSubContent>
-      </ContextMenuSub>
-      <ContextMenuSub>
-        <ContextMenuSubTrigger>Like</ContextMenuSubTrigger>
-        <ContextMenuSubContent className="w-48">
-          <ContextMenuItem onClick={() => submit("like", "spotify")}>
-            Spotify
-          </ContextMenuItem>
-          <ContextMenuItem onClick={() => submit("like", "google")}>
-            Youtube
-          </ContextMenuItem>
-          <ContextMenuItem disabled>Apple</ContextMenuItem>
-        </ContextMenuSubContent>
-      </ContextMenuSub>
-      <ContextMenuSub>
-        <ContextMenuSubTrigger>Queue</ContextMenuSubTrigger>
-        <ContextMenuSubContent className="w-48">
-          <ContextMenuItem onClick={() => submit("queue", "spotify")}>
-            Spotify
-          </ContextMenuItem>
-          <ContextMenuItem disabled>Youtube</ContextMenuItem>
-          <ContextMenuItem disabled>Apple</ContextMenuItem>
-        </ContextMenuSubContent>
-      </ContextMenuSub>
-    </>
   );
 }

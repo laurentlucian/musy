@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import Spotified, { SpotifyApiError } from "spotified";
 import {
   getProvider,
@@ -11,8 +12,8 @@ type GetSpotifyClientOptions = { userId: string } | { token: string };
 export async function getSpotifyClient(args: GetSpotifyClientOptions) {
   if ("token" in args) {
     const spotify = new Spotified({
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+      clientId: env.SPOTIFY_CLIENT_ID,
+      clientSecret: env.SPOTIFY_CLIENT_SECRET,
     });
     spotify.setBearerToken(args.token);
 
@@ -20,8 +21,8 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
   }
 
   const spotify = new Spotified({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    clientId: env.SPOTIFY_CLIENT_ID,
+    clientSecret: env.SPOTIFY_CLIENT_SECRET,
   });
 
   const provider = await getProvider({

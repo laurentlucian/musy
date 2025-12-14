@@ -131,7 +131,7 @@ export async function getTopLeaderboard(db: Database) {
       artistUri: track.artistUri,
       explicit: track.explicit,
       duration: track.duration,
-      preview_url: track.previewUrl,
+      previewUrl: track.previewUrl,
       link: track.link,
       plays: count(recentSongs.id),
     })
