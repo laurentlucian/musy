@@ -1,5 +1,3 @@
-"use client";
-
 import { href, useNavigation, useSearchParams } from "react-router";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Waver } from "~/components/icons/waver";

@@ -1,13 +1,13 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import { and, count, desc, eq, gte, lte } from "drizzle-orm";
-import { Suspense } from "react";
+import { Suspense, use } from "react";
 import { Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
 import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { Links, Loader, Selector } from "~/routes/profile/profile.client";
+import { Links, Loader, Selector } from "~/routes/profile/profile.selectors";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
@@ -17,28 +17,28 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
 
   const url = new URL(request.url);
   const year = +(url.searchParams.get("year") ?? "2025");
-  const range = url.searchParams.get("range") ?? "long_term";
-  const type = url.searchParams.get("type") ?? "songs";
 
   return {
     userId,
     year,
-    range,
-    type,
+    profile: getProfile(userId),
+    stats: getStats(userId, year),
   };
 }
 
-export function ServerComponent({ loaderData }: Route.ComponentProps) {
+export default function Profile({ loaderData }: Route.ComponentProps) {
   return (
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
       <div className="flex flex-1 flex-col gap-4">
-        <Avatar userId={loaderData.userId} />
+        <Suspense fallback={<Waver />}>
+          <Avatar promise={loaderData.profile} userId={loaderData.userId} />
+        </Suspense>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Selector year={loaderData.year} />
           </div>
           <Suspense fallback={<Waver />}>
-            <Stats userId={loaderData.userId} year={loaderData.year} />
+            <Stats promise={loaderData.stats} year={loaderData.year} />
           </Suspense>
         </div>
       </div>
@@ -49,7 +49,102 @@ export function ServerComponent({ loaderData }: Route.ComponentProps) {
   );
 }
 
-async function Stats({ userId, year }: { userId: string; year: number }) {
+function Stats({
+  promise,
+  year,
+}: {
+  promise: ReturnType<typeof getStats>;
+  year: number;
+}) {
+  const data = use(promise);
+
+  return (
+    <>
+      <div className="flex flex-wrap gap-4 whitespace-nowrap">
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-3xl">
+            <NumberAnimated value={data.played} key={year} />
+          </p>
+          <p className="text-muted-foreground text-sm">songs played</p>
+        </div>
+        <div className="flex gap-4">
+          <div className="rounded-lg bg-card p-4">
+            <p className="font-bold text-3xl">
+              <NumberAnimated value={data.liked} key={year} />
+            </p>
+            <p className="text-muted-foreground text-sm">songs liked</p>
+          </div>
+        </div>
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-3xl">
+            <NumberAnimated value={data.minutes} key={year} />
+          </p>
+          <p className="text-muted-foreground text-sm">minutes listened</p>
+        </div>
+      </div>
+      {data.song && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{data.song}</p>
+          <p className="text-muted-foreground text-sm">most listened song</p>
+        </div>
+      )}
+
+      {data.artist && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{data.artist}</p>
+          <p className="text-muted-foreground text-sm">most listened artist</p>
+        </div>
+      )}
+
+      {data.album && (
+        <div className="rounded-lg bg-card p-4">
+          <p className="font-bold text-2xl">{data.album}</p>
+          <p className="text-muted-foreground text-sm">most listened album</p>
+        </div>
+      )}
+    </>
+  );
+}
+
+function Avatar({
+  promise,
+  userId,
+}: {
+  promise: ReturnType<typeof getProfile>;
+  userId: string;
+}) {
+  const data = use(promise);
+
+  if (!data) return null;
+
+  return (
+    <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
+      <div className="flex items-center gap-2">
+        {data.image && (
+          <img
+            className="size-10 rounded-full"
+            src={data.image}
+            alt={data.name ?? "pp"}
+          />
+        )}
+        <div className="flex items-center gap-2">
+          <h1 className="font-bold text-2xl">{data.name}</h1>
+          <Loader />
+        </div>
+      </div>
+      <p className="text-muted-foreground text-sm">{data.bio}</p>
+      <Links userId={userId} />
+    </div>
+  );
+}
+
+async function getProfile(userId: string) {
+  return db.query.profile.findFirst({
+    where: eq(profile.id, userId),
+  });
+}
+
+async function getStats(userId: string, year: number) {
   const date = setYear(new Date(), year);
 
   const [{ count: liked }] = await db
@@ -63,7 +158,7 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
       ),
     );
 
-  let length = 0;
+  let played = 0;
   let minutes = 0;
   const artists: Record<string, number> = {};
   const albums: Record<string, number> = {};
@@ -74,7 +169,7 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
   let all = false;
 
   while (!all) {
-    const played = await db
+    const rows = await db
       .select({
         track: {
           uri: track.uri,
@@ -97,13 +192,13 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
       .limit(take)
       .offset(skip);
 
-    if (played.length < take) {
+    if (rows.length < take) {
       all = true;
     }
 
-    skip += played.length;
-    const batch = calculateStats(played);
-    length += batch.played;
+    skip += rows.length;
+    const batch = calculateStats(rows);
+    played += batch.played;
     minutes += batch.minutes;
 
     for (const [artist, count] of Object.entries(batch.artists)) {
@@ -117,86 +212,16 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
     }
   }
 
-  const { artist, album, song } = getTopItems({
-    songs: songs,
-    albums: albums,
-    artists: artists,
-  });
+  const topItems = getTopItems({ songs, albums, artists });
 
-  return (
-    <>
-      <div className="flex flex-wrap gap-4 whitespace-nowrap">
-        <div className="rounded-lg bg-card p-4">
-          <p className="font-bold text-3xl">
-            <NumberAnimated value={length} key={year} />
-          </p>
-          <p className="text-muted-foreground text-sm">songs played</p>
-        </div>
-        <div className="flex gap-4">
-          <div className="rounded-lg bg-card p-4">
-            <p className="font-bold text-3xl">
-              <NumberAnimated value={liked} key={year} />
-            </p>
-            <p className="text-muted-foreground text-sm">songs liked</p>
-          </div>
-        </div>
-        <div className="rounded-lg bg-card p-4">
-          <p className="font-bold text-3xl">
-            <NumberAnimated value={minutes} key={year} />
-          </p>
-          <p className="text-muted-foreground text-sm">minutes listened</p>
-        </div>
-      </div>
-      {song && (
-        <div className="rounded-lg bg-card p-4">
-          <p className="font-bold text-2xl">{song}</p>
-          <p className="text-muted-foreground text-sm">most listened song</p>
-        </div>
-      )}
-
-      {artist && (
-        <div className="rounded-lg bg-card p-4">
-          <p className="font-bold text-2xl">{artist}</p>
-          <p className="text-muted-foreground text-sm">most listened artist</p>
-        </div>
-      )}
-
-      {album && (
-        <div className="rounded-lg bg-card p-4">
-          <p className="font-bold text-2xl">{album}</p>
-          <p className="text-muted-foreground text-sm">most listened album</p>
-        </div>
-      )}
-    </>
-  );
-}
-
-async function Avatar({ userId }: { userId: string }) {
-  const userProfile = await db.query.profile.findFirst({
-    where: eq(profile.id, userId),
-  });
-
-  if (!userProfile) return null;
-
-  return (
-    <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
-      <div className="flex items-center gap-2">
-        {userProfile.image && (
-          <img
-            className="size-10 rounded-full"
-            src={userProfile.image}
-            alt={userProfile.name ?? "pp"}
-          />
-        )}
-        <div className="flex items-center gap-2">
-          <h1 className="font-bold text-2xl">{userProfile.name}</h1>
-          <Loader />
-        </div>
-      </div>
-      <p className="text-muted-foreground text-sm">{userProfile.bio}</p>
-      <Links userId={userId} />
-    </div>
-  );
+  return {
+    liked,
+    played,
+    minutes,
+    artist: topItems.artist,
+    album: topItems.album,
+    song: topItems.song,
+  };
 }
 
 function getTopItems(arg: {
@@ -223,7 +248,7 @@ function getTopItems(arg: {
 }
 
 function calculateStats(
-  played: {
+  rows: {
     track: {
       name: string;
       albumName: string;
@@ -232,12 +257,12 @@ function calculateStats(
     };
   }[],
 ) {
-  const minutes = played.reduce(
+  const minutes = rows.reduce(
     (acc, curr) => acc + curr.track.duration / 60_000,
     0,
   );
 
-  const artists = played.reduce(
+  const artists = rows.reduce(
     (acc, { track }) => {
       acc[track.artist] = (acc[track.artist] || 0) + 1;
       return acc;
@@ -245,7 +270,7 @@ function calculateStats(
     {} as Record<string, number>,
   );
 
-  const albums = played.reduce(
+  const albums = rows.reduce(
     (acc, { track }) => {
       acc[track.albumName] = (acc[track.albumName] || 0) + 1;
       return acc;
@@ -253,7 +278,7 @@ function calculateStats(
     {} as Record<string, number>,
   );
 
-  const songs = played.reduce(
+  const songs = rows.reduce(
     (acc, { track }) => {
       acc[track.name] = (acc[track.name] || 0) + 1;
       return acc;
@@ -261,5 +286,5 @@ function calculateStats(
     {} as Record<string, number>,
   );
 
-  return { minutes, artists, albums, songs, played: played.length };
+  return { minutes, artists, albums, songs, played: rows.length };
 }

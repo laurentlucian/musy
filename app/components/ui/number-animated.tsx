@@ -1,4 +1,3 @@
-"use client";
 import { useMotionValue, useSpring } from "motion/react";
 import { useLayoutEffect, useRef } from "react";
 

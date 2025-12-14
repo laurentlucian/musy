@@ -1,5 +1,3 @@
-"use client";
-
 import type { Artist as ArtistType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import { Image } from "../ui/image";

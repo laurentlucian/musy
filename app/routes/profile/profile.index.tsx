@@ -7,7 +7,7 @@ import { Waver } from "~/components/icons/waver";
 import { userContext } from "~/context";
 import { artist, top, topArtists, topSongs, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { TopSelector } from "~/routes/profile/profile.client";
+import { TopSelector } from "~/routes/profile/profile.selectors";
 import type { Route } from "./+types/profile.index";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
