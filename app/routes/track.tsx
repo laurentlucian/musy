@@ -7,6 +7,7 @@ import {
   TrackName,
 } from "~/components/domain/track";
 import { getTrack } from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
 import { ellipsis, getCacheControl } from "~/lib/utils";
 import type { Route } from "./+types/track";
 
@@ -25,7 +26,7 @@ export function headers(_: Route.HeadersArgs) {
 }
 
 export async function loader({ params }: Route.LoaderArgs) {
-  const track = await getTrack(params.trackId);
+  const track = await getTrack(db, params.trackId);
   if (!track) throw data(null, { status: 404 });
 
   return track;

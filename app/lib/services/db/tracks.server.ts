@@ -37,7 +37,7 @@ export async function getUserRecommended(db: Database, userId: string) {
   return userRecommended.map((t) => t.track);
 }
 
-export type UserRecent = Awaited<ReturnType<typeof getUserRecent>>;
+export type UserRecent = ReturnType<typeof getUserRecent>;
 export async function getUserRecent(
   db: Database,
   args: {
@@ -70,7 +70,7 @@ export async function getUserRecent(
   return { count: totalCount, tracks: recent.map((r) => r.track) };
 }
 
-export type UserLiked = Awaited<ReturnType<typeof getUserLiked>>;
+export type UserLiked = ReturnType<typeof getUserLiked>;
 export async function getUserLiked(
   db: Database,
   args: { userId: string; provider: string },

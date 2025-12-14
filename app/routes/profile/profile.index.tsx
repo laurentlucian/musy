@@ -1,6 +1,6 @@
 import { desc, eq, inArray } from "drizzle-orm";
 import { Suspense } from "react";
-import { redirect } from "react-router";
+import { Await, redirect } from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
@@ -25,23 +25,56 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     year,
     range,
     type,
+    topData: getTopData({ userId, range, type }),
   };
 }
 
-export function ServerComponent({ loaderData }: Route.ComponentProps) {
+export default function ProfileIndex({ loaderData }: Route.ComponentProps) {
   return (
-    <Suspense fallback={<Waver />}>
+    <>
       <TopSelector type={loaderData.type} range={loaderData.range} />
-      <Top
-        userId={loaderData.userId}
-        range={loaderData.range}
-        type={loaderData.type}
-      />
-    </Suspense>
+      <Suspense fallback={<Waver />}>
+        <Await resolve={loaderData.topData}>
+          {(data) => <TopList data={data} type={loaderData.type} />}
+        </Await>
+      </Suspense>
+    </>
   );
 }
 
-async function Top({
+function TopList({
+  data,
+  type,
+}: {
+  data: Awaited<ReturnType<typeof getTopData>>;
+  type: string;
+}) {
+  if (!data) return null;
+
+  if (type === "songs") {
+    const tracks = data.tracks;
+    if (!tracks) return null;
+    return (
+      <div className="flex flex-col gap-2">
+        {tracks.map((track) => (
+          <Track track={track} key={track.id} />
+        ))}
+      </div>
+    );
+  } else {
+    const artists = data.artists;
+    if (!artists) return null;
+    return (
+      <div className="flex flex-col gap-2">
+        {artists.map((artist) => (
+          <Artist artist={artist} key={artist.id} />
+        ))}
+      </div>
+    );
+  }
+}
+
+async function getTopData({
   userId,
   range,
   type,
@@ -75,13 +108,11 @@ async function Top({
 
     // Sort tracks according to their position in trackIds
     const trackMap = new Map(tracks.map((t) => [t.id, t]));
-    const sortedTracks = trackIds.map((id) => trackMap.get(id)).filter(Boolean);
+    const sortedTracks = trackIds
+      .map((id) => trackMap.get(id))
+      .filter(Boolean) as typeof tracks;
 
-    const SONGS = sortedTracks.map((track) => (
-      <Track track={track!} key={track!.id} />
-    ));
-
-    return <div className="flex flex-col gap-2">{SONGS}</div>;
+    return { tracks: sortedTracks };
   } else {
     // Get top artists for this range
     const artistsRecord = await db.query.topArtists.findFirst({
@@ -102,12 +133,8 @@ async function Top({
     const artistMap = new Map(artists.map((a) => [a.id, a]));
     const sortedArtists = artistIds
       .map((id) => artistMap.get(id))
-      .filter(Boolean);
+      .filter(Boolean) as typeof artists;
 
-    const ARTISTS = sortedArtists.map((artist) => (
-      <Artist artist={artist!} key={artist!.id} />
-    ));
-
-    return <div className="flex flex-col gap-2">{ARTISTS}</div>;
+    return { artists: sortedArtists };
   }
 }

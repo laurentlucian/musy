@@ -7,13 +7,14 @@ import {
   getUserRecent,
   type UserRecent,
 } from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/profile.recent";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
   if (!userId) throw redirect("/settings");
 
-  return { recent: getUserRecent({ userId, provider: "spotify" }) };
+  return { recent: getUserRecent(db, { userId, provider: "spotify" }) };
 }
 
 export default function ProfileRecent({

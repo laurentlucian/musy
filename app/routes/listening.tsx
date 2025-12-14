@@ -2,11 +2,12 @@ import { Suspense, use } from "react";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { getPlaybacks } from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/listening";
 
 export function loader(_: Route.LoaderArgs) {
   return {
-    playbacks: getPlaybacks(),
+    playbacks: getPlaybacks(db),
   };
 }
 

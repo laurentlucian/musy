@@ -4,13 +4,14 @@ import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { userContext } from "~/context";
 import { getUserLiked, type UserLiked } from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/profile.liked";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
   if (!userId) throw redirect("/settings");
 
-  return { liked: getUserLiked({ userId, provider: "spotify" }) };
+  return { liked: getUserLiked(db, { userId, provider: "spotify" }) };
 }
 
 export default function ProfileLiked({

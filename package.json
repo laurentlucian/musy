@@ -24,6 +24,7 @@
     "@radix-ui/react-context-menu": "2.2.16",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.3",
+    "@react-router/cloudflare": "^7.10.1",
     "@xstate/react": "6.0.0",
     "ai": "^5.0.76",
     "class-variance-authority": "0.7.1",

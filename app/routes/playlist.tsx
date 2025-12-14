@@ -18,8 +18,8 @@ import { userContext } from "~/context";
 import {
   generated,
   generatedPlaylist,
+  generatedPlaylistToTrack,
   profile,
-  topSongsToTrack,
   track,
   user,
 } from "~/lib/db/schema";
@@ -41,12 +41,8 @@ export async function loader({ params, context }: Route.LoaderArgs) {
       familiar: generatedPlaylist.familiar,
       popular: generatedPlaylist.popular,
       createdAt: generatedPlaylist.createdAt,
-      owner: {
-        user: {
-          id: user.id,
-          name: profile.name,
-        },
-      },
+      ownerId: user.id,
+      ownerName: profile.name,
     })
     .from(generatedPlaylist)
     .innerJoin(generated, eq(generatedPlaylist.ownerId, generated.id))
@@ -60,9 +56,9 @@ export async function loader({ params, context }: Route.LoaderArgs) {
   // Get the tracks for this playlist
   const playlistTracks = await db
     .select({ track })
-    .from(topSongsToTrack)
-    .innerJoin(track, eq(topSongsToTrack.b, track.id))
-    .where(eq(topSongsToTrack.a, params.id));
+    .from(generatedPlaylistToTrack)
+    .innerJoin(track, eq(generatedPlaylistToTrack.b, track.id))
+    .where(eq(generatedPlaylistToTrack.a, params.id));
 
   const playlist = {
     ...playlistData[0],
@@ -75,7 +71,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 export default function Playlist({
   loaderData: { playlist, userId },
 }: Route.ComponentProps) {
-  const isOwner = userId === playlist.owner.user.id;
+  const isOwner = userId === playlist.ownerId;
 
   return (
     <div className="flex w-full max-w-md flex-col gap-2">
@@ -86,10 +82,10 @@ export default function Playlist({
         <p className="text-muted-foreground text-sm">
           by{" "}
           <Link
-            to={href("/profile/:userId?", { userId: playlist.owner.user.id })}
+            to={href("/profile/:userId?", { userId: playlist.ownerId })}
             className="hover:underline"
           >
-            {playlist.owner.user.name}
+            {playlist.ownerName}
           </Link>
         </p>
         <div className="flex flex-1 items-center justify-end gap-2">
@@ -144,11 +140,12 @@ export async function action({ params, request, context }: Route.ActionArgs) {
   const intent = form.get("intent");
 
   if (intent === "refresh") {
-    const playlist = await prisma.generatedPlaylist.findUnique({
-      where: {
-        id: params.id,
-      },
-    });
+    const [playlist] = await db
+      .select()
+      .from(generatedPlaylist)
+      .where(eq(generatedPlaylist.id, params.id))
+      .limit(1);
+
     if (!playlist) return "not found";
 
     await generatePlaylist(
@@ -173,18 +170,15 @@ export async function action({ params, request, context }: Route.ActionArgs) {
       return "device not found";
     }
 
-    const playlist = await prisma.generatedPlaylist.findUnique({
-      include: {
-        tracks: true,
-      },
-      where: {
-        id: params.id,
-      },
-    });
+    const playlistTracks = await db
+      .select({ uri: track.uri })
+      .from(generatedPlaylistToTrack)
+      .innerJoin(track, eq(generatedPlaylistToTrack.b, track.id))
+      .where(eq(generatedPlaylistToTrack.a, params.id));
 
-    const trackUris = playlist?.tracks.map((track) => track.uri);
+    const trackUris = playlistTracks.map((t) => t.uri);
 
-    if (!trackUris) return "no tracks in playlist";
+    if (!trackUris.length) return "no tracks in playlist";
 
     await spotify.player.startResumePlayback(deviceId, {
       uris: trackUris,

@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import { Leaderboard } from "~/components/domain/leaderboard";
 import { Waver } from "~/components/icons/waver";
 import { getTopLeaderboard } from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/leaderboard";
 
 export async function loader(_: Route.LoaderArgs) {
-  return { leaderboard: getTopLeaderboard() };
+  return { leaderboard: getTopLeaderboard(db) };
 }
 
 export default function LeaderboardComponent({
