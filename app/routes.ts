@@ -8,13 +8,7 @@ import {
 
 export default [
   layout("routes/layout.root.tsx", [
-    index("routes/create.tsx"),
-    route("playlists", "routes/playlists.tsx"),
-    route("leaderboard", "routes/leaderboard.tsx"),
-    route("new", "routes/new.tsx"),
-
-    route("playlists/:id", "routes/playlist.tsx"),
-    route("listening", "routes/listening.tsx"),
+    index("routes/index.tsx"),
 
     route("profile/:userId?", "routes/profile/profile.tsx", [
       index("routes/profile/profile.index.tsx"),
