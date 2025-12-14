@@ -1,23 +1,13 @@
 {
-  "include": ["**/*.ts", "**/*.tsx", "./.react-router/types/**/*"],
+  "extends": "./tsconfig.json",
+  "include": ["vite.config.ts"],
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
+    "composite": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "moduleResolution": "Bundler",
-    "module": "ESNext",
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "@vitejs/plugin-rsc/types"],
-    "jsx": "react-jsx",
-    "rootDirs": [".", "./.react-router/types"],
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    }
+    "types": ["node"],
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler"
   }
 }

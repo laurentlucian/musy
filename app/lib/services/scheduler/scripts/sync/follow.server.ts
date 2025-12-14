@@ -1,6 +1,7 @@
 import type Spotified from "spotified";
+import { follow, sync } from "~/lib/db/schema";
 import { getAllUsersId } from "~/lib/services/db/users.server";
-import { prisma } from "~/lib/services/db.server";
+import { db } from "~/lib/services/db.server";
 import { log } from "~/lib/utils";
 
 export async function syncUserFollow({
@@ -22,48 +23,44 @@ export async function syncUserFollow({
     log(`adding following to db: ${following.length}`, "follow");
 
     for (const followingId of following) {
-      await prisma.follow.upsert({
-        create: {
+      await db
+        .insert(follow)
+        .values({
           followerId: userId,
           followingId,
-        },
-        update: {},
-        where: {
-          followingId_followerId: {
-            followerId: userId,
-            followingId,
-          },
-        },
-      });
+        })
+        .onConflictDoNothing();
     }
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "success",
         type: "follow",
-      },
-      update: {
-        state: "success",
-      },
-      where: {
-        userId_type_state: { userId, type: "follow", state: "success" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: now },
+      });
     log("completed", "follow");
   } catch {
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "failure",
         type: "follow",
-      },
-      update: {
-        state: "failure",
-      },
-      where: {
-        userId_type_state: { userId, type: "follow", state: "failure" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "failure", updatedAt: now },
+      });
     log("failure", "follow");
   }
 }

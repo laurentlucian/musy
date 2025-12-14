@@ -1,6 +1,8 @@
+import { and, eq, inArray } from "drizzle-orm";
 import type { PlaybackState } from "spotified";
+import { playback, provider, track } from "~/lib/db/schema";
 import { getAllUsersId } from "~/lib/services/db/users.server";
-import { prisma } from "~/lib/services/db.server";
+import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { log, notNull } from "~/lib/utils";
@@ -20,7 +22,9 @@ export async function syncPlaybacks() {
   for (const { id: userId, playback } of active) {
     if (!playback) continue;
     const { item } = playback;
-    const current = await prisma.playback.findUnique({ where: { userId } });
+    const current = await db.query.playback.findFirst({
+      where: eq(playback.userId, Number(userId)),
+    });
     const isSameTrack = current?.trackId === item?.id;
     if (!item || item.type !== "track" || isSameTrack) continue;
     log("new track", "playback");
@@ -40,7 +44,7 @@ export async function syncPlaybacks() {
 }
 
 async function handleInactiveUsers(users: string[]) {
-  await prisma.playback.deleteMany({ where: { userId: { in: users } } });
+  await db.delete(playback).where(inArray(playback.userId, users));
 }
 
 const upsertPlayback = async (userId: string, playback: PlaybackState) => {
@@ -55,36 +59,37 @@ const upsertPlayback = async (userId: string, playback: PlaybackState) => {
     )
       return;
 
-    const track = createTrackModel(playback.item);
-    const data = {
-      progress,
-      timestamp: BigInt(timestamp),
-      track: {
-        connectOrCreate: {
-          create: track,
-          where: {
-            id: track.id,
-          },
-        },
-      },
-    };
+    const trackData = createTrackModel(playback.item);
 
-    await prisma.playback.upsert({
-      create: {
-        ...data,
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-      },
-      update: {
-        ...data,
-      },
-      where: {
+    // First, upsert the track
+    await db
+      .insert(track)
+      .values({
+        ...trackData,
+        explicit: trackData.explicit ? "1" : "0",
+      })
+      .onConflictDoNothing();
+
+    // Then upsert the playback
+    const now = new Date().toISOString();
+    await db
+      .insert(playback)
+      .values({
         userId,
-      },
-    });
+        trackId: trackData.id,
+        progress,
+        timestamp: timestamp.toString(),
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [playback.userId],
+        set: {
+          trackId: trackData.id,
+          progress,
+          timestamp: timestamp.toString(),
+          updatedAt: now,
+        },
+      });
   } catch {
     log("failure upserting playback", "playback");
   }
@@ -104,10 +109,12 @@ async function getPlaybackState(userId: string) {
     if (error instanceof Error) {
       if (error.message.includes("revoked")) {
         log(`revoked token for ${userId}`, "playback");
-        await prisma.provider.update({
-          data: { revoked: true },
-          where: { userId_type: { userId: userId, type: "spotify" } },
-        });
+        await db
+          .update(provider)
+          .set({ revoked: true })
+          .where(
+            and(eq(provider.userId, userId), eq(provider.type, "spotify")),
+          );
       } else {
         log(`unknown: ${error.message}`, "playback");
       }

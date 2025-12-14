@@ -1,10 +1,12 @@
+import { desc, eq, inArray } from "drizzle-orm";
 import { Suspense } from "react";
 import { redirect } from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import { artist, top, topArtists, topSongs, track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { TopSelector } from "~/routes/profile/profile.client";
 import type { Route } from "./+types/profile.index";
 
@@ -48,70 +50,64 @@ async function Top({
   range: string;
   type: string;
 }) {
-  const top = await prisma.top.findUnique({
-    include: {
-      songs: {
-        include: {
-          tracks: true,
-        },
-        take: 1,
-        where: {
-          type: range,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-      artists: {
-        include: {
-          artists: true,
-        },
-        take: 1,
-        where: {
-          type: range,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-    where: {
-      userId,
-    },
+  // Check if top record exists for user
+  const topRecord = await db.query.top.findFirst({
+    where: eq(top.userId, userId),
   });
 
-  if (!top) return null;
+  if (!topRecord) return null;
 
-  const sPos = top.songs[0].trackIds.split(",").reduce(
-    (acc, id, i) => {
-      acc[id] = i;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  if (type === "songs") {
+    // Get top songs for this range
+    const songsRecord = await db.query.topSongs.findFirst({
+      where: eq(topSongs.userId, userId),
+      orderBy: desc(topSongs.createdAt),
+    });
 
-  const songs = top.songs[0].tracks.sort((a, b) => sPos[a.id] - sPos[b.id]);
+    if (!songsRecord) return null;
 
-  const SONGS = songs.map((track) => <Track track={track} key={track.id} />);
+    // Get tracks based on trackIds
+    const trackIds = songsRecord.trackIds.split(",");
+    const tracks = await db
+      .select()
+      .from(track)
+      .where(inArray(track.id, trackIds));
 
-  const aPos = top.artists[0].artistIds.split(",").reduce(
-    (acc, id, i) => {
-      acc[id] = i;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+    // Sort tracks according to their position in trackIds
+    const trackMap = new Map(tracks.map((t) => [t.id, t]));
+    const sortedTracks = trackIds.map((id) => trackMap.get(id)).filter(Boolean);
 
-  const artists =
-    top.artists[0].artists.sort((a, b) => aPos[a.id] - aPos[b.id]) || [];
+    const SONGS = sortedTracks.map((track) => (
+      <Track track={track!} key={track!.id} />
+    ));
 
-  const ARTISTS = artists.map((artist) => (
-    <Artist artist={artist} key={artist.id} />
-  ));
+    return <div className="flex flex-col gap-2">{SONGS}</div>;
+  } else {
+    // Get top artists for this range
+    const artistsRecord = await db.query.topArtists.findFirst({
+      where: eq(topArtists.userId, userId),
+      orderBy: desc(topArtists.createdAt),
+    });
 
-  return (
-    <div className="flex flex-col gap-2">
-      {type === "songs" ? SONGS : ARTISTS}
-    </div>
-  );
+    if (!artistsRecord) return null;
+
+    // Get artists based on artistIds
+    const artistIds = artistsRecord.artistIds.split(",");
+    const artists = await db
+      .select()
+      .from(artist)
+      .where(inArray(artist.id, artistIds));
+
+    // Sort artists according to their position in artistIds
+    const artistMap = new Map(artists.map((a) => [a.id, a]));
+    const sortedArtists = artistIds
+      .map((id) => artistMap.get(id))
+      .filter(Boolean);
+
+    const ARTISTS = sortedArtists.map((artist) => (
+      <Artist artist={artist!} key={artist!.id} />
+    ));
+
+    return <div className="flex flex-col gap-2">{ARTISTS}</div>;
+  }
 }

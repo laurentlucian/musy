@@ -1,5 +1,7 @@
+import { and, eq } from "drizzle-orm";
 import { OAuth2Strategy } from "remix-auth-oauth2";
-import { type Prisma, prisma } from "~/lib/services/db.server";
+import { profile, provider, user } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { generateId } from "~/lib/utils.server";
 
@@ -23,81 +25,68 @@ export function getSpotifyStrategy() {
 
       const data = await spotify.user.getCurrentUserProfile();
 
-      const provider = await prisma.provider.findUnique({
-        where: {
-          accountId_type: {
-            accountId: data.id,
-            type: "spotify",
-          },
-        },
-        select: { userId: true },
+      const existingProvider = await db.query.provider.findFirst({
+        where: and(
+          eq(provider.accountId, data.id),
+          eq(provider.type, "spotify"),
+        ),
       });
 
-      const PROVIDER_DATA: Prisma.ProviderCreateWithoutUserInput = {
-        type: "spotify",
+      const providerData = {
+        type: "spotify" as const,
         accountId: data.id,
         accessToken: tokens.accessToken(),
         refreshToken: tokens.refreshToken(),
-        expiresAt: BigInt(
+        expiresAt: Number(
           Date.now() + tokens.accessTokenExpiresInSeconds() * 1000,
         ),
         tokenType: tokens.tokenType(),
-        revoked: false,
+        revoked: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
-      if (provider) {
-        await prisma.provider.update({
-          where: {
-            accountId_type: {
-              accountId: data.id,
-              type: "spotify",
-            },
-          },
-          data: PROVIDER_DATA,
-        });
+      if (existingProvider) {
+        await db
+          .update(provider)
+          .set(providerData)
+          .where(
+            and(eq(provider.accountId, data.id), eq(provider.type, "spotify")),
+          );
 
-        return { id: provider.userId };
+        return { id: existingProvider.userId };
       }
 
-      const profile = await prisma.profile.upsert({
-        where: { email: data.email },
-        update: {
+      // Create new user and profile
+      const userId = generateId();
+      const now = new Date().toISOString();
+
+      await db.transaction(async (tx) => {
+        // Create user
+        await tx.insert(user).values({
+          id: userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+
+        // Create profile
+        await tx.insert(profile).values({
+          id: userId,
+          email: data.email!,
           image: data.images?.[0]?.url,
           name: data.display_name,
-          user: {
-            upsert: {
-              where: { id: data.id },
-              update: {
-                providers: {
-                  create: PROVIDER_DATA,
-                },
-              },
-              create: {
-                id: generateId(),
-                providers: {
-                  create: PROVIDER_DATA,
-                },
-              },
-            },
-          },
-        },
-        create: {
-          email: data.email,
-          image: data.images?.[0]?.url,
-          name: data.display_name,
-          user: {
-            create: {
-              id: generateId(),
-              providers: {
-                create: PROVIDER_DATA,
-              },
-            },
-          },
-        },
-        select: { user: { select: { id: true } } },
+          createdAt: now,
+          updatedAt: now,
+        });
+
+        // Create provider
+        await tx.insert(provider).values({
+          ...providerData,
+          userId,
+        });
       });
 
-      return { id: profile.user.id };
+      return { id: userId };
     },
   );
 }

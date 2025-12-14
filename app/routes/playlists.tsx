@@ -1,28 +1,33 @@
+import { desc, eq } from "drizzle-orm";
 import { href, Link, redirect } from "react-router";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import { generated, generatedPlaylist, profile, user } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/playlists";
 
 export async function loader({ context }: Route.LoaderArgs) {
   const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
 
-  const playlists = await prisma.generatedPlaylist.findMany({
-    include: {
+  const playlists = await db
+    .select({
+      id: generatedPlaylist.id,
+      mood: generatedPlaylist.mood,
+      year: generatedPlaylist.year,
+      familiar: generatedPlaylist.familiar,
+      popular: generatedPlaylist.popular,
+      createdAt: generatedPlaylist.createdAt,
       owner: {
-        select: {
-          user: {
-            select: {
-              name: true,
-            },
-          },
+        user: {
+          name: profile.name,
         },
       },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+    })
+    .from(generatedPlaylist)
+    .innerJoin(generated, eq(generatedPlaylist.ownerId, generated.id))
+    .innerJoin(user, eq(generated.userId, user.id))
+    .innerJoin(profile, eq(user.id, profile.id))
+    .orderBy(desc(generatedPlaylist.createdAt));
 
   return { playlists };
 }

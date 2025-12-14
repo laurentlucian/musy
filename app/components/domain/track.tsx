@@ -13,14 +13,14 @@ import {
   ContextMenuTrigger,
 } from "~/components/ui/context-menu";
 import { useFetcherToast } from "~/hooks/useFetcherToast";
-import type { Track as TrackType } from "~/lib/services/db.server";
+import type { Track } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import type { action } from "~/routes/resources/actions";
 import { Image } from "../ui/image";
 
 export function Track(
   props: {
-    track: TrackType;
+    track: Track;
   } & React.ComponentProps<"a">,
 ) {
   const { track, className, ...rest } = props;

@@ -1,15 +1,13 @@
 import { format } from "date-fns";
+import { desc } from "drizzle-orm";
 import { href, useNavigate, useNavigation, useSubmit } from "react-router";
 import { Button } from "~/components/ui/button";
-import { prisma } from "~/lib/services/db.server";
+import { sync } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/syncs";
 
 export async function loader(_: Route.LoaderArgs) {
-  const syncs = await prisma.sync.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
+  const syncs = await db.select().from(sync).orderBy(desc(sync.updatedAt));
   return { syncs };
 }
 
@@ -81,6 +79,6 @@ export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const intent = formData.get("intent");
   if (intent === "clear") {
-    await prisma.sync.deleteMany();
+    await db.delete(sync);
   }
 }

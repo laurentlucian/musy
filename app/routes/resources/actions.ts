@@ -1,6 +1,8 @@
+import { eq } from "drizzle-orm";
 import { data, redirect } from "react-router";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import { thanks, track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { logError } from "~/lib/utils";
 import type { Route } from "./+types/actions";
@@ -43,20 +45,17 @@ async function like(args: { form: FormData; userId: string }) {
   const uri = form.get("uri");
   if (typeof uri !== "string") return "no uri";
 
-  const track = await prisma.track.findFirst({
-    select: { id: true, name: true, artist: true },
-    where: {
-      uri,
-    },
+  const trackData = await db.query.track.findFirst({
+    where: eq(track.uri, uri),
   });
 
-  if (!track) return "no track";
+  if (!trackData) return "no track";
 
   try {
     if (provider === "spotify") {
       const spotify = await getSpotifyClient({ userId });
 
-      await spotify.track.saveTracksforCurrentUser([track.id]);
+      await spotify.track.saveTracksforCurrentUser([trackData.id]);
       return null;
     }
   } catch (error) {
@@ -65,21 +64,22 @@ async function like(args: { form: FormData; userId: string }) {
   }
 }
 
-async function thanks(args: { form: FormData; userId: string }) {
+async function _thanks(args: { form: FormData; userId: string }) {
   const { form, userId } = args;
 
   const uri = form.get("uri");
   if (typeof uri !== "string") return "no uri";
 
-  const track = await prisma.track.findFirst({
-    select: { id: true },
-    where: { uri },
+  const trackData = await db.query.track.findFirst({
+    where: eq(track.uri, uri),
   });
 
-  if (!track) return "no track";
+  if (!trackData) return "no track";
 
-  await prisma.thanks.create({
-    data: { trackId: track.id, userId },
+  await db.insert(_thanks).values({
+    trackId: trackData.id,
+    userId,
+    createdAt: new Date().toISOString(),
   });
 
   return null;

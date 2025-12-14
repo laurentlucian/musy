@@ -1,22 +1,22 @@
-import { PrismaD1 } from "@prisma/adapter-d1";
-import { PrismaClient } from "~/generated/prisma/client/client.ts";
-import { singleton } from "~/lib/services/singleton.server";
+import type { InferSelectModel } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import { db } from "~/lib/db";
+import type { artist, playlist, profile, track, user } from "~/lib/db/schema";
+import * as schema from "~/lib/db/schema";
 
-const D1 = {
-  CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
-  CLOUDFLARE_DATABASE_ID: process.env.CLOUDFLARE_DATABASE_ID,
-  CLOUDFLARE_D1_TOKEN: process.env.CLOUDFLARE_D1_TOKEN,
-};
+// Re-export the database instance
+export { db };
 
-const prisma = import.meta.env.DEV
-  ? singleton("prisma", () => {
-      const adapter = new PrismaD1(D1);
-      return new PrismaClient({ adapter });
-    })
-  : new PrismaClient({
-      adapter: new PrismaD1(D1),
-    });
+// Type definitions from Drizzle schema
+export type Database = typeof db;
 
-export { prisma };
+export type Track = InferSelectModel<typeof track>;
+export type Artist = InferSelectModel<typeof artist>;
+export type Playlist = InferSelectModel<typeof playlist>;
+export type User = InferSelectModel<typeof user>;
+export type Profile = InferSelectModel<typeof profile>;
 
-export type * from "~/generated/prisma/client/client.ts";
+// Function to create database instance (used in sync scripts)
+export function createDatabase(env: { musy: D1Database }) {
+  return drizzle(env.musy, { schema, casing: "snake_case" });
+}

@@ -1,12 +1,12 @@
 "use client";
 
-import type { Artist as ArtistType } from "~/lib/services/db.server";
+import type { Artist } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import { Image } from "../ui/image";
 
 export function Artist(
   props: {
-    artist: ArtistType;
+    artist: Artist;
   } & React.ComponentProps<"a">,
 ) {
   const { artist, className, ...rest } = props;

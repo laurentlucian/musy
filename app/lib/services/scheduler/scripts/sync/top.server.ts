@@ -1,5 +1,14 @@
+import { desc, eq } from "drizzle-orm";
 import type Spotified from "spotified";
-import { prisma } from "~/lib/services/db.server";
+import {
+  artistToTopArtists,
+  sync,
+  top,
+  topArtists,
+  topSongs,
+  topSongsToTrack,
+} from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import {
   transformArtists,
   transformTracks,
@@ -23,34 +32,36 @@ export async function syncUserTop({
     }
 
     log("completed", "top");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "success",
         type: "top",
-      },
-      update: {
-        state: "success",
-      },
-      where: {
-        userId_type_state: { userId, type: "top", state: "success" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: now },
+      });
   } catch (error) {
     log(`failure:${error}`, "top");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "failure",
         type: "top",
-      },
-      update: {
-        state: "failure",
-      },
-      where: {
-        userId_type_state: { userId, type: "top", state: "failure" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "failure", updatedAt: now },
+      });
   }
 }
 
@@ -70,65 +81,40 @@ async function syncTopSongs({
 
   const trackIds = await transformTracks(response.items);
 
-  const existing = await prisma.topSongs.findFirst({
-    where: {
-      userId,
-      type: "tracks",
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+  const existing = await db.query.topSongs.findFirst({
+    where: eq(topSongs.userId, userId),
+    orderBy: desc(topSongs.createdAt),
   });
 
   const newList = trackIds.join(",");
-  if (existing) {
-    const existingList = existing.trackIds;
-    if (existingList === newList) {
-      log("skipped", `top_${range}`);
-      return;
-    }
+  if (existing?.trackIds === newList) {
+    log("skipped", `top_${range}`);
+    return;
+  }
 
-    await prisma.topSongs.create({
-      data: {
-        id: generateId(),
-        type: range,
-        trackIds: newList,
-        tracks: {
-          connect: trackIds.map((id) => ({ id })),
-        },
-        top: {
-          connectOrCreate: {
-            create: {
-              userId,
-            },
-            where: {
-              userId,
-            },
-          },
-        },
-      },
-    });
-  } else {
-    await prisma.topSongs.create({
-      data: {
-        id: generateId(),
-        type: range,
-        trackIds: newList,
-        tracks: {
-          connect: trackIds.map((id) => ({ id })),
-        },
-        top: {
-          connectOrCreate: {
-            create: {
-              userId,
-            },
-            where: {
-              userId,
-            },
-          },
-        },
-      },
-    });
+  const now = new Date().toISOString();
+  const topSongsId = generateId();
+
+  // First ensure the top record exists
+  await db.insert(top).values({ userId }).onConflictDoNothing();
+
+  // Create the top songs record
+  await db.insert(topSongs).values({
+    id: topSongsId,
+    userId,
+    type: range,
+    trackIds: newList,
+    createdAt: now,
+  });
+
+  // Create many-to-many relationships
+  if (trackIds.length > 0) {
+    await db.insert(topSongsToTrack).values(
+      trackIds.map((trackId) => ({
+        a: topSongsId,
+        b: trackId,
+      })),
+    );
   }
 }
 
@@ -148,14 +134,9 @@ async function syncTopArtists({
 
   const artistIds = await transformArtists(response.items);
 
-  const existing = await prisma.topArtists.findFirst({
-    where: {
-      userId,
-      type: range,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+  const existing = await db.query.topArtists.findFirst({
+    where: eq(topArtists.userId, userId),
+    orderBy: desc(topArtists.createdAt),
   });
 
   const newList = artistIds.join(",");
@@ -164,24 +145,28 @@ async function syncTopArtists({
     return;
   }
 
-  await prisma.topArtists.create({
-    data: {
-      id: generateId(),
-      type: range,
-      artistIds: newList,
-      artists: {
-        connect: artistIds.map((id) => ({ id })),
-      },
-      top: {
-        connectOrCreate: {
-          create: {
-            userId,
-          },
-          where: {
-            userId,
-          },
-        },
-      },
-    },
+  const now = new Date().toISOString();
+  const topArtistsId = generateId();
+
+  // First ensure the top record exists
+  await db.insert(top).values({ userId }).onConflictDoNothing();
+
+  // Create the top artists record
+  await db.insert(topArtists).values({
+    id: topArtistsId,
+    userId,
+    type: range,
+    artistIds: newList,
+    createdAt: now,
   });
+
+  // Create many-to-many relationships
+  if (artistIds.length > 0) {
+    await db.insert(artistToTopArtists).values(
+      artistIds.map((artistId) => ({
+        a: artistId,
+        b: topArtistsId,
+      })),
+    );
+  }
 }

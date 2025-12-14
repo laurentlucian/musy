@@ -1,6 +1,8 @@
+import { inArray } from "drizzle-orm";
 import type { Artist, Track } from "spotified";
 import { boolean, nullable, number, object, parse, string } from "valibot";
-import { prisma } from "~/lib/services/db.server";
+import { artist, track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 
 const trackSchema = object({
@@ -39,15 +41,21 @@ export function createTrackModel(track: Track) {
 
 export async function transformTracks(tracks: Track[]) {
   const trackIds = tracks.map((t) => t.id).filter((id) => id !== undefined);
-  const existing = await prisma.track.findMany({
-    where: { id: { in: trackIds } },
-  });
+  const existing = await db
+    .select({ id: track.id })
+    .from(track)
+    .where(inArray(track.id, trackIds));
 
-  const newTracks = tracks.filter((t) => !existing.find((e) => e.id === t.id));
+  const existingIds = new Set(existing.map((e) => e.id));
+  const newTracks = tracks.filter((t) => !existingIds.has(t.id));
 
-  await prisma.track.createMany({
-    data: newTracks.map(createTrackModel),
-  });
+  if (newTracks.length > 0) {
+    const tracksToInsert = newTracks.map(createTrackModel).map((t) => ({
+      ...t,
+      explicit: t.explicit ? "1" : "0",
+    }));
+    await db.insert(track).values(tracksToInsert);
+  }
 
   return trackIds;
 }
@@ -91,17 +99,17 @@ export function createArtistModel(artist: Artist) {
 
 export async function transformArtists(artists: Artist[]) {
   const artistIds = artists.map((a) => a.id).filter((id) => id !== undefined);
-  const existing = await prisma.artist.findMany({
-    where: { id: { in: artistIds } },
-  });
+  const existing = await db
+    .select({ id: artist.id })
+    .from(artist)
+    .where(inArray(artist.id, artistIds));
 
-  const newArtists = artists.filter(
-    (a) => !existing.find((e) => e.id === a.id),
-  );
+  const existingIds = new Set(existing.map((e) => e.id));
+  const newArtists = artists.filter((a) => !existingIds.has(a.id));
 
-  await prisma.artist.createMany({
-    data: newArtists.map(createArtistModel),
-  });
+  if (newArtists.length > 0) {
+    await db.insert(artist).values(newArtists.map(createArtistModel));
+  }
 
   return artistIds;
 }

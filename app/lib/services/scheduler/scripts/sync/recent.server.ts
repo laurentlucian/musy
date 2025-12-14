@@ -1,5 +1,7 @@
+import { and, eq, inArray } from "drizzle-orm";
 import type Spotified from "spotified";
-import { prisma } from "~/lib/services/db.server";
+import { recentSongs, sync, track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
 import { log, notNull } from "~/lib/utils";
 
@@ -27,10 +29,10 @@ export async function syncUserRecent({
 
     // find existing tracks
     const trackIds = tracks.map((t) => t.id);
-    const existingTracks = await prisma.track.findMany({
-      where: { id: { in: trackIds } },
-      select: { id: true },
-    });
+    const existingTracks = await db
+      .select({ id: track.id })
+      .from(track)
+      .where(inArray(track.id, trackIds));
     const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
     // split into new and existing tracks
@@ -39,7 +41,11 @@ export async function syncUserRecent({
 
     // batch create new tracks
     if (newTracks.length) {
-      await prisma.track.createMany({ data: newTracks });
+      const tracksToInsert = newTracks.map((t) => ({
+        ...t,
+        explicit: t.explicit ? "1" : "0",
+      }));
+      await db.insert(track).values(tracksToInsert);
     }
 
     // batch update existing tracks
@@ -69,15 +75,18 @@ export async function syncUserRecent({
       .filter(notNull);
 
     // find existing recent songs
-    const existingRecent = await prisma.recentSongs.findMany({
-      where: {
-        userId,
-        playedAt: { in: recentSongs.map((s) => s.playedAt) },
-      },
-      select: { playedAt: true },
-    });
+    const playedAts = recentSongs.map((s) => s.playedAt.toISOString());
+    const existingRecent = await db
+      .select({ playedAt: recentSongs.playedAt })
+      .from(recentSongs)
+      .where(
+        and(
+          eq(recentSongs.userId, userId),
+          inArray(recentSongs.playedAt, playedAts),
+        ),
+      );
     const existingRecentTimes = new Set(
-      existingRecent.map((r) => r.playedAt.getTime()),
+      existingRecent.map((r) => new Date(r.playedAt).getTime()),
     );
 
     // split into new and existing recent songs
@@ -87,38 +96,44 @@ export async function syncUserRecent({
 
     // batch create new recent songs
     if (newRecent.length) {
-      await prisma.recentSongs.createMany({ data: newRecent });
+      const recentToInsert = newRecent.map((r) => ({
+        ...r,
+        playedAt: r.playedAt.toISOString(),
+      }));
+      await db.insert(recentSongs).values(recentToInsert);
     }
 
     log("completed", "recent");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "success",
         type: "recent",
-      },
-      update: {
-        state: "success",
-      },
-      where: {
-        userId_type_state: { userId, type: "recent", state: "success" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: now },
+      });
   } catch (error: unknown) {
     log("failure", "recent");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "failure",
         type: "recent",
-      },
-      update: {
-        state: "failure",
-      },
-      where: {
-        userId_type_state: { userId, type: "recent", state: "failure" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "failure", updatedAt: now },
+      });
 
     throw error; // Re-throw to let the machine handle the failure state
   }

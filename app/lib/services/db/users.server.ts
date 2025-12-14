@@ -1,21 +1,42 @@
-import { prisma } from "~/lib/services/db.server";
+import { and, eq, inArray, or } from "drizzle-orm";
+import {
+  feed,
+  follow,
+  generated,
+  generatedPlaylist,
+  likedSongs,
+  playback,
+  playbackHistory,
+  playlist,
+  playlistTrack,
+  profile,
+  provider,
+  recentSongs,
+  recommended,
+  thanks,
+  top,
+  topArtists,
+  topSongs,
+  user,
+} from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 
 export async function getProvider(args: {
   userId: string;
   type: "spotify" | "google";
 }) {
-  const data = await prisma.provider.findUnique({
-    where: { userId_type: args },
+  const data = await db.query.provider.findFirst({
+    where: and(eq(provider.userId, args.userId), eq(provider.type, args.type)),
   });
   return data;
 }
 
 export type Providers = ReturnType<typeof getProviders>;
 export async function getProviders(userId: string) {
-  return prisma.provider.findMany({
-    where: { userId },
-    select: { type: true },
-  });
+  return db
+    .select({ type: provider.type })
+    .from(provider)
+    .where(eq(provider.userId, userId));
 }
 
 export async function updateToken(args: {
@@ -26,71 +47,79 @@ export async function updateToken(args: {
   type: "spotify" | "google";
 }) {
   const { id, token, expiresAt, refreshToken, type } = args;
-  const data = await prisma.provider.update({
-    data: { accessToken: token, expiresAt, refreshToken, revoked: false },
-    where: { userId_type: { userId: id, type } },
-  });
-  return data.expiresAt;
+  await db
+    .update(provider)
+    .set({
+      accessToken: token,
+      expiresAt,
+      refreshToken,
+      revoked: "0",
+      updatedAt: new Date().toISOString(),
+    })
+    .where(and(eq(provider.userId, id), eq(provider.type, type)));
+  return expiresAt;
 }
 
 export async function getAllUsersId() {
-  return prisma.user
-    .findMany({
-      select: {
-        id: true,
-      },
-      where: {
-        providers: {
-          some: {
-            revoked: false,
-          },
-        },
-      },
-    })
-    .then((users) => users.map((u) => u.id));
+  const users = await db
+    .select({ id: user.id })
+    .from(user)
+    .innerJoin(provider, eq(user.id, provider.userId))
+    .where(eq(provider.revoked, "0"));
+  return users.map((u) => u.id);
 }
 
 export async function revokeUser(
   userId: string,
-  provider: "spotify" | "google",
+  providerType: "spotify" | "google",
 ) {
-  await prisma.provider.update({
-    where: { userId_type: { userId, type: provider } },
-    data: { revoked: true },
-  });
+  await db
+    .update(provider)
+    .set({ revoked: "1", updatedAt: new Date().toISOString() })
+    .where(and(eq(provider.userId, userId), eq(provider.type, providerType)));
 }
 
 export async function deleteUser(userId: string) {
-  await Promise.all([
-    prisma.provider.deleteMany({ where: { userId } }),
-    prisma.likedSongs.deleteMany({ where: { userId } }),
-    prisma.recentSongs.deleteMany({ where: { userId } }),
-    prisma.recommended.deleteMany({ where: { userId } }),
-    prisma.playback.deleteMany({ where: { userId } }),
-    prisma.playbackHistory.deleteMany({ where: { userId } }),
-    prisma.playlistTrack.deleteMany({ where: { playlist: { userId } } }),
-    prisma.feed.deleteMany({ where: { userId } }),
-    prisma.thanks.deleteMany({ where: { userId } }),
-    prisma.topSongs.deleteMany({ where: { userId } }),
-    prisma.topArtists.deleteMany({ where: { userId } }),
-    prisma.follow.deleteMany({
-      where: { OR: [{ followerId: userId }, { followingId: userId }] },
-    }),
-    prisma.generatedPlaylist.deleteMany({
-      where: {
-        owner: {
-          userId,
-        },
-      },
-    }),
-  ]);
+  // Delete playlist tracks first (foreign key constraint)
+  const userPlaylists = await db
+    .select({ id: playlist.id })
+    .from(playlist)
+    .where(eq(playlist.userId, userId));
+  const playlistIds = userPlaylists.map((p) => p.id);
+
+  await Promise.all(
+    [
+      db.delete(provider).where(eq(provider.userId, userId)),
+      db.delete(likedSongs).where(eq(likedSongs.userId, userId)),
+      db.delete(recentSongs).where(eq(recentSongs.userId, userId)),
+      db.delete(recommended).where(eq(recommended.userId, userId)),
+      db.delete(playback).where(eq(playback.userId, userId)),
+      db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
+      playlistIds.length > 0 &&
+        db
+          .delete(playlistTrack)
+          .where(inArray(playlistTrack.playlistId, playlistIds)),
+      db.delete(feed).where(eq(feed.userId, userId)),
+      db.delete(thanks).where(eq(thanks.userId, userId)),
+      db.delete(topSongs).where(eq(topSongs.userId, userId)),
+      db.delete(topArtists).where(eq(topArtists.userId, userId)),
+      db
+        .delete(follow)
+        .where(
+          or(eq(follow.followerId, userId), eq(follow.followingId, userId)),
+        ),
+      db
+        .delete(generatedPlaylist)
+        .where(eq(generatedPlaylist.ownerId, Number(userId))),
+    ].filter(Boolean),
+  );
 
   await Promise.all([
-    prisma.generated.deleteMany({ where: { userId } }),
-    prisma.top.deleteMany({ where: { userId } }),
-    prisma.playlist.deleteMany({ where: { userId } }),
+    db.delete(generated).where(eq(generated.userId, userId)),
+    db.delete(top).where(eq(top.userId, userId)),
+    db.delete(playlist).where(eq(playlist.userId, userId)),
   ]);
 
-  await prisma.profile.delete({ where: { id: userId } });
-  await prisma.user.delete({ where: { id: userId } });
+  await db.delete(profile).where(eq(profile.id, userId));
+  await db.delete(user).where(eq(user.id, userId));
 }

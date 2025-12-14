@@ -1,11 +1,13 @@
+import { and, eq } from "drizzle-orm";
 import * as v from "valibot";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import { transfer } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/transfers";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const transfers = await prisma.transfer.findMany();
+  const transfers = await db.select().from(transfer);
   return { transfers };
 }
 
@@ -124,16 +126,16 @@ export async function action({ request, context }: Route.ActionArgs) {
       return { error: "invalid transfer data" };
     }
 
-    await prisma.transfer.delete({
-      where: {
-        userId_source_destination_type: {
-          userId: result.output.userId,
-          source: result.output.source,
-          destination: result.output.destination,
-          type: result.output.type,
-        },
-      },
-    });
+    await db
+      .delete(transfer)
+      .where(
+        and(
+          eq(transfer.userId, result.output.userId),
+          eq(transfer.source, result.output.source),
+          eq(transfer.destination, result.output.destination),
+          eq(transfer.type, result.output.type),
+        ),
+      );
   }
 
   return { error: null };

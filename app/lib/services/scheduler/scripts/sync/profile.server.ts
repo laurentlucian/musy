@@ -1,5 +1,7 @@
+import { eq } from "drizzle-orm";
 import type Spotified from "spotified";
-import { prisma } from "~/lib/services/db.server";
+import { profile, sync } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { log } from "~/lib/utils";
 
 export async function syncUserProfile({
@@ -16,43 +18,46 @@ export async function syncUserProfile({
     const image = images?.[0]?.url || images?.[1]?.url;
     const name = response.display_name;
 
-    await prisma.profile.update({
-      where: { id: userId },
-      data: {
+    await db
+      .update(profile)
+      .set({
         image,
         name,
-      },
-    });
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(profile.id, userId));
 
     log("completed", "profile");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "success",
         type: "profile",
-      },
-      update: {
-        state: "success",
-      },
-      where: {
-        userId_type_state: { userId, type: "profile", state: "success" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: now },
+      });
   } catch (error) {
     log("failure", "profile");
-    await prisma.sync.upsert({
-      create: {
+    const now = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
         userId,
         state: "failure",
         type: "profile",
-      },
-      update: {
-        state: "failure",
-      },
-      where: {
-        userId_type_state: { userId, type: "profile", state: "failure" },
-      },
-    });
+        createdAt: now,
+        updatedAt: now,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "failure", updatedAt: now },
+      });
     throw error;
   }
 }

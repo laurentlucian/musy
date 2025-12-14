@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { PlayIcon, RefreshCwIcon } from "lucide-react";
 import { useEffect } from "react";
 import {
@@ -14,7 +15,15 @@ import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import {
+  generated,
+  generatedPlaylist,
+  profile,
+  topSongsToTrack,
+  track,
+  user,
+} from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { generatePlaylist } from "~/lib/services/sdk/helpers/ai.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/playlist";
@@ -23,26 +32,42 @@ export async function loader({ params, context }: Route.LoaderArgs) {
   const userId = context.get(userContext);
   if (!userId) return redirect("/settings");
 
-  const playlist = await prisma.generatedPlaylist.findUnique({
-    include: {
-      tracks: true,
+  // Get the playlist with owner info
+  const playlistData = await db
+    .select({
+      id: generatedPlaylist.id,
+      mood: generatedPlaylist.mood,
+      year: generatedPlaylist.year,
+      familiar: generatedPlaylist.familiar,
+      popular: generatedPlaylist.popular,
+      createdAt: generatedPlaylist.createdAt,
       owner: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+        user: {
+          id: user.id,
+          name: profile.name,
         },
       },
-    },
-    where: {
-      id: params.id,
-    },
-  });
+    })
+    .from(generatedPlaylist)
+    .innerJoin(generated, eq(generatedPlaylist.ownerId, generated.id))
+    .innerJoin(user, eq(generated.userId, user.id))
+    .innerJoin(profile, eq(user.id, profile.id))
+    .where(eq(generatedPlaylist.id, params.id))
+    .limit(1);
 
-  if (!playlist) throw data("not found", { status: 404 });
+  if (!playlistData.length) throw data("not found", { status: 404 });
+
+  // Get the tracks for this playlist
+  const playlistTracks = await db
+    .select({ track })
+    .from(topSongsToTrack)
+    .innerJoin(track, eq(topSongsToTrack.b, track.id))
+    .where(eq(topSongsToTrack.a, params.id));
+
+  const playlist = {
+    ...playlistData[0],
+    tracks: playlistTracks.map((pt) => pt.track),
+  };
 
   return { playlist, userId };
 }

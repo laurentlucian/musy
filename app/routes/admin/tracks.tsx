@@ -1,12 +1,12 @@
 import { format, millisecondsToMinutes } from "date-fns";
-import { prisma } from "~/lib/services/db.server";
+import { count } from "drizzle-orm";
+import { track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/tracks";
 
 export async function loader(_: Route.LoaderArgs) {
-  const tracks = await prisma.track.findMany({
-    take: 100,
-  });
-  const total = await prisma.track.count();
+  const tracks = await db.select().from(track).limit(100);
+  const [{ count: total }] = await db.select({ count: count() }).from(track);
   return { tracks, total };
 }
 

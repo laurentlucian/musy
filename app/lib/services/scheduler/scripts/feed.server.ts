@@ -1,88 +1,87 @@
-import { prisma } from "~/lib/services/db.server";
+import { eq, isNull } from "drizzle-orm";
+import {
+  feed,
+  likedSongs,
+  playlist,
+  playlistTrack,
+  recommended,
+} from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { log } from "~/lib/utils";
 
 export async function syncFeed() {
   log("starting...", "feed");
 
-  const [liked, recommended, playlistTracks] = await Promise.all([
-    prisma.likedSongs.findMany({
-      where: {
-        feedId: null,
-      },
-    }),
-    prisma.recommended.findMany({
-      where: {
-        feedId: null,
-      },
-    }),
-    prisma.playlistTrack.findMany({
-      include: {
-        playlist: {
-          select: {
-            userId: true,
-          },
-        },
-      },
-      where: {
-        feedId: null,
-      },
-    }),
+  const [liked, recommendedItems, playlistTracksData] = await Promise.all([
+    db.select().from(likedSongs).where(isNull(likedSongs.feedId)),
+    db.select().from(recommended).where(isNull(recommended.feedId)),
+    db
+      .select({
+        id: playlistTrack.id,
+        addedAt: playlistTrack.addedAt,
+        playlistId: playlistTrack.playlistId,
+        trackId: playlistTrack.trackId,
+        userId: playlist.userId,
+      })
+      .from(playlistTrack)
+      .innerJoin(playlist, eq(playlistTrack.playlistId, playlist.id))
+      .where(isNull(playlistTrack.feedId)),
   ]);
 
   for (const item of liked) {
-    await prisma.feed.create({
-      data: {
-        createdAt: item.createdAt,
-        liked: {
-          connect: {
-            id: item.id,
-          },
-        },
-        user: {
-          connect: {
-            id: item.userId,
-          },
-        },
-      },
+    const _feedId = await db.transaction(async (tx) => {
+      const [newFeed] = await tx
+        .insert(feed)
+        .values({
+          createdAt: item.createdAt,
+          userId: item.userId,
+        })
+        .returning({ id: feed.id });
+
+      await tx
+        .update(likedSongs)
+        .set({ feedId: newFeed.id })
+        .where(eq(likedSongs.id, item.id));
+
+      return newFeed.id;
     });
   }
 
-  for (const item of recommended) {
-    await prisma.feed.create({
-      data: {
-        createdAt: item.createdAt,
-        recommend: {
-          connect: {
-            id: item.id,
-          },
-        },
-        user: {
-          connect: {
-            id: item.userId,
-          },
-        },
-      },
+  for (const item of recommendedItems) {
+    const _feedId = await db.transaction(async (tx) => {
+      const [newFeed] = await tx
+        .insert(feed)
+        .values({
+          createdAt: item.createdAt,
+          userId: item.userId,
+        })
+        .returning({ id: feed.id });
+
+      await tx
+        .update(recommended)
+        .set({ feedId: newFeed.id })
+        .where(eq(recommended.id, item.id));
+
+      return newFeed.id;
     });
   }
 
-  for (const item of playlistTracks) {
-    await prisma.feed.create({
-      data: {
-        createdAt: item.addedAt,
-        playlist: {
-          connect: {
-            playlistId_trackId: {
-              playlistId: item.playlistId,
-              trackId: item.trackId,
-            },
-          },
-        },
-        user: {
-          connect: {
-            id: item.playlist.userId,
-          },
-        },
-      },
+  for (const item of playlistTracksData) {
+    const _feedId = await db.transaction(async (tx) => {
+      const [newFeed] = await tx
+        .insert(feed)
+        .values({
+          createdAt: item.addedAt,
+          userId: item.userId,
+        })
+        .returning({ id: feed.id });
+
+      await tx
+        .update(playlistTrack)
+        .set({ feedId: newFeed.id })
+        .where(eq(playlistTrack.id, item.id));
+
+      return newFeed.id;
     });
   }
 

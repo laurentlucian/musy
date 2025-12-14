@@ -1,10 +1,12 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
+import { and, count, desc, eq, gte, lte } from "drizzle-orm";
 import { Suspense } from "react";
 import { Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
-import { prisma } from "~/lib/services/db.server";
+import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import { Links, Loader, Selector } from "~/routes/profile/profile.client";
 import type { Route } from "./+types/profile";
 
@@ -50,15 +52,16 @@ export function ServerComponent({ loaderData }: Route.ComponentProps) {
 async function Stats({ userId, year }: { userId: string; year: number }) {
   const date = setYear(new Date(), year);
 
-  const liked = await prisma.likedSongs.count({
-    where: {
-      userId,
-      createdAt: {
-        gte: startOfYear(date),
-        lte: endOfYear(date),
-      },
-    },
-  });
+  const [{ count: liked }] = await db
+    .select({ count: count() })
+    .from(likedSongs)
+    .where(
+      and(
+        eq(likedSongs.userId, userId),
+        gte(likedSongs.createdAt, startOfYear(date).toISOString()),
+        lte(likedSongs.createdAt, endOfYear(date).toISOString()),
+      ),
+    );
 
   let length = 0;
   let minutes = 0;
@@ -71,31 +74,28 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
   let all = false;
 
   while (!all) {
-    const played = await prisma.recentSongs.findMany({
-      where: {
-        userId,
-        playedAt: {
-          gte: startOfYear(date),
-          lte: endOfYear(date),
-        },
-      },
-      take,
-      skip,
-      orderBy: {
-        playedAt: "desc",
-      },
-      select: {
+    const played = await db
+      .select({
         track: {
-          select: {
-            uri: true,
-            name: true,
-            artist: true,
-            albumName: true,
-            duration: true,
-          },
+          uri: track.uri,
+          name: track.name,
+          artist: track.artist,
+          albumName: track.albumName,
+          duration: track.duration,
         },
-      },
-    });
+      })
+      .from(recentSongs)
+      .innerJoin(track, eq(recentSongs.trackId, track.id))
+      .where(
+        and(
+          eq(recentSongs.userId, userId),
+          gte(recentSongs.playedAt, startOfYear(date).toISOString()),
+          lte(recentSongs.playedAt, endOfYear(date).toISOString()),
+        ),
+      )
+      .orderBy(desc(recentSongs.playedAt))
+      .limit(take)
+      .offset(skip);
 
     if (played.length < take) {
       all = true;
@@ -172,30 +172,28 @@ async function Stats({ userId, year }: { userId: string; year: number }) {
 }
 
 async function Avatar({ userId }: { userId: string }) {
-  const profile = await prisma.profile.findFirst({
-    where: {
-      id: userId,
-    },
+  const userProfile = await db.query.profile.findFirst({
+    where: eq(profile.id, userId),
   });
 
-  if (!profile) return null;
+  if (!userProfile) return null;
 
   return (
     <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
       <div className="flex items-center gap-2">
-        {profile.image && (
+        {userProfile.image && (
           <img
             className="size-10 rounded-full"
-            src={profile.image}
-            alt={profile.name ?? "pp"}
+            src={userProfile.image}
+            alt={userProfile.name ?? "pp"}
           />
         )}
         <div className="flex items-center gap-2">
-          <h1 className="font-bold text-2xl">{profile.name}</h1>
+          <h1 className="font-bold text-2xl">{userProfile.name}</h1>
           <Loader />
         </div>
       </div>
-      <p className="text-muted-foreground text-sm">{profile.bio}</p>
+      <p className="text-muted-foreground text-sm">{userProfile.bio}</p>
       <Links userId={userId} />
     </div>
   );

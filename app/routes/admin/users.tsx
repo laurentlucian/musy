@@ -1,33 +1,53 @@
 import { format } from "date-fns";
+import { desc, eq } from "drizzle-orm";
 import { ClipboardCopy, TrashIcon } from "lucide-react";
 import { data, useNavigation, useSubmit } from "react-router";
 import { toast } from "sonner";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
+import { profile, provider } from "~/lib/db/schema";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
 import { deleteUser } from "~/lib/services/db/users.server";
-import { prisma } from "~/lib/services/db.server";
+import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/users";
 
 export async function loader(_: Route.LoaderArgs) {
-  const users = await prisma.profile.findMany({
-    include: {
-      user: {
-        select: {
-          providers: {
-            select: {
-              revoked: true,
-            },
-          },
-        },
+  const users = await db
+    .select({
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      createdAt: profile.createdAt,
+      updatedAt: profile.updatedAt,
+      userId: profile.id, // profile.id is the foreign key to user
+      providers: {
+        revoked: provider.revoked,
       },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-  return { users };
+    })
+    .from(profile)
+    .leftJoin(provider, eq(profile.id, provider.userId))
+    .orderBy(desc(profile.updatedAt));
+
+  // Group providers by user to match the Prisma structure
+  const groupedUsers = users.reduce((acc, user) => {
+    const existing = acc.find((u) => u.id === user.id);
+    if (existing) {
+      if (user.providers.revoked !== null) {
+        existing.user.providers.push(user.providers);
+      }
+    } else {
+      acc.push({
+        ...user,
+        user: {
+          providers: user.providers.revoked !== null ? [user.providers] : [],
+        },
+      });
+    }
+    return acc;
+  }, [] as any[]);
+
+  return { users: groupedUsers };
 }
 
 export default function Users({ loaderData: { users } }: Route.ComponentProps) {

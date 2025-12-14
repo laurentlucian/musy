@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "musy",
-  "main": ".output/server/index.mjs",
+  "main": "workers/app.ts",
   "compatibility_date": "2025-06-17",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
@@ -14,11 +14,5 @@
       "database_name": "musy",
       "database_id": "0f47bd03-cb16-4ffe-9e41-2e49ba11eaed"
     }
-  ],
-  "triggers": {
-    "crons": [
-      "0 * * * *",  // hourly for recent sync
-      "0 0 */7 * *" // weekly for top sync
-    ]
-  }
+  ]
 }

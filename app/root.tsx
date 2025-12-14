@@ -39,7 +39,7 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => [
   { title: "musy" },
-  { name: "description", content: "music sharing" },
+  { name: "description", content: "" },
   {
     name: "viewport",
     content: "width=device-width, initial-scale=1, viewport-fit=cover",
@@ -77,6 +77,7 @@ export async function loader({
       throw redirect("/");
     }
   }
+  return null;
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

@@ -1,19 +1,24 @@
-import { prisma } from "~/lib/services/db.server";
+import { eq } from "drizzle-orm";
+import { provider, user } from "~/lib/db/schema";
+import { db } from "~/lib/services/db.server";
 import type { SessionTyped } from "~/lib/services/session.server";
 
 export async function migrateLegacySession(session?: SessionTyped) {
   if (!session) return null;
-  const user = session.get("spotify:session");
-  if (!user) return null;
+  const userSession = session.get("spotify:session");
+  if (!userSession) return null;
 
-  const spotifyId = user.user.id;
+  const spotifyId = userSession.user.id;
 
-  const db = await prisma.user.findFirst({
-    where: { providers: { some: { accountId: spotifyId } } },
-  });
+  const dbUser = await db
+    .select({ id: user.id })
+    .from(user)
+    .innerJoin(provider, eq(user.id, provider.userId))
+    .where(eq(provider.accountId, spotifyId))
+    .limit(1);
 
-  if (db) {
-    session.set("data", { id: db.id });
+  if (dbUser.length > 0) {
+    session.set("data", { id: dbUser[0].id });
     session.unset("spotify:session");
   }
 
