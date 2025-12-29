@@ -70,7 +70,7 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
         <tbody>
           {users.map((profile) => {
             const provider = profile.user.providers[0];
-            const revoked = !provider || provider?.revoked;
+            const revoked = !provider || provider?.revoked === "1";
             return (
               <tr
                 key={profile.id}

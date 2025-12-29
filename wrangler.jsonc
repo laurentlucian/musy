@@ -12,7 +12,8 @@
     {
       "binding": "D1",
       "database_name": "musy",
-      "database_id": "0f47bd03-cb16-4ffe-9e41-2e49ba11eaed"
+      "database_id": "0f47bd03-cb16-4ffe-9e41-2e49ba11eaed",
+      "remote": true
     }
   ]
 }

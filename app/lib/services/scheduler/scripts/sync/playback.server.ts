@@ -19,17 +19,17 @@ export async function syncPlaybacks() {
 
   log(`users active: ${active.length}`, "playback");
 
-  for (const { id: userId, playback } of active) {
-    if (!playback) continue;
-    const { item } = playback;
+  for (const { id: userId, playback: playbackState } of active) {
+    if (!playbackState) continue;
+    const { item } = playbackState;
     const current = await db.query.playback.findFirst({
-      where: eq(playback.userId, Number(userId)),
+      where: eq(playback.userId, userId),
     });
     const isSameTrack = current?.trackId === item?.id;
     if (!item || item.type !== "track" || isSameTrack) continue;
     log("new track", "playback");
 
-    await upsertPlayback(userId, playback);
+    await upsertPlayback(userId, playbackState);
 
     // const remaining = track.duration_ms - progress_ms;
     // schedulePlaybackCheck(userId, remaining);
@@ -47,19 +47,19 @@ async function handleInactiveUsers(users: string[]) {
   await db.delete(playback).where(inArray(playback.userId, users));
 }
 
-const upsertPlayback = async (userId: string, playback: PlaybackState) => {
+const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {
   try {
     log("upserting playback", "playback");
-    const { progress_ms: progress, timestamp } = playback;
+    const { progress_ms: progress, timestamp } = playbackState;
     if (
-      !playback.item ||
-      playback.item.type !== "track" ||
+      !playbackState.item ||
+      playbackState.item.type !== "track" ||
       !progress ||
       !timestamp
     )
       return;
 
-    const trackData = createTrackModel(playback.item);
+    const trackData = createTrackModel(playbackState.item);
 
     // First, upsert the track
     await db
@@ -78,7 +78,7 @@ const upsertPlayback = async (userId: string, playback: PlaybackState) => {
         userId,
         trackId: trackData.id,
         progress,
-        timestamp: timestamp.toString(),
+        timestamp: Number(timestamp),
         updatedAt: now,
       })
       .onConflictDoUpdate({
@@ -86,7 +86,7 @@ const upsertPlayback = async (userId: string, playback: PlaybackState) => {
         set: {
           trackId: trackData.id,
           progress,
-          timestamp: timestamp.toString(),
+          timestamp: Number(timestamp),
           updatedAt: now,
         },
       });
@@ -111,7 +111,7 @@ async function getPlaybackState(userId: string) {
         log(`revoked token for ${userId}`, "playback");
         await db
           .update(provider)
-          .set({ revoked: true })
+          .set({ revoked: "1" })
           .where(
             and(eq(provider.userId, userId), eq(provider.type, "spotify")),
           );

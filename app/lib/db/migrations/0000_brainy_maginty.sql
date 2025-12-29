@@ -1,7 +1,9 @@
 -- Current sql file was generated after introspecting the database
--- If you want to run this migration please uncomment this code before executing migrations
-/*
-CREATE TABLE `_prisma_migrations` (
+-- This migration uses IF NOT EXISTS to be compatible with existing databases
+-- All CREATE TABLE and CREATE INDEX statements use IF NOT EXISTS to avoid errors if they already exist
+-- This allows the migration to be safely run against an existing database without conflicts
+
+CREATE TABLE IF NOT EXISTS `_prisma_migrations` (
 	`id` text PRIMARY KEY NOT NULL,
 	`checksum` text NOT NULL,
 	`finished_at` numeric,
@@ -12,7 +14,7 @@ CREATE TABLE `_prisma_migrations` (
 	`applied_steps_count` integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `PlaylistTrack` (
+CREATE TABLE IF NOT EXISTS `PlaylistTrack` (
 	`addedAt` numeric NOT NULL,
 	`playlistId` text NOT NULL,
 	`trackId` text NOT NULL,
@@ -22,9 +24,9 @@ CREATE TABLE `PlaylistTrack` (
 	FOREIGN KEY (`trackId`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `PlaylistTrack_playlistId_trackId_key` ON `PlaylistTrack` (`playlistId`,`trackId`);--> statement-breakpoint
-CREATE UNIQUE INDEX `PlaylistTrack_feedId_key` ON `PlaylistTrack` (`feedId`);--> statement-breakpoint
-CREATE TABLE `Generated` (
+CREATE UNIQUE INDEX IF NOT EXISTS `PlaylistTrack_playlistId_trackId_key` ON `PlaylistTrack` (`playlistId`,`trackId`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `PlaylistTrack_feedId_key` ON `PlaylistTrack` (`feedId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Generated` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -34,17 +36,17 @@ CREATE TABLE `Generated` (
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Generated_userId_key` ON `Generated` (`userId`);--> statement-breakpoint
-CREATE UNIQUE INDEX `AI_userId_key` ON `Generated` (`userId`);--> statement-breakpoint
-CREATE TABLE `Feed` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Generated_userId_key` ON `Generated` (`userId`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `AI_userId_key` ON `Generated` (`userId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Feed` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric NOT NULL,
 	`userId` text NOT NULL,
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE INDEX `Feed_createdAt_idx` ON `Feed` (`createdAt`);--> statement-breakpoint
-CREATE TABLE `Follow` (
+CREATE INDEX IF NOT EXISTS `Feed_createdAt_idx` ON `Feed` (`createdAt`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Follow` (
 	`followingId` text NOT NULL,
 	`followerId` text NOT NULL,
 	PRIMARY KEY(`followingId`, `followerId`),
@@ -52,7 +54,7 @@ CREATE TABLE `Follow` (
 	FOREIGN KEY (`followingId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE TABLE `LikedSongs` (
+CREATE TABLE IF NOT EXISTS `LikedSongs` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`trackId` text NOT NULL,
@@ -64,9 +66,9 @@ CREATE TABLE `LikedSongs` (
 	FOREIGN KEY (`trackId`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `LikedSongs_trackId_userId_key` ON `LikedSongs` (`trackId`,`userId`);--> statement-breakpoint
-CREATE UNIQUE INDEX `LikedSongs_feedId_key` ON `LikedSongs` (`feedId`);--> statement-breakpoint
-CREATE TABLE `Playback` (
+CREATE UNIQUE INDEX IF NOT EXISTS `LikedSongs_trackId_userId_key` ON `LikedSongs` (`trackId`,`userId`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `LikedSongs_feedId_key` ON `LikedSongs` (`feedId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Playback` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric NOT NULL,
@@ -78,8 +80,8 @@ CREATE TABLE `Playback` (
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Playback_userId_key` ON `Playback` (`userId`);--> statement-breakpoint
-CREATE TABLE `PlaybackHistory` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Playback_userId_key` ON `Playback` (`userId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `PlaybackHistory` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`startedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`endedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -89,7 +91,7 @@ CREATE TABLE `PlaybackHistory` (
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `PlaybackHistory_feedId_key` ON `PlaybackHistory` (`feedId`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `PlaybackHistory_feedId_key` ON `PlaybackHistory` (`feedId`);--> statement-breakpoint
 CREATE TABLE `Recommended` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -104,15 +106,15 @@ CREATE TABLE `Recommended` (
 	FOREIGN KEY (`trackId`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Recommended_feedId_key` ON `Recommended` (`feedId`);--> statement-breakpoint
-CREATE TABLE `User` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Recommended_feedId_key` ON `Recommended` (`feedId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `User` (
 	`id` text PRIMARY KEY NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`newId` text
 );
 --> statement-breakpoint
-CREATE TABLE `Provider` (
+CREATE TABLE IF NOT EXISTS `Provider` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -127,9 +129,9 @@ CREATE TABLE `Provider` (
 	FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Provider_accountId_type_key` ON `Provider` (`accountId`,`type`);--> statement-breakpoint
-CREATE UNIQUE INDEX `Provider_userId_type_key` ON `Provider` (`userId`,`type`);--> statement-breakpoint
-CREATE TABLE `Profile` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Provider_accountId_type_key` ON `Provider` (`accountId`,`type`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `Provider_userId_type_key` ON `Provider` (`userId`,`type`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Profile` (
 	`id` text PRIMARY KEY NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -140,8 +142,8 @@ CREATE TABLE `Profile` (
 	FOREIGN KEY (`id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Profile_email_key` ON `Profile` (`email`);--> statement-breakpoint
-CREATE TABLE `RecentSongs` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Profile_email_key` ON `Profile` (`email`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `RecentSongs` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`playedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`trackId` text NOT NULL,
@@ -152,8 +154,8 @@ CREATE TABLE `RecentSongs` (
 	FOREIGN KEY (`trackId`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `RecentSongs_playedAt_userId_key` ON `RecentSongs` (`playedAt`,`userId`);--> statement-breakpoint
-CREATE TABLE `Track` (
+CREATE UNIQUE INDEX IF NOT EXISTS `RecentSongs_playedAt_userId_key` ON `RecentSongs` (`playedAt`,`userId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Track` (
 	`id` text PRIMARY KEY NOT NULL,
 	`uri` text NOT NULL,
 	`name` text NOT NULL,
@@ -169,8 +171,8 @@ CREATE TABLE `Track` (
 	`provider` text DEFAULT 'spotify' NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Track_id_key` ON `Track` (`id`);--> statement-breakpoint
-CREATE TABLE `Thanks` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Track_id_key` ON `Track` (`id`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Thanks` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`trackId` text NOT NULL,
@@ -179,7 +181,7 @@ CREATE TABLE `Thanks` (
 	FOREIGN KEY (`trackId`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE TABLE `Playlist` (
+CREATE TABLE IF NOT EXISTS `Playlist` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`description` text,
@@ -191,8 +193,8 @@ CREATE TABLE `Playlist` (
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Playlist_id_key` ON `Playlist` (`id`);--> statement-breakpoint
-CREATE TABLE `Sync` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Playlist_id_key` ON `Playlist` (`id`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Sync` (
 	`userId` text NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric NOT NULL,
@@ -201,7 +203,7 @@ CREATE TABLE `Sync` (
 	PRIMARY KEY(`userId`, `state`, `type`)
 );
 --> statement-breakpoint
-CREATE TABLE `Transfer` (
+CREATE TABLE IF NOT EXISTS `Transfer` (
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric NOT NULL,
 	`userId` text NOT NULL,
@@ -215,7 +217,7 @@ CREATE TABLE `Transfer` (
 	PRIMARY KEY(`userId`, `type`, `source`, `destination`)
 );
 --> statement-breakpoint
-CREATE TABLE `GeneratedPlaylist` (
+CREATE TABLE IF NOT EXISTS `GeneratedPlaylist` (
 	`id` text PRIMARY KEY NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`updatedAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
@@ -227,27 +229,27 @@ CREATE TABLE `GeneratedPlaylist` (
 	FOREIGN KEY (`ownerId`) REFERENCES `Generated`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `GeneratedPlaylist_id_key` ON `GeneratedPlaylist` (`id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `AIPlaylist_id_key` ON `GeneratedPlaylist` (`id`);--> statement-breakpoint
-CREATE TABLE `_GeneratedPlaylistToTrack` (
+CREATE UNIQUE INDEX IF NOT EXISTS `GeneratedPlaylist_id_key` ON `GeneratedPlaylist` (`id`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `AIPlaylist_id_key` ON `GeneratedPlaylist` (`id`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `_GeneratedPlaylistToTrack` (
 	`A` text NOT NULL,
 	`B` text NOT NULL,
 	FOREIGN KEY (`B`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`A`) REFERENCES `GeneratedPlaylist`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `_GeneratedPlaylistToTrack_B_index` ON `_GeneratedPlaylistToTrack` (`B`);--> statement-breakpoint
-CREATE UNIQUE INDEX `_GeneratedPlaylistToTrack_AB_unique` ON `_GeneratedPlaylistToTrack` (`A`,`B`);--> statement-breakpoint
-CREATE TABLE `_TopSongsToTrack` (
+CREATE INDEX IF NOT EXISTS `_GeneratedPlaylistToTrack_B_index` ON `_GeneratedPlaylistToTrack` (`B`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `_GeneratedPlaylistToTrack_AB_unique` ON `_GeneratedPlaylistToTrack` (`A`,`B`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `_TopSongsToTrack` (
 	`A` text NOT NULL,
 	`B` text NOT NULL,
 	FOREIGN KEY (`B`) REFERENCES `Track`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`A`) REFERENCES `TopSongs`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `_TopSongsToTrack_B_index` ON `_TopSongsToTrack` (`B`);--> statement-breakpoint
-CREATE UNIQUE INDEX `_TopSongsToTrack_AB_unique` ON `_TopSongsToTrack` (`A`,`B`);--> statement-breakpoint
-CREATE TABLE `Artist` (
+CREATE INDEX IF NOT EXISTS `_TopSongsToTrack_B_index` ON `_TopSongsToTrack` (`B`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `_TopSongsToTrack_AB_unique` ON `_TopSongsToTrack` (`A`,`B`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `Artist` (
 	`id` text PRIMARY KEY NOT NULL,
 	`uri` text NOT NULL,
 	`name` text NOT NULL,
@@ -257,7 +259,7 @@ CREATE TABLE `Artist` (
 	`genres` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `Album` (
+CREATE TABLE IF NOT EXISTS `Album` (
 	`id` text PRIMARY KEY NOT NULL,
 	`uri` text NOT NULL,
 	`type` text NOT NULL,
@@ -269,13 +271,13 @@ CREATE TABLE `Album` (
 	FOREIGN KEY (`artistId`) REFERENCES `Artist`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE TABLE `Top` (
+CREATE TABLE IF NOT EXISTS `Top` (
 	`userId` text PRIMARY KEY NOT NULL,
 	FOREIGN KEY (`userId`) REFERENCES `Profile`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `Top_userId_key` ON `Top` (`userId`);--> statement-breakpoint
-CREATE TABLE `TopArtists` (
+CREATE UNIQUE INDEX IF NOT EXISTS `Top_userId_key` ON `Top` (`userId`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `TopArtists` (
 	`id` text PRIMARY KEY NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`type` text NOT NULL,
@@ -284,17 +286,17 @@ CREATE TABLE `TopArtists` (
 	FOREIGN KEY (`userId`) REFERENCES `Top`(`userId`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `TopArtists_id_key` ON `TopArtists` (`id`);--> statement-breakpoint
-CREATE TABLE `_ArtistToTopArtists` (
+CREATE UNIQUE INDEX IF NOT EXISTS `TopArtists_id_key` ON `TopArtists` (`id`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `_ArtistToTopArtists` (
 	`A` text NOT NULL,
 	`B` text NOT NULL,
 	FOREIGN KEY (`B`) REFERENCES `TopArtists`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`A`) REFERENCES `Artist`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `_ArtistToTopArtists_B_index` ON `_ArtistToTopArtists` (`B`);--> statement-breakpoint
-CREATE UNIQUE INDEX `_ArtistToTopArtists_AB_unique` ON `_ArtistToTopArtists` (`A`,`B`);--> statement-breakpoint
-CREATE TABLE `TopSongs` (
+CREATE INDEX IF NOT EXISTS `_ArtistToTopArtists_B_index` ON `_ArtistToTopArtists` (`B`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `_ArtistToTopArtists_AB_unique` ON `_ArtistToTopArtists` (`A`,`B`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `TopSongs` (
 	`id` text PRIMARY KEY NOT NULL,
 	`createdAt` numeric DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
 	`type` text NOT NULL,
@@ -303,5 +305,4 @@ CREATE TABLE `TopSongs` (
 	FOREIGN KEY (`userId`) REFERENCES `Top`(`userId`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `TopSongs_id_key` ON `TopSongs` (`id`);
-*/
+CREATE UNIQUE INDEX IF NOT EXISTS `TopSongs_id_key` ON `TopSongs` (`id`);

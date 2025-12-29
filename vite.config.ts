@@ -8,7 +8,7 @@ export default defineConfig(() => {
   return {
     server: {
       port: 3000,
-      host: false,
+      host: true,
     },
     plugins: [
       cloudflare({ viteEnvironment: { name: "ssr" } }),

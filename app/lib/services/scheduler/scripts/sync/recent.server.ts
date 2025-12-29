@@ -61,7 +61,7 @@ export async function syncUserRecent({
     // }
 
     // prepare recent songs data
-    const recentSongs = recent
+    const recentSongsData = recent
       .map(({ played_at, track }) => {
         if (!track?.id || !played_at) return null;
 
@@ -75,7 +75,7 @@ export async function syncUserRecent({
       .filter(notNull);
 
     // find existing recent songs
-    const playedAts = recentSongs.map((s) => s.playedAt.toISOString());
+    const playedAts = recentSongsData.map((s) => s.playedAt.toISOString());
     const existingRecent = await db
       .select({ playedAt: recentSongs.playedAt })
       .from(recentSongs)
@@ -90,7 +90,7 @@ export async function syncUserRecent({
     );
 
     // split into new and existing recent songs
-    const newRecent = recentSongs.filter(
+    const newRecent = recentSongsData.filter(
       (s) => !existingRecentTimes.has(s.playedAt.getTime()),
     );
 

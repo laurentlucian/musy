@@ -1,4 +1,4 @@
-import { eq, isNull } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import {
   feed,
   likedSongs,
@@ -17,7 +17,6 @@ export async function syncFeed() {
     db.select().from(recommended).where(isNull(recommended.feedId)),
     db
       .select({
-        id: playlistTrack.id,
         addedAt: playlistTrack.addedAt,
         playlistId: playlistTrack.playlistId,
         trackId: playlistTrack.trackId,
@@ -79,7 +78,12 @@ export async function syncFeed() {
       await tx
         .update(playlistTrack)
         .set({ feedId: newFeed.id })
-        .where(eq(playlistTrack.id, item.id));
+        .where(
+          and(
+            eq(playlistTrack.playlistId, item.playlistId),
+            eq(playlistTrack.trackId, item.trackId),
+          ),
+        );
 
       return newFeed.id;
     });
@@ -89,12 +93,12 @@ export async function syncFeed() {
     log(`liked items processed: ${liked.length}`, "feed");
   }
 
-  if (recommended.length > 0) {
-    log(`recommended items processed: ${recommended.length}`, "feed");
+  if (recommendedItems.length > 0) {
+    log(`recommended items processed: ${recommendedItems.length}`, "feed");
   }
 
-  if (playlistTracks.length > 0) {
-    log(`playlist tracks processed: ${playlistTracks.length}`, "feed");
+  if (playlistTracksData.length > 0) {
+    log(`playlist tracks processed: ${playlistTracksData.length}`, "feed");
   }
 
   log("completed", "feed");

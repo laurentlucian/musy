@@ -18,5 +18,5 @@ export type Profile = InferSelectModel<typeof profile>;
 
 // Function to create database instance (used in sync scripts)
 export function createDatabase(env: { musy: D1Database }) {
-  return drizzle(env.musy, { schema, casing: "snake_case" });
+  return drizzle(env.musy, { schema });
 }
