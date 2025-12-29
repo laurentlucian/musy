@@ -51,5 +51,10 @@
       "quoteStyle": "double",
       "lineWidth": 80
     }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   }
 }

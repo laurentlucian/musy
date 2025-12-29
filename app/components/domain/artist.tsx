@@ -58,13 +58,15 @@ export function ArtistName(
 export function ArtistImage(
   props: React.ComponentProps<"img"> & { id: string },
 ) {
-  const { className, id, ...rest } = props;
+  const { className, id, alt, ...rest } = props;
   return (
     <Image
       className={cn("rounded-full", className)}
       style={{
         viewTransitionName: `track-image-${id}`,
       }}
+      name={alt}
+      alt={alt}
       {...rest}
     />
   );

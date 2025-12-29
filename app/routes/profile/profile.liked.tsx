@@ -42,7 +42,7 @@ function LikedList(props: { tracks: UserLiked }) {
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">
-        {rest ? `+ ${rest}` : "NONE"}
+        {rest ? `+ ${rest.toLocaleString()}` : "NONE"}
       </p>
     </div>
   );

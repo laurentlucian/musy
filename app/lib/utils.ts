@@ -36,7 +36,7 @@ export const lessThanADay = (date: Date) => {
 
 export const timeSince = (date: Date | null, type?: string) => {
   if (!date) return "";
-  const now = new Date().getTime();
+  const now = Date.now();
   const seconds = Math.floor((now - new Date(date).getTime()) / 1000);
 
   let interval = seconds / 31536000;
@@ -166,4 +166,5 @@ export function log(message: string, label?: string) {
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+// biome-ignore lint/complexity/useOptionalChain: window is only defined in the browser
 export const pwa = typeof window !== "undefined" && window.navigator.standalone;

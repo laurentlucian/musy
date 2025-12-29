@@ -4,10 +4,11 @@ import { Suspense, use } from "react";
 import { Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { NumberAnimated } from "~/components/ui/number-animated";
+import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
 import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { Links, Loader, Selector } from "~/routes/profile/profile.selectors";
+import { Links, Loader, Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
@@ -121,10 +122,11 @@ function Avatar({
     <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
       <div className="flex items-center gap-2">
         {data.image && (
-          <img
+          <Image
             className="size-10 rounded-full"
             src={data.image}
             alt={data.name ?? "pp"}
+            name={data.name}
           />
         )}
         <div className="flex items-center gap-2">

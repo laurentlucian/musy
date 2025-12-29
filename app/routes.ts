@@ -30,4 +30,5 @@ export default [
 
   route("actions/:action", "routes/resources/actions.ts"),
   route("api/auth/:provider/callback", "routes/resources/authenticate.ts"),
+  route(".well-known/*", "routes/resources/well-known.ts"),
 ] satisfies RouteConfig;

@@ -1,5 +1,8 @@
+import { use } from "react";
 import { href, useNavigation, useSearchParams } from "react-router";
+import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
+import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import {
   Select,
@@ -8,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import type { getTopData } from "~/routes/profile/utils/profile.server";
 
 export function Selector({ year }: { year: number }) {
   const [params, setParams] = useSearchParams();
@@ -16,16 +20,19 @@ export function Selector({ year }: { year: number }) {
     <Select
       value={year.toString()}
       onValueChange={(data) => {
-        setParams(
-          { ...Object.fromEntries(params), year: data },
-          {
-            preventScrollReset: true,
-          },
-        );
+        const newParams = { ...Object.fromEntries(params) };
+        if (data) {
+          newParams.year = data;
+        } else {
+          delete newParams.year;
+        }
+        setParams(newParams, {
+          preventScrollReset: true,
+        });
       }}
     >
       <SelectTrigger className="min-w-[100px]">
-        <SelectValue placeholder="Year" />
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="2025">2025</SelectItem>
@@ -60,6 +67,12 @@ export function Links({ userId }: { userId: string }) {
   );
 }
 
+const rangeLabels: Record<string, string> = {
+  long_term: "Year",
+  medium_term: "Half Year",
+  short_term: "Month",
+};
+
 export function TopSelector({ type, range }: { type: string; range: string }) {
   const [params, setParams] = useSearchParams();
 
@@ -69,16 +82,19 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
       <Select
         defaultValue={type}
         onValueChange={(data) => {
-          setParams(
-            { ...Object.fromEntries(params), type: data },
-            {
-              preventScrollReset: true,
-            },
-          );
+          const newParams = { ...Object.fromEntries(params) };
+          if (data) {
+            newParams.type = data;
+          } else {
+            delete newParams.type;
+          }
+          setParams(newParams, {
+            preventScrollReset: true,
+          });
         }}
       >
         <SelectTrigger className="min-w-[100px]">
-          <SelectValue placeholder="Type" />
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="songs">Songs</SelectItem>
@@ -88,16 +104,19 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
       <Select
         value={range}
         onValueChange={(data) => {
-          setParams(
-            { ...Object.fromEntries(params), range: data },
-            {
-              preventScrollReset: true,
-            },
-          );
+          const newParams = { ...Object.fromEntries(params) };
+          if (data) {
+            newParams.range = data;
+          } else {
+            delete newParams.range;
+          }
+          setParams(newParams, {
+            preventScrollReset: true,
+          });
         }}
       >
         <SelectTrigger className="min-w-[100px]">
-          <SelectValue placeholder="Range" />
+          <SelectValue>{rangeLabels[range] || range}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="long_term">Year</SelectItem>
@@ -107,4 +126,37 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
       </Select>
     </div>
   );
+}
+
+export function TopList({
+  promise,
+  type,
+}: {
+  promise: ReturnType<typeof getTopData>;
+  type: string;
+}) {
+  const data = use(promise);
+  if (!data) return null;
+
+  if (type === "songs") {
+    const tracks = data.tracks;
+    if (!tracks) return null;
+    return (
+      <div className="flex flex-col gap-2">
+        {tracks.map((track) => (
+          <Track track={track} key={track.id} />
+        ))}
+      </div>
+    );
+  } else {
+    const artists = data.artists;
+    if (!artists) return null;
+    return (
+      <div className="flex flex-col gap-2">
+        {artists.map((artist) => (
+          <Artist artist={artist} key={artist.id} />
+        ))}
+      </div>
+    );
+  }
 }

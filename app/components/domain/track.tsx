@@ -1,15 +1,6 @@
-import type { PropsWithChildren } from "react";
-import { Link, useFetcher } from "react-router";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuTrigger,
-} from "~/components/ui/context-menu";
+import { Link, useNavigate } from "react-router";
 import type { Track as TrackType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
-import type { action } from "~/routes/resources/actions";
 import { Image } from "../ui/image";
 
 export function Track(
@@ -17,21 +8,10 @@ export function Track(
     track: TrackType;
   } & React.ComponentProps<"a">,
 ) {
-  const { track, className, ...rest } = props;
+  const { track, ...rest } = props;
   return (
-    <TrackMenu
-      query={encodeURIComponent(`${track.name} ${track.artist}`.toLowerCase())}
-      uri={track.uri}
-    >
-      <Link
-        className={cn(
-          "flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
-          className,
-        )}
-        to={`/track/${track.id}`}
-        viewTransition
-        {...rest}
-      >
+    <Link to={`/track/${track.id}`} viewTransition {...rest}>
+      <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
         <TrackImage
           id={track.id}
           src={track.image}
@@ -43,8 +23,8 @@ export function Track(
           <TrackName name={track.name} uri={track.uri} />
           <TrackArtist artist={track.artist} uri={track.artistUri} />
         </div>
-      </Link>
-    </TrackMenu>
+      </div>
+    </Link>
   );
 }
 
@@ -55,7 +35,7 @@ export function TrackName(
   return (
     <a
       className={cn(
-        "line-clamp-2 cursor-pointer text-ellipsis font-medium hover:underline",
+        "line-clamp-2 w-fit cursor-pointer text-ellipsis font-medium hover:underline",
         className,
       )}
       target="_blank"
@@ -106,44 +86,5 @@ export function TrackImage(
       }}
       {...rest}
     />
-  );
-}
-
-export function TrackMenu(
-  props: { query: string; uri: string } & PropsWithChildren,
-) {
-  const fetcher = useFetcher<typeof action>();
-
-  const submit = (action: string, provider: string) => {
-    fetcher.submit(
-      { provider, uri: props.uri },
-      { method: "post", action: `/actions/${action}` },
-    );
-  };
-
-  return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>{props.children}</ContextMenuTrigger>
-      <ContextMenuContent>
-        {/* <_TrackMenuWithProviders submit={submit} {...props} /> */}
-        <ContextMenuItem
-          onClick={() => {
-            window.open(props.uri, "_blank");
-          }}
-        >
-          Open
-        </ContextMenuItem>
-        <ContextMenuItem onClick={() => submit("like", "spotify")}>
-          Like
-        </ContextMenuItem>{" "}
-        <ContextMenuItem onClick={() => submit("queue", "spotify")}>
-          Queue
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => submit("thanks", "spotify")}>
-          Thanks
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
   );
 }

@@ -10,6 +10,9 @@ export default defineConfig(() => {
       port: 3000,
       host: true,
     },
+    resolve: {
+      dedupe: ["react", "react-dom"],
+    },
     plugins: [
       cloudflare({ viteEnvironment: { name: "ssr" } }),
       tailwindcss(),
