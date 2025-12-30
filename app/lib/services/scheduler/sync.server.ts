@@ -1,12 +1,17 @@
+import type Spotified from "spotified";
 import { SpotifyApiError } from "spotified";
 import { getAllUsersId, revokeUser } from "~/lib/services/db/users.server";
+import {
+  syncUserLikedFull,
+  syncUserLikedIncremental,
+} from "~/lib/services/scheduler/scripts/sync/liked.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { log, logError } from "~/lib/utils";
 
-const SYNC_TYPES = ["top", "recent", "profile"] as const;
+const SYNC_TYPES = ["top", "recent", "profile", "liked", "liked-full"] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
 function getSyncFunction(type: SyncType) {
@@ -17,6 +22,10 @@ function getSyncFunction(type: SyncType) {
       return syncUserTop;
     case "profile":
       return syncUserProfile;
+    case "liked":
+      return syncUserLikedIncremental;
+    case "liked-full":
+      return syncUserLikedFull;
   }
 }
 

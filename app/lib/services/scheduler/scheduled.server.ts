@@ -14,7 +14,8 @@ export default async function handleScheduled({
     // Hourly cron - run recent sync
     context.waitUntil(syncUsers("recent"));
   } else if (controller.cron === "0 0 */7 * *") {
-    // Weekly cron - run top sync
+    // Weekly cron - run top sync and liked sync
     context.waitUntil(syncUsers("top"));
+    context.waitUntil(syncUsers("liked"));
   }
 }

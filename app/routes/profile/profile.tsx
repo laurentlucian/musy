@@ -3,7 +3,6 @@ import { and, count, desc, eq, gte, lte } from "drizzle-orm";
 import { Suspense, use } from "react";
 import { data, Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
-import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
@@ -74,9 +73,15 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function Profile({ loaderData }: Route.ComponentProps) {
   return (
-    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
+    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 py-2 sm:flex-row sm:items-start">
       <div className="flex flex-1 flex-col gap-4">
-        <Suspense fallback={<Waver />}>
+        <Suspense
+          fallback={
+            <div className="mx-auto py-10">
+              <Waver />
+            </div>
+          }
+        >
           <Avatar
             promise={loaderData.profile}
             userId={loaderData.userId}

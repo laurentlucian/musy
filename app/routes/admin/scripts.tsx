@@ -20,6 +20,11 @@ export default function Scripts(_: Route.ComponentProps) {
           Sync Profile
         </Button>
       </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="sync-liked-full">
+          Sync Liked (Full)
+        </Button>
+      </form>
     </article>
   );
 }
@@ -38,5 +43,9 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "sync-profile") {
     await syncUsers("profile");
+  }
+
+  if (intent === "sync-liked-full") {
+    await syncUsers("liked-full");
   }
 }

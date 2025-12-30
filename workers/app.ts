@@ -20,8 +20,9 @@ export default {
       // Daily at midnight - sync user profiles
       ctx.waitUntil(syncUsers("profile"));
     } else if (cron === "0 0 * * 1") {
-      // Weekly on Sunday at midnight - sync top songs/artists
+      // Weekly on Sunday at midnight - sync top songs/artists and liked songs
       ctx.waitUntil(syncUsers("top"));
+      ctx.waitUntil(syncUsers("liked"));
     }
   },
 } satisfies ExportedHandler<Env>;
