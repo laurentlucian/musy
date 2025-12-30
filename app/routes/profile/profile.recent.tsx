@@ -12,7 +12,7 @@ import type { Route } from "./+types/profile.recent";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
-  if (!userId) throw redirect("/settings");
+  if (!userId) throw redirect("/");
 
   return { recent: getUserRecent(db, { userId, provider: "spotify" }) };
 }

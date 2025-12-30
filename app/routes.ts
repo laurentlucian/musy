@@ -7,9 +7,8 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
+  index("routes/index.tsx"),
   layout("routes/layout.root.tsx", [
-    index("routes/index.tsx"),
-
     route("profile/:userId?", "routes/profile/profile.tsx", [
       index("routes/profile/profile.index.tsx"),
       route("liked", "routes/profile/profile.liked.tsx"),

@@ -32,7 +32,7 @@ const SpotifyLogo = ({
           minWidth: w,
         }}
         src={
-          white ? "/spotity/wordmark-white.png" : "/spotity/wordmark-black.png"
+          white ? "/spotify/wordmark-white.png" : "/spotify/wordmark-black.png"
         }
       />
     </button>

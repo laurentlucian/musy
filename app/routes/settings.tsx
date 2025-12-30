@@ -3,7 +3,6 @@ import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
-import { authenticator } from "~/lib/services/auth.server";
 import { sessionStorage } from "~/lib/services/session.server";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
@@ -37,21 +36,11 @@ export default function Settings({
           data-root={root ? 1 : undefined}
         >
           {(userId === ADMIN_USER_ID || DEV) && <AdminNav />}
-          {userId ? (
+          {userId && (
             <Form method="post">
               <input type="hidden" name="mode" value="logout" />
               <Button type="submit" variant="nav-sub">
                 logout
-              </Button>
-            </Form>
-          ) : (
-            <Form method="post" className="w-full">
-              <input type="hidden" name="mode" value="authorize" />
-              <input type="hidden" name="provider" value="spotify" />
-              <Button type="submit" variant="nav-sub" size="lg">
-                <p className="flex items-center gap-x-1 font-medium">
-                  login with spotify
-                </p>
               </Button>
             </Form>
           )}
@@ -63,7 +52,6 @@ export default function Settings({
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const cloned = request.clone();
   const data = await request.formData();
   const mode = data.get("mode");
   if (typeof mode !== "string") throw new Error("mode not found");
@@ -75,11 +63,5 @@ export async function action({ request }: Route.ActionArgs) {
     return redirect("/settings", {
       headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
     });
-  }
-
-  if (mode === "authorize") {
-    const provider = data.get("provider");
-    if (typeof provider !== "string") throw new Error("invalid data");
-    await authenticator.authenticate(provider, cloned as Request);
   }
 }

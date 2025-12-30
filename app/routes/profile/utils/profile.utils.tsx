@@ -73,6 +73,11 @@ const rangeLabels: Record<string, string> = {
   short_term: "Month",
 };
 
+const typeLabels: Record<string, string> = {
+  songs: "Songs",
+  artists: "Artists",
+};
+
 export function TopSelector({ type, range }: { type: string; range: string }) {
   const [params, setParams] = useSearchParams();
 
@@ -80,7 +85,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
     <div className="flex h-12 items-center gap-2">
       <p className="text-muted-foreground text-sm">Top</p>
       <Select
-        defaultValue={type}
+        value={type}
         onValueChange={(data) => {
           const newParams = { ...Object.fromEntries(params) };
           if (data) {
@@ -94,7 +99,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
         }}
       >
         <SelectTrigger className="min-w-[100px]">
-          <SelectValue />
+          <SelectValue>{typeLabels[type] || type}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="songs">Songs</SelectItem>

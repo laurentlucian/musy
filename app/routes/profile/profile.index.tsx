@@ -9,7 +9,7 @@ import type { Route } from "./+types/profile.index";
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
 
-  if (!userId) throw redirect("/settings");
+  if (!userId) throw redirect("/");
 
   const url = new URL(request.url);
   const year = +(url.searchParams.get("year") ?? "2025");
