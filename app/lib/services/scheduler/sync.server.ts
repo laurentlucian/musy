@@ -1,10 +1,11 @@
 import { getAllUsersId } from "~/lib/services/db/users.server";
+import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { log, logError } from "~/lib/utils";
 
-const SYNC_TYPES = ["top", "recent"] as const;
+const SYNC_TYPES = ["top", "recent", "profile"] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
 function getSyncFunction(type: SyncType) {
@@ -13,6 +14,8 @@ function getSyncFunction(type: SyncType) {
       return syncUserRecent;
     case "top":
       return syncUserTop;
+    case "profile":
+      return syncUserProfile;
   }
 }
 
