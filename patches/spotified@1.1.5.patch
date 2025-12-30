@@ -1,6 +1,41 @@
+diff --git a/node_modules/spotified/.bun-tag-1f5dfb7275f1a588 b/.bun-tag-1f5dfb7275f1a588
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/spotified/.bun-tag-6b8a6b6401e7e392 b/.bun-tag-6b8a6b6401e7e392
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/spotified/.bun-tag-88e49c403a13ff4 b/.bun-tag-88e49c403a13ff4
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/spotified/.bun-tag-e1b6007a6d9816e6 b/.bun-tag-e1b6007a6d9816e6
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
 diff --git a/node_modules/spotified/.bun-tag-ef77caac500e4523 b/.bun-tag-ef77caac500e4523
 new file mode 100644
 index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/cjs/client-helpers/RequestMaker.js b/dist/cjs/client-helpers/RequestMaker.js
+index c8434fa4f4a3e46669679a0fd3d18f5d6de76604..eb091c55403edc3bfac8b43c19b9f57ac5ed5c5c 100644
+--- a/dist/cjs/client-helpers/RequestMaker.js
++++ b/dist/cjs/client-helpers/RequestMaker.js
+@@ -56,7 +56,17 @@ class RequestMaker {
+                 const retryAfter = res.headers.get('Retry-After');
+                 throw new index_js_1.SpotifyApiError(res.status, res.statusText, requestParams.url, requestParams, errorData, retryAfter ? parseInt(retryAfter, 10) : undefined);
+             }
+-            const data = await res.json();
++            const contentType = res.headers.get('content-type');
++            const contentLength = res.headers.get('content-length');
++            const hasBody = contentLength && contentLength !== '0';
++            const isJson = contentType && contentType.includes('application/json');
++            let data;
++            if (hasBody && isJson) {
++                data = await res.json();
++            }
++            else {
++                data = undefined;
++            }
+             const { headers } = res;
+             return { data, headers };
+         }
 diff --git a/dist/cjs/endpoints/Audiobook.js b/dist/cjs/endpoints/Audiobook.js
 index 6e42af29375c2ee2304d37e67345112a02532a33..2b40ef9c3d674ebf08c00249420fa4207744458f 100644
 --- a/dist/cjs/endpoints/Audiobook.js
@@ -223,7 +258,7 @@ index 851fd95384d1d9b5fa9686cadf1c1984baf09082..bd65fc2f4648af0a2b11639b59afea7a
  }
  export default Player;
 diff --git a/dist/cjs/endpoints/Player.js b/dist/cjs/endpoints/Player.js
-index 3f8384d438bd4f053faad5e8f360846f42f0e722..c5988e226609f8b24268ab7581554df341269eb6 100644
+index 3f8384d438bd4f053faad5e8f360846f42f0e722..3c652bc0dee3e2d7b4c483cdae8667e68166c899 100644
 --- a/dist/cjs/endpoints/Player.js
 +++ b/dist/cjs/endpoints/Player.js
 @@ -1,114 +1,120 @@
@@ -450,7 +485,7 @@ index 3f8384d438bd4f053faad5e8f360846f42f0e722..c5988e226609f8b24268ab7581554df3
 +   */
 +  addItemToPlaybackQueue(uri, optionalParams) {
 +    return this.post(
-+      `/me/player/queue${(0, utils_js_1.generateQueryParametersString)({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++      `/me/player/queue${(0, utils_js_1.generateQueryParametersString)({ uri, ...(optionalParams || {}) })}`
 +    );
 +  }
  }
@@ -517,6 +552,29 @@ index e5086dbc781e23569d11e26b61aac3bdc00b1322..6b528baf43cf5e1ed7e554f4e891510b
 +    constructor(status: number, statusText: string, endpoint: string, requestParams?: any | undefined, details?: any | undefined, retryAfter?: number | undefined);
  }
  export default SpotifyApiError;
+diff --git a/dist/mjs/client-helpers/RequestMaker.js b/dist/mjs/client-helpers/RequestMaker.js
+index 13cf8b0058ec7517819873c7dc9b1b1445288b18..2352c59a88a77817898a6220c4c4fe304cab8ae9 100644
+--- a/dist/mjs/client-helpers/RequestMaker.js
++++ b/dist/mjs/client-helpers/RequestMaker.js
+@@ -54,7 +54,17 @@ export default class RequestMaker {
+                 const retryAfter = res.headers.get('Retry-After');
+                 throw new SpotifyApiError(res.status, res.statusText, requestParams.url, requestParams, errorData, retryAfter ? parseInt(retryAfter, 10) : undefined);
+             }
+-            const data = await res.json();
++            const contentType = res.headers.get('content-type');
++            const contentLength = res.headers.get('content-length');
++            const hasBody = contentLength && contentLength !== '0';
++            const isJson = contentType && contentType.includes('application/json');
++            let data;
++            if (hasBody && isJson) {
++                data = await res.json();
++            }
++            else {
++                data = undefined;
++            }
+             const { headers } = res;
+             return { data, headers };
+         }
 diff --git a/dist/mjs/endpoints/Player.d.ts b/dist/mjs/endpoints/Player.d.ts
 index 851fd95384d1d9b5fa9686cadf1c1984baf09082..bd65fc2f4648af0a2b11639b59afea7a9d86f48a 100644
 --- a/dist/mjs/endpoints/Player.d.ts
@@ -695,7 +753,7 @@ index 851fd95384d1d9b5fa9686cadf1c1984baf09082..bd65fc2f4648af0a2b11639b59afea7a
  }
  export default Player;
 diff --git a/dist/mjs/endpoints/Player.js b/dist/mjs/endpoints/Player.js
-index 86b01a1a38d3218bff1419b47d2af0e08bbd5a7a..2be0587750afcf494672530f9b4b230d4fcd225c 100644
+index 86b01a1a38d3218bff1419b47d2af0e08bbd5a7a..18765a4a9598d4f9c75223041c9738fa06aa4207 100644
 --- a/dist/mjs/endpoints/Player.js
 +++ b/dist/mjs/endpoints/Player.js
 @@ -1,111 +1,113 @@
@@ -911,12 +969,13 @@ index 86b01a1a38d3218bff1419b47d2af0e08bbd5a7a..2be0587750afcf494672530f9b4b230d
 +   */
 +  addItemToPlaybackQueue(uri, optionalParams) {
 +    return this.post(
-+      `/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++      `/me/player/queue${generateQueryParametersString({ uri, ...(optionalParams || {}) })}`
 +    );
 +  }
  }
  export default Player;
  //# sourceMappingURL=Player.js.map
+\ No newline at end of file
 diff --git a/dist/mjs/errors/SpotifyApiError.d.ts b/dist/mjs/errors/SpotifyApiError.d.ts
 index e5086dbc781e23569d11e26b61aac3bdc00b1322..6b528baf43cf5e1ed7e554f4e891510b354c565d 100644
 --- a/dist/mjs/errors/SpotifyApiError.d.ts
@@ -934,17 +993,52 @@ index e5086dbc781e23569d11e26b61aac3bdc00b1322..6b528baf43cf5e1ed7e554f4e891510b
 +    constructor(status: number, statusText: string, endpoint: string, requestParams?: any | undefined, details?: any | undefined, retryAfter?: number | undefined);
  }
  export default SpotifyApiError;
+diff --git a/src/client-helpers/RequestMaker.ts b/src/client-helpers/RequestMaker.ts
+index b5a027aa04409cb44c52f32a5c2026b2d3d68af2..dbfa11d2da4f1c27517396b328a4560d2f45ffea 100644
+--- a/src/client-helpers/RequestMaker.ts
++++ b/src/client-helpers/RequestMaker.ts
+@@ -80,7 +80,18 @@ export default class RequestMaker {
+         );
+       }
+ 
+-      const data = await res.json();
++      const contentType = res.headers.get('content-type');
++      const contentLength = res.headers.get('content-length');
++      const hasBody = contentLength && contentLength !== '0';
++      const isJson = contentType && contentType.includes('application/json');
++
++      let data: T;
++      if (hasBody && isJson) {
++        data = await res.json();
++      } else {
++        data = undefined as T;
++      }
++
+       const { headers } = res;
+       return { data, headers } as SpotifiedResponse<T>;
+     } catch (err) {
 diff --git a/src/endpoints/Player.ts b/src/endpoints/Player.ts
-index e172c270da74c109e6f8418b2717aad9a1382afc..e4e830c4a7aa8392298eae71474d2f2e072c5ae1 100644
+index e172c270da74c109e6f8418b2717aad9a1382afc..b6c37e1fa0ea86321d80ad12ffa792f4639a8008 100644
 --- a/src/endpoints/Player.ts
 +++ b/src/endpoints/Player.ts
-@@ -137,7 +137,9 @@ export class Player extends ReadWriteBaseClient {
+@@ -124,7 +124,7 @@ export class Player extends ReadWriteBaseClient {
+     return this.get<RecentlyPlayedTracks>(`/me/player/recently-played`, optionalParams);
+   }
+ 
+-  /**
++  /**n
+    * Get the list of objects that make up the user's queue
+    * https://developer.spotify.com/documentation/web-api/reference/get-queue
+    */
+@@ -136,8 +136,10 @@ export class Player extends ReadWriteBaseClient {
+    * Add an item to the end of the user's current playback queue
     * https://developer.spotify.com/documentation/web-api/reference/add-to-queue
     */
-   addItemToPlaybackQueue(uri: string, optionalParams: AddItemToPlaybackQueueOptionalParams) {
+-  addItemToPlaybackQueue(uri: string, optionalParams: AddItemToPlaybackQueueOptionalParams) {
 -    this.post(`/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`);
++  addItemToPlaybackQueue(uri: string, optionalParams?: AddItemToPlaybackQueueOptionalParams) {
 +    return this.post(
-+      `/me/player/queue${generateQueryParametersString({ uri: encodeURIComponent(uri), ...optionalParams })}}`
++      `/me/player/queue${generateQueryParametersString({ uri, ...(optionalParams || {}) })}`
 +    );
    }
  }

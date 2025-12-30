@@ -26,6 +26,11 @@ export async function action({
     return data({ error, type: "liked" });
   }
 
+  if (action === "queue") {
+    const error = await queue({ form, userId });
+    return data({ error, type: "queue" });
+  }
+
   async function like(args: { form: FormData; userId: string }) {
     const { userId, form } = args;
     const provider = form.get("provider");
@@ -53,7 +58,7 @@ export async function action({
     }
   }
 
-  async function _queue(args: { form: FormData; userId: string }) {
+  async function queue(args: { form: FormData; userId: string }) {
     const { form, userId } = args;
     const uri = form.get("uri");
     if (typeof uri !== "string") return "no uri";

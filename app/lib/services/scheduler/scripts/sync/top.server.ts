@@ -13,8 +13,8 @@ import {
   transformArtists,
   transformTracks,
 } from "~/lib/services/sdk/helpers/spotify.server";
+import { generateId } from "~/lib/services/utils.server";
 import { log } from "~/lib/utils";
-import { generateId } from "~/lib/utils.server";
 
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 const ranges = ["short_term", "medium_term", "long_term"] as const;

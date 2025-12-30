@@ -4,7 +4,7 @@ import { OAuth2Strategy } from "remix-auth-oauth2";
 import { profile, provider, user } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
-import { generateId } from "~/lib/utils.server";
+import { generateId } from "~/lib/services/utils.server";
 
 const clientId = env.SPOTIFY_CLIENT_ID;
 const clientSecret = env.SPOTIFY_CLIENT_SECRET;
