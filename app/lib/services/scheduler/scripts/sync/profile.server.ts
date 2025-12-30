@@ -1,8 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, gte } from "drizzle-orm";
 import type Spotified from "spotified";
 import { profile, sync } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { log } from "~/lib/utils";
+
+const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function syncUserProfile({
   userId,
@@ -11,6 +13,24 @@ export async function syncUserProfile({
   userId: string;
   spotify: Spotified;
 }) {
+  const recentSync = await db.query.sync.findFirst({
+    where: and(
+      eq(sync.userId, userId),
+      eq(sync.type, "profile"),
+      eq(sync.state, "success"),
+    ),
+    orderBy: desc(sync.updatedAt),
+  });
+
+  if (recentSync) {
+    const updatedAt = new Date(recentSync.updatedAt).getTime();
+    const now = Date.now();
+    if (now - updatedAt < SYNC_COOLDOWN_MS) {
+      log("skipped - recent sync exists", "profile");
+      return;
+    }
+  }
+
   try {
     const response = await spotify.user.getCurrentUserProfile();
 

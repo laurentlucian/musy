@@ -1,4 +1,4 @@
-import { desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { use } from "react";
 import { href, useNavigation, useSearchParams } from "react-router";
 import { Artist } from "~/components/domain/artist";
@@ -27,7 +27,7 @@ export async function getTopData({
   if (type === "songs") {
     // Get top songs for this range
     const songsRecord = await db.query.topSongs.findFirst({
-      where: eq(topSongs.userId, userId),
+      where: and(eq(topSongs.userId, userId), eq(topSongs.type, range)),
       orderBy: desc(topSongs.createdAt),
     });
 
@@ -50,7 +50,7 @@ export async function getTopData({
   } else {
     // Get top artists for this range
     const artistsRecord = await db.query.topArtists.findFirst({
-      where: eq(topArtists.userId, userId),
+      where: and(eq(topArtists.userId, userId), eq(topArtists.type, range)),
       orderBy: desc(topArtists.createdAt),
     });
 

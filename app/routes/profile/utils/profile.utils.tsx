@@ -1,9 +1,10 @@
 import { use } from "react";
-import { href, useNavigation, useSearchParams } from "react-router";
+import { href, useFetcher, useNavigation, useSearchParams } from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
+import { Button } from "~/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -49,6 +50,27 @@ export function Loader() {
   const navigation = useNavigation();
 
   return <div>{navigation.state === "loading" && <Waver />}</div>;
+}
+
+export function SyncButton({ userId }: { userId: string }) {
+  const fetcher = useFetcher();
+  const isSyncing =
+    fetcher.state === "submitting" || fetcher.state === "loading";
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      className="ml-auto"
+      disabled={isSyncing}
+      onClick={() => {
+        fetcher.submit({ intent: "sync", userId }, { method: "post" });
+      }}
+    >
+      {isSyncing ? <Waver /> : "Sync"}
+    </Button>
+  );
 }
 
 export function Links({ userId }: { userId: string }) {

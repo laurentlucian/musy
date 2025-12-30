@@ -1,9 +1,11 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import type Spotified from "spotified";
 import { recentSongs, sync, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
 import { log, notNull } from "~/lib/utils";
+
+const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function syncUserRecent({
   userId,
@@ -12,6 +14,24 @@ export async function syncUserRecent({
   userId: string;
   spotify: Spotified;
 }) {
+  const recentSync = await db.query.sync.findFirst({
+    where: and(
+      eq(sync.userId, userId),
+      eq(sync.type, "recent"),
+      eq(sync.state, "success"),
+    ),
+    orderBy: desc(sync.updatedAt),
+  });
+
+  if (recentSync) {
+    const updatedAt = new Date(recentSync.updatedAt).getTime();
+    const now = Date.now();
+    if (now - updatedAt < SYNC_COOLDOWN_MS) {
+      log("skipped - recent sync exists", "recent");
+      return;
+    }
+  }
+
   try {
     const { items: recent } = await spotify.player.getRecentlyPlayedTracks({
       limit: 50,

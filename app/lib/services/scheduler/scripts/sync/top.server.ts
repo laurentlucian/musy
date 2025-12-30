@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import type Spotified from "spotified";
 import {
   artistToTopArtists,
@@ -16,7 +16,9 @@ import {
 import { log } from "~/lib/utils";
 import { generateId } from "~/lib/utils.server";
 
+const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 const ranges = ["short_term", "medium_term", "long_term"] as const;
+
 export async function syncUserTop({
   userId,
   spotify,
@@ -24,6 +26,24 @@ export async function syncUserTop({
   userId: string;
   spotify: Spotified;
 }) {
+  const recentSync = await db.query.sync.findFirst({
+    where: and(
+      eq(sync.userId, userId),
+      eq(sync.type, "top"),
+      eq(sync.state, "success"),
+    ),
+    orderBy: desc(sync.updatedAt),
+  });
+
+  if (recentSync) {
+    const updatedAt = new Date(recentSync.updatedAt).getTime();
+    const now = Date.now();
+    if (now - updatedAt < SYNC_COOLDOWN_MS) {
+      log("skipped - recent sync exists", "top");
+      return;
+    }
+  }
+
   try {
     for (const range of ranges) {
       log("syncing", `top_${range}`);

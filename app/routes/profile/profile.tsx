@@ -1,18 +1,29 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import { and, count, desc, eq, gte, lte } from "drizzle-orm";
 import { Suspense, use } from "react";
-import { Outlet, redirect } from "react-router";
+import { data, Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
+import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
 import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { Links, Loader, Selector } from "~/routes/profile/utils/profile.utils";
+import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
+import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
+import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import {
+  Links,
+  Loader,
+  Selector,
+  SyncButton,
+} from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
+  const currentUserId = context.get(userContext);
 
   if (!userId) throw redirect("/");
 
@@ -21,10 +32,44 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
 
   return {
     userId,
+    currentUserId,
     year,
     profile: getProfile(userId),
     stats: getStats(userId, year),
   };
+}
+
+export async function action({ request, context }: Route.ActionArgs) {
+  const currentUserId = context.get(userContext);
+  if (!currentUserId) {
+    return data({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const userId = formData.get("userId");
+
+  if (intent !== "sync" || userId !== currentUserId) {
+    return data({ success: false, error: "Invalid request" }, { status: 400 });
+  }
+
+  try {
+    const spotify = await getSpotifyClient({ userId });
+    await Promise.all([
+      syncUserProfile({ userId, spotify }),
+      syncUserRecent({ userId, spotify }),
+      syncUserTop({ userId, spotify }),
+    ]);
+    return data({ success: true });
+  } catch (error) {
+    return data(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Sync failed",
+      },
+      { status: 500 },
+    );
+  }
 }
 
 export default function Profile({ loaderData }: Route.ComponentProps) {
@@ -32,7 +77,11 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
     <article className="flex flex-1 flex-col gap-6 self-stretch px-6 sm:flex-row sm:items-start">
       <div className="flex flex-1 flex-col gap-4">
         <Suspense fallback={<Waver />}>
-          <Avatar promise={loaderData.profile} userId={loaderData.userId} />
+          <Avatar
+            promise={loaderData.profile}
+            userId={loaderData.userId}
+            currentUserId={loaderData.currentUserId}
+          />
         </Suspense>
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -110,13 +159,17 @@ function Stats({
 function Avatar({
   promise,
   userId,
+  currentUserId,
 }: {
   promise: ReturnType<typeof getProfile>;
   userId: string;
+  currentUserId: string | null;
 }) {
   const data = use(promise);
 
   if (!data) return null;
+
+  const isOwnProfile = currentUserId === userId;
 
   return (
     <div className="flex flex-col gap-3 rounded-lg bg-card p-4">
@@ -129,9 +182,10 @@ function Avatar({
             name={data.name}
           />
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2">
           <h1 className="font-bold text-2xl">{data.name}</h1>
           <Loader />
+          {isOwnProfile && <SyncButton userId={userId} />}
         </div>
       </div>
       <p className="text-muted-foreground text-sm">{data.bio}</p>
