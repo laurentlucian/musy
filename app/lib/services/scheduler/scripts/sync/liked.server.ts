@@ -1,6 +1,6 @@
 import { and, eq, inArray } from "drizzle-orm";
-import type Spotified from "spotified";
-import type { Track } from "spotified";
+import type { Track } from "~/lib/services/sdk/spotify";
+import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import { likedSongs, sync, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";

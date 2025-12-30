@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { OAuth2Strategy } from "remix-auth-oauth2";
 import { profile, provider, user } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { getUserProfile } from "~/lib/services/sdk/spotify/endpoints/user";
 import { generateId } from "~/lib/services/utils.server";
 
 const clientId = env.SPOTIFY_CLIENT_ID;
@@ -22,9 +22,7 @@ export function getSpotifyStrategy() {
       cookie: "spotify:session",
     },
     async ({ tokens }) => {
-      const spotify = await getSpotifyClient({ token: tokens.accessToken() });
-
-      const data = await spotify.user.getCurrentUserProfile();
+      const data = await getUserProfile(tokens.accessToken());
 
       const existingProvider = await db.query.provider.findFirst({
         where: and(
@@ -57,6 +55,9 @@ export function getSpotifyStrategy() {
           .where(
             and(eq(provider.accountId, data.id), eq(provider.type, "spotify")),
           );
+
+        if (!existingProvider.userId)
+          throw new Error("Existing provider missing userId");
 
         return { id: existingProvider.userId };
       }
@@ -105,9 +106,9 @@ const scopes = [
   "user-read-recently-played", // recently played (can show music_senders/user if a user already listened to a song they suggested/queued recently)
   "user-read-currently-playing", // currently playing track only (do we need this?)
   "user-modify-playback-state", // to add to queue (can replace 'streaming' scope so we can integrate our own player to include more than just spotify)
-  "user-follow-modify", // used to (un)follow users/artists
+  // "user-follow-modify", // used to (un)follow users/artists
   "user-library-modify", // used to save songs to user's library
   "playlist-modify-public", // create playlists with custom image
   "user-top-read", // get top tracks
-  "user-follow-read", // allows to check users follows
+  // "user-follow-read", // allows to check users follows
 ];

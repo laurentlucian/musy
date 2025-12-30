@@ -3,19 +3,31 @@ import { userContext } from "~/context";
 import { authenticator } from "~/lib/services/auth.server";
 import type { Route } from "./+types/index";
 
-export async function loader({ context }: Route.LoaderArgs) {
+export async function loader({ context, request }: Route.LoaderArgs) {
   const userId = context.get(userContext);
 
   if (userId) {
     throw redirect("/profile");
   }
 
-  return null;
+  const url = new URL(request.url);
+  const error = url.searchParams.get("error");
+  const code = url.searchParams.get("code");
+
+  return { error, code };
 }
 
-export default function Index() {
+export default function Index({ loaderData }: Route.ComponentProps) {
+  const { error, code } = loaderData;
+
   return (
     <main className="flex min-h-dvh w-full max-w-dvw flex-1 flex-col items-center justify-center gap-4 px-8">
+      {error && (
+        <div className="w-full max-w-sm rounded-lg border border-red-200 bg-red-50 p-3 text-red-800">
+          <p className="text-xs font-medium">{error}</p>
+          {code && <p className="mt-1 text-xs text-red-600">Code: {code}</p>}
+        </div>
+      )}
       <Form method="post" className="w-full max-w-sm">
         <input type="hidden" name="mode" value="authorize" />
         <input type="hidden" name="provider" value="spotify" />

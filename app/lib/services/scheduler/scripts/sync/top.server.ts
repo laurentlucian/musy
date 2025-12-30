@@ -1,5 +1,5 @@
 import { and, desc, eq } from "drizzle-orm";
-import type Spotified from "spotified";
+import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import {
   artistToTopArtists,
   sync,

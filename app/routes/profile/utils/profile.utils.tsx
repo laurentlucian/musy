@@ -1,3 +1,4 @@
+import { RefreshCcw } from "lucide-react";
 import { use } from "react";
 import { href, useFetcher, useNavigation, useSearchParams } from "react-router";
 import { Artist } from "~/components/domain/artist";
@@ -68,7 +69,7 @@ export function SyncButton({ userId }: { userId: string }) {
         fetcher.submit({ intent: "sync", userId }, { method: "post" });
       }}
     >
-      {isSyncing ? <Waver /> : "Sync"}
+      {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
 }

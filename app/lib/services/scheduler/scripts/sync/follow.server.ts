@@ -1,4 +1,4 @@
-import type Spotified from "spotified";
+import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import { follow, sync } from "~/lib/db/schema";
 import { getAllUsersId } from "~/lib/services/db/users.server";
 import { db } from "~/lib/services/db.server";

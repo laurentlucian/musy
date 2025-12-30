@@ -1,7 +1,7 @@
 import { and, desc, eq, gte } from "drizzle-orm";
-import type Spotified from "spotified";
 import { profile, sync } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
+import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import { log } from "~/lib/utils";
 
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes

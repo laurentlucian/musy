@@ -1,5 +1,5 @@
-import type Spotified from "spotified";
-import { SpotifyApiError } from "spotified";
+import type { Spotified } from "~/lib/services/sdk/spotify.server";
+import { SpotifyApiError } from "~/lib/services/sdk/spotify";
 import { getAllUsersId, revokeUser } from "~/lib/services/db/users.server";
 import {
   syncUserLikedFull,

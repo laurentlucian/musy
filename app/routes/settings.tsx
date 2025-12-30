@@ -60,7 +60,7 @@ export async function action({ request }: Route.ActionArgs) {
     const session = await sessionStorage.getSession(
       request.headers.get("cookie"),
     );
-    return redirect("/settings", {
+    return redirect("/", {
       headers: { "Set-Cookie": await sessionStorage.destroySession(session) },
     });
   }

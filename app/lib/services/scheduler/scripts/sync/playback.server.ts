@@ -1,9 +1,9 @@
 import { and, eq, inArray } from "drizzle-orm";
-import type { PlaybackState } from "spotified";
 import { playback, provider, track } from "~/lib/db/schema";
 import { getAllUsersId } from "~/lib/services/db/users.server";
 import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
+import type { PlaybackState } from "~/lib/services/sdk/spotify";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { log, notNull } from "~/lib/utils";
 

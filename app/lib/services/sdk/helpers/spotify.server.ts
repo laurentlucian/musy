@@ -1,4 +1,4 @@
-import type { Artist, Track } from "spotified";
+import type { Artist, Track } from "~/lib/services/sdk/spotify";
 import { artist, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { notNull } from "~/lib/utils";
