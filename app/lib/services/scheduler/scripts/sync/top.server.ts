@@ -107,14 +107,17 @@ async function syncTopSongs({
     createdAt: now,
   });
 
-  // Create many-to-many relationships
+  // Create many-to-many relationships (2 columns = max 45 per batch for safety)
   if (trackIds.length > 0) {
-    await db.insert(topSongsToTrack).values(
-      trackIds.map((trackId) => ({
-        a: topSongsId,
-        b: trackId,
-      })),
-    );
+    const relations = trackIds.map((trackId) => ({
+      a: topSongsId,
+      b: trackId,
+    }));
+    const batchSize = 45;
+    for (let i = 0; i < relations.length; i += batchSize) {
+      const batch = relations.slice(i, i + batchSize);
+      await db.insert(topSongsToTrack).values(batch);
+    }
   }
 }
 
@@ -160,13 +163,16 @@ async function syncTopArtists({
     createdAt: now,
   });
 
-  // Create many-to-many relationships
+  // Create many-to-many relationships (2 columns = max 45 per batch for safety)
   if (artistIds.length > 0) {
-    await db.insert(artistToTopArtists).values(
-      artistIds.map((artistId) => ({
-        a: artistId,
-        b: topArtistsId,
-      })),
-    );
+    const relations = artistIds.map((artistId) => ({
+      a: artistId,
+      b: topArtistsId,
+    }));
+    const batchSize = 45;
+    for (let i = 0; i < relations.length; i += batchSize) {
+      const batch = relations.slice(i, i + batchSize);
+      await db.insert(artistToTopArtists).values(batch);
+    }
   }
 }

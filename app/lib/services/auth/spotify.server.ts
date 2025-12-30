@@ -50,7 +50,10 @@ export function getSpotifyStrategy() {
       if (existingProvider) {
         await db
           .update(provider)
-          .set(providerData)
+          .set({
+            ...providerData,
+            createdAt: existingProvider.createdAt,
+          })
           .where(
             and(eq(provider.accountId, data.id), eq(provider.type, "spotify")),
           );

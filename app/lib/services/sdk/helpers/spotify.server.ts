@@ -53,16 +53,16 @@ export async function transformTracks(
 
   if (trackModels.length === 0) return [];
 
-  // Upsert tracks
-  await db
-    .insert(track)
-    .values(
-      trackModels.map((t) => ({
-        ...t,
-        explicit: t.explicit ? "1" : "0",
-      })),
-    )
-    .onConflictDoNothing();
+  // Upsert tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
+  const tracksToInsert = trackModels.map((t) => ({
+    ...t,
+    explicit: t.explicit ? "1" : "0",
+  }));
+  const batchSize = 7;
+  for (let i = 0; i < tracksToInsert.length; i += batchSize) {
+    const batch = tracksToInsert.slice(i, i + batchSize);
+    await db.insert(track).values(batch).onConflictDoNothing();
+  }
 
   return trackModels.map((t) => t.id);
 }
@@ -84,8 +84,12 @@ export async function transformArtists(artists: Artist[]): Promise<string[]> {
 
   if (artistModels.length === 0) return [];
 
-  // Upsert artists
-  await db.insert(artist).values(artistModels).onConflictDoNothing();
+  // Upsert artists (D1 has 100 param limit, 7 columns = max 14 artists per batch)
+  const batchSize = 14;
+  for (let i = 0; i < artistModels.length; i += batchSize) {
+    const batch = artistModels.slice(i, i + batchSize);
+    await db.insert(artist).values(batch).onConflictDoNothing();
+  }
 
   return artistModels.map((a) => a.id);
 }

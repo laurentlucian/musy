@@ -26,8 +26,13 @@ export async function syncUserLiked({
       })
       .filter(notNull);
 
+    // deduplicate tracks within the batch
+    const uniqueTracks = Array.from(
+      new Map(tracks.map((t) => [t.id, t])).values(),
+    );
+
     // find existing tracks
-    const trackIds = tracks.map((t) => t.id);
+    const trackIds = uniqueTracks.map((t) => t.id);
     const existingTracks = await db
       .select({ id: track.id })
       .from(track)
@@ -36,28 +41,20 @@ export async function syncUserLiked({
     const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
     // split into new and existing tracks
-    const newTracks = tracks.filter((t) => !existingTrackIds.has(t.id));
+    const newTracks = uniqueTracks.filter((t) => !existingTrackIds.has(t.id));
 
-    // batch create new tracks
+    // batch create new tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
     if (newTracks.length) {
       const tracksToInsert = newTracks.map((t) => ({
         ...t,
         explicit: t.explicit ? "1" : "0",
       }));
-      await db.insert(track).values(tracksToInsert);
+      const batchSize = 7;
+      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
+        const batch = tracksToInsert.slice(i, i + batchSize);
+        await db.insert(track).values(batch).onConflictDoNothing();
+      }
     }
-
-    // batch update existing tracks
-    // if (tracksToUpdate.length) {
-    //   await prisma.$transaction(
-    //     tracksToUpdate.map((track) =>
-    //       prisma.track.update({
-    //         where: { id: track.id },
-    //         data: track,
-    //       }),
-    //     ),
-    //   );
-    // }
 
     // prepare liked songs data
     const likedSongsData = items
@@ -85,12 +82,16 @@ export async function syncUserLiked({
       existingLiked.map((l: { trackId: string }) => l.trackId),
     );
 
-    // create new liked songs
+    // create new liked songs (2 columns = max 45 per batch for safety)
     const newLiked = likedSongsData.filter(
       (l) => !existingLikedIds.has(l.trackId),
     );
     if (newLiked.length) {
-      await db.insert(likedSongs).values(newLiked);
+      const batchSize = 45;
+      for (let i = 0; i < newLiked.length; i += batchSize) {
+        const batch = newLiked.slice(i, i + batchSize);
+        await db.insert(likedSongs).values(batch);
+      }
     }
 
     log("completed", "liked");
@@ -154,8 +155,13 @@ export async function syncUserLikedPage({
       })
       .filter(notNull);
 
+    // deduplicate tracks within the batch
+    const uniqueTracks = Array.from(
+      new Map(tracks.map((t) => [t.id, t])).values(),
+    );
+
     // find existing tracks
-    const trackIds = tracks.map((t) => t.id);
+    const trackIds = uniqueTracks.map((t) => t.id);
     const existingTracks = await db
       .select({ id: track.id })
       .from(track)
@@ -164,16 +170,22 @@ export async function syncUserLikedPage({
     const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
     // split into new and existing tracks
-    const newTracks = tracks.filter((t) => !existingTrackIds.has(t.id));
-    const tracksToUpdate = tracks.filter((t) => existingTrackIds.has(t.id));
+    const newTracks = uniqueTracks.filter((t) => !existingTrackIds.has(t.id));
+    const tracksToUpdate = uniqueTracks.filter((t) =>
+      existingTrackIds.has(t.id),
+    );
 
-    // batch create new tracks
+    // batch create new tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
     if (newTracks.length) {
       const tracksToInsert = newTracks.map((t) => ({
         ...t,
         explicit: t.explicit ? "1" : "0",
       }));
-      await db.insert(track).values(tracksToInsert);
+      const batchSize = 7;
+      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
+        const batch = tracksToInsert.slice(i, i + batchSize);
+        await db.insert(track).values(batch).onConflictDoNothing();
+      }
     }
 
     // batch update existing tracks
@@ -217,12 +229,16 @@ export async function syncUserLikedPage({
       existingLiked.map((l: { trackId: string }) => l.trackId),
     );
 
-    // create new liked songs
+    // create new liked songs (2 columns = max 45 per batch for safety)
     const newLiked = likedSongsData.filter(
       (l) => !existingLikedIds.has(l.trackId),
     );
     if (newLiked.length) {
-      await db.insert(likedSongs).values(newLiked);
+      const batchSize = 45;
+      for (let i = 0; i < newLiked.length; i += batchSize) {
+        const batch = newLiked.slice(i, i + batchSize);
+        await db.insert(likedSongs).values(batch);
+      }
     }
 
     return {

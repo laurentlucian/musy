@@ -1,4 +1,5 @@
 import { Button } from "~/components/ui/button";
+import { syncUsers } from "~/lib/services/scheduler/sync.server";
 import { migrateUserIds } from "~/lib/services/scripts/migrate-user-ids";
 import type { Route } from "./+types/scripts";
 
@@ -8,6 +9,21 @@ export default function Scripts(_: Route.ComponentProps) {
       <form method="post">
         <Button type="submit" name="intent" value="migrate-users">
           Migrate User IDs
+        </Button>
+      </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="sync-recent">
+          Sync Recent
+        </Button>
+      </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="sync-top">
+          Sync Top
+        </Button>
+      </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="sync-profile">
+          Sync Profile
         </Button>
       </form>
     </article>
@@ -20,5 +36,17 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "migrate-users") {
     await migrateUserIds();
+  }
+
+  if (intent === "sync-recent") {
+    await syncUsers("recent");
+  }
+
+  if (intent === "sync-top") {
+    await syncUsers("top");
+  }
+
+  if (intent === "sync-profile") {
+    await syncUsers("profile");
   }
 }

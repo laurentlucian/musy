@@ -68,7 +68,10 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
     log(`token refresh failed for ${args.userId}: ${error}`, "spotify");
     if (error instanceof SpotifyApiError) {
       console.log("spotify error", error.message);
-      if (error.message.includes("Revoked")) {
+      if (
+        error.message.includes("Revoked") ||
+        error.message.includes("invalid_grant")
+      ) {
         await revokeUser(args.userId, "spotify");
       }
     }

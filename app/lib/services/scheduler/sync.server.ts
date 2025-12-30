@@ -1,4 +1,5 @@
-import { getAllUsersId } from "~/lib/services/db/users.server";
+import { SpotifyApiError } from "spotified";
+import { getAllUsersId, revokeUser } from "~/lib/services/db/users.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
@@ -37,6 +38,11 @@ export async function syncUsers(type: SyncType) {
             await getSyncFunction(type)({ userId, spotify });
           } catch (error) {
             logError(`${type} sync failed for ${userId}: ${error}`);
+            if (error instanceof SpotifyApiError) {
+              if (error.message.includes("invalid_grant")) {
+                await revokeUser(userId, "spotify");
+              }
+            }
           }
         }),
       );

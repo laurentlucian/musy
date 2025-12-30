@@ -20,3 +20,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     return redirect("/settings");
   }
 }
+
+export default function Authenticate() {
+  return null;
+}

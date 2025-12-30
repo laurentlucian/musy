@@ -76,3 +76,7 @@ export async function action({
     return "provider not supported";
   }
 }
+
+export default function Actions() {
+  return null;
+}

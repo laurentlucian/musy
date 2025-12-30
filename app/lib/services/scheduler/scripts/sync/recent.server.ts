@@ -27,8 +27,13 @@ export async function syncUserRecent({
       })
       .filter(notNull);
 
+    // deduplicate tracks within the batch (same track can appear multiple times in recent history)
+    const uniqueTracks = Array.from(
+      new Map(tracks.map((t) => [t.id, t])).values(),
+    );
+
     // find existing tracks
-    const trackIds = tracks.map((t) => t.id);
+    const trackIds = uniqueTracks.map((t) => t.id);
     const existingTracks = await db
       .select({ id: track.id })
       .from(track)
@@ -36,16 +41,20 @@ export async function syncUserRecent({
     const existingTrackIds = new Set(existingTracks.map((t) => t.id));
 
     // split into new and existing tracks
-    const newTracks = tracks.filter((t) => !existingTrackIds.has(t.id));
+    const newTracks = uniqueTracks.filter((t) => !existingTrackIds.has(t.id));
     // const tracksToUpdate = tracks.filter((t) => existingTrackIds.has(t.id));
 
-    // batch create new tracks
+    // batch create new tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
     if (newTracks.length) {
       const tracksToInsert = newTracks.map((t) => ({
         ...t,
         explicit: t.explicit ? "1" : "0",
       }));
-      await db.insert(track).values(tracksToInsert);
+      const batchSize = 7;
+      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
+        const batch = tracksToInsert.slice(i, i + batchSize);
+        await db.insert(track).values(batch).onConflictDoNothing();
+      }
     }
 
     // batch update existing tracks
@@ -65,42 +74,90 @@ export async function syncUserRecent({
       .map(({ played_at, track }) => {
         if (!track?.id || !played_at) return null;
 
+        const playedAtDate = new Date(played_at);
         return {
           action: "played",
-          playedAt: new Date(played_at),
+          playedAt: playedAtDate,
+          playedAtISO: playedAtDate.toISOString(),
           trackId: track.id,
           userId,
         };
       })
       .filter(notNull);
 
-    // find existing recent songs
-    const playedAts = recentSongsData.map((s) => s.playedAt.toISOString());
+    log(
+      `processing ${recentSongsData.length} recent songs for ${userId}`,
+      "recent",
+    );
+
+    // deduplicate recent songs within the batch (same track at same time can appear multiple times)
+    const uniqueRecentSongs = Array.from(
+      new Map(
+        recentSongsData.map((s) => [`${s.playedAtISO}-${s.userId}`, s]),
+      ).values(),
+    );
+
+    log(
+      `deduplicated to ${uniqueRecentSongs.length} unique recent songs`,
+      "recent",
+    );
+
+    // find existing recent songs - use ISO strings for query (matching DB storage format)
+    const playedAtISOs = uniqueRecentSongs.map((s) => s.playedAtISO);
     const existingRecent = await db
       .select({ playedAt: recentSongs.playedAt })
       .from(recentSongs)
       .where(
         and(
           eq(recentSongs.userId, userId),
-          inArray(recentSongs.playedAt, playedAts),
+          inArray(recentSongs.playedAt, playedAtISOs),
         ),
       );
-    const existingRecentTimes = new Set(
-      existingRecent.map((r) => new Date(r.playedAt).getTime()),
+
+    // normalize existing records to ISO strings for comparison
+    const existingISOs = new Set(
+      existingRecent
+        .map((r) => {
+          const playedAt = r.playedAt;
+          // Normalize to ISO string format for consistent comparison
+          if (typeof playedAt === "string") {
+            // Already ISO string, use as-is
+            return playedAt;
+          }
+          if (typeof playedAt === "number") {
+            // Convert numeric timestamp to ISO string
+            return new Date(playedAt).toISOString();
+          }
+          return null;
+        })
+        .filter((iso): iso is string => iso !== null),
     );
 
-    // split into new and existing recent songs
-    const newRecent = recentSongsData.filter(
-      (s) => !existingRecentTimes.has(s.playedAt.getTime()),
+    log(
+      `found ${existingISOs.size} existing recent songs out of ${uniqueRecentSongs.length} checked`,
+      "recent",
     );
 
-    // batch create new recent songs
+    // split into new and existing recent songs - compare ISO strings
+    const newRecent = uniqueRecentSongs.filter(
+      (s) => !existingISOs.has(s.playedAtISO),
+    );
+
+    log(`inserting ${newRecent.length} new recent songs`, "recent");
+
+    // batch create new recent songs - store as ISO string (4 columns = max 25 per batch)
     if (newRecent.length) {
       const recentToInsert = newRecent.map((r) => ({
-        ...r,
-        playedAt: r.playedAt.toISOString(),
+        userId: r.userId,
+        trackId: r.trackId,
+        action: r.action,
+        playedAt: r.playedAtISO,
       }));
-      await db.insert(recentSongs).values(recentToInsert);
+      const batchSize = 25;
+      for (let i = 0; i < recentToInsert.length; i += batchSize) {
+        const batch = recentToInsert.slice(i, i + batchSize);
+        await db.insert(recentSongs).values(batch).onConflictDoNothing();
+      }
     }
 
     log("completed", "recent");
