@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, inArray, min } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, min } from "drizzle-orm";
 import {
   likedTracks,
   playlist,
@@ -174,7 +174,7 @@ export async function getPlaylistWithTracks(
     .from(playlistTrack)
     .innerJoin(track, eq(playlistTrack.trackId, track.id))
     .where(eq(playlistTrack.playlistId, playlistId))
-    .orderBy(playlistTrack.addedAt);
+    .orderBy(asc(playlistTrack.addedAt));
 
   const [{ createdAt }] = await db
     .select({ createdAt: min(playlistTrack.addedAt) })

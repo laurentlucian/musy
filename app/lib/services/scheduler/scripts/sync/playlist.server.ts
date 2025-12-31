@@ -206,7 +206,6 @@ export async function syncUserPlaylists({
       await syncPlaylistTracks({
         playlistId,
         spotify,
-        spotifyPlaylistsMap,
       });
       syncedPlaylistIds.add(playlistId);
     }
@@ -311,29 +310,41 @@ async function fetchAndInsertMissingTracks(
   }
 }
 
-async function syncPlaylistTracks({
+/**
+ * Sync a single playlist's tracks from Spotify.
+ * This function can be used independently or as part of syncing all playlists.
+ */
+export async function syncSinglePlaylist({
   playlistId,
   spotify,
-  spotifyPlaylistsMap,
+  userId,
 }: {
   playlistId: string;
   spotify: Spotified;
-  spotifyPlaylistsMap: Map<
-    string,
-    {
-      id: string;
-      name: string;
-      description: string | null;
-      uri: string;
-      image: string;
-      snapshotId: string;
-      total: number;
-    }
-  >;
+  userId: string;
 }) {
-  const playlistData = spotifyPlaylistsMap.get(playlistId);
-  if (!playlistData) return;
+  // Verify playlist exists in DB and belongs to user
+  const dbPlaylist = await db
+    .select()
+    .from(playlist)
+    .where(and(eq(playlist.id, playlistId), eq(playlist.userId, userId)))
+    .limit(1);
 
+  if (dbPlaylist.length === 0) {
+    logError(`playlist ${playlistId} not found in DB for user ${userId}`);
+    throw new Error("Playlist not found");
+  }
+
+  await syncPlaylistTracks({ playlistId, spotify });
+}
+
+async function syncPlaylistTracks({
+  playlistId,
+  spotify,
+}: {
+  playlistId: string;
+  spotify: Spotified;
+}) {
   log(`syncing tracks for playlist ${playlistId}`, "playlist");
 
   // Fetch full playlist to get updated metadata

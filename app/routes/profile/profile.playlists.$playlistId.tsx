@@ -1,4 +1,4 @@
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, RefreshCcw } from "lucide-react";
 import { Suspense, use, useState } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
@@ -25,6 +25,7 @@ import {
   likePlaylistTracks,
   unlikePlaylistTracks,
 } from "~/lib/services/scheduler/scripts/playlist-actions.server";
+import { syncSinglePlaylist } from "~/lib/services/scheduler/scripts/sync/playlist.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/profile.playlists.$playlistId";
 
@@ -58,6 +59,15 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   try {
     const spotify = await getSpotifyClient({ userId: userId.toString() });
+
+    if (intent === "sync-playlist") {
+      await syncSinglePlaylist({
+        playlistId: playlistId.toString(),
+        spotify,
+        userId: userId.toString(),
+      });
+      return data({ success: true });
+    }
 
     if (intent === "like-playlist") {
       const result = await likePlaylistTracks({
@@ -133,7 +143,7 @@ function PlaylistDetailContent({
     );
   }
 
-  const { playlist, tracks, createdAt } = data;
+  const { playlist, tracks } = data;
 
   const firstLetter = playlist.name.charAt(0).toUpperCase();
   const hasImage = playlist.image && playlist.image.trim() !== "";
@@ -191,8 +201,11 @@ function PlaylistActions({
 }) {
   const fetcher = useFetcher();
   const [unlikeDialogOpen, setUnlikeDialogOpen] = useState(false);
-  const isLoading =
-    fetcher.state === "submitting" || fetcher.state === "loading";
+  const isSubmitting = fetcher.state === "submitting" || fetcher.state === "loading";
+  const currentIntent = fetcher.formData?.get("intent")?.toString();
+  
+  const isSyncing = isSubmitting && currentIntent === "sync-playlist";
+  const isBulkAction = isSubmitting && (currentIntent === "like-playlist" || currentIntent === "unlike-playlist");
 
   const handleLike = () => {
     fetcher.submit(
@@ -209,31 +222,49 @@ function PlaylistActions({
     );
   };
 
+  const handleSync = () => {
+    fetcher.submit(
+      { intent: "sync-playlist", userId, playlistId },
+      { method: "post" },
+    );
+  };
+
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            disabled={isLoading}
-          >
-            {isLoading ? <Waver /> : "Bulk"}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem onClick={handleLike} disabled={isLoading}>
-            Like
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setUnlikeDialogOpen(true)}
-            disabled={isLoading}
-          >
-            Unlike
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={isSyncing}
+          onClick={handleSync}
+        >
+          {isSyncing ? <Waver /> : <RefreshCcw />}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={isBulkAction}
+            >
+              {isBulkAction ? <Waver /> : "Bulk"}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleLike} disabled={isBulkAction}>
+              Like
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => setUnlikeDialogOpen(true)}
+              disabled={isBulkAction}
+            >
+              Unlike
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
         <DialogContent>
@@ -252,9 +283,9 @@ function PlaylistActions({
               variant="destructive"
               size="sm"
               onClick={handleUnlike}
-              disabled={isLoading}
+              disabled={isBulkAction}
             >
-              {isLoading ? <Waver /> : "Unlike All"}
+              {isBulkAction ? <Waver /> : "Unlike All"}
             </Button>
           </div>
         </DialogContent>
