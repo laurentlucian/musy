@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1761008510605,
-      "tag": "0000_brainy_maginty",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1767165420262,
-      "tag": "0001_huge_klaw",
+      "when": 1767169226013,
+      "tag": "0000_awesome_sentry",
       "breakpoints": true
     }
   ]

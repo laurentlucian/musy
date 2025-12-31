@@ -10,7 +10,8 @@
     "format": "biome format --write ./app",
     "lint": "biome lint",
     "lint:fix": "biome lint --write --unsafe",
-    "db:migrate": "wrangler d1 migrations apply -c ./wrangler.jsonc --local musy",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "wrangler d1 migrations apply -c ./wrangler.jsonc --remote musy",
     "typegen": "wrangler types -c ./wrangler.jsonc --env-interface Env",
     "env": "dotenv -e .env"
   },

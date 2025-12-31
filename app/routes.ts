@@ -13,7 +13,12 @@ export default [
       index("routes/profile/profile.index.tsx"),
       route("liked", "routes/profile/profile.liked.tsx"),
       route("recent", "routes/profile/profile.recent.tsx"),
-      route("playlists", "routes/profile/profile.playlists.tsx"),
+      route("playlists", "routes/profile/profile.playlists.tsx", [
+        route(
+          ":playlistId",
+          "routes/profile/profile.playlists.$playlistId.tsx",
+        ),
+      ]),
     ]),
 
     route("settings", "routes/settings.tsx", [

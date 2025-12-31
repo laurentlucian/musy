@@ -1,5 +1,14 @@
+import { RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
-import { data, redirect, useFetcher } from "react-router";
+import {
+  data,
+  href,
+  Link,
+  Outlet,
+  redirect,
+  useFetcher,
+  useMatches,
+} from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
@@ -55,29 +64,44 @@ export async function action({ request, context }: Route.ActionArgs) {
 export default function ProfilePlaylists({
   loaderData: { userId, playlists },
 }: Route.ComponentProps) {
+  const matches = useMatches();
+  const isDetailRoute = matches.some(
+    (match: { id?: string }) =>
+      match.id === "routes/profile/profile.playlists.$playlistId",
+  );
+
   return (
     <>
-      <div className="flex h-12 items-center gap-2">
-        <p className="text-muted-foreground text-sm">Playlists</p>
-        <PlaylistsSyncButton userId={userId} />
-      </div>
-      {playlists && (
+      {!isDetailRoute && (
+        <div className="flex h-12 items-center gap-2">
+          <p className="text-muted-foreground text-sm">Playlists</p>
+          <PlaylistsSyncButton userId={userId} />
+        </div>
+      )}
+      {!isDetailRoute && playlists && (
         <Suspense fallback={<Waver />}>
-          <PlaylistsList playlists={playlists} />
+          <PlaylistsList playlists={playlists} userId={userId} />
         </Suspense>
       )}
+      <Outlet />
     </>
   );
 }
 
-function PlaylistsList(props: { playlists: UserPlaylists }) {
+function PlaylistsList(props: { playlists: UserPlaylists; userId: string }) {
   const { playlists, count } = use(props.playlists);
   const rest = count - playlists.length;
 
   return (
     <div className="flex flex-col gap-y-2">
       {playlists.map((playlist) => {
-        return <PlaylistItem key={playlist.id} playlist={playlist} />;
+        return (
+          <PlaylistItem
+            key={playlist.id}
+            playlist={playlist}
+            userId={props.userId}
+          />
+        );
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">
@@ -89,6 +113,7 @@ function PlaylistsList(props: { playlists: UserPlaylists }) {
 
 function PlaylistItem({
   playlist,
+  userId,
 }: {
   playlist: {
     id: string;
@@ -97,29 +122,32 @@ function PlaylistItem({
     total: number;
     description: string | null;
   };
+  userId: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-card p-3">
-      {playlist.image && (
-        <Image
-          className="size-12 rounded"
-          src={playlist.image}
-          alt={playlist.name}
-          name={playlist.name}
-        />
-      )}
-      <div className="flex flex-1 flex-col gap-1">
-        <p className="font-semibold text-sm">{playlist.name}</p>
-        {playlist.description && (
-          <p className="line-clamp-1 text-muted-foreground text-xs">
-            {playlist.description}
-          </p>
+    <Link to={`/profile/${userId}/playlists/${playlist.id}`} viewTransition>
+      <div className="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors duration-150 hover:bg-accent">
+        {playlist.image && (
+          <Image
+            className="size-12 rounded"
+            src={playlist.image}
+            alt={playlist.name}
+            name={playlist.name}
+          />
         )}
-        <p className="text-muted-foreground text-xs">
-          {playlist.total} {playlist.total === 1 ? "track" : "tracks"}
-        </p>
+        <div className="flex flex-1 flex-col gap-1">
+          <p className="font-semibold text-sm">{playlist.name}</p>
+          {playlist.description && (
+            <p className="line-clamp-1 text-muted-foreground text-xs">
+              {playlist.description}
+            </p>
+          )}
+          <p className="text-muted-foreground text-xs">
+            {playlist.total} {playlist.total === 1 ? "track" : "tracks"}
+          </p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -142,7 +170,7 @@ function PlaylistsSyncButton({ userId }: { userId: string }) {
         );
       }}
     >
-      {isSyncing ? <Waver /> : "Sync"}
+      {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
 }

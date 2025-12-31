@@ -1,9 +1,5 @@
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
-  feed,
-  follow,
-  generated,
-  generatedPlaylist,
   likedSongs,
   playback,
   playbackHistory,
@@ -12,8 +8,6 @@ import {
   profile,
   provider,
   recentSongs,
-  recommended,
-  thanks,
   top,
   topArtists,
   topSongs,
@@ -92,30 +86,18 @@ export async function deleteUser(userId: string) {
       db.delete(provider).where(eq(provider.userId, userId)),
       db.delete(likedSongs).where(eq(likedSongs.userId, userId)),
       db.delete(recentSongs).where(eq(recentSongs.userId, userId)),
-      db.delete(recommended).where(eq(recommended.userId, userId)),
       db.delete(playback).where(eq(playback.userId, userId)),
       db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
       playlistIds.length > 0 &&
         db
           .delete(playlistTrack)
           .where(inArray(playlistTrack.playlistId, playlistIds)),
-      db.delete(feed).where(eq(feed.userId, userId)),
-      db.delete(thanks).where(eq(thanks.userId, userId)),
       db.delete(topSongs).where(eq(topSongs.userId, userId)),
       db.delete(topArtists).where(eq(topArtists.userId, userId)),
-      db
-        .delete(follow)
-        .where(
-          or(eq(follow.followerId, userId), eq(follow.followingId, userId)),
-        ),
-      db
-        .delete(generatedPlaylist)
-        .where(eq(generatedPlaylist.ownerId, Number(userId))),
     ].filter(Boolean),
   );
 
   await Promise.all([
-    db.delete(generated).where(eq(generated.userId, userId)),
     db.delete(top).where(eq(top.userId, userId)),
     db.delete(playlist).where(eq(playlist.userId, userId)),
   ]);

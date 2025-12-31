@@ -1,42 +1,12 @@
-import { and, count, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, min } from "drizzle-orm";
 import {
-  feed,
   likedSongs,
   playlist,
+  playlistTrack,
   recentSongs,
-  recommended,
   track,
 } from "~/lib/db/schema";
 import type { Database } from "~/lib/services/db.server";
-
-export async function getFeed(
-  db: Database,
-  args?: { limit?: number; offset?: number },
-) {
-  const { limit = 20, offset = 0 } = args ?? {};
-
-  // TODO: Implement complex feed query with proper relations
-  // For now, return basic feed entries
-  const feedEntries = await db.query.feed.findMany({
-    orderBy: desc(feed.createdAt),
-    offset: offset * limit,
-    limit,
-  });
-
-  return feedEntries;
-}
-
-export async function getUserRecommended(db: Database, userId: string) {
-  const userRecommended = await db.query.recommended.findMany({
-    with: {
-      track: true,
-    },
-    orderBy: desc(recommended.createdAt),
-    where: eq(recommended.userId, userId),
-  });
-
-  return userRecommended.map((t) => t.track);
-}
 
 export type UserRecent = ReturnType<typeof getUserRecent>;
 export async function getUserRecent(
@@ -180,6 +150,48 @@ export async function getUserPlaylists(
     .where(and(eq(playlist.userId, userId), eq(playlist.provider, provider)));
 
   return { count: totalCount, playlists };
+}
+
+export type PlaylistWithTracks = Awaited<
+  ReturnType<typeof getPlaylistWithTracks>
+>;
+export async function getPlaylistWithTracks(
+  db: Database,
+  args: { playlistId: string; userId: string },
+) {
+  const { playlistId, userId } = args;
+
+  // Get playlist (with userId check for security)
+  const playlistData = await db.query.playlist.findFirst({
+    where: and(eq(playlist.id, playlistId), eq(playlist.userId, userId)),
+  });
+
+  if (!playlistData) return null;
+
+  // Get tracks for this playlist using join (same pattern as getUserRecent)
+  const playlistTracks = await db
+    .select({
+      trackId: playlistTrack.trackId,
+      track: track,
+      addedAt: playlistTrack.addedAt,
+    })
+    .from(playlistTrack)
+    .leftJoin(track, eq(playlistTrack.trackId, track.id))
+    .where(eq(playlistTrack.playlistId, playlistId))
+    .orderBy(playlistTrack.addedAt);
+
+  // Get earliest addedAt as creation date approximation
+  const [{ createdAt }] = await db
+    .select({ createdAt: min(playlistTrack.addedAt) })
+    .from(playlistTrack)
+    .where(eq(playlistTrack.playlistId, playlistId));
+
+  console.log("playlistTracks", playlistTracks);
+  return {
+    playlist: playlistData,
+    tracks: playlistTracks.filter((pt) => pt.track).map((pt) => pt.track),
+    createdAt: createdAt || null,
+  };
 }
 
 export async function getPlaybacks(db: Database) {
