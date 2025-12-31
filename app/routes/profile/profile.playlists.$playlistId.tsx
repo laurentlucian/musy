@@ -93,14 +93,6 @@ function PlaylistDetailContent({
               {playlist.description}
             </p>
           )}
-          {createdAt && (
-            <p className="text-muted-foreground text-xs">
-              Created {format(new Date(createdAt), "MMMM d, yyyy")}
-            </p>
-          )}
-          <p className="text-muted-foreground text-xs">
-            {tracks.length} {tracks.length === 1 ? "track" : "tracks"}
-          </p>
         </div>
       </div>
 

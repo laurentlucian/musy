@@ -137,11 +137,6 @@ function PlaylistItem({
         )}
         <div className="flex flex-1 flex-col gap-1">
           <p className="font-semibold text-sm">{playlist.name}</p>
-          {playlist.description && (
-            <p className="line-clamp-1 text-muted-foreground text-xs">
-              {playlist.description}
-            </p>
-          )}
           <p className="text-muted-foreground text-xs">
             {playlist.total} {playlist.total === 1 ? "track" : "tracks"}
           </p>

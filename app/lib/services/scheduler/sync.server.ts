@@ -1,17 +1,24 @@
-import type { Spotified } from "~/lib/services/sdk/spotify.server";
-import { SpotifyApiError } from "~/lib/services/sdk/spotify";
 import { getAllUsersId, revokeUser } from "~/lib/services/db/users.server";
 import {
   syncUserLikedFull,
   syncUserLikedIncremental,
 } from "~/lib/services/scheduler/scripts/sync/liked.server";
+import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
+import { SpotifyApiError } from "~/lib/services/sdk/spotify";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import { log, logError } from "~/lib/utils";
 
-const SYNC_TYPES = ["top", "recent", "profile", "liked", "liked-full"] as const;
+const SYNC_TYPES = [
+  "top",
+  "recent",
+  "profile",
+  "liked",
+  "liked-full",
+  "playlist",
+] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
 function getSyncFunction(type: SyncType) {
@@ -26,6 +33,8 @@ function getSyncFunction(type: SyncType) {
       return syncUserLikedIncremental;
     case "liked-full":
       return syncUserLikedFull;
+    case "playlist":
+      return syncUserPlaylists;
   }
 }
 

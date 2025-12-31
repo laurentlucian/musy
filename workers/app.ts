@@ -23,6 +23,7 @@ export default {
       // Weekly on Sunday at midnight - sync top tracks/artists and liked tracks
       ctx.waitUntil(syncUsers("top"));
       ctx.waitUntil(syncUsers("liked"));
+      ctx.waitUntil(syncUsers("playlist"));
     }
   },
 } satisfies ExportedHandler<Env>;
