@@ -14,13 +14,13 @@ export default {
     const cron = controller.cron;
 
     if (cron === "0 */3 * * *") {
-      // Every 3 hours - sync recent songs
+      // Every 3 hours - sync recent tracks
       ctx.waitUntil(syncUsers("recent"));
     } else if (cron === "0 0 * * *") {
       // Daily at midnight - sync user profiles
       ctx.waitUntil(syncUsers("profile"));
     } else if (cron === "0 0 * * 1") {
-      // Weekly on Sunday at midnight - sync top songs/artists and liked songs
+      // Weekly on Sunday at midnight - sync top tracks/artists and liked tracks
       ctx.waitUntil(syncUsers("top"));
       ctx.waitUntil(syncUsers("liked"));
     }

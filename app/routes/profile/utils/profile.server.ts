@@ -6,7 +6,7 @@ import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { db } from "~/lib/db";
-import { artist, top, topArtists, topSongs, track } from "~/lib/db/schema";
+import { artist, top, topArtists, topTracks, track } from "~/lib/db/schema";
 
 export async function getTopData({
   userId,
@@ -24,17 +24,17 @@ export async function getTopData({
 
   if (!topRecord) return null;
 
-  if (type === "songs") {
-    // Get top songs for this range
-    const songsRecord = await db.query.topSongs.findFirst({
-      where: and(eq(topSongs.userId, userId), eq(topSongs.type, range)),
-      orderBy: desc(topSongs.createdAt),
+  if (type === "tracks") {
+    // Get top tracks for this range
+    const tracksRecord = await db.query.topTracks.findFirst({
+      where: and(eq(topTracks.userId, userId), eq(topTracks.type, range)),
+      orderBy: desc(topTracks.createdAt),
     });
 
-    if (!songsRecord) return null;
+    if (!tracksRecord) return null;
 
     // Get tracks based on trackIds
-    const trackIds = songsRecord.trackIds.split(",");
+    const trackIds = tracksRecord.trackIds.split(",");
     const tracks = await db
       .select()
       .from(track)

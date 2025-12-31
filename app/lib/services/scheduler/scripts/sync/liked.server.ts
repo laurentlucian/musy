@@ -1,19 +1,19 @@
 import { and, eq, inArray } from "drizzle-orm";
 import type { Track } from "~/lib/services/sdk/spotify";
 import type { Spotified } from "~/lib/services/sdk/spotify.server";
-import { likedSongs, sync, track } from "~/lib/db/schema";
+import { likedTracks, sync, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
 import { log, logError, notNull } from "~/lib/utils";
 
 /**
- * Full sync of user's liked songs from Spotify.
+ * Full sync of user's liked tracks from Spotify.
  *
  * This function:
- * 1. Fetches ALL liked songs with pagination
+ * 1. Fetches ALL liked tracks with pagination
  * 2. Captures Spotify's added_at timestamp for accurate year-based categorization
- * 3. Preserves timestamps for re-added songs (doesn't overwrite original)
- * 4. Removes songs that are no longer liked in Spotify
+ * 3. Preserves timestamps for re-added tracks (doesn't overwrite original)
+ * 4. Removes tracks that are no longer liked in Spotify
  * 5. Handles Cloudflare D1 batch limits efficiently
  */
 export async function syncUserLikedFull({
@@ -26,7 +26,7 @@ export async function syncUserLikedFull({
   try {
     log(`starting full liked sync for ${userId}`, "liked-full");
 
-    // Step 1: Fetch ALL liked songs from Spotify with pagination
+    // Step 1: Fetch ALL liked tracks from Spotify with pagination
     const spotifyLikedMap = new Map<
       string,
       { trackId: string; addedAt: string; track: Track }
@@ -35,7 +35,7 @@ export async function syncUserLikedFull({
     let offset = 0;
     let total = 0;
     let hasMore = true;
-    const MAX_PAGES = 200; // Safety limit: 200 pages * 50 = 10k songs max
+    const MAX_PAGES = 200; // Safety limit: 200 pages * 50 = 10k tracks max
 
     while (hasMore) {
       const response = await spotify.track.getUsersSavedTracks({
@@ -88,14 +88,14 @@ export async function syncUserLikedFull({
 
     const spotifyTrackIds = Array.from(spotifyLikedMap.keys());
     log(
-      `fetched ${spotifyTrackIds.length} liked songs from Spotify`,
+      `fetched ${spotifyTrackIds.length} liked tracks from Spotify`,
       "liked-full",
     );
 
     if (spotifyTrackIds.length === 0) {
-      log("no liked songs found", "liked-full");
-      // Remove all existing liked songs if none exist in Spotify
-      await db.delete(likedSongs).where(eq(likedSongs.userId, userId));
+      log("no liked tracks found", "liked-full");
+      // Remove all existing liked tracks if none exist in Spotify
+      await db.delete(likedTracks).where(eq(likedTracks.userId, userId));
       await updateSyncMetadata(userId, "success");
       return;
     }
@@ -103,11 +103,11 @@ export async function syncUserLikedFull({
     // Step 2: Get current DB state with timestamps
     const dbLiked = await db
       .select({
-        trackId: likedSongs.trackId,
-        createdAt: likedSongs.createdAt,
+        trackId: likedTracks.trackId,
+        createdAt: likedTracks.createdAt,
       })
-      .from(likedSongs)
-      .where(eq(likedSongs.userId, userId));
+      .from(likedTracks)
+      .where(eq(likedTracks.userId, userId));
 
     const dbLikedMap = new Map(dbLiked.map((l) => [l.trackId, l.createdAt]));
     const dbTrackIds = new Set(dbLikedMap.keys());
@@ -118,19 +118,19 @@ export async function syncUserLikedFull({
     const toRemove: string[] = [];
     const toUpdate: Array<{ trackId: string; addedAt: string }> = [];
 
-    // Find new songs and songs that need timestamp updates
+    // Find new tracks and tracks that need timestamp updates
     for (const trackId of spotifyTrackIds) {
       const spotifyData = spotifyLikedMap.get(trackId);
       if (!spotifyData) continue;
 
       if (!dbTrackIds.has(trackId)) {
-        // New song - add it with Spotify's added_at timestamp
+        // New track - add it with Spotify's added_at timestamp
         toAdd.push({
           trackId: spotifyData.trackId,
           addedAt: spotifyData.addedAt,
         });
       } else {
-        // Existing song - check if timestamp needs correction
+        // Existing track - check if timestamp needs correction
         const dbTimestamp = dbLikedMap.get(trackId);
         if (dbTimestamp) {
           const dbDate = new Date(dbTimestamp);
@@ -147,7 +147,7 @@ export async function syncUserLikedFull({
       }
     }
 
-    // Find songs to remove (in DB but not in Spotify)
+    // Find tracks to remove (in DB but not in Spotify)
     for (const trackId of dbTrackIds) {
       if (!spotifyTrackIdsSet.has(trackId)) {
         toRemove.push(trackId);
@@ -200,27 +200,27 @@ export async function syncUserLikedFull({
       log(`created ${newTracks.length} new tracks`, "liked-full");
     }
 
-    // Step 5: Remove unliked songs
+    // Step 5: Remove unliked tracks
     if (toRemove.length > 0) {
       // D1 has 100 param limit, so batch deletions if needed
       const deleteBatchSize = 50;
       for (let i = 0; i < toRemove.length; i += deleteBatchSize) {
         const batch = toRemove.slice(i, i + deleteBatchSize);
         await db
-          .delete(likedSongs)
+          .delete(likedTracks)
           .where(
             and(
-              eq(likedSongs.userId, userId),
-              inArray(likedSongs.trackId, batch),
+              eq(likedTracks.userId, userId),
+              inArray(likedTracks.trackId, batch),
             ),
           );
       }
-      log(`removed ${toRemove.length} unliked songs`, "liked-full");
+      log(`removed ${toRemove.length} unliked tracks`, "liked-full");
     }
 
-    // Step 6: Add new liked songs with correct timestamps
+    // Step 6: Add new liked tracks with correct timestamps
     if (toAdd.length > 0) {
-      const likedSongsToInsert = toAdd.map(({ trackId, addedAt }) => ({
+      const likedTracksToInsert = toAdd.map(({ trackId, addedAt }) => ({
         trackId,
         userId,
         createdAt: new Date(addedAt).toISOString(), // Use Spotify's added_at
@@ -228,26 +228,26 @@ export async function syncUserLikedFull({
 
       // D1 has 100 param limit, 3 columns (trackId, userId, createdAt) = max 33 per batch
       const batchSize = 33;
-      for (let i = 0; i < likedSongsToInsert.length; i += batchSize) {
-        const batch = likedSongsToInsert.slice(i, i + batchSize);
-        await db.insert(likedSongs).values(batch).onConflictDoNothing();
+      for (let i = 0; i < likedTracksToInsert.length; i += batchSize) {
+        const batch = likedTracksToInsert.slice(i, i + batchSize);
+        await db.insert(likedTracks).values(batch).onConflictDoNothing();
       }
-      log(`added ${toAdd.length} new liked songs`, "liked-full");
+      log(`added ${toAdd.length} new liked tracks`, "liked-full");
     }
 
-    // Step 7: Update timestamps for existing songs (fix incorrect timestamps)
+    // Step 7: Update timestamps for existing tracks (fix incorrect timestamps)
     if (toUpdate.length > 0) {
       // Update createdAt to use Spotify's added_at timestamp
       for (const { trackId, addedAt } of toUpdate) {
         await db
-          .update(likedSongs)
+          .update(likedTracks)
           .set({ createdAt: new Date(addedAt).toISOString() })
           .where(
-            and(eq(likedSongs.userId, userId), eq(likedSongs.trackId, trackId)),
+            and(eq(likedTracks.userId, userId), eq(likedTracks.trackId, trackId)),
           );
       }
       log(
-        `updated timestamps for ${toUpdate.length} existing songs`,
+        `updated timestamps for ${toUpdate.length} existing tracks`,
         "liked-full",
       );
     }
@@ -264,13 +264,13 @@ export async function syncUserLikedFull({
 }
 
 /**
- * Incremental sync of user's liked songs from Spotify.
+ * Incremental sync of user's liked tracks from Spotify.
  *
  * This function:
- * 1. Fetches only recent liked songs (first N pages, newest first)
- * 2. Stops early when encountering songs already in DB
- * 3. Adds new songs with correct timestamps
- * 4. Checks for removals in recent songs only (efficient for weekly runs)
+ * 1. Fetches only recent liked tracks (first N pages, newest first)
+ * 2. Stops early when encountering tracks already in DB
+ * 3. Adds new tracks with correct timestamps
+ * 4. Checks for removals in recent tracks only (efficient for weekly runs)
  * 5. Optimized for Cloudflare D1 batch limits
  *
  * This is designed to run weekly and is more efficient than full sync.
@@ -285,24 +285,24 @@ export async function syncUserLikedIncremental({
   try {
     log(`starting incremental liked sync for ${userId}`, "liked-inc");
 
-    // Step 1: Fetch recent liked songs (newest first)
-    // Spotify API returns songs in reverse chronological order
+    // Step 1: Fetch recent liked tracks (newest first)
+    // Spotify API returns tracks in reverse chronological order
     const spotifyLikedMap = new Map<
       string,
       { trackId: string; addedAt: string; track: Track }
     >();
 
-    const MAX_PAGES = 20; // Check up to 20 pages (1000 songs) for incremental
+    const MAX_PAGES = 20; // Check up to 20 pages (1000 tracks) for incremental
     let offset = 0;
     let total = 0;
     let hasMore = true;
     let allSeenInDb = false;
 
-    // Get existing track IDs to detect when we've seen all new songs
+    // Get existing track IDs to detect when we've seen all new tracks
     const existingLiked = await db
-      .select({ trackId: likedSongs.trackId })
-      .from(likedSongs)
-      .where(eq(likedSongs.userId, userId))
+      .select({ trackId: likedTracks.trackId })
+      .from(likedTracks)
+      .where(eq(likedTracks.userId, userId))
       .limit(1000); // Get recent 1000 for comparison
 
     const existingTrackIds = new Set(existingLiked.map((l) => l.trackId));
@@ -319,19 +319,19 @@ export async function syncUserLikedIncremental({
       }
 
       total = response.total || total;
-      let newSongsInPage = 0;
+      let newTracksInPage = 0;
 
       // Process each item and capture added_at timestamp
       for (const { track: trackData, added_at } of response.items) {
         if (!trackData?.id || !added_at) continue;
 
-        // If we've seen this song in DB, we can stop (all newer songs are already synced)
+        // If we've seen this track in DB, we can stop (all newer tracks are already synced)
         if (existingTrackIds.has(trackData.id)) {
           allSeenInDb = true;
           break;
         }
 
-        newSongsInPage++;
+        newTracksInPage++;
         spotifyLikedMap.set(trackData.id, {
           trackId: trackData.id,
           addedAt: added_at,
@@ -339,8 +339,8 @@ export async function syncUserLikedIncremental({
         });
       }
 
-      // If no new songs in this page, we've caught up
-      if (newSongsInPage === 0) {
+      // If no new tracks in this page, we've caught up
+      if (newTracksInPage === 0) {
         allSeenInDb = true;
         break;
       }
@@ -356,12 +356,12 @@ export async function syncUserLikedIncremental({
 
     const spotifyTrackIds = Array.from(spotifyLikedMap.keys());
     log(
-      `fetched ${spotifyTrackIds.length} new/recent liked songs from Spotify`,
+      `fetched ${spotifyTrackIds.length} new/recent liked tracks from Spotify`,
       "liked-inc",
     );
 
     if (spotifyTrackIds.length === 0) {
-      log("no new liked songs found", "liked-inc");
+      log("no new liked tracks found", "liked-inc");
       await updateSyncMetadata(userId, "success");
       return;
     }
@@ -369,11 +369,11 @@ export async function syncUserLikedIncremental({
     // Step 2: Get current DB state for comparison
     const dbLiked = await db
       .select({
-        trackId: likedSongs.trackId,
-        createdAt: likedSongs.createdAt,
+        trackId: likedTracks.trackId,
+        createdAt: likedTracks.createdAt,
       })
-      .from(likedSongs)
-      .where(eq(likedSongs.userId, userId));
+      .from(likedTracks)
+      .where(eq(likedTracks.userId, userId));
 
     const dbLikedMap = new Map(dbLiked.map((l) => [l.trackId, l.createdAt]));
     const dbTrackIds = new Set(dbLikedMap.keys());
@@ -381,7 +381,7 @@ export async function syncUserLikedIncremental({
     // Step 3: Calculate differences
     const toAdd: Array<{ trackId: string; addedAt: string }> = [];
 
-    // Find new songs (in Spotify but not in DB)
+    // Find new tracks (in Spotify but not in DB)
     for (const trackId of spotifyTrackIds) {
       const spotifyData = spotifyLikedMap.get(trackId);
       if (!spotifyData) continue;
@@ -440,20 +440,20 @@ export async function syncUserLikedIncremental({
       log(`created ${newTracks.length} new tracks`, "liked-inc");
     }
 
-    // Step 5: Add new liked songs with correct timestamps
+    // Step 5: Add new liked tracks with correct timestamps
     if (toAdd.length > 0) {
-      const likedSongsToInsert = toAdd.map(({ trackId, addedAt }) => ({
+      const likedTracksToInsert = toAdd.map(({ trackId, addedAt }) => ({
         trackId,
         userId,
         createdAt: new Date(addedAt).toISOString(),
       }));
 
       const batchSize = 33;
-      for (let i = 0; i < likedSongsToInsert.length; i += batchSize) {
-        const batch = likedSongsToInsert.slice(i, i + batchSize);
-        await db.insert(likedSongs).values(batch).onConflictDoNothing();
+      for (let i = 0; i < likedTracksToInsert.length; i += batchSize) {
+        const batch = likedTracksToInsert.slice(i, i + batchSize);
+        await db.insert(likedTracks).values(batch).onConflictDoNothing();
       }
-      log(`added ${toAdd.length} new liked songs`, "liked-inc");
+      log(`added ${toAdd.length} new liked tracks`, "liked-inc");
     }
 
     // Step 6: Update sync metadata

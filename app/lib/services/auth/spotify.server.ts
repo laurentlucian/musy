@@ -99,15 +99,15 @@ export function getSpotifyStrategy() {
 // https://developer.spotify.com/documentation/general/guides/authorization/scopes
 const scopes = [
   // 'streaming', // (must have spotify premium) --> controls playback of tracks through a spotify player (might not need if we change direction with app (see user-modify-playback-state))
-  "user-library-read", // checks if a user saved specific songs (can show music_senders/user if a user already likes a song they suggested/queued )
+  "user-library-read", // checks if a user saved specific tracks (can show music_senders/user if a user already likes a track they suggested/queued )
   "user-read-email", // user spotify profile
   "user-read-private", // search for albums, artists, playlists, tracks, shows or episodes
   "user-read-playback-state", // get currently playing track and info about it (important)
-  "user-read-recently-played", // recently played (can show music_senders/user if a user already listened to a song they suggested/queued recently)
+  "user-read-recently-played", // recently played (can show music_senders/user if a user already listened to a track they suggested/queued recently)
   "user-read-currently-playing", // currently playing track only (do we need this?)
   "user-modify-playback-state", // to add to queue (can replace 'streaming' scope so we can integrate our own player to include more than just spotify)
   // "user-follow-modify", // used to (un)follow users/artists
-  "user-library-modify", // used to save songs to user's library
+  "user-library-modify", // used to save tracks to user's library
   "playlist-modify-public", // create playlists with custom image
   "user-top-read", // get top tracks
   // "user-follow-read", // allows to check users follows

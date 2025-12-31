@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { recentSongs, sync, track } from "~/lib/db/schema";
+import { recentTracks, sync, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
 import type { Spotified } from "~/lib/services/sdk/spotify.server";
@@ -52,13 +52,20 @@ export async function syncUserRecent({
       new Map(tracks.map((t) => [t.id, t])).values(),
     );
 
-    // find existing tracks
+    // find existing tracks (batch queries to respect D1 param limit)
     const trackIds = uniqueTracks.map((t) => t.id);
-    const existingTracks = await db
-      .select({ id: track.id })
-      .from(track)
-      .where(inArray(track.id, trackIds));
-    const existingTrackIds = new Set(existingTracks.map((t) => t.id));
+    const existingTrackIds = new Set<string>();
+    const queryBatchSize = 99; // D1 limit is 100 params
+    for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+      const batch = trackIds.slice(i, i + queryBatchSize);
+      const existingTracks = await db
+        .select({ id: track.id })
+        .from(track)
+        .where(inArray(track.id, batch));
+      for (const t of existingTracks) {
+        existingTrackIds.add(t.id);
+      }
+    }
 
     // split into new and existing tracks
     const newTracks = uniqueTracks.filter((t) => !existingTrackIds.has(t.id));
@@ -89,8 +96,8 @@ export async function syncUserRecent({
     //   );
     // }
 
-    // prepare recent songs data
-    const recentSongsData = recent
+    // prepare recent tracks data
+    const recentTracksData = recent
       .map(({ played_at, track }) => {
         if (!track?.id || !played_at) return null;
 
@@ -106,33 +113,39 @@ export async function syncUserRecent({
       .filter(notNull);
 
     log(
-      `processing ${recentSongsData.length} recent songs for ${userId}`,
+      `processing ${recentTracksData.length} recent tracks for ${userId}`,
       "recent",
     );
 
-    // deduplicate recent songs within the batch (same track at same time can appear multiple times)
-    const uniqueRecentSongs = Array.from(
+    // deduplicate recent tracks within the batch (same track at same time can appear multiple times)
+    const uniqueRecentTracks = Array.from(
       new Map(
-        recentSongsData.map((s) => [`${s.playedAtISO}-${s.userId}`, s]),
+        recentTracksData.map((s) => [`${s.playedAtISO}-${s.userId}`, s]),
       ).values(),
     );
 
     log(
-      `deduplicated to ${uniqueRecentSongs.length} unique recent songs`,
+      `deduplicated to ${uniqueRecentTracks.length} unique recent tracks`,
       "recent",
     );
 
-    // find existing recent songs - use ISO strings for query (matching DB storage format)
-    const playedAtISOs = uniqueRecentSongs.map((s) => s.playedAtISO);
-    const existingRecent = await db
-      .select({ playedAt: recentSongs.playedAt })
-      .from(recentSongs)
-      .where(
-        and(
-          eq(recentSongs.userId, userId),
-          inArray(recentSongs.playedAt, playedAtISOs),
-        ),
-      );
+    // find existing recent tracks - use ISO strings for query (matching DB storage format)
+    // Batch queries to respect D1 param limit (99 per batch due to and() condition)
+    const playedAtISOs = uniqueRecentTracks.map((s) => s.playedAtISO);
+    const existingRecent: Array<{ playedAt: string | number }> = [];
+    for (let i = 0; i < playedAtISOs.length; i += queryBatchSize) {
+      const batch = playedAtISOs.slice(i, i + queryBatchSize);
+      const batchResults = await db
+        .select({ playedAt: recentTracks.playedAt })
+        .from(recentTracks)
+        .where(
+          and(
+            eq(recentTracks.userId, userId),
+            inArray(recentTracks.playedAt, batch),
+          ),
+        );
+      existingRecent.push(...batchResults);
+    }
 
     // normalize existing records to ISO strings for comparison
     const existingISOs = new Set(
@@ -154,18 +167,18 @@ export async function syncUserRecent({
     );
 
     log(
-      `found ${existingISOs.size} existing recent songs out of ${uniqueRecentSongs.length} checked`,
+      `found ${existingISOs.size} existing recent tracks out of ${uniqueRecentTracks.length} checked`,
       "recent",
     );
 
-    // split into new and existing recent songs - compare ISO strings
-    const newRecent = uniqueRecentSongs.filter(
+    // split into new and existing recent tracks - compare ISO strings
+    const newRecent = uniqueRecentTracks.filter(
       (s) => !existingISOs.has(s.playedAtISO),
     );
 
-    log(`inserting ${newRecent.length} new recent songs`, "recent");
+    log(`inserting ${newRecent.length} new recent tracks`, "recent");
 
-    // batch create new recent songs - store as ISO string (4 columns = max 25 per batch)
+    // batch create new recent tracks - store as ISO string (4 columns = max 25 per batch)
     if (newRecent.length) {
       const recentToInsert = newRecent.map((r) => ({
         userId: r.userId,
@@ -176,7 +189,7 @@ export async function syncUserRecent({
       const batchSize = 25;
       for (let i = 0; i < recentToInsert.length; i += batchSize) {
         const batch = recentToInsert.slice(i, i + batchSize);
-        await db.insert(recentSongs).values(batch).onConflictDoNothing();
+        await db.insert(recentTracks).values(batch).onConflictDoNothing();
       }
     }
 

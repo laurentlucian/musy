@@ -8,7 +8,6 @@ export function AdminNav() {
       <NavLinkSub to="/settings/admin/tracks">tracks</NavLinkSub>
       <NavLinkSub to="/settings/admin/syncs">syncs</NavLinkSub>
       <NavLinkSub to="/settings/admin/scripts">scripts</NavLinkSub>
-      {/* <NavLinkSub to="/settings/admin/transfers">transfers</NavLinkSub> */}
     </Fragment>
   );
 }

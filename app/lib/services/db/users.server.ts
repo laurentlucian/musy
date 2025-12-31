@@ -1,16 +1,16 @@
 import { and, eq, inArray } from "drizzle-orm";
 import {
-  likedSongs,
+  likedTracks,
   playback,
   playbackHistory,
   playlist,
   playlistTrack,
   profile,
   provider,
-  recentSongs,
+  recentTracks,
   top,
   topArtists,
-  topSongs,
+  topTracks,
   user,
 } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
@@ -84,15 +84,15 @@ export async function deleteUser(userId: string) {
   await Promise.all(
     [
       db.delete(provider).where(eq(provider.userId, userId)),
-      db.delete(likedSongs).where(eq(likedSongs.userId, userId)),
-      db.delete(recentSongs).where(eq(recentSongs.userId, userId)),
+      db.delete(likedTracks).where(eq(likedTracks.userId, userId)),
+      db.delete(recentTracks).where(eq(recentTracks.userId, userId)),
       db.delete(playback).where(eq(playback.userId, userId)),
       db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
       playlistIds.length > 0 &&
         db
           .delete(playlistTrack)
           .where(inArray(playlistTrack.playlistId, playlistIds)),
-      db.delete(topSongs).where(eq(topSongs.userId, userId)),
+      db.delete(topTracks).where(eq(topTracks.userId, userId)),
       db.delete(topArtists).where(eq(topArtists.userId, userId)),
     ].filter(Boolean),
   );

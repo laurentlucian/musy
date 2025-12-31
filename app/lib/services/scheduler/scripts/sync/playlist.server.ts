@@ -156,14 +156,18 @@ export async function syncUserPlaylists({
           .delete(playlistTrack)
           .where(inArray(playlistTrack.playlistId, batch));
       }
-      await db
-        .delete(playlist)
-        .where(
-          and(
-            eq(playlist.userId, userId),
-            inArray(playlist.id, playlistsToRemove),
-          ),
-        );
+      // Batch playlist deletion to respect D1 param limit (99 per batch due to and() condition)
+      const playlistDeleteBatchSize = 99;
+      for (
+        let i = 0;
+        i < playlistsToRemove.length;
+        i += playlistDeleteBatchSize
+      ) {
+        const batch = playlistsToRemove.slice(i, i + playlistDeleteBatchSize);
+        await db
+          .delete(playlist)
+          .where(and(eq(playlist.userId, userId), inArray(playlist.id, batch)));
+      }
       log(`removed ${playlistsToRemove.length} playlists`, "playlist");
     }
 
@@ -213,6 +217,61 @@ export async function syncUserPlaylists({
     logError(`playlist sync failed for ${userId}: ${error}`);
     await updateSyncMetadata(userId, "failure");
     throw error;
+  }
+}
+
+async function fetchAndInsertMissingTracks(
+  trackIds: string[],
+  spotify: Spotified,
+): Promise<void> {
+  if (trackIds.length === 0) return;
+
+  // Check which tracks are missing (batch queries to respect D1 param limit)
+  const existingTrackIds = new Set<string>();
+  const queryBatchSize = 99; // D1 limit is 100 params
+  for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+    const batch = trackIds.slice(i, i + queryBatchSize);
+    const existingTracks = await db
+      .select({ id: track.id })
+      .from(track)
+      .where(inArray(track.id, batch));
+    for (const t of existingTracks) {
+      existingTrackIds.add(t.id);
+    }
+  }
+  const missingTrackIds = trackIds.filter((id) => !existingTrackIds.has(id));
+
+  if (missingTrackIds.length === 0) return;
+
+  log(
+    `fetching ${missingTrackIds.length} missing tracks from Spotify`,
+    "playlist",
+  );
+
+  // Fetch tracks from Spotify in batches of 50 (API limit)
+  const batchSize = 50;
+  const tracksToInsert: Track[] = [];
+
+  for (let i = 0; i < missingTrackIds.length; i += batchSize) {
+    const batch = missingTrackIds.slice(i, i + batchSize);
+    try {
+      const response = await spotify.track.getTracks(batch);
+      if (response.tracks) {
+        // Filter out null tracks (tracks that don't exist or are unavailable)
+        const validTracks = response.tracks.filter(
+          (t): t is Track => t !== null && t.id !== undefined,
+        );
+        tracksToInsert.push(...validTracks);
+      }
+    } catch (error) {
+      logError(`failed to fetch tracks batch: ${error}`);
+    }
+  }
+
+  // Insert fetched tracks
+  if (tracksToInsert.length > 0) {
+    await transformTracks(tracksToInsert);
+    log(`inserted ${tracksToInsert.length} missing tracks`, "playlist");
   }
 }
 
@@ -316,9 +375,43 @@ async function syncPlaylistTracks({
     "playlist",
   );
 
-  // Transform and insert tracks
+  // Transform and insert tracks from playlist response
   const tracks = Array.from(spotifyTracksMap.values()).map((v) => v.track);
   await transformTracks(tracks);
+
+  // Verify which tracks actually exist in DB (batch queries to respect D1 param limit)
+  const existingTrackIds = new Set<string>();
+  const queryBatchSize = 99; // D1 limit is 100 params
+  for (let i = 0; i < spotifyTrackIds.length; i += queryBatchSize) {
+    const batch = spotifyTrackIds.slice(i, i + queryBatchSize);
+    const existingTracks = await db
+      .select({ id: track.id })
+      .from(track)
+      .where(inArray(track.id, batch));
+    for (const t of existingTracks) {
+      existingTrackIds.add(t.id);
+    }
+  }
+
+  // Fetch and insert any missing tracks from Spotify
+  const missingTrackIds = spotifyTrackIds.filter(
+    (id) => !existingTrackIds.has(id),
+  );
+  if (missingTrackIds.length > 0) {
+    await fetchAndInsertMissingTracks(missingTrackIds, spotify);
+    // Re-check existing tracks after fetching missing ones
+    existingTrackIds.clear();
+    for (let i = 0; i < spotifyTrackIds.length; i += queryBatchSize) {
+      const batch = spotifyTrackIds.slice(i, i + queryBatchSize);
+      const updatedExistingTracks = await db
+        .select({ id: track.id })
+        .from(track)
+        .where(inArray(track.id, batch));
+      for (const t of updatedExistingTracks) {
+        existingTrackIds.add(t.id);
+      }
+    }
+  }
 
   // Get current DB state for this playlist
   const dbPlaylistTracks = await db
@@ -341,7 +434,10 @@ async function syncPlaylistTracks({
   const toUpdate: Array<{ trackId: string; addedAt: string }> = [];
 
   // Find new tracks and tracks that need timestamp updates
+  // Only include tracks that exist in the track table
   for (const trackId of spotifyTrackIds) {
+    if (!existingTrackIds.has(trackId)) continue;
+
     const spotifyData = spotifyTracksMap.get(trackId);
     if (!spotifyData) continue;
 

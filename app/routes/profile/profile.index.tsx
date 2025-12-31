@@ -14,7 +14,7 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const year = +(url.searchParams.get("year") ?? "2025");
   const range = url.searchParams.get("range") ?? "long_term";
-  const type = url.searchParams.get("type") ?? "songs";
+  const type = url.searchParams.get("type") ?? "tracks";
 
   return {
     userId,

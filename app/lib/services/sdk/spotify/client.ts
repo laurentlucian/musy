@@ -61,6 +61,9 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
       getUsersSavedTracks: (options?: OptionalUserSavedTrackParams) =>
         trackEndpoints.getUsersSavedTracks(accessToken, options),
 
+      getTracks: (trackIds: string[], market?: string) =>
+        trackEndpoints.getTracks(accessToken, trackIds, market),
+
       saveTracksforCurrentUser: (trackIds: string[]) =>
         trackEndpoints.saveTracksforCurrentUser(accessToken, trackIds),
     },

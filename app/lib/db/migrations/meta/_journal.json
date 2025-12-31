@@ -8,6 +8,13 @@
       "when": 1767169226013,
       "tag": "0000_awesome_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1767170370200,
+      "tag": "0001_lyrical_thunderbolt_ross",
+      "breakpoints": true
     }
   ]
 }

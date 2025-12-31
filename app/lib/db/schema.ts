@@ -59,8 +59,8 @@ export const profile = sqliteTable(
   (table) => [uniqueIndex("Profile_email_key").on(table.email)],
 );
 
-export const recentSongs = sqliteTable(
-  "RecentSongs",
+export const recentTracks = sqliteTable(
+  "RecentTracks",
   {
     id: integer().primaryKey({ autoIncrement: true }).notNull(),
     playedAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
@@ -80,7 +80,7 @@ export const recentSongs = sqliteTable(
     sessionId: integer(),
   },
   (table) => [
-    uniqueIndex("RecentSongs_playedAt_userId_key").on(
+    uniqueIndex("RecentTracks_playedAt_userId_key").on(
       table.playedAt,
       table.userId,
     ),
@@ -145,12 +145,12 @@ export const sync = sqliteTable(
   ],
 );
 
-export const topSongsToTrack = sqliteTable(
-  "_TopSongsToTrack",
+export const topTracksToTrack = sqliteTable(
+  "_TopTracksToTrack",
   {
     a: text("A")
       .notNull()
-      .references(() => topSongs.id, {
+      .references(() => topTracks.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
@@ -159,8 +159,8 @@ export const topSongsToTrack = sqliteTable(
       .references(() => track.id, { onDelete: "cascade", onUpdate: "cascade" }),
   },
   (table) => [
-    index("TopSongsToTrack_B_idx").on(table.b),
-    uniqueIndex("_TopSongsToTrack_AB_unique").on(table.a, table.b),
+    index("TopTracksToTrack_B_idx").on(table.b),
+    uniqueIndex("_TopTracksToTrack_AB_unique").on(table.a, table.b),
   ],
 );
 
@@ -240,8 +240,8 @@ export const artistToTopArtists = sqliteTable(
   ],
 );
 
-export const topSongs = sqliteTable(
-  "TopSongs",
+export const topTracks = sqliteTable(
+  "TopTracks",
   {
     id: text().primaryKey().notNull(),
     createdAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
@@ -254,7 +254,7 @@ export const topSongs = sqliteTable(
         onUpdate: "cascade",
       }),
   },
-  (table) => [uniqueIndex("TopSongs_id_key").on(table.id)],
+  (table) => [uniqueIndex("TopTracks_id_key").on(table.id)],
 );
 
 export const provider = sqliteTable(
@@ -305,8 +305,8 @@ export const playlistTrack = sqliteTable(
   ],
 );
 
-export const likedSongs = sqliteTable(
-  "LikedSongs",
+export const likedTracks = sqliteTable(
+  "LikedTracks",
   {
     id: integer().primaryKey({ autoIncrement: true }).notNull(),
     createdAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
@@ -325,7 +325,7 @@ export const likedSongs = sqliteTable(
     action: text().default("liked").notNull(),
   },
   (table) => [
-    uniqueIndex("LikedSongs_trackId_userId_key").on(
+    uniqueIndex("LikedTracks_trackId_userId_key").on(
       table.trackId,
       table.userId,
     ),

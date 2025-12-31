@@ -5,8 +5,8 @@ import {
   sync,
   top,
   topArtists,
-  topSongs,
-  topSongsToTrack,
+  topTracks,
+  topTracksToTrack,
 } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import {
@@ -47,7 +47,7 @@ export async function syncUserTop({
   try {
     for (const range of ranges) {
       log("syncing", `top_${range}`);
-      await syncTopSongs({ userId, spotify, range });
+      await syncTopTracks({ userId, spotify, range });
       await syncTopArtists({ userId, spotify, range });
     }
 
@@ -85,7 +85,7 @@ export async function syncUserTop({
   }
 }
 
-async function syncTopSongs({
+async function syncTopTracks({
   userId,
   spotify,
   range,
@@ -101,9 +101,9 @@ async function syncTopSongs({
 
   const trackIds = await transformTracks(response.items);
 
-  const existing = await db.query.topSongs.findFirst({
-    where: eq(topSongs.userId, userId),
-    orderBy: desc(topSongs.createdAt),
+  const existing = await db.query.topTracks.findFirst({
+    where: eq(topTracks.userId, userId),
+    orderBy: desc(topTracks.createdAt),
   });
 
   const newList = trackIds.join(",");
@@ -113,14 +113,14 @@ async function syncTopSongs({
   }
 
   const now = new Date().toISOString();
-  const topSongsId = generateId();
+  const topTracksId = generateId();
 
   // First ensure the top record exists
   await db.insert(top).values({ userId }).onConflictDoNothing();
 
-  // Create the top songs record
-  await db.insert(topSongs).values({
-    id: topSongsId,
+  // Create the top tracks record
+  await db.insert(topTracks).values({
+    id: topTracksId,
     userId,
     type: range,
     trackIds: newList,
@@ -130,13 +130,13 @@ async function syncTopSongs({
   // Create many-to-many relationships (2 columns = max 45 per batch for safety)
   if (trackIds.length > 0) {
     const relations = trackIds.map((trackId) => ({
-      a: topSongsId,
+      a: topTracksId,
       b: trackId,
     }));
     const batchSize = 45;
     for (let i = 0; i < relations.length; i += batchSize) {
       const batch = relations.slice(i, i + batchSize);
-      await db.insert(topSongsToTrack).values(batch);
+      await db.insert(topTracksToTrack).values(batch);
     }
   }
 }

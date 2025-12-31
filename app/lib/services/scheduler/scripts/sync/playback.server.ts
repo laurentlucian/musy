@@ -44,7 +44,13 @@ export async function syncPlaybacks() {
 }
 
 async function handleInactiveUsers(users: string[]) {
-  await db.delete(playback).where(inArray(playback.userId, users));
+  if (users.length === 0) return;
+  // Batch deletions to respect D1 param limit (100 params)
+  const batchSize = 99;
+  for (let i = 0; i < users.length; i += batchSize) {
+    const batch = users.slice(i, i + batchSize);
+    await db.delete(playback).where(inArray(playback.userId, batch));
+  }
 }
 
 const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {

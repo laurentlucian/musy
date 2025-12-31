@@ -6,7 +6,7 @@ import { Waver } from "~/components/icons/waver";
 import { Image } from "~/components/ui/image";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
-import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
+import { likedTracks, profile, recentTracks, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
@@ -122,14 +122,14 @@ function Stats({
           <p className="font-bold text-3xl">
             <NumberAnimated value={data.played} key={year} />
           </p>
-          <p className="text-muted-foreground text-sm">songs played</p>
+          <p className="text-muted-foreground text-sm">tracks played</p>
         </div>
         <div className="flex gap-4">
           <div className="rounded-lg bg-card p-4">
             <p className="font-bold text-3xl">
               <NumberAnimated value={data.liked} key={year} />
             </p>
-            <p className="text-muted-foreground text-sm">songs liked</p>
+            <p className="text-muted-foreground text-sm">tracks liked</p>
           </div>
         </div>
         <div className="rounded-lg bg-card p-4">
@@ -142,7 +142,7 @@ function Stats({
       {data.song && (
         <div className="rounded-lg bg-card p-4">
           <p className="font-bold text-2xl">{data.song}</p>
-          <p className="text-muted-foreground text-sm">most listened song</p>
+          <p className="text-muted-foreground text-sm">most listened track</p>
         </div>
       )}
 
@@ -212,12 +212,12 @@ async function getStats(userId: string, year: number) {
 
   const [{ count: liked }] = await db
     .select({ count: count() })
-    .from(likedSongs)
+    .from(likedTracks)
     .where(
       and(
-        eq(likedSongs.userId, userId),
-        gte(likedSongs.createdAt, startOfYear(date).toISOString()),
-        lte(likedSongs.createdAt, endOfYear(date).toISOString()),
+        eq(likedTracks.userId, userId),
+        gte(likedTracks.createdAt, startOfYear(date).toISOString()),
+        lte(likedTracks.createdAt, endOfYear(date).toISOString()),
       ),
     );
 
@@ -242,16 +242,16 @@ async function getStats(userId: string, year: number) {
           duration: track.duration,
         },
       })
-      .from(recentSongs)
-      .innerJoin(track, eq(recentSongs.trackId, track.id))
+      .from(recentTracks)
+      .innerJoin(track, eq(recentTracks.trackId, track.id))
       .where(
         and(
-          eq(recentSongs.userId, userId),
-          gte(recentSongs.playedAt, startOfYear(date).toISOString()),
-          lte(recentSongs.playedAt, endOfYear(date).toISOString()),
+          eq(recentTracks.userId, userId),
+          gte(recentTracks.playedAt, startOfYear(date).toISOString()),
+          lte(recentTracks.playedAt, endOfYear(date).toISOString()),
         ),
       )
-      .orderBy(desc(recentSongs.playedAt))
+      .orderBy(desc(recentTracks.playedAt))
       .limit(take)
       .offset(skip);
 

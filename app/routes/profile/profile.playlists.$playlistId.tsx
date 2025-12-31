@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
 import { Suspense, use } from "react";
-import { Link, redirect, useParams } from "react-router";
+import { Link, redirect } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -25,7 +25,7 @@ export async function loader({ context, params }: Route.LoaderArgs) {
 }
 
 export default function ProfilePlaylistDetail({
-  loaderData: { userId, playlistId, playlistData },
+  loaderData: { userId, playlistData },
 }: Route.ComponentProps) {
   return (
     <>

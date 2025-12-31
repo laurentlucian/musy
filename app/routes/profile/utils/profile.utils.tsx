@@ -98,7 +98,7 @@ const rangeLabels: Record<string, string> = {
 };
 
 const typeLabels: Record<string, string> = {
-  songs: "Songs",
+  tracks: "Tracks",
   artists: "Artists",
 };
 
@@ -126,7 +126,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
           <SelectValue>{typeLabels[type] || type}</SelectValue>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="songs">Songs</SelectItem>
+          <SelectItem value="tracks">Tracks</SelectItem>
           <SelectItem value="artists">Artists</SelectItem>
         </SelectContent>
       </Select>
@@ -167,7 +167,7 @@ export function TopList({
   const data = use(promise);
   if (!data) return null;
 
-  if (type === "songs") {
+  if (type === "tracks") {
     const tracks = data.tracks;
     if (!tracks) return null;
     return (

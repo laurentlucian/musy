@@ -1,5 +1,5 @@
 import { and, eq, like, not } from "drizzle-orm";
-import { likedSongs, profile, recentSongs, track, user } from "~/lib/db/schema";
+import { likedTracks, profile, recentTracks, track, user } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 
 export async function getUsersByKeyword(keyword: string, userId: string) {
@@ -30,11 +30,11 @@ export async function getTracksByKeyword(keyword: string) {
               email: profile.email,
             },
           })
-          .from(likedSongs)
-          .innerJoin(user, eq(likedSongs.userId, user.id))
+          .from(likedTracks)
+          .innerJoin(user, eq(likedTracks.userId, user.id))
           .innerJoin(profile, eq(user.id, profile.id))
-          .where(eq(likedSongs.trackId, trackData.id))
-          .orderBy(likedSongs.createdAt),
+          .where(eq(likedTracks.trackId, trackData.id))
+          .orderBy(likedTracks.createdAt),
         db
           .select({
             user: {
@@ -43,11 +43,11 @@ export async function getTracksByKeyword(keyword: string) {
               email: profile.email,
             },
           })
-          .from(recentSongs)
-          .innerJoin(user, eq(recentSongs.userId, user.id))
+          .from(recentTracks)
+          .innerJoin(user, eq(recentTracks.userId, user.id))
           .innerJoin(profile, eq(user.id, profile.id))
-          .where(eq(recentSongs.trackId, trackData.id))
-          .orderBy(recentSongs.playedAt),
+          .where(eq(recentTracks.trackId, trackData.id))
+          .orderBy(recentTracks.playedAt),
       ]);
 
       return {

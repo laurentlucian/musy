@@ -1,9 +1,9 @@
 import { and, count, desc, eq, gte, inArray, min } from "drizzle-orm";
 import {
-  likedSongs,
+  likedTracks,
   playlist,
   playlistTrack,
-  recentSongs,
+  recentTracks,
   track,
 } from "~/lib/db/schema";
 import type { Database } from "~/lib/services/db.server";
@@ -18,25 +18,25 @@ export async function getUserRecent(
 ) {
   const { userId, provider } = args;
 
-  // Get recent songs with track information
+  // Get recent tracks with track information
   const recent = await db
     .select({
-      id: recentSongs.id,
-      playedAt: recentSongs.playedAt,
+      id: recentTracks.id,
+      playedAt: recentTracks.playedAt,
       track: track,
     })
-    .from(recentSongs)
-    .innerJoin(track, eq(track.id, recentSongs.trackId))
-    .where(and(eq(recentSongs.userId, userId), eq(track.provider, provider)))
-    .orderBy(desc(recentSongs.playedAt))
+    .from(recentTracks)
+    .innerJoin(track, eq(track.id, recentTracks.trackId))
+    .where(and(eq(recentTracks.userId, userId), eq(track.provider, provider)))
+    .orderBy(desc(recentTracks.playedAt))
     .limit(10);
 
   // Get total count
   const [{ count: totalCount }] = await db
     .select({ count: count() })
-    .from(recentSongs)
-    .innerJoin(track, eq(track.id, recentSongs.trackId))
-    .where(and(eq(recentSongs.userId, userId), eq(track.provider, provider)));
+    .from(recentTracks)
+    .innerJoin(track, eq(track.id, recentTracks.trackId))
+    .where(and(eq(recentTracks.userId, userId), eq(track.provider, provider)));
 
   return { count: totalCount, tracks: recent.map((r) => r.track) };
 }
@@ -48,25 +48,25 @@ export async function getUserLiked(
 ) {
   const { userId, provider } = args;
 
-  // Get liked songs with track information
+  // Get liked tracks with track information
   const liked = await db
     .select({
-      id: likedSongs.id,
-      createdAt: likedSongs.createdAt,
+      id: likedTracks.id,
+      createdAt: likedTracks.createdAt,
       track: track,
     })
-    .from(likedSongs)
-    .innerJoin(track, eq(track.id, likedSongs.trackId))
-    .where(and(eq(likedSongs.userId, userId), eq(track.provider, provider)))
-    .orderBy(desc(likedSongs.createdAt))
+    .from(likedTracks)
+    .innerJoin(track, eq(track.id, likedTracks.trackId))
+    .where(and(eq(likedTracks.userId, userId), eq(track.provider, provider)))
+    .orderBy(desc(likedTracks.createdAt))
     .limit(10);
 
   // Get total count
   const [{ count: totalCount }] = await db
     .select({ count: count() })
-    .from(likedSongs)
-    .innerJoin(track, eq(track.id, likedSongs.trackId))
-    .where(and(eq(likedSongs.userId, userId), eq(track.provider, provider)));
+    .from(likedTracks)
+    .innerJoin(track, eq(track.id, likedTracks.trackId))
+    .where(and(eq(likedTracks.userId, userId), eq(track.provider, provider)));
 
   return { count: totalCount, tracks: liked.map((l) => l.track) };
 }
@@ -78,13 +78,13 @@ export async function getTopLeaderboard(db: Database) {
 
   const trackIds = await db
     .select({
-      trackId: recentSongs.trackId,
-      count: count(recentSongs.id),
+      trackId: recentTracks.trackId,
+      count: count(recentTracks.id),
     })
-    .from(recentSongs)
-    .where(gte(recentSongs.playedAt, last3DaysStr))
-    .groupBy(recentSongs.trackId)
-    .orderBy(desc(count(recentSongs.id)))
+    .from(recentTracks)
+    .where(gte(recentTracks.playedAt, last3DaysStr))
+    .groupBy(recentTracks.trackId)
+    .orderBy(desc(count(recentTracks.id)))
     .limit(20);
 
   const trackIdsArray = trackIds.map((t) => t.trackId);
@@ -104,18 +104,18 @@ export async function getTopLeaderboard(db: Database) {
       duration: track.duration,
       previewUrl: track.previewUrl,
       link: track.link,
-      plays: count(recentSongs.id),
+      plays: count(recentTracks.id),
     })
     .from(track)
-    .innerJoin(recentSongs, eq(track.id, recentSongs.trackId))
+    .innerJoin(recentTracks, eq(track.id, recentTracks.trackId))
     .where(
       and(
         inArray(track.id, trackIdsArray),
-        gte(recentSongs.playedAt, last3DaysStr),
+        gte(recentTracks.playedAt, last3DaysStr),
       ),
     )
     .groupBy(track.id)
-    .orderBy(desc(count(recentSongs.id)));
+    .orderBy(desc(count(recentTracks.id)));
 
   return top;
 }
@@ -168,28 +168,23 @@ export async function getPlaylistWithTracks(
 
   if (!playlistData) return null;
 
-  // Get tracks for this playlist using join (same pattern as getUserRecent)
-  const playlistTracks = await db
+  const tracks = await db
     .select({
-      trackId: playlistTrack.trackId,
       track: track,
-      addedAt: playlistTrack.addedAt,
     })
     .from(playlistTrack)
-    .leftJoin(track, eq(playlistTrack.trackId, track.id))
+    .innerJoin(track, eq(playlistTrack.trackId, track.id))
     .where(eq(playlistTrack.playlistId, playlistId))
     .orderBy(playlistTrack.addedAt);
 
-  // Get earliest addedAt as creation date approximation
   const [{ createdAt }] = await db
     .select({ createdAt: min(playlistTrack.addedAt) })
     .from(playlistTrack)
     .where(eq(playlistTrack.playlistId, playlistId));
 
-  console.log("playlistTracks", playlistTracks);
   return {
     playlist: playlistData,
-    tracks: playlistTracks.filter((pt) => pt.track).map((pt) => pt.track),
+    tracks: tracks.map((t) => t.track),
     createdAt: createdAt || null,
   };
 }
@@ -200,9 +195,9 @@ export async function getPlaybacks(db: Database) {
       track: track,
     })
     .from(track)
-    .innerJoin(recentSongs, eq(track.id, recentSongs.trackId))
+    .innerJoin(recentTracks, eq(track.id, recentTracks.trackId))
     .groupBy(track.id)
-    .orderBy(desc(count(recentSongs.id)));
+    .orderBy(desc(count(recentTracks.id)));
 
   return playbacks;
 }
