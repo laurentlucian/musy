@@ -30,11 +30,12 @@ export function Image({
     return (
       <div
         className={cn(
-          "flex items-center justify-center rounded-full bg-muted text-muted-foreground",
+          "flex aspect-square flex-1 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground",
           className,
         )}
         style={{
-          ...(size && { width: size, height: size }),
+          width: size,
+          height: size,
           ...style,
         }}
       >

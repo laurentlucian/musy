@@ -55,3 +55,17 @@ export async function saveTracksforCurrentUser(
     query: { ids: trackIds.join(",") },
   });
 }
+
+/**
+ * Remove tracks for current user
+ */
+export async function removeTracksforCurrentUser(
+  token: string,
+  trackIds: string[],
+): Promise<void> {
+  await spotifyFetch<unknown>("https://api.spotify.com/v1/me/tracks", {
+    token,
+    method: "DELETE",
+    query: { ids: trackIds.join(",") },
+  });
+}

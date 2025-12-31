@@ -66,6 +66,9 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
 
       saveTracksforCurrentUser: (trackIds: string[]) =>
         trackEndpoints.saveTracksforCurrentUser(accessToken, trackIds),
+
+      removeTracksforCurrentUser: (trackIds: string[]) =>
+        trackEndpoints.removeTracksforCurrentUser(accessToken, trackIds),
     },
 
     player: {

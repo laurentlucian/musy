@@ -1,3 +1,4 @@
+import { RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
@@ -133,7 +134,7 @@ function LikedSyncButton({ userId }: { userId: string }) {
         fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });
       }}
     >
-      {isSyncing ? <Waver /> : "Full Sync"}
+      {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
 }

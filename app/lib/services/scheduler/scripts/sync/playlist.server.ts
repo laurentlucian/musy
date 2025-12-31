@@ -201,12 +201,48 @@ export async function syncUserPlaylists({
     }
 
     // Step 7: Sync tracks for changed playlists
+    const syncedPlaylistIds = new Set<string>();
     for (const playlistId of playlistsToSync) {
       await syncPlaylistTracks({
         playlistId,
         spotify,
         spotifyPlaylistsMap,
       });
+      syncedPlaylistIds.add(playlistId);
+    }
+
+    // Step 7b: Sync descriptions for playlists that weren't synced above
+    // This ensures descriptions stay in sync if they were changed in Spotify
+    // (playlists already synced in Step 7 already have updated descriptions)
+    const playlistsToCheckDescription = spotifyPlaylistIds.filter(
+      (id) => !syncedPlaylistIds.has(id),
+    );
+
+    // Sync descriptions using data from the original fetch (Spotify takes precedence)
+    if (playlistsToCheckDescription.length > 0) {
+      const descriptionUpdates = playlistsToCheckDescription
+        .map((playlistId) => {
+          const spotifyData = spotifyPlaylistsMap.get(playlistId);
+          if (!spotifyData) return null;
+          return {
+            playlistId,
+            description: spotifyData.description,
+          };
+        })
+        .filter(
+          (
+            update,
+          ): update is { playlistId: string; description: string | null } =>
+            update !== null,
+        );
+
+      // Batch update descriptions
+      for (const { playlistId, description } of descriptionUpdates) {
+        await db
+          .update(playlist)
+          .set({ description })
+          .where(eq(playlist.id, playlistId));
+      }
     }
 
     // Step 8: Update sync metadata

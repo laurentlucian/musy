@@ -1,8 +1,6 @@
-import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
-import { Suspense, use } from "react";
-import { Link, data, redirect, useFetcher } from "react-router";
+import { Suspense, use, useState } from "react";
+import { data, Link, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -13,6 +11,12 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
 import { getPlaylistWithTracks } from "~/lib/services/db/tracks.server";
@@ -207,34 +211,38 @@ function PlaylistActions({
 
   return (
     <>
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={isLoading}
-          onClick={handleLike}
-        >
-          {isLoading ? <Waver /> : "Like All"}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          disabled={isLoading}
-          onClick={() => setUnlikeDialogOpen(true)}
-        >
-          {isLoading ? <Waver /> : "Unlike All"}
-        </Button>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={isLoading}
+          >
+            {isLoading ? <Waver /> : "Bulk"}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={handleLike} disabled={isLoading}>
+            Like
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setUnlikeDialogOpen(true)}
+            disabled={isLoading}
+          >
+            Unlike
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
         <DialogContent>
           <DialogTitle>Unlike all songs?</DialogTitle>
           <DialogDescription>
-            This will unlike all {trackCount.toLocaleString()} songs in "{playlistName}". This action cannot be undone.
+            This will unlike all {trackCount.toLocaleString()} songs in "
+            {playlistName}". This action cannot be undone.
           </DialogDescription>
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
               <Button variant="outline" size="sm">
                 Cancel

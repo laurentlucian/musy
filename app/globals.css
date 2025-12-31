@@ -83,7 +83,7 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 10%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 10.9%;
     --chart-1: 220 70% 50%;
@@ -111,6 +111,7 @@
 
   html {
     font-family: "IBM Plex Mono", system-ui, sans-serif;
+    font-size: 15px;
   }
 
   /* body {
