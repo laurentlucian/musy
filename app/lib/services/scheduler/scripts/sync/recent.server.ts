@@ -130,11 +130,12 @@ export async function syncUserRecent({
     );
 
     // find existing recent tracks - use ISO strings for query (matching DB storage format)
-    // Batch queries to respect D1 param limit (99 per batch due to and() condition)
+    // Batch queries to respect D1 param limit (98 per batch: 1 for userId + 98 for IN array = 99 total, under 100 limit)
     const playedAtISOs = uniqueRecentTracks.map((s) => s.playedAtISO);
     const existingRecent: Array<{ playedAt: string | number }> = [];
-    for (let i = 0; i < playedAtISOs.length; i += queryBatchSize) {
-      const batch = playedAtISOs.slice(i, i + queryBatchSize);
+    const recentQueryBatchSize = 98; // Account for userId parameter in and() condition
+    for (let i = 0; i < playedAtISOs.length; i += recentQueryBatchSize) {
+      const batch = playedAtISOs.slice(i, i + recentQueryBatchSize);
       const batchResults = await db
         .select({ playedAt: recentTracks.playedAt })
         .from(recentTracks)
