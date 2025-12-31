@@ -65,22 +65,21 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function Profile({ loaderData }: Route.ComponentProps) {
   return (
-    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 py-2 sm:flex-row sm:items-start">
-      <div className="flex flex-1 flex-col gap-4">
-        <Suspense
-          fallback={
-            <div className="mx-auto py-10">
-              <Waver />
-            </div>
-          }
-        >
-          <Avatar
-            promise={loaderData.profile}
-            userId={loaderData.userId}
-            currentUserId={loaderData.currentUserId}
-          />
-        </Suspense>
-      </div>
+    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 py-2">
+      <Suspense
+        fallback={
+          <div className="mx-auto py-10">
+            <Waver />
+          </div>
+        }
+      >
+        <Avatar
+          promise={loaderData.profile}
+          userId={loaderData.userId}
+          currentUserId={loaderData.currentUserId}
+        />
+      </Suspense>
+      <Links userId={loaderData.userId} />
       <div className="flex flex-1 flex-col gap-2">
         <Outlet />
       </div>
@@ -122,7 +121,6 @@ function Avatar({
           {isOwnProfile && <SyncButton userId={userId} />}
         </div>
       </div>
-      <Links userId={userId} />
     </div>
   );
 }

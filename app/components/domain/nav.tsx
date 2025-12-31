@@ -1,4 +1,3 @@
-import { ChevronRight } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
 import { Button } from "~/components/ui/button";
@@ -49,7 +48,6 @@ export function NavLinkSub({
               {icon}
               {children}
             </div>
-            <ChevronRight strokeWidth={3} className="text-neutral-600" />
           </Button>
         );
       }}

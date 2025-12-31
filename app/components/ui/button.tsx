@@ -19,7 +19,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         nav: "text-neutral-300 text-xs hover:bg-neutral-600 hover:text-neutral-100 disabled:pointer-events-none disabled:bg-white disabled:text-black disabled:opacity-100 sm:w-full",
         "nav-sub":
-          "w-full min-w-64 justify-between bg-neutral-900 hover:bg-neutral-800",
+          "flex-1 justify-center bg-neutral-900 hover:bg-neutral-800",
       },
       size: {
         default: "h-10 px-4 py-2",

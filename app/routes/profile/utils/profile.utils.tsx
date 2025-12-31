@@ -1,6 +1,6 @@
 import { RefreshCcw } from "lucide-react";
 import { use } from "react";
-import { href, useFetcher, useNavigation, useSearchParams } from "react-router";
+import { useFetcher, useNavigation, useSearchParams } from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
@@ -76,19 +76,13 @@ export function SyncButton({ userId }: { userId: string }) {
 
 export function Links({ userId }: { userId: string }) {
   return (
-    <>
-      <NavLinkSub
-        to={href("/profile/:userId?", {
-          userId,
-        })}
-      >
-        Stats
-      </NavLinkSub>
+    <nav className="flex w-full gap-2">
+      <NavLinkSub to=".">Stats</NavLinkSub>
       <NavLinkSub to="top">Top</NavLinkSub>
       <NavLinkSub to="liked">Liked</NavLinkSub>
       <NavLinkSub to="recent">Listened</NavLinkSub>
       <NavLinkSub to="playlists">Playlists</NavLinkSub>
-    </>
+    </nav>
   );
 }
 
