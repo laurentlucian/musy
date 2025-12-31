@@ -140,8 +140,7 @@ export async function getUserPlaylists(
     .select()
     .from(playlist)
     .where(and(eq(playlist.userId, userId), eq(playlist.provider, provider)))
-    .orderBy(playlist.name)
-    .limit(10);
+    .orderBy(playlist.name);
 
   // Get total count
   const [{ count: totalCount }] = await db

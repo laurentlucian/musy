@@ -70,3 +70,53 @@ export async function getPlaylistTracks(
     },
   );
 }
+
+/**
+ * Create a new playlist for a user
+ */
+export async function createPlaylist(
+  token: string,
+  userId: string,
+  options: {
+    name: string;
+    description?: string;
+    public?: boolean;
+    collaborative?: boolean;
+  },
+): Promise<PlaylistObject> {
+  return spotifyFetch<PlaylistObject>(
+    `https://api.spotify.com/v1/users/${userId}/playlists`,
+    {
+      token,
+      method: "POST",
+      body: {
+        name: options.name,
+        description: options.description,
+        public: options.public ?? false,
+        collaborative: options.collaborative ?? false,
+      },
+    },
+  );
+}
+
+/**
+ * Add tracks to a playlist
+ */
+export async function addTracksToPlaylist(
+  token: string,
+  playlistId: string,
+  uris: string[],
+  position?: number,
+): Promise<{ snapshot_id: string }> {
+  return spotifyFetch<{ snapshot_id: string }>(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    {
+      token,
+      method: "POST",
+      body: {
+        uris,
+        ...(position !== undefined && { position }),
+      },
+    },
+  );
+}

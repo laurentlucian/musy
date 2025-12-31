@@ -94,6 +94,23 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
         options?: OptionalPlaylistTracksParams,
       ) =>
         playlistEndpoints.getPlaylistTracks(accessToken, playlistId, options),
+
+      createPlaylist: (
+        userId: string,
+        options: {
+          name: string;
+          description?: string;
+          public?: boolean;
+          collaborative?: boolean;
+        },
+      ) => playlistEndpoints.createPlaylist(accessToken, userId, options),
+
+      addTracksToPlaylist: (
+        playlistId: string,
+        uris: string[],
+        position?: number,
+      ) =>
+        playlistEndpoints.addTracksToPlaylist(accessToken, playlistId, uris, position),
     },
   };
 }

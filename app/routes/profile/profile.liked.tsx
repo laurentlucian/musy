@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { getUserLiked, type UserLiked } from "~/lib/services/db/tracks.server";
 import { db } from "~/lib/services/db.server";
+import { createPlaylistsByYear } from "~/lib/services/scheduler/scripts/create-playlists.server";
 import { syncUserLikedFull } from "~/lib/services/scheduler/scripts/sync/liked.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/profile.liked";
@@ -27,19 +28,29 @@ export async function action({ request, context }: Route.ActionArgs) {
   const intent = formData.get("intent");
   const userId = formData.get("userId");
 
-  if (intent !== "sync-liked" || userId !== currentUserId) {
+  if (userId !== currentUserId) {
     return data({ success: false, error: "Invalid request" }, { status: 400 });
   }
 
   try {
     const spotify = await getSpotifyClient({ userId });
-    await syncUserLikedFull({ userId, spotify });
-    return data({ success: true });
+
+    if (intent === "sync-liked") {
+      await syncUserLikedFull({ userId, spotify });
+      return data({ success: true });
+    }
+
+    if (intent === "create-playlists-by-year") {
+      const result = await createPlaylistsByYear({ userId, spotify });
+      return data(result);
+    }
+
+    return data({ success: false, error: "Invalid intent" }, { status: 400 });
   } catch (error) {
     return data(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Sync failed",
+        error: error instanceof Error ? error.message : "Operation failed",
       },
       { status: 500 },
     );
@@ -53,7 +64,10 @@ export default function ProfileLiked({
     <>
       <div className="flex h-12 items-center gap-2">
         <p className="text-muted-foreground text-sm">Liked</p>
-        <LikedSyncButton userId={userId} />
+        <div className="ml-auto flex gap-2">
+          <CreatePlaylistsButton userId={userId} />
+          <LikedSyncButton userId={userId} />
+        </div>
       </div>
       {liked && (
         <Suspense fallback={<Waver />}>
@@ -81,6 +95,29 @@ function LikedList(props: { tracks: UserLiked }) {
   );
 }
 
+function CreatePlaylistsButton({ userId }: { userId: string }) {
+  const fetcher = useFetcher();
+  const isCreating =
+    fetcher.state === "submitting" || fetcher.state === "loading";
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      disabled={isCreating}
+      onClick={() => {
+        fetcher.submit(
+          { intent: "create-playlists-by-year", userId },
+          { method: "post" },
+        );
+      }}
+    >
+      {isCreating ? <Waver /> : "Organize by Year"}
+    </Button>
+  );
+}
+
 function LikedSyncButton({ userId }: { userId: string }) {
   const fetcher = useFetcher();
   const isSyncing =
@@ -91,7 +128,6 @@ function LikedSyncButton({ userId }: { userId: string }) {
       type="button"
       size="sm"
       variant="outline"
-      className="ml-auto"
       disabled={isSyncing}
       onClick={() => {
         fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });

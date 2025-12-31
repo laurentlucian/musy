@@ -1,14 +1,27 @@
 import { format } from "date-fns";
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
 import { Suspense, use } from "react";
-import { Link, redirect } from "react-router";
+import { Link, data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
 import { getPlaylistWithTracks } from "~/lib/services/db/tracks.server";
 import { db } from "~/lib/services/db.server";
+import {
+  likePlaylistTracks,
+  unlikePlaylistTracks,
+} from "~/lib/services/scheduler/scripts/playlist-actions.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
 import type { Route } from "./+types/profile.playlists.$playlistId";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
@@ -24,6 +37,54 @@ export async function loader({ context, params }: Route.LoaderArgs) {
   };
 }
 
+export async function action({ request, context }: Route.ActionArgs) {
+  const currentUserId = context.get(userContext);
+  if (!currentUserId) {
+    return data({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const userId = formData.get("userId");
+  const playlistId = formData.get("playlistId");
+
+  if (userId !== currentUserId || !playlistId) {
+    return data({ success: false, error: "Invalid request" }, { status: 400 });
+  }
+
+  try {
+    const spotify = await getSpotifyClient({ userId: userId.toString() });
+
+    if (intent === "like-playlist") {
+      const result = await likePlaylistTracks({
+        userId: userId.toString(),
+        playlistId: playlistId.toString(),
+        spotify,
+      });
+      return data(result);
+    }
+
+    if (intent === "unlike-playlist") {
+      const result = await unlikePlaylistTracks({
+        userId: userId.toString(),
+        playlistId: playlistId.toString(),
+        spotify,
+      });
+      return data(result);
+    }
+
+    return data({ success: false, error: "Invalid intent" }, { status: 400 });
+  } catch (error) {
+    return data(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Operation failed",
+      },
+      { status: 500 },
+    );
+  }
+}
+
 export default function ProfilePlaylistDetail({
   loaderData: { userId, playlistData },
 }: Route.ComponentProps) {
@@ -33,7 +94,7 @@ export default function ProfilePlaylistDetail({
         <BackButton userId={userId} />
       </div>
       <Suspense fallback={<Waver />}>
-        <PlaylistDetailContent playlistData={playlistData} />
+        <PlaylistDetailContent userId={userId} playlistData={playlistData} />
       </Suspense>
     </>
   );
@@ -54,8 +115,10 @@ function BackButton({ userId }: { userId: string }) {
 }
 
 function PlaylistDetailContent({
+  userId,
   playlistData,
 }: {
+  userId: string;
   playlistData: ReturnType<typeof getPlaylistWithTracks>;
 }) {
   const data = use(playlistData);
@@ -94,6 +157,12 @@ function PlaylistDetailContent({
             </p>
           )}
         </div>
+        <PlaylistActions
+          userId={userId}
+          playlistId={playlist.id}
+          trackCount={tracks.length}
+          playlistName={playlist.name}
+        />
       </div>
 
       <div className="flex flex-col gap-y-2">
@@ -102,5 +171,86 @@ function PlaylistDetailContent({
         })}
       </div>
     </div>
+  );
+}
+
+function PlaylistActions({
+  userId,
+  playlistId,
+  trackCount,
+  playlistName,
+}: {
+  userId: string;
+  playlistId: string;
+  trackCount: number;
+  playlistName: string;
+}) {
+  const fetcher = useFetcher();
+  const [unlikeDialogOpen, setUnlikeDialogOpen] = useState(false);
+  const isLoading =
+    fetcher.state === "submitting" || fetcher.state === "loading";
+
+  const handleLike = () => {
+    fetcher.submit(
+      { intent: "like-playlist", userId, playlistId },
+      { method: "post" },
+    );
+  };
+
+  const handleUnlike = () => {
+    setUnlikeDialogOpen(false);
+    fetcher.submit(
+      { intent: "unlike-playlist", userId, playlistId },
+      { method: "post" },
+    );
+  };
+
+  return (
+    <>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={isLoading}
+          onClick={handleLike}
+        >
+          {isLoading ? <Waver /> : "Like All"}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={isLoading}
+          onClick={() => setUnlikeDialogOpen(true)}
+        >
+          {isLoading ? <Waver /> : "Unlike All"}
+        </Button>
+      </div>
+
+      <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
+        <DialogContent>
+          <DialogTitle>Unlike all songs?</DialogTitle>
+          <DialogDescription>
+            This will unlike all {trackCount.toLocaleString()} songs in "{playlistName}". This action cannot be undone.
+          </DialogDescription>
+          <div className="flex justify-end gap-2 mt-4">
+            <DialogClose asChild>
+              <Button variant="outline" size="sm">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleUnlike}
+              disabled={isLoading}
+            >
+              {isLoading ? <Waver /> : "Unlike All"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

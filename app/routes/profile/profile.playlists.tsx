@@ -89,8 +89,7 @@ export default function ProfilePlaylists({
 }
 
 function PlaylistsList(props: { playlists: UserPlaylists; userId: string }) {
-  const { playlists, count } = use(props.playlists);
-  const rest = count - playlists.length;
+  const { playlists } = use(props.playlists);
 
   return (
     <div className="flex flex-col gap-y-2">
@@ -103,10 +102,6 @@ function PlaylistsList(props: { playlists: UserPlaylists; userId: string }) {
           />
         );
       })}
-
-      <p className="mx-auto font-semibold text-muted-foreground text-xs">
-        {rest ? `+ ${rest.toLocaleString()}` : ""}
-      </p>
     </div>
   );
 }

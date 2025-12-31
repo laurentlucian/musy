@@ -183,9 +183,11 @@ function Avatar({
       <div className="flex items-center gap-2">
         {data.image && (
           <Image
-            className="size-10 rounded-full"
+            className="rounded-full"
+            height={40}
+            width={40}
             src={data.image}
-            alt={data.name ?? "pp"}
+            alt={data.name ?? "user"}
             name={data.name}
           />
         )}

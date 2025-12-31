@@ -108,7 +108,8 @@ const scopes = [
   "user-modify-playback-state", // to add to queue (can replace 'streaming' scope so we can integrate our own player to include more than just spotify)
   // "user-follow-modify", // used to (un)follow users/artists
   "user-library-modify", // used to save tracks to user's library
-  "playlist-modify-public", // create playlists with custom image
+  "playlist-modify-public", // create public playlists with custom image
+  // "playlist-modify-private", // create private playlists
   "user-top-read", // get top tracks
   // "user-follow-read", // allows to check users follows
 ];
