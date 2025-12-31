@@ -1,0 +1,148 @@
+import { Suspense, use } from "react";
+import { data, redirect, useFetcher } from "react-router";
+import { Waver } from "~/components/icons/waver";
+import { Button } from "~/components/ui/button";
+import { Image } from "~/components/ui/image";
+import { userContext } from "~/context";
+import {
+  getUserPlaylists,
+  type UserPlaylists,
+} from "~/lib/services/db/tracks.server";
+import { db } from "~/lib/services/db.server";
+import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
+import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import type { Route } from "./+types/profile.playlists";
+
+export async function loader({ context, params }: Route.LoaderArgs) {
+  const userId = params.userId ?? context.get(userContext);
+  if (!userId) throw redirect("/");
+
+  return {
+    userId,
+    playlists: getUserPlaylists(db, { userId, provider: "spotify" }),
+  };
+}
+
+export async function action({ request, context }: Route.ActionArgs) {
+  const currentUserId = context.get(userContext);
+  if (!currentUserId) {
+    return data({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const userId = formData.get("userId");
+
+  if (intent !== "sync-playlists" || userId !== currentUserId) {
+    return data({ success: false, error: "Invalid request" }, { status: 400 });
+  }
+
+  try {
+    const spotify = await getSpotifyClient({ userId });
+    await syncUserPlaylists({ userId, spotify });
+    return data({ success: true });
+  } catch (error) {
+    return data(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Sync failed",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export default function ProfilePlaylists({
+  loaderData: { userId, playlists },
+}: Route.ComponentProps) {
+  return (
+    <>
+      <div className="flex h-12 items-center gap-2">
+        <p className="text-muted-foreground text-sm">Playlists</p>
+        <PlaylistsSyncButton userId={userId} />
+      </div>
+      {playlists && (
+        <Suspense fallback={<Waver />}>
+          <PlaylistsList playlists={playlists} />
+        </Suspense>
+      )}
+    </>
+  );
+}
+
+function PlaylistsList(props: { playlists: UserPlaylists }) {
+  const { playlists, count } = use(props.playlists);
+  const rest = count - playlists.length;
+
+  return (
+    <div className="flex flex-col gap-y-2">
+      {playlists.map((playlist) => {
+        return <PlaylistItem key={playlist.id} playlist={playlist} />;
+      })}
+
+      <p className="mx-auto font-semibold text-muted-foreground text-xs">
+        {rest ? `+ ${rest.toLocaleString()}` : ""}
+      </p>
+    </div>
+  );
+}
+
+function PlaylistItem({
+  playlist,
+}: {
+  playlist: {
+    id: string;
+    name: string;
+    image: string;
+    total: number;
+    description: string | null;
+  };
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg bg-card p-3">
+      {playlist.image && (
+        <Image
+          className="size-12 rounded"
+          src={playlist.image}
+          alt={playlist.name}
+          name={playlist.name}
+        />
+      )}
+      <div className="flex flex-1 flex-col gap-1">
+        <p className="font-semibold text-sm">{playlist.name}</p>
+        {playlist.description && (
+          <p className="line-clamp-1 text-muted-foreground text-xs">
+            {playlist.description}
+          </p>
+        )}
+        <p className="text-muted-foreground text-xs">
+          {playlist.total} {playlist.total === 1 ? "track" : "tracks"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PlaylistsSyncButton({ userId }: { userId: string }) {
+  const fetcher = useFetcher();
+  const isSyncing =
+    fetcher.state === "submitting" || fetcher.state === "loading";
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      className="ml-auto"
+      disabled={isSyncing}
+      onClick={() => {
+        fetcher.submit(
+          { intent: "sync-playlists", userId },
+          { method: "post" },
+        );
+      }}
+    >
+      {isSyncing ? <Waver /> : "Sync"}
+    </Button>
+  );
+}

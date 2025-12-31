@@ -337,6 +337,7 @@ export const playlist = sqliteTable(
       }),
     total: integer().default(0).notNull(),
     provider: text().default("spotify").notNull(),
+    snapshotId: text("snapshot_id"),
   },
   (table) => [uniqueIndex("Playlist_id_key").on(table.id)],
 );

@@ -2,6 +2,7 @@ import { and, count, desc, eq, gte, inArray } from "drizzle-orm";
 import {
   feed,
   likedSongs,
+  playlist,
   recentSongs,
   recommended,
   track,
@@ -155,6 +156,30 @@ export async function getTrack(db: Database, trackId: string) {
   });
 
   return trackResult;
+}
+
+export type UserPlaylists = ReturnType<typeof getUserPlaylists>;
+export async function getUserPlaylists(
+  db: Database,
+  args: { userId: string; provider: string },
+) {
+  const { userId, provider } = args;
+
+  // Get playlists for user
+  const playlists = await db
+    .select()
+    .from(playlist)
+    .where(and(eq(playlist.userId, userId), eq(playlist.provider, provider)))
+    .orderBy(playlist.name)
+    .limit(10);
+
+  // Get total count
+  const [{ count: totalCount }] = await db
+    .select({ count: count() })
+    .from(playlist)
+    .where(and(eq(playlist.userId, userId), eq(playlist.provider, provider)));
+
+  return { count: totalCount, playlists };
 }
 
 export async function getPlaybacks(db: Database) {

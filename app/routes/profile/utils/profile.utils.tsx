@@ -86,6 +86,7 @@ export function Links({ userId }: { userId: string }) {
       </NavLinkSub>
       <NavLinkSub to="liked">Liked</NavLinkSub>
       <NavLinkSub to="recent">Listened</NavLinkSub>
+      <NavLinkSub to="playlists">Playlists</NavLinkSub>
     </>
   );
 }

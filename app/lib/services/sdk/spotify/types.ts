@@ -300,6 +300,49 @@ export interface RecentlyPlayedTracks {
   items?: PlayHistoryObject[];
 }
 
+// Playlist types
+export interface SimplifiedPlaylistObject {
+  collaborative: boolean;
+  description: string | null;
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  images: Image[];
+  name: string;
+  owner: UserProfile;
+  public: boolean | null;
+  snapshot_id: string;
+  tracks: {
+    href: string;
+    total: number;
+  };
+  type: string;
+  uri: string;
+}
+
+export interface PlaylistObject extends SimplifiedPlaylistObject {
+  followers?: Followers;
+  primary_color?: string | null;
+}
+
+export interface PlaylistTracksResponse extends PaginationResponseProps {
+  items: Array<{
+    added_at: string;
+    added_by?: UserProfile;
+    is_local: boolean;
+    track: Track | null;
+  }>;
+}
+
+export interface OptionalPlaylistParams extends PaginationParams {
+  market?: string;
+}
+
+export interface OptionalPlaylistTracksParams extends PaginationParams {
+  market?: string;
+  fields?: string;
+}
+
 // Auth types
 export interface OAuth2AccessTokenResponse {
   token_type: "bearer";

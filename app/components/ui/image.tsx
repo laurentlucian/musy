@@ -26,15 +26,15 @@ export function Image({
   const [showInitials, setShowInitials] = useState(false);
 
   if (showInitials && name) {
+    const size = width || height;
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-muted text-muted-foreground",
+          "flex items-center justify-center rounded-full bg-muted text-muted-foreground",
           className,
         )}
         style={{
-          width,
-          height,
+          ...(size && { width: size, height: size }),
           ...style,
         }}
       >

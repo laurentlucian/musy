@@ -8,6 +8,7 @@ import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
 import { likedSongs, profile, recentSongs, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
+import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
@@ -58,6 +59,7 @@ export async function action({ request, context }: Route.ActionArgs) {
       syncUserProfile({ userId, spotify }),
       syncUserRecent({ userId, spotify }),
       syncUserTop({ userId, spotify }),
+      syncUserPlaylists({ userId, spotify }),
     ]);
     return data({ success: true });
   } catch (error) {

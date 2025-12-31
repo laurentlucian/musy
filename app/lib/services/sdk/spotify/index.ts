@@ -27,10 +27,15 @@ export type {
   // Auth types
   OAuth2AccessTokenResponse,
   OptionalParams,
+  OptionalPlaylistParams,
+  OptionalPlaylistTracksParams,
   OptionalUserSavedTrackParams,
   PaginationParams,
   PaginationResponseProps,
   PlaybackState,
+  // Playlist types
+  PlaylistObject,
+  PlaylistTracksResponse,
   RecentlyPlayedTracks,
   RepeatState,
   Restrictions,
@@ -39,6 +44,8 @@ export type {
   SimplifiedAlbum,
   // Artist types
   SimplifiedArtist,
+  // Playlist types
+  SimplifiedPlaylistObject,
   // Track types
   SimplifiedTrack,
   TopItemsOptionalParams,

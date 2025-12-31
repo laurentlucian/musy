@@ -1,5 +1,6 @@
 import { refreshAccessToken } from "./endpoints/auth";
 import * as playerEndpoints from "./endpoints/player";
+import * as playlistEndpoints from "./endpoints/playlist";
 import * as trackEndpoints from "./endpoints/track";
 import * as userEndpoints from "./endpoints/user";
 import type {
@@ -7,6 +8,8 @@ import type {
   ArtistsUsersType,
   GetPlaybackStateParams,
   GetRecentlyPlayedTracksOptionalParams,
+  OptionalPlaylistParams,
+  OptionalPlaylistTracksParams,
   OptionalUserSavedTrackParams,
   TopItemsOptionalParams,
   UsersTopItemsType,
@@ -74,6 +77,20 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
 
       getPlaybackState: (params?: GetPlaybackStateParams) =>
         playerEndpoints.getPlaybackState(accessToken, params),
+    },
+
+    playlist: {
+      getCurrentUserPlaylists: (options?: OptionalPlaylistParams) =>
+        playlistEndpoints.getCurrentUserPlaylists(accessToken, options),
+
+      getPlaylist: (playlistId: string, options?: OptionalPlaylistParams) =>
+        playlistEndpoints.getPlaylist(accessToken, playlistId, options),
+
+      getPlaylistTracks: (
+        playlistId: string,
+        options?: OptionalPlaylistTracksParams,
+      ) =>
+        playlistEndpoints.getPlaylistTracks(accessToken, playlistId, options),
     },
   };
 }
