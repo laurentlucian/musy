@@ -112,6 +112,7 @@
   html {
     font-family: "IBM Plex Mono", system-ui, sans-serif;
     font-size: 15px;
+    scrollbar-gutter: stable;
   }
 
   /* body {

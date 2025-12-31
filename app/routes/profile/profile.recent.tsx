@@ -22,9 +22,6 @@ export default function ProfileRecent({
 }: Route.ComponentProps) {
   return (
     <>
-      <p className="flex h-12 items-center text-muted-foreground text-sm">
-        Listened
-      </p>
       {recent && (
         <Suspense fallback={<Waver />}>
           <RecentList tracks={recent} />

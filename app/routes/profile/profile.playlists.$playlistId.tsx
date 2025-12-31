@@ -31,12 +31,14 @@ import type { Route } from "./+types/profile.playlists.$playlistId";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
+  const currentUserId = context.get(userContext);
   const playlistId = params.playlistId;
 
   if (!userId || !playlistId) throw redirect("/");
 
   return {
     userId,
+    currentUserId,
     playlistId,
     playlistData: getPlaylistWithTracks(db, { playlistId, userId }),
   };
@@ -100,7 +102,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfilePlaylistDetail({
-  loaderData: { userId, playlistData },
+  loaderData: { userId, currentUserId, playlistData },
 }: Route.ComponentProps) {
   return (
     <>
@@ -108,7 +110,11 @@ export default function ProfilePlaylistDetail({
         <BackButton userId={userId} />
       </div>
       <Suspense fallback={<Waver />}>
-        <PlaylistDetailContent userId={userId} playlistData={playlistData} />
+        <PlaylistDetailContent
+          userId={userId}
+          currentUserId={currentUserId}
+          playlistData={playlistData}
+        />
       </Suspense>
     </>
   );
@@ -130,9 +136,11 @@ function BackButton({ userId }: { userId: string }) {
 
 function PlaylistDetailContent({
   userId,
+  currentUserId,
   playlistData,
 }: {
   userId: string;
+  currentUserId: string | null;
   playlistData: ReturnType<typeof getPlaylistWithTracks>;
 }) {
   const data = use(playlistData);
@@ -171,12 +179,14 @@ function PlaylistDetailContent({
             </p>
           )}
         </div>
-        <PlaylistActions
-          userId={userId}
-          playlistId={playlist.id}
-          trackCount={tracks.length}
-          playlistName={playlist.name}
-        />
+        {currentUserId === userId && (
+          <PlaylistActions
+            userId={userId}
+            playlistId={playlist.id}
+            trackCount={tracks.length}
+            playlistName={playlist.name}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-y-2">

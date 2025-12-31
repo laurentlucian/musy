@@ -24,10 +24,12 @@ import type { Route } from "./+types/profile.playlists";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
+  const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
   return {
     userId,
+    currentUserId,
     playlists: getUserPlaylists(db, { userId, provider: "spotify" }),
   };
 }
@@ -62,19 +64,19 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfilePlaylists({
-  loaderData: { userId, playlists },
+  loaderData: { userId, currentUserId, playlists },
 }: Route.ComponentProps) {
   const matches = useMatches();
   const isDetailRoute = matches.some(
     (match: { id?: string }) =>
       match.id === "routes/profile/profile.playlists.$playlistId",
   );
+  const isOwnProfile = currentUserId === userId;
 
   return (
     <>
-      {!isDetailRoute && (
+      {!isDetailRoute && isOwnProfile && (
         <div className="flex h-12 items-center gap-2">
-          <p className="text-muted-foreground text-sm">Playlists</p>
           <PlaylistsSyncButton userId={userId} />
         </div>
       )}

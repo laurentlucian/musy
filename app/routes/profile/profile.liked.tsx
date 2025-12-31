@@ -14,9 +14,14 @@ import type { Route } from "./+types/profile.liked";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
+  const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
-  return { userId, liked: getUserLiked(db, { userId, provider: "spotify" }) };
+  return {
+    userId,
+    currentUserId,
+    liked: getUserLiked(db, { userId, provider: "spotify" }),
+  };
 }
 
 export async function action({ request, context }: Route.ActionArgs) {
@@ -59,17 +64,20 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfileLiked({
-  loaderData: { userId, liked },
+  loaderData: { userId, currentUserId, liked },
 }: Route.ComponentProps) {
+  const isOwnProfile = currentUserId === userId;
+
   return (
     <>
-      <div className="flex h-12 items-center gap-2">
-        <p className="text-muted-foreground text-sm">Liked</p>
-        <div className="ml-auto flex gap-2">
-          <CreatePlaylistsButton userId={userId} />
-          <LikedSyncButton userId={userId} />
+      {isOwnProfile && (
+        <div className="flex items-center gap-2">
+          <div className="ml-auto flex gap-2">
+            <CreatePlaylistsButton userId={userId} />
+            <LikedSyncButton userId={userId} />
+          </div>
         </div>
-      </div>
+      )}
       {liked && (
         <Suspense fallback={<Waver />}>
           <LikedList tracks={liked} />

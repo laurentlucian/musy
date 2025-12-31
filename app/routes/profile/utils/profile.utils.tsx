@@ -82,8 +82,9 @@ export function Links({ userId }: { userId: string }) {
           userId,
         })}
       >
-        Top
+        Stats
       </NavLinkSub>
+      <NavLinkSub to="top">Top</NavLinkSub>
       <NavLinkSub to="liked">Liked</NavLinkSub>
       <NavLinkSub to="recent">Listened</NavLinkSub>
       <NavLinkSub to="playlists">Playlists</NavLinkSub>
@@ -106,8 +107,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
   const [params, setParams] = useSearchParams();
 
   return (
-    <div className="flex h-12 items-center gap-2">
-      <p className="text-muted-foreground text-sm">Top</p>
+    <div className="flex items-center gap-2">
       <Select
         value={type}
         onValueChange={(data) => {

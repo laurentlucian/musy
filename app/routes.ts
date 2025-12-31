@@ -11,6 +11,7 @@ export default [
   layout("routes/layout.root.tsx", [
     route("profile/:userId?", "routes/profile/profile.tsx", [
       index("routes/profile/profile.index.tsx"),
+      route("top", "routes/profile/profile.top.tsx"),
       route("liked", "routes/profile/profile.liked.tsx"),
       route("recent", "routes/profile/profile.recent.tsx"),
       route("playlists", "routes/profile/profile.playlists.tsx", [
