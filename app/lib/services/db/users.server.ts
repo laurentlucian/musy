@@ -26,7 +26,10 @@ export async function getProvider(args: {
 }) {
   try {
     const data = await db.query.provider.findFirst({
-      where: and(eq(provider.userId, args.userId), eq(provider.type, args.type)),
+      where: and(
+        eq(provider.userId, args.userId),
+        eq(provider.type, args.type),
+      ),
     });
     return data;
   } catch (error) {
@@ -34,12 +37,15 @@ export async function getProvider(args: {
     console.error("getProvider error:", {
       userId: args.userId,
       type: args.type,
-      error: error instanceof Error ? {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        cause: error.cause,
-      } : error,
+      error:
+        error instanceof Error
+          ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+              cause: error.cause,
+            }
+          : error,
     });
     throw error;
   }

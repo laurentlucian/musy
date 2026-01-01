@@ -1,7 +1,7 @@
 import type { InferSelectModel } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { db } from "~/lib/db";
-import type { artist, playlist, profile, track, user } from "~/lib/db/schema";
+import type { album, artist, playlist, profile, track, user } from "~/lib/db/schema";
 import * as schema from "~/lib/db/schema";
 import * as relations from "~/lib/db/relations";
 
@@ -13,6 +13,7 @@ export type Database = typeof db;
 
 export type Track = InferSelectModel<typeof track>;
 export type Artist = InferSelectModel<typeof artist>;
+export type Album = InferSelectModel<typeof album>;
 export type Playlist = InferSelectModel<typeof playlist>;
 export type User = InferSelectModel<typeof user>;
 export type Profile = InferSelectModel<typeof profile>;

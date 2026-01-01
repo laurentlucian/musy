@@ -3,17 +3,31 @@ import type { Track as TrackType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import { Image } from "../ui/image";
 
-function getArtistName(track: TrackType & { artists?: Array<{ artist?: { name?: string } }> }): string {
+function getArtistName(
+  track: TrackType & { artists?: Array<{ artist?: { name?: string } }> },
+): string {
   return track.artists?.[0]?.artist?.name || "Unknown";
 }
 
-function getArtistUri(track: TrackType & { artists?: Array<{ artist?: { uri?: string } }> }): string {
+function getArtistId(
+  track: TrackType & { artists?: Array<{ artist?: { id?: string } }> },
+): string | undefined {
+  return track.artists?.[0]?.artist?.id;
+}
+
+function getArtistUri(
+  track: TrackType & { artists?: Array<{ artist?: { uri?: string } }> },
+): string {
   return track.artists?.[0]?.artist?.uri || track.uri;
 }
 
 export function Track(
   props: {
-    track: TrackType & { artists?: Array<{ artist?: { name?: string; uri?: string } }> };
+    track: TrackType & {
+      artists?: Array<{
+        artist?: { id?: string; name?: string; uri?: string };
+      }>;
+    };
   } & React.ComponentProps<"a">,
 ) {
   const { track, ...rest } = props;
@@ -29,7 +43,11 @@ export function Track(
         />
         <div>
           <TrackName name={track.name} uri={track.uri} />
-          <TrackArtist artist={getArtistName(track)} uri={getArtistUri(track)} />
+          <TrackArtist
+            artist={getArtistName(track)}
+            artistId={getArtistId(track)}
+            uri={getArtistUri(track)}
+          />
         </div>
       </div>
     </Link>
@@ -60,9 +78,73 @@ export function TrackName(
 }
 
 export function TrackArtist(
-  props: { artist: string; uri: string } & React.ComponentProps<"a">,
+  props: {
+    artist: string;
+    artistId?: string;
+    uri: string;
+  } & React.ComponentProps<"a">,
 ) {
-  const { artist, className, uri, ...rest } = props;
+  const { artist, artistId, className, uri, ...rest } = props;
+
+  if (artistId) {
+    return (
+      <Link
+        className={cn(
+          "text-muted-foreground text-sm hover:underline",
+          className,
+        )}
+        to={`/artist/${artistId}`}
+        viewTransition
+        {...rest}
+      >
+        <span className="cursor-pointer hover:underline">{artist}</span>
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      className={cn(
+        "cursor-pointer text-muted-foreground text-sm hover:underline",
+        className,
+      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      href={uri}
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      {artist}
+    </a>
+  );
+}
+
+export function TrackAlbum(
+  props: {
+    album: string;
+    albumId?: string;
+    uri: string;
+  } & React.ComponentProps<"a">,
+) {
+  const { album, albumId, className, uri, ...rest } = props;
+
+  if (albumId) {
+    return (
+      <Link
+        className={cn(
+          "text-muted-foreground text-s hover:underline",
+          className,
+        )}
+        to={`/album/${albumId}`}
+        viewTransition
+        {...rest}
+      >
+        <span className="cursor-pointer hover:underline">{album}</span>
+      </Link>
+    );
+  }
+
   return (
     <a
       className={cn(
@@ -77,7 +159,7 @@ export function TrackArtist(
       }}
       {...rest}
     >
-      {artist}
+      {album}
     </a>
   );
 }

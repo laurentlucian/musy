@@ -31,7 +31,9 @@ export default [
       ]),
     ]),
   ]),
-  route("track/:trackId", "routes/track.tsx"),
+  route("track/:trackId", "routes/track/track.tsx"),
+  route("artist/:artistId", "routes/track/artist.tsx"),
+  route("album/:albumId", "routes/track/album.tsx"),
 
   route("actions/:action", "routes/resources/actions.ts"),
   route("api/auth/:provider/callback", "routes/resources/authenticate.ts"),

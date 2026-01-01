@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Artist as ArtistType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import { Image } from "../ui/image";
@@ -7,28 +8,21 @@ export function Artist(
     artist: ArtistType;
   } & React.ComponentProps<"a">,
 ) {
-  const { artist, className, ...rest } = props;
+  const { artist, ...rest } = props;
   return (
-    <a
-      className={cn(
-        "flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent",
-        className,
-      )}
-      target="_blank"
-      rel="noopener noreferrer"
-      href={props.artist.uri}
-      {...rest}
-    >
-      <ArtistImage
-        id={artist.id}
-        src={artist.image}
-        alt={artist.name}
-        width={80}
-        height={80}
-      />
+    <Link to={`/artist/${artist.id}`} viewTransition {...rest}>
+      <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
+        <ArtistImage
+          id={artist.id}
+          src={artist.image}
+          alt={artist.name}
+          width={80}
+          height={80}
+        />
 
-      <ArtistName name={artist.name} uri={artist.uri} />
-    </a>
+        <ArtistName name={artist.name} uri={artist.uri} />
+      </div>
+    </Link>
   );
 }
 
@@ -61,9 +55,9 @@ export function ArtistImage(
   const { className, id, alt, ...rest } = props;
   return (
     <Image
-      className={cn("rounded-full", className)}
+      className={cn("rounded", className)}
       style={{
-        viewTransitionName: `track-image-${id}`,
+        viewTransitionName: `artist-image-${id}`,
       }}
       name={alt}
       alt={alt}
