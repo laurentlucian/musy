@@ -39,7 +39,6 @@ export const user = sqliteTable("User", {
   id: text().primaryKey().notNull(),
   createdAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
   updatedAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
-  newId: text(),
 });
 
 export const profile = sqliteTable(
@@ -76,8 +75,6 @@ export const recentTracks = sqliteTable(
         onDelete: "restrict",
         onUpdate: "cascade",
       }),
-    action: text().default("recent").notNull(),
-    sessionId: integer(),
   },
   (table) => [
     uniqueIndex("RecentTracks_playedAt_userId_key").on(
