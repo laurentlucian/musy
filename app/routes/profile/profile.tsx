@@ -79,7 +79,7 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
           currentUserId={loaderData.currentUserId}
         />
       </Suspense>
-      <Links userId={loaderData.userId} />
+      <Links />
       <div className="flex flex-1 flex-col gap-2">
         <Outlet />
       </div>

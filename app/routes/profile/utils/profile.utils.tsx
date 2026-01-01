@@ -74,9 +74,9 @@ export function SyncButton({ userId }: { userId: string }) {
   );
 }
 
-export function Links({ userId }: { userId: string }) {
+export function Links() {
   return (
-    <nav className="flex w-full gap-2">
+    <nav className="flex w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth p-1">
       <NavLinkSub to=".">Stats</NavLinkSub>
       <NavLinkSub to="top">Top</NavLinkSub>
       <NavLinkSub to="liked">Liked</NavLinkSub>
