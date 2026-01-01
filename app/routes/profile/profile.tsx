@@ -22,10 +22,14 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 
   if (!userId) throw redirect("/");
 
+  const profile = await getProfile(userId);
+
+  if (!profile) throw data(null, { status: 404 });
+
   return {
     userId,
     currentUserId,
-    profile: getProfile(userId),
+    profile,
   };
 }
 
@@ -74,7 +78,7 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
         }
       >
         <Avatar
-          promise={loaderData.profile}
+          data={loaderData.profile}
           userId={loaderData.userId}
           currentUserId={loaderData.currentUserId}
         />
@@ -88,16 +92,14 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
 }
 
 function Avatar({
-  promise,
+  data,
   userId,
   currentUserId,
 }: {
-  promise: ReturnType<typeof getProfile>;
+  data: Awaited<ReturnType<typeof getProfile>>;
   userId: string;
   currentUserId: string | null;
 }) {
-  const data = use(promise);
-
   if (!data) return null;
 
   const isOwnProfile = currentUserId === userId;
