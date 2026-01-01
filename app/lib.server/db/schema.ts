@@ -1,7 +1,5 @@
 import { sql } from "drizzle-orm";
 import {
-  type AnySQLiteColumn,
-  foreignKey,
   index,
   integer,
   numeric,

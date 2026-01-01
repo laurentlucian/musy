@@ -76,7 +76,7 @@ export default function ProfilePlaylists({
   return (
     <>
       {!isDetailRoute && isOwnProfile && (
-        <div className="flex h-12 items-center gap-2">
+        <div className="flex items-center gap-2">
           <PlaylistsSyncButton userId={userId} />
         </div>
       )}

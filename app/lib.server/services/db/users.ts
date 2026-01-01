@@ -1,5 +1,7 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import {
+  album,
+  artist,
   likedTracks,
   playback,
   playbackHistory,
@@ -9,9 +11,11 @@ import {
   provider,
   recentTracks,
   stats,
+  sync,
   top,
   topArtists,
   topTracks,
+  track,
   trackToArtist,
   user,
 } from "~/lib.server/db/schema";
@@ -137,26 +141,43 @@ export async function getProfile(userId: string) {
 }
 
 export async function getStats(userId: string, year: number) {
-  let statsRecord = await db.query.stats.findFirst({
+  const statsRecord = await db.query.stats.findFirst({
     where: and(eq(stats.userId, userId), eq(stats.year, year)),
   });
 
   if (!statsRecord) {
-    await syncUserStats({ userId, year });
-    statsRecord = await db.query.stats.findFirst({
-      where: and(eq(stats.userId, userId), eq(stats.year, year)),
-    });
+    return null;
   }
 
-  if (!statsRecord) {
-    return {
-      liked: 0,
-      played: 0,
-      minutes: 0,
-      artist: undefined,
-      album: undefined,
-      song: undefined,
-    };
+  let trackId: string | undefined;
+  let artistId: string | undefined;
+  let albumId: string | undefined;
+
+  if (statsRecord.song) {
+    const trackResult = await db
+      .select({ id: track.id })
+      .from(track)
+      .where(eq(track.name, statsRecord.song))
+      .limit(1);
+    trackId = trackResult[0]?.id;
+  }
+
+  if (statsRecord.artist) {
+    const artistResult = await db
+      .select({ id: artist.id })
+      .from(artist)
+      .where(eq(artist.name, statsRecord.artist))
+      .limit(1);
+    artistId = artistResult[0]?.id;
+  }
+
+  if (statsRecord.album) {
+    const albumResult = await db
+      .select({ id: album.id })
+      .from(album)
+      .where(eq(album.name, statsRecord.album))
+      .limit(1);
+    albumId = albumResult[0]?.id;
   }
 
   return {
@@ -164,7 +185,38 @@ export async function getStats(userId: string, year: number) {
     played: statsRecord.played,
     minutes: Number.parseFloat(statsRecord.minutes.toString()),
     artist: statsRecord.artist || undefined,
+    artistId,
     album: statsRecord.album || undefined,
+    albumId,
     song: statsRecord.song || undefined,
+    trackId,
   };
+}
+
+export async function hasStats(userId: string, year: number) {
+  const statsRecord = await db.query.stats.findFirst({
+    where: and(eq(stats.userId, userId), eq(stats.year, year)),
+  });
+  return !!statsRecord;
+}
+
+export async function getStatsSyncState(userId: string) {
+  // Check for pending state first (most important for UI)
+  const pendingSync = await db.query.sync.findFirst({
+    where: and(
+      eq(sync.userId, userId),
+      eq(sync.type, "stats"),
+      eq(sync.state, "pending"),
+    ),
+  });
+
+  if (pendingSync) return "pending";
+
+  // Otherwise return the most recent sync state
+  const syncRecord = await db.query.sync.findFirst({
+    where: and(eq(sync.userId, userId), eq(sync.type, "stats")),
+    orderBy: desc(sync.updatedAt),
+  });
+
+  return syncRecord?.state ?? null;
 }

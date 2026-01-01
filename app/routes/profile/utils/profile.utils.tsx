@@ -20,12 +20,16 @@ export function Selector({ year }: { year: number | null }) {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
+  const isAll = year === null || year === 0;
+
   return (
     <Select
-      value={year?.toString() ?? "all"}
+      value={isAll ? "All" : year.toString()}
       onValueChange={(data) => {
         const newParams = { ...Object.fromEntries(params) };
-        if (data && data !== "all") {
+        if (data === "all") {
+          newParams.year = "all";
+        } else if (data) {
           newParams.year = data;
         } else {
           delete newParams.year;
@@ -36,9 +40,7 @@ export function Selector({ year }: { year: number | null }) {
       }}
     >
       <SelectTrigger className="min-w-[100px]">
-        <SelectValue>
-          {year?.toString() ?? "All"}
-        </SelectValue>
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">All</SelectItem>

@@ -62,7 +62,7 @@ export default function ProfileListened({
   return (
     <>
       {currentUserId === userId && (
-        <div className="flex h-12 items-center gap-2">
+        <div className="flex items-center gap-2">
           <ListenedSyncButton userId={userId} />
         </div>
       )}

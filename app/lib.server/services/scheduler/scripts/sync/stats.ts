@@ -15,6 +15,7 @@ import {
 } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
 import { getAllUsersId } from "~/lib.server/services/db/users";
+import { generateId } from "~/lib.server/services/utils";
 
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -88,6 +89,7 @@ function getTopItems(arg: {
 }
 
 async function getUserYearsWithData(userId: string): Promise<number[]> {
+  log(`fetching years with data for user ${userId}`, "stats");
   const years = new Set<number>();
 
   const recentDates = await db
@@ -131,7 +133,177 @@ async function getUserYearsWithData(userId: string): Promise<number[]> {
     addYearsFromDateRange(likedDates[0].minDate, likedDates[0].maxDate);
   }
 
-  return Array.from(years).sort();
+  const sortedYears = Array.from(years).sort();
+  log(
+    `found ${sortedYears.length} years with data for user ${userId}: ${sortedYears.join(", ")}`,
+    "stats",
+  );
+  return sortedYears;
+}
+
+export async function syncUserStatsAll({ userId }: { userId: string }) {
+  log(`starting all-time stats sync for user ${userId}`, "stats");
+  const now = new Date().toISOString();
+
+  // Mark sync as pending
+  await db
+    .insert(sync)
+    .values({
+      userId,
+      state: "pending",
+      type: "stats",
+      createdAt: now,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [sync.userId, sync.state, sync.type],
+      set: { state: "pending", updatedAt: now },
+    });
+
+  try {
+    const [{ count: liked }] = await db
+      .select({ count: count() })
+      .from(likedTracks)
+      .where(eq(likedTracks.userId, userId));
+
+    log(`found ${liked} total liked tracks for user ${userId}`, "stats");
+
+    let played = 0;
+    let minutes = 0;
+    const artists: Record<string, number> = {};
+    const albums: Record<string, number> = {};
+    const songs: Record<string, number> = {};
+
+    const take = 2500;
+    let skip = 0;
+    let all = false;
+    let batchNumber = 0;
+
+    while (!all) {
+      batchNumber++;
+      const rows = await db
+        .select({
+          track: {
+            uri: track.uri,
+            name: track.name,
+            duration: track.duration,
+          },
+          artistName: artist.name,
+          albumNameRel: album.name,
+        })
+        .from(recentTracks)
+        .innerJoin(track, eq(recentTracks.trackId, track.id))
+        .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
+        .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
+        .leftJoin(album, eq(track.albumId, album.id))
+        .where(eq(recentTracks.userId, userId))
+        .orderBy(desc(recentTracks.playedAt))
+        .limit(take)
+        .offset(skip);
+
+      log(
+        `processing batch ${batchNumber} for user ${userId} (all-time): ${rows.length} tracks (skip: ${skip})`,
+        "stats",
+      );
+
+      if (rows.length < take) {
+        all = true;
+      }
+
+      skip += rows.length;
+      const batch = calculateStats(rows);
+      played += batch.played;
+      minutes += batch.minutes;
+
+      for (const [artist, count] of Object.entries(batch.artists)) {
+        artists[artist] = (artists[artist] ?? 0) + count;
+      }
+      for (const [album, count] of Object.entries(batch.albums)) {
+        albums[album] = (albums[album] ?? 0) + count;
+      }
+      for (const [song, count] of Object.entries(batch.songs)) {
+        songs[song] = (songs[song] ?? 0) + count;
+      }
+    }
+
+    const topItems = getTopItems({ songs, albums, artists });
+
+    log(
+      `calculated all-time stats for user ${userId}: ${played} plays, ${Math.round(minutes)} minutes, top song: ${topItems.song || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
+      "stats",
+    );
+
+    const statsId = generateId();
+    const updatedAt = new Date().toISOString();
+    const year = 0;
+
+    // Always save stats record, even if all values are 0 or undefined
+    // This ensures we have a record indicating the sync completed
+    await db
+      .insert(stats)
+      .values({
+        id: statsId,
+        userId,
+        year,
+        played,
+        liked,
+        minutes: minutes.toString(),
+        song: topItems.song || null,
+        artist: topItems.artist || null,
+        album: topItems.album || null,
+        createdAt: updatedAt,
+        updatedAt: updatedAt,
+      })
+      .onConflictDoUpdate({
+        target: [stats.userId, stats.year],
+        set: {
+          played,
+          liked,
+          minutes: minutes.toString(),
+          song: topItems.song || null,
+          artist: topItems.artist || null,
+          album: topItems.album || null,
+          updatedAt: updatedAt,
+        },
+      });
+
+    log(`saved all-time stats to database for user ${userId}`, "stats");
+
+    // Mark sync as success
+    await db
+      .insert(sync)
+      .values({
+        userId,
+        state: "success",
+        type: "stats",
+        createdAt: updatedAt,
+        updatedAt: updatedAt,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: updatedAt },
+      });
+
+    log(`successfully synced all-time stats for user ${userId}`, "stats");
+  } catch (error) {
+    logError(`failed to sync all-time stats for user ${userId}: ${error}`);
+    // Mark sync as error
+    const errorAt = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
+        userId,
+        state: "error",
+        type: "stats",
+        createdAt: errorAt,
+        updatedAt: errorAt,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "error", updatedAt: errorAt },
+      });
+    throw error;
+  }
 }
 
 export async function syncUserStats({
@@ -141,110 +313,184 @@ export async function syncUserStats({
   userId: string;
   year: number;
 }) {
-  const date = setYear(new Date(), year);
-
-  const [{ count: liked }] = await db
-    .select({ count: count() })
-    .from(likedTracks)
-    .where(
-      and(
-        eq(likedTracks.userId, userId),
-        gte(likedTracks.createdAt, startOfYear(date).toISOString()),
-        lte(likedTracks.createdAt, endOfYear(date).toISOString()),
-      ),
-    );
-
-  let played = 0;
-  let minutes = 0;
-  const artists: Record<string, number> = {};
-  const albums: Record<string, number> = {};
-  const songs: Record<string, number> = {};
-
-  const take = 2500;
-  let skip = 0;
-  let all = false;
-
-  while (!all) {
-    const rows = await db
-      .select({
-        track: {
-          uri: track.uri,
-          name: track.name,
-          duration: track.duration,
-        },
-        artistName: artist.name,
-        albumNameRel: album.name,
-      })
-      .from(recentTracks)
-      .innerJoin(track, eq(recentTracks.trackId, track.id))
-      .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
-      .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
-      .leftJoin(album, eq(track.albumId, album.id))
-      .where(
-        and(
-          eq(recentTracks.userId, userId),
-          gte(recentTracks.playedAt, startOfYear(date).toISOString()),
-          lte(recentTracks.playedAt, endOfYear(date).toISOString()),
-        ),
-      )
-      .orderBy(desc(recentTracks.playedAt))
-      .limit(take)
-      .offset(skip);
-
-    if (rows.length < take) {
-      all = true;
-    }
-
-    skip += rows.length;
-    const batch = calculateStats(rows);
-    played += batch.played;
-    minutes += batch.minutes;
-
-    for (const [artist, count] of Object.entries(batch.artists)) {
-      artists[artist] = (artists[artist] ?? 0) + count;
-    }
-    for (const [album, count] of Object.entries(batch.albums)) {
-      albums[album] = (albums[album] ?? 0) + count;
-    }
-    for (const [song, count] of Object.entries(batch.songs)) {
-      songs[song] = (songs[song] ?? 0) + count;
-    }
-  }
-
-  const topItems = getTopItems({ songs, albums, artists });
-
+  log(`starting stats sync for user ${userId}, year ${year}`, "stats");
   const now = new Date().toISOString();
-  const statsId = `${userId}-${year}`;
 
+  // Mark sync as pending
   await db
-    .insert(stats)
+    .insert(sync)
     .values({
-      id: statsId,
       userId,
-      year,
-      played,
-      liked,
-      minutes: minutes.toString(),
-      song: topItems.song || null,
-      artist: topItems.artist || null,
-      album: topItems.album || null,
+      state: "pending",
+      type: "stats",
       createdAt: now,
       updatedAt: now,
     })
     .onConflictDoUpdate({
-      target: [stats.userId, stats.year],
-      set: {
+      target: [sync.userId, sync.state, sync.type],
+      set: { state: "pending", updatedAt: now },
+    });
+
+  try {
+    const date = setYear(new Date(), year);
+
+    const [{ count: liked }] = await db
+      .select({ count: count() })
+      .from(likedTracks)
+      .where(
+        and(
+          eq(likedTracks.userId, userId),
+          gte(likedTracks.createdAt, startOfYear(date).toISOString()),
+          lte(likedTracks.createdAt, endOfYear(date).toISOString()),
+        ),
+      );
+
+    log(
+      `found ${liked} liked tracks for user ${userId}, year ${year}`,
+      "stats",
+    );
+
+    let played = 0;
+    let minutes = 0;
+    const artists: Record<string, number> = {};
+    const albums: Record<string, number> = {};
+    const songs: Record<string, number> = {};
+
+    const take = 2500;
+    let skip = 0;
+    let all = false;
+    let batchNumber = 0;
+
+    while (!all) {
+      batchNumber++;
+      const rows = await db
+        .select({
+          track: {
+            uri: track.uri,
+            name: track.name,
+            duration: track.duration,
+          },
+          artistName: artist.name,
+          albumNameRel: album.name,
+        })
+        .from(recentTracks)
+        .innerJoin(track, eq(recentTracks.trackId, track.id))
+        .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
+        .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
+        .leftJoin(album, eq(track.albumId, album.id))
+        .where(
+          and(
+            eq(recentTracks.userId, userId),
+            gte(recentTracks.playedAt, startOfYear(date).toISOString()),
+            lte(recentTracks.playedAt, endOfYear(date).toISOString()),
+          ),
+        )
+        .orderBy(desc(recentTracks.playedAt))
+        .limit(take)
+        .offset(skip);
+
+      log(
+        `processing batch ${batchNumber} for user ${userId}, year ${year}: ${rows.length} tracks (skip: ${skip})`,
+        "stats",
+      );
+
+      if (rows.length < take) {
+        all = true;
+      }
+
+      skip += rows.length;
+      const batch = calculateStats(rows);
+      played += batch.played;
+      minutes += batch.minutes;
+
+      for (const [artist, count] of Object.entries(batch.artists)) {
+        artists[artist] = (artists[artist] ?? 0) + count;
+      }
+      for (const [album, count] of Object.entries(batch.albums)) {
+        albums[album] = (albums[album] ?? 0) + count;
+      }
+      for (const [song, count] of Object.entries(batch.songs)) {
+        songs[song] = (songs[song] ?? 0) + count;
+      }
+    }
+
+    const topItems = getTopItems({ songs, albums, artists });
+
+    log(
+      `calculated stats for user ${userId}, year ${year}: ${played} plays, ${Math.round(minutes)} minutes, top song: ${topItems.song || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
+      "stats",
+    );
+
+    const statsId = generateId();
+    const updatedAt = new Date().toISOString();
+
+    // Always save stats record, even if all values are 0 or undefined
+    // This ensures we have a record indicating the sync completed
+    await db
+      .insert(stats)
+      .values({
+        id: statsId,
+        userId,
+        year,
         played,
         liked,
         minutes: minutes.toString(),
         song: topItems.song || null,
         artist: topItems.artist || null,
         album: topItems.album || null,
-        updatedAt: now,
-      },
-    });
+        createdAt: updatedAt,
+        updatedAt: updatedAt,
+      })
+      .onConflictDoUpdate({
+        target: [stats.userId, stats.year],
+        set: {
+          played,
+          liked,
+          minutes: minutes.toString(),
+          song: topItems.song || null,
+          artist: topItems.artist || null,
+          album: topItems.album || null,
+          updatedAt: updatedAt,
+        },
+      });
 
-  log(`synced stats for ${userId} year ${year}`, "stats");
+    log(`saved stats to database for user ${userId}, year ${year}`, "stats");
+
+    // Mark sync as success
+    await db
+      .insert(sync)
+      .values({
+        userId,
+        state: "success",
+        type: "stats",
+        createdAt: updatedAt,
+        updatedAt: updatedAt,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "success", updatedAt: updatedAt },
+      });
+
+    log(`successfully synced stats for user ${userId}, year ${year}`, "stats");
+  } catch (error) {
+    logError(`failed to sync stats for user ${userId}, year ${year}: ${error}`);
+    // Mark sync as error
+    const errorAt = new Date().toISOString();
+    await db
+      .insert(sync)
+      .values({
+        userId,
+        state: "error",
+        type: "stats",
+        createdAt: errorAt,
+        updatedAt: errorAt,
+      })
+      .onConflictDoUpdate({
+        target: [sync.userId, sync.state, sync.type],
+        set: { state: "error", updatedAt: errorAt },
+      });
+    throw error;
+  }
 }
 
 export async function syncAllUsersStats() {
@@ -256,12 +502,20 @@ export async function syncAllUsersStats() {
     log(`syncing stats for ${activeUsers.length} users`, "stats");
 
     const BATCH_SIZE = 3;
+    const totalBatches = Math.ceil(activeUsers.length / BATCH_SIZE);
     for (let i = 0; i < activeUsers.length; i += BATCH_SIZE) {
+      const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
       const batch = activeUsers.slice(i, i + BATCH_SIZE);
+
+      log(
+        `processing batch ${batchNumber}/${totalBatches} (${batch.length} users)`,
+        "stats",
+      );
 
       await Promise.allSettled(
         batch.map(async (userId) => {
           try {
+            log(`checking sync status for user ${userId}`, "stats");
             const recentSync = await db.query.sync.findFirst({
               where: and(
                 eq(sync.userId, userId),
@@ -274,8 +528,15 @@ export async function syncAllUsersStats() {
             if (recentSync) {
               const updatedAt = new Date(recentSync.updatedAt).getTime();
               const now = Date.now();
-              if (now - updatedAt < SYNC_COOLDOWN_MS) {
-                log(`skipped - recent sync exists for ${userId}`, "stats");
+              const timeSinceSync = now - updatedAt;
+              if (timeSinceSync < SYNC_COOLDOWN_MS) {
+                const remainingCooldown = Math.ceil(
+                  (SYNC_COOLDOWN_MS - timeSinceSync) / 1000 / 60,
+                );
+                log(
+                  `skipped user ${userId} - recent sync exists (${remainingCooldown} minutes remaining in cooldown)`,
+                  "stats",
+                );
                 return;
               }
             }
@@ -283,10 +544,11 @@ export async function syncAllUsersStats() {
             const years = await getUserYearsWithData(userId);
 
             if (years.length === 0) {
-              log(`no data found for ${userId}`, "stats");
+              log(`no data found for user ${userId}`, "stats");
               return;
             }
 
+            log(`syncing ${years.length} years for user ${userId}`, "stats");
             for (const year of years) {
               await syncUserStats({ userId, year });
             }
@@ -328,12 +590,14 @@ export async function syncAllUsersStats() {
       );
 
       if (i + BATCH_SIZE < activeUsers.length) {
+        log(`waiting 2 seconds before next batch...`, "stats");
         await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     }
 
-    log("completed stats sync", "stats");
+    log(`completed stats sync for all ${activeUsers.length} users`, "stats");
   } catch (error) {
     logError(`stats sync failed: ${error}`);
+    throw error;
   }
 }
