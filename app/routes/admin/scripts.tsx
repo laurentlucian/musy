@@ -1,5 +1,6 @@
 import { Button } from "~/components/ui/button";
 import { enrichArtistsAndAlbums } from "~/lib/services/scheduler/scripts/enrich-artists-albums.server";
+import { logMissingData } from "~/lib/services/scheduler/scripts/log-missing-data.server";
 import { syncUsers } from "~/lib/services/scheduler/sync.server";
 import type { Route } from "./+types/scripts";
 
@@ -31,6 +32,11 @@ export default function Scripts(_: Route.ComponentProps) {
           Enrich Artists & Albums
         </Button>
       </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="log-missing-data">
+          Log Missing Data
+        </Button>
+      </form>
     </article>
   );
 }
@@ -57,5 +63,9 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "enrich-artists-albums") {
     await enrichArtistsAndAlbums();
+  }
+
+  if (intent === "log-missing-data") {
+    await logMissingData();
   }
 }
