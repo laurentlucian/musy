@@ -1,6 +1,6 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
-import { enrichArtistsAndAlbums } from "~/lib/services/scheduler/scripts/enrich-artists-albums.server";
-import { syncUsers } from "~/lib/services/scheduler/sync.server";
+import { enrichArtistsAndAlbums } from "~/lib.server/services/scheduler/scripts/enrich-artists-albums";
+import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),

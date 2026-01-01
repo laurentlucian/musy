@@ -2,8 +2,8 @@ import { format } from "date-fns";
 import { desc } from "drizzle-orm";
 import { href, useNavigate, useNavigation, useSubmit } from "react-router";
 import { Button } from "~/components/ui/button";
-import { sync } from "~/lib/db/schema";
-import { db } from "~/lib/services/db.server";
+import { sync } from "~/lib.server/db/schema";
+import { db } from "~/lib.server/services/db";
 import type { Route } from "./+types/syncs";
 
 export async function loader(_: Route.LoaderArgs) {

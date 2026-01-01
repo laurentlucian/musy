@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
-import { profile, provider } from "~/lib/db/schema";
-import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
-import { deleteUser } from "~/lib/services/db/users.server";
-import { db } from "~/lib/services/db.server";
+import { profile, provider } from "~/lib.server/db/schema";
+import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
+import { db } from "~/lib.server/services/db";
+import { deleteUser } from "~/lib.server/services/db/users";
 import type { Route } from "./+types/users";
 
 export async function loader(_: Route.LoaderArgs) {

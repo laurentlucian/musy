@@ -1,9 +1,9 @@
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import { AlbumArtist, AlbumImage, AlbumName } from "~/components/domain/album";
-import { getAlbum } from "~/lib/services/db/albums.server";
-import { db } from "~/lib/services/db.server";
-import { ellipsis } from "~/lib/utils";
+import { ellipsis } from "~/components/utils";
+import { db } from "~/lib.server/services/db";
+import { getAlbum } from "~/lib.server/services/db/albums";
 import type { Route } from "./+types/album";
 
 function getArtistName(album: any): string {

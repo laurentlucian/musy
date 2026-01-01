@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router";
-import type { Track as TrackType } from "~/lib/services/db.server";
-import { cn } from "~/lib/utils";
+import { cn } from "~/components/utils";
+import type { Track as TrackType } from "~/lib.server/services/db";
 import { Image } from "../ui/image";
 
 function getArtistName(

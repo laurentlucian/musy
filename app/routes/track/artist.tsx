@@ -1,9 +1,9 @@
 import { ChevronLeft } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import { ArtistImage, ArtistName } from "~/components/domain/artist";
-import { getArtist } from "~/lib/services/db/artists.server";
-import { db } from "~/lib/services/db.server";
-import { ellipsis } from "~/lib/utils";
+import { ellipsis } from "~/components/utils";
+import { db } from "~/lib.server/services/db";
+import { getArtist } from "~/lib.server/services/db/artists";
 import type { Route } from "./+types/artist";
 
 export function meta({ loaderData }: Route.MetaArgs) {

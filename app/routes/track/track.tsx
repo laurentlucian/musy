@@ -10,9 +10,9 @@ import {
   TrackLikeButton,
   TrackQueueButton,
 } from "~/components/domain/track-actions";
-import { getTrack } from "~/lib/services/db/tracks.server";
-import { db } from "~/lib/services/db.server";
-import { ellipsis } from "~/lib/utils";
+import { ellipsis } from "~/components/utils";
+import { db } from "~/lib.server/services/db";
+import { getTrack } from "~/lib.server/services/db/tracks";
 import type { Route } from "./+types/track";
 
 function getArtistName(track: any): string {

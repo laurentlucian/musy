@@ -1,8 +1,12 @@
-import { User, Settings } from "lucide-react";
+import { Settings, User } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
 import { Button } from "~/components/ui/button";
-import { pwa } from "~/lib/utils";
+
+function pwa() {
+  // @ts-expect-error - standalone is not defined in the type navigator
+  return typeof window !== "undefined" && window.navigator.standalone;
+}
 
 export function Nav() {
   return (

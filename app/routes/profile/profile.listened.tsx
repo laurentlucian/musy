@@ -6,13 +6,13 @@ import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
+import { db } from "~/lib.server/services/db";
 import {
   getUserRecent,
   type UserRecent,
-} from "~/lib/services/db/tracks.server";
-import { db } from "~/lib/services/db.server";
-import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+} from "~/lib.server/services/db/tracks";
+import { syncUserRecent } from "~/lib.server/services/scheduler/scripts/sync/recent";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/profile.listened";
 
 export async function loader({ context, params }: Route.LoaderArgs) {

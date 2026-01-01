@@ -14,11 +14,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 import { Toaster } from "~/components/ui/sonner";
+import { log } from "~/components/utils";
 import { userContext } from "~/context";
 import stylesheet from "~/globals.css?url";
-import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
-import { sessionStorage } from "~/lib/services/session.server";
-import { log } from "~/lib/utils";
+import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
+import { sessionStorage } from "~/lib.server/services/session";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

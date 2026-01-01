@@ -5,8 +5,14 @@ import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
-import { db } from "~/lib/db";
-import { artist, top, topArtists, topTracks, track } from "~/lib/db/schema";
+import { db } from "~/lib.server/db";
+import {
+  artist,
+  top,
+  topArtists,
+  topTracks,
+  track,
+} from "~/lib.server/db/schema";
 
 export async function getTopData({
   userId,
@@ -38,7 +44,7 @@ export async function getTopData({
     const trackIds = tracksRecord.trackIds.split(",");
     const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
     const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
-    
+
     for (let i = 0; i < trackIds.length; i += queryBatchSize) {
       const batch = trackIds.slice(i, i + queryBatchSize);
       const batchTracks = await db.query.track.findMany({
@@ -59,7 +65,7 @@ export async function getTopData({
     const trackMap = new Map(tracks.map((t) => [t.id, t]));
     const orderedTracks = trackIds
       .map((id) => trackMap.get(id))
-      .filter((t): t is NonNullable<typeof tracks[0]> => t !== undefined);
+      .filter((t): t is NonNullable<(typeof tracks)[0]> => t !== undefined);
 
     return { tracks: orderedTracks };
   } else {

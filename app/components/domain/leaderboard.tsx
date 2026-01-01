@@ -1,5 +1,5 @@
 import { use } from "react";
-import type { getTopLeaderboard } from "~/lib/services/db/tracks.server";
+import type { getTopLeaderboard } from "~/lib.server/services/db/tracks";
 import { Track } from "./track";
 
 export function Leaderboard(props: {

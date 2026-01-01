@@ -15,11 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { userContext } from "~/context";
-import { getUserLiked, type UserLiked } from "~/lib/services/db/tracks.server";
-import { db } from "~/lib/services/db.server";
-import { createPlaylistsByYear } from "~/lib/services/scheduler/scripts/create-playlists.server";
-import { syncUserLikedFull } from "~/lib/services/scheduler/scripts/sync/liked.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { db } from "~/lib.server/services/db";
+import { getUserLiked, type UserLiked } from "~/lib.server/services/db/tracks";
+import { createPlaylistsByYear } from "~/lib.server/services/scheduler/scripts/create-playlists";
+import { syncUserLikedFull } from "~/lib.server/services/scheduler/scripts/sync/liked";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/profile.liked";
 

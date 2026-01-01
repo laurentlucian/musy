@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { data, redirect } from "react-router";
+import { logError } from "~/components/utils";
 import { userContext } from "~/context";
-import { track } from "~/lib/db/schema";
-import { db } from "~/lib/services/db.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
-import { logError } from "~/lib/utils";
+import { track } from "~/lib.server/db/schema";
+import { db } from "~/lib.server/services/db";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/actions";
 
 export function loader() {

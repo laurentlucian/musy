@@ -1,6 +1,6 @@
 import { Form, redirect } from "react-router";
 import { userContext } from "~/context";
-import { authenticator } from "~/lib/services/auth.server";
+import { authenticator } from "~/lib.server/services/auth";
 import type { Route } from "./+types/index";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
@@ -24,8 +24,8 @@ export default function Index({ loaderData }: Route.ComponentProps) {
     <main className="flex min-h-dvh w-full max-w-dvw flex-1 flex-col items-center justify-center gap-4 px-8">
       {error && (
         <div className="w-full max-w-sm rounded-lg border border-red-200 bg-red-50 p-3 text-red-800">
-          <p className="text-xs font-medium">{error}</p>
-          {code && <p className="mt-1 text-xs text-red-600">Code: {code}</p>}
+          <p className="font-medium text-xs">{error}</p>
+          {code && <p className="mt-1 text-red-600 text-xs">Code: {code}</p>}
         </div>
       )}
       <Form method="post" className="w-full max-w-sm">

@@ -1,7 +1,7 @@
 import { format, millisecondsToMinutes } from "date-fns";
 import { count, eq } from "drizzle-orm";
-import { artist, track, trackToArtist } from "~/lib/db/schema";
-import { db } from "~/lib/services/db.server";
+import { artist, track, trackToArtist } from "~/lib.server/db/schema";
+import { db } from "~/lib.server/services/db";
 import type { Route } from "./+types/tracks";
 
 export async function loader(_: Route.LoaderArgs) {

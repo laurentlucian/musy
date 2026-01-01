@@ -6,8 +6,8 @@ import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
-import { getStats } from "~/lib/services/db/users.server";
-import { syncUserStats } from "~/lib/services/scheduler/scripts/sync/stats.server";
+import { getStats } from "~/lib.server/services/db/users";
+import { syncUserStats } from "~/lib.server/services/scheduler/scripts/sync/stats";
 import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/profile.stats";
 

@@ -13,13 +13,13 @@ import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
+import { db } from "~/lib.server/services/db";
 import {
   getUserPlaylists,
   type UserPlaylists,
-} from "~/lib/services/db/tracks.server";
-import { db } from "~/lib/services/db.server";
-import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+} from "~/lib.server/services/db/tracks";
+import { syncUserPlaylists } from "~/lib.server/services/scheduler/scripts/sync/playlist";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/profile.playlists";
 
 export async function loader({ context, params }: Route.LoaderArgs) {

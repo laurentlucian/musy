@@ -1,7 +1,7 @@
 import { Button } from "~/components/ui/button";
-import { enrichArtistsAndAlbums } from "~/lib/services/scheduler/scripts/enrich-artists-albums.server";
-import { logMissingData } from "~/lib/services/scheduler/scripts/log-missing-data.server";
-import { syncUsers } from "~/lib/services/scheduler/sync.server";
+import { enrichArtistsAndAlbums } from "~/lib.server/services/scheduler/scripts/enrich-artists-albums";
+import { logMissingData } from "~/lib.server/services/scheduler/scripts/log-missing-data";
+import { syncUsers } from "~/lib.server/services/scheduler/sync";
 import type { Route } from "./+types/scripts";
 
 export default function Scripts(_: Route.ComponentProps) {

@@ -3,12 +3,12 @@ import { data, Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
-import { getProfile } from "~/lib/services/db/users.server";
-import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
-import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
-import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
-import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { getProfile } from "~/lib.server/services/db/users";
+import { syncUserPlaylists } from "~/lib.server/services/scheduler/scripts/sync/playlist";
+import { syncUserProfile } from "~/lib.server/services/scheduler/scripts/sync/profile";
+import { syncUserRecent } from "~/lib.server/services/scheduler/scripts/sync/recent";
+import { syncUserTop } from "~/lib.server/services/scheduler/scripts/sync/top";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
   Links,
   Loader,

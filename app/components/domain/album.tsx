@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import type { Album as AlbumType } from "~/lib/services/db.server";
-import { cn } from "~/lib/utils";
+import { cn } from "~/components/utils";
+import type { Album as AlbumType } from "~/lib.server/services/db";
 import { Image } from "../ui/image";
 
 export function Album(

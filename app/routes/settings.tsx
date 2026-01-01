@@ -2,8 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
-import { ADMIN_USER_ID, DEV } from "~/lib/services/auth/const";
-import { sessionStorage } from "~/lib/services/session.server";
+import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
+import { sessionStorage } from "~/lib.server/services/session";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
 

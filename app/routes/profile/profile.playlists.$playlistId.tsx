@@ -19,14 +19,14 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
-import { getPlaylistWithTracks } from "~/lib/services/db/tracks.server";
-import { db } from "~/lib/services/db.server";
+import { db } from "~/lib.server/services/db";
+import { getPlaylistWithTracks } from "~/lib.server/services/db/tracks";
 import {
   likePlaylistTracks,
   unlikePlaylistTracks,
-} from "~/lib/services/scheduler/scripts/playlist-actions.server";
-import { syncSinglePlaylist } from "~/lib/services/scheduler/scripts/sync/playlist.server";
-import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+} from "~/lib.server/services/scheduler/scripts/playlist-actions";
+import { syncSinglePlaylist } from "~/lib.server/services/scheduler/scripts/sync/playlist";
+import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/profile.playlists.$playlistId";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
@@ -213,11 +213,14 @@ function PlaylistActions({
 }) {
   const fetcher = useFetcher();
   const [unlikeDialogOpen, setUnlikeDialogOpen] = useState(false);
-  const isSubmitting = fetcher.state === "submitting" || fetcher.state === "loading";
+  const isSubmitting =
+    fetcher.state === "submitting" || fetcher.state === "loading";
   const currentIntent = fetcher.formData?.get("intent")?.toString();
-  
+
   const isSyncing = isSubmitting && currentIntent === "sync-playlist";
-  const isBulkAction = isSubmitting && (currentIntent === "like-playlist" || currentIntent === "unlike-playlist");
+  const isBulkAction =
+    isSubmitting &&
+    (currentIntent === "like-playlist" || currentIntent === "unlike-playlist");
 
   const handleLike = () => {
     fetcher.submit(
