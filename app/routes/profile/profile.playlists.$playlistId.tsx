@@ -158,6 +158,16 @@ function PlaylistDetailContent({
 
   return (
     <div className="flex flex-col gap-4">
+      {currentUserId === userId && (
+        <div className="flex items-center gap-2">
+          <PlaylistActions
+            userId={userId}
+            playlistId={playlist.id}
+            trackCount={tracks.length}
+            playlistName={playlist.name}
+          />
+        </div>
+      )}
       <div className="flex items-center gap-3 rounded-lg bg-card p-4">
         {hasImage ? (
           <Image
@@ -179,14 +189,6 @@ function PlaylistDetailContent({
             </p>
           )}
         </div>
-        {currentUserId === userId && (
-          <PlaylistActions
-            userId={userId}
-            playlistId={playlist.id}
-            trackCount={tracks.length}
-            playlistName={playlist.name}
-          />
-        )}
       </div>
 
       <div className="flex flex-col gap-y-2">

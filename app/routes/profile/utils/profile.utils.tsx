@@ -85,7 +85,7 @@ export function Links() {
       <NavLinkSub to=".">Stats</NavLinkSub>
       <NavLinkSub to="top">Top</NavLinkSub>
       <NavLinkSub to="liked">Liked</NavLinkSub>
-      <NavLinkSub to="recent">Listened</NavLinkSub>
+      <NavLinkSub to="listened">Listened</NavLinkSub>
       <NavLinkSub to="playlists">Playlists</NavLinkSub>
     </nav>
   );

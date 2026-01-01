@@ -153,7 +153,6 @@ function PlaylistsSyncButton({ userId }: { userId: string }) {
       type="button"
       size="sm"
       variant="outline"
-      className="ml-auto"
       disabled={isSyncing}
       onClick={() => {
         fetcher.submit(

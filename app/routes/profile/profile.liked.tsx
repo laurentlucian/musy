@@ -1,10 +1,19 @@
 import { format } from "date-fns";
-import { RefreshCcw } from "lucide-react";
+import { Plus, RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { userContext } from "~/context";
 import { getUserLiked, type UserLiked } from "~/lib/services/db/tracks.server";
 import { db } from "~/lib/services/db.server";
@@ -80,7 +89,7 @@ export default function ProfileLiked({
       <div className="flex items-center gap-2">
         <Selector year={year} />
         {isOwnProfile && (
-          <div className="ml-auto flex gap-2">
+          <div className="flex gap-2">
             <CreatePlaylistsButton userId={userId} />
             <LikedSyncButton userId={userId} />
           </div>
@@ -120,21 +129,34 @@ function CreatePlaylistsButton({ userId }: { userId: string }) {
   const isCreating =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
+  const handleCreateByYear = () => {
+    fetcher.submit(
+      { intent: "create-playlists-by-year", userId },
+      { method: "post" },
+    );
+  };
+
   return (
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      disabled={isCreating}
-      onClick={() => {
-        fetcher.submit(
-          { intent: "create-playlists-by-year", userId },
-          { method: "post" },
-        );
-      }}
-    >
-      {isCreating ? <Waver /> : "Organize by Year"}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button type="button" size="sm" variant="outline" disabled={isCreating}>
+          {isCreating ? <Waver /> : <Plus />}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Playlists</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem
+              onClick={handleCreateByYear}
+              disabled={isCreating}
+            >
+              By Year
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
