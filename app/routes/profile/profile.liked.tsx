@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
@@ -10,17 +11,23 @@ import { db } from "~/lib/services/db.server";
 import { createPlaylistsByYear } from "~/lib/services/scheduler/scripts/create-playlists.server";
 import { syncUserLikedFull } from "~/lib/services/scheduler/scripts/sync/liked.server";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
+import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/profile.liked";
 
-export async function loader({ context, params }: Route.LoaderArgs) {
+export async function loader({ context, params, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
   const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
+  const url = new URL(request.url);
+  const yearParam = url.searchParams.get("year");
+  const year = yearParam ? +yearParam : undefined;
+
   return {
     userId,
     currentUserId,
-    liked: getUserLiked(db, { userId, provider: "spotify" }),
+    year: year ?? null,
+    liked: getUserLiked(db, { userId, provider: "spotify", year }),
   };
 }
 
@@ -64,20 +71,21 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfileLiked({
-  loaderData: { userId, currentUserId, liked },
+  loaderData: { userId, currentUserId, year, liked },
 }: Route.ComponentProps) {
   const isOwnProfile = currentUserId === userId;
 
   return (
     <>
-      {isOwnProfile && (
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
+        <Selector year={year} />
+        {isOwnProfile && (
           <div className="ml-auto flex gap-2">
             <CreatePlaylistsButton userId={userId} />
             <LikedSyncButton userId={userId} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
       {liked && (
         <Suspense fallback={<Waver />}>
           <LikedList tracks={liked} />
@@ -94,7 +102,10 @@ function LikedList(props: { tracks: UserLiked }) {
   return (
     <div className="flex flex-col gap-y-2">
       {tracks.map((track) => {
-        return <Track key={track.name} track={track} />;
+        const extraInfo = track.likedAt
+          ? format(new Date(track.likedAt), "MMM d, y")
+          : undefined;
+        return <Track key={track.name} track={track} extraInfo={extraInfo} />;
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">

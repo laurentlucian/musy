@@ -1,4 +1,5 @@
-import { and, asc, count, desc, eq, gte, inArray, min } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, lte, min } from "drizzle-orm";
+import { endOfYear, setYear, startOfYear } from "date-fns";
 import {
   album,
   artist,
@@ -69,9 +70,22 @@ export async function getUserRecent(
 export type UserLiked = ReturnType<typeof getUserLiked>;
 export async function getUserLiked(
   db: Database,
-  args: { userId: string; provider: string },
+  args: { userId: string; provider: string; year?: number },
 ) {
-  const { userId, provider } = args;
+  const { userId, provider, year } = args;
+
+  const whereConditions = [
+    eq(likedTracks.userId, userId),
+    eq(track.provider, provider),
+  ];
+
+  if (year !== undefined) {
+    const date = setYear(new Date(), year);
+    whereConditions.push(
+      gte(likedTracks.createdAt, startOfYear(date).toISOString()),
+      lte(likedTracks.createdAt, endOfYear(date).toISOString()),
+    );
+  }
 
   // Get liked tracks with track information
   const liked = await db
@@ -82,16 +96,21 @@ export async function getUserLiked(
     })
     .from(likedTracks)
     .innerJoin(track, eq(track.id, likedTracks.trackId))
-    .where(and(eq(likedTracks.userId, userId), eq(track.provider, provider)))
+    .where(and(...whereConditions))
     .orderBy(desc(likedTracks.createdAt))
-    .limit(10);
+    .limit(100);
 
   // Get total count
   const [{ count: totalCount }] = await db
     .select({ count: count() })
     .from(likedTracks)
     .innerJoin(track, eq(track.id, likedTracks.trackId))
-    .where(and(eq(likedTracks.userId, userId), eq(track.provider, provider)));
+    .where(and(...whereConditions));
+
+  // Create map of trackId to createdAt
+  const createdAtMap = new Map(
+    liked.map((l) => [l.trackId, l.createdAt]),
+  );
 
   // Load tracks with relations (batch queries to respect SQLite param limit)
   // Using smaller batch size due to relation subqueries adding parameters
@@ -115,7 +134,20 @@ export async function getUserLiked(
     tracks.push(...batchTracks);
   }
 
-  return { count: totalCount, tracks };
+  // Preserve order and add createdAt
+  const trackMap = new Map(tracks.map((t) => [t.id, t]));
+  const orderedTracks = trackIds
+    .map((id) => {
+      const track = trackMap.get(id);
+      if (!track) return null;
+      return {
+        ...track,
+        likedAt: createdAtMap.get(id),
+      };
+    })
+    .filter((t): t is NonNullable<typeof t> => t !== null);
+
+  return { count: totalCount, tracks: orderedTracks };
 }
 
 export type TopLeaderboard = Awaited<ReturnType<typeof getTopLeaderboard>>;

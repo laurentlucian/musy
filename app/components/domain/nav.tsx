@@ -1,3 +1,4 @@
+import { User, Settings } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
 import { Button } from "~/components/ui/button";
@@ -10,8 +11,12 @@ export function Nav() {
       data-pwa={pwa}
     >
       <Logo />
-      <NavLink to="/profile">profile</NavLink>
-      <NavLink to="/settings">settings</NavLink>
+      <NavLink to="/profile">
+        <User />
+      </NavLink>
+      <NavLink to="/settings">
+        <Settings />
+      </NavLink>
     </nav>
   );
 }

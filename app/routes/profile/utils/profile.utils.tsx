@@ -15,15 +15,17 @@ import {
 } from "~/components/ui/select";
 import type { getTopData } from "~/routes/profile/utils/profile.server";
 
-export function Selector({ year }: { year: number }) {
+export function Selector({ year }: { year: number | null }) {
   const [params, setParams] = useSearchParams();
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
   return (
     <Select
-      value={year.toString()}
+      value={year?.toString() ?? "all"}
       onValueChange={(data) => {
         const newParams = { ...Object.fromEntries(params) };
-        if (data) {
+        if (data && data !== "all") {
           newParams.year = data;
         } else {
           delete newParams.year;
@@ -34,14 +36,17 @@ export function Selector({ year }: { year: number }) {
       }}
     >
       <SelectTrigger className="min-w-[100px]">
-        <SelectValue />
+        <SelectValue>
+          {year?.toString() ?? "All"}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="2025">2025</SelectItem>
-        <SelectItem value="2024">2024</SelectItem>
-        <SelectItem value="2023">2023</SelectItem>
-        <SelectItem value="2022">2022</SelectItem>
-        <SelectItem value="2021">2021</SelectItem>
+        <SelectItem value="all">All</SelectItem>
+        {years.map((y) => (
+          <SelectItem key={y} value={y.toString()}>
+            {y}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

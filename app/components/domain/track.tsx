@@ -27,10 +27,12 @@ export function Track(
       artists?: Array<{
         artist?: { id?: string; name?: string; uri?: string };
       }>;
+      likedAt?: string;
     };
+    extraInfo?: React.ReactNode;
   } & React.ComponentProps<"a">,
 ) {
-  const { track, ...rest } = props;
+  const { track, extraInfo, ...rest } = props;
   return (
     <Link to={`/track/${track.id}`} viewTransition {...rest}>
       <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
@@ -41,13 +43,18 @@ export function Track(
           width={80}
           height={80}
         />
-        <div>
+        <div className="flex flex-1 flex-col gap-px">
           <TrackName name={track.name} uri={track.uri} />
           <TrackArtist
             artist={getArtistName(track)}
             artistId={getArtistId(track)}
             uri={getArtistUri(track)}
           />
+          {extraInfo && (
+            <div className="mt-auto text-muted-foreground text-xs">
+              {extraInfo}
+            </div>
+          )}
         </div>
       </div>
     </Link>
