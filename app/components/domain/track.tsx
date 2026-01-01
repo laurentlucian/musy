@@ -28,6 +28,7 @@ export function Track(
         artist?: { id?: string; name?: string; uri?: string };
       }>;
       likedAt?: string;
+      playedAt?: string;
     };
     extraInfo?: React.ReactNode;
   } & React.ComponentProps<"a">,

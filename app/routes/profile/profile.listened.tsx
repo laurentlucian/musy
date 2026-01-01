@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
@@ -86,10 +87,7 @@ function ListenedSyncButton({ userId }: { userId: string }) {
       variant="outline"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit(
-          { intent: "sync-listened", userId },
-          { method: "post" },
-        );
+        fetcher.submit({ intent: "sync-listened", userId }, { method: "post" });
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
@@ -104,7 +102,16 @@ function ListenedList(props: { tracks: UserRecent }) {
   return (
     <div className="flex flex-col gap-y-2">
       {tracks.map((track) => {
-        return <Track key={track.name} track={track} />;
+        const extraInfo = track.playedAt ? (
+          <>
+            {format(new Date(track.playedAt), "MMM d, y")}
+            <span className="text-muted-foreground/70">
+              {" · "}
+              {format(new Date(track.playedAt), "h:mm a")}
+            </span>
+          </>
+        ) : undefined;
+        return <Track key={track.name} track={track} extraInfo={extraInfo} />;
       })}
 
       <p className="mx-auto font-semibold text-muted-foreground text-xs">

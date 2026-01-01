@@ -42,6 +42,11 @@ export async function getUserRecent(
     .innerJoin(track, eq(track.id, recentTracks.trackId))
     .where(and(eq(recentTracks.userId, userId), eq(track.provider, provider)));
 
+  // Create map of trackId to playedAt
+  const playedAtMap = new Map(
+    recent.map((r) => [r.trackId, r.playedAt]),
+  );
+
   // Load tracks with relations (batch queries to respect SQLite param limit)
   // Using smaller batch size due to relation subqueries adding parameters
   const trackIds = recent.map((r) => r.trackId);
@@ -64,7 +69,20 @@ export async function getUserRecent(
     tracks.push(...batchTracks);
   }
 
-  return { count: totalCount, tracks };
+  // Preserve order and add playedAt
+  const trackMap = new Map(tracks.map((t) => [t.id, t]));
+  const orderedTracks = trackIds
+    .map((id) => {
+      const track = trackMap.get(id);
+      if (!track) return null;
+      return {
+        ...track,
+        playedAt: playedAtMap.get(id),
+      };
+    })
+    .filter((t): t is NonNullable<typeof t> => t !== null);
+
+  return { count: totalCount, tracks: orderedTracks };
 }
 
 export type UserLiked = ReturnType<typeof getUserLiked>;
