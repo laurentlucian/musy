@@ -107,6 +107,7 @@ export async function transformTracks(
               image: albumData.images?.[0]?.url || "",
               name: albumData.name,
               date: albumData.release_date || "",
+              popularity: 0,
               artistId: albumArtist.id,
             })
             .onConflictDoNothing();

@@ -24,10 +24,25 @@ export async function getProvider(args: {
   userId: string;
   type: "spotify" | "google";
 }) {
-  const data = await db.query.provider.findFirst({
-    where: and(eq(provider.userId, args.userId), eq(provider.type, args.type)),
-  });
-  return data;
+  try {
+    const data = await db.query.provider.findFirst({
+      where: and(eq(provider.userId, args.userId), eq(provider.type, args.type)),
+    });
+    return data;
+  } catch (error) {
+    // Log more details about the error for debugging
+    console.error("getProvider error:", {
+      userId: args.userId,
+      type: args.type,
+      error: error instanceof Error ? {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        cause: error.cause,
+      } : error,
+    });
+    throw error;
+  }
 }
 
 export type Providers = ReturnType<typeof getProviders>;

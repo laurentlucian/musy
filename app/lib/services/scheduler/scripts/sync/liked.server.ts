@@ -3,7 +3,7 @@ import type { Track } from "~/lib/services/sdk/spotify";
 import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import { likedTracks, sync, track } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
+import { transformTracks } from "~/lib/services/sdk/helpers/spotify.server";
 import { log, logError, notNull } from "~/lib/utils";
 
 /**
@@ -160,45 +160,15 @@ export async function syncUserLikedFull({
     );
 
     // Step 4: Process tracks (create/update track records)
+    // Use transformTracks to create tracks, albums, and artists
+    // This ensures albums and artists are created with full data if they don't exist
     const allTracks = Array.from(spotifyLikedMap.values()).map((v) => v.track);
     const uniqueTracks = Array.from(
       new Map(allTracks.filter((t) => t.id).map((t) => [t.id!, t])).values(),
     ).filter((t): t is Track & { id: string } => Boolean(t.id));
 
-    // Find existing tracks (batch queries to avoid D1 100 param limit)
-    const existingTrackIds = new Set<string>();
-    const queryBatchSize = 50; // Stay well under 100 param limit
-    for (let i = 0; i < spotifyTrackIds.length; i += queryBatchSize) {
-      const batch = spotifyTrackIds.slice(i, i + queryBatchSize);
-      const existingTracks = await db
-        .select({ id: track.id })
-        .from(track)
-        .where(inArray(track.id, batch));
-      for (const t of existingTracks) {
-        existingTrackIds.add(t.id);
-      }
-    }
-    const newTracks = uniqueTracks.filter(
-      (t) => t.id && !existingTrackIds.has(t.id),
-    );
-
-    // Batch create new tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
-    if (newTracks.length) {
-      const tracksToInsert = newTracks.map((t) => {
-        const trackModel = createTrackModel(t);
-        return {
-          ...trackModel,
-          explicit: trackModel.explicit ? "1" : "0",
-        };
-      });
-
-      const batchSize = 7;
-      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
-        const batch = tracksToInsert.slice(i, i + batchSize);
-        await db.insert(track).values(batch).onConflictDoNothing();
-      }
-      log(`created ${newTracks.length} new tracks`, "liked-full");
-    }
+    await transformTracks(uniqueTracks);
+    log(`processed ${uniqueTracks.length} tracks`, "liked-full");
 
     // Step 5: Remove unliked tracks
     if (toRemove.length > 0) {
@@ -400,45 +370,15 @@ export async function syncUserLikedIncremental({
     log(`sync diff: +${toAdd.length}`, "liked-inc");
 
     // Step 4: Process tracks (create track records)
+    // Use transformTracks to create tracks, albums, and artists
+    // This ensures albums and artists are created with full data if they don't exist
     const allTracks = Array.from(spotifyLikedMap.values()).map((v) => v.track);
     const uniqueTracks = Array.from(
       new Map(allTracks.filter((t) => t.id).map((t) => [t.id!, t])).values(),
     ).filter((t): t is Track & { id: string } => Boolean(t.id));
 
-    // Find existing tracks (batch queries to avoid D1 100 param limit)
-    const existingTrackIdsSet = new Set<string>();
-    const queryBatchSize = 50; // Stay well under 100 param limit
-    for (let i = 0; i < spotifyTrackIds.length; i += queryBatchSize) {
-      const batch = spotifyTrackIds.slice(i, i + queryBatchSize);
-      const existingTracks = await db
-        .select({ id: track.id })
-        .from(track)
-        .where(inArray(track.id, batch));
-      for (const t of existingTracks) {
-        existingTrackIdsSet.add(t.id);
-      }
-    }
-    const newTracks = uniqueTracks.filter(
-      (t) => t.id && !existingTrackIdsSet.has(t.id),
-    );
-
-    // Batch create new tracks
-    if (newTracks.length) {
-      const tracksToInsert = newTracks.map((t) => {
-        const trackModel = createTrackModel(t);
-        return {
-          ...trackModel,
-          explicit: trackModel.explicit ? "1" : "0",
-        };
-      });
-
-      const batchSize = 7;
-      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
-        const batch = tracksToInsert.slice(i, i + batchSize);
-        await db.insert(track).values(batch).onConflictDoNothing();
-      }
-      log(`created ${newTracks.length} new tracks`, "liked-inc");
-    }
+    await transformTracks(uniqueTracks);
+    log(`processed ${uniqueTracks.length} tracks`, "liked-inc");
 
     // Step 5: Add new liked tracks with correct timestamps
     if (toAdd.length > 0) {

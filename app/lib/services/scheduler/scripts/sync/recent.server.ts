@@ -1,7 +1,8 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { recentTracks, sync, track } from "~/lib/db/schema";
+import { recentTracks, sync } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
-import { createTrackModel } from "~/lib/services/sdk/helpers/spotify.server";
+import { transformTracks } from "~/lib/services/sdk/helpers/spotify.server";
+import type { Track } from "~/lib/services/sdk/spotify";
 import type { Spotified } from "~/lib/services/sdk/spotify.server";
 import { log, notNull } from "~/lib/utils";
 
@@ -39,62 +40,18 @@ export async function syncUserRecent({
 
     if (!recent?.length) throw new Error("No recent tracks found");
 
-    // prepare tracks for batch creation/update
-    const tracks = recent
-      .map(({ track }) => {
-        if (!track) return null;
-        return createTrackModel(track);
-      })
-      .filter(notNull);
+    // Extract Spotify track objects and deduplicate
+    const spotifyTracks: Track[] = recent
+      .map(({ track }) => track)
+      .filter((t): t is Track => notNull(t) && Boolean(t?.id));
 
-    // deduplicate tracks within the batch (same track can appear multiple times in recent history)
-    const uniqueTracks = Array.from(
-      new Map(tracks.map((t) => [t.id, t])).values(),
+    const uniqueSpotifyTracks = Array.from(
+      new Map(spotifyTracks.map((t) => [t.id!, t])).values(),
     );
 
-    // find existing tracks (batch queries to respect D1 param limit)
-    const trackIds = uniqueTracks.map((t) => t.id);
-    const existingTrackIds = new Set<string>();
-    const queryBatchSize = 99; // D1 limit is 100 params
-    for (let i = 0; i < trackIds.length; i += queryBatchSize) {
-      const batch = trackIds.slice(i, i + queryBatchSize);
-      const existingTracks = await db
-        .select({ id: track.id })
-        .from(track)
-        .where(inArray(track.id, batch));
-      for (const t of existingTracks) {
-        existingTrackIds.add(t.id);
-      }
-    }
-
-    // split into new and existing tracks
-    const newTracks = uniqueTracks.filter((t) => !existingTrackIds.has(t.id));
-    // const tracksToUpdate = tracks.filter((t) => existingTrackIds.has(t.id));
-
-    // batch create new tracks (D1 has 100 param limit, 13 columns = max 7 tracks per batch)
-    if (newTracks.length) {
-      const tracksToInsert = newTracks.map((t) => ({
-        ...t,
-        explicit: t.explicit ? "1" : "0",
-      }));
-      const batchSize = 7;
-      for (let i = 0; i < tracksToInsert.length; i += batchSize) {
-        const batch = tracksToInsert.slice(i, i + batchSize);
-        await db.insert(track).values(batch).onConflictDoNothing();
-      }
-    }
-
-    // batch update existing tracks
-    // if (tracksToUpdate.length) {
-    //   await prisma.$transaction(
-    //     tracksToUpdate.map((track) =>
-    //       prisma.track.update({
-    //         where: { id: track.id },
-    //         data: track,
-    //       }),
-    //     ),
-    //   );
-    // }
+    // Use transformTracks to create tracks, albums, and artists
+    // This ensures albums and artists are created with full data if they don't exist
+    await transformTracks(uniqueSpotifyTracks);
 
     // prepare recent tracks data
     const recentTracksData = recent

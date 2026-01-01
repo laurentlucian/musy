@@ -1,4 +1,5 @@
 import { Button } from "~/components/ui/button";
+import { enrichArtistsAndAlbums } from "~/lib/services/scheduler/scripts/enrich-artists-albums.server";
 import { syncUsers } from "~/lib/services/scheduler/sync.server";
 import type { Route } from "./+types/scripts";
 
@@ -25,6 +26,11 @@ export default function Scripts(_: Route.ComponentProps) {
           Sync Liked (Full)
         </Button>
       </form>
+      <form method="post">
+        <Button type="submit" name="intent" value="enrich-artists-albums">
+          Enrich Artists & Albums
+        </Button>
+      </form>
     </article>
   );
 }
@@ -47,5 +53,9 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "sync-liked-full") {
     await syncUsers("liked-full");
+  }
+
+  if (intent === "enrich-artists-albums") {
+    await enrichArtistsAndAlbums();
   }
 }

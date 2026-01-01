@@ -179,6 +179,7 @@ export const album = sqliteTable("Album", {
   image: text().notNull(),
   name: text().notNull(),
   date: text().notNull(),
+  popularity: integer().notNull(),
   artistId: text()
     .notNull()
     .references(() => artist.id, { onDelete: "restrict", onUpdate: "cascade" }),
