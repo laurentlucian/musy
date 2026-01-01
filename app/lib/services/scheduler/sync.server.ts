@@ -6,6 +6,7 @@ import {
 import { syncUserPlaylists } from "~/lib/services/scheduler/scripts/sync/playlist.server";
 import { syncUserProfile } from "~/lib/services/scheduler/scripts/sync/profile.server";
 import { syncUserRecent } from "~/lib/services/scheduler/scripts/sync/recent.server";
+import { syncAllUsersStats } from "~/lib/services/scheduler/scripts/sync/stats.server";
 import { syncUserTop } from "~/lib/services/scheduler/scripts/sync/top.server";
 import { SpotifyApiError } from "~/lib/services/sdk/spotify";
 import { getSpotifyClient } from "~/lib/services/sdk/spotify.server";
@@ -18,10 +19,13 @@ const SYNC_TYPES = [
   "liked",
   "liked-full",
   "playlist",
+  "stats",
 ] as const;
 type SyncType = (typeof SYNC_TYPES)[number];
 
-function getSyncFunction(type: SyncType) {
+function getSyncFunction(
+  type: Exclude<SyncType, "stats">,
+): (args: { userId: string; spotify: any }) => Promise<void> {
   switch (type) {
     case "recent":
       return syncUserRecent;
@@ -42,6 +46,11 @@ export async function syncUsers(type: SyncType) {
   log(`starting ${type} sync`, "cron");
 
   try {
+    if (type === "stats") {
+      await syncAllUsersStats();
+      return;
+    }
+
     const users = await getAllUsersId();
     log(`syncing ${type} for ${users.length} users`, "cron");
 

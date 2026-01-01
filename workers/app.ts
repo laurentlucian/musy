@@ -23,6 +23,9 @@ export default {
     } else if (cron === "0 0 * * *") {
       // Daily at midnight - sync user profiles
       ctx.waitUntil(syncUsers("profile"));
+    } else if (cron === "0 1 * * *") {
+      // Daily at 1 AM - sync stats
+      ctx.waitUntil(syncUsers("stats"));
     } else if (cron === "0 0 * * 1") {
       // Weekly on Sunday at midnight - sync top tracks/artists and liked tracks
       ctx.waitUntil(syncUsers("top"));

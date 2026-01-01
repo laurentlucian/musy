@@ -366,3 +366,28 @@ export const trackToArtist = sqliteTable(
     ),
   ],
 );
+
+export const stats = sqliteTable(
+  "Stats",
+  {
+    id: text().primaryKey().notNull(),
+    userId: text()
+      .notNull()
+      .references(() => profile.id, {
+        onDelete: "restrict",
+        onUpdate: "cascade",
+      }),
+    year: integer().notNull(),
+    played: integer().default(0).notNull(),
+    liked: integer().default(0).notNull(),
+    minutes: numeric().default("0").notNull(),
+    song: text(),
+    artist: text(),
+    album: text(),
+    createdAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
+    updatedAt: numeric().notNull(),
+  },
+  (table) => [
+    uniqueIndex("Stats_userId_year_key").on(table.userId, table.year),
+  ],
+);

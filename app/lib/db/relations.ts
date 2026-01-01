@@ -11,6 +11,7 @@ import {
   profile,
   provider,
   recentTracks,
+  stats,
   top,
   topArtists,
   topTracks,
@@ -55,6 +56,7 @@ export const profileRelations = relations(profile, ({ one, many }) => ({
   tops: many(top),
   likedTracks: many(likedTracks),
   playbackHistories: many(playbackHistory),
+  stats: many(stats),
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -195,5 +197,12 @@ export const trackToArtistRelations = relations(trackToArtist, ({ one }) => ({
   artist: one(artist, {
     fields: [trackToArtist.artistId],
     references: [artist.id],
+  }),
+}));
+
+export const statsRelations = relations(stats, ({ one }) => ({
+  profile: one(profile, {
+    fields: [stats.userId],
+    references: [profile.id],
   }),
 }));

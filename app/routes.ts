@@ -10,7 +10,7 @@ export default [
   index("routes/index.tsx"),
   layout("routes/layout.root.tsx", [
     route("profile/:userId?", "routes/profile/profile.tsx", [
-      index("routes/profile/profile.index.tsx"),
+      index("routes/profile/profile.stats.tsx"),
       route("top", "routes/profile/profile.top.tsx"),
       route("liked", "routes/profile/profile.liked.tsx"),
       route("listened", "routes/profile/profile.listened.tsx"),

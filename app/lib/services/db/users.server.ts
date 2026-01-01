@@ -1,8 +1,5 @@
-import { endOfYear, setYear, startOfYear } from "date-fns";
-import { and, count, desc, eq, gte, inArray, lte } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
-  album,
-  artist,
   likedTracks,
   playback,
   playbackHistory,
@@ -11,14 +8,15 @@ import {
   profile,
   provider,
   recentTracks,
+  stats,
   top,
   topArtists,
   topTracks,
-  track,
   trackToArtist,
   user,
 } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
+import { syncUserStats } from "~/lib/services/scheduler/scripts/sync/stats.server";
 
 export async function getProvider(args: {
   userId: string;
@@ -139,153 +137,34 @@ export async function getProfile(userId: string) {
 }
 
 export async function getStats(userId: string, year: number) {
-  const date = setYear(new Date(), year);
+  let statsRecord = await db.query.stats.findFirst({
+    where: and(eq(stats.userId, userId), eq(stats.year, year)),
+  });
 
-  const [{ count: liked }] = await db
-    .select({ count: count() })
-    .from(likedTracks)
-    .where(
-      and(
-        eq(likedTracks.userId, userId),
-        gte(likedTracks.createdAt, startOfYear(date).toISOString()),
-        lte(likedTracks.createdAt, endOfYear(date).toISOString()),
-      ),
-    );
-
-  let played = 0;
-  let minutes = 0;
-  const artists: Record<string, number> = {};
-  const albums: Record<string, number> = {};
-  const songs: Record<string, number> = {};
-
-  const take = 2500;
-  let skip = 0;
-  let all = false;
-
-  while (!all) {
-    const rows = await db
-      .select({
-        track: {
-          uri: track.uri,
-          name: track.name,
-          duration: track.duration,
-        },
-        artistName: artist.name,
-        albumNameRel: album.name,
-      })
-      .from(recentTracks)
-      .innerJoin(track, eq(recentTracks.trackId, track.id))
-      .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
-      .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
-      .leftJoin(album, eq(track.albumId, album.id))
-      .where(
-        and(
-          eq(recentTracks.userId, userId),
-          gte(recentTracks.playedAt, startOfYear(date).toISOString()),
-          lte(recentTracks.playedAt, endOfYear(date).toISOString()),
-        ),
-      )
-      .orderBy(desc(recentTracks.playedAt))
-      .limit(take)
-      .offset(skip);
-
-    if (rows.length < take) {
-      all = true;
-    }
-
-    skip += rows.length;
-    const batch = calculateStats(rows);
-    played += batch.played;
-    minutes += batch.minutes;
-
-    for (const [artist, count] of Object.entries(batch.artists)) {
-      artists[artist] = (artists[artist] ?? 0) + count;
-    }
-    for (const [album, count] of Object.entries(batch.albums)) {
-      albums[album] = (albums[album] ?? 0) + count;
-    }
-    for (const [song, count] of Object.entries(batch.songs)) {
-      songs[song] = (songs[song] ?? 0) + count;
-    }
+  if (!statsRecord) {
+    await syncUserStats({ userId, year });
+    statsRecord = await db.query.stats.findFirst({
+      where: and(eq(stats.userId, userId), eq(stats.year, year)),
+    });
   }
 
-  const topItems = getTopItems({ songs, albums, artists });
+  if (!statsRecord) {
+    return {
+      liked: 0,
+      played: 0,
+      minutes: 0,
+      artist: undefined,
+      album: undefined,
+      song: undefined,
+    };
+  }
 
   return {
-    liked,
-    played,
-    minutes,
-    artist: topItems.artist,
-    album: topItems.album,
-    song: topItems.song,
+    liked: statsRecord.liked,
+    played: statsRecord.played,
+    minutes: Number.parseFloat(statsRecord.minutes.toString()),
+    artist: statsRecord.artist || undefined,
+    album: statsRecord.album || undefined,
+    song: statsRecord.song || undefined,
   };
-}
-
-function getTopItems(arg: {
-  artists: Record<string, number>;
-  albums: Record<string, number>;
-  songs: Record<string, number>;
-}) {
-  const artist = Object.entries(arg.artists).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  const album = Object.entries(arg.albums).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  const song = Object.entries(arg.songs).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  return { artist, album, song };
-}
-
-function calculateStats(
-  rows: {
-    track: {
-      name: string;
-      duration: number;
-    };
-    artistName: string | null;
-    albumNameRel: string | null;
-  }[],
-) {
-  const minutes = rows.reduce(
-    (acc, curr) => acc + curr.track.duration / 60_000,
-    0,
-  );
-
-  const artists = rows.reduce(
-    (acc, { artistName }) => {
-      if (artistName) {
-        acc[artistName] = (acc[artistName] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const albums = rows.reduce(
-    (acc, { albumNameRel }) => {
-      if (albumNameRel) {
-        acc[albumNameRel] = (acc[albumNameRel] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const songs = rows.reduce(
-    (acc, { track }) => {
-      acc[track.name] = (acc[track.name] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  return { minutes, artists, albums, songs, played: rows.length };
 }

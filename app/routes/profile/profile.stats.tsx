@@ -1,11 +1,15 @@
 import { Suspense, use } from "react";
-import { redirect } from "react-router";
+import { data, redirect } from "react-router";
+import { RefreshCcw } from "lucide-react";
+import { useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";
+import { Button } from "~/components/ui/button";
 import { NumberAnimated } from "~/components/ui/number-animated";
 import { userContext } from "~/context";
 import { getStats } from "~/lib/services/db/users.server";
+import { syncUserStats } from "~/lib/services/scheduler/scripts/sync/stats.server";
 import { Selector } from "~/routes/profile/utils/profile.utils";
-import type { Route } from "./+types/profile.index";
+import type { Route } from "./+types/profile.stats";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
@@ -22,16 +26,75 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
   };
 }
 
+export async function action({ request, context }: Route.ActionArgs) {
+  const currentUserId = context.get(userContext);
+  if (!currentUserId) {
+    return data({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const userId = formData.get("userId");
+  const year = formData.get("year");
+
+  if (intent !== "sync-stats" || userId !== currentUserId || !year) {
+    return data({ success: false, error: "Invalid request" }, { status: 400 });
+  }
+
+  try {
+    await syncUserStats({ userId, year: +year });
+    return data({ success: true });
+  } catch (error) {
+    return data(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Sync failed",
+      },
+      { status: 500 },
+    );
+  }
+}
+
 export default function ProfileIndex({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <div className="flex items-center gap-2">
         <Selector year={loaderData.year} />
+        <StatsSyncButton userId={loaderData.userId} year={loaderData.year} />
       </div>
       <Suspense fallback={<Waver />}>
         <Stats promise={loaderData.stats} year={loaderData.year} />
       </Suspense>
     </>
+  );
+}
+
+function StatsSyncButton({
+  userId,
+  year,
+}: {
+  userId: string;
+  year: number;
+}) {
+  const fetcher = useFetcher();
+  const isSyncing =
+    fetcher.state === "submitting" || fetcher.state === "loading";
+
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      disabled={isSyncing}
+      onClick={() => {
+        fetcher.submit(
+          { intent: "sync-stats", userId, year: year.toString() },
+          { method: "post" },
+        );
+      }}
+    >
+      {isSyncing ? <Waver /> : <RefreshCcw />}
+    </Button>
   );
 }
 
