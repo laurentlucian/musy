@@ -1,10 +1,13 @@
 import { and, asc, count, desc, eq, gte, inArray, min } from "drizzle-orm";
 import {
+  album,
+  artist,
   likedTracks,
   playlist,
   playlistTrack,
   recentTracks,
   track,
+  trackToArtist,
 } from "~/lib/db/schema";
 import type { Database } from "~/lib/services/db.server";
 
@@ -23,7 +26,7 @@ export async function getUserRecent(
     .select({
       id: recentTracks.id,
       playedAt: recentTracks.playedAt,
-      track: track,
+      trackId: recentTracks.trackId,
     })
     .from(recentTracks)
     .innerJoin(track, eq(track.id, recentTracks.trackId))
@@ -38,7 +41,29 @@ export async function getUserRecent(
     .innerJoin(track, eq(track.id, recentTracks.trackId))
     .where(and(eq(recentTracks.userId, userId), eq(track.provider, provider)));
 
-  return { count: totalCount, tracks: recent.map((r) => r.track) };
+  // Load tracks with relations (batch queries to respect SQLite param limit)
+  // Using smaller batch size due to relation subqueries adding parameters
+  const trackIds = recent.map((r) => r.trackId);
+  const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+  const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+  
+  for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+    const batch = trackIds.slice(i, i + queryBatchSize);
+    const batchTracks = await db.query.track.findMany({
+      where: inArray(track.id, batch),
+      with: {
+        album: true,
+        artists: {
+          with: {
+            artist: true,
+          },
+        },
+      },
+    });
+    tracks.push(...batchTracks);
+  }
+
+  return { count: totalCount, tracks };
 }
 
 export type UserLiked = ReturnType<typeof getUserLiked>;
@@ -53,7 +78,7 @@ export async function getUserLiked(
     .select({
       id: likedTracks.id,
       createdAt: likedTracks.createdAt,
-      track: track,
+      trackId: likedTracks.trackId,
     })
     .from(likedTracks)
     .innerJoin(track, eq(track.id, likedTracks.trackId))
@@ -68,7 +93,29 @@ export async function getUserLiked(
     .innerJoin(track, eq(track.id, likedTracks.trackId))
     .where(and(eq(likedTracks.userId, userId), eq(track.provider, provider)));
 
-  return { count: totalCount, tracks: liked.map((l) => l.track) };
+  // Load tracks with relations (batch queries to respect SQLite param limit)
+  // Using smaller batch size due to relation subqueries adding parameters
+  const trackIds = liked.map((l) => l.trackId);
+  const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+  const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+  
+  for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+    const batch = trackIds.slice(i, i + queryBatchSize);
+    const batchTracks = await db.query.track.findMany({
+      where: inArray(track.id, batch),
+      with: {
+        album: true,
+        artists: {
+          with: {
+            artist: true,
+          },
+        },
+      },
+    });
+    tracks.push(...batchTracks);
+  }
+
+  return { count: totalCount, tracks };
 }
 
 export type TopLeaderboard = Awaited<ReturnType<typeof getTopLeaderboard>>;
@@ -76,10 +123,10 @@ export async function getTopLeaderboard(db: Database) {
   const LAST_3_DAYS = new Date(Date.now() - 1000 * 60 * 60 * 24 * 3);
   const last3DaysStr = LAST_3_DAYS.toISOString();
 
-  const trackIds = await db
+  const trackIdsWithPlays = await db
     .select({
       trackId: recentTracks.trackId,
-      count: count(recentTracks.id),
+      plays: count(recentTracks.id),
     })
     .from(recentTracks)
     .where(gte(recentTracks.playedAt, last3DaysStr))
@@ -87,42 +134,51 @@ export async function getTopLeaderboard(db: Database) {
     .orderBy(desc(count(recentTracks.id)))
     .limit(20);
 
-  const trackIdsArray = trackIds.map((t) => t.trackId);
+  // Load tracks with relations (batch queries to respect SQLite param limit)
+  // Using smaller batch size due to relation subqueries adding parameters
+  const trackIds = trackIdsWithPlays.map(({ trackId }) => trackId);
+  const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+  const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+  
+  for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+    const batch = trackIds.slice(i, i + queryBatchSize);
+    const batchTracks = await db.query.track.findMany({
+      where: inArray(track.id, batch),
+      with: {
+        album: true,
+        artists: {
+          with: {
+            artist: true,
+          },
+        },
+      },
+    });
+    tracks.push(...batchTracks);
+  }
 
-  const top = await db
-    .select({
-      id: track.id,
-      name: track.name,
-      artist: track.artist,
-      image: track.image,
-      uri: track.uri,
-      provider: track.provider,
-      albumName: track.albumName,
-      albumUri: track.albumUri,
-      artistUri: track.artistUri,
-      explicit: track.explicit,
-      duration: track.duration,
-      previewUrl: track.previewUrl,
-      link: track.link,
-      plays: count(recentTracks.id),
-    })
-    .from(track)
-    .innerJoin(recentTracks, eq(track.id, recentTracks.trackId))
-    .where(
-      and(
-        inArray(track.id, trackIdsArray),
-        gte(recentTracks.playedAt, last3DaysStr),
-      ),
-    )
-    .groupBy(track.id)
-    .orderBy(desc(count(recentTracks.id)));
+  // Create map for quick lookup
+  const playsMap = new Map(
+    trackIdsWithPlays.map(({ trackId, plays }) => [trackId, plays]),
+  );
 
-  return top;
+  // Map to return format with plays count
+  return tracks.map((track) => ({
+    ...track,
+    plays: playsMap.get(track.id) || 0,
+  }));
 }
 
 export async function getTrack(db: Database, trackId: string) {
   const trackResult = await db.query.track.findFirst({
     where: eq(track.id, trackId),
+    with: {
+      album: true,
+      artists: {
+        with: {
+          artist: true,
+        },
+      },
+    },
   });
 
   return trackResult;
@@ -167,14 +223,42 @@ export async function getPlaylistWithTracks(
 
   if (!playlistData) return null;
 
-  const tracks = await db
+  const playlistTracks = await db
     .select({
-      track: track,
+      trackId: playlistTrack.trackId,
+      addedAt: playlistTrack.addedAt,
     })
     .from(playlistTrack)
-    .innerJoin(track, eq(playlistTrack.trackId, track.id))
     .where(eq(playlistTrack.playlistId, playlistId))
     .orderBy(asc(playlistTrack.addedAt));
+
+  // Load tracks with relations (batch queries to respect SQLite param limit)
+  // Using smaller batch size due to relation subqueries adding parameters
+  const trackIds = playlistTracks.map((pt) => pt.trackId);
+  const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+  const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+  
+  for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+    const batch = trackIds.slice(i, i + queryBatchSize);
+    const batchTracks = await db.query.track.findMany({
+      where: inArray(track.id, batch),
+      with: {
+        album: true,
+        artists: {
+          with: {
+            artist: true,
+          },
+        },
+      },
+    });
+    tracks.push(...batchTracks);
+  }
+
+  // Preserve order from playlistTracks
+  const trackMap = new Map(tracks.map((t) => [t.id, t]));
+  const orderedTracks = trackIds
+    .map((id) => trackMap.get(id))
+    .filter((t): t is NonNullable<(typeof tracks)[0]> => t !== undefined);
 
   const [{ createdAt }] = await db
     .select({ createdAt: min(playlistTrack.addedAt) })
@@ -183,7 +267,7 @@ export async function getPlaylistWithTracks(
 
   return {
     playlist: playlistData,
-    tracks: tracks.map((t) => t.track),
+    tracks: orderedTracks,
     createdAt: createdAt || null,
   };
 }

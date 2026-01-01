@@ -1,13 +1,30 @@
 import { format, millisecondsToMinutes } from "date-fns";
-import { count } from "drizzle-orm";
-import { track } from "~/lib/db/schema";
+import { count, eq } from "drizzle-orm";
+import { artist, track, trackToArtist } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 import type { Route } from "./+types/tracks";
 
 export async function loader(_: Route.LoaderArgs) {
-  const tracks = await db.select().from(track).limit(100);
+  const tracks = await db
+    .select({
+      id: track.id,
+      name: track.name,
+      artistName: artist.name,
+      duration: track.duration,
+    })
+    .from(track)
+    .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
+    .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
+    .limit(100)
+    .groupBy(track.id);
   const [{ count: total }] = await db.select({ count: count() }).from(track);
-  return { tracks, total };
+  return {
+    tracks: tracks.map((t) => ({
+      ...t,
+      artist: t.artistName || "Unknown",
+    })),
+    total,
+  };
 }
 
 export default function Tracks({

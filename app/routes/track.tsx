@@ -10,10 +10,19 @@ import { db } from "~/lib/services/db.server";
 import { ellipsis } from "~/lib/utils";
 import type { Route } from "./+types/track";
 
+function getArtistName(track: any): string {
+  return track.artists?.[0]?.artist?.name || "Unknown";
+}
+
+function getArtistUri(track: any): string {
+  return track.artists?.[0]?.artist?.uri || track.uri;
+}
+
 export function meta({ loaderData }: Route.MetaArgs) {
+  const artistName = getArtistName(loaderData);
   return [
     {
-      title: `${ellipsis(loaderData.name, 10)} by ${ellipsis(loaderData.artist, 20)}`,
+      title: `${ellipsis(loaderData.name, 10)} by ${ellipsis(artistName, 20)}`,
     },
   ];
 }
@@ -50,7 +59,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
       <TrackImage id={track.id} src={track.image} alt={track.name} />
       <div className="mt-2 flex flex-col gap-y-0.5">
         <TrackName name={track.name} uri={track.uri} />
-        <TrackArtist artist={track.artist} uri={track.artistUri} />
+        <TrackArtist artist={getArtistName(track)} uri={getArtistUri(track)} />
       </div>
     </div>
   );

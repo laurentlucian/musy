@@ -3,9 +3,17 @@ import type { Track as TrackType } from "~/lib/services/db.server";
 import { cn } from "~/lib/utils";
 import { Image } from "../ui/image";
 
+function getArtistName(track: TrackType & { artists?: Array<{ artist?: { name?: string } }> }): string {
+  return track.artists?.[0]?.artist?.name || "Unknown";
+}
+
+function getArtistUri(track: TrackType & { artists?: Array<{ artist?: { uri?: string } }> }): string {
+  return track.artists?.[0]?.artist?.uri || track.uri;
+}
+
 export function Track(
   props: {
-    track: TrackType;
+    track: TrackType & { artists?: Array<{ artist?: { name?: string; uri?: string } }> };
   } & React.ComponentProps<"a">,
 ) {
   const { track, ...rest } = props;
@@ -21,7 +29,7 @@ export function Track(
         />
         <div>
           <TrackName name={track.name} uri={track.uri} />
-          <TrackArtist artist={track.artist} uri={track.artistUri} />
+          <TrackArtist artist={getArtistName(track)} uri={getArtistUri(track)} />
         </div>
       </div>
     </Link>

@@ -8,10 +8,11 @@ export function Leaderboard(props: {
   const leaderboard = use(props.leaderboard);
 
   return leaderboard.map((track, index) => {
+    if (!track) return null;
     return (
       <li key={track.id} className="flex items-center gap-x-2">
         <span className="basis-6 font-bold">{index + 1}.</span>
-        <Track id={track.id} track={track} />
+        <Track track={track} />
       </li>
     );
   });

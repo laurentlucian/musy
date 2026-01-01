@@ -16,6 +16,7 @@ import {
   topTracks,
   topTracksToTrack,
   track,
+  trackToArtist,
   user,
 } from "./schema";
 
@@ -30,12 +31,17 @@ export const playbackRelations = relations(playback, ({ one }) => ({
   }),
 }));
 
-export const trackRelations = relations(track, ({ many }) => ({
+export const trackRelations = relations(track, ({ one, many }) => ({
   playbacks: many(playback),
   recentTracks: many(recentTracks),
   topTracksToTracks: many(topTracksToTrack),
   playlistTracks: many(playlistTrack),
   likedTracks: many(likedTracks),
+  album: one(album, {
+    fields: [track.albumId],
+    references: [album.id],
+  }),
+  artists: many(trackToArtist),
 }));
 
 export const profileRelations = relations(profile, ({ one, many }) => ({
@@ -97,16 +103,18 @@ export const topTracksRelations = relations(topTracks, ({ one, many }) => ({
   }),
 }));
 
-export const albumRelations = relations(album, ({ one }) => ({
+export const albumRelations = relations(album, ({ one, many }) => ({
   artist: one(artist, {
     fields: [album.artistId],
     references: [artist.id],
   }),
+  tracks: many(track),
 }));
 
 export const artistRelations = relations(artist, ({ many }) => ({
   albums: many(album),
   artistToTopArtists: many(artistToTopArtists),
+  tracks: many(trackToArtist),
 }));
 
 export const topRelations = relations(top, ({ one, many }) => ({
@@ -178,3 +186,14 @@ export const playbackHistoryRelations = relations(
     }),
   }),
 );
+
+export const trackToArtistRelations = relations(trackToArtist, ({ one }) => ({
+  track: one(track, {
+    fields: [trackToArtist.trackId],
+    references: [track.id],
+  }),
+  artist: one(artist, {
+    fields: [trackToArtist.artistId],
+    references: [artist.id],
+  }),
+}));

@@ -1,6 +1,8 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
 import { and, count, desc, eq, gte, inArray, lte } from "drizzle-orm";
 import {
+  album,
+  artist,
   likedTracks,
   playback,
   playbackHistory,
@@ -13,6 +15,7 @@ import {
   topArtists,
   topTracks,
   track,
+  trackToArtist,
   user,
 } from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
@@ -144,13 +147,16 @@ export async function getStats(userId: string, year: number) {
         track: {
           uri: track.uri,
           name: track.name,
-          artist: track.artist,
-          albumName: track.albumName,
           duration: track.duration,
         },
+        artistName: artist.name,
+        albumNameRel: album.name,
       })
       .from(recentTracks)
       .innerJoin(track, eq(recentTracks.trackId, track.id))
+      .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
+      .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
+      .leftJoin(album, eq(track.albumId, album.id))
       .where(
         and(
           eq(recentTracks.userId, userId),
@@ -221,10 +227,10 @@ function calculateStats(
   rows: {
     track: {
       name: string;
-      albumName: string;
-      artist: string;
       duration: number;
     };
+    artistName: string | null;
+    albumNameRel: string | null;
   }[],
 ) {
   const minutes = rows.reduce(
@@ -233,16 +239,20 @@ function calculateStats(
   );
 
   const artists = rows.reduce(
-    (acc, { track }) => {
-      acc[track.artist] = (acc[track.artist] || 0) + 1;
+    (acc, { artistName }) => {
+      if (artistName) {
+        acc[artistName] = (acc[artistName] || 0) + 1;
+      }
       return acc;
     },
     {} as Record<string, number>,
   );
 
   const albums = rows.reduce(
-    (acc, { track }) => {
-      acc[track.albumName] = (acc[track.albumName] || 0) + 1;
+    (acc, { albumNameRel }) => {
+      if (albumNameRel) {
+        acc[albumNameRel] = (acc[albumNameRel] || 0) + 1;
+      }
       return acc;
     },
     {} as Record<string, number>,

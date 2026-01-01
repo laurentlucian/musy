@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { db } from "~/lib/db";
 import type { artist, playlist, profile, track, user } from "~/lib/db/schema";
 import * as schema from "~/lib/db/schema";
+import * as relations from "~/lib/db/relations";
 
 // Re-export the database instance
 export { db };
@@ -18,5 +19,5 @@ export type Profile = InferSelectModel<typeof profile>;
 
 // Function to create database instance (used in sync scripts)
 export function createDatabase(env: { musy: D1Database }) {
-  return drizzle(env.musy, { schema });
+  return drizzle(env.musy, { schema: { ...schema, ...relations } });
 }

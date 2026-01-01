@@ -33,20 +33,35 @@ export async function getTopData({
 
     if (!tracksRecord) return null;
 
-    // Get tracks based on trackIds
+    // Get tracks based on trackIds with relations (batch queries to respect SQLite param limit)
+    // Using smaller batch size due to relation subqueries adding parameters
     const trackIds = tracksRecord.trackIds.split(",");
-    const tracks = await db
-      .select()
-      .from(track)
-      .where(inArray(track.id, trackIds));
+    const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+    const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+    
+    for (let i = 0; i < trackIds.length; i += queryBatchSize) {
+      const batch = trackIds.slice(i, i + queryBatchSize);
+      const batchTracks = await db.query.track.findMany({
+        where: inArray(track.id, batch),
+        with: {
+          album: true,
+          artists: {
+            with: {
+              artist: true,
+            },
+          },
+        },
+      });
+      tracks.push(...batchTracks);
+    }
 
-    // Sort tracks according to their position in trackIds
+    // Preserve order from trackIds
     const trackMap = new Map(tracks.map((t) => [t.id, t]));
-    const sortedTracks = trackIds
+    const orderedTracks = trackIds
       .map((id) => trackMap.get(id))
-      .filter(Boolean) as typeof tracks;
+      .filter((t): t is NonNullable<typeof tracks[0]> => t !== undefined);
 
-    return { tracks: sortedTracks };
+    return { tracks: orderedTracks };
   } else {
     // Get top artists for this range
     const artistsRecord = await db.query.topArtists.findFirst({

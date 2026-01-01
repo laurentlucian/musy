@@ -1,5 +1,11 @@
-import { and, eq, like, not } from "drizzle-orm";
-import { likedTracks, profile, recentTracks, track, user } from "~/lib/db/schema";
+import { and, eq, inArray, like, not } from "drizzle-orm";
+import {
+  likedTracks,
+  profile,
+  recentTracks,
+  track,
+  user,
+} from "~/lib/db/schema";
 import { db } from "~/lib/services/db.server";
 
 export async function getUsersByKeyword(keyword: string, userId: string) {
@@ -13,10 +19,32 @@ export async function getUsersByKeyword(keyword: string, userId: string) {
 
 export async function getTracksByKeyword(keyword: string) {
   // Get tracks that match the keyword
-  const tracks = await db
-    .select()
+  const trackIds = await db
+    .select({ id: track.id })
     .from(track)
     .where(like(track.name, `%${keyword}%`));
+
+  // Load tracks with relations (batch queries to respect SQLite param limit)
+  // Using smaller batch size due to relation subqueries adding parameters
+  const ids = trackIds.map(({ id }) => id);
+  const queryBatchSize = 50; // SQLite limit is ~999 vars, relations add params
+  const tracks: Awaited<ReturnType<typeof db.query.track.findMany>> = [];
+
+  for (let i = 0; i < ids.length; i += queryBatchSize) {
+    const batch = ids.slice(i, i + queryBatchSize);
+    const batchTracks = await db.query.track.findMany({
+      where: inArray(track.id, batch),
+      with: {
+        album: true,
+        artists: {
+          with: {
+            artist: true,
+          },
+        },
+      },
+    });
+    tracks.push(...batchTracks);
+  }
 
   // For each track, get liked and recent data
   const tracksWithRelations = await Promise.all(

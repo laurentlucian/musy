@@ -91,15 +91,15 @@ export const track = sqliteTable(
     uri: text().notNull(),
     name: text().notNull(),
     image: text().notNull(),
-    albumUri: text().notNull(),
-    albumName: text().notNull(),
-    artist: text().notNull(),
-    artistUri: text().notNull(),
     explicit: numeric().notNull(),
     previewUrl: text("preview_url"),
     link: text().notNull(),
     duration: integer().notNull(),
     provider: text().default("spotify").notNull(),
+    albumId: text().references(() => album.id, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
   },
   (table) => [uniqueIndex("Track_id_key").on(table.id)],
 );
@@ -340,3 +340,28 @@ export const playbackHistory = sqliteTable("PlaybackHistory", {
       onUpdate: "cascade",
     }),
 });
+
+export const trackToArtist = sqliteTable(
+  "_TrackToArtist",
+  {
+    trackId: text("trackId")
+      .notNull()
+      .references(() => track.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    artistId: text("artistId")
+      .notNull()
+      .references(() => artist.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (table) => [
+    index("TrackToArtist_artistId_idx").on(table.artistId),
+    uniqueIndex("_TrackToArtist_trackId_artistId_unique").on(
+      table.trackId,
+      table.artistId,
+    ),
+  ],
+);
