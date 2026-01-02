@@ -1,8 +1,7 @@
 import { format } from "date-fns";
 import { desc, eq } from "drizzle-orm";
-import { ClipboardCopy, TrashIcon } from "lucide-react";
-import { data, useNavigation, useSubmit } from "react-router";
-import { toast } from "sonner";
+import { TrashIcon } from "lucide-react";
+import { data, useNavigate, useNavigation, useSubmit } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
@@ -54,6 +53,7 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
   const navigation = useNavigation();
   const userId = navigation.formData?.get("userId");
   const submit = useSubmit();
+  const navigate = useNavigate();
 
   return (
     <article className="flex flex-col gap-3 font-normal text-sm sm:flex-1">
@@ -74,23 +74,15 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
             return (
               <tr
                 key={profile.id}
-                className="bg-card transition-colors duration-150 *:p-3"
+                className="bg-card cursor-pointer transition-colors duration-150 hover:bg-muted *:p-3"
+                onClick={() => navigate(`/profile/${profile.id}`)}
               >
                 <td className="capitalize">{profile.name}</td>
                 <td>{profile.email}</td>
                 <td>{format(profile.createdAt, "MMM d y")}</td>
                 <td>{format(profile.updatedAt, "MMM d h:m a")}</td>
                 <td>{revoked ? "Yes" : "No"}</td>
-                <td className="flex items-center gap-2">
-                  <Button
-                    size="icon"
-                    onClick={() => {
-                      navigator.clipboard.writeText(profile.id);
-                      toast.success("Copied");
-                    }}
-                  >
-                    <ClipboardCopy />
-                  </Button>
+                <td className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
                   <Button
                     variant="destructive"
                     size="icon"

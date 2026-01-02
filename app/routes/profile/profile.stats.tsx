@@ -15,6 +15,7 @@ import type { Route } from "./+types/profile.stats";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
+  const currentUserId = context.get(userContext);
 
   if (!userId) throw redirect("/");
 
@@ -27,6 +28,7 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
 
   return {
     userId,
+    currentUserId,
     year,
     stats,
   };
@@ -63,7 +65,9 @@ export default function ProfileIndex({ loaderData }: Route.ComponentProps) {
     <>
       <div className="flex items-center gap-2">
         <Selector year={loaderData.year} />
-        <StatsSyncButton userId={loaderData.userId} year={loaderData.year} />
+        {loaderData.currentUserId === loaderData.userId && (
+          <StatsSyncButton userId={loaderData.userId} year={loaderData.year} />
+        )}
       </div>
       {loaderData.stats === null ? (
         <Waver />

@@ -27,7 +27,7 @@ export default [
         route("syncs", "routes/admin/syncs.tsx"),
         route("scripts", "routes/admin/scripts.tsx"),
         route("users", "routes/admin/users.tsx"),
-        route("tracks", "routes/admin/tracks.tsx"),
+        route("counts", "routes/admin/counts.tsx"),
       ]),
     ]),
   ]),

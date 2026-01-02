@@ -109,21 +109,24 @@ export async function deleteUser(userId: string) {
     .where(eq(playlist.userId, userId));
   const playlistIds = userPlaylists.map((p) => p.id);
 
-  await Promise.all(
-    [
-      db.delete(provider).where(eq(provider.userId, userId)),
-      db.delete(likedTracks).where(eq(likedTracks.userId, userId)),
-      db.delete(recentTracks).where(eq(recentTracks.userId, userId)),
-      db.delete(playback).where(eq(playback.userId, userId)),
-      db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
-      playlistIds.length > 0 &&
-        db
-          .delete(playlistTrack)
-          .where(inArray(playlistTrack.playlistId, playlistIds)),
-      db.delete(topTracks).where(eq(topTracks.userId, userId)),
-      db.delete(topArtists).where(eq(topArtists.userId, userId)),
-    ].filter(Boolean),
-  );
+  // Batch delete playlist tracks to avoid SQLite variable limit (D1 max is 100 params)
+  const batchSize = 100;
+  for (let i = 0; i < playlistIds.length; i += batchSize) {
+    const batch = playlistIds.slice(i, i + batchSize);
+    await db
+      .delete(playlistTrack)
+      .where(inArray(playlistTrack.playlistId, batch));
+  }
+
+  await Promise.all([
+    db.delete(provider).where(eq(provider.userId, userId)),
+    db.delete(likedTracks).where(eq(likedTracks.userId, userId)),
+    db.delete(recentTracks).where(eq(recentTracks.userId, userId)),
+    db.delete(playback).where(eq(playback.userId, userId)),
+    db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
+    db.delete(topTracks).where(eq(topTracks.userId, userId)),
+    db.delete(topArtists).where(eq(topArtists.userId, userId)),
+  ]);
 
   await Promise.all([
     db.delete(top).where(eq(top.userId, userId)),
