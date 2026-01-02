@@ -105,30 +105,24 @@ export default function ProfilePlaylistDetail({
   loaderData: { userId, currentUserId, playlistData },
 }: Route.ComponentProps) {
   return (
-    <>
-      <div className="flex h-12 items-center gap-2">
-        <BackButton userId={userId} />
-      </div>
-      <Suspense fallback={<Waver />}>
-        <PlaylistDetailContent
-          userId={userId}
-          currentUserId={currentUserId}
-          playlistData={playlistData}
-        />
-      </Suspense>
-    </>
+    <Suspense fallback={<Waver />}>
+      <PlaylistDetailContent
+        userId={userId}
+        currentUserId={currentUserId}
+        playlistData={playlistData}
+      />
+    </Suspense>
   );
 }
 
 function BackButton({ userId }: { userId: string }) {
   return (
-    <Button asChild variant="ghost" size="sm" className="gap-2">
+    <Button asChild variant="ghost" size="sm">
       <Link
         to={`/profile/${userId}/playlists`}
         className="text-muted-foreground"
       >
-        <ChevronLeft className="size-4" />
-        <span className="text-sm">Back</span>
+        <ChevronLeft />
       </Link>
     </Button>
   );
@@ -158,16 +152,17 @@ function PlaylistDetailContent({
 
   return (
     <div className="flex flex-col gap-4">
-      {currentUserId === userId && (
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
+        <BackButton userId={userId} />
+        {currentUserId === userId && (
           <PlaylistActions
             userId={userId}
             playlistId={playlist.id}
             trackCount={tracks.length}
             playlistName={playlist.name}
           />
-        </div>
-      )}
+        )}
+      </div>
       <div className="flex items-center gap-3 rounded-lg bg-card p-4">
         {hasImage ? (
           <Image

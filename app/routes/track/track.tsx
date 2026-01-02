@@ -1,4 +1,4 @@
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, XIcon } from "lucide-react";
 import { data, useNavigate } from "react-router";
 import {
   TrackAlbum,
@@ -10,6 +10,7 @@ import {
   TrackLikeButton,
   TrackQueueButton,
 } from "~/components/domain/track-actions";
+import { Button } from "~/components/ui/button";
 import { ellipsis } from "~/components/utils";
 import { db } from "~/lib.server/services/db";
 import { getTrack } from "~/lib.server/services/db/tracks";
@@ -59,19 +60,19 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
   const navigate = useNavigate();
   return (
     <div className="mx-auto max-w-[640px]">
-      <div className="flex items-center justify-between">
-        <button
+      <div className="flex items-center justify-between py-4">
+        <Button
           type="button"
+          variant="ghost"
           onClick={async () => {
             const canReturn = window.history.state?.idx !== undefined;
 
             if (canReturn) await navigate(-1);
             else await navigate("/");
           }}
-          className="flex py-5 pr-3"
         >
-          <ChevronLeft /> Back
-        </button>
+          <XIcon />
+        </Button>
         <div className="flex items-center gap-x-2">
           <TrackLikeButton uri={track.uri} provider={track.provider} />
           <TrackQueueButton uri={track.uri} provider={track.provider} />
