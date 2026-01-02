@@ -68,8 +68,7 @@ export default function ProfilePlaylists({
 }: Route.ComponentProps) {
   const matches = useMatches();
   const isDetailRoute = matches.some(
-    (match: { id?: string }) =>
-      match.id === "routes/profile/profile.playlists.$playlistId",
+    (match: { id?: string }) => match.id === "routes/profile/profile.playlist",
   );
   const isOwnProfile = currentUserId === userId;
 

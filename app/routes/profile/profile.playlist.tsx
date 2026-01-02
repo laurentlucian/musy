@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { ChevronLeft, RefreshCcw } from "lucide-react";
 import { Suspense, use, useState } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
@@ -18,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
+import { decodeHtmlEntity } from "~/components/utils";
 import { userContext } from "~/context";
 import { db } from "~/lib.server/services/db";
 import { getPlaylistWithTracks } from "~/lib.server/services/db/tracks";
@@ -27,7 +29,7 @@ import {
 } from "~/lib.server/services/scheduler/scripts/playlist-actions";
 import { syncSinglePlaylist } from "~/lib.server/services/scheduler/scripts/sync/playlist";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
-import type { Route } from "./+types/profile.playlists.$playlistId";
+import type { Route } from "./+types/profile.playlist";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
@@ -180,7 +182,7 @@ function PlaylistDetailContent({
           <h1 className="font-bold text-xl">{playlist.name}</h1>
           {playlist.description && (
             <p className="line-clamp-2 text-muted-foreground text-sm">
-              {playlist.description}
+              {decodeHtmlEntity(playlist.description)}
             </p>
           )}
         </div>
@@ -188,7 +190,10 @@ function PlaylistDetailContent({
 
       <div className="flex flex-col gap-y-2">
         {tracks.map((track) => {
-          return <Track key={track.id} track={track} />;
+          const extraInfo = track.addedAt
+            ? format(new Date(track.addedAt), "MMM d, y")
+            : undefined;
+          return <Track key={track.id} track={track} extraInfo={extraInfo} />;
         })}
       </div>
     </div>

@@ -284,7 +284,7 @@ export async function getPlaylistWithTracks(
     })
     .from(playlistTrack)
     .where(eq(playlistTrack.playlistId, playlistId))
-    .orderBy(asc(playlistTrack.addedAt));
+    .orderBy(desc(playlistTrack.addedAt));
 
   // Load tracks with relations (batch queries to respect SQLite param limit)
   // Using smaller batch size due to relation subqueries adding parameters
@@ -308,11 +308,24 @@ export async function getPlaylistWithTracks(
     tracks.push(...batchTracks);
   }
 
-  // Preserve order from playlistTracks
+  // Preserve order from playlistTracks and attach addedAt
+  const addedAtMap = new Map(
+    playlistTracks.map((pt) => [pt.trackId, pt.addedAt]),
+  );
   const trackMap = new Map(tracks.map((t) => [t.id, t]));
   const orderedTracks = trackIds
-    .map((id) => trackMap.get(id))
-    .filter((t): t is NonNullable<(typeof tracks)[0]> => t !== undefined);
+    .map((id) => {
+      const track = trackMap.get(id);
+      if (!track) return null;
+      return {
+        ...track,
+        addedAt: addedAtMap.get(id) || null,
+      };
+    })
+    .filter(
+      (t): t is NonNullable<(typeof tracks)[0]> & { addedAt: string | null } =>
+        t !== null,
+    );
 
   const [{ createdAt }] = await db
     .select({ createdAt: min(playlistTrack.addedAt) })
