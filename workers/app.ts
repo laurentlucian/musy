@@ -1,5 +1,6 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
-import { enrichArtistsAndAlbums } from "~/lib.server/services/scheduler/scripts/enrich-artists-albums";
+import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-albums";
+import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
 const handler = createRequestHandler(
@@ -15,8 +16,10 @@ export default {
     const cron = controller.cron;
 
     if (cron === "*/5 * * * *") {
-      // Every 5 minutes - enrich artists and albums
-      ctx.waitUntil(enrichArtistsAndAlbums());
+      // Every 5 minutes - enrich artists then albums sequentially
+      ctx.waitUntil(
+        enrichArtists().then(() => enrichAlbums()),
+      );
     } else if (cron === "0 */3 * * *") {
       // Every 3 hours - sync recent tracks
       ctx.waitUntil(syncUsers("recent"));

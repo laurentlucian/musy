@@ -1,5 +1,6 @@
 import { Button } from "~/components/ui/button";
-import { enrichArtistsAndAlbums } from "~/lib.server/services/scheduler/scripts/enrich-artists-albums";
+import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-albums";
+import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { logMissingData } from "~/lib.server/services/scheduler/scripts/log-missing-data";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 import type { Route } from "./+types/scripts";
@@ -62,7 +63,8 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   if (intent === "enrich-artists-albums") {
-    await enrichArtistsAndAlbums();
+    await enrichArtists();
+    await enrichAlbums();
   }
 
   if (intent === "log-missing-data") {
