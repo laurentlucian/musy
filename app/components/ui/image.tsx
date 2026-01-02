@@ -30,7 +30,7 @@ export function Image({
     return (
       <div
         className={cn(
-          "flex aspect-square flex-1 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground",
+          "flex aspect-square shrink-0 items-center justify-center rounded bg-muted text-muted-foreground",
           className,
         )}
         style={{
