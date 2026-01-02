@@ -17,12 +17,13 @@ export default {
 
     if (cron === "*/5 * * * *") {
       // Every 5 minutes - enrich artists then albums sequentially
-      ctx.waitUntil(
-        enrichArtists().then(() => enrichAlbums()),
-      );
-    } else if (cron === "0 */3 * * *") {
-      // Every 3 hours - sync recent tracks
+      ctx.waitUntil(enrichArtists().then(() => enrichAlbums()));
+    } else if (cron === "0 * * * *") {
+      // Every hour - sync recent tracks
       ctx.waitUntil(syncUsers("recent"));
+    } else if (cron === "0 */6 * * *") {
+      // Every 6 hours - sync liked tracks
+      ctx.waitUntil(syncUsers("liked"));
     } else if (cron === "0 0 * * *") {
       // Daily at midnight - sync user profiles
       ctx.waitUntil(syncUsers("profile"));
@@ -30,9 +31,8 @@ export default {
       // Daily at 1 AM - sync stats
       ctx.waitUntil(syncUsers("stats"));
     } else if (cron === "0 0 * * 1") {
-      // Weekly on Sunday at midnight - sync top tracks/artists and liked tracks
+      // Weekly on Sunday at midnight - sync top tracks/artists and playlists
       ctx.waitUntil(syncUsers("top"));
-      ctx.waitUntil(syncUsers("liked"));
       ctx.waitUntil(syncUsers("playlist"));
     }
   },
