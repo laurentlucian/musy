@@ -242,7 +242,7 @@ function Stats({
           </div>
         </div>
       </div>
-      {stats.song && (
+      {stats.trackName && (
         <div className="rounded-lg bg-card p-4">
           {stats.trackId ? (
             <Link
@@ -250,12 +250,20 @@ function Stats({
               viewTransition
               className="font-bold text-2xl hover:underline"
             >
-              {stats.song}
+              {stats.trackName}
             </Link>
           ) : (
-            <p className="font-bold text-2xl">{stats.song}</p>
+            <p className="font-bold text-2xl">{stats.trackName}</p>
           )}
           <p className="text-muted-foreground text-sm">most listened track</p>
+          <p className="text-muted-foreground text-xs">
+            played{" "}
+            <NumberAnimated
+              value={stats.trackCount}
+              key={`${year}-trackCount`}
+            />{" "}
+            times
+          </p>
         </div>
       )}
 

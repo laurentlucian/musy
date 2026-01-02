@@ -156,11 +156,11 @@ export async function getStats(userId: string, year: number) {
   let artistId: string | undefined;
   let albumId: string | undefined;
 
-  if (statsRecord.song) {
+  if (statsRecord.trackName) {
     const trackResult = await db
       .select({ id: track.id })
       .from(track)
-      .where(eq(track.name, statsRecord.song))
+      .where(eq(track.name, statsRecord.trackName))
       .limit(1);
     trackId = trackResult[0]?.id;
   }
@@ -191,7 +191,8 @@ export async function getStats(userId: string, year: number) {
     artistId,
     album: statsRecord.album || undefined,
     albumId,
-    song: statsRecord.song || undefined,
+    trackName: statsRecord.trackName || undefined,
+    trackCount: statsRecord.trackCount,
     trackId,
   };
 }

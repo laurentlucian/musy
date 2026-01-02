@@ -8,6 +8,6 @@ export default defineConfig({
     databaseId: process.env.CLOUDFLARE_DATABASE_ID!,
     token: process.env.CLOUDFLARE_D1_TOKEN!,
   },
-  schema: "./app/lib/db/schema.ts",
-  out: "./app/lib/db/migrations",
+  schema: "./app/lib.server/db/schema.ts",
+  out: "./app/lib.server/db/migrations",
 });

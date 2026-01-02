@@ -54,7 +54,7 @@ function calculateStats(
     {} as Record<string, number>,
   );
 
-  const songs = rows.reduce(
+  const tracks = rows.reduce(
     (acc, { track }) => {
       acc[track.name] = (acc[track.name] || 0) + 1;
       return acc;
@@ -62,13 +62,13 @@ function calculateStats(
     {} as Record<string, number>,
   );
 
-  return { minutes, artists, albums, songs, played: rows.length };
+  return { minutes, artists, albums, tracks, played: rows.length };
 }
 
 function getTopItems(arg: {
   artists: Record<string, number>;
   albums: Record<string, number>;
-  songs: Record<string, number>;
+  tracks: Record<string, number>;
 }) {
   const artist = Object.entries(arg.artists).reduce(
     (a, b) => (b[1] > a[1] ? b : a),
@@ -80,12 +80,14 @@ function getTopItems(arg: {
     ["", 0],
   )[0];
 
-  const song = Object.entries(arg.songs).reduce(
+  const trackEntry = Object.entries(arg.tracks).reduce(
     (a, b) => (b[1] > a[1] ? b : a),
     ["", 0],
-  )[0];
+  );
+  const track = trackEntry[0];
+  const trackCount = trackEntry[1];
 
-  return { artist, album, song };
+  return { artist, album, track, trackCount };
 }
 
 async function getUserYearsWithData(userId: string): Promise<number[]> {
@@ -180,7 +182,7 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
     let minutes = 0;
     const artists: Record<string, number> = {};
     const albums: Record<string, number> = {};
-    const songs: Record<string, number> = {};
+    const tracks: Record<string, number> = {};
 
     const take = 2500;
     let skip = 0;
@@ -229,15 +231,15 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
       for (const [album, count] of Object.entries(batch.albums)) {
         albums[album] = (albums[album] ?? 0) + count;
       }
-      for (const [song, count] of Object.entries(batch.songs)) {
-        songs[song] = (songs[song] ?? 0) + count;
+      for (const [track, count] of Object.entries(batch.tracks)) {
+        tracks[track] = (tracks[track] ?? 0) + count;
       }
     }
 
-    const topItems = getTopItems({ songs, albums, artists });
+    const topItems = getTopItems({ tracks, albums, artists });
 
     log(
-      `calculated all-time stats for user ${userId}: ${played} plays, ${Math.round(minutes)} minutes, top song: ${topItems.song || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
+      `calculated all-time stats for user ${userId}: ${played} plays, ${Math.round(minutes)} minutes, top track: ${topItems.track || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
       "stats",
     );
 
@@ -256,7 +258,8 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
         played,
         liked,
         minutes: minutes.toString(),
-        song: topItems.song || null,
+        trackName: topItems.track || null,
+        trackCount: topItems.trackCount || 0,
         artist: topItems.artist || null,
         album: topItems.album || null,
         createdAt: updatedAt,
@@ -268,7 +271,8 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
           played,
           liked,
           minutes: minutes.toString(),
-          song: topItems.song || null,
+          trackName: topItems.track || null,
+          trackCount: topItems.trackCount || 0,
           artist: topItems.artist || null,
           album: topItems.album || null,
           updatedAt: updatedAt,
@@ -362,7 +366,7 @@ export async function syncUserStats({
     let minutes = 0;
     const artists: Record<string, number> = {};
     const albums: Record<string, number> = {};
-    const songs: Record<string, number> = {};
+    const tracks: Record<string, number> = {};
 
     const take = 2500;
     let skip = 0;
@@ -417,15 +421,15 @@ export async function syncUserStats({
       for (const [album, count] of Object.entries(batch.albums)) {
         albums[album] = (albums[album] ?? 0) + count;
       }
-      for (const [song, count] of Object.entries(batch.songs)) {
-        songs[song] = (songs[song] ?? 0) + count;
+      for (const [track, count] of Object.entries(batch.tracks)) {
+        tracks[track] = (tracks[track] ?? 0) + count;
       }
     }
 
-    const topItems = getTopItems({ songs, albums, artists });
+    const topItems = getTopItems({ tracks, albums, artists });
 
     log(
-      `calculated stats for user ${userId}, year ${year}: ${played} plays, ${Math.round(minutes)} minutes, top song: ${topItems.song || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
+      `calculated stats for user ${userId}, year ${year}: ${played} plays, ${Math.round(minutes)} minutes, top track: ${topItems.track || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
       "stats",
     );
 
@@ -443,7 +447,8 @@ export async function syncUserStats({
         played,
         liked,
         minutes: minutes.toString(),
-        song: topItems.song || null,
+        trackName: topItems.track || null,
+        trackCount: topItems.trackCount || 0,
         artist: topItems.artist || null,
         album: topItems.album || null,
         createdAt: updatedAt,
@@ -455,7 +460,8 @@ export async function syncUserStats({
           played,
           liked,
           minutes: minutes.toString(),
-          song: topItems.song || null,
+          trackName: topItems.track || null,
+          trackCount: topItems.trackCount || 0,
           artist: topItems.artist || null,
           album: topItems.album || null,
           updatedAt: updatedAt,

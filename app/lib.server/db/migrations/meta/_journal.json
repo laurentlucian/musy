@@ -50,6 +50,20 @@
       "when": 1767299711858,
       "tag": "0006_open_tomorrow_man",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1767318823607,
+      "tag": "0007_huge_magma",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1767319438954,
+      "tag": "0008_public_gabe_jones",
+      "breakpoints": true
     }
   ]
 }

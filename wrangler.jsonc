@@ -14,7 +14,7 @@
       "database_name": "musy",
       "database_id": "0f47bd03-cb16-4ffe-9e41-2e49ba11eaed",
       "remote": true,
-      "migrations_dir": "app/lib/db/migrations"
+      "migrations_dir": "app/lib.server/db/migrations"
     }
   ],
   "triggers": {

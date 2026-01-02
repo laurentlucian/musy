@@ -1,0 +1,1 @@
+ALTER TABLE `Stats` RENAME COLUMN "song" TO "trackName";

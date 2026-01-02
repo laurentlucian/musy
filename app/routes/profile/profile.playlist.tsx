@@ -381,13 +381,13 @@ function PlaylistActions({
 
       <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
         <DialogContent>
-          <DialogTitle>Unlike songs?</DialogTitle>
+          <DialogTitle>Unlike tracks?</DialogTitle>
           <DialogDescription>
             This will unlike{" "}
             {unlikeCount === "all"
               ? `all ${trackCount.toLocaleString()}`
               : unlikeCount}{" "}
-            songs in "{playlistName}". This action cannot be undone.
+            tracks in "{playlistName}". This action cannot be undone.
           </DialogDescription>
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
