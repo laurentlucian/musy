@@ -1,5 +1,5 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import { and, asc, count, desc, eq, gte, inArray, lte, min } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, lte, max, min } from "drizzle-orm";
 import {
   album,
   artist,
@@ -237,12 +237,20 @@ export async function getUserPlaylists(
 ) {
   const { userId, provider } = args;
 
-  // Get playlists for user
-  const playlists = await db
-    .select()
+  // Get playlists with latest update time
+  const playlistsWithUpdate = await db
+    .select({
+      playlist: playlist,
+      latestUpdate: max(playlistTrack.addedAt),
+    })
     .from(playlist)
+    .leftJoin(playlistTrack, eq(playlistTrack.playlistId, playlist.id))
     .where(and(eq(playlist.userId, userId), eq(playlist.provider, provider)))
-    .orderBy(playlist.name);
+    .groupBy(playlist.id)
+    .orderBy(desc(max(playlistTrack.addedAt)), asc(playlist.name));
+
+  // Extract just the playlists (latestUpdate was only for sorting)
+  const playlists = playlistsWithUpdate.map(({ playlist }) => playlist);
 
   // Get total count
   const [{ count: totalCount }] = await db
