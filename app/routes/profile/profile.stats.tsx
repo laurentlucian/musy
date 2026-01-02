@@ -1,5 +1,5 @@
 import { RefreshCcw } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { data, Link, redirect, useFetcher, useRevalidator } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -158,6 +158,58 @@ function Stats({
   stats: NonNullable<Awaited<ReturnType<typeof getStats>>>;
   year: number;
 }) {
+  const [timeUnit, setTimeUnit] = useState<
+    "minutes" | "days" | "weeks" | "seconds"
+  >("minutes");
+
+  const cycleTimeUnit = () => {
+    setTimeUnit((prev) => {
+      switch (prev) {
+        case "minutes":
+          return "days";
+        case "days":
+          return "weeks";
+        case "weeks":
+          return "seconds";
+        case "seconds":
+          return "minutes";
+        default:
+          return "minutes";
+      }
+    });
+  };
+
+  const getDisplayValue = () => {
+    const minutes = stats.minutes;
+    switch (timeUnit) {
+      case "minutes":
+        return minutes;
+      case "days":
+        return minutes / 1440; // 24 * 60
+      case "weeks":
+        return minutes / 10080; // 7 * 24 * 60
+      case "seconds":
+        return minutes * 60;
+      default:
+        return minutes;
+    }
+  };
+
+  const getUnitLabel = () => {
+    switch (timeUnit) {
+      case "minutes":
+        return "minutes listened";
+      case "days":
+        return "days listened";
+      case "weeks":
+        return "weeks listened";
+      case "seconds":
+        return "seconds listened";
+      default:
+        return "minutes listened";
+    }
+  };
+
   return (
     <>
       <div className="flex flex-wrap gap-2 whitespace-nowrap">
@@ -167,12 +219,20 @@ function Stats({
           </p>
           <p className="text-muted-foreground text-xs">tracks played</p>
         </div>
-        <div className="rounded-lg bg-card p-3">
+        <button
+          type="button"
+          className="cursor-pointer rounded-lg bg-card p-3 text-left"
+          onClick={cycleTimeUnit}
+          aria-label={`Switch time unit display, currently showing ${getUnitLabel()}`}
+        >
           <p className="font-bold text-3xl">
-            <NumberAnimated value={stats.minutes} key={year} />
+            <NumberAnimated
+              value={getDisplayValue()}
+              key={`${year}-${timeUnit}`}
+            />
           </p>
-          <p className="text-muted-foreground text-xs">minutes listened</p>
-        </div>
+          <p className="text-muted-foreground text-xs">{getUnitLabel()}</p>
+        </button>
         <div className="flex gap-4">
           <div className="rounded-lg bg-card p-3">
             <p className="font-bold text-3xl">
