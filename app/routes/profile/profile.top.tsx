@@ -1,6 +1,7 @@
 import { RefreshCcw } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
+import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
@@ -64,7 +65,20 @@ export default function ProfileTop({ loaderData }: Route.ComponentProps) {
       <div className="flex items-center gap-2">
         <TopSelector type={loaderData.type} range={loaderData.range} />
         {loaderData.currentUserId === loaderData.userId && (
-          <TopSyncButton userId={loaderData.userId} />
+          <>
+            <TopSyncButton userId={loaderData.userId} />
+            {loaderData.type === "tracks" && (
+              <Suspense
+                fallback={
+                  <Button size="sm" variant="outline" disabled>
+                    <Waver />
+                  </Button>
+                }
+              >
+                <TopQueueButton topData={loaderData.topData} />
+              </Suspense>
+            )}
+          </>
         )}
       </div>
       <Suspense fallback={<Waver />}>
@@ -92,4 +106,15 @@ function TopSyncButton({ userId }: { userId: string }) {
       {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
+}
+
+function TopQueueButton({
+  topData,
+}: {
+  topData: ReturnType<typeof getTopData>;
+}) {
+  const data = use(topData);
+  const tracks = data?.tracks || [];
+
+  return <TracksQueueButton tracks={tracks} provider="spotify" />;
 }

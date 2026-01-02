@@ -31,6 +31,11 @@ export async function action({
     return data({ error, type: "queue" });
   }
 
+  if (action === "queue-multiple") {
+    const error = await queueMultiple({ form, userId });
+    return data({ error, type: "queue-multiple" });
+  }
+
   async function like(args: { form: FormData; userId: string }) {
     const { userId, form } = args;
     const provider = form.get("provider");
@@ -70,6 +75,46 @@ export async function action({
       try {
         const spotify = await getSpotifyClient({ userId });
         await spotify.player.addItemToPlaybackQueue(uri, {});
+
+        return null;
+      } catch (error) {
+        logError(error instanceof Error ? error.message : error);
+        return "not listening";
+      }
+    }
+
+    return "provider not supported";
+  }
+
+  async function queueMultiple(args: { form: FormData; userId: string }) {
+    const { form, userId } = args;
+    const uris = form.get("uris");
+    if (typeof uris !== "string") return "no uris";
+
+    let parsedUris: string[];
+    try {
+      parsedUris = JSON.parse(uris);
+      if (
+        !Array.isArray(parsedUris) ||
+        !parsedUris.every((uri) => typeof uri === "string")
+      ) {
+        return "invalid uris format";
+      }
+    } catch {
+      return "invalid uris format";
+    }
+
+    const provider = form.get("provider");
+    if (typeof provider !== "string") return "no provider";
+
+    if (provider === "spotify") {
+      try {
+        const spotify = await getSpotifyClient({ userId });
+
+        // Queue tracks sequentially to maintain order
+        for (const uri of parsedUris) {
+          await spotify.player.addItemToPlaybackQueue(uri, {});
+        }
 
         return null;
       } catch (error) {

@@ -3,6 +3,7 @@ import { RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
+import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
@@ -64,6 +65,15 @@ export default function ProfileListened({
       {currentUserId === userId && (
         <div className="flex items-center gap-2">
           <ListenedSyncButton userId={userId} />
+          <Suspense
+            fallback={
+              <Button size="sm" variant="outline" disabled>
+                <Waver />
+              </Button>
+            }
+          >
+            <ListenedQueueButton recent={recent} />
+          </Suspense>
         </div>
       )}
       {recent && (
@@ -93,6 +103,12 @@ function ListenedSyncButton({ userId }: { userId: string }) {
       {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
+}
+
+function ListenedQueueButton({ recent }: { recent: UserRecent }) {
+  const { tracks } = use(recent);
+
+  return <TracksQueueButton tracks={tracks} provider="spotify" />;
 }
 
 function ListenedList(props: { tracks: UserRecent }) {

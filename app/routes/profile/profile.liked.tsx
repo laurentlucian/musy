@@ -3,6 +3,7 @@ import { Plus, RefreshCcw } from "lucide-react";
 import { Suspense, use } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
+import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import {
@@ -92,6 +93,15 @@ export default function ProfileLiked({
           <div className="flex gap-2">
             <CreatePlaylistsButton userId={userId} />
             <LikedSyncButton userId={userId} />
+            <Suspense
+              fallback={
+                <Button size="sm" variant="outline" disabled>
+                  <Waver />
+                </Button>
+              }
+            >
+              <LikedQueueButton liked={liked} />
+            </Suspense>
           </div>
         )}
       </div>
@@ -178,4 +188,10 @@ function LikedSyncButton({ userId }: { userId: string }) {
       {isSyncing ? <Waver /> : <RefreshCcw />}
     </Button>
   );
+}
+
+function LikedQueueButton({ liked }: { liked: UserLiked }) {
+  const { tracks } = use(liked);
+
+  return <TracksQueueButton tracks={tracks} provider="spotify" />;
 }

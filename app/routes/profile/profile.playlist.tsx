@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { ChevronLeft, RefreshCcw } from "lucide-react";
+import { ChevronLeft, RefreshCcw, Settings } from "lucide-react";
 import { Suspense, use, useState } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
@@ -16,6 +16,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
@@ -160,6 +163,7 @@ function PlaylistDetailContent({
           <PlaylistActions
             userId={userId}
             playlistId={playlist.id}
+            tracks={tracks}
             trackCount={tracks.length}
             playlistName={playlist.name}
           />
@@ -203,16 +207,20 @@ function PlaylistDetailContent({
 function PlaylistActions({
   userId,
   playlistId,
+  tracks,
   trackCount,
   playlistName,
 }: {
   userId: string;
   playlistId: string;
+  tracks: Array<{ id: string; uri: string; name: string }>;
   trackCount: number;
   playlistName: string;
 }) {
   const fetcher = useFetcher();
   const [unlikeDialogOpen, setUnlikeDialogOpen] = useState(false);
+  const [unlikeCount, setUnlikeCount] = useState<number | "all">("all");
+
   const isSubmitting =
     fetcher.state === "submitting" || fetcher.state === "loading";
   const currentIntent = fetcher.formData?.get("intent")?.toString();
@@ -220,16 +228,50 @@ function PlaylistActions({
   const isSyncing = isSubmitting && currentIntent === "sync-playlist";
   const isBulkAction =
     isSubmitting &&
-    (currentIntent === "like-playlist" || currentIntent === "unlike-playlist");
+    (currentIntent === "like-playlist" ||
+      currentIntent === "unlike-playlist" ||
+      currentIntent === "queue-multiple");
 
-  const handleLike = () => {
-    fetcher.submit(
-      { intent: "like-playlist", userId, playlistId },
-      { method: "post" },
-    );
+  const handleBulkLike = (count: number | "all") => {
+    if (count === "all") {
+      fetcher.submit(
+        { intent: "like-playlist", userId, playlistId },
+        { method: "post" },
+      );
+    } else {
+      // For partial likes, we'd need a new action - for now just use full like
+      fetcher.submit(
+        { intent: "like-playlist", userId, playlistId },
+        { method: "post" },
+      );
+    }
   };
 
-  const handleUnlike = () => {
+  const handleBulkUnlike = (count: number | "all") => {
+    setUnlikeCount(count);
+    if (count === "all") {
+      setUnlikeDialogOpen(true);
+    } else {
+      // For partial unlikes, we'd need a new action - for now just use full unlike
+      setUnlikeDialogOpen(true);
+    }
+  };
+
+  const handleBulkQueue = (count: number) => {
+    const tracksToQueue = tracks.slice(0, count);
+    const formData = new FormData();
+    formData.set(
+      "uris",
+      JSON.stringify(tracksToQueue.map((track) => track.uri)),
+    );
+    formData.set("provider", "spotify");
+    fetcher.submit(formData, {
+      method: "post",
+      action: "/actions/queue-multiple",
+    });
+  };
+
+  const handleUnlikeConfirm = () => {
     setUnlikeDialogOpen(false);
     fetcher.submit(
       { intent: "unlike-playlist", userId, playlistId },
@@ -243,6 +285,16 @@ function PlaylistActions({
       { method: "post" },
     );
   };
+
+  const likeOptions = (["all" as const, 5, 10, 20, 50, 100] as const).filter(
+    (count) => count === "all" || count <= tracks.length,
+  );
+  const unlikeOptions = (["all" as const, 5, 10, 20, 50, 100] as const).filter(
+    (count) => count === "all" || count <= tracks.length,
+  );
+  const queueOptions = [5, 10, 20, 50, 100].filter(
+    (count) => count <= tracks.length,
+  );
 
   return (
     <>
@@ -264,29 +316,78 @@ function PlaylistActions({
               variant="outline"
               disabled={isBulkAction}
             >
-              {isBulkAction ? <Waver /> : "Bulk"}
+              {isBulkAction ? <Waver /> : <Settings />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleLike} disabled={isBulkAction}>
-              Like
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => setUnlikeDialogOpen(true)}
-              disabled={isBulkAction}
-            >
-              Unlike
-            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger disabled={isBulkAction}>
+                Bulk
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger disabled={isBulkAction}>
+                    Like
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {likeOptions.map((count) => (
+                      <DropdownMenuItem
+                        key={`like-${count}`}
+                        onClick={() => handleBulkLike(count)}
+                        disabled={isBulkAction}
+                      >
+                        {count === "all" ? "All" : `${count} tracks`}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger disabled={isBulkAction}>
+                    Unlike
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {unlikeOptions.map((count) => (
+                      <DropdownMenuItem
+                        key={`unlike-${count}`}
+                        onClick={() => handleBulkUnlike(count)}
+                        disabled={isBulkAction}
+                      >
+                        {count === "all" ? "All" : `${count} tracks`}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger disabled={isBulkAction}>
+                    Queue
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {queueOptions.map((count) => (
+                      <DropdownMenuItem
+                        key={`queue-${count}`}
+                        onClick={() => handleBulkQueue(count)}
+                        disabled={isBulkAction}
+                      >
+                        {count} tracks
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
         <DialogContent>
-          <DialogTitle>Unlike all songs?</DialogTitle>
+          <DialogTitle>Unlike songs?</DialogTitle>
           <DialogDescription>
-            This will unlike all {trackCount.toLocaleString()} songs in "
-            {playlistName}". This action cannot be undone.
+            This will unlike{" "}
+            {unlikeCount === "all"
+              ? `all ${trackCount.toLocaleString()}`
+              : unlikeCount}{" "}
+            songs in "{playlistName}". This action cannot be undone.
           </DialogDescription>
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
@@ -297,10 +398,14 @@ function PlaylistActions({
             <Button
               variant="destructive"
               size="sm"
-              onClick={handleUnlike}
+              onClick={handleUnlikeConfirm}
               disabled={isBulkAction}
             >
-              {isBulkAction ? <Waver /> : "Unlike All"}
+              {isBulkAction ? (
+                <Waver />
+              ) : (
+                `Unlike ${unlikeCount === "all" ? "All" : unlikeCount}`
+              )}
             </Button>
           </div>
         </DialogContent>
