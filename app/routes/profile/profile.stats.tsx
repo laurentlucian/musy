@@ -45,7 +45,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const userId = formData.get("userId");
   const year = formData.get("year");
 
-  if (intent !== "sync-stats" || userId !== currentUserId || year === null) {
+  if (intent !== "sync-stats" || !userId || year === null) {
     return data({ success: false, error: "Invalid request" }, { status: 400 });
   }
 
