@@ -141,6 +141,14 @@ async function getUserYearsWithData(userId: string): Promise<number[]> {
   return sortedYears;
 }
 
+async function getUserYearsWithStats(userId: string): Promise<Set<number>> {
+  const existingStats = await db.query.stats.findMany({
+    where: eq(stats.userId, userId),
+    columns: { year: true },
+  });
+  return new Set(existingStats.map((s) => s.year));
+}
+
 export async function syncUserStatsAll({ userId }: { userId: string }) {
   log(`starting all-time stats sync for user ${userId}`, "stats");
   const now = new Date().toISOString();
@@ -548,9 +556,49 @@ export async function syncAllUsersStats() {
               return;
             }
 
-            log(`syncing ${years.length} years for user ${userId}`, "stats");
-            for (const year of years) {
-              await syncUserStats({ userId, year });
+            const existingStatsYears = await getUserYearsWithStats(userId);
+            const currentYear = new Date().getFullYear();
+            const pastYears = years.filter((year) => year < currentYear);
+            const missingPastYears = pastYears.filter(
+              (year) => !existingStatsYears.has(year),
+            );
+
+            // Only sync if there are missing past years, or if all past years exist and we need to sync current year
+            if (missingPastYears.length > 0) {
+              log(
+                `syncing ${missingPastYears.length} missing past years for user ${userId}: ${missingPastYears.join(", ")}`,
+                "stats",
+              );
+              for (const year of missingPastYears) {
+                await syncUserStats({ userId, year });
+              }
+            }
+
+            // Sync current year only if all past years exist
+            if (
+              pastYears.length > 0 &&
+              missingPastYears.length === 0 &&
+              years.includes(currentYear) &&
+              !existingStatsYears.has(currentYear)
+            ) {
+              log(
+                `all past years exist for user ${userId}, syncing current year ${currentYear}`,
+                "stats",
+              );
+              await syncUserStats({ userId, year: currentYear });
+            } else if (
+              pastYears.length === 0 &&
+              years.includes(currentYear) &&
+              !existingStatsYears.has(currentYear)
+            ) {
+              // If user only has current year data, sync it
+              log(
+                `syncing current year ${currentYear} for user ${userId}`,
+                "stats",
+              );
+              await syncUserStats({ userId, year: currentYear });
+            } else if (missingPastYears.length === 0) {
+              log(`all years already synced for user ${userId}`, "stats");
             }
 
             const now = new Date().toISOString();
