@@ -16,8 +16,11 @@ export default {
     const cron = controller.cron;
 
     if (cron === "*/5 * * * *") {
-      // Every 5 minutes - enrich artists then albums sequentially
-      ctx.waitUntil(enrichArtists().then(() => enrichAlbums()));
+      // Every 5 minutes - enrich artists
+      ctx.waitUntil(enrichArtists());
+    } else if (cron === "*/3 * * * *") {
+      // Every 3 minutes - enrich albums
+      ctx.waitUntil(enrichAlbums());
     } else if (cron === "0 * * * *") {
       // Every hour - sync recent tracks
       ctx.waitUntil(syncUsers("recent"));

@@ -37,7 +37,7 @@ export async function enrichAlbums() {
           eq(album.total, ""),
         ),
       )
-      .limit(500);
+      .limit(700);
 
     if (albumsToEnrich.length === 0) {
       log("no albums to enrich", "enrich");

@@ -25,7 +25,7 @@ export async function enrichArtists() {
           eq(artist.followers, 0),
         ),
       )
-      .limit(500);
+      .limit(700);
 
     if (artistsToEnrich.length === 0) {
       log("no artists to enrich", "enrich");
