@@ -257,7 +257,6 @@ function Stats({
           )}
           <p className="text-muted-foreground text-sm">most listened track</p>
           <p className="text-muted-foreground text-xs">
-            played{" "}
             <NumberAnimated
               value={stats.trackCount}
               key={`${year}-trackCount`}
