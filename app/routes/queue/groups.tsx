@@ -80,7 +80,9 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
                 <p className="text-muted-foreground text-xs">
                   {group.members.length === 0
                     ? "Share link to add others."
-                    : `${group.members.length} members`}
+                    : `${group.members.length} member${
+                        group.members.length > 1 ? "s" : ""
+                      }`}
                 </p>
               </div>
             </Link>

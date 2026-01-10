@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 import {
   queueGroup,
   queueGroupToUser,
@@ -102,7 +102,7 @@ export async function getQueueItems(groupId: string) {
         },
       },
     },
-    orderBy: (queueItem, { asc }) => [asc(queueItem.createdAt)],
+    orderBy: (queueItem, { desc }) => [desc(queueItem.createdAt)],
   });
 }
 
@@ -127,7 +127,7 @@ export async function getWorkflowStatus(args: {
   const wfId = `${groupId}-${userId}`;
 
   try {
-    const wf = await env.WORKFLOW_QUEUE.get(wfId);
+    const wf = await env.WORKFLOW_QUEUE.get(wfId).catch(() => null);
     if (!wf) {
       return { id: wfId, status: "not_started" };
     }
@@ -313,7 +313,7 @@ export async function addQueueItem(args: {
   const workflows = recipientIds.map(async (recipientId) => {
     const wfId = `${groupId}-${recipientId}`;
     try {
-      const wf = await env.WORKFLOW_QUEUE.get(wfId);
+      const wf = await env.WORKFLOW_QUEUE.get(wfId).catch(() => null);
 
       if (!wf) {
         await env.WORKFLOW_QUEUE.create({
@@ -366,7 +366,7 @@ export async function getNextQueueItemForDelivery(args: {
   const { groupId, userId } = args;
 
   const items = await db.query.queueItem.findMany({
-    where: eq(queueItem.groupId, groupId),
+    where: and(eq(queueItem.groupId, groupId), ne(queueItem.userId, userId)),
     orderBy: (queueItem, { asc }) => [asc(queueItem.createdAt)],
     with: {
       track: true,

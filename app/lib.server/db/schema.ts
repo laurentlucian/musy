@@ -499,7 +499,7 @@ export const queueItemDelivery = sqliteTable(
         onUpdate: "cascade",
       }),
 
-    reaction: text().default("like"), // like, dislike
+    reaction: text(), // like, dislike, null
   },
   (table) => [
     index("_QueueItemDelivery_userId_idx").on(table.userId),

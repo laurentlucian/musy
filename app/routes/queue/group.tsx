@@ -233,53 +233,71 @@ export default function Group({ loaderData }: Route.ComponentProps) {
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  className="flex items-center gap-4"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {myDelivery && (
-                    <div className="flex items-center gap-1">
-                      <ReactionButton
-                        queueItemId={item.id}
-                        reaction="like"
-                        isActive={myDelivery.reaction === "like"}
-                      />
-                      <ReactionButton
-                        queueItemId={item.id}
-                        reaction="dislike"
-                        isActive={myDelivery.reaction === "dislike"}
-                      />
-                    </div>
-                  )}
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center gap-3">
+                    {myDelivery && (
+                      <div className="flex items-center gap-1">
+                        <ReactionButton
+                          queueItemId={item.id}
+                          reaction="like"
+                          isActive={myDelivery.reaction === "like"}
+                        />
+                        <ReactionButton
+                          queueItemId={item.id}
+                          reaction="dislike"
+                          isActive={myDelivery.reaction === "dislike"}
+                        />
+                      </div>
+                    )}
 
-                  <div className="flex items-center gap-2">
-                    {item.deliveries.map((delivery) => (
+                    <div className="flex items-center gap-1.5">
                       <div
-                        key={delivery.id}
-                        className="relative flex items-center gap-1.5"
+                        className="relative flex items-center"
+                        title={`Queued by ${item.uploader?.name ?? "User"}`}
                       >
                         <Image
-                          src={delivery.user.image ?? ""}
-                          alt={delivery.user.name ?? "User"}
-                          className="h-6 w-6 rounded-full object-cover opacity-60 grayscale"
+                          src={item.uploader?.image ?? ""}
+                          alt={item.uploader?.name ?? "User"}
+                          className="h-6 w-6 rounded-full object-cover"
                           height={24}
                           width={24}
                         />
-                        <div className="flex items-center gap-0.5">
-                          {delivery.reaction === "like" ? (
-                            <ThumbsUp className="h-3 w-3 text-primary" />
-                          ) : delivery.reaction === "dislike" ? (
-                            <ThumbsDown className="h-3 w-3 text-destructive" />
-                          ) : (
-                            <Check
-                              className="h-3 w-3 text-muted-foreground"
-                              strokeWidth={3}
-                            />
-                          )}
+                        <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary">
+                          <Plus className="h-2.5 w-2.5 text-primary-foreground" />
                         </div>
                       </div>
-                    ))}
+
+                      {item.deliveries.map((delivery) => (
+                        <div
+                          key={delivery.id}
+                          className="relative flex items-center"
+                        >
+                          <Image
+                            src={delivery.user.image ?? ""}
+                            alt={delivery.user.name ?? "User"}
+                            className="h-6 w-6 rounded-full object-cover opacity-60 grayscale"
+                            height={24}
+                            width={24}
+                          />
+                          {delivery.reaction === "like" ? (
+                            <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary">
+                              <ThumbsUp className="h-2.5 w-2.5 text-primary-foreground" />
+                            </div>
+                          ) : delivery.reaction === "dislike" ? (
+                            <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive">
+                              <ThumbsDown className="h-2.5 w-2.5 text-white" />
+                            </div>
+                          ) : (
+                            <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-muted-foreground">
+                              <Check
+                                className="h-2.5 w-2.5 text-white"
+                                strokeWidth={3}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <span className="whitespace-nowrap text-muted-foreground text-xs">
@@ -287,7 +305,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
                       addSuffix: true,
                     })}
                   </span>
-                </button>
+                </div>
               </Link>
             );
           })}
@@ -415,21 +433,61 @@ function AddTrackAction() {
 
 function DeleteGroupAction() {
   const fetcher = useFetcher();
+  const [open, setOpen] = useState(false);
   const isDeleting = fetcher.formData?.get("intent") === "delete-group";
 
+  useEffect(() => {
+    if (
+      fetcher.data &&
+      typeof fetcher.data === "object" &&
+      "success" in fetcher.data
+    ) {
+      setOpen(false);
+    }
+  }, [fetcher.data]);
+
   return (
-    <fetcher.Form method="post">
-      <Button
-        variant="ghost"
-        size="icon"
-        name="intent"
-        value="delete-group"
-        className="text-muted-foreground hover:text-destructive"
-        disabled={isDeleting}
-      >
-        {isDeleting ? <Loader /> : <Trash className="h-4 w-4" />}
-      </Button>
-    </fetcher.Form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-muted-foreground hover:text-destructive"
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete Group</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this group? This action cannot be
+            undone.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <fetcher.Form method="post">
+            <Button
+              type="submit"
+              name="intent"
+              value="delete-group"
+              variant="destructive"
+              disabled={isDeleting}
+            >
+              {isDeleting ? <Loader /> : "Delete"}
+            </Button>
+          </fetcher.Form>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
