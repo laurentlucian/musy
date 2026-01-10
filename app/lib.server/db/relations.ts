@@ -10,6 +10,10 @@ import {
   playlistTrack,
   profile,
   provider,
+  queueGroup,
+  queueGroupToUser,
+  queueItem,
+  queueItemDelivery,
   recentTracks,
   stats,
   top,
@@ -206,3 +210,56 @@ export const statsRelations = relations(stats, ({ one }) => ({
     references: [profile.id],
   }),
 }));
+
+export const queueGroupRelations = relations(queueGroup, ({ one, many }) => ({
+  owner: one(profile, {
+    fields: [queueGroup.userId],
+    references: [profile.id],
+  }),
+  members: many(queueGroupToUser),
+  items: many(queueItem),
+}));
+
+export const queueGroupToProfileRelations = relations(
+  queueGroupToUser,
+  ({ one }) => ({
+    group: one(queueGroup, {
+      fields: [queueGroupToUser.groupId],
+      references: [queueGroup.id],
+    }),
+    user: one(profile, {
+      fields: [queueGroupToUser.userId],
+      references: [profile.id],
+    }),
+  }),
+);
+
+export const queueItemRelations = relations(queueItem, ({ one, many }) => ({
+  group: one(queueGroup, {
+    fields: [queueItem.groupId],
+    references: [queueGroup.id],
+  }),
+  track: one(track, {
+    fields: [queueItem.trackId],
+    references: [track.id],
+  }),
+  uploader: one(profile, {
+    fields: [queueItem.userId],
+    references: [profile.id],
+  }),
+  deliveries: many(queueItemDelivery),
+}));
+
+export const queueItemDeliveryRelations = relations(
+  queueItemDelivery,
+  ({ one }) => ({
+    queueItem: one(queueItem, {
+      fields: [queueItemDelivery.queueItemId],
+      references: [queueItem.id],
+    }),
+    user: one(profile, {
+      fields: [queueItemDelivery.userId],
+      references: [profile.id],
+    }),
+  }),
+);

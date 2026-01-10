@@ -1,4 +1,4 @@
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 import { data, Outlet, redirect } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Image } from "~/components/ui/image";

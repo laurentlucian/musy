@@ -1,5 +1,16 @@
 import { endOfYear, setYear, startOfYear } from "date-fns";
-import { and, asc, count, desc, eq, gte, inArray, lte, max, min } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  inArray,
+  lte,
+  max,
+  min,
+} from "drizzle-orm";
 import {
   album,
   artist,
@@ -33,7 +44,7 @@ export async function getUserRecent(
     .innerJoin(track, eq(track.id, recentTracks.trackId))
     .where(and(eq(recentTracks.userId, userId), eq(track.provider, provider)))
     .orderBy(desc(recentTracks.playedAt))
-    .limit(10);
+    .limit(100);
 
   // Get total count
   const [{ count: totalCount }] = await db

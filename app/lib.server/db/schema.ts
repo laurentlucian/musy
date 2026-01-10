@@ -390,3 +390,122 @@ export const stats = sqliteTable(
     uniqueIndex("Stats_userId_year_key").on(table.userId, table.year),
   ],
 );
+
+export const queueGroup = sqliteTable("QueueGroup", {
+  id: text().primaryKey().notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+
+  name: text(),
+  userId: text()
+    .notNull()
+    .references(() => profile.id, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
+});
+
+export const queueGroupToUser = sqliteTable(
+  "_QueueGroupToUser",
+  {
+    groupId: text()
+      .notNull()
+      .references(() => queueGroup.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+
+    userId: text()
+      .notNull()
+      .references(() => profile.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("_QueueGroupToUser_userId_groupId_key").on(
+      table.userId,
+      table.groupId,
+    ),
+    index("_QueueGroupToUser_userId_idx").on(table.userId),
+  ],
+);
+
+export const queueItem = sqliteTable(
+  "QueueItem",
+  {
+    id: text().primaryKey().notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+
+    groupId: text()
+      .notNull()
+      .references(() => queueGroup.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    trackId: text()
+      .notNull()
+      .references(() => track.id, {
+        onDelete: "restrict",
+        onUpdate: "cascade",
+      }),
+    userId: text()
+      .notNull()
+      .references(() => profile.id, {
+        onDelete: "restrict",
+        onUpdate: "cascade",
+      }),
+  },
+  (table) => [index("QueueItem_groupId_idx").on(table.groupId)],
+);
+
+export const queueItemDelivery = sqliteTable(
+  "_QueueItemDelivery",
+  {
+    id: integer().primaryKey({ autoIncrement: true }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .$defaultFn(() => /* @__PURE__ */ new Date())
+      .notNull(),
+
+    queueItemId: text()
+      .notNull()
+      .references(() => queueItem.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    userId: text()
+      .notNull()
+      .references(() => profile.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+
+    reaction: text().default("like"), // like, dislike
+  },
+  (table) => [
+    index("_QueueItemDelivery_userId_idx").on(table.userId),
+    uniqueIndex("_QueueItemDelivery_queueItemId_userId_key").on(
+      table.queueItemId,
+      table.userId,
+    ),
+  ],
+);

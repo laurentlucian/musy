@@ -18,7 +18,9 @@ export default [
         route(":playlistId", "routes/profile/profile.playlist.tsx"),
       ]),
     ]),
-
+    route("queue", "routes/queue/groups.tsx", [
+      route(":groupId", "routes/queue/group.tsx"),
+    ]),
     route("settings", "routes/settings.tsx", [
       ...prefix("admin", [
         route("syncs", "routes/admin/syncs.tsx"),

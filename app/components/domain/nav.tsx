@@ -1,4 +1,4 @@
-import { Settings, User } from "lucide-react";
+import { ListMusic, Settings, User } from "lucide-react";
 import { NavLink as RouterNavLink, type To } from "react-router";
 import { Logo } from "~/components/domain/logo";
 import { Button } from "~/components/ui/button";
@@ -11,12 +11,15 @@ function pwa() {
 export function Nav() {
   return (
     <nav
-      className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-y-3 bg-[#101010] p-2 py-4 data-[pwa=true]:pb-8! sm:top-0 sm:left-0 sm:w-fit! sm:flex-col"
+      className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-3 bg-[#101010] p-2 py-4 data-[pwa=true]:pb-8! sm:top-0 sm:left-0 sm:w-fit! sm:flex-col"
       data-pwa={pwa()}
     >
       <Logo />
       <NavLink to="/profile">
         <User />
+      </NavLink>
+      <NavLink to="/queue">
+        <ListMusic />
       </NavLink>
       <NavLink to="/settings">
         <Settings />

@@ -3,6 +3,8 @@ import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-alb
 import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
+export { WorkflowQueue } from "./workflow-queue";
+
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
