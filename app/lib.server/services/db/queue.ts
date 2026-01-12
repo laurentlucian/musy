@@ -325,11 +325,19 @@ export async function addQueueItem(args: {
         });
         console.log("workflow created", recipientId);
       } else {
-        await wf.sendEvent({
-          type: "track_added",
-          payload: {},
-        });
-        console.log("workflow event triggered", recipientId);
+        const status = await wf.status();
+        if (status.status === "errored") {
+          await wf.terminate();
+          console.log("workflow terminated", recipientId);
+          await env.WORKFLOW_QUEUE.create({
+            id: wfId,
+            params: {
+              groupId,
+              userId: recipientId,
+            },
+          });
+          console.log("workflow created", recipientId);
+        }
       }
     } catch (error) {
       console.error(`Failed to manage workflow for ${wfId}`, error);

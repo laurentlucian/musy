@@ -32,16 +32,12 @@ export class WorkflowQueue extends WorkflowEntrypoint<
         },
       );
 
-      // No tracks available - wait for event or timeout
+      // No tracks available - workflow self-deletes
       if (!trackToDeliver) {
-        console.log(`No pending tracks for user ${userId} in group ${groupId}`);
-        // Wait for a "track_added" event, or timeout after 30 minutes as a fallback
-        await step.waitForEvent(`Wait for tracks [${trackIndex}]`, {
-          type: "track_added",
-          timeout: "30 minutes",
-        });
-        trackIndex++;
-        continue;
+        console.log(
+          `No pending tracks for user ${userId} in group ${groupId} - workflow terminating`,
+        );
+        break;
       }
 
       // Wrap track delivery in try-catch to prevent entire workflow from crashing
@@ -72,14 +68,19 @@ export class WorkflowQueue extends WorkflowEntrypoint<
           isListening = playbackResult.isPlaying;
 
           if (!isListening) {
-            await step.sleep(`Wait 30s [${trackIndex}-${playbackCheckCount}]`, "30 seconds");
+            await step.sleep(
+              `Wait 30s [${trackIndex}-${playbackCheckCount}]`,
+              "30 seconds",
+            );
             playbackCheckCount++;
           }
         }
 
         // If user never started listening, skip this track for now and try next
         if (!isListening) {
-          console.log(`User ${userId} not listening after ${maxPlaybackChecks} checks, skipping track`);
+          console.log(
+            `User ${userId} not listening after ${maxPlaybackChecks} checks, skipping track`,
+          );
           trackIndex++;
           continue;
         }
@@ -97,7 +98,9 @@ export class WorkflowQueue extends WorkflowEntrypoint<
           },
           async () => {
             const spotify = await getSpotifyClient({ userId });
-            await spotify.player.addItemToPlaybackQueue(trackToDeliver.track.uri);
+            await spotify.player.addItemToPlaybackQueue(
+              trackToDeliver.track.uri,
+            );
             await recordQueueItemDelivery({
               queueItemId: trackToDeliver.id,
               userId,
