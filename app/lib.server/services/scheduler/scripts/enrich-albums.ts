@@ -29,14 +29,7 @@ export async function enrichAlbums() {
     const albumsToEnrich = await db
       .select({ id: album.id })
       .from(album)
-      .where(
-        or(
-          eq(album.image, ""),
-          eq(album.popularity, 0),
-          eq(album.date, ""),
-          eq(album.total, ""),
-        ),
-      )
+      .where(eq(album.enriched, false))
       .limit(700);
 
     if (albumsToEnrich.length === 0) {
@@ -116,10 +109,15 @@ export async function enrichAlbums() {
             if (Object.keys(updateData).length > 0) {
               await db
                 .update(album)
-                .set(updateData)
+                .set({ ...updateData, enriched: true })
                 .where(eq(album.id, update.id));
               enriched++;
               batchEnriched++;
+            } else {
+              await db
+                .update(album)
+                .set({ enriched: true })
+                .where(eq(album.id, update.id));
             }
           }
           if (batchEnriched > 0) {
@@ -213,10 +211,15 @@ export async function enrichAlbums() {
                 if (Object.keys(updateData).length > 0) {
                   await db
                     .update(album)
-                    .set(updateData)
+                    .set({ ...updateData, enriched: true })
                     .where(eq(album.id, update.id));
                   enriched++;
                   batchEnriched++;
+                } else {
+                  await db
+                    .update(album)
+                    .set({ enriched: true })
+                    .where(eq(album.id, update.id));
                 }
               }
               if (batchEnriched > 0) {

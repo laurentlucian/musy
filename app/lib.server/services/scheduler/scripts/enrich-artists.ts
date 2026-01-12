@@ -17,14 +17,7 @@ export async function enrichArtists() {
     const artistsToEnrich = await db
       .select({ id: artist.id })
       .from(artist)
-      .where(
-        or(
-          eq(artist.image, ""),
-          eq(artist.popularity, 0),
-          eq(artist.genres, ""),
-          eq(artist.followers, 0),
-        ),
-      )
+      .where(eq(artist.enriched, false))
       .limit(700);
 
     if (artistsToEnrich.length === 0) {
@@ -104,10 +97,15 @@ export async function enrichArtists() {
             if (Object.keys(updateData).length > 0) {
               await db
                 .update(artist)
-                .set(updateData)
+                .set({ ...updateData, enriched: true })
                 .where(eq(artist.id, update.id));
               enriched++;
               batchEnriched++;
+            } else {
+              await db
+                .update(artist)
+                .set({ enriched: true })
+                .where(eq(artist.id, update.id));
             }
           }
           if (batchEnriched > 0) {
@@ -201,10 +199,15 @@ export async function enrichArtists() {
                 if (Object.keys(updateData).length > 0) {
                   await db
                     .update(artist)
-                    .set(updateData)
+                    .set({ ...updateData, enriched: true })
                     .where(eq(artist.id, update.id));
                   enriched++;
                   batchEnriched++;
+                } else {
+                  await db
+                    .update(artist)
+                    .set({ enriched: true })
+                    .where(eq(artist.id, update.id));
                 }
               }
               if (batchEnriched > 0) {

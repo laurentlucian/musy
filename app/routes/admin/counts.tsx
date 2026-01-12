@@ -16,25 +16,11 @@ export async function loader(_: Route.LoaderArgs) {
   const [artistsNotEnrichedCount] = await db
     .select({ count: count() })
     .from(artist)
-    .where(
-      or(
-        eq(artist.image, ""),
-        eq(artist.popularity, 0),
-        eq(artist.genres, ""),
-        eq(artist.followers, 0),
-      ),
-    );
+    .where(eq(artist.enriched, false));
   const [albumsNotEnrichedCount] = await db
     .select({ count: count() })
     .from(album)
-    .where(
-      or(
-        eq(album.image, ""),
-        eq(album.popularity, 0),
-        eq(album.date, ""),
-        eq(album.total, ""),
-      ),
-    );
+    .where(eq(album.enriched, false));
 
   return {
     tracks: tracksCount.count,

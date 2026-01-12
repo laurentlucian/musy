@@ -167,6 +167,7 @@ export const artist = sqliteTable("Artist", {
   popularity: integer().notNull(),
   followers: integer().notNull(),
   genres: text().notNull(),
+  enriched: integer({ mode: "boolean" }).default(false).notNull(),
 });
 
 export const album = sqliteTable("Album", {
@@ -181,6 +182,7 @@ export const album = sqliteTable("Album", {
   artistId: text()
     .notNull()
     .references(() => artist.id, { onDelete: "restrict", onUpdate: "cascade" }),
+  enriched: integer({ mode: "boolean" }).default(false).notNull(),
 });
 
 export const top = sqliteTable(

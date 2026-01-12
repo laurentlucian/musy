@@ -78,6 +78,13 @@
       "when": 1768083946027,
       "tag": "0010_parched_manta",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1768260888077,
+      "tag": "0011_normal_rictor",
+      "breakpoints": true
     }
   ]
 }
