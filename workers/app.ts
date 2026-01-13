@@ -1,9 +1,12 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
+import { checkAndQueueDeliveries } from "~/lib.server/services/queue/check-playback";
+import {
+  processQueueDelivery,
+  type QueueDeliveryMessage,
+} from "~/lib.server/services/queue/delivery";
 import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-albums";
 import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
-
-export { WorkflowQueue } from "./workflow-queue";
 
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
@@ -39,6 +42,18 @@ export default {
       // Weekly on Sunday at midnight - sync top tracks/artists and playlists
       ctx.waitUntil(syncUsers("top"));
       ctx.waitUntil(syncUsers("playlist"));
+    } else if (cron === "* * * * *") {
+      // Every minute - check Spotify playback and queue deliveries
+      ctx.waitUntil(checkAndQueueDeliveries());
+    }
+  },
+  async queue(batch, env, ctx) {
+    for (const message of batch.messages) {
+      ctx.waitUntil(
+        processQueueDelivery(env, message.body as QueueDeliveryMessage).then(
+          () => message.ack(),
+        ),
+      );
     }
   },
 } satisfies ExportedHandler<Env>;

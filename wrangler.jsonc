@@ -17,6 +17,21 @@
       "migrations_dir": "app/lib.server/db/migrations"
     }
   ],
+  "queues": {
+    "producers": [
+      {
+        "queue": "musy-delivery-queue",
+        "binding": "DELIVERY_QUEUE"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "musy-delivery-queue",
+        "max_batch_size": 25,
+        "max_retries": 5
+      }
+    ]
+  },
   "triggers": {
     "crons": [
       "*/5 * * * *",
@@ -24,14 +39,8 @@
       "0 * * * *",
       "0 */6 * * *",
       "0 0 * * *",
-      "0 0 * * 1"
+      "0 0 * * 1",
+      "* * * * *"
     ]
-  },
-  "workflows": [
-    {
-      "name": "musy-queue",
-      "binding": "WORKFLOW_QUEUE",
-      "class_name": "WorkflowQueue"
-    }
-  ]
+  }
 }

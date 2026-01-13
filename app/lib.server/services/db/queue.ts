@@ -1,6 +1,6 @@
-import { env } from "cloudflare:workers";
-import { and, eq, ne, or } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
+  playback,
   queueGroup,
   queueGroupToUser,
   queueItem,
@@ -106,104 +106,13 @@ export async function getQueueItems(groupId: string) {
   });
 }
 
-export type WorkflowStatus = {
-  id: string;
-  status:
-    | "running"
-    | "paused"
-    | "errored"
-    | "terminated"
-    | "complete"
-    | "unknown"
-    | "not_started";
-  error?: string;
-};
-
-export async function getWorkflowStatus(args: {
-  groupId: string;
-  userId: string;
-}): Promise<WorkflowStatus> {
-  const { groupId, userId } = args;
-  const wfId = `${groupId}-${userId}`;
-
-  try {
-    const wf = await env.WORKFLOW_QUEUE.get(wfId).catch(() => null);
-    if (!wf) {
-      return { id: wfId, status: "not_started" };
-    }
-
-    const status = await wf.status();
-    return {
-      id: wfId,
-      status: status.status as WorkflowStatus["status"],
-      error: status.error?.message,
-    };
-  } catch (error) {
-    console.error(`Failed to get workflow status for ${wfId}`, error);
-    return { id: wfId, status: "unknown" };
-  }
-}
-
-export async function getGroupWorkflowStatuses(
-  groupId: string,
-): Promise<WorkflowStatus[]> {
-  // Get all members including owner
-  const group = await db.query.queueGroup.findFirst({
-    where: eq(queueGroup.id, groupId),
-    with: {
-      members: true,
-    },
-  });
-
-  if (!group) return [];
-
-  const allUserIds = [group.userId, ...group.members.map((m) => m.userId)];
-
-  const statuses = await Promise.all(
-    allUserIds.map((userId) => getWorkflowStatus({ groupId, userId })),
-  );
-
-  return statuses;
-}
-
 export async function deleteQueueGroup(args: {
   groupId: string;
   userId: string;
 }) {
   const { groupId, userId } = args;
-
-  // Get all members to cancel their workflows
-  const members = await db.query.queueGroupToUser.findMany({
-    where: eq(queueGroupToUser.groupId, groupId),
-  });
-
-  // Cancel workflows for all members (including owner)
-  const group = await db.query.queueGroup.findFirst({
-    where: eq(queueGroup.id, groupId),
-  });
-
-  const allUserIds = [
-    ...(group ? [group.userId] : []),
-    ...members.map((m) => m.userId),
-  ];
-
-  await Promise.all(
-    allUserIds.map(async (memberId) => {
-      const wfId = `${groupId}-${memberId}`;
-      try {
-        const wf = await env.WORKFLOW_QUEUE.get(wfId);
-        if (wf) {
-          await wf.terminate();
-          console.log(`Cancelled workflow for user ${memberId}`);
-        }
-      } catch (_error) {
-        // Workflow may not exist, ignore
-        console.log(`No workflow to cancel for user ${memberId}`);
-      }
-    }),
-  );
-
-  // Delete the group (cascade will handle related records)
+  
+  // Delete the group (cascade will handle related records in _QueueGroupToUser, QueueItem, etc.)
   await db
     .delete(queueGroup)
     .where(and(eq(queueGroup.id, groupId), eq(queueGroup.userId, userId)));
@@ -256,19 +165,6 @@ export async function leaveQueueGroup(args: {
     );
   }
 
-  // Cancel the user's workflow
-  const wfId = `${groupId}-${userId}`;
-  try {
-    const wf = await env.WORKFLOW_QUEUE.get(wfId);
-    if (wf) {
-      await wf.terminate();
-      console.log(`Cancelled workflow for departing user ${userId}`);
-    }
-  } catch (_error) {
-    // Workflow may not exist, ignore
-    console.log(`No workflow to cancel for user ${userId}`);
-  }
-
   // Remove membership
   await db
     .delete(queueGroupToUser)
@@ -295,7 +191,46 @@ export async function addQueueItem(args: {
     userId,
   });
 
-  // Get all potential recipients (owner + members)
+  return id;
+}
+
+export async function updateQueueItemReaction(args: {
+  queueItemId: string;
+  userId: string;
+  reaction: "like" | "dislike" | null | "";
+}) {
+  const { queueItemId, userId, reaction } = args;
+
+  if (!reaction) {
+    await db
+      .delete(queueItemDelivery)
+      .where(
+        and(
+          eq(queueItemDelivery.queueItemId, queueItemId),
+          eq(queueItemDelivery.userId, userId),
+        ),
+      );
+    return;
+  }
+
+  await db
+    .insert(queueItemDelivery)
+    .values({
+      queueItemId,
+      userId,
+      reaction,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [queueItemDelivery.queueItemId, queueItemDelivery.userId],
+      set: {
+        reaction,
+        updatedAt: new Date(),
+      },
+    });
+}
+
+export async function getGroupPlaybackStatuses(groupId: string) {
   const group = await db.query.queueGroup.findFirst({
     where: eq(queueGroup.id, groupId),
     with: {
@@ -303,68 +238,20 @@ export async function addQueueItem(args: {
     },
   });
 
-  if (!group) return id;
+  if (!group) return [];
 
-  const recipientIds = [
-    group.userId,
-    ...group.members.map((m) => m.userId),
-  ].filter((id) => id !== userId); // Exclude the uploader
+  const userIds = [group.userId, ...group.members.map((m) => m.userId)];
 
-  const workflows = recipientIds.map(async (recipientId) => {
-    const wfId = `${groupId}-${recipientId}`;
-    try {
-      const wf = await env.WORKFLOW_QUEUE.get(wfId).catch(() => null);
-
-      if (!wf) {
-        await env.WORKFLOW_QUEUE.create({
-          id: wfId,
-          params: {
-            groupId,
-            userId: recipientId,
-          },
-        });
-        console.log("workflow created", recipientId);
-      } else {
-        const status = await wf.status();
-        if (status.status === "errored") {
-          await wf.terminate();
-          console.log("workflow terminated", recipientId);
-          await env.WORKFLOW_QUEUE.create({
-            id: wfId,
-            params: {
-              groupId,
-              userId: recipientId,
-            },
-          });
-          console.log("workflow created", recipientId);
-        }
-      }
-    } catch (error) {
-      console.error(`Failed to manage workflow for ${wfId}`, error);
-    }
+  const playbacks = await db.query.playback.findMany({
+    where: inArray(playback.userId, userIds),
   });
 
-  await Promise.all(workflows);
+  const activeUserIds = new Set(playbacks.map((p) => p.userId));
 
-  return id;
-}
-
-export async function updateQueueItemReaction(args: {
-  queueItemId: string;
-  userId: string;
-  reaction: "like" | "dislike" | null;
-}) {
-  const { queueItemId, userId, reaction } = args;
-
-  await db
-    .update(queueItemDelivery)
-    .set({ reaction, updatedAt: new Date() })
-    .where(
-      and(
-        eq(queueItemDelivery.queueItemId, queueItemId),
-        eq(queueItemDelivery.userId, userId),
-      ),
-    );
+  return userIds.map((userId) => ({
+    userId,
+    status: activeUserIds.has(userId) ? ("online" as const) : ("offline" as const),
+  }));
 }
 
 export async function getNextQueueItemForDelivery(args: {
@@ -373,18 +260,31 @@ export async function getNextQueueItemForDelivery(args: {
 }) {
   const { groupId, userId } = args;
 
-  const items = await db.query.queueItem.findMany({
-    where: and(eq(queueItem.groupId, groupId), ne(queueItem.userId, userId)),
-    orderBy: (queueItem, { asc }) => [asc(queueItem.createdAt)],
+  // Find items in this group that haven't been delivered to this user yet
+  // A delivery exists if there's a record in queueItemDelivery for this user and item
+  const undeliveredItem = await db.query.queueItem.findFirst({
+    where: (fields, { eq, and, notExists }) => 
+      and(
+        eq(fields.groupId, groupId),
+        notExists(
+          db
+            .select()
+            .from(queueItemDelivery)
+            .where(
+              and(
+                eq(queueItemDelivery.queueItemId, fields.id),
+                eq(queueItemDelivery.userId, userId)
+              )
+            )
+        )
+      ),
+    orderBy: (fields, { asc }) => [asc(fields.createdAt)],
     with: {
       track: true,
-      deliveries: {
-        where: eq(queueItemDelivery.userId, userId),
-      },
     },
   });
 
-  return items.find((item) => item.deliveries.length === 0);
+  return undeliveredItem;
 }
 
 export async function recordQueueItemDelivery(args: {

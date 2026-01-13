@@ -5,13 +5,14 @@ import {
   Circle,
   CircleAlert,
   CirclePause,
+  ListMusic,
   LogOut,
+  Music,
   Plus,
   ThumbsDown,
   ThumbsUp,
   Trash,
   X,
-  Zap,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -33,13 +34,12 @@ import { db } from "~/lib.server/services/db";
 import {
   addQueueItem,
   deleteQueueGroup,
-  getGroupWorkflowStatuses,
+  getGroupPlaybackStatuses,
   getQueueGroup,
   getQueueItems,
   joinQueueGroup,
   leaveQueueGroup,
   updateQueueItemReaction,
-  type WorkflowStatus,
 } from "~/lib.server/services/db/queue";
 import { transformTracks } from "~/lib.server/services/sdk/helpers/spotify";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
@@ -54,10 +54,10 @@ export async function loader({ context, params }: Route.LoaderArgs) {
 
   await joinQueueGroup({ groupId, userId });
 
-  const [group, items, workflowStatuses] = await Promise.all([
+  const [group, items, playbackStatuses] = await Promise.all([
     getQueueGroup(groupId),
     getQueueItems(groupId),
-    getGroupWorkflowStatuses(groupId),
+    getGroupPlaybackStatuses(groupId),
   ]);
 
   if (!group) throw redirect("/queue");
@@ -69,7 +69,7 @@ export async function loader({ context, params }: Route.LoaderArgs) {
     items,
     userId,
     isOwner,
-    workflowStatuses,
+    playbackStatuses,
   };
 }
 
@@ -174,11 +174,11 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 }
 
 export default function Group({ loaderData }: Route.ComponentProps) {
-  const { group, items, userId, isOwner, workflowStatuses } = loaderData;
+  const { group, items, userId, isOwner, playbackStatuses } = loaderData;
 
-  // Create a map of userId to workflow status
+  // Create a map of userId to playback status
   const statusByUser = new Map(
-    workflowStatuses.map((s) => [s.id.split("-").slice(1).join("-"), s]),
+    playbackStatuses.map((s) => [s.userId, s.status]),
   );
 
   return (
@@ -186,7 +186,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <h1 className="flex-1 font-bold text-3xl">{group.name}</h1>
-          <WorkflowStatusPanel
+          <PlaybackStatusPanel
             group={group}
             statusByUser={statusByUser}
             currentUserId={userId}
@@ -263,7 +263,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
                           width={24}
                         />
                         <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary">
-                          <Plus className="h-2.5 w-2.5 text-primary-foreground" />
+                          <ListMusic className="h-2.5 w-2.5 text-primary-foreground" />
                         </div>
                       </div>
 
@@ -339,6 +339,7 @@ function ReactionButton({
         type="submit"
         variant="ghost"
         size="icon"
+        onClick={(e) => e.stopPropagation()}
         className={`h-8 w-8 ${isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground opacity-50 hover:opacity-100"}`}
       >
         {reaction === "like" ? (
@@ -532,7 +533,7 @@ function LeaveGroupAction() {
   );
 }
 
-function WorkflowStatusPanel({
+function PlaybackStatusPanel({
   group,
   statusByUser,
   currentUserId,
@@ -545,7 +546,7 @@ function WorkflowStatusPanel({
       user: { id: string; name: string | null; image: string | null };
     }[];
   };
-  statusByUser: Map<string, WorkflowStatus>;
+  statusByUser: Map<string, "online" | "offline">;
   currentUserId: string;
 }) {
   const allUsers = [
@@ -556,7 +557,7 @@ function WorkflowStatusPanel({
   return (
     <div className="flex flex-wrap gap-3">
       {allUsers.map(({ userId, user }) => {
-        const status = statusByUser.get(userId);
+        const status = statusByUser.get(userId) ?? "offline";
         const isCurrentUser = userId === currentUserId;
 
         return (
@@ -573,7 +574,7 @@ function WorkflowStatusPanel({
                 width={24}
               />
               <div className="absolute -right-1 -bottom-1">
-                <WorkflowStatusIcon status={status?.status ?? "not_started"} />
+                <PlaybackStatusIcon status={status} />
               </div>
             </div>
             <span className="text-sm">
@@ -586,37 +587,24 @@ function WorkflowStatusPanel({
   );
 }
 
-function WorkflowStatusIcon({ status }: { status: WorkflowStatus["status"] }) {
+function PlaybackStatusIcon({ status }: { status: "online" | "offline" }) {
   switch (status) {
-    case "running":
+    case "online":
       return (
-        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-green-500">
-          <Zap className="h-2.5 w-2.5 text-white" />
+        <div
+          className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-background bg-green-500"
+          title="Online"
+        >
+          <Circle className="h-2 w-2 fill-current text-green-700" />
         </div>
       );
-    case "paused":
+    case "offline":
       return (
-        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-yellow-500">
-          <CirclePause className="h-2.5 w-2.5 text-white" />
-        </div>
-      );
-    case "errored":
-      return (
-        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-destructive">
-          <CircleAlert className="h-2.5 w-2.5 text-white" />
-        </div>
-      );
-    case "complete":
-    case "terminated":
-      return (
-        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-muted-foreground">
-          <Check className="h-2.5 w-2.5 text-white" />
-        </div>
-      );
-    case "unknown":
-      return (
-        <div className="flex h-4 w-4 items-center justify-center rounded-full bg-muted">
-          <Circle className="h-2.5 w-2.5 text-muted-foreground" />
+        <div
+          className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-background bg-muted-foreground/30"
+          title="Offline"
+        >
+          <Circle className="h-2 w-2 fill-current text-muted-foreground" />
         </div>
       );
   }
