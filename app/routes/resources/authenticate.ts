@@ -1,5 +1,6 @@
 import { redirect } from "react-router";
 import { SpotifyApiError } from "~/lib.server/sdk/spotify";
+import { logError } from "~/components/utils";
 import { authenticator } from "~/lib.server/services/auth";
 import { commitSession, getSession } from "~/lib.server/services/session";
 import type { Route } from "./+types/authenticate";
@@ -17,7 +18,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     });
   } catch (error) {
     if (error instanceof Response) throw error;
-    console.error("auth/callback/error", error);
+    logError(`auth/callback/error: ${error}`, "auth");
 
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorCode =

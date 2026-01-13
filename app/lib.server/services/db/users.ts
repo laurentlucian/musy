@@ -22,6 +22,8 @@ import {
 import { db } from "~/lib.server/services/db";
 import { syncUserStats } from "~/lib.server/services/scheduler/scripts/sync/stats";
 
+import { logError } from "~/components/utils";
+
 export async function getProvider(args: {
   userId: string;
   type: "spotify" | "google";
@@ -36,19 +38,23 @@ export async function getProvider(args: {
     return data;
   } catch (error) {
     // Log more details about the error for debugging
-    console.error("getProvider error:", {
-      userId: args.userId,
-      type: args.type,
-      error:
-        error instanceof Error
-          ? {
-              name: error.name,
-              message: error.message,
-              stack: error.stack,
-              cause: error.cause,
-            }
-          : error,
-    });
+    logError(
+      {
+        message: "getProvider error",
+        userId: args.userId,
+        type: args.type,
+        error:
+          error instanceof Error
+            ? {
+                name: error.name,
+                message: error.message,
+                stack: error.stack,
+                cause: error.cause,
+              }
+            : error,
+      },
+      "db",
+    );
     throw error;
   }
 }

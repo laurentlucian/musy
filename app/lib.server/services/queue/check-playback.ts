@@ -6,9 +6,10 @@ import {
   updatePlaybackStatus,
 } from "../db/queue";
 import { getAllUsersId } from "../db/users";
+import { log, logError } from "~/components/utils";
 
 export async function checkAndQueueDeliveries() {
-  console.log("Syncing playback status for all users...");
+  log("Syncing playback status for all users...", "playback");
 
   try {
     const userIds = await getAllUsersId();
@@ -40,13 +41,13 @@ export async function checkAndQueueDeliveries() {
                 : null,
             });
           } catch (error) {
-            console.error(`Error syncing playback for user ${userId}:`, error);
+            logError(`Error syncing playback for user ${userId}: ${error}`, "playback");
           }
         })
       );
     }
 
-    console.log(`Synced ${userIds.length} users. Checking for pending queue deliveries...`);
+    log(`Synced ${userIds.length} users. Checking for pending queue deliveries...`, "playback");
 
     // 2. Check for deliveries ONLY for users who are currently playing
     const groups = await db.query.queueGroup.findMany({
@@ -73,8 +74,9 @@ export async function checkAndQueueDeliveries() {
         });
 
         if (nextItem) {
-          console.log(
+          log(
             `User ${userId} has undelivered track ${nextItem.trackId}, queuing delivery for group ${group.id}`,
+            "playback",
           );
           deliveriesToQueue.push({
             groupId: group.id,
@@ -85,24 +87,24 @@ export async function checkAndQueueDeliveries() {
     }
 
     if (deliveriesToQueue.length === 0) {
-      console.log("No deliveries to queue");
+      log("No deliveries to queue", "playback");
       return;
     }
 
-    console.log(`Queueing ${deliveriesToQueue.length} delivery jobs`);
+    log(`Queueing ${deliveriesToQueue.length} delivery jobs`, "playback");
 
     for (const delivery of deliveriesToQueue) {
       try {
         await env.DELIVERY_QUEUE.send(delivery);
       } catch (error) {
-        console.error(
-          `Failed to queue delivery for user ${delivery.userId}:`,
-          error,
+        logError(
+          `Failed to queue delivery for user ${delivery.userId}: ${error}`,
+          "playback",
         );
       }
     }
   } catch (error) {
-    console.error("Error in checkAndQueueDeliveries:", error);
+    logError(`Error in checkAndQueueDeliveries: ${error}`, "playback");
     throw error;
   }
 }

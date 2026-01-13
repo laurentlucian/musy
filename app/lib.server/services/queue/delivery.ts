@@ -5,6 +5,7 @@ import {
   getNextQueueItemForDelivery,
   recordQueueItemDelivery,
 } from "../db/queue";
+import { log, logError } from "~/components/utils";
 
 export interface QueueDeliveryMessage {
   groupId: string;
@@ -17,8 +18,9 @@ export async function processQueueDelivery(
 ) {
   const { groupId, userId } = message;
 
-  console.log(
+  log(
     `Processing queue delivery for user ${userId} in group ${groupId}`,
+    "delivery",
   );
 
   try {
@@ -33,7 +35,7 @@ export async function processQueueDelivery(
       });
 
       if (!trackToDeliver) {
-        console.log(`No more undelivered tracks for user ${userId}`);
+        log(`No more undelivered tracks for user ${userId}`, "delivery");
         break;
       }
 
@@ -44,8 +46,9 @@ export async function processQueueDelivery(
           userId,
         });
 
-        console.log(
+        log(
           `Successfully queued track ${trackToDeliver.trackId} for user ${userId}`,
+          "delivery",
         );
         deliveryCount++;
       } catch (error) {
@@ -53,8 +56,9 @@ export async function processQueueDelivery(
           error instanceof Error &&
           error.message.includes("UNIQUE constraint failed")
         ) {
-          console.log(
+          log(
             `Track ${trackToDeliver.trackId} already delivered, skipping`,
+            "delivery",
           );
           continue;
         }
@@ -63,12 +67,12 @@ export async function processQueueDelivery(
     }
 
     if (deliveryCount > 0) {
-      console.log(`Delivered ${deliveryCount} tracks to user ${userId}`);
+      log(`Delivered ${deliveryCount} tracks to user ${userId}`, "delivery");
     }
   } catch (error) {
-    console.error(
-      `Error processing queue delivery for user ${userId} in group ${groupId}:`,
-      error,
+    logError(
+      `Error processing queue delivery for user ${userId} in group ${groupId}: ${error}`,
+      "delivery",
     );
     throw error;
   }

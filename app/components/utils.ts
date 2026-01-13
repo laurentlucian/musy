@@ -144,23 +144,12 @@ export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
   return `max-age=${durationToSeconds(args.browser)}, s-maxage=${durationToSeconds(args.cdn)}`;
 }
 
-export function logError(error: unknown) {
-  console.error("\x1b[31merror:\x1b[0m", error);
+export function logError(error: unknown, label?: string) {
+  console.error(`${(label ?? "error")}:`, error);
 }
 
 export function log(message: string, label?: string) {
-  // console.timeEnd(label);
-  const prefix = [
-    `\x1b[90m${new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" })}\x1b[0m`,
-    "\x1b[1;34m[musy]\x1b[0m",
-  ];
-
-  console.log(
-    ...prefix,
-    `\x1b[90m${label?.padEnd(10)}:\x1b[0m`,
-    `\x1b[33m${message}\x1b[0m`,
-  );
-  // console.time(label);
+  console.log(`${(label ?? "log")}: ${message}`);
 }
 
 export const sleep = (ms: number) =>

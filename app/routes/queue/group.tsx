@@ -40,6 +40,7 @@ import {
 import { transformTracks } from "~/lib.server/services/sdk/helpers/spotify";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import { Loader } from "~/routes/profile/utils/profile.utils";
+import { logError } from "~/components/utils";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = context.get(userContext);
@@ -142,6 +143,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
         finalTrackId = savedTrackIds[0];
       }
 
+
       // Add to queue
       await addQueueItem({
         groupId,
@@ -151,7 +153,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
       return { success: true };
     } catch (error) {
-      console.error("Failed to add track:", error);
+      logError(`Failed to add track: ${error}`, "queue");
       return data(
         { error: "Failed to add track. Please try again." },
         { status: 500 },
