@@ -3,18 +3,14 @@ import { formatDistanceToNow } from "date-fns";
 import {
   Check,
   Circle,
-  CircleAlert,
-  CirclePause,
   ListMusic,
   LogOut,
-  Music,
   Plus,
   ThumbsDown,
   ThumbsUp,
   Trash,
   X,
 } from "lucide-react";
-import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
 import { Waver } from "~/components/icons/waver";
@@ -235,7 +231,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-3">
-                    {myDelivery && (
+                    {myDelivery && userId !== item.userId && (
                       <div className="flex items-center gap-1">
                         <ReactionButton
                           queueItemId={item.id}
