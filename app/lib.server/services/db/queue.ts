@@ -254,6 +254,62 @@ export async function getGroupPlaybackStatuses(groupId: string) {
   }));
 }
 
+export async function getUniqueGroupUserIds() {
+  const groups = await db.query.queueGroup.findMany({
+    with: {
+      members: true,
+    },
+  });
+
+  const userIds = new Set<string>();
+  for (const group of groups) {
+    userIds.add(group.userId);
+    for (const member of group.members) {
+      userIds.add(member.userId);
+    }
+  }
+
+  return Array.from(userIds);
+}
+
+export async function updatePlaybackStatus(args: {
+  userId: string;
+  playback: {
+    trackId?: string;
+    progress?: number;
+    timestamp?: number;
+    is_playing: boolean;
+  } | null;
+}) {
+  const { userId, playback: playbackData } = args;
+
+  if (!playbackData || !playbackData.is_playing || !playbackData.trackId) {
+    await db.delete(playback).where(eq(playback.userId, userId));
+    return;
+  }
+
+  const now = new Date().toISOString();
+
+  await db
+    .insert(playback)
+    .values({
+      userId,
+      trackId: playbackData.trackId,
+      progress: playbackData.progress ?? 0,
+      timestamp: playbackData.timestamp ?? 0,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [playback.userId],
+      set: {
+        trackId: playbackData.trackId,
+        progress: playbackData.progress ?? 0,
+        timestamp: playbackData.timestamp ?? 0,
+        updatedAt: now,
+      },
+    });
+}
+
 export async function getNextQueueItemForDelivery(args: {
   groupId: string;
   userId: string;

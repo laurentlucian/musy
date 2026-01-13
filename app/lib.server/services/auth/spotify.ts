@@ -104,7 +104,7 @@ const scopes = [
   "user-read-private", // search for albums, artists, playlists, tracks, shows or episodes
   "user-read-playback-state", // get currently playing track and info about it (important)
   "user-read-recently-played", // recently played (can show music_senders/user if a user already listened to a track they suggested/queued recently)
-  "user-read-currently-playing", // currently playing track only (do we need this?)
+  "user-read-currently-playing", // currently playing track only
   "user-modify-playback-state", // to add to queue (can replace 'streaming' scope so we can integrate our own player to include more than just spotify)
   // "user-follow-modify", // used to (un)follow users/artists
   "user-library-modify", // used to save tracks to user's library
