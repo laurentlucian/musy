@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import {
   playback,
   queueGroup,
@@ -266,6 +266,7 @@ export async function getNextQueueItemForDelivery(args: {
     where: (fields, { eq, and, notExists }) => 
       and(
         eq(fields.groupId, groupId),
+        ne(fields.userId, userId), // Don't deliver to the user who queued it
         notExists(
           db
             .select()
@@ -273,10 +274,10 @@ export async function getNextQueueItemForDelivery(args: {
             .where(
               and(
                 eq(queueItemDelivery.queueItemId, fields.id),
-                eq(queueItemDelivery.userId, userId)
-              )
-            )
-        )
+                eq(queueItemDelivery.userId, userId),
+              ),
+            ),
+        ),
       ),
     orderBy: (fields, { asc }) => [asc(fields.createdAt)],
     with: {
