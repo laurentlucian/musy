@@ -76,6 +76,11 @@ export interface Artists {
 }
 
 // Album types
+export interface Copyright {
+  text: string;
+  type: string;
+}
+
 export interface SimplifiedAlbum {
   album_type: string;
   artists: SimplifiedArtist[];
@@ -91,6 +96,19 @@ export interface SimplifiedAlbum {
   total_tracks: number;
   type: string;
   uri: string;
+}
+
+export interface Album extends SimplifiedAlbum {
+  copyrights: Copyright[];
+  external_ids: ExternalIds;
+  genres: string[];
+  label: string;
+  popularity: number;
+  tracks: PaginationResponseProps & { items: SimplifiedTrack[] };
+}
+
+export interface Albums {
+  albums: Album[];
 }
 
 // Track types

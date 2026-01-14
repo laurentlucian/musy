@@ -99,7 +99,7 @@ async function syncTopTracks({
     time_range: range,
   });
 
-  const trackIds = await transformTracks(response.items);
+  const trackIds = await transformTracks(response.items, spotify);
 
   const existing = await db.query.topTracks.findFirst({
     where: eq(topTracks.userId, userId),
@@ -155,7 +155,7 @@ async function syncTopArtists({
     time_range: range,
   });
 
-  const artistIds = await transformArtists(response.items);
+  const artistIds = await transformArtists(response.items, spotify);
 
   const existing = await db.query.topArtists.findFirst({
     where: eq(topArtists.userId, userId),

@@ -131,7 +131,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
         const spotifyTrack = response.tracks[0];
 
         // Transform and save track
-        const savedTrackIds = await transformTracks([spotifyTrack]);
+        const savedTrackIds = await transformTracks([spotifyTrack], spotify);
 
         if (savedTrackIds.length === 0) {
           return data(

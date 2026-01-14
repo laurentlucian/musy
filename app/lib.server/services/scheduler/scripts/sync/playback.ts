@@ -4,8 +4,8 @@ import { playback, provider, track } from "~/lib.server/db/schema";
 import type { PlaybackState } from "~/lib.server/sdk/spotify";
 import { db } from "~/lib.server/services/db";
 import { getAllUsersId } from "~/lib.server/services/db/users";
-import { createTrackModel } from "~/lib.server/services/sdk/helpers/spotify";
-import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
+import { createTrackModel, transformTracks } from "~/lib.server/services/sdk/helpers/spotify";
+import { getSpotifyClient, type Spotified } from "~/lib.server/services/sdk/spotify";
 
 export async function syncPlaybacks() {
   log("starting...", "playback");
@@ -19,7 +19,7 @@ export async function syncPlaybacks() {
 
   log(`users active: ${active.length}`, "playback");
 
-  for (const { id: userId, playback: playbackState } of active) {
+  for (const { id: userId, playback: playbackState, spotify } of active) {
     if (!playbackState) continue;
     const { item } = playbackState;
     const current = await db.query.playback.findFirst({
@@ -29,7 +29,7 @@ export async function syncPlaybacks() {
     if (!item || item.type !== "track" || isSameTrack) continue;
     log("new track", "playback");
 
-    await upsertPlayback(userId, playbackState);
+    await upsertPlayback(userId, playbackState, spotify);
 
     // const remaining = track.duration_ms - progress_ms;
     // schedulePlaybackCheck(userId, remaining);
@@ -53,7 +53,11 @@ async function handleInactiveUsers(users: string[]) {
   }
 }
 
-const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {
+const upsertPlayback = async (
+  userId: string,
+  playbackState: PlaybackState,
+  spotify: Spotified,
+) => {
   try {
     log("upserting playback", "playback");
     const { progress_ms: progress, timestamp } = playbackState;
@@ -65,16 +69,10 @@ const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {
     )
       return;
 
-    const trackData = createTrackModel(playbackState.item);
+    const trackItem = playbackState.item as any; // Cast as Track
 
-    // First, upsert the track
-    await db
-      .insert(track)
-      .values({
-        ...trackData,
-        explicit: trackData.explicit ? "1" : "0",
-      })
-      .onConflictDoNothing();
+    // Use transformTracks for enriched ingestion
+    await transformTracks([trackItem], spotify);
 
     // Then upsert the playback
     const now = new Date().toISOString();
@@ -82,7 +80,7 @@ const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {
       .insert(playback)
       .values({
         userId,
-        trackId: trackData.id,
+        trackId: trackItem.id,
         progress,
         timestamp: Number(timestamp),
         updatedAt: now,
@@ -90,14 +88,14 @@ const upsertPlayback = async (userId: string, playbackState: PlaybackState) => {
       .onConflictDoUpdate({
         target: [playback.userId],
         set: {
-          trackId: trackData.id,
+          trackId: trackItem.id,
           progress,
           timestamp: Number(timestamp),
           updatedAt: now,
         },
       });
-  } catch {
-    log("failure upserting playback", "playback");
+  } catch (error) {
+    log(`failure upserting playback: ${error}`, "playback");
   }
 };
 
@@ -110,7 +108,7 @@ async function getPlaybackState(userId: string) {
     if (!is_playing || !item || item.type !== "track")
       return { id: userId, playback: null };
 
-    return { id: userId, playback };
+    return { id: userId, playback, spotify };
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes("revoked")) {

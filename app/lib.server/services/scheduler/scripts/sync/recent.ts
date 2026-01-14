@@ -51,7 +51,7 @@ export async function syncUserRecent({
 
     // Use transformTracks to create tracks, albums, and artists
     // This ensures albums and artists are created with full data if they don't exist
-    await transformTracks(uniqueSpotifyTracks);
+    await transformTracks(uniqueSpotifyTracks, spotify);
 
     // prepare recent tracks data
     const recentTracksData = recent

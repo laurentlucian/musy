@@ -1,4 +1,6 @@
 import { refreshAccessToken } from "./endpoints/auth";
+import * as artistEndpoints from "./endpoints/artist";
+import * as albumEndpoints from "./endpoints/album";
 import * as playerEndpoints from "./endpoints/player";
 import * as playlistEndpoints from "./endpoints/playlist";
 import * as trackEndpoints from "./endpoints/track";
@@ -55,6 +57,16 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
         ids: string[],
       ) =>
         userEndpoints.checkIfUserFollowsArtistsOrUsers(accessToken, type, ids),
+    },
+
+    artist: {
+      getArtists: (artistIds: string[]) =>
+        artistEndpoints.getArtists(accessToken, artistIds),
+    },
+
+    album: {
+      getAlbums: (albumIds: string[]) =>
+        albumEndpoints.getAlbums(accessToken, albumIds),
     },
 
     track: {

@@ -305,7 +305,7 @@ async function fetchAndInsertMissingTracks(
 
   // Insert fetched tracks
   if (tracksToInsert.length > 0) {
-    await transformTracks(tracksToInsert);
+    await transformTracks(tracksToInsert, spotify);
     log(`inserted ${tracksToInsert.length} missing tracks`, "playlist");
   }
 }
@@ -424,7 +424,7 @@ async function syncPlaylistTracks({
 
   // Transform and insert tracks from playlist response
   const tracks = Array.from(spotifyTracksMap.values()).map((v) => v.track);
-  await transformTracks(tracks);
+  await transformTracks(tracks, spotify);
 
   // Verify which tracks actually exist in DB (batch queries to respect D1 param limit)
   const existingTrackIds = new Set<string>();
