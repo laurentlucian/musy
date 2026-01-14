@@ -1,6 +1,4 @@
 import { Button } from "~/components/ui/button";
-import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-albums";
-import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { logMissingData } from "~/lib.server/services/scheduler/scripts/log-missing-data";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 import type { Route } from "./+types/scripts";
@@ -60,11 +58,6 @@ export async function action({ request }: Route.ActionArgs) {
 
   if (intent === "sync-liked-full") {
     await syncUsers("liked-full");
-  }
-
-  if (intent === "enrich-artists-albums") {
-    await enrichArtists();
-    await enrichAlbums();
   }
 
   if (intent === "log-missing-data") {

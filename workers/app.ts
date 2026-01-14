@@ -4,8 +4,6 @@ import {
   processQueueDelivery,
   type QueueDeliveryMessage,
 } from "~/lib.server/services/queue/delivery";
-import { enrichAlbums } from "~/lib.server/services/scheduler/scripts/enrich-albums";
-import { enrichArtists } from "~/lib.server/services/scheduler/scripts/enrich-artists";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
 const handler = createRequestHandler(
@@ -20,13 +18,7 @@ export default {
   async scheduled(controller, _env, ctx) {
     const cron = controller.cron;
 
-    if (cron === "*/5 * * * *") {
-      // Every 5 minutes - enrich artists
-      ctx.waitUntil(enrichArtists());
-    } else if (cron === "*/3 * * * *") {
-      // Every 3 minutes - enrich albums
-      ctx.waitUntil(enrichAlbums());
-    } else if (cron === "0 * * * *") {
+    if (cron === "0 * * * *") {
       // Every hour - sync recent tracks
       ctx.waitUntil(syncUsers("recent"));
     } else if (cron === "0 */6 * * *") {
