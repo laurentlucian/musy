@@ -1,5 +1,5 @@
 import { Globe2, MapPin, Monitor, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
+import { Suspense, use, useEffect } from "react";
 import {
   data,
   Link,
@@ -9,6 +9,7 @@ import {
   useSearchParams,
 } from "react-router";
 import ListeningMap from "~/components/domain/listening-map";
+import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { listeningTime } from "~/lib/device";
@@ -32,12 +33,12 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const rawPage = Number(params.get("page") ?? 0);
   if (!Number.isSafeInteger(rawPage) || rawPage < 0 || rawPage > 1_000_000)
     throw data("Invalid page", { status: 400, headers });
-  const [insights, result] = await Promise.all([
+  const history = Promise.all([
     getHistoryInsights(userId),
     getLocationSongs(userId, bounds, rawPage),
-  ]);
+  ]).then(([insights, result]) => ({ ...insights, ...result }));
   return data(
-    { ...insights, ...result, page: rawPage, selected: bounds !== null },
+    { history, page: rawPage, selected: bounds !== null },
     { headers },
   );
 }
@@ -56,18 +57,54 @@ export async function action({ context, request }: Route.ActionArgs) {
 }
 
 export default function Explore({ loaderData }: Route.ComponentProps) {
-  const {
-    devices,
-    locations,
-    listens,
-    msPlayed,
-    located,
-    job,
-    songs,
-    total,
-    page,
-    selected,
-  } = loaderData;
+  return (
+    <main className="mx-auto w-full max-w-6xl space-y-8 py-4">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-border border-b pb-4">
+        <div>
+          <h1 className="font-semibold text-2xl">Explore</h1>
+          <p className="mt-1 text-muted-foreground text-sm">
+            Private · Imported Spotify history
+          </p>
+        </div>
+        <Suspense fallback={<Waver />}>
+          <ExploreSummary history={loaderData.history} />
+        </Suspense>
+      </header>
+      <Suspense fallback={<Waver />}>
+        <ExploreContent loaderData={loaderData} />
+      </Suspense>
+    </main>
+  );
+}
+
+function ExploreSummary({
+  history,
+}: Pick<Route.ComponentProps["loaderData"], "history">) {
+  const { listens, msPlayed } = use(history);
+  return (
+    <div className="flex gap-6 text-sm">
+      <div>
+        <p className="font-semibold text-xl tabular-nums">
+          {listens.toLocaleString()}
+        </p>
+        <p className="text-muted-foreground">Listens</p>
+      </div>
+      <div>
+        <p className="font-semibold text-xl tabular-nums">
+          {listeningTime(msPlayed)}
+        </p>
+        <p className="text-muted-foreground">Listening time</p>
+      </div>
+    </div>
+  );
+}
+
+function ExploreContent({
+  loaderData,
+}: Pick<Route.ComponentProps, "loaderData">) {
+  const { devices, locations, listens, msPlayed, located, job, songs, total } =
+    use(loaderData.history);
+  const { page, selected } = loaderData;
   const [params, setParams] = useSearchParams();
   const fetcher = useFetcher<typeof action>();
   const revalidator = useRevalidator();
@@ -87,29 +124,7 @@ export default function Explore({ loaderData }: Route.ComponentProps) {
     ? params.get("area") || "Selected area"
     : "All listening";
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-8 py-4">
-      <header className="flex flex-wrap items-end justify-between gap-4 border-border border-b pb-4">
-        <div>
-          <h1 className="font-semibold text-2xl">Explore</h1>
-          <p className="mt-1 text-muted-foreground text-sm">
-            Private · Imported Spotify history
-          </p>
-        </div>
-        <div className="flex gap-6 text-sm">
-          <div>
-            <p className="font-semibold text-xl tabular-nums">
-              {listens.toLocaleString()}
-            </p>
-            <p className="text-muted-foreground">Listens</p>
-          </div>
-          <div>
-            <p className="font-semibold text-xl tabular-nums">
-              {listeningTime(msPlayed)}
-            </p>
-            <p className="text-muted-foreground">Listening time</p>
-          </div>
-        </div>
-      </header>
+    <>
       {!listens ? (
         <div className="py-16 text-center">
           <Globe2 className="mx-auto mb-4 size-8 text-muted-foreground" />
@@ -317,6 +332,6 @@ export default function Explore({ loaderData }: Route.ComponentProps) {
           </section>
         </>
       )}
-    </main>
+    </>
   );
 }

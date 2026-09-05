@@ -14,14 +14,13 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 
   if (!userId) throw redirect("/");
 
-  const profile = await getProfile(userId);
-
-  if (!profile) throw data(null, { status: 404 });
+  if (userId !== currentUserId && !(await getProfile(userId))) {
+    throw data(null, { status: 404 });
+  }
 
   return {
     userId,
     currentUserId,
-    profile,
   };
 }
 
