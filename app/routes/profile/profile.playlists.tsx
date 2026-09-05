@@ -119,9 +119,6 @@ export default function ProfilePlaylists({
     <>
       {!isDetailRoute && (
         <div className="page-toolbar">
-          <h2 className="font-semibold">
-            {isOwnProfile ? "Your playlists" : "Playlists"}
-          </h2>
           {isOwnProfile && (
             <div className="flex flex-wrap gap-2">
               {yearOptions && (
