@@ -1,0 +1,23 @@
+.cat-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cat-blink 5s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+@keyframes cat-blink {
+  0%,
+  43%,
+  47%,
+  100% {
+    transform: scaleY(1);
+  }
+  45% {
+    transform: scaleY(0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-eye {
+    animation: none;
+  }
+}
