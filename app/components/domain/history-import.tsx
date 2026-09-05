@@ -5,17 +5,83 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useRevalidator } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import type { ImportMessage } from "~/lib/history-parser";
+import type { ImportMessage, ImportProgress } from "~/lib/history-parser";
 
-export function HistoryImport() {
-  const [open, setOpen] = useState(false);
+function restoreImport(progress: ImportProgress | null): ImportMessage | null {
+  if (!progress) return null;
+  return {
+    progress,
+    phase:
+      progress.status === "complete"
+        ? "complete"
+        : progress.status === "processing"
+          ? "processing"
+          : "error",
+    error:
+      progress.status === "running"
+        ? "Upload interrupted. Choose your files again. Saved listens won’t duplicate."
+        : undefined,
+  };
+}
+
+export function HistoryImport({
+  initialImport,
+}: {
+  initialImport: ImportProgress | null;
+}) {
+  const [open, setOpen] = useState(
+    Boolean(initialImport && initialImport.status !== "complete"),
+  );
   const reduceMotion = useReducedMotion();
   const [files, setFiles] = useState<File[]>([]);
-  const [state, setState] = useState<ImportMessage | null>(null);
+  const [state, setState] = useState<ImportMessage | null>(() =>
+    restoreImport(initialImport),
+  );
   const jobId = useRef<string | null>(null);
   const worker = useRef<Worker | null>(null);
   const revalidator = useRevalidator();
-  const busy = state?.phase === "reading" || state?.phase === "uploading";
+  const uploading = state?.phase === "reading" || state?.phase === "uploading";
+  const processing = state?.phase === "processing";
+  const busy = uploading || processing;
+  const [pollError, setPollError] = useState<string | null>(null);
+  const savedJob = state?.progress?.jobId;
+  const shouldPoll =
+    !uploading && (state?.progress?.status === "running" || processing);
+  useEffect(() => {
+    if (!shouldPoll) return;
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const response = await fetch("/resources/history-import", {
+          signal: controller.signal,
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("Couldn’t check progress. Retrying…");
+        const result = (await response.json()) as {
+          import: ImportProgress | null;
+          error?: string;
+        };
+        if (result.error) throw new Error(result.error);
+        if (controller.signal.aborted) return;
+        setPollError(null);
+        setState(restoreImport(result.import));
+        if (!result.import || result.import.status === "complete") {
+          void revalidator.revalidate();
+          return;
+        }
+      } catch {
+        if (controller.signal.aborted) return;
+        setPollError("Couldn’t check progress. Retrying…");
+      }
+      timer = setTimeout(poll, 5000);
+    };
+    void poll();
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [shouldPoll, savedJob, revalidator]);
   useEffect(() => () => worker.current?.terminate(), []);
 
   return (
@@ -26,7 +92,7 @@ export function HistoryImport() {
           Bring your Spotify listening history into Musy.
         </p>
         <DialogPrimitive.Trigger asChild>
-          <Button>{busy ? "View import" : "Import history"}</Button>
+          <Button>{state ? "View import" : "Import history"}</Button>
         </DialogPrimitive.Trigger>
       </div>
       <DialogPrimitive.Portal>
@@ -58,13 +124,13 @@ export function HistoryImport() {
                   ? { duration: 12, repeat: Infinity, ease: "linear" }
                   : { duration: 0.4 }
               }
-              className="relative mb-10 flex size-48 shrink-0 items-center justify-center rounded-full border border-foreground/10 bg-muted sm:size-64"
+              className="relative mb-10 flex size-48 shrink-0 items-center justify-center rounded-full border border-border bg-muted sm:size-64"
               style={{
                 backgroundImage:
                   "repeating-radial-gradient(circle at center, transparent 0px, transparent 5px, rgb(255 255 255 / 0.035) 6px, transparent 7px)",
               }}
             >
-              <div className="flex size-20 items-center justify-center rounded-full border border-foreground/10 bg-background sm:size-24">
+              <div className="flex size-20 items-center justify-center rounded-full border border-border bg-background sm:size-24">
                 {state?.phase === "complete" ? (
                   <Check className="size-8" />
                 ) : (
@@ -84,11 +150,13 @@ export function HistoryImport() {
                         : "Every listen. Back with you."}
                 </DialogPrimitive.Title>
                 <DialogPrimitive.Description className="mt-3 text-muted-foreground text-sm">
-                  {busy
-                    ? "Keep this page open as your listening history arrives."
-                    : state?.phase === "complete"
-                      ? "Explore the music you’ve spent time with."
-                      : "Choose your Spotify Extended streaming history ZIP or JSON files."}
+                  {processing
+                    ? "Building your listening stats. You can close this page."
+                    : busy
+                      ? "Keep this page open as your listening history arrives."
+                      : state?.phase === "complete"
+                        ? "Explore the music you’ve spent time with."
+                        : "Choose your Spotify Extended streaming history ZIP or JSON files."}
                 </DialogPrimitive.Description>
               </div>
               {!busy && state?.phase !== "complete" && (
@@ -102,6 +170,7 @@ export function HistoryImport() {
                     setFiles(Array.from(event.target.files ?? []));
                     jobId.current = null;
                     setState(null);
+                    setPollError(null);
                   }}
                 />
               )}
@@ -132,8 +201,12 @@ export function HistoryImport() {
                     }));
                     next.onmessage = (event: MessageEvent<ImportMessage>) => {
                       setState((previous) => ({ ...previous, ...event.data }));
-                      if (event.data.phase === "complete") {
+                      if (
+                        event.data.phase === "complete" ||
+                        event.data.phase === "processing"
+                      ) {
                         next.terminate();
+                        worker.current = null;
                         void revalidator.revalidate();
                       }
                     };
@@ -158,14 +231,27 @@ export function HistoryImport() {
                   <p>
                     {state.phase === "complete"
                       ? "History imported"
-                      : state.phase === "error"
-                        ? "Import paused"
-                        : `${state.phase === "reading" ? "Reading" : "Importing"} ${state.file ?? "files"}…`}
+                      : state.phase === "processing"
+                        ? "Building listening stats…"
+                        : state.phase === "error"
+                          ? "Import paused"
+                          : `${state.phase === "reading" ? "Reading" : "Importing"} ${state.file ?? "files"}…`}
                   </p>
-                  {busy && (
+                  {uploading && (
                     <p className="text-muted-foreground text-xs">
                       Keep this page open. Reimporting won’t duplicate listens.
                     </p>
+                  )}
+                  {processing && (
+                    <progress
+                      aria-label="Building listening stats"
+                      className="h-1 w-full accent-primary"
+                    />
+                  )}
+                  {pollError && (
+                    <output className="block text-muted-foreground text-xs">
+                      {pollError}
+                    </output>
                   )}
                   {state.phase === "uploading" && (
                     <progress
@@ -197,6 +283,18 @@ export function HistoryImport() {
                     </p>
                   )}
                   {state.phase === "complete" && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setState(null);
+                        setFiles([]);
+                        jobId.current = null;
+                      }}
+                    >
+                      Import more
+                    </Button>
+                  )}
+                  {state.phase === "complete" && (
                     <Button asChild variant="link" className="px-0">
                       <Link to="/history">View listening</Link>
                     </Button>
@@ -206,9 +304,11 @@ export function HistoryImport() {
             </div>
           </main>
           <footer className="px-6 py-5 text-center text-muted-foreground text-xs">
-            {busy
-              ? "You can minimize this view. Keep the tab open."
-              : "Your music. Your history."}
+            {processing
+              ? "Progress is saved. You can close this page."
+              : busy
+                ? "You can minimize this view. Keep the tab open."
+                : "Your music. Your history."}
           </footer>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

@@ -12,6 +12,7 @@ import { HistoryImport } from "~/components/domain/history-import";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
+import { getHistoryImport } from "~/lib.server/services/history-import";
 import { sessionStorage } from "~/lib.server/services/session";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
@@ -21,11 +22,12 @@ export async function loader({ context }: Route.LoaderArgs) {
 
   return data({
     userId,
+    historyImport: userId ? await getHistoryImport(userId) : null,
   });
 }
 
 export default function Settings({
-  loaderData: { userId },
+  loaderData: { userId, historyImport },
 }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const root = pathname === "/settings";
@@ -33,7 +35,7 @@ export default function Settings({
 
   return (
     <main className="mx-auto w-full max-w-6xl py-4">
-      <header className="mb-6 border-b border-border pb-4">
+      <header className="mb-6 border-border border-b pb-4">
         <h1 className="font-semibold text-2xl sm:text-3xl">Settings</h1>
       </header>
       <div className="flex flex-col gap-10 md:flex-row">
@@ -43,7 +45,7 @@ export default function Settings({
             <Form
               method="post"
               action="/settings"
-              className="border-t border-border pt-5"
+              className="border-border border-t pt-5"
             >
               <input type="hidden" name="mode" value="logout" />
               <Button
@@ -62,7 +64,7 @@ export default function Settings({
         <div className="min-w-0 flex-1">
           {root ? (
             userId ? (
-              <HistoryImport />
+              <HistoryImport initialImport={historyImport} />
             ) : (
               <Button asChild>
                 <Link to="/">Sign in</Link>

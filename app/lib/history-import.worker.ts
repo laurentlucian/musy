@@ -94,7 +94,10 @@ self.onmessage = async (
     }
     if (!found) throw new Error("No listening records found in these files.");
     const progress = await submit({ action: "complete", jobId });
-    report({ phase: "complete", progress });
+    report({
+      phase: progress?.status === "complete" ? "complete" : "processing",
+      progress,
+    });
   } catch (error) {
     report({
       phase: "error",

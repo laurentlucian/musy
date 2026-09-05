@@ -47,7 +47,7 @@ export type ImportProgress = {
   skipped: number;
 };
 export type ImportMessage = {
-  phase: "reading" | "uploading" | "complete" | "error";
+  phase: "reading" | "uploading" | "processing" | "complete" | "error";
   file?: string;
   processed?: number;
   total?: number;

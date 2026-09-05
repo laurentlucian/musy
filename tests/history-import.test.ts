@@ -116,6 +116,40 @@ test("users own independent events and durable completion", async () => {
     imported: 1,
   });
 });
+test("fresh progress reads recover committed batches and background completion", async () => {
+  const { loader } = await import("../app/routes/resources/history-import");
+  const readProgress = async () =>
+    (await loader({ context: { get: () => "a" } } as any)).data.import;
+
+  expect(await readProgress()).toBeNull();
+  await importHistoryBatch("a", "job", "0", [row, row]);
+  expect(await readProgress()).toMatchObject({
+    jobId: "job",
+    status: "running",
+    imported: 1,
+    duplicates: 1,
+    skipped: 0,
+  });
+
+  await importHistoryBatch("a", "job", "1", [
+    { ...row, ts: "2020-01-02T12:00:00Z" },
+    { spotify_episode_uri: "episode" },
+  ]);
+  const counts = { imported: 2, duplicates: 1, skipped: 1 };
+  expect(await readProgress()).toMatchObject({ ...counts, status: "running" });
+  await completeHistoryImport("a", "job");
+  expect(await readProgress()).toMatchObject({ ...counts, status: "processing" });
+  expect(await getHistoryImport("a")).toMatchObject({
+    ...counts,
+    status: "processing",
+  });
+
+  sqlite
+    .query("UPDATE HistoryImport SET status='complete' WHERE userId=? AND jobId=?")
+    .run("a", "job");
+  expect(await readProgress()).toMatchObject({ ...counts, status: "complete" });
+  expect(await readProgress()).toEqual(await getHistoryImport("a"));
+});
 test("exact API overlap is attached, different simultaneous archive listens remain", async () => {
   await importHistoryBatch("b", "seed", "0", [row]);
   sqlite

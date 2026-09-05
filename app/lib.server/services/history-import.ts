@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import type { ImportProgress } from "~/lib/history-parser";
 
 export function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
@@ -78,7 +79,7 @@ export async function getHistoryImport(userId: string) {
     `SELECT h.jobId, h.status, h.updatedAt, COALESCE(SUM(b.imported),0) imported, COALESCE(SUM(b.duplicates),0) duplicates, COALESCE(SUM(b.skipped),0) skipped FROM HistoryImport h LEFT JOIN HistoryImportBatch b ON b.userId=h.userId AND b.jobId=h.jobId WHERE h.userId=? GROUP BY h.userId`,
   )
     .bind(userId)
-    .first();
+    .first<ImportProgress>();
 }
 
 export async function importHistoryBatch(
