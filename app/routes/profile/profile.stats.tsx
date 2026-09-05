@@ -1,5 +1,5 @@
 import { RefreshCcw } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, redirect, useNavigation, useRevalidator } from "react-router";
 import {
   ImportEmptyState,
@@ -302,9 +302,8 @@ export default function ProfileIndex({
                 </span>
               </p>
               <BarChart
-                rows={stats.hourly.map((row, index) => ({
+                rows={stats.hourly.map((row) => ({
                   label: row.label,
-                  shortLabel: index % 6 === 0 ? row.label : "",
                   value: row.plays,
                 }))}
                 unit="plays"
@@ -391,13 +390,37 @@ function BarChart({
   rows: { label: string; shortLabel?: string; value: number }[];
   unit: string;
 }) {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setWidth(entry.contentRect.width);
+    });
+    observer.observe(chart);
+    return () => observer.disconnect();
+  }, []);
   const max = Math.max(1, ...rows.map((row) => row.value));
+  const labelWidth = Math.max(
+    36,
+    ...rows.map((row) => (row.shortLabel ?? row.label).length * 6 + 16),
+  );
+  const tickCount = Math.min(
+    rows.length,
+    Math.max(1, Math.floor(width / labelWidth)),
+  );
+  const ticks = Array.from({ length: tickCount }, (_, index) =>
+    tickCount === 1
+      ? 0
+      : Math.round((index * (rows.length - 1)) / (tickCount - 1)),
+  );
   return (
     <>
-      <div className="mt-5 overflow-x-auto">
+      <div ref={chartRef} className="mt-5">
         <div
-          className="flex h-36 items-end gap-1 border-border border-b"
-          style={{ minWidth: rows.length > 24 ? rows.length * 22 : undefined }}
+          className="flex h-36 items-end border-border border-b"
+          style={{ gap: rows.length > 24 ? 1 : 4 }}
           aria-hidden="true"
         >
           {rows.map((row) => (
@@ -417,16 +440,29 @@ function BarChart({
           ))}
         </div>
         <div
-          className="mt-2 flex gap-1"
-          style={{ minWidth: rows.length > 24 ? rows.length * 22 : undefined }}
+          className="relative mt-2 h-4 text-[10px] text-muted-foreground"
           aria-hidden="true"
         >
-          {rows.map((row) => (
+          {ticks.map((index, tick) => (
             <span
-              key={row.label}
-              className="min-w-0 flex-1 truncate text-center text-[10px] text-muted-foreground"
+              key={rows[index].label}
+              className="absolute whitespace-nowrap"
+              style={{
+                left:
+                  tick === 0
+                    ? 0
+                    : tick === ticks.length - 1
+                      ? "100%"
+                      : `${((index + 0.5) / rows.length) * 100}%`,
+                transform:
+                  tick === 0
+                    ? undefined
+                    : tick === ticks.length - 1
+                      ? "translateX(-100%)"
+                      : "translateX(-50%)",
+              }}
             >
-              {row.shortLabel ?? row.label}
+              {rows[index].shortLabel ?? rows[index].label}
             </span>
           ))}
         </div>
