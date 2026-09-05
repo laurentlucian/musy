@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "~/components/utils";
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium text-sm ring-offset-background transition-colors duration-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium text-sm leading-[1.4] tracking-[-0.2px] transition-colors duration-100 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -17,12 +17,12 @@ const buttonVariants = cva(
         ghost:
           "text-muted-foreground hover:bg-accent hover:text-accent-foreground active:bg-button-secondary-hover",
         link: "text-primary underline-offset-4 hover:underline",
-        nav: "rounded-xl text-muted-foreground text-xs hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:bg-button-secondary-hover disabled:text-foreground disabled:opacity-100 sm:w-full",
+        nav: "rounded-xl text-muted-foreground text-sm hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:bg-button-secondary-hover disabled:text-foreground disabled:opacity-100 sm:w-full",
         "nav-sub": "flex-1 justify-center bg-card hover:bg-accent",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 px-3",
+        sm: "h-8 px-3",
         lg: "h-11 px-4",
         icon: "h-10 w-10",
       },

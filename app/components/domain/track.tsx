@@ -1,4 +1,6 @@
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
+import { buttonVariants } from "~/components/ui/button";
 import { cn } from "~/components/utils";
 import type { Track as TrackType } from "~/lib.server/services/db";
 import { Image } from "../ui/image";
@@ -37,7 +39,7 @@ export function Track(
   return (
     <div
       className={cn(
-        "group flex min-w-0 items-center gap-3 border-b border-border py-3",
+        "group flex min-w-0 items-center gap-3 border-border border-b py-3",
         className,
       )}
     >
@@ -72,7 +74,7 @@ export function Track(
           className="block truncate"
         />
         {extraInfo && (
-          <div className="mt-1 text-xs text-muted-foreground">{extraInfo}</div>
+          <div className="mt-1 text-muted-foreground text-xs">{extraInfo}</div>
         )}
       </div>
       <a
@@ -80,9 +82,9 @@ export function Track(
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Open ${track.name} in Spotify`}
-        className="flex size-11 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-primary"
+        className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "shrink-0")}
       >
-        ↗
+        <ArrowUpRight />
       </a>
     </div>
   );

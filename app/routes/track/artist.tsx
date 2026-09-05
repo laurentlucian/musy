@@ -48,14 +48,14 @@ export default function Artist({ loaderData: artist }: Route.ComponentProps) {
             alt={artist.name}
             width={500}
             height={500}
-            className="aspect-square h-auto w-full rounded-none object-cover shadow-xl"
+            className="aspect-square h-auto w-full rounded-none object-cover"
           />
         </div>
         <div className="min-w-0">
           <p className="mb-4 font-medium text-primary text-xs uppercase">
             Artist
           </p>
-          <h1 className="font-semibold text-2xl leading-[1.05] tracking-tight sm:text-2xl lg:text-3xl">
+          <h1 className="font-semibold text-2xl leading-tight tracking-tight sm:text-2xl lg:text-3xl">
             {artist.name}
           </h1>
 
@@ -81,7 +81,7 @@ export default function Artist({ loaderData: artist }: Route.ComponentProps) {
             <PopularityIndicator value={artist.popularity} showLabel />
             {genres.length > 0 && (
               <div>
-                <h2 className="mb-3 text-muted-foreground text-xs uppercase tracking-widest">
+                <h2 className="mb-3 font-medium text-muted-foreground text-sm">
                   Genres
                 </h2>
                 <div className="flex flex-wrap gap-2">

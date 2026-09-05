@@ -73,7 +73,7 @@ export function InitialImportBanner({
       {visible && (
         <section
           aria-label="Spotify import"
-          className="mb-6 rounded-md border border-border p-4"
+          className="mb-6 rounded-2xl border border-border bg-card p-4"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">

@@ -80,8 +80,8 @@ export default function ProfileLiked({
 
   return (
     <>
-      <div className="page-toolbar gap-3 [&_button]:text-xs [&_a]:text-xs [&_svg]:size-3.5">
-        <Selector year={year} className="min-w-28 data-[size=default]:h-9 px-3 shadow-none" />
+      <div className="page-toolbar gap-3">
+        <Selector year={year} className="min-w-28" />
         {isOwnProfile && (
           <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
             <CreatePlaylistsButton userId={userId} />

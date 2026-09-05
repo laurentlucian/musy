@@ -77,14 +77,14 @@ export default function Album({ loaderData: album }: Route.ComponentProps) {
             alt={album.name}
             width={500}
             height={500}
-            className="aspect-square h-auto w-full rounded-none object-cover shadow-xl"
+            className="aspect-square h-auto w-full rounded-none object-cover"
           />
         </div>
         <div className="min-w-0">
           <p className="mb-4 font-medium text-primary text-xs uppercase">
             Album
           </p>
-          <h1 className="font-semibold text-2xl leading-[1.05] tracking-tight sm:text-2xl lg:text-3xl">
+          <h1 className="font-semibold text-2xl leading-tight tracking-tight sm:text-2xl lg:text-3xl">
             {album.name}
           </h1>
           <div className="mt-5 text-lg text-muted-foreground">

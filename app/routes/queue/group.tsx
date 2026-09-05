@@ -184,11 +184,11 @@ export default function Group({ loaderData }: Route.ComponentProps) {
     <section className="mx-auto w-full max-w-5xl pb-4">
       <Link
         to="/queue"
-        className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        className="mb-8 inline-flex items-center gap-2 text-muted-foreground text-sm hover:text-foreground"
       >
         <ArrowLeft className="size-4" /> Shared queues
       </Link>
-      <header className="mb-8 border-b border-border pb-4">
+      <header className="mb-8 border-border border-b pb-4">
         <h1 className="font-semibold text-2xl sm:text-3xl">{group.name}</h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-5">
           <PlaybackStatusPanel
@@ -203,7 +203,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
         </div>
       </header>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase">
+        <h2 className="font-semibold text-xs uppercase">
           Tracks{" "}
           <span className="ml-2 text-muted-foreground">{items.length}</span>
         </h2>
@@ -211,7 +211,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
       </div>
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center border-y border-border py-16 text-center">
+        <div className="flex flex-col items-center justify-center border-border border-y py-16 text-center">
           <h3 className="font-semibold text-3xl">No tracks yet</h3>
         </div>
       ) : (
@@ -297,12 +297,12 @@ export default function Group({ loaderData }: Route.ComponentProps) {
                             </div>
                           ) : delivery.reaction === "dislike" ? (
                             <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive">
-                              <ThumbsDown className="h-2.5 w-2.5 text-white" />
+                              <ThumbsDown className="h-2.5 w-2.5 text-destructive-foreground" />
                             </div>
                           ) : (
                             <div className="absolute -right-1 -bottom-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-muted-foreground">
                               <Check
-                                className="h-2.5 w-2.5 text-white"
+                                className="h-2.5 w-2.5 text-background"
                                 strokeWidth={3}
                               />
                             </div>
@@ -349,7 +349,7 @@ function InviteAction() {
         {copied ? "Link copied" : "Invite friends"}
       </Button>
       {error && (
-        <p role="alert" className="mt-2 max-w-48 text-xs text-destructive">
+        <p role="alert" className="mt-2 max-w-48 text-destructive text-xs">
           Copy this page’s address to invite friends.
         </p>
       )}
@@ -384,7 +384,7 @@ function ReactionButton({
         aria-label={reaction === "like" ? "Like track" : "Dislike track"}
         aria-pressed={isActive}
         disabled={fetcher.state !== "idle"}
-        className={`h-10 w-10 ${isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground opacity-50 hover:opacity-100"}`}
+        className={isActive ? "bg-accent text-accent-foreground" : undefined}
       >
         {reaction === "like" ? (
           <ThumbsUp className="h-4 w-4" />
@@ -583,7 +583,7 @@ function LeaveGroupAction() {
       {fetcher.data &&
         typeof fetcher.data === "object" &&
         "error" in fetcher.data && (
-          <p role="alert" className="text-sm text-destructive">
+          <p role="alert" className="text-destructive text-sm">
             {String(fetcher.data.error)}
           </p>
         )}

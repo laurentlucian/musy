@@ -7,10 +7,19 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
+  --font-sans: "Inter", Roboto, "Open Sans", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+  --spacing: 4px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
   --radius-3xl: 24px;
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-4xl: 32px;
+  --radius-menu-item: 10px;
+  --shadow-popover: 0 2px 8px rgb(0 0 0 / 0.05);
 
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
@@ -29,6 +38,11 @@
 
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-tertiary: hsl(0 0% 52%);
+  --color-success: hsl(122 61% 72%);
+  --color-warning: hsl(48 98% 62%);
+  --color-link: hsl(227 85% 75%);
+  --color-link-hover: hsl(227 56% 50%);
 
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
@@ -82,19 +96,19 @@
     --background: 30 5% 7%;
     --foreground: 0 0% 99%;
     --card: 30 5% 9%;
-    --card-foreground: 0 0% 98%;
+    --card-foreground: var(--foreground);
     --popover: 30 6.060606% 12.941176%;
-    --popover-foreground: 0 0% 98%;
+    --popover-foreground: var(--foreground);
     --primary: 0 0% 99%;
     --primary-foreground: 0 0% 2%;
     --secondary: 0 0% 99% / 0.08;
-    --secondary-foreground: 0 0% 98%;
+    --secondary-foreground: var(--foreground);
     --muted: 30 5% 12%;
     --muted-foreground: 0 0% 62%;
     --accent: 0 0% 99% / 0.08;
-    --accent-foreground: 0 0% 98%;
+    --accent-foreground: var(--foreground);
     --destructive: 357 82% 71%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 0% 2%;
     --border: 0 0% 99% / 0.06;
     --input: 0 0% 99% / 0.08;
     --ring: 207 100% 58%;
@@ -104,7 +118,6 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --radius: 14px;
     --sidebar: var(--background);
     --input-background: 30 5% 9%;
     --input-focus: oklch(99.24% 0 none / 0.16);
@@ -125,31 +138,23 @@
 }
 
 @layer base {
-  /* * {
-    @apply box-border;
-  } */
-
   html {
-    font-family: "IBM Plex Mono", system-ui, sans-serif;
-    font-size: 15px;
+    font-family: var(--font-sans);
+    font-size: 16px;
     scrollbar-gutter: stable;
   }
 
-  /* ul,
-  p {
-    @apply text-pretty select-none md:select-text;
-  } */
+  body {
+    font-size: 15px;
+    line-height: 1.5;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
 
   img {
     @apply select-none;
   }
-  /* 
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply text-balance;
-  } */
 
   * {
     scrollbar-width: thin;
@@ -177,10 +182,10 @@
 
 @layer components {
   .section-label {
-    font-size: 0.7rem;
+    font-size: 13px;
     font-weight: 600;
 
-    letter-spacing: 0.04em;
+    letter-spacing: normal;
     color: hsl(var(--muted-foreground));
   }
   .page-toolbar {
@@ -236,15 +241,15 @@
   .nav-item {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    padding: 0.8rem 1rem;
-    min-height: 46px;
+    gap: 8px;
+    padding: 6px 12px;
+    min-height: 36px;
     border-radius: 12px;
     color: hsl(var(--muted-foreground));
-    font-size: 0.9rem;
+    font-size: 14px;
     transition:
-      background 160ms,
-      color 160ms;
+      background 100ms,
+      color 100ms;
   }
   .nav-item:hover {
     background: hsl(var(--accent));
@@ -265,7 +270,7 @@
     white-space: nowrap;
     color: hsl(var(--muted-foreground));
     border-bottom: 2px solid transparent;
-    font-size: 0.9rem;
+    font-size: 14px;
   }
   .sub-nav a[aria-current="page"] {
     color: hsl(var(--primary));
@@ -327,6 +332,37 @@
     font-weight: 700;
   }
 }
+@keyframes surface-enter {
+  from { opacity: 0; scale: 0.98; }
+  to { opacity: 1; scale: 1; }
+}
+@keyframes surface-exit {
+  to { opacity: 0; scale: 0.98; }
+}
+@keyframes overlay-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-exit {
+  to { opacity: 0; }
+}
+@layer components {
+  [data-slot="dialog-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="dropdown-menu-sub-content"] {
+    &[data-state="open"] { animation: surface-enter 150ms ease-out; }
+    &[data-state="closed"] { animation: surface-exit 100ms ease-in; }
+  }
+  [data-slot="dialog-overlay"] {
+    &[data-state="open"] { animation: overlay-enter 150ms ease-out; }
+    &[data-state="closed"] { animation: overlay-exit 100ms ease-in; }
+  }
+  [data-slot="select-content"] {
+    transition: opacity 100ms, scale 100ms;
+    &[data-starting-style], &[data-ending-style] { opacity: 0; scale: 0.98; }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -342,7 +378,7 @@
 
 @layer base {
   :focus-visible {
-    outline: 2px solid hsl(var(--foreground));
-    outline-offset: 3px;
+    outline: 1px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 }

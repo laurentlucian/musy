@@ -82,14 +82,14 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             alt={track.name}
             width={500}
             height={500}
-            className="aspect-square h-auto w-full rounded-none object-cover shadow-xl"
+            className="aspect-square h-auto w-full rounded-none object-cover"
           />
         </div>
         <div className="min-w-0">
           <p className="mb-4 font-medium text-primary text-xs uppercase">
             Track
           </p>
-          <h1 className="font-semibold text-2xl leading-[1.05] tracking-tight sm:text-2xl lg:text-3xl">
+          <h1 className="font-semibold text-2xl leading-tight tracking-tight sm:text-2xl lg:text-3xl">
             {track.name}
           </h1>
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-lg text-muted-foreground">
@@ -161,7 +161,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             </dl>
             {artist?.popularity != null && (
               <div>
-                <p className="mb-3 text-muted-foreground text-xs uppercase tracking-widest">
+                <p className="mb-3 font-medium text-muted-foreground text-sm">
                   Artist popularity
                 </p>
                 <PopularityIndicator value={artist.popularity} showLabel />
@@ -169,7 +169,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             )}
             {genres.length > 0 && (
               <div>
-                <h2 className="mb-3 text-muted-foreground text-xs uppercase tracking-widest">
+                <h2 className="mb-3 font-medium text-muted-foreground text-sm">
                   Genres
                 </h2>
                 <div className="flex flex-wrap gap-2">

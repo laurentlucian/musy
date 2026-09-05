@@ -1,4 +1,6 @@
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
+import { buttonVariants } from "~/components/ui/button";
 import { cn } from "~/components/utils";
 import type { Artist as ArtistType } from "~/lib.server/services/db";
 import { Image } from "../ui/image";
@@ -12,7 +14,7 @@ export function Artist(
   return (
     <div
       className={cn(
-        "group flex min-w-0 items-center gap-3 border-b border-border py-3",
+        "group flex min-w-0 items-center gap-3 border-border border-b py-3",
         className,
       )}
     >
@@ -40,16 +42,16 @@ export function Artist(
         >
           {artist.name}
         </Link>
-        <span className="text-sm text-muted-foreground">Artist</span>
+        <span className="text-muted-foreground text-sm">Artist</span>
       </div>
       <a
         href={artist.uri}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Open ${artist.name} in Spotify`}
-        className="flex size-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-primary"
+        className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "shrink-0")}
       >
-        ↗
+        <ArrowUpRight />
       </a>
     </div>
   );

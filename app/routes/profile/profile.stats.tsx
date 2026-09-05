@@ -114,9 +114,9 @@ function StatsSyncButton({ userId, year }: { userId: string; year: number }) {
   return (
     <Button
       type="button"
-      size="lg"
+      size="icon"
       variant="outline"
-      className="w-11 shrink-0 px-0"
+      className="shrink-0"
       aria-label="Refresh stats"
       disabled={isSyncing}
       onClick={() => {
@@ -232,19 +232,19 @@ function Stats({
   return (
     <>
       <div className="flex flex-wrap gap-2 whitespace-nowrap">
-        <div className="rounded-lg bg-card p-3">
-          <p className="font-bold text-3xl">
+        <div className="rounded-2xl bg-card p-3">
+          <p className="font-semibold text-3xl">
             <NumberAnimated value={stats.played} key={year} />
           </p>
           <p className="text-muted-foreground text-xs">tracks played</p>
         </div>
         <button
           type="button"
-          className="cursor-pointer rounded-lg bg-card p-3 text-left"
+          className="cursor-pointer rounded-2xl bg-card p-3 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:bg-button-secondary-hover"
           onClick={cycleTimeUnit}
           aria-label={`Switch time unit display, currently showing ${getUnitLabel()}`}
         >
-          <p className="font-bold text-3xl">
+          <p className="font-semibold text-3xl">
             <NumberAnimated
               value={getDisplayValue()}
               key={`${year}-${timeUnit}`}
@@ -253,8 +253,8 @@ function Stats({
           <p className="text-muted-foreground text-xs">{getUnitLabel()}</p>
         </button>
         <div className="flex gap-4">
-          <div className="rounded-lg bg-card p-3">
-            <p className="font-bold text-3xl">
+          <div className="rounded-2xl bg-card p-3">
+            <p className="font-semibold text-3xl">
               <NumberAnimated value={stats.liked} key={year} />
             </p>
             <p className="text-muted-foreground text-xs">tracks liked</p>
@@ -262,17 +262,17 @@ function Stats({
         </div>
       </div>
       {stats.trackName && (
-        <div className="rounded-lg bg-card p-4">
+        <div className="rounded-2xl bg-card p-4">
           {stats.trackId ? (
             <Link
               to={`/track/${stats.trackId}`}
               viewTransition
-              className="font-bold text-2xl hover:underline"
+              className="font-semibold text-2xl hover:underline"
             >
               {stats.trackName}
             </Link>
           ) : (
-            <p className="font-bold text-2xl">{stats.trackName}</p>
+            <p className="font-semibold text-2xl">{stats.trackName}</p>
           )}
           <p className="text-muted-foreground text-sm">most listened track</p>
           <p className="text-muted-foreground text-xs">
@@ -286,34 +286,34 @@ function Stats({
       )}
 
       {stats.artist && (
-        <div className="rounded-lg bg-card p-4">
+        <div className="rounded-2xl bg-card p-4">
           {stats.artistId ? (
             <Link
               to={`/artist/${stats.artistId}`}
               viewTransition
-              className="font-bold text-2xl hover:underline"
+              className="font-semibold text-2xl hover:underline"
             >
               {stats.artist}
             </Link>
           ) : (
-            <p className="font-bold text-2xl">{stats.artist}</p>
+            <p className="font-semibold text-2xl">{stats.artist}</p>
           )}
           <p className="text-muted-foreground text-sm">most listened artist</p>
         </div>
       )}
 
       {stats.album && (
-        <div className="rounded-lg bg-card p-4">
+        <div className="rounded-2xl bg-card p-4">
           {stats.albumId ? (
             <Link
               to={`/album/${stats.albumId}`}
               viewTransition
-              className="font-bold text-2xl hover:underline"
+              className="font-semibold text-2xl hover:underline"
             >
               {stats.album}
             </Link>
           ) : (
-            <p className="font-bold text-2xl">{stats.album}</p>
+            <p className="font-semibold text-2xl">{stats.album}</p>
           )}
           <p className="text-muted-foreground text-sm">most listened album</p>
         </div>

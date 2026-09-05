@@ -10,12 +10,12 @@ function Toaster({ ...props }: ToasterProps) {
       toastOptions={{
         classNames: {
           toast:
-            "group !w-fit toast group-[.toaster]:bg-popover group-[.toaster]:rounded-4xl! group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
+            "w-fit! rounded-2xl! border-border! bg-popover! text-foreground! shadow-popover! text-sm! tracking-[-0.2px]",
+          description: "text-muted-foreground!",
           actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+            "rounded-full! bg-button-filled! text-primary-foreground!",
           cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+            "rounded-full! bg-secondary! text-foreground!",
         },
       }}
       {...props}

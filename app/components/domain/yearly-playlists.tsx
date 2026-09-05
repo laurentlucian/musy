@@ -156,7 +156,7 @@ function YearPicker({
           {years.map(({ year, count }) => (
             <label
               key={year}
-              className={`flex cursor-pointer items-center gap-3 rounded-md border p-3 transition-colors ${selected.includes(year) ? "border-foreground/40 bg-muted" : "border-border hover:bg-muted/50"}`}
+              className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-colors focus-within:ring-1 focus-within:ring-ring has-disabled:cursor-default has-disabled:opacity-50 ${selected.includes(year) ? "border-button-outline-border bg-secondary" : "border-border hover:bg-accent"}`}
             >
               <input
                 type="checkbox"
@@ -170,7 +170,7 @@ function YearPicker({
                       : previous.filter((value) => value !== year),
                   )
                 }
-                className="size-4 accent-current"
+                className="size-4 accent-primary"
               />
               <span>
                 <span className="block font-medium text-sm">{year}</span>

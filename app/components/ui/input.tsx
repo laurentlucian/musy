@@ -11,7 +11,7 @@ function Input({
     <input
       type={type}
       className={cn(
-        "flex min-h-12 w-full rounded-md border border-input bg-input-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:border-input-focus focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "flex h-10 w-full rounded-xl border border-input bg-input-background px-3 py-2 text-base leading-[1.4] tracking-[-0.2px] transition-colors duration-100 file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground hover:border-button-outline-border focus-visible:border-input-focus focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive md:text-sm",
         className,
       )}
       ref={ref}
