@@ -90,7 +90,7 @@ export function Landing({ signedIn = false }: { signedIn?: boolean }) {
                   </Link>
                 </Button>
               ) : (
-                <Form method="post" action="/">
+                <Form method="post" action="/?index">
                   <input type="hidden" name="mode" value="authorize" />
                   <input type="hidden" name="provider" value="spotify" />
                   <Button type="submit" size="lg" disabled={connecting}>
