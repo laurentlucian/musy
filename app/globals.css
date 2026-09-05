@@ -187,14 +187,6 @@
     margin-inline: auto;
     min-width: 0;
   }
-  .app-masthead {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 86px;
-    border-bottom: 1px solid hsl(var(--border));
-    margin-bottom: 2.5rem;
-  }
   .app-sidebar {
     position: fixed;
     inset: 0 auto 0 0;
@@ -283,10 +275,6 @@
   }
   .app-sidebar {
     display: none;
-  }
-  .app-masthead {
-    min-height: 72px;
-    margin-bottom: 1.75rem;
   }
   .mobile-nav {
     display: flex;

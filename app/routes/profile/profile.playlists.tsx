@@ -116,15 +116,19 @@ export default function ProfilePlaylists({
 
   return (
     <>
-      {!isDetailRoute && isOwnProfile && yearOptions && (
-        <YearlyPlaylists userId={userId} options={yearOptions} />
-      )}
       {!isDetailRoute && (
         <div className="page-toolbar">
           <h2 className="font-semibold">
             {isOwnProfile ? "Your playlists" : "Playlists"}
           </h2>
-          {isOwnProfile && <PlaylistsSyncButton userId={userId} />}
+          {isOwnProfile && (
+            <div className="flex flex-wrap gap-2">
+              {yearOptions && (
+                <YearlyPlaylists userId={userId} options={yearOptions} />
+              )}
+              <PlaylistsSyncButton userId={userId} />
+            </div>
+          )}
         </div>
       )}
       {!isDetailRoute && playlists && (

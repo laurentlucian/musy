@@ -19,39 +19,22 @@ export function YearlyPlaylists({
   const [params, setParams] = useSearchParams();
   const open = params.get("tool") === "yearly";
   return (
-    <section
-      className="mb-8 rounded-lg border border-border bg-muted/30 p-5 sm:p-6"
-      aria-labelledby="playlist-tools-title"
-    >
-      <p className="section-label mb-4" id="playlist-tools-title">
-        Playlist tools
-      </p>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
-            <CalendarDays className="size-5" />
-          </div>
-          <div>
-            <h2 className="font-semibold">Liked songs by year</h2>
-            <p className="mt-1 max-w-md text-muted-foreground text-sm">
-              Turn each year of saved music into a Spotify playlist.
-            </p>
-          </div>
-        </div>
-        <Button
-          onClick={() =>
-            setParams(
-              (previous) => {
-                previous.set("tool", "yearly");
-                return previous;
-              },
-              { preventScrollReset: true },
-            )
-          }
-        >
-          Choose years <ArrowRight />
-        </Button>
-      </div>
+    <>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() =>
+          setParams(
+            (previous) => {
+              previous.set("tool", "yearly");
+              return previous;
+            },
+            { preventScrollReset: true },
+          )
+        }
+      >
+        <CalendarDays /> Yearly playlists
+      </Button>
       <Dialog
         open={open}
         onOpenChange={(value) => {
@@ -84,7 +67,7 @@ export function YearlyPlaylists({
           </Suspense>
         </DialogContent>
       </Dialog>
-    </section>
+    </>
   );
 }
 
