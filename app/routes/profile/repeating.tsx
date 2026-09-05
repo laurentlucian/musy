@@ -10,7 +10,7 @@ import { syncUserTop } from "~/lib.server/services/scheduler/scripts/sync/top";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import { getTopData } from "~/routes/profile/utils/profile.server";
 import { TopList, TopSelector } from "~/routes/profile/utils/profile.utils";
-import type { Route } from "./+types/profile.top";
+import type { Route } from "./+types/repeating";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);

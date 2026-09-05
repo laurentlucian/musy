@@ -15,7 +15,7 @@ import { createPlaylistsByYear } from "~/lib.server/services/scheduler/scripts/c
 import { syncUserLikedFull } from "~/lib.server/services/scheduler/scripts/sync/liked";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import { Selector } from "~/routes/profile/utils/profile.utils";
-import type { Route } from "./+types/profile.liked";
+import type { Route } from "./+types/liked";
 
 export async function loader({ context, params, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);

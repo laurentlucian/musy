@@ -44,11 +44,11 @@ export function Nav({
             <ChartNoAxesCombined size={18} />
             Overview
           </SidebarLink>
-          <SidebarLink className="nav-item" to="/profile/top">
+          <SidebarLink className="nav-item" to="/profile/repeating">
             <TrendingUp size={18} />
             Repeating
           </SidebarLink>
-          <SidebarLink className="nav-item" to="/profile/listened">
+          <SidebarLink className="nav-item" to="/profile/history">
             <History size={18} />
             History
           </SidebarLink>
@@ -61,7 +61,7 @@ export function Nav({
           <p className="section-label mb-2 mt-8 px-4">Collection</p>
           <SidebarLink className="nav-item" to="/profile/liked">
             <Heart size={18} />
-            Liked songs
+            Liked
           </SidebarLink>
           <SidebarLink className="nav-item" to="/profile/playlists">
             <Library size={18} />
@@ -118,10 +118,10 @@ export function Nav({
               <Link to="/profile">Overview</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/top">Repeating</Link>
+              <Link to="/profile/repeating">Repeating</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/listened">History</Link>
+              <Link to="/profile/history">History</Link>
             </DropdownMenuItem>
             {profile && (
               <DropdownMenuItem asChild>
@@ -140,7 +140,7 @@ export function Nav({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" sideOffset={12}>
             <DropdownMenuItem asChild>
-              <Link to="/profile/liked">Liked songs</Link>
+              <Link to="/profile/liked">Liked</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/profile/playlists">Playlists</Link>
@@ -223,7 +223,7 @@ function SidebarLink({
 }) {
   const { pathname } = useLocation();
   const normalized = pathname.replace(
-    /^\/profile\/(?!top(?:\/|$)|liked(?:\/|$)|listened(?:\/|$)|playlists(?:\/|$))[^/]+/,
+    /^\/profile\/(?!repeating(?:\/|$)|history(?:\/|$)|liked(?:\/|$)|playlists(?:\/|$))[^/]+/,
     "/profile",
   );
   const active = end

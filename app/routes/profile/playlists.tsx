@@ -24,7 +24,7 @@ import {
 import { createPlaylistsByYear } from "~/lib.server/services/scheduler/scripts/create-playlists";
 import { syncUserPlaylists } from "~/lib.server/services/scheduler/scripts/sync/playlist";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
-import type { Route } from "./+types/profile.playlists";
+import type { Route } from "./+types/playlists";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
@@ -111,7 +111,7 @@ export default function ProfilePlaylists({
 }: Route.ComponentProps) {
   const matches = useMatches();
   const isDetailRoute = matches.some(
-    (match: { id?: string }) => match.id === "routes/profile/profile.playlist",
+    (match: { id?: string }) => match.id === "routes/profile/playlist",
   );
   const isOwnProfile = currentUserId === userId;
 

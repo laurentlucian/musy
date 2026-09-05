@@ -31,7 +31,7 @@ import {
 } from "~/lib.server/services/scheduler/scripts/playlist-actions";
 import { syncSinglePlaylist } from "~/lib.server/services/scheduler/scripts/sync/playlist";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
-import type { Route } from "./+types/profile.playlist";
+import type { Route } from "./+types/playlist";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);

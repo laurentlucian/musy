@@ -1,4 +1,4 @@
-import { RefreshCcw } from "lucide-react";
+import { CalendarDays, Clock, Heart, Play, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect, useRef, useState } from "react";
 import { Link, redirect, useNavigation, useRevalidator } from "react-router";
 import {
@@ -10,7 +10,7 @@ import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { getDashboard } from "~/lib.server/services/dashboard";
 import { Selector } from "~/routes/profile/utils/profile.utils";
-import type { Route } from "./+types/profile.stats";
+import type { Route } from "./+types/overview";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);
@@ -146,6 +146,20 @@ function Stats({
         stats.played) *
       100
     : 0;
+  const periodDays = (() => {
+    const first = stats.monthly[0]?.key;
+    if (!first) return 0;
+    const start = Date.parse(`${first}-01T00:00:00Z`);
+    const today = Date.now();
+    const end =
+      year && year < new Date().getUTCFullYear()
+        ? Date.UTC(year, 11, 31)
+        : today;
+    return Math.max(
+      stats.activeDays,
+      Math.floor((end - start) / 86_400_000) + 1,
+    );
+  })();
 
   return (
     <>
@@ -158,47 +172,77 @@ function Stats({
       ) : null}
       <dl className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <Metric
+          icon={Play}
           label="Plays"
           value={number(stats.played)}
           detail={`${number(stats.uniqueTracks)} different tracks`}
-          prominent
+          backdrop={
+            <Sparkline values={stats.monthly.map((row) => row.plays)} />
+          }
         />
-        <div className={panel}>
-          <div className="flex items-center justify-between gap-2">
-            <dt className="text-muted-foreground text-xs">Listening time</dt>
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-label={`Show listening time in ${unit === "minutes" ? "hours" : "minutes"}`}
-              onClick={() => setUnit(unit === "minutes" ? "hours" : "minutes")}
-            >
-              {unit === "minutes" ? "Min" : "Hrs"}
-            </Button>
-          </div>
-          <dd className="mt-2 font-semibold text-3xl tabular-nums tracking-tight sm:text-4xl">
-            {number(
-              stats.minutes / (unit === "hours" ? 60 : 1),
-              unit === "hours" ? 1 : 0,
-            )}
-          </dd>
-          <p className="mt-2 text-muted-foreground text-xs">
-            {unit === "minutes"
-              ? `${number(stats.minutes / 60, 1)} hours`
-              : `${number(stats.minutes)} minutes`}
-            {stats.estimatedPlays > 0 ? " · estimated" : ""}
-          </p>
-        </div>
         <Metric
+          icon={Clock}
+          label="Listening time"
+          value={number(
+            stats.minutes / (unit === "hours" ? 60 : 1),
+            unit === "hours" ? 1 : 0,
+          )}
+          unit={unit === "hours" ? "hrs" : "min"}
+          detail={
+            (unit === "minutes"
+              ? `${number(stats.minutes / 60, 1)} hours`
+              : `${number(stats.minutes)} minutes`) +
+            (stats.estimatedPlays > 0 ? " · estimated" : "")
+          }
+          action={
+            <fieldset
+              aria-label="Listening time unit"
+              className="flex rounded-full border border-border bg-background/60 p-0.5 text-[11px]"
+            >
+              {(["minutes", "hours"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={unit === value}
+                  onClick={() => setUnit(value)}
+                  className={`rounded-full px-2 py-0.5 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+                    unit === value
+                      ? "bg-foreground font-medium text-background"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {value === "minutes" ? "Min" : "Hrs"}
+                </button>
+              ))}
+            </fieldset>
+          }
+          backdrop={
+            <Sparkline values={stats.monthly.map((row) => row.minutes)} />
+          }
+        />
+        <Metric
+          icon={CalendarDays}
           label="Active days"
           value={number(stats.activeDays)}
+          unit={periodDays ? `of ${number(periodDays)}` : undefined}
           detail={`${number(stats.playsPerActiveDay, 1)} plays / active day`}
-          prominent
+          backdrop={
+            <Coverage
+              share={periodDays ? stats.activeDays / periodDays : 0}
+              weekdays={stats.weekdays}
+            />
+          }
         />
         <Metric
+          icon={Heart}
           label="Tracks liked"
           value={number(stats.liked)}
           detail={year ? "Still saved · added this year" : "Currently saved"}
-          prominent
+          action={
+            <Ring
+              share={stats.uniqueTracks ? stats.liked / stats.uniqueTracks : 0}
+            />
+          }
         />
       </dl>
       {stats.played > 0 && (
@@ -383,28 +427,165 @@ function Stats({
 }
 
 function Metric({
+  icon: Icon,
   label,
   value,
+  unit,
   detail,
-  prominent,
+  action,
+  backdrop,
 }: {
+  icon: typeof Play;
   label: string;
   value: string;
+  unit?: string;
   detail: string;
-  prominent?: boolean;
+  action?: React.ReactNode;
+  backdrop?: React.ReactNode;
 }) {
   return (
-    <div className={panel}>
-      <dt className="flex min-h-8 items-center text-muted-foreground text-xs">
-        {label}
-      </dt>
-      <dd
-        className={`mt-2 font-semibold tabular-nums tracking-tight ${prominent ? "text-3xl sm:text-4xl" : "text-2xl"}`}
-      >
+    <div className="group relative isolate min-w-0 overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-[inset_0_1px_0_0_hsl(0_0%_100%/0.05)] transition-[border-color,transform] duration-300 hover:border-foreground/25 sm:p-5">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-20 -right-20 size-48 rounded-full bg-foreground/[0.05] opacity-70 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+      />
+      {backdrop && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-16 text-foreground opacity-60 transition-opacity duration-500 group-hover:opacity-100"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent, black 20%, black 85%, transparent)",
+          }}
+        >
+          {backdrop}
+        </div>
+      )}
+      <div className="relative flex items-center justify-between gap-2">
+        <dt className="flex items-center gap-2 text-muted-foreground text-xs">
+          <span className="flex size-6 items-center justify-center rounded-md border border-border bg-background/60">
+            <Icon className="size-3" aria-hidden="true" />
+          </span>
+          {label}
+        </dt>
+        {action}
+      </div>
+      <dd className="relative mt-4 flex items-baseline gap-1.5 font-semibold text-4xl tabular-nums tracking-tighter sm:text-5xl">
         {value}
+        {unit && (
+          <span className="font-medium text-muted-foreground text-xs tracking-normal">
+            {unit}
+          </span>
+        )}
       </dd>
-      <p className="mt-2 text-muted-foreground text-xs">{detail}</p>
+      <p className="relative mt-3 text-muted-foreground text-xs">{detail}</p>
     </div>
+  );
+}
+function Sparkline({ values }: { values: number[] }) {
+  if (values.length < 2) return null;
+  const w = 100;
+  const h = 40;
+  const max = Math.max(1, ...values);
+  const points = values.map(
+    (value, index) =>
+      [
+        (index / (values.length - 1)) * w,
+        h - (value / max) * (h - 4) - 2,
+      ] as const,
+  );
+  const line = points.map(([x, y]) => `${x},${y}`).join(" ");
+  const last = points[points.length - 1];
+  return (
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      preserveAspectRatio="none"
+      className="size-full"
+      aria-hidden="true"
+    >
+      <polygon
+        points={`0,${h} ${line} ${w},${h}`}
+        fill="currentColor"
+        opacity={0.08}
+      />
+      <polyline
+        points={line}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+        opacity={0.6}
+      />
+      <circle cx={last[0]} cy={last[1]} r={2} fill="currentColor" />
+    </svg>
+  );
+}
+function Coverage({
+  share,
+  weekdays,
+}: {
+  share: number;
+  weekdays: { label: string; plays: number }[];
+}) {
+  const max = Math.max(1, ...weekdays.map((row) => row.plays));
+  return (
+    <div className="flex h-full flex-col justify-end gap-2 px-4 pb-4 sm:px-5 sm:pb-5">
+      <div className="flex items-end gap-1">
+        {weekdays.map((row) => (
+          <div
+            key={row.label}
+            className="flex-1 rounded-t-[2px] bg-current"
+            style={{
+              height: 4 + (row.plays / max) * 20,
+              opacity: 0.15 + (row.plays / max) * 0.45,
+            }}
+          />
+        ))}
+      </div>
+      <div className="h-1 overflow-hidden rounded-full bg-current/15">
+        <div
+          className="h-full rounded-full bg-current transition-[width] duration-700"
+          style={{ width: `${Math.min(100, share * 100)}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+function Ring({ share }: { share: number }) {
+  const r = 10;
+  const c = 2 * Math.PI * r;
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-6 shrink-0 text-foreground"
+      aria-label={`${number(share * 100, 1)}% of tracks liked`}
+      role="img"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r={r}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        opacity="0.15"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r={r}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray={c}
+        strokeDashoffset={c * (1 - Math.min(1, share))}
+        transform="rotate(-90 12 12)"
+        className="transition-[stroke-dashoffset] duration-700"
+      />
+    </svg>
   );
 }
 function SmallMetric({ label, value }: { label: string; value: string }) {

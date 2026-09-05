@@ -16,7 +16,7 @@ import {
 } from "~/lib.server/services/db/tracks";
 import { syncUserRecent } from "~/lib.server/services/scheduler/scripts/sync/recent";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
-import type { Route } from "./+types/profile.listened";
+import type { Route } from "./+types/history";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const userId = params.userId ?? context.get(userContext);

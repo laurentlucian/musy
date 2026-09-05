@@ -10,20 +10,14 @@ export default [
   index("routes/index.tsx"),
   layout("routes/layout.root.tsx", [
     route("profile/:userId?", "routes/profile/profile.tsx", [
-      index("routes/profile/profile.stats.tsx"),
-      route("top", "routes/profile/profile.top.tsx"),
-      route("liked", "routes/profile/profile.liked.tsx"),
-      route("listened", "routes/profile/profile.listened.tsx"),
-      route("playlists", "routes/profile/profile.playlists.tsx", [
-        route(":playlistId", "routes/profile/profile.playlist.tsx"),
+      index("routes/profile/overview.tsx"),
+      route("repeating", "routes/profile/repeating.tsx"),
+      route("history", "routes/profile/history.tsx"),
+      route("liked", "routes/profile/liked.tsx"),
+      route("playlists", "routes/profile/playlists.tsx", [
+        route(":playlistId", "routes/profile/playlist.tsx"),
       ]),
     ]),
-    route("queue", "routes/queue/groups.tsx", [
-      route(":groupId", "routes/queue/group.tsx"),
-    ]),
-    route("track/:trackId", "routes/track/track.tsx"),
-    route("artist/:artistId", "routes/track/artist.tsx"),
-    route("album/:albumId", "routes/track/album.tsx"),
     route("explore", "routes/explore.tsx"),
     route("import", "routes/import.tsx"),
     route("settings", "routes/settings.tsx", [
@@ -34,6 +28,12 @@ export default [
         route("counts", "routes/admin/counts.tsx"),
       ]),
     ]),
+    route("queue", "routes/queue/groups.tsx", [
+      route(":groupId", "routes/queue/group.tsx"),
+    ]),
+    route("track/:trackId", "routes/track/track.tsx"),
+    route("artist/:artistId", "routes/track/artist.tsx"),
+    route("album/:albumId", "routes/track/album.tsx"),
   ]),
 
   route("resources/history-import", "routes/resources/history-import.ts"),
