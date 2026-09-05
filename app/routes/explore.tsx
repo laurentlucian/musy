@@ -12,6 +12,7 @@ import ListeningMap from "~/components/domain/listening-map";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
+import { normalizeCountry } from "~/lib/countries";
 import { listeningTime } from "~/lib/device";
 import { startHistoryLocations } from "~/lib.server/services/history-geolocation";
 import {
@@ -30,15 +31,23 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const bounds = parseBounds(params.get("bounds"));
   if (params.has("bounds") && !bounds)
     throw data("Invalid map area", { status: 400, headers });
+  const country = normalizeCountry(params.get("country"));
+  if (params.has("country") && !country)
+    throw data("Invalid country", { status: 400, headers });
   const rawPage = Number(params.get("page") ?? 0);
   if (!Number.isSafeInteger(rawPage) || rawPage < 0 || rawPage > 1_000_000)
     throw data("Invalid page", { status: 400, headers });
   const history = Promise.all([
     getHistoryInsights(userId),
-    getLocationSongs(userId, bounds, rawPage),
+    getLocationSongs(userId, bounds, rawPage, country),
   ]).then(([insights, result]) => ({ ...insights, ...result }));
   return data(
-    { history, page: rawPage, selected: bounds !== null },
+    {
+      history,
+      page: rawPage,
+      country,
+      selected: bounds !== null || country !== null,
+    },
     { headers },
   );
 }
@@ -102,9 +111,18 @@ function ExploreSummary({
 function ExploreContent({
   loaderData,
 }: Pick<Route.ComponentProps, "loaderData">) {
-  const { devices, locations, listens, msPlayed, located, job, songs, total } =
-    use(loaderData.history);
-  const { page, selected } = loaderData;
+  const {
+    devices,
+    locations,
+    countries,
+    listens,
+    msPlayed,
+    located,
+    job,
+    songs,
+    total,
+  } = use(loaderData.history);
+  const { page, selected, country } = loaderData;
   const [params, setParams] = useSearchParams();
   const fetcher = useFetcher<typeof action>();
   const revalidator = useRevalidator();
@@ -120,9 +138,11 @@ function ExploreContent({
     }, 10_000);
     return () => window.clearInterval(timer);
   }, [active, revalidator]);
-  const label = selected
-    ? params.get("area") || "Selected area"
-    : "All listening";
+  const label = country
+    ? countries.find((item) => item.code === country)?.label || country
+    : selected
+      ? params.get("area") || "Selected area"
+      : "All listening";
   return (
     <>
       {!listens ? (
@@ -161,10 +181,10 @@ function ExploreContent({
                     className={`size-4 ${active ? "animate-spin" : ""}`}
                   />
                   {active
-                    ? "Locating…"
+                    ? "Locating cities…"
                     : job?.status === "failed"
-                      ? "Retry locations"
-                      : "Locate listening"}
+                      ? "Retry cities"
+                      : "Locate cities"}
                 </Button>
               </fetcher.Form>
             </div>
@@ -174,10 +194,28 @@ function ExploreContent({
                 setParams({ bounds: bounds.join(","), area })
               }
             />
+            {countries.length > 0 && (
+              <section className="flex flex-wrap gap-2" aria-label="Countries">
+                {countries.map((item) => (
+                  <Button
+                    key={item.code}
+                    variant={country === item.code ? "default" : "outline"}
+                    size="sm"
+                    aria-pressed={country === item.code}
+                    onClick={() => setParams({ country: item.code })}
+                  >
+                    {item.label}
+                    <span className="tabular-nums">
+                      {item.listens.toLocaleString()}
+                    </span>
+                  </Button>
+                ))}
+              </section>
+            )}
             <p className="text-muted-foreground text-xs">
-              Approximate locations from current IP records, not GPS or
-              historical addresses. Select a marker to explore songs. Location
-              lookup uses ipwho.is.
+              Countries from your Spotify export. Map locations are current IP
+              estimates from ipwho.is. Select a country or marker to explore
+              songs.
             </p>
             {located < listens && !active && (
               <p className="text-muted-foreground text-xs">
@@ -285,7 +323,7 @@ function ExploreContent({
             </div>
             {!songs.length && (
               <p className="py-6 text-muted-foreground text-sm">
-                No listens in this area.
+                No listens here.
               </p>
             )}
             <div className="flex items-center justify-between">

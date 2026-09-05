@@ -9,6 +9,7 @@ import {
   sql,
   sum,
 } from "drizzle-orm";
+import { countryName, normalizeCountry } from "~/lib/countries";
 import { deviceLabel } from "~/lib/device";
 import { geoIp, historyEvent, historyGeoJob } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
@@ -57,7 +58,7 @@ export function summarizeDevices(
 }
 
 export async function getHistoryInsights(userId: string) {
-  const [platforms, locations, [totals], [located], [job]] = await Promise.all([
+  const [platforms, locations, [totals], coverage, [job]] = await Promise.all([
     db
       .select({
         platform: historyEvent.platform,
@@ -99,10 +100,19 @@ export async function getHistoryInsights(userId: string) {
       .from(historyEvent)
       .where(eq(historyEvent.userId, userId)),
     db
-      .select({ listens: count() })
+      .select({
+        country: historyEvent.country,
+        ipLocated: sql<number>`CASE WHEN ${geoIp.status} = 'located' AND ${geoIp.latitude} IS NOT NULL AND ${geoIp.longitude} IS NOT NULL THEN 1 ELSE 0 END`,
+        listens: count(),
+        msPlayed: sum(historyEvent.msPlayed),
+      })
       .from(historyEvent)
-      .innerJoin(geoIp, eq(historyEvent.ip, geoIp.ip))
-      .where(and(eq(historyEvent.userId, userId), eq(geoIp.status, "located"))),
+      .leftJoin(geoIp, eq(historyEvent.ip, geoIp.ip))
+      .where(eq(historyEvent.userId, userId))
+      .groupBy(
+        historyEvent.country,
+        sql`CASE WHEN ${geoIp.status} = 'located' AND ${geoIp.latitude} IS NOT NULL AND ${geoIp.longitude} IS NOT NULL THEN 1 ELSE 0 END`,
+      ),
     db
       .select({
         status: historyGeoJob.status,
@@ -113,6 +123,27 @@ export async function getHistoryInsights(userId: string) {
       .where(eq(historyGeoJob.userId, userId))
       .limit(1),
   ]);
+  const countries = new Map<
+    string,
+    { code: string; label: string; listens: number; msPlayed: number }
+  >();
+  let located = 0;
+  let ipLocated = 0;
+  for (const row of coverage) {
+    const code = normalizeCountry(row.country);
+    if (code || row.ipLocated) located += row.listens;
+    if (row.ipLocated) ipLocated += row.listens;
+    if (!code) continue;
+    const country = countries.get(code) ?? {
+      code,
+      label: countryName(code),
+      listens: 0,
+      msPlayed: 0,
+    };
+    country.listens += row.listens;
+    country.msPlayed += Number(row.msPlayed ?? 0);
+    countries.set(code, country);
+  }
   return {
     devices: summarizeDevices(
       platforms.map((row) => ({ ...row, msPlayed: Number(row.msPlayed) })),
@@ -130,7 +161,11 @@ export async function getHistoryInsights(userId: string) {
     ),
     listens: totals?.listens ?? 0,
     msPlayed: Number(totals?.msPlayed ?? 0),
-    located: located?.listens ?? 0,
+    located,
+    ipLocated,
+    countries: [...countries.values()].sort(
+      (a, b) => b.listens - a.listens || a.code.localeCompare(b.code),
+    ),
     job: job ?? null,
   };
 }
@@ -139,9 +174,16 @@ export async function getLocationSongs(
   userId: string,
   bounds: MapBounds | null,
   page: number,
+  country: string | null = null,
 ) {
+  const code = normalizeCountry(country);
   const where = and(
     eq(historyEvent.userId, userId),
+    country !== null
+      ? code
+        ? eq(sql`UPPER(TRIM(${historyEvent.country}))`, code)
+        : sql`0`
+      : undefined,
     bounds
       ? and(
           eq(geoIp.status, "located"),
