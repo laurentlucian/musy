@@ -16,10 +16,22 @@ import {
 } from "~/components/ui/select";
 import type { getTopData } from "~/routes/profile/utils/profile.server";
 
-export function Selector({ year, className }: { year: number | null; className?: string }) {
+export function Selector({
+  year,
+  className,
+  years: availableYears,
+}: {
+  year: number | null;
+  className?: string;
+  years?: number[];
+}) {
   const [params, setParams] = useSearchParams();
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
+  const years = availableYears
+    ? [
+        ...new Set([currentYear, ...(year ? [year] : []), ...availableYears]),
+      ].sort((a, b) => b - a)
+    : Array.from({ length: 6 }, (_, i) => currentYear - i);
 
   const isAll = year === null || year === 0;
 

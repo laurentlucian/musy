@@ -112,6 +112,7 @@ export const recentTracks = sqliteTable(
       }),
   },
   (table) => [
+    index("RecentTracks_userId_playedAt_idx").on(table.userId, table.playedAt),
     uniqueIndex("RecentTracks_playedAt_userId_key").on(
       table.playedAt,
       table.userId,
