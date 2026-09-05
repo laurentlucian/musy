@@ -80,10 +80,10 @@ export default function ProfileLiked({
 
   return (
     <>
-      <div className="page-toolbar">
-        <Selector year={year} />
+      <div className="page-toolbar gap-3 [&_button]:text-xs [&_a]:text-xs [&_svg]:size-3.5">
+        <Selector year={year} className="min-w-28 data-[size=default]:h-9 px-3 shadow-none" />
         {isOwnProfile && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
             <CreatePlaylistsButton userId={userId} />
             <LikedSyncButton userId={userId} />
             <Suspense
@@ -135,9 +135,9 @@ function LikedList(props: { tracks: UserLiked }) {
 
 function CreatePlaylistsButton({ userId }: { userId: string }) {
   return (
-    <Button asChild size="sm" variant="outline">
+    <Button asChild size="sm" variant="secondary">
       <Link to={`/profile/${userId}/playlists?tool=yearly`}>
-        <Plus /> Make yearly playlists
+        <Plus /> Yearly playlists
       </Link>
     </Button>
   );
@@ -157,7 +157,8 @@ function LikedSyncButton({ userId }: { userId: string }) {
     <Button
       type="button"
       size="sm"
-      variant="outline"
+      variant="ghost"
+      className="text-muted-foreground transition-colors duration-150"
       disabled={isSyncing}
       onClick={() => {
         fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });

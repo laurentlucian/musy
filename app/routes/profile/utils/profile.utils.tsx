@@ -16,7 +16,7 @@ import {
 } from "~/components/ui/select";
 import type { getTopData } from "~/routes/profile/utils/profile.server";
 
-export function Selector({ year }: { year: number | null }) {
+export function Selector({ year, className }: { year: number | null; className?: string }) {
   const [params, setParams] = useSearchParams();
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 6 }, (_, i) => currentYear - i);
@@ -40,8 +40,8 @@ export function Selector({ year }: { year: number | null }) {
         });
       }}
     >
-      <SelectTrigger aria-label="Year" className="min-w-[100px]">
-        <SelectValue />
+      <SelectTrigger aria-label="Year" className={className ?? "min-w-[100px]"}>
+        <SelectValue>{isAll ? "All time" : year.toString()}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">All time</SelectItem>
