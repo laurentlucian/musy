@@ -1,9 +1,5 @@
 import type { Route } from ".react-router/types/app/+types/root";
-import type {
-  LinksFunction,
-  LoaderFunctionArgs,
-  MetaFunction,
-} from "react-router";
+import type { LinksFunction, MetaFunction } from "react-router";
 import {
   isRouteErrorResponse,
   Links,
@@ -66,11 +62,7 @@ export const middleware: Route.MiddlewareFunction[] = [
   },
 ];
 
-export async function loader({
-  request,
-  context,
-}: LoaderFunctionArgs & { context: { userId?: string } }) {
-  const url = new URL(request.url);
+export async function loader({ url, context }: Route.LoaderArgs) {
   const accessingAdmin = url.pathname.includes("/admin");
   if (accessingAdmin && !DEV) {
     const userId = context.get(userContext);
