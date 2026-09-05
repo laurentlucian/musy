@@ -296,7 +296,7 @@ export function HistoryImport({
                   )}
                   {state.phase === "complete" && (
                     <Button asChild variant="link" className="px-0">
-                      <Link to="/history">View listening</Link>
+                      <Link to="/explore">View listening</Link>
                     </Button>
                   )}
                 </div>

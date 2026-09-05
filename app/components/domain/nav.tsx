@@ -27,7 +27,7 @@ export function Nav({
   const { pathname } = useLocation();
   const library = /\/(liked|playlists)(\/|$)/.test(pathname);
   const journal =
-    (pathname.startsWith("/profile") && !library) || pathname === "/history";
+    (pathname.startsWith("/profile") && !library) || pathname === "/explore";
   return (
     <>
       <aside className="app-sidebar">
@@ -52,7 +52,7 @@ export function Nav({
             History
           </SidebarLink>
           {profile && (
-            <SidebarLink className="nav-item" to="/history">
+            <SidebarLink className="nav-item" to="/explore">
               <MapPinned size={18} />
               Explore
             </SidebarLink>
@@ -118,7 +118,7 @@ export function Nav({
             </DropdownMenuItem>
             {profile && (
               <DropdownMenuItem asChild>
-                <Link to="/history">Explore</Link>
+                <Link to="/explore">Explore</Link>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

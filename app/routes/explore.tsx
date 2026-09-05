@@ -18,7 +18,7 @@ import {
   getLocationSongs,
   parseBounds,
 } from "~/lib.server/services/history-insights";
-import type { Route } from "./+types/history";
+import type { Route } from "./+types/explore";
 
 const headers = { "Cache-Control": "private, no-store" };
 
@@ -55,7 +55,7 @@ export async function action({ context, request }: Route.ActionArgs) {
   return data({ error: null }, { headers });
 }
 
-export default function History({ loaderData }: Route.ComponentProps) {
+export default function Explore({ loaderData }: Route.ComponentProps) {
   const {
     devices,
     locations,
@@ -90,7 +90,7 @@ export default function History({ loaderData }: Route.ComponentProps) {
     <main className="mx-auto w-full max-w-6xl space-y-8 py-4">
       <header className="flex flex-wrap items-end justify-between gap-4 border-border border-b pb-4">
         <div>
-          <h1 className="font-semibold text-2xl">Listening history</h1>
+          <h1 className="font-semibold text-2xl">Explore</h1>
           <p className="mt-1 text-muted-foreground text-sm">
             Private · Imported Spotify history
           </p>
