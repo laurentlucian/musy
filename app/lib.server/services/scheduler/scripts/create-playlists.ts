@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { log, logError } from "~/components/utils";
 import { playlist, playlistTrack } from "~/lib.server/db/schema";
 import { SpotifyApiError } from "~/lib.server/sdk/spotify/errors";
@@ -57,9 +57,11 @@ class RateLimiter {
 export async function createPlaylistsByYear({
   userId,
   spotify,
+  years,
 }: {
   userId: string;
   spotify: Spotified;
+  years?: number[];
 }) {
   const rateLimiter = new RateLimiter();
 
@@ -80,9 +82,9 @@ export async function createPlaylistsByYear({
     let created = 0;
     let updated = 0;
 
-    const sortedYears = Array.from(tracksByYear.entries()).sort(
-      ([yearA], [yearB]) => yearA - yearB,
-    );
+    const sortedYears = Array.from(tracksByYear.entries())
+      .filter(([year]) => years === undefined || years.includes(year))
+      .sort(([yearA], [yearB]) => yearA - yearB);
 
     for (const [year, tracks] of sortedYears) {
       const yearAbbr = `'${year.toString().slice(-2)}`;
@@ -90,7 +92,7 @@ export async function createPlaylistsByYear({
       const description = `made by musy`;
 
       let playlistId: string;
-      let existingPlaylist = await findExistingPlaylistByName(
+      const existingPlaylist = await findExistingPlaylistByName(
         db,
         userId,
         yearAbbr,
@@ -124,10 +126,6 @@ export async function createPlaylistsByYear({
           total: newPlaylist.tracks?.total || 0,
           provider: "spotify",
           snapshotId: newPlaylist.snapshot_id,
-        });
-
-        existingPlaylist = await db.query.playlist.findFirst({
-          where: eq(playlist.id, playlistId),
         });
 
         created++;
@@ -198,25 +196,37 @@ export async function createPlaylistsByYear({
               logError(
                 `failed to add tracks to ${playlistName} after retry: ${formatError(retryError)}`,
               );
+              throw retryError;
             }
           } else {
             logError(
               `failed to add tracks to ${playlistName}: ${formatError(error)}`,
             );
+            throw error;
           }
         }
-      }
 
-      const tracksToInsert = tracksToAdd.map((t) => ({
-        playlistId,
-        trackId: t.trackId,
-        addedAt: t.createdAt,
-      }));
-
-      const INSERT_BATCH_SIZE = 33;
-      for (let i = 0; i < tracksToInsert.length; i += INSERT_BATCH_SIZE) {
-        const batch = tracksToInsert.slice(i, i + INSERT_BATCH_SIZE);
-        await db.insert(playlistTrack).values(batch).onConflictDoNothing();
+        const tracksToInsert = tracksToAdd
+          .slice(i, i + BATCH_SIZE)
+          .map((t) => ({
+            playlistId,
+            trackId: t.trackId,
+            addedAt: t.createdAt,
+          }));
+        const INSERT_BATCH_SIZE = 33;
+        for (let j = 0; j < tracksToInsert.length; j += INSERT_BATCH_SIZE) {
+          await db
+            .insert(playlistTrack)
+            .values(tracksToInsert.slice(j, j + INSERT_BATCH_SIZE))
+            .onConflictDoNothing();
+        }
+        await db
+          .update(playlist)
+          .set({
+            total: existingTracks.length + i + batch.length,
+            ...(latestSnapshotId && { snapshotId: latestSnapshotId }),
+          })
+          .where(eq(playlist.id, playlistId));
       }
 
       // Sync description from Spotify to ensure it's up to date
@@ -243,7 +253,7 @@ export async function createPlaylistsByYear({
         })
         .where(eq(playlist.id, playlistId));
 
-      updated++;
+      if (existingPlaylist) updated++;
     }
 
     log(

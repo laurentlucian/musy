@@ -1,8 +1,8 @@
-import { toast } from "sonner";
 import { format } from "date-fns";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
-import { data, redirect, useFetcher } from "react-router";
+import { data, Link, redirect, useFetcher } from "react-router";
+import { toast } from "sonner";
 import { Track } from "~/components/domain/track";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
@@ -131,32 +131,11 @@ function LikedList(props: { tracks: UserLiked }) {
 }
 
 function CreatePlaylistsButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
-  useEffect(() => {
-    if (fetcher.state !== "idle" || !fetcher.data) return;
-    if (fetcher.data.error) toast.error(fetcher.data.error);
-    else if (fetcher.data.success) toast.success("Updated");
-  }, [fetcher.state, fetcher.data]);
-  const isCreating =
-    fetcher.state === "submitting" || fetcher.state === "loading";
-
-  const handleCreateByYear = () => {
-    fetcher.submit(
-      { intent: "create-playlists-by-year", userId },
-      { method: "post" },
-    );
-  };
-
   return (
-    <Button
-      type="button"
-      size="sm"
-      variant="outline"
-      disabled={isCreating}
-      onClick={handleCreateByYear}
-    >
-      {isCreating ? <Waver /> : <Plus />}
-      {isCreating ? "Creating…" : "Make yearly playlists"}
+    <Button asChild size="sm" variant="outline">
+      <Link to={`/profile/${userId}/playlists?tool=yearly`}>
+        <Plus /> Make yearly playlists
+      </Link>
     </Button>
   );
 }

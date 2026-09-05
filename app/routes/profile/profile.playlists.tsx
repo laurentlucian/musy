@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
 import {
@@ -9,15 +8,19 @@ import {
   useFetcher,
   useMatches,
 } from "react-router";
+import { toast } from "sonner";
+import { YearlyPlaylists } from "~/components/domain/yearly-playlists";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { Image } from "~/components/ui/image";
 import { userContext } from "~/context";
 import { db } from "~/lib.server/services/db";
+import { getLikedTracksByYear } from "~/lib.server/services/db/playlists";
 import {
   getUserPlaylists,
   type UserPlaylists,
 } from "~/lib.server/services/db/tracks";
+import { createPlaylistsByYear } from "~/lib.server/services/scheduler/scripts/create-playlists";
 import { syncUserPlaylists } from "~/lib.server/services/scheduler/scripts/sync/playlist";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/profile.playlists";
@@ -31,6 +34,15 @@ export async function loader({ context, params }: Route.LoaderArgs) {
     userId,
     currentUserId,
     playlists: getUserPlaylists(db, { userId, provider: "spotify" }),
+    yearOptions:
+      currentUserId === userId
+        ? getLikedTracksByYear(db, userId, "spotify").then((years) =>
+            Array.from(years, ([year, tracks]) => ({
+              year,
+              count: tracks.length,
+            })).sort((a, b) => b.year - a.year),
+          )
+        : null,
   };
 }
 
@@ -44,11 +56,41 @@ export async function action({ request, context }: Route.ActionArgs) {
   const intent = formData.get("intent");
   const userId = formData.get("userId");
 
-  if (intent !== "sync-playlists" || userId !== currentUserId) {
+  if (
+    (intent !== "sync-playlists" && intent !== "create-playlists-by-year") ||
+    userId !== currentUserId
+  ) {
     return data({ success: false, error: "Invalid request" }, { status: 400 });
   }
 
   try {
+    if (intent === "create-playlists-by-year") {
+      const selectedYears = formData.getAll("years");
+      const likedYears = await getLikedTracksByYear(db, userId, "spotify");
+      if (
+        selectedYears.length === 0 ||
+        selectedYears.some(
+          (year) =>
+            typeof year !== "string" ||
+            !/^\d{4}$/.test(year) ||
+            !likedYears.has(Number(year)),
+        )
+      ) {
+        return data(
+          { success: false, error: "Choose years with liked tracks." },
+          { status: 400 },
+        );
+      }
+      const spotify = await getSpotifyClient({ userId });
+      return data(
+        await createPlaylistsByYear({
+          userId,
+          spotify,
+          years: [...new Set(selectedYears.map(Number))],
+        }),
+      );
+    }
+
     const spotify = await getSpotifyClient({ userId });
     await syncUserPlaylists({ userId, spotify });
     return data({ success: true });
@@ -56,7 +98,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     return data(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Sync failed",
+        error: error instanceof Error ? error.message : "Operation failed",
       },
       { status: 500 },
     );
@@ -64,7 +106,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfilePlaylists({
-  loaderData: { userId, currentUserId, playlists },
+  loaderData: { userId, currentUserId, playlists, yearOptions },
 }: Route.ComponentProps) {
   const matches = useMatches();
   const isDetailRoute = matches.some(
@@ -74,9 +116,15 @@ export default function ProfilePlaylists({
 
   return (
     <>
-      {!isDetailRoute && isOwnProfile && (
+      {!isDetailRoute && isOwnProfile && yearOptions && (
+        <YearlyPlaylists userId={userId} options={yearOptions} />
+      )}
+      {!isDetailRoute && (
         <div className="page-toolbar">
-          <PlaylistsSyncButton userId={userId} />
+          <h2 className="font-semibold">
+            {isOwnProfile ? "Your playlists" : "Playlists"}
+          </h2>
+          {isOwnProfile && <PlaylistsSyncButton userId={userId} />}
         </div>
       )}
       {!isDetailRoute && playlists && (
