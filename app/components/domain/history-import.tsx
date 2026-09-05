@@ -90,17 +90,36 @@ export function HistoryImport({
             ? { duration: 12, repeat: Infinity, ease: "linear" }
             : { duration: 0.4 }
         }
-        className="relative mb-10 flex size-48 shrink-0 items-center justify-center rounded-full border border-border bg-muted sm:size-64"
+        className="relative mb-10 flex size-48 shrink-0 items-center justify-center rounded-full shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.12)] sm:size-64"
         style={{
-          backgroundImage:
-            "repeating-radial-gradient(circle at center, transparent 0px, transparent 5px, rgb(255 255 255 / 0.035) 6px, transparent 7px)",
+          backgroundImage: [
+            "conic-gradient(from 210deg at 50% 50%, rgb(255 255 255 / 0.16) 0deg, transparent 40deg, transparent 160deg, rgb(255 255 255 / 0.1) 200deg, transparent 240deg, transparent 330deg, rgb(255 255 255 / 0.16) 360deg)",
+            "repeating-radial-gradient(circle at center, rgb(255 255 255 / 0.06) 0px, rgb(255 255 255 / 0.06) 1px, transparent 1.5px, transparent 4px)",
+            "radial-gradient(circle at center, #1b1b1f 0%, #111114 55%, #050506 100%)",
+          ].join(","),
         }}
       >
-        <div className="flex size-20 items-center justify-center rounded-full border border-border bg-background sm:size-24">
+        <div
+          className="pointer-events-none absolute inset-0 rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 25%, rgb(255 255 255 / 0.12), transparent 45%)",
+          }}
+        />
+        <div
+          className="relative flex size-20 items-center justify-center rounded-full text-white shadow-[inset_0_0_0_1px_rgb(255_255_255/0.2),0_0_0_3px_#0a0a0c,0_0_40px_-8px_rgb(255_120_60/0.6)] sm:size-24"
+          style={{
+            background:
+              state?.phase === "complete"
+                ? "conic-gradient(from 0deg, #ff5f6d, #ffc371, #2bd2ff, #a05cff, #ff5f6d)"
+                : "conic-gradient(from 0deg, #ff7a18, #ff2d95, #7b2ff7, #ff7a18)",
+          }}
+        >
+          <div className="absolute inset-[3px] rounded-full bg-[radial-gradient(circle_at_35%_30%,rgb(255_255_255/0.35),transparent_55%)]" />
           {state?.phase === "complete" ? (
-            <Check className="size-8" />
+            <Check className="relative size-8 drop-shadow" strokeWidth={2.5} />
           ) : (
-            <Music2 className="size-8" />
+            <Music2 className="relative size-8 drop-shadow" strokeWidth={2.5} />
           )}
         </div>
       </motion.div>
