@@ -1,10 +1,11 @@
 import { RefreshCcw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, use, useEffect, useRef, useState } from "react";
 import { Link, redirect, useNavigation, useRevalidator } from "react-router";
 import {
   ImportEmptyState,
   useInitialImport,
 } from "~/components/domain/initial-import";
+import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { getDashboard } from "~/lib.server/services/dashboard";
@@ -32,7 +33,7 @@ export async function loader({ params, context, request }: Route.LoaderArgs) {
     userId,
     currentUserId: context.get(userContext),
     year,
-    stats: await getDashboard(userId, year),
+    stats: getDashboard(userId, year),
   };
 }
 
@@ -57,26 +58,8 @@ export default function ProfileIndex({
   const revalidator = useRevalidator();
   const navigation = useNavigation();
   const busy = revalidator.state !== "idle" || navigation.state !== "idle";
-  const [unit, setUnit] = useState<"minutes" | "hours">("minutes");
-  const [metric, setMetric] = useState<"plays" | "minutes">("plays");
   const importing =
     initialImport?.status === "queued" || initialImport?.status === "running";
-  const peakMonth = stats.monthly.reduce<(typeof stats.monthly)[number] | null>(
-    (best, row) => (!best || row[metric] > best[metric] ? row : best),
-    null,
-  );
-
-  const peakWeekday = stats.weekdays.reduce((best, row) =>
-    row.plays > best.plays ? row : best,
-  );
-  const peakHour = stats.hourly.reduce((best, row) =>
-    row.plays > best.plays ? row : best,
-  );
-  const weekendShare = stats.played
-    ? (stats.weekdays.slice(5).reduce((sum, row) => sum + row.plays, 0) /
-        stats.played) *
-      100
-    : 0;
 
   return (
     <div className="flex min-w-0 flex-col gap-4 pb-4" aria-busy={busy}>
@@ -88,7 +71,9 @@ export default function ProfileIndex({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Selector year={year} years={stats.availableYears} />
+          <Suspense fallback={<Selector year={year} />}>
+            <YearSelector year={year} stats={stats} />
+          </Suspense>
           <Button
             type="button"
             size="icon"
@@ -108,6 +93,54 @@ export default function ProfileIndex({
           Importing history. Stats update as it arrives.
         </output>
       )}
+      <Suspense fallback={<Waver />}>
+        <Stats stats={stats} year={year} importing={importing} />
+      </Suspense>
+    </div>
+  );
+}
+
+function YearSelector({
+  year,
+  stats,
+}: {
+  year: number;
+  stats: ReturnType<typeof getDashboard>;
+}) {
+  return <Selector year={year} years={use(stats).availableYears} />;
+}
+
+function Stats({
+  stats: promise,
+  year,
+  importing,
+}: {
+  stats: ReturnType<typeof getDashboard>;
+  year: number;
+  importing: boolean;
+}) {
+  const stats = use(promise);
+  const [unit, setUnit] = useState<"minutes" | "hours">("minutes");
+  const [metric, setMetric] = useState<"plays" | "minutes">("plays");
+  const peakMonth = stats.monthly.reduce<(typeof stats.monthly)[number] | null>(
+    (best, row) => (!best || row[metric] > best[metric] ? row : best),
+    null,
+  );
+
+  const peakWeekday = stats.weekdays.reduce((best, row) =>
+    row.plays > best.plays ? row : best,
+  );
+  const peakHour = stats.hourly.reduce((best, row) =>
+    row.plays > best.plays ? row : best,
+  );
+  const weekendShare = stats.played
+    ? (stats.weekdays.slice(5).reduce((sum, row) => sum + row.plays, 0) /
+        stats.played) *
+      100
+    : 0;
+
+  return (
+    <>
       {!stats.played ? (
         <ImportEmptyState>
           {importing
@@ -337,7 +370,7 @@ export default function ProfileIndex({
           library.
         </p>
       </details>
-    </div>
+    </>
   );
 }
 
