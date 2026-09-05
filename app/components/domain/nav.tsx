@@ -71,12 +71,12 @@ export function Nav({
             <ListMusic size={18} />
             Shared queues
           </SidebarLink>
-          <div className="mt-auto pt-10">
+          <div className="mt-auto flex flex-col gap-1 pt-10">
             {profile && (
-              <div className="mb-2 flex items-center gap-2 px-3 py-2">
+              <div className="mb-1 flex min-h-9 items-center gap-2 px-3">
                 <Link
                   to="/profile"
-                  className="flex min-w-0 flex-1 items-center gap-2 py-2"
+                  className="flex min-w-0 flex-1 items-center gap-2"
                 >
                   <Image
                     src={profile.image ?? ""}
