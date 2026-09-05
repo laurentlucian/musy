@@ -73,12 +73,6 @@ export function Nav({
           </SidebarLink>
           <div className="mt-auto pt-10">
             {profile && (
-              <SidebarLink className="nav-item" to="/import">
-                <Upload size={18} />
-                Import
-              </SidebarLink>
-            )}
-            {profile && (
               <div className="mb-2 flex items-center gap-2 px-3 py-2">
                 <Link
                   to="/profile"
@@ -96,6 +90,12 @@ export function Nav({
                 </Link>
                 <SyncButton userId={profile.id} compact />
               </div>
+            )}
+            {profile && (
+              <SidebarLink className="nav-item" to="/import">
+                <Upload size={18} />
+                Import
+              </SidebarLink>
             )}
             <SidebarLink className="nav-item" to="/settings">
               <Settings size={18} />
