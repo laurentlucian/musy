@@ -77,11 +77,11 @@ export default function Album({ loaderData: album }: Route.ComponentProps) {
             alt={album.name}
             width={500}
             height={500}
-            className="aspect-square h-auto w-full rounded-none object-cover shadow-[0_12px_32px_-16px_rgba(37,40,32,0.35)]"
+            className="aspect-square h-auto w-full rounded-none object-cover shadow-xl"
           />
         </div>
         <div className="min-w-0">
-          <p className="mb-4 text-xs font-medium uppercase text-primary">
+          <p className="mb-4 font-medium text-primary text-xs uppercase">
             Album
           </p>
           <h1 className="font-semibold text-2xl leading-[1.05] tracking-tight sm:text-2xl lg:text-3xl">
@@ -118,7 +118,7 @@ export default function Album({ loaderData: album }: Route.ComponentProps) {
             </a>
           </div>
           <div className="space-y-6">
-            <dl className="divide-y divide-border border-y border-border text-sm">
+            <dl className="divide-y divide-border border-border border-y text-sm">
               <div className="flex justify-between gap-6 py-4">
                 <dt className="text-muted-foreground">Format</dt>
                 <dd>{getAlbumTypeLabel(album.type)}</dd>

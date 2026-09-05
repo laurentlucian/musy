@@ -7,6 +7,7 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
+  --radius-3xl: 24px;
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -24,7 +25,7 @@
   --color-destructive-foreground: hsl(var(--destructive-foreground));
 
   --color-foreground: hsl(var(--foreground));
-  --color-input: hsl(var(--input));
+  --color-input: oklch(90.01% 0 none / 0.04);
 
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
@@ -39,6 +40,18 @@
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-input-background: hsl(var(--input-background));
+  --color-input-focus: var(--input-focus);
+  --color-button-filled: var(--button-filled);
+  --color-button-filled-hover: var(--button-filled-hover);
+  --color-button-filled-active: var(--button-filled-active);
+  --color-button-secondary-hover: var(--button-secondary-hover);
+  --color-button-secondary-active: var(--button-secondary-active);
+  --color-button-outline-border: var(--button-outline-border);
+  --color-button-filled-border: oklch(11.57% 0 none / 0.06);
+  --color-overlay: var(--overlay);
 
   --color-chart-1: hsl(var(--chart-1));
   --color-chart-2: hsl(var(--chart-2));
@@ -66,32 +79,42 @@
 
 @layer base {
   :root {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 5.9%;
+    --background: 30 5% 7%;
+    --foreground: 0 0% 99%;
+    --card: 30 5% 9%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 30 6.060606% 12.941176%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 15.9%;
+    --primary: 0 0% 99%;
+    --primary-foreground: 0 0% 2%;
+    --secondary: 0 0% 99% / 0.08;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15.9%;
-    --muted-foreground: 0 0% 64.9%;
-    --accent: 0 0% 11%;
+    --muted: 30 5% 12%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 99% / 0.08;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 84% 60%;
+    --destructive: 357 82% 71%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 11%;
-    --input: 0 0% 15.9%;
-    --ring: 0 0% 10.9%;
+    --border: 0 0% 99% / 0.06;
+    --input: 0 0% 99% / 0.08;
+    --ring: 207 100% 58%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --radius: 0.5rem;
+    --radius: 14px;
+    --sidebar: var(--background);
+    --input-background: 30 5% 9%;
+    --input-focus: oklch(99.24% 0 none / 0.16);
+    --button-filled: oklch(99.24% 0 none);
+    --button-filled-hover: oklch(90.01% 0 none);
+    --button-filled-active: oklch(69.96% 0 none);
+    --button-secondary-hover: oklch(99.24% 0 none / 0.1);
+    --button-secondary-active: oklch(99.24% 0 none / 0.12);
+    --button-outline-border: oklch(90.01% 0 none / 0.08);
+    --overlay: oklch(11.57% 0 none / 0.5);
   }
 }
 
@@ -188,7 +211,7 @@
     inset: 0 auto 0 0;
     width: 225px;
     padding: 2rem 1.25rem;
-    background: hsl(var(--card));
+    background: hsl(var(--sidebar));
     border-right: 1px solid hsl(var(--border));
     display: flex;
     flex-direction: column;
@@ -216,7 +239,7 @@
     gap: 0.8rem;
     padding: 0.8rem 1rem;
     min-height: 46px;
-    border-radius: 8px;
+    border-radius: 12px;
     color: hsl(var(--muted-foreground));
     font-size: 0.9rem;
     transition:
@@ -224,12 +247,12 @@
       color 160ms;
   }
   .nav-item:hover {
-    background: hsl(var(--background));
+    background: hsl(var(--accent));
     color: hsl(var(--foreground));
   }
   .nav-item[aria-current="page"] {
-    background: hsl(var(--foreground));
-    color: hsl(var(--background));
+    background: var(--button-secondary-hover);
+    color: hsl(var(--foreground));
   }
   .sub-nav {
     display: flex;

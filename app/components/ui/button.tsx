@@ -3,27 +3,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "~/components/utils";
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm ring-offset-background transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium text-sm ring-offset-background transition-colors duration-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "border border-button-filled-border bg-button-filled text-primary-foreground hover:bg-button-filled-hover active:bg-button-filled-active",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive/6 text-destructive hover:bg-destructive/8 active:bg-destructive/10",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-button-outline-border bg-transparent text-foreground hover:bg-accent active:bg-button-secondary-hover",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-button-secondary-hover active:bg-button-secondary-active",
         ghost:
-          "transition-all duration-500 hover:bg-accent hover:text-accent-foreground",
+          "text-muted-foreground hover:bg-accent hover:text-accent-foreground active:bg-button-secondary-hover",
         link: "text-primary underline-offset-4 hover:underline",
-        nav: "text-neutral-300 text-xs hover:bg-neutral-600 hover:text-neutral-100 disabled:pointer-events-none disabled:bg-white disabled:text-black disabled:opacity-100 sm:w-full",
-        "nav-sub": "flex-1 justify-center bg-neutral-900 hover:bg-neutral-800",
+        nav: "rounded-xl text-muted-foreground text-xs hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:bg-button-secondary-hover disabled:text-foreground disabled:opacity-100 sm:w-full",
+        "nav-sub": "flex-1 justify-center bg-card hover:bg-accent",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-4",
+        sm: "h-9 px-3",
+        lg: "h-11 px-4",
         icon: "h-10 w-10",
       },
     },

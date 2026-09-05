@@ -82,11 +82,11 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             alt={track.name}
             width={500}
             height={500}
-            className="aspect-square h-auto w-full rounded-none object-cover shadow-[0_12px_32px_-16px_rgba(37,40,32,0.35)]"
+            className="aspect-square h-auto w-full rounded-none object-cover shadow-xl"
           />
         </div>
         <div className="min-w-0">
-          <p className="mb-4 text-xs font-medium uppercase text-primary">
+          <p className="mb-4 font-medium text-primary text-xs uppercase">
             Track
           </p>
           <h1 className="font-semibold text-2xl leading-[1.05] tracking-tight sm:text-2xl lg:text-3xl">
@@ -125,7 +125,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             <TrackQueueButton uri={track.uri} provider={track.provider} />
           </div>
           <div className="space-y-6">
-            <dl className="divide-y divide-border border-y border-border text-sm">
+            <dl className="divide-y divide-border border-border border-y text-sm">
               <div className="flex justify-between gap-6 py-4">
                 <dt className="text-muted-foreground">Duration</dt>
                 <dd className="tabular-nums">
@@ -161,7 +161,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             </dl>
             {artist?.popularity != null && (
               <div>
-                <p className="mb-3 text-xs uppercase tracking-widest text-muted-foreground">
+                <p className="mb-3 text-muted-foreground text-xs uppercase tracking-widest">
                   Artist popularity
                 </p>
                 <PopularityIndicator value={artist.popularity} showLabel />
@@ -169,7 +169,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
             )}
             {genres.length > 0 && (
               <div>
-                <h2 className="mb-3 text-xs uppercase tracking-widest text-muted-foreground">
+                <h2 className="mb-3 text-muted-foreground text-xs uppercase tracking-widest">
                   Genres
                 </h2>
                 <div className="flex flex-wrap gap-2">

@@ -10,7 +10,7 @@ function Toaster({ ...props }: ToasterProps) {
       toastOptions={{
         classNames: {
           toast:
-            "group !w-fit toast group-[.toaster]:bg-background group-[.toaster]:rounded-4xl! group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+            "group !w-fit toast group-[.toaster]:bg-popover group-[.toaster]:rounded-4xl! group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
           description: "group-[.toast]:text-muted-foreground",
           actionButton:
             "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
