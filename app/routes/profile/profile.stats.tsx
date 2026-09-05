@@ -1,6 +1,10 @@
 import { RefreshCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { data, Link, redirect, useFetcher, useRevalidator } from "react-router";
+import {
+  ImportEmptyState,
+  useInitialImport,
+} from "~/components/domain/initial-import";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { NumberAnimated } from "~/components/ui/number-animated";
@@ -65,7 +69,18 @@ export async function action({ request, context }: Route.ActionArgs) {
 }
 
 export default function ProfileIndex({ loaderData }: Route.ComponentProps) {
-  useStatsAutoSync(loaderData.userId, loaderData.year, loaderData.stats);
+  const initialImport = useInitialImport();
+  const importing = Boolean(
+    initialImport && initialImport.status !== "complete",
+  );
+  useStatsAutoSync(
+    loaderData.userId,
+    loaderData.year,
+    loaderData.stats,
+    importing,
+  );
+  if (importing && !loaderData.stats)
+    return <ImportEmptyState>Preparing your stats…</ImportEmptyState>;
 
   return (
     <>
@@ -118,6 +133,7 @@ function useStatsAutoSync(
   userId: string,
   year: number,
   stats: Awaited<ReturnType<typeof getStats>>,
+  importing: boolean,
 ) {
   const fetcher = useFetcher();
   const revalidator = useRevalidator();
@@ -131,6 +147,7 @@ function useStatsAutoSync(
 
   useEffect(() => {
     if (
+      !importing &&
       stats === null &&
       fetcher.state === "idle" &&
       (!fetcher.data || syncedYearRef.current !== year)
@@ -141,7 +158,7 @@ function useStatsAutoSync(
         { method: "post" },
       );
     }
-  }, [stats, fetcher, userId, year]);
+  }, [stats, fetcher, userId, year, importing]);
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data?.success) {

@@ -9,6 +9,7 @@ import {
   useMatches,
 } from "react-router";
 import { toast } from "sonner";
+import { ImportEmptyState } from "~/components/domain/initial-import";
 import { YearlyPlaylists } from "~/components/domain/yearly-playlists";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -146,9 +147,9 @@ function PlaylistsList(props: { playlists: UserPlaylists; userId: string }) {
 
   if (!playlists.length)
     return (
-      <div className="empty-state">
+      <ImportEmptyState>
         Your playlists will appear here after syncing Spotify.
-      </div>
+      </ImportEmptyState>
     );
 
   return (

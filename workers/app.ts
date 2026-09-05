@@ -4,6 +4,10 @@ import {
   processQueueDelivery,
   type QueueDeliveryMessage,
 } from "~/lib.server/services/queue/delivery";
+import {
+  processInitialImport,
+  recoverInitialImports,
+} from "~/lib.server/services/scheduler/initial-import";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
 const handler = createRequestHandler(
@@ -42,10 +46,18 @@ export default {
     } else if (cron === "* * * * *") {
       // Every minute - check Spotify playback and queue deliveries
       ctx.waitUntil(checkAndQueueDeliveries());
+      ctx.waitUntil(recoverInitialImports());
     }
   },
   async queue(batch, env, ctx) {
     for (const message of batch.messages) {
+      const body = message.body as { type?: string; userId?: string };
+      if (body.type === "initial-import" && typeof body.userId === "string") {
+        ctx.waitUntil(
+          processInitialImport(body.userId).then(() => message.ack()),
+        );
+        continue;
+      }
       ctx.waitUntil(
         processQueueDelivery(env, message.body as QueueDeliveryMessage).then(
           () => message.ack(),

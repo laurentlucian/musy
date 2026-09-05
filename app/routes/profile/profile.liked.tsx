@@ -3,6 +3,7 @@ import { Plus, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
 import { toast } from "sonner";
+import { ImportEmptyState } from "~/components/domain/initial-import";
 import { Track } from "~/components/domain/track";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
@@ -110,7 +111,9 @@ function LikedList(props: { tracks: UserLiked }) {
   const { tracks, count } = use(props.tracks);
 
   if (!tracks.length)
-    return <div className="empty-state">No saved tracks for this period.</div>;
+    return (
+      <ImportEmptyState>No saved tracks for this period.</ImportEmptyState>
+    );
 
   return (
     <div className="flex flex-col">

@@ -1,8 +1,9 @@
-import { toast } from "sonner";
 import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
 import { data, redirect, useFetcher } from "react-router";
+import { toast } from "sonner";
+import { ImportEmptyState } from "~/components/domain/initial-import";
 import { Track } from "~/components/domain/track";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
@@ -123,9 +124,9 @@ function ListenedList(props: { tracks: UserRecent }) {
 
   if (!tracks.length)
     return (
-      <div className="empty-state">
+      <ImportEmptyState>
         No listens yet. Your next tracks will appear here.
-      </div>
+      </ImportEmptyState>
     );
 
   return (

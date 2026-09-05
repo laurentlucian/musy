@@ -509,3 +509,24 @@ export const queueItemDelivery = sqliteTable(
     ),
   ],
 );
+
+export const initialImport = sqliteTable("InitialImport", {
+  userId: text()
+    .primaryKey()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  status: text({ enum: ["queued", "running", "failed", "complete"] })
+    .notNull()
+    .default("queued"),
+  stage: text({ enum: ["recent", "top", "liked", "stats"] })
+    .notNull()
+    .default("recent"),
+  imported: integer().notNull().default(0),
+  total: integer(),
+  offset: integer().notNull().default(0),
+  year: integer(),
+  attempts: integer().notNull().default(0),
+  updatedAt: integer().notNull(),
+  lease: text(),
+  retryAt: integer().notNull().default(0),
+});

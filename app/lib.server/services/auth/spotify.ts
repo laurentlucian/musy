@@ -1,9 +1,13 @@
 import { env } from "cloudflare:workers";
 import { and, eq } from "drizzle-orm";
 import { OAuth2Strategy } from "remix-auth-oauth2";
-import { profile, provider, user } from "~/lib.server/db/schema";
+import { initialImport, profile, provider, user } from "~/lib.server/db/schema";
 import { getUserProfile } from "~/lib.server/sdk/spotify/endpoints/user";
 import { db } from "~/lib.server/services/db";
+import {
+  enqueueInitialImport,
+  retryInitialImport,
+} from "~/lib.server/services/scheduler/initial-import";
 import { generateId } from "~/lib.server/services/utils";
 
 const clientId = env.SPOTIFY_CLIENT_ID;
@@ -59,6 +63,7 @@ export function getSpotifyStrategy() {
         if (!existingProvider.userId)
           throw new Error("Existing provider missing userId");
 
+        await retryInitialImport(existingProvider.userId);
         return { id: existingProvider.userId };
       }
 
@@ -66,30 +71,20 @@ export function getSpotifyStrategy() {
       const userId = generateId();
       const now = new Date().toISOString();
 
-      await db.transaction(async (tx) => {
-        // Create user
-        await tx.insert(user).values({
-          id: userId,
-          createdAt: now,
-          updatedAt: now,
-        });
-
-        // Create profile
-        await tx.insert(profile).values({
+      await db.batch([
+        db.insert(user).values({ id: userId, createdAt: now, updatedAt: now }),
+        db.insert(profile).values({
           id: userId,
           email: data.email!,
           image: data.images?.[0]?.url,
           name: data.display_name,
           createdAt: now,
           updatedAt: now,
-        });
-
-        // Create provider
-        await tx.insert(provider).values({
-          ...providerData,
-          userId,
-        });
-      });
+        }),
+        db.insert(provider).values({ ...providerData, userId }),
+        db.insert(initialImport).values({ userId, updatedAt: Date.now() }),
+      ]);
+      await enqueueInitialImport(userId);
 
       return { id: userId };
     },

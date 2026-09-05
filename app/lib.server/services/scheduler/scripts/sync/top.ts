@@ -82,6 +82,7 @@ export async function syncUserTop({
         target: [sync.userId, sync.state, sync.type],
         set: { state: "failure", updatedAt: now },
       });
+    throw error;
   }
 }
 
@@ -102,7 +103,7 @@ async function syncTopTracks({
   const trackIds = await transformTracks(response.items, spotify);
 
   const existing = await db.query.topTracks.findFirst({
-    where: eq(topTracks.userId, userId),
+    where: and(eq(topTracks.userId, userId), eq(topTracks.type, range)),
     orderBy: desc(topTracks.createdAt),
   });
 
@@ -158,7 +159,7 @@ async function syncTopArtists({
   const artistIds = await transformArtists(response.items, spotify);
 
   const existing = await db.query.topArtists.findFirst({
-    where: eq(topArtists.userId, userId),
+    where: and(eq(topArtists.userId, userId), eq(topArtists.type, range)),
     orderBy: desc(topArtists.createdAt),
   });
 

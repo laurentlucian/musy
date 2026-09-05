@@ -1,8 +1,9 @@
-import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
 import { use, useEffect } from "react";
 import { useFetcher, useNavigation, useSearchParams } from "react-router";
+import { toast } from "sonner";
 import { Artist } from "~/components/domain/artist";
+import { ImportEmptyState } from "~/components/domain/initial-import";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -174,18 +175,18 @@ export function TopList({
   const data = use(promise);
   if (!data)
     return (
-      <p className="empty-state">
+      <ImportEmptyState>
         No favorites yet. Refresh to bring in your music.
-      </p>
+      </ImportEmptyState>
     );
 
   if (type === "tracks") {
     const tracks = data.tracks;
     if (!tracks?.length)
       return (
-        <p className="empty-state">
+        <ImportEmptyState>
           No top tracks yet. Refresh to bring in your favorites.
-        </p>
+        </ImportEmptyState>
       );
     return (
       <div className="flex flex-col gap-2">
@@ -198,9 +199,9 @@ export function TopList({
     const artists = data.artists;
     if (!artists?.length)
       return (
-        <p className="empty-state">
+        <ImportEmptyState>
           No top artists yet. Refresh to bring in your favorites.
-        </p>
+        </ImportEmptyState>
       );
     return (
       <div className="flex flex-col gap-2">

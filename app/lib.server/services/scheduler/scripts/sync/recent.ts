@@ -38,7 +38,7 @@ export async function syncUserRecent({
       limit: 50,
     });
 
-    if (!recent?.length) throw new Error("No recent tracks found");
+    if (!recent) throw new Error("Missing recent tracks response");
 
     // Extract Spotify track objects and deduplicate
     const spotifyTracks: Track[] = recent

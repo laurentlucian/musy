@@ -6,7 +6,7 @@
     "dev": "react-router dev",
     "build": "react-router build",
     "release": "wrangler deploy",
-    "typecheck": "react-router typegen && tsc",
+    "typecheck": "react-router typegen && tsc -b",
     "format": "biome format --write ./app",
     "lint": "biome lint",
     "lint:fix": "biome lint --write --unsafe",

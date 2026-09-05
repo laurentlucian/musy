@@ -40,15 +40,19 @@ export async function spotifyFetch<T>(
     headers["Content-Type"] = "application/json";
   }
 
+  let retryAfter: number | undefined;
   const { data, error } = await betterFetch<T>(fullUrl, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    onError: ({ response }) => {
+      const seconds = Number(response.headers.get("Retry-After"));
+      if (Number.isFinite(seconds) && seconds > 0) retryAfter = seconds;
+    },
   });
 
   if (error) {
-    // Throw raw better-fetch error directly
-    throw error;
+    throw retryAfter === undefined ? error : { ...error, retryAfter };
   }
 
   // Handle empty responses (204 No Content)
