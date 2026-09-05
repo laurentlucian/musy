@@ -8,6 +8,7 @@ import {
 
 export default [
   index("routes/index.tsx"),
+  route("landing", "routes/landing.tsx"),
   layout("routes/layout.root.tsx", [
     route("profile/:userId?", "routes/profile/profile.tsx", [
       index("routes/profile/overview.tsx"),

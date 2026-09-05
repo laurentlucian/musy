@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { Form, redirect } from "react-router";
+import { redirect } from "react-router";
 import { toast } from "sonner";
-import { Button } from "~/components/ui/button";
+import { Landing, landingMeta } from "~/components/landing/landing";
 import { userContext } from "~/context";
 import { authenticator } from "~/lib.server/services/auth";
 import type { Route } from "./+types/index";
+
+export const meta = landingMeta;
 
 export async function loader({ context, request }: Route.LoaderArgs) {
   const userId = context.get(userContext);
@@ -29,21 +31,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
     }
   }, [error]);
 
-  return (
-    <main className="flex min-h-dvh items-center justify-center bg-background px-6 py-8 text-foreground">
-      <div className="flex w-full max-w-xl flex-col items-center text-center">
-        <h1 className="text-4xl font-semibold tracking-tight">musy</h1>
-        <Form method="post" className="mt-8">
-          <input type="hidden" name="mode" value="authorize" />
-          <input type="hidden" name="provider" value="spotify" />
-          <Button type="submit" size="lg" className="gap-3">
-            <img src="/spotify/icon-black.png" alt="" className="h-5 w-5" />
-            Continue with Spotify
-          </Button>
-        </Form>
-      </div>
-    </main>
-  );
+  return <Landing />;
 }
 
 export async function action({ request }: Route.ActionArgs) {
