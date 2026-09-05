@@ -181,7 +181,7 @@ export default function Group({ loaderData }: Route.ComponentProps) {
   );
 
   return (
-    <section className="mx-auto w-full max-w-5xl py-4">
+    <section className="mx-auto w-full max-w-5xl pb-4">
       <Link
         to="/queue"
         className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"

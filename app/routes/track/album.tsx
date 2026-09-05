@@ -57,7 +57,7 @@ export default function Album({ loaderData: album }: Route.ComponentProps) {
   const artistUri = getArtistUri(album);
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 pb-16 pt-6 sm:px-8 sm:pt-8">
+    <section className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
       <Button
         type="button"
         variant="ghost"

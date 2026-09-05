@@ -51,7 +51,7 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
   if (outlet) return <Outlet />;
 
   return (
-    <section className="mx-auto w-full max-w-5xl py-4">
+    <section className="mx-auto w-full max-w-5xl pb-4">
       <header className="mb-6 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-4">
         <div>
           <h1 className="font-semibold text-2xl sm:text-3xl">Shared queues</h1>
