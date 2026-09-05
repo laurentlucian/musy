@@ -50,7 +50,7 @@ function event(
 
 test("device classification identifies verified models and does not guess generic iOS", () => {
   expect(deviceLabel("iOS 15.1.1 (iPhone14,2)")).toBe("iPhone 13 Pro");
-  expect(deviceLabel("ios")).toBe("iOS · model unknown");
+  expect(deviceLabel("ios")).toBe("iOS");
   expect(deviceLabel("Partner amazon_salmon Amazon;Echo_Dot;;")).toBe(
     "Amazon Echo Dot",
   );

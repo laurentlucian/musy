@@ -26,7 +26,7 @@ export function deviceLabel(platform: string | null): string {
     );
   }
   const value = platform.toLowerCase();
-  if (value === "ios" || value.startsWith("ios ")) return "iOS · model unknown";
+  if (value === "ios" || value.startsWith("ios ")) return "iOS";
   if (value.includes("echo_dot")) return "Amazon Echo Dot";
   if (value.includes("amazon_echo") || value.includes(";echo;"))
     return "Amazon Echo";
