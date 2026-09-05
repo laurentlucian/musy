@@ -1,25 +1,36 @@
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { GeoJSONSource, Marker, Map as VectorMap } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import type { GeoJSONSource, Map as VectorMap, Marker } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
+import { countryCentroids } from "~/lib/country-centroids";
 import type {
   ListeningLocation,
   MapBounds,
 } from "~/lib.server/services/history-insights";
 
+export type MapCountry = { code: string; label: string; listens: number };
+
 export default function ListeningMap({
   locations,
+  countries,
   onSelect,
+  onSelectCountry,
 }: {
   locations: ListeningLocation[];
+  countries: MapCountry[];
   onSelect: (bounds: MapBounds, label: string) => void;
+  onSelectCountry: (code: string) => void;
 }) {
   const container = useRef<HTMLElement>(null);
   const select = useRef(onSelect);
+  const selectCountry = useRef(onSelectCountry);
   const points = useRef(locations);
+  const pins = useRef(countries);
   const redraw = useRef<(() => void) | null>(null);
   points.current = locations;
+  pins.current = countries;
   select.current = onSelect;
+  selectCountry.current = onSelectCountry;
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -27,6 +38,7 @@ export default function ListeningMap({
     let map: VectorMap | undefined;
     let observer: ResizeObserver | undefined;
     const markers = new Map<string, Marker>();
+    const countryMarkers: Marker[] = [];
     void import("maplibre-gl")
       .then((L) => {
         if (disposed || !container.current) return;
@@ -77,10 +89,34 @@ export default function ListeningMap({
             paint: { "circle-radius": 0, "circle-opacity": 0 },
           });
           const source = view.getSource("listens") as GeoJSONSource;
+          const compact = new Intl.NumberFormat("en", {
+            notation: "compact",
+            maximumFractionDigits: 1,
+          });
           const draw = () => {
             for (const marker of markers.values()) marker.remove();
             markers.clear();
+            for (const marker of countryMarkers) marker.remove();
+            countryMarkers.length = 0;
             const locations = points.current;
+            const countries = pins.current.filter(
+              (item) => countryCentroids[item.code],
+            );
+            for (const item of countries) {
+              const button = document.createElement("button");
+              button.type = "button";
+              button.className =
+                "flex h-9 min-w-9 items-center justify-center rounded-full border-2 border-primary bg-background/90 px-2 text-xs font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+              button.textContent = compact.format(item.listens);
+              button.title = `${item.label}: ${item.listens.toLocaleString()} listens`;
+              button.setAttribute("aria-label", button.title);
+              button.onclick = () => selectCountry.current(item.code);
+              countryMarkers.push(
+                new L.Marker({ element: button })
+                  .setLngLat(countryCentroids[item.code])
+                  .addTo(view),
+              );
+            }
             source.setData({
               type: "FeatureCollection",
               features: locations.map((point, id) => ({
@@ -100,11 +136,13 @@ export default function ListeningMap({
                 },
               })),
             });
-            if (!fitted && locations.length) {
+            if (!fitted && (locations.length || countries.length)) {
               fitted = true;
               const bounds = new L.LngLatBounds();
               for (const point of locations)
                 bounds.extend([point.longitude, point.latitude]);
+              for (const item of countries)
+                bounds.extend(countryCentroids[item.code]);
               view.fitBounds(bounds, { padding: 55, maxZoom: 10, duration: 0 });
             }
           };
@@ -125,10 +163,7 @@ export default function ListeningMap({
               button.type = "button";
               button.className =
                 "flex h-11 min-w-11 items-center justify-center rounded-full border-2 border-background bg-primary px-2 text-xs font-semibold text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
-              button.textContent = new Intl.NumberFormat("en", {
-                notation: "compact",
-                maximumFractionDigits: 1,
-              }).format(p.listens);
+              button.textContent = compact.format(p.listens);
               button.title = `${label}: ${Number(p.listens).toLocaleString()} listens`;
               button.setAttribute("aria-label", button.title);
               button.onclick = () => {
@@ -173,13 +208,14 @@ export default function ListeningMap({
       redraw.current = null;
       observer?.disconnect();
       for (const marker of markers.values()) marker.remove();
+      for (const marker of countryMarkers) marker.remove();
       map?.remove();
     };
   }, []);
 
   useEffect(() => {
     redraw.current?.();
-  }, [locations]);
+  }, [locations, countries]);
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border">

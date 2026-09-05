@@ -190,9 +190,11 @@ function ExploreContent({
             </div>
             <ListeningMap
               locations={locations}
+              countries={countries}
               onSelect={(bounds, area) =>
                 setParams({ bounds: bounds.join(","), area })
               }
+              onSelectCountry={(code) => setParams({ country: code })}
             />
             {countries.length > 0 && (
               <section className="flex flex-wrap gap-2" aria-label="Countries">
