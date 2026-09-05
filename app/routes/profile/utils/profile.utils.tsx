@@ -1,15 +1,8 @@
 import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
 import { use, useEffect } from "react";
-import {
-  useFetcher,
-  useNavigation,
-  useSearchParams,
-  useLocation,
-  useParams,
-} from "react-router";
+import { useFetcher, useNavigation, useSearchParams } from "react-router";
 import { Artist } from "~/components/domain/artist";
-import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -67,7 +60,13 @@ export function Loader() {
   return <div>{navigation.state === "loading" && <Waver />}</div>;
 }
 
-export function SyncButton({ userId }: { userId: string }) {
+export function SyncButton({
+  userId,
+  compact = false,
+}: {
+  userId: string;
+  compact?: boolean;
+}) {
   const fetcher = useFetcher();
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
@@ -82,49 +81,21 @@ export function SyncButton({ userId }: { userId: string }) {
   return (
     <Button
       type="button"
-      size="sm"
-      variant="outline"
-      className="ml-auto"
+      size={compact ? "icon" : "sm"}
+      variant={compact ? "ghost" : "outline"}
+      className="ml-auto shrink-0"
       aria-label="Refresh your music"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit({ intent: "sync", userId }, { method: "post" });
+        fetcher.submit(
+          { intent: "sync", userId },
+          { method: "post", action: "/profile" },
+        );
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
-      {isSyncing ? "Refreshing…" : "Refresh"}
+      {!compact && (isSyncing ? "Refreshing…" : "Refresh")}
     </Button>
-  );
-}
-
-export function Links() {
-  const { pathname } = useLocation();
-  const { userId } = useParams();
-  const base = userId ? `/profile/${userId}` : "/profile";
-  const collection = /\/(liked|playlists)(\/|$)/.test(pathname);
-  return (
-    <nav
-      className="sub-nav"
-      aria-label={collection ? "Collection" : "Listening"}
-    >
-      {collection ? (
-        <>
-          <NavLinkSub to={`${base}/liked`}>Liked songs</NavLinkSub>
-          <NavLinkSub to={`${base}/playlists`}>Playlists</NavLinkSub>
-        </>
-      ) : (
-        <>
-          <NavLinkSub to={base}>Overview</NavLinkSub>
-          <NavLinkSub to={`${base}/top`}>On repeat</NavLinkSub>
-          <NavLinkSub to={`${base}/listened`}>History</NavLinkSub>
-        </>
-      )}
-      {userId && (
-        <NavLinkSub to={collection ? base : `${base}/liked`}>
-          {collection ? "Listening ↗" : "Collection ↗"}
-        </NavLinkSub>
-      )}
-    </nav>
   );
 }
 

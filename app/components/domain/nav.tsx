@@ -8,9 +8,21 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Link, NavLink, useLocation, type To } from "react-router";
+import { Image } from "~/components/ui/image";
+import { SyncButton } from "~/routes/profile/utils/profile.utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Logo } from "~/components/domain/logo";
 
-export function Nav() {
+export function Nav({
+  profile,
+}: {
+  profile: { id: string; name: string | null; image: string | null } | null;
+}) {
   const { pathname } = useLocation();
   const library = /\/(liked|playlists)(\/|$)/.test(pathname);
   const journal = pathname.startsWith("/profile") && !library;
@@ -52,6 +64,25 @@ export function Nav() {
             Shared queues
           </SidebarLink>
           <div className="mt-auto pt-10">
+            {profile && (
+              <div className="mb-2 flex items-center gap-2 px-2">
+                <Link
+                  to="/profile"
+                  className="flex min-w-0 flex-1 items-center gap-2 py-2"
+                >
+                  <Image
+                    src={profile.image ?? ""}
+                    name={profile.name}
+                    alt=""
+                    className="size-7 rounded-full"
+                  />
+                  <span className="truncate text-xs font-medium">
+                    {profile.name || "Profile"}
+                  </span>
+                </Link>
+                <SyncButton userId={profile.id} compact />
+              </div>
+            )}
             <SidebarLink className="nav-item" to="/settings">
               <Settings size={18} />
               Settings
@@ -60,22 +91,75 @@ export function Nav() {
         </nav>
       </aside>
       <nav className="mobile-nav" aria-label="Main navigation">
-        <Link to="/profile" aria-current={journal ? "page" : undefined}>
-          <ChartNoAxesCombined size={21} />
-          Listening
-        </Link>
-        <Link to="/profile/liked" aria-current={library ? "page" : undefined}>
-          <Library size={21} />
-          Collection
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="mobile-nav-menu"
+            aria-current={journal ? "page" : undefined}
+          >
+            <ChartNoAxesCombined size={21} />
+            Listening
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" sideOffset={12}>
+            <DropdownMenuItem asChild>
+              <Link to="/profile">Overview</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/profile/top">On repeat</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/profile/listened">History</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="mobile-nav-menu"
+            aria-current={library ? "page" : undefined}
+          >
+            <Library size={21} />
+            Collection
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" sideOffset={12}>
+            <DropdownMenuItem asChild>
+              <Link to="/profile/liked">Liked songs</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/profile/playlists">Playlists</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <NavLink to="/queue">
           <ListMusic size={21} />
           Together
         </NavLink>
-        <NavLink to="/settings">
-          <Settings size={21} />
-          Settings
-        </NavLink>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="mobile-nav-menu"
+            aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+          >
+            <Settings size={21} />
+            Settings
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" sideOffset={12}>
+            {profile && (
+              <div className="flex items-center gap-2 border-b p-2">
+                <Image
+                  src={profile.image ?? ""}
+                  name={profile.name}
+                  alt=""
+                  className="size-7 rounded-full"
+                />
+                <span className="max-w-32 truncate text-xs">
+                  {profile.name || "Profile"}
+                </span>
+                <SyncButton userId={profile.id} compact />
+              </div>
+            )}
+            <DropdownMenuItem asChild>
+              <Link to="/settings">Settings</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
     </>
   );

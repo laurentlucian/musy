@@ -300,7 +300,8 @@
     border-top: 1px solid hsl(var(--border));
     backdrop-filter: blur(16px);
   }
-  .mobile-nav a {
+  .mobile-nav > a,
+  .mobile-nav-menu {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -310,7 +311,8 @@
     font-size: 0.65rem;
     color: hsl(var(--muted-foreground));
   }
-  .mobile-nav a[aria-current="page"] {
+  .mobile-nav > a[aria-current="page"],
+  .mobile-nav-menu[aria-current="page"] {
     color: hsl(var(--primary));
     font-weight: 700;
   }
