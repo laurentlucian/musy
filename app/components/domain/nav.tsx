@@ -7,6 +7,7 @@ import {
   MapPinned,
   Settings,
   TrendingUp,
+  Upload,
 } from "lucide-react";
 import { Link, NavLink, useLocation, type To } from "react-router";
 import { Image } from "~/components/ui/image";
@@ -71,6 +72,12 @@ export function Nav({
             Shared queues
           </SidebarLink>
           <div className="mt-auto pt-10">
+            {profile && (
+              <SidebarLink className="nav-item" to="/import">
+                <Upload size={18} />
+                Import
+              </SidebarLink>
+            )}
             {profile && (
               <div className="mb-2 flex items-center gap-2 px-3 py-2">
                 <Link
@@ -147,7 +154,11 @@ export function Nav({
         <DropdownMenu>
           <DropdownMenuTrigger
             className="mobile-nav-menu"
-            aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+            aria-current={
+              pathname.startsWith("/settings") || pathname === "/import"
+                ? "page"
+                : undefined
+            }
           >
             <Settings size={21} />
             Settings
@@ -166,6 +177,11 @@ export function Nav({
                 </span>
                 <SyncButton userId={profile.id} compact />
               </div>
+            )}
+            {profile && (
+              <DropdownMenuItem asChild>
+                <Link to="/import">Import</Link>
+              </DropdownMenuItem>
             )}
             <DropdownMenuItem asChild>
               <Link to="/settings">Settings</Link>

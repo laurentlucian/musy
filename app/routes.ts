@@ -25,6 +25,7 @@ export default [
     route("artist/:artistId", "routes/track/artist.tsx"),
     route("album/:albumId", "routes/track/album.tsx"),
     route("explore", "routes/explore.tsx"),
+    route("import", "routes/import.tsx"),
     route("settings", "routes/settings.tsx", [
       ...prefix("admin", [
         route("syncs", "routes/admin/syncs.tsx"),

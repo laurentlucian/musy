@@ -8,11 +8,9 @@ import {
   useLocation,
   useNavigation,
 } from "react-router";
-import { HistoryImport } from "~/components/domain/history-import";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
-import { getHistoryImport } from "~/lib.server/services/history-import";
 import { sessionStorage } from "~/lib.server/services/session";
 import { AdminNav } from "~/routes/admin/nav";
 import type { Route } from "./+types/settings";
@@ -22,12 +20,11 @@ export async function loader({ context }: Route.LoaderArgs) {
 
   return data({
     userId,
-    historyImport: userId ? await getHistoryImport(userId) : null,
   });
 }
 
 export default function Settings({
-  loaderData: { userId, historyImport },
+  loaderData: { userId },
 }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const root = pathname === "/settings";
@@ -63,9 +60,7 @@ export default function Settings({
         </aside>
         <div className="min-w-0 flex-1">
           {root ? (
-            userId ? (
-              <HistoryImport initialImport={historyImport} />
-            ) : (
+            userId ? null : (
               <Button asChild>
                 <Link to="/">Sign in</Link>
               </Button>
