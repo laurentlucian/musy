@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": ["**", "!worker-configuration.d.ts"]
+  },
   "formatter": {
     "enabled": true,
     "indentWidth": 2,

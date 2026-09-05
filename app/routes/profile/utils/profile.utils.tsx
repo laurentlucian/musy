@@ -100,7 +100,7 @@ export function SyncButton({
       aria-label="Refresh your music"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit(
+        void fetcher.submit(
           { intent: "sync", userId },
           { method: "post", action: "/profile" },
         );

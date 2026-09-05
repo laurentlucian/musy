@@ -49,7 +49,10 @@ export function Artist(
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Open ${artist.name} in Spotify`}
-        className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "shrink-0")}
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "icon" }),
+          "shrink-0",
+        )}
       >
         <ArrowUpRight />
       </a>

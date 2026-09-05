@@ -1,33 +1,38 @@
 import { env } from "cloudflare:workers";
+import { log, logError } from "~/components/utils";
 import { db } from "~/lib.server/services/db";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
+  getGroupMemberIds,
   getNextQueueItemForDelivery,
+  getUniqueGroupUserIds,
   updatePlaybackStatus,
 } from "../db/queue";
 import { getAllUsersId } from "../db/users";
-import { log, logError } from "~/components/utils";
 
 export async function checkAndQueueDeliveries() {
-  log("Syncing playback status for all users...", "playback");
-
   try {
-    const userIds = await getAllUsersId();
-    const activePlaybackByUserId = new Map<string, boolean>();
+    const [groupUserIds, activeUserIds] = await Promise.all([
+      getUniqueGroupUserIds(),
+      getAllUsersId(),
+    ]);
+    const active = new Set(activeUserIds);
+    const userIds = groupUserIds.filter((id) => active.has(id));
+    if (userIds.length === 0) return;
 
-    // 1. Update playback status for ALL users in batches
+    const playing = new Set<string>();
+
     const BATCH_SIZE = 10;
     for (let i = 0; i < userIds.length; i += BATCH_SIZE) {
       const batch = userIds.slice(i, i + BATCH_SIZE);
-      
+
       await Promise.allSettled(
         batch.map(async (userId) => {
           try {
             const spotify = await getSpotifyClient({ userId });
             const playbackState = await spotify.player.getPlaybackState();
-
             const isPlaying = playbackState?.is_playing ?? false;
-            activePlaybackByUserId.set(userId, isPlaying);
+            if (isPlaying) playing.add(userId);
 
             await updatePlaybackStatus({
               userId,
@@ -41,68 +46,49 @@ export async function checkAndQueueDeliveries() {
                 : null,
             });
           } catch (error) {
-            logError(`Error syncing playback for user ${userId}: ${error}`, "playback");
+            logError(
+              `Error syncing playback for user ${userId}: ${error}`,
+              "playback",
+            );
           }
-        })
+        }),
       );
     }
 
-    log(`Synced ${userIds.length} users. Checking for pending queue deliveries...`, "playback");
+    if (playing.size === 0) return;
 
-    // 2. Check for deliveries ONLY for users who are currently playing
     const groups = await db.query.queueGroup.findMany({
-      with: {
-        members: true,
-      },
+      columns: { id: true, userId: true },
+      with: { members: { columns: { userId: true } } },
     });
 
-    const deliveriesToQueue: { groupId: string; userId: string }[] = [];
+    const deliveries: { groupId: string; userId: string }[] = [];
 
     for (const group of groups) {
-      const recipientIds = [
-        group.userId,
-        ...group.members.map((m) => m.userId),
-      ];
-
-      for (const userId of recipientIds) {
-        // Optimization: Only check for queue items if we know they are playing
-        if (!activePlaybackByUserId.get(userId)) continue;
+      for (const userId of getGroupMemberIds(group)) {
+        if (!playing.has(userId)) continue;
 
         const nextItem = await getNextQueueItemForDelivery({
           groupId: group.id,
           userId,
         });
+        if (nextItem) deliveries.push({ groupId: group.id, userId });
+      }
+    }
 
-        if (nextItem) {
-          log(
-            `User ${userId} has undelivered track ${nextItem.trackId}, queuing delivery for group ${group.id}`,
+    if (deliveries.length === 0) return;
+
+    log(`Queueing ${deliveries.length} delivery jobs`, "playback");
+    await Promise.allSettled(
+      deliveries.map((delivery) =>
+        env.DELIVERY_QUEUE.send(delivery).catch((error) => {
+          logError(
+            `Failed to queue delivery for user ${delivery.userId}: ${error}`,
             "playback",
           );
-          deliveriesToQueue.push({
-            groupId: group.id,
-            userId,
-          });
-        }
-      }
-    }
-
-    if (deliveriesToQueue.length === 0) {
-      log("No deliveries to queue", "playback");
-      return;
-    }
-
-    log(`Queueing ${deliveriesToQueue.length} delivery jobs`, "playback");
-
-    for (const delivery of deliveriesToQueue) {
-      try {
-        await env.DELIVERY_QUEUE.send(delivery);
-      } catch (error) {
-        logError(
-          `Failed to queue delivery for user ${delivery.userId}: ${error}`,
-          "playback",
-        );
-      }
-    }
+        }),
+      ),
+    );
   } catch (error) {
     logError(`Error in checkAndQueueDeliveries: ${error}`, "playback");
     throw error;

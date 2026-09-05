@@ -161,7 +161,7 @@ function LikedSyncButton({ userId }: { userId: string }) {
       className="text-muted-foreground transition-colors duration-150"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });
+        void fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}

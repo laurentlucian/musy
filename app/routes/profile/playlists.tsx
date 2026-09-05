@@ -225,7 +225,7 @@ function PlaylistsSyncButton({ userId }: { userId: string }) {
       variant="outline"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit(
+        void fetcher.submit(
           { intent: "sync-playlists", userId },
           { method: "post" },
         );

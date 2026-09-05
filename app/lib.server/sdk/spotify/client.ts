@@ -125,7 +125,12 @@ export function createSpotifyClient(config: SpotifyClientConfig) {
         uris: string[],
         position?: number,
       ) =>
-        playlistEndpoints.addTracksToPlaylist(accessToken, playlistId, uris, position),
+        playlistEndpoints.addTracksToPlaylist(
+          accessToken,
+          playlistId,
+          uris,
+          position,
+        ),
     },
   };
 }

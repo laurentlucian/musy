@@ -56,40 +56,61 @@ export const profile = sqliteTable(
   (table) => [uniqueIndex("Profile_email_key").on(table.email)],
 );
 
-export const historyEvent = sqliteTable("HistoryEvent", {
-  id: text().primaryKey().notNull(),
-  userId: text().notNull().references(() => profile.id, { onDelete: "cascade" }),
-  batchId: text().notNull(),
-  trackId: text().notNull(),
-  trackName: text().notNull(),
-  artistName: text().notNull(),
-  albumName: text().notNull(),
-  playedAt: text().notNull(),
-  msPlayed: integer().notNull(),
-  ip: text(),
-  platform: text(),
-  country: text(),
-  rawJson: text().notNull(),
-}, (table) => [index("HistoryEvent_user_date_idx").on(table.userId, table.playedAt), index("HistoryEvent_batch_idx").on(table.batchId), index("HistoryEvent_userId_ip_idx").on(table.userId, table.ip)]);
+export const historyEvent = sqliteTable(
+  "HistoryEvent",
+  {
+    id: text().primaryKey().notNull(),
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    batchId: text().notNull(),
+    trackId: text().notNull(),
+    trackName: text().notNull(),
+    artistName: text().notNull(),
+    albumName: text().notNull(),
+    playedAt: text().notNull(),
+    msPlayed: integer().notNull(),
+    ip: text(),
+    platform: text(),
+    country: text(),
+    rawJson: text().notNull(),
+  },
+  (table) => [
+    index("HistoryEvent_user_date_idx").on(table.userId, table.playedAt),
+    index("HistoryEvent_batch_idx").on(table.batchId),
+    index("HistoryEvent_userId_ip_idx").on(table.userId, table.ip),
+  ],
+);
 
 export const historyImport = sqliteTable("HistoryImport", {
   statsYear: integer().default(-1),
   statsUpdatedAt: integer().notNull().default(0),
-  userId: text().primaryKey().notNull().references(() => profile.id, { onDelete: "cascade" }),
+  userId: text()
+    .primaryKey()
+    .notNull()
+    .references(() => profile.id, { onDelete: "cascade" }),
   jobId: text().notNull(),
   status: text().notNull(),
   updatedAt: integer().notNull(),
 });
 
-export const historyImportBatch = sqliteTable("HistoryImportBatch", {
-  payloadHash: text().notNull(),
-  id: text().primaryKey().notNull(),
-  userId: text().notNull().references(() => profile.id, { onDelete: "cascade" }),
-  jobId: text().notNull(),
-  imported: integer().notNull(),
-  duplicates: integer().notNull(),
-  skipped: integer().notNull(),
-}, (table) => [index("HistoryImportBatch_user_job_idx").on(table.userId, table.jobId)]);
+export const historyImportBatch = sqliteTable(
+  "HistoryImportBatch",
+  {
+    payloadHash: text().notNull(),
+    id: text().primaryKey().notNull(),
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    jobId: text().notNull(),
+    imported: integer().notNull(),
+    duplicates: integer().notNull(),
+    skipped: integer().notNull(),
+  },
+  (table) => [
+    index("HistoryImportBatch_user_job_idx").on(table.userId, table.jobId),
+  ],
+);
 
 export const recentTracks = sqliteTable(
   "RecentTracks",
@@ -113,11 +134,9 @@ export const recentTracks = sqliteTable(
   },
   (table) => [
     index("RecentTracks_userId_playedAt_idx").on(table.userId, table.playedAt),
-    uniqueIndex("RecentTracks_playedAt_userId_key").on(
-      table.playedAt,
-      table.userId,
-      table.trackId,
-    ).where(sql`${table.historyEventId} IS NULL`),
+    uniqueIndex("RecentTracks_playedAt_userId_key")
+      .on(table.playedAt, table.userId, table.trackId)
+      .where(sql`${table.historyEventId} IS NULL`),
     uniqueIndex("RecentTracks_historyEventId_key").on(table.historyEventId),
   ],
 );
@@ -583,7 +602,10 @@ export const geoIp = sqliteTable("GeoIP", {
 });
 
 export const historyGeoJob = sqliteTable("HistoryGeoJob", {
-  userId: text().primaryKey().notNull().references(() => user.id, { onDelete: "cascade" }),
+  userId: text()
+    .primaryKey()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   status: text().notNull().default("queued"),
   updatedAt: integer().notNull(),
   retryAt: integer().notNull().default(0),

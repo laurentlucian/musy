@@ -3,8 +3,8 @@ import "./logo.css";
 
 export function Logo() {
   return (
-    <Link to="/" className="brand flex items-center" aria-label="Musy home">
-      <svg viewBox="0 0 100 100" className="size-8" aria-hidden="true">
+    <Link to="/" className="brand flex items-center justify-center" aria-label="Musy home">
+      <svg viewBox="0 0 100 100" className="size-16" aria-hidden="true">
         <path
           d="M16 38 17 32 24 20 34 12 50 8 67 12 77 20 84 32 85 38 80 37 77 26 64 19 50 17 37 19 27 26 23 36 20 39Z"
           fill="#555756"

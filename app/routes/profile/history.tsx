@@ -104,7 +104,7 @@ function ListenedSyncButton({ userId }: { userId: string }) {
       variant="outline"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit({ intent: "sync-listened", userId }, { method: "post" });
+        void fetcher.submit({ intent: "sync-listened", userId }, { method: "post" });
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}

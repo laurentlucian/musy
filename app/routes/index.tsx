@@ -37,11 +37,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           <input type="hidden" name="mode" value="authorize" />
           <input type="hidden" name="provider" value="spotify" />
           <Button type="submit" size="lg" className="gap-3">
-            <img
-              src="/spotify/icon-black.png"
-              alt=""
-              className="h-5 w-5"
-            />
+            <img src="/spotify/icon-black.png" alt="" className="h-5 w-5" />
             Continue with Spotify
           </Button>
         </Form>

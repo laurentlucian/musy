@@ -54,10 +54,7 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
   const { groups, userId } = loaderData;
 
   return (
-    <section
-      aria-labelledby="queues-title"
-      className="pb-8"
-    >
+    <section aria-labelledby="queues-title" className="pb-8">
       <header className="mb-4 flex items-center justify-between gap-4">
         <div>
           <h1

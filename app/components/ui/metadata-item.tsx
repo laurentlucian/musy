@@ -7,7 +7,12 @@ interface MetadataItemProps {
   variant?: "default" | "data";
 }
 
-export function MetadataItem({ label, value, className, variant = "default" }: MetadataItemProps) {
+export function MetadataItem({
+  label,
+  value,
+  className,
+  variant = "default",
+}: MetadataItemProps) {
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       <span className="text-muted-foreground text-xs uppercase tracking-wider">
@@ -16,7 +21,7 @@ export function MetadataItem({ label, value, className, variant = "default" }: M
       <span
         className={cn(
           "text-sm",
-          variant === "data" ? "font-mono text-foreground" : "text-foreground"
+          variant === "data" ? "font-mono text-foreground" : "text-foreground",
         )}
       >
         {value}

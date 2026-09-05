@@ -4,8 +4,14 @@ import { playback, provider, track } from "~/lib.server/db/schema";
 import type { PlaybackState } from "~/lib.server/sdk/spotify";
 import { db } from "~/lib.server/services/db";
 import { getAllUsersId } from "~/lib.server/services/db/users";
-import { createTrackModel, transformTracks } from "~/lib.server/services/sdk/helpers/spotify";
-import { getSpotifyClient, type Spotified } from "~/lib.server/services/sdk/spotify";
+import {
+  createTrackModel,
+  transformTracks,
+} from "~/lib.server/services/sdk/helpers/spotify";
+import {
+  getSpotifyClient,
+  type Spotified,
+} from "~/lib.server/services/sdk/spotify";
 
 export async function syncPlaybacks() {
   log("starting...", "playback");

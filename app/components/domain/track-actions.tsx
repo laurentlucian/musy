@@ -36,7 +36,7 @@ export function TrackLikeButton({
           const formData = new FormData();
           formData.set("uri", uri);
           formData.set("provider", provider);
-          fetcher.submit(formData, {
+          void fetcher.submit(formData, {
             method: "post",
             action: "/actions/like",
           });
@@ -93,7 +93,7 @@ export function TrackQueueButton({
           const formData = new FormData();
           formData.set("uri", uri);
           formData.set("provider", provider);
-          fetcher.submit(formData, {
+          void fetcher.submit(formData, {
             method: "post",
             action: "/actions/queue",
           });
@@ -157,7 +157,7 @@ export function TracksQueueButton({
       JSON.stringify(tracksToQueue.map((track) => track.uri)),
     );
     formData.set("provider", provider);
-    fetcher.submit(formData, {
+    void fetcher.submit(formData, {
       method: "post",
       action: "/actions/queue-multiple",
     });

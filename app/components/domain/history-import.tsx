@@ -1,10 +1,18 @@
 import { Check, Music2 } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useRevalidator } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import type { ImportMessage, ImportProgress } from "~/lib/history-parser";
+import { useRecordSpin } from "./use-record-spin";
 
 function restoreImport(progress: ImportProgress | null): ImportMessage | null {
   if (!progress) return null;
@@ -23,12 +31,36 @@ function restoreImport(progress: ImportProgress | null): ImportMessage | null {
   };
 }
 
+const spring = { type: "spring", stiffness: 260, damping: 28 } as const;
+const reveal = {
+  hidden: { opacity: 0, y: 12, filter: "blur(6px)" },
+  shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: spring },
+};
+
+function Count({ value, instant }: { value: number; instant: boolean }) {
+  const count = useMotionValue(instant ? value : 0);
+  const text = useTransform(count, (v) => Math.round(v).toLocaleString());
+  useEffect(() => {
+    if (instant) {
+      count.set(value);
+      return;
+    }
+    const controls = animate(count, value, {
+      duration: 1.2,
+      ease: [0.16, 1, 0.3, 1],
+    });
+    return controls.stop;
+  }, [value, instant, count]);
+  return <motion.span>{text}</motion.span>;
+}
+
 export function HistoryImport({
   initialImport,
 }: {
   initialImport: ImportProgress | null;
 }) {
   const reduceMotion = useReducedMotion();
+  const { transform, ...spinEvents } = useRecordSpin(!!reduceMotion);
   const [files, setFiles] = useState<File[]>([]);
   const [state, setState] = useState<ImportMessage | null>(() =>
     restoreImport(initialImport),
@@ -84,14 +116,10 @@ export function HistoryImport({
     <main className="mx-auto flex w-full max-w-xl flex-col items-center px-6 py-10 text-center">
       <motion.div
         aria-hidden="true"
-        animate={busy && !reduceMotion ? { rotate: 360 } : { rotate: 0 }}
-        transition={
-          busy && !reduceMotion
-            ? { duration: 12, repeat: Infinity, ease: "linear" }
-            : { duration: 0.4 }
-        }
-        className="relative mb-10 flex size-48 shrink-0 items-center justify-center rounded-full shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.12)] sm:size-64"
+        {...spinEvents}
+        className="relative mb-10 flex size-48 shrink-0 touch-none select-none items-center justify-center rounded-full cursor-grab active:cursor-grabbing shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.12)] sm:size-64"
         style={{
+          transform,
           backgroundImage: [
             "conic-gradient(from 210deg at 50% 50%, rgb(255 255 255 / 0.16) 0deg, transparent 40deg, transparent 160deg, rgb(255 255 255 / 0.1) 200deg, transparent 240deg, transparent 330deg, rgb(255 255 255 / 0.16) 360deg)",
             "repeating-radial-gradient(circle at center, rgb(255 255 255 / 0.06) 0px, rgb(255 255 255 / 0.06) 1px, transparent 1.5px, transparent 4px)",
@@ -116,34 +144,59 @@ export function HistoryImport({
           }}
         >
           <div className="absolute inset-[3px] rounded-full bg-[radial-gradient(circle_at_35%_30%,rgb(255_255_255/0.35),transparent_55%)]" />
-          {state?.phase === "complete" ? (
-            <Check className="relative size-8 drop-shadow" strokeWidth={2.5} />
-          ) : (
-            <Music2 className="relative size-8 drop-shadow" strokeWidth={2.5} />
-          )}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={state?.phase === "complete" ? "check" : "music"}
+              initial={
+                reduceMotion ? false : { scale: 0.4, opacity: 0, rotate: -30 }
+              }
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={
+                reduceMotion
+                  ? undefined
+                  : { scale: 0.4, opacity: 0, rotate: 30 }
+              }
+              transition={{ type: "spring", stiffness: 400, damping: 22 }}
+              className="relative flex"
+            >
+              {state?.phase === "complete" ? (
+                <Check className="size-8 drop-shadow" strokeWidth={2.5} />
+              ) : (
+                <Music2 className="size-8 drop-shadow" strokeWidth={2.5} />
+              )}
+            </motion.span>
+          </AnimatePresence>
         </div>
       </motion.div>
-      <div className="w-full space-y-6">
-        <div>
-          <h1 className="font-semibold text-3xl tracking-tight sm:text-4xl">
-            {state?.phase === "complete"
-              ? "Your history is here."
-              : busy
-                ? "Bringing it all back."
-                : state?.phase === "error"
-                  ? "Let’s pick up here."
-                  : "Every listen. Back with you."}
-          </h1>
-          <p className="mt-3 text-muted-foreground text-sm">
-            {processing
-              ? "Building your listening stats. You can close this page."
-              : busy
-                ? "Keep this page open as your listening history arrives."
-                : state?.phase === "complete"
-                  ? "Explore the music you’ve spent time with."
-                  : "Choose your Spotify Extended streaming history ZIP or JSON files."}
-          </p>
-        </div>
+      <motion.div layout={!reduceMotion} className="w-full space-y-6">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={state?.phase ?? "idle"}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <h1 className="text-balance font-semibold text-4xl leading-none tracking-[-0.035em] sm:text-5xl">
+              {state?.phase === "complete"
+                ? "Your history is here."
+                : busy
+                  ? "Bringing it all back."
+                  : state?.phase === "error"
+                    ? "Let’s pick up here."
+                    : "Every listen. Back with you."}
+            </h1>
+            <p className="mx-auto mt-4 max-w-sm text-pretty text-base text-muted-foreground leading-snug">
+              {processing
+                ? "Building your listening stats. You can close this page."
+                : busy
+                  ? "Keep this page open as your listening history arrives."
+                  : state?.phase === "complete"
+                    ? "Explore the music you’ve spent time with."
+                    : "Choose your Spotify Extended streaming history ZIP or JSON files."}
+            </p>
+          </motion.div>
+        </AnimatePresence>
         {!busy && state?.phase !== "complete" && (
           <Input
             aria-label="Spotify history files"
@@ -208,8 +261,22 @@ export function HistoryImport({
           </Button>
         )}
         {state && (
-          <div className="space-y-2 text-sm" aria-live="polite">
-            <p>
+          <motion.div
+            key={state.phase === "complete" ? "complete" : "active"}
+            variants={
+              reduceMotion
+                ? undefined
+                : { shown: { transition: { staggerChildren: 0.08 } } }
+            }
+            initial="hidden"
+            animate="shown"
+            className="space-y-2 text-sm"
+            aria-live="polite"
+          >
+            <motion.p
+              variants={reduceMotion ? undefined : reveal}
+              className="font-medium text-[11px] text-muted-foreground uppercase tracking-[0.18em]"
+            >
               {state.phase === "complete"
                 ? "History imported"
                 : state.phase === "processing"
@@ -217,7 +284,7 @@ export function HistoryImport({
                   : state.phase === "error"
                     ? "Import paused"
                     : `${state.phase === "reading" ? "Reading" : "Importing"} ${state.file ?? "files"}…`}
-            </p>
+            </motion.p>
             {uploading && (
               <p className="text-muted-foreground text-xs">
                 Keep this page open. Reimporting won’t duplicate listens.
@@ -243,20 +310,34 @@ export function HistoryImport({
               />
             )}
             {state.progress && (
-              <div className="py-4">
-                <p className="font-semibold text-5xl tabular-nums tracking-tight sm:text-6xl">
-                  {state.progress.imported.toLocaleString()}
+              <motion.div
+                variants={reduceMotion ? undefined : reveal}
+                className="py-3"
+              >
+                <p className="font-semibold text-7xl tabular-nums leading-none tracking-[-0.045em] sm:text-8xl">
+                  <Count
+                    value={state.progress.imported}
+                    instant={Boolean(reduceMotion)}
+                  />
                 </p>
-                <p className="mt-2 text-muted-foreground text-sm">
-                  listens imported
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {state.progress.imported.toLocaleString()} imported ·{" "}
-                  {state.progress.duplicates.toLocaleString()} duplicates ·{" "}
-                  {state.progress.skipped.toLocaleString()} skipped (including
-                  podcasts)
-                </p>
-              </div>
+                <p className="mt-3 text-base text-muted-foreground">listens</p>
+                <motion.dl
+                  variants={reduceMotion ? undefined : reveal}
+                  className="mt-5 flex justify-center gap-6 text-xs"
+                >
+                  {[
+                    ["duplicates", state.progress.duplicates],
+                    ["skipped", state.progress.skipped],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-baseline gap-1.5">
+                      <dd className="font-medium text-foreground tabular-nums">
+                        {value.toLocaleString()}
+                      </dd>
+                      <dt className="text-muted-foreground">{label}</dt>
+                    </div>
+                  ))}
+                </motion.dl>
+              </motion.div>
             )}
             {state.error && (
               <p role="alert" className="text-destructive">
@@ -264,25 +345,28 @@ export function HistoryImport({
               </p>
             )}
             {state.phase === "complete" && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setState(null);
-                  setFiles([]);
-                  jobId.current = null;
-                }}
+              <motion.div
+                variants={reduceMotion ? undefined : reveal}
+                className="flex items-center justify-center gap-3 pt-2"
               >
-                Import more
-              </Button>
+                <Button asChild>
+                  <Link to="/explore">View listening</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setState(null);
+                    setFiles([]);
+                    jobId.current = null;
+                  }}
+                >
+                  Import more
+                </Button>
+              </motion.div>
             )}
-            {state.phase === "complete" && (
-              <Button asChild variant="link" className="px-0">
-                <Link to="/explore">View listening</Link>
-              </Button>
-            )}
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </main>
   );
 }

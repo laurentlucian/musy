@@ -70,12 +70,8 @@
           "name": "Album_artistId_Artist_id_fk",
           "tableFrom": "Album",
           "tableTo": "Artist",
-          "columnsFrom": [
-            "artistId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["artistId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -164,17 +160,12 @@
       "indexes": {
         "ArtistToTopArtists_B_idx": {
           "name": "ArtistToTopArtists_B_idx",
-          "columns": [
-            "B"
-          ],
+          "columns": ["B"],
           "isUnique": false
         },
         "_ArtistToTopArtists_AB_unique": {
           "name": "_ArtistToTopArtists_AB_unique",
-          "columns": [
-            "A",
-            "B"
-          ],
+          "columns": ["A", "B"],
           "isUnique": true
         }
       },
@@ -183,12 +174,8 @@
           "name": "_ArtistToTopArtists_A_Artist_id_fk",
           "tableFrom": "_ArtistToTopArtists",
           "tableTo": "Artist",
-          "columnsFrom": [
-            "A"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["A"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -196,12 +183,8 @@
           "name": "_ArtistToTopArtists_B_TopArtists_id_fk",
           "tableFrom": "_ArtistToTopArtists",
           "tableTo": "TopArtists",
-          "columnsFrom": [
-            "B"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["B"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -254,10 +237,7 @@
       "indexes": {
         "LikedTracks_trackId_userId_key": {
           "name": "LikedTracks_trackId_userId_key",
-          "columns": [
-            "trackId",
-            "userId"
-          ],
+          "columns": ["trackId", "userId"],
           "isUnique": true
         }
       },
@@ -266,12 +246,8 @@
           "name": "LikedTracks_trackId_Track_id_fk",
           "tableFrom": "LikedTracks",
           "tableTo": "Track",
-          "columnsFrom": [
-            "trackId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trackId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -279,12 +255,8 @@
           "name": "LikedTracks_userId_Profile_id_fk",
           "tableFrom": "LikedTracks",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -351,9 +323,7 @@
       "indexes": {
         "Playback_userId_key": {
           "name": "Playback_userId_key",
-          "columns": [
-            "userId"
-          ],
+          "columns": ["userId"],
           "isUnique": true
         }
       },
@@ -362,12 +332,8 @@
           "name": "Playback_userId_Profile_id_fk",
           "tableFrom": "Playback",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -375,12 +341,8 @@
           "name": "Playback_trackId_Track_id_fk",
           "tableFrom": "Playback",
           "tableTo": "Track",
-          "columnsFrom": [
-            "trackId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trackId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -429,12 +391,8 @@
           "name": "PlaybackHistory_userId_Profile_id_fk",
           "tableFrom": "PlaybackHistory",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -515,9 +473,7 @@
       "indexes": {
         "Playlist_id_key": {
           "name": "Playlist_id_key",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         }
       },
@@ -526,12 +482,8 @@
           "name": "Playlist_userId_Profile_id_fk",
           "tableFrom": "Playlist",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -568,10 +520,7 @@
       "indexes": {
         "PlaylistTrack_playlistId_trackId_key": {
           "name": "PlaylistTrack_playlistId_trackId_key",
-          "columns": [
-            "playlistId",
-            "trackId"
-          ],
+          "columns": ["playlistId", "trackId"],
           "isUnique": true
         }
       },
@@ -580,12 +529,8 @@
           "name": "PlaylistTrack_playlistId_Playlist_id_fk",
           "tableFrom": "PlaylistTrack",
           "tableTo": "Playlist",
-          "columnsFrom": [
-            "playlistId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["playlistId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -593,12 +538,8 @@
           "name": "PlaylistTrack_trackId_Track_id_fk",
           "tableFrom": "PlaylistTrack",
           "tableTo": "Track",
-          "columnsFrom": [
-            "trackId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trackId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -665,9 +606,7 @@
       "indexes": {
         "Profile_email_key": {
           "name": "Profile_email_key",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },
@@ -676,12 +615,8 @@
           "name": "Profile_id_User_id_fk",
           "tableFrom": "Profile",
           "tableTo": "User",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -776,18 +711,12 @@
       "indexes": {
         "Provider_userId_type_key": {
           "name": "Provider_userId_type_key",
-          "columns": [
-            "userId",
-            "type"
-          ],
+          "columns": ["userId", "type"],
           "isUnique": true
         },
         "Provider_accountId_type_key": {
           "name": "Provider_accountId_type_key",
-          "columns": [
-            "accountId",
-            "type"
-          ],
+          "columns": ["accountId", "type"],
           "isUnique": true
         }
       },
@@ -796,12 +725,8 @@
           "name": "Provider_userId_User_id_fk",
           "tableFrom": "Provider",
           "tableTo": "User",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -846,10 +771,7 @@
       "indexes": {
         "RecentTracks_playedAt_userId_key": {
           "name": "RecentTracks_playedAt_userId_key",
-          "columns": [
-            "playedAt",
-            "userId"
-          ],
+          "columns": ["playedAt", "userId"],
           "isUnique": true
         }
       },
@@ -858,12 +780,8 @@
           "name": "RecentTracks_trackId_Track_id_fk",
           "tableFrom": "RecentTracks",
           "tableTo": "Track",
-          "columnsFrom": [
-            "trackId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trackId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         },
@@ -871,12 +789,8 @@
           "name": "RecentTracks_userId_Profile_id_fk",
           "tableFrom": "RecentTracks",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -929,11 +843,7 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "Sync_userId_state_type_pk": {
-          "columns": [
-            "userId",
-            "state",
-            "type"
-          ],
+          "columns": ["userId", "state", "type"],
           "name": "Sync_userId_state_type_pk"
         }
       },
@@ -954,9 +864,7 @@
       "indexes": {
         "Top_userId_key": {
           "name": "Top_userId_key",
-          "columns": [
-            "userId"
-          ],
+          "columns": ["userId"],
           "isUnique": true
         }
       },
@@ -965,12 +873,8 @@
           "name": "Top_userId_Profile_id_fk",
           "tableFrom": "Top",
           "tableTo": "Profile",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1022,9 +926,7 @@
       "indexes": {
         "TopArtists_id_key": {
           "name": "TopArtists_id_key",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         }
       },
@@ -1033,12 +935,8 @@
           "name": "TopArtists_userId_Top_userId_fk",
           "tableFrom": "TopArtists",
           "tableTo": "Top",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "userId"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["userId"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1090,9 +988,7 @@
       "indexes": {
         "TopTracks_id_key": {
           "name": "TopTracks_id_key",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         }
       },
@@ -1101,12 +997,8 @@
           "name": "TopTracks_userId_Top_userId_fk",
           "tableFrom": "TopTracks",
           "tableTo": "Top",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "userId"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["userId"],
           "onDelete": "restrict",
           "onUpdate": "cascade"
         }
@@ -1136,17 +1028,12 @@
       "indexes": {
         "TopTracksToTrack_B_idx": {
           "name": "TopTracksToTrack_B_idx",
-          "columns": [
-            "B"
-          ],
+          "columns": ["B"],
           "isUnique": false
         },
         "_TopTracksToTrack_AB_unique": {
           "name": "_TopTracksToTrack_AB_unique",
-          "columns": [
-            "A",
-            "B"
-          ],
+          "columns": ["A", "B"],
           "isUnique": true
         }
       },
@@ -1155,12 +1042,8 @@
           "name": "_TopTracksToTrack_A_TopTracks_id_fk",
           "tableFrom": "_TopTracksToTrack",
           "tableTo": "TopTracks",
-          "columnsFrom": [
-            "A"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["A"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -1168,12 +1051,8 @@
           "name": "_TopTracksToTrack_B_Track_id_fk",
           "tableFrom": "_TopTracksToTrack",
           "tableTo": "Track",
-          "columnsFrom": [
-            "B"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["B"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -1281,9 +1160,7 @@
       "indexes": {
         "Track_id_key": {
           "name": "Track_id_key",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         }
       },

@@ -7,7 +7,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "border border-button-filled-border bg-button-filled text-primary-foreground hover:bg-button-filled-hover active:bg-button-filled-active",
+        default:
+          "border border-button-filled-border bg-button-filled text-primary-foreground hover:bg-button-filled-hover active:bg-button-filled-active",
         destructive:
           "bg-destructive/6 text-destructive hover:bg-destructive/8 active:bg-destructive/10",
         outline:

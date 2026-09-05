@@ -32,7 +32,7 @@ export function Nav({
   return (
     <>
       <aside className="app-sidebar">
-        <div className="px-4">
+        <div className="flex justify-center">
           <Logo />
         </div>
         <nav
@@ -67,9 +67,10 @@ export function Nav({
             <Library size={18} />
             Playlists
           </SidebarLink>
-          <SidebarLink className="nav-item mt-8" to="/queue">
+          <p className="section-label mb-2 mt-8 px-4">Multiplayer</p>
+          <SidebarLink className="nav-item" to="/queue">
             <ListMusic size={18} />
-            Shared queues
+            Queues
           </SidebarLink>
           <div className="mt-auto flex flex-col gap-1 pt-10">
             {profile && (

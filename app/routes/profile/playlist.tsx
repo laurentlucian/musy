@@ -244,7 +244,7 @@ function PlaylistActions({
           variant="outline"
           disabled={isSubmitting || !trackCount}
           onClick={() => {
-            fetcher.submit(
+            void fetcher.submit(
               { intent: "like-playlist", userId, playlistId },
               { method: "post" },
             );
@@ -267,7 +267,7 @@ function PlaylistActions({
           <DropdownMenuContent align="end">
             <DropdownMenuItem
               onClick={() => {
-                fetcher.submit(
+                void fetcher.submit(
                   { intent: "sync-playlist", userId, playlistId },
                   { method: "post" },
                 );
@@ -304,7 +304,7 @@ function PlaylistActions({
               disabled={isSubmitting}
               onClick={() => {
                 setUnlikeDialogOpen(false);
-                fetcher.submit(
+                void fetcher.submit(
                   { intent: "unlike-playlist", userId, playlistId },
                   { method: "post" },
                 );

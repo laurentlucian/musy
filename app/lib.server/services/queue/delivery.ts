@@ -1,16 +1,16 @@
-import { queueItemDelivery } from "~/lib.server/db/schema";
-import { db } from "~/lib.server/services/db";
+import { log, logError } from "~/components/utils";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
   getNextQueueItemForDelivery,
   recordQueueItemDelivery,
 } from "../db/queue";
-import { log, logError } from "~/components/utils";
 
 export interface QueueDeliveryMessage {
   groupId: string;
   userId: string;
 }
+
+const MAX_DELIVERIES = 10;
 
 export async function processQueueDelivery(
   _env: Env,
@@ -18,60 +18,25 @@ export async function processQueueDelivery(
 ) {
   const { groupId, userId } = message;
 
-  log(
-    `Processing queue delivery for user ${userId} in group ${groupId}`,
-    "delivery",
-  );
-
   try {
     const spotify = await getSpotifyClient({ userId });
-    let deliveryCount = 0;
-    const maxDeliveries = 10;
+    let delivered = 0;
 
-    while (deliveryCount < maxDeliveries) {
-      const trackToDeliver = await getNextQueueItemForDelivery({
-        groupId,
-        userId,
-      });
+    while (delivered < MAX_DELIVERIES) {
+      const item = await getNextQueueItemForDelivery({ groupId, userId });
+      if (!item) break;
 
-      if (!trackToDeliver) {
-        log(`No more undelivered tracks for user ${userId}`, "delivery");
-        break;
-      }
-
-      try {
-        await spotify.player.addItemToPlaybackQueue(trackToDeliver.track.uri);
-        await recordQueueItemDelivery({
-          queueItemId: trackToDeliver.id,
-          userId,
-        });
-
-        log(
-          `Successfully queued track ${trackToDeliver.trackId} for user ${userId}`,
-          "delivery",
-        );
-        deliveryCount++;
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          error.message.includes("UNIQUE constraint failed")
-        ) {
-          log(
-            `Track ${trackToDeliver.trackId} already delivered, skipping`,
-            "delivery",
-          );
-          continue;
-        }
-        throw error;
-      }
+      await spotify.player.addItemToPlaybackQueue(item.track.uri);
+      await recordQueueItemDelivery({ queueItemId: item.id, userId });
+      delivered++;
     }
 
-    if (deliveryCount > 0) {
-      log(`Delivered ${deliveryCount} tracks to user ${userId}`, "delivery");
+    if (delivered > 0) {
+      log(`Delivered ${delivered} tracks to user ${userId}`, "delivery");
     }
   } catch (error) {
     logError(
-      `Error processing queue delivery for user ${userId} in group ${groupId}: ${error}`,
+      `Error delivering queue ${groupId} to user ${userId}: ${error}`,
       "delivery",
     );
     throw error;

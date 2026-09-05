@@ -106,7 +106,7 @@ function TopSyncButton({ userId }: { userId: string }) {
       variant="outline"
       disabled={isSyncing}
       onClick={() => {
-        fetcher.submit({ intent: "sync-top", userId }, { method: "post" });
+        void fetcher.submit({ intent: "sync-top", userId }, { method: "post" });
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
