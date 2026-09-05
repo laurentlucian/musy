@@ -590,10 +590,10 @@ function PlaybackStatusIcon({ status }: { status: "online" | "offline" }) {
     case "online":
       return (
         <div
-          className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-background bg-green-500"
+          className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-background bg-foreground"
           title="Online"
         >
-          <Circle className="h-2 w-2 fill-current text-green-700" />
+          <Circle className="h-2 w-2 fill-current text-background" />
         </div>
       );
     case "offline":

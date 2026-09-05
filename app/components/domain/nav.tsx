@@ -11,7 +11,7 @@ function pwa() {
 export function Nav() {
   return (
     <nav
-      className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-3 bg-[#101010] p-2 py-4 data-[pwa=true]:pb-8! sm:top-0 sm:left-0 sm:w-fit! sm:flex-col"
+      className="sm:justify-start! fixed bottom-0 flex w-full justify-center gap-3 bg-card p-2 py-4 data-[pwa=true]:pb-8! sm:top-0 sm:left-0 sm:w-fit! sm:flex-col"
       data-pwa={pwa()}
     >
       <Logo />

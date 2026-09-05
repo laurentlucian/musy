@@ -13,10 +13,10 @@
 .la-line-scale-pulse-out {
   display: block;
   font-size: 0;
-  color: hsl(var(--musy-200));
+  color: hsl(var(--foreground));
 }
 .la-line-scale-pulse-out.la-dark {
-  color: hsl(var(--musy-900));
+  color: hsl(var(--muted-foreground));
 }
 .la-line-scale-pulse-out > div {
   display: inline-block;
@@ -98,7 +98,7 @@
 .audio-visualizer {
   display: block;
   font-size: 0;
-  color: #fff;
+  color: hsl(var(--foreground));
 }
 
 .audio-visualizer > div {

@@ -14,12 +14,6 @@ export function PopularityIndicator({
   showLabel = true,
 }: PopularityIndicatorProps) {
   const percentage = Math.min((value / max) * 100, 100);
-  const getColorClass = () => {
-    if (percentage >= 80) return "bg-green-500";
-    if (percentage >= 60) return "bg-yellow-500";
-    if (percentage >= 40) return "bg-orange-500";
-    return "bg-red-500";
-  };
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -33,10 +27,7 @@ export function PopularityIndicator({
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
-          className={cn(
-            "h-full rounded-full transition-all duration-500",
-            getColorClass(),
-          )}
+          className="h-full rounded-full bg-foreground transition-all duration-500"
           style={{ width: `${percentage}%` }}
         />
       </div>
