@@ -10,6 +10,15 @@ import {
 } from "~/lib.server/services/scheduler/initial-import";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 
+import {
+  processHistoryStats,
+  recoverHistoryStats,
+} from "~/lib.server/services/history-stats";
+import {
+  processHistoryLocations,
+  recoverHistoryLocations,
+} from "~/lib.server/services/history-geolocation";
+
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
@@ -47,11 +56,42 @@ export default {
       // Every minute - check Spotify playback and queue deliveries
       ctx.waitUntil(checkAndQueueDeliveries());
       ctx.waitUntil(recoverInitialImports());
+      ctx.waitUntil(recoverHistoryStats());
+      ctx.waitUntil(recoverHistoryLocations());
     }
   },
   async queue(batch, env, ctx) {
     for (const message of batch.messages) {
-      const body = message.body as { type?: string; userId?: string };
+      const body = message.body as {
+        type?: string;
+        userId?: string;
+        jobId?: string;
+      };
+      if (
+        body.type === "history-stats" &&
+        typeof body.userId === "string" &&
+        typeof body.jobId === "string"
+      ) {
+        try {
+          await processHistoryStats(body.userId, body.jobId);
+          message.ack();
+        } catch {
+          message.retry({ delaySeconds: 60 });
+        }
+        continue;
+      }
+      if (
+        body.type === "history-geolocation" &&
+        typeof body.userId === "string"
+      ) {
+        try {
+          await processHistoryLocations(body.userId);
+          message.ack();
+        } catch {
+          message.retry({ delaySeconds: 60 });
+        }
+        continue;
+      }
       if (body.type === "initial-import" && typeof body.userId === "string") {
         ctx.waitUntil(
           processInitialImport(body.userId).then(() => message.ack()),

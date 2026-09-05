@@ -77,7 +77,7 @@ export async function syncUserRecent({
     // deduplicate recent tracks within the batch (same track at same time can appear multiple times)
     const uniqueRecentTracks = Array.from(
       new Map(
-        recentTracksData.map((s) => [`${s.playedAtISO}-${s.userId}`, s]),
+        recentTracksData.map((s) => [`${s.trackId}-${s.playedAtISO}`, s]),
       ).values(),
     );
 
@@ -89,12 +89,18 @@ export async function syncUserRecent({
     // find existing recent tracks - use ISO strings for query (matching DB storage format)
     // Batch queries to respect D1 param limit (98 per batch: 1 for userId + 98 for IN array = 99 total, under 100 limit)
     const playedAtISOs = uniqueRecentTracks.map((s) => s.playedAtISO);
-    const existingRecent: Array<{ playedAt: string | number }> = [];
+    const existingRecent: Array<{
+      playedAt: string | number;
+      trackId: string;
+    }> = [];
     const recentQueryBatchSize = 98; // Account for userId parameter in and() condition
     for (let i = 0; i < playedAtISOs.length; i += recentQueryBatchSize) {
       const batch = playedAtISOs.slice(i, i + recentQueryBatchSize);
       const batchResults = await db
-        .select({ playedAt: recentTracks.playedAt })
+        .select({
+          playedAt: recentTracks.playedAt,
+          trackId: recentTracks.trackId,
+        })
         .from(recentTracks)
         .where(
           and(
@@ -113,11 +119,11 @@ export async function syncUserRecent({
           // Normalize to ISO string format for consistent comparison
           if (typeof playedAt === "string") {
             // Already ISO string, use as-is
-            return playedAt;
+            return `${r.trackId}-${playedAt}`;
           }
           if (typeof playedAt === "number") {
             // Convert numeric timestamp to ISO string
-            return new Date(playedAt).toISOString();
+            return `${r.trackId}-${new Date(playedAt).toISOString()}`;
           }
           return null;
         })
@@ -131,7 +137,7 @@ export async function syncUserRecent({
 
     // split into new and existing recent tracks - compare ISO strings
     const newRecent = uniqueRecentTracks.filter(
-      (s) => !existingISOs.has(s.playedAtISO),
+      (s) => !existingISOs.has(`${s.trackId}-${s.playedAtISO}`),
     );
 
     log(`inserting ${newRecent.length} new recent tracks`, "recent");

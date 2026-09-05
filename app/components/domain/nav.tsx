@@ -4,6 +4,7 @@ import {
   History,
   Library,
   ListMusic,
+  MapPinned,
   Settings,
   TrendingUp,
 } from "lucide-react";
@@ -25,7 +26,8 @@ export function Nav({
 }) {
   const { pathname } = useLocation();
   const library = /\/(liked|playlists)(\/|$)/.test(pathname);
-  const journal = pathname.startsWith("/profile") && !library;
+  const journal =
+    (pathname.startsWith("/profile") && !library) || pathname === "/history";
   return (
     <>
       <aside className="app-sidebar">
@@ -43,12 +45,18 @@ export function Nav({
           </SidebarLink>
           <SidebarLink className="nav-item" to="/profile/top">
             <TrendingUp size={18} />
-            On repeat
+            Repeating
           </SidebarLink>
           <SidebarLink className="nav-item" to="/profile/listened">
             <History size={18} />
             History
           </SidebarLink>
+          {profile && (
+            <SidebarLink className="nav-item" to="/history">
+              <MapPinned size={18} />
+              Explore
+            </SidebarLink>
+          )}
           <p className="section-label mb-2 mt-8 px-4">Collection</p>
           <SidebarLink className="nav-item" to="/profile/liked">
             <Heart size={18} />
@@ -103,11 +111,16 @@ export function Nav({
               <Link to="/profile">Overview</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/top">On repeat</Link>
+              <Link to="/profile/top">Repeating</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to="/profile/listened">History</Link>
             </DropdownMenuItem>
+            {profile && (
+              <DropdownMenuItem asChild>
+                <Link to="/history">Explore</Link>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
         <DropdownMenu>

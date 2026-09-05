@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import {
   createCookieSessionStorage,
   type Session,
@@ -10,7 +11,7 @@ export const cookieOptions = {
   name: "_musy-session",
   path: "/",
   sameSite: "lax",
-  secrets: ["d00cd8153c10e47afa1b7a8f41b3dbc2"],
+  secrets: [env.SESSION_SECRET],
   secure: !import.meta.env.DEV,
 } satisfies SessionIdStorageStrategy["cookie"];
 

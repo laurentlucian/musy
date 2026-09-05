@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { notNull } from "~/components/utils";
 import { album, artist, track, trackToArtist } from "~/lib.server/db/schema";
 import type { Artist, SimplifiedAlbum, Track } from "~/lib.server/sdk/spotify";
@@ -60,7 +60,21 @@ export async function transformTracks(
   const batchSize = 7;
   for (let i = 0; i < tracksToInsert.length; i += batchSize) {
     const batch = tracksToInsert.slice(i, i + batchSize);
-    await db.insert(track).values(batch).onConflictDoNothing();
+    await db
+      .insert(track)
+      .values(batch)
+      .onConflictDoUpdate({
+        target: track.id,
+        set: {
+          name: sql`excluded.name`,
+          image: sql`excluded.image`,
+          explicit: sql`excluded.explicit`,
+          previewUrl: sql`excluded.preview_url`,
+          link: sql`excluded.link`,
+          duration: sql`excluded.duration`,
+        },
+        setWhere: eq(track.duration, 0),
+      });
   }
 
   // Collect all artists and albums from these tracks that might need enrichment
@@ -131,6 +145,16 @@ export async function transformTracks(
         artists.map((a) => artistsToEnrich.get(a.id!) || a),
         spotify,
       );
+      if (artistIds.length) {
+        await db
+          .delete(trackToArtist)
+          .where(
+            and(
+              eq(trackToArtist.trackId, trackModel.id),
+              sql`${trackToArtist.artistId} LIKE 'history:%'`,
+            ),
+          );
+      }
       for (const artistId of artistIds) {
         const existingRelation = await db.query.trackToArtist.findFirst({
           where: and(

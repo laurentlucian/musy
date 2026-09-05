@@ -8,6 +8,7 @@ import {
   useLocation,
   useNavigation,
 } from "react-router";
+import { HistoryImport } from "~/components/domain/history-import";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
@@ -60,7 +61,9 @@ export default function Settings({
         </aside>
         <div className="min-w-0 flex-1">
           {root ? (
-            !userId && (
+            userId ? (
+              <HistoryImport />
+            ) : (
               <Button asChild>
                 <Link to="/">Sign in</Link>
               </Button>

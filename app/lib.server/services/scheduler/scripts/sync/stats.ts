@@ -1,16 +1,16 @@
-import { endOfYear, setYear, startOfYear } from "date-fns";
-import { and, count, desc, eq, gte, lte, max, min } from "drizzle-orm";
+import {
+  calculateListeningStats,
+  listeningStatsQuery,
+  type ListeningStatsRow,
+} from "~/lib.server/services/history-stats-query";
+import { and, count, desc, eq, gte, lt, max, min } from "drizzle-orm";
 import { log, logError } from "~/components/utils";
 import {
-  album,
-  artist,
   likedTracks,
   provider,
   recentTracks,
   stats,
   sync,
-  track,
-  trackToArtist,
   user,
 } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
@@ -19,50 +19,10 @@ import { generateId } from "~/lib.server/services/utils";
 
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
-function calculateStats(
-  rows: {
-    track: {
-      name: string;
-      duration: number;
-    };
-    artistName: string | null;
-    albumNameRel: string | null;
-  }[],
-) {
-  const minutes = rows.reduce(
-    (acc, curr) => acc + curr.track.duration / 60_000,
-    0,
+async function getListeningStats(userId: string, year?: number) {
+  return calculateListeningStats(
+    await db.all<ListeningStatsRow>(listeningStatsQuery(userId, year)),
   );
-
-  const artists = rows.reduce(
-    (acc, { artistName }) => {
-      if (artistName) {
-        acc[artistName] = (acc[artistName] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const albums = rows.reduce(
-    (acc, { albumNameRel }) => {
-      if (albumNameRel) {
-        acc[albumNameRel] = (acc[albumNameRel] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  const tracks = rows.reduce(
-    (acc, { track }) => {
-      acc[track.name] = (acc[track.name] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  return { minutes, artists, albums, tracks, played: rows.length };
 }
 
 function getTopItems(arg: {
@@ -119,8 +79,8 @@ async function getUserYearsWithData(userId: string): Promise<number[]> {
     const min = new Date(minDate);
     const max = new Date(maxDate);
 
-    const minYear = min.getFullYear();
-    const maxYear = max.getFullYear();
+    const minYear = min.getUTCFullYear();
+    const maxYear = max.getUTCFullYear();
 
     for (let year = minYear; year <= maxYear; year++) {
       years.add(year);
@@ -178,63 +138,8 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
 
     log(`found ${liked} total liked tracks for user ${userId}`, "stats");
 
-    let played = 0;
-    let minutes = 0;
-    const artists: Record<string, number> = {};
-    const albums: Record<string, number> = {};
-    const tracks: Record<string, number> = {};
-
-    const take = 2500;
-    let skip = 0;
-    let all = false;
-    let batchNumber = 0;
-
-    while (!all) {
-      batchNumber++;
-      const rows = await db
-        .select({
-          track: {
-            uri: track.uri,
-            name: track.name,
-            duration: track.duration,
-          },
-          artistName: artist.name,
-          albumNameRel: album.name,
-        })
-        .from(recentTracks)
-        .innerJoin(track, eq(recentTracks.trackId, track.id))
-        .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
-        .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
-        .leftJoin(album, eq(track.albumId, album.id))
-        .where(eq(recentTracks.userId, userId))
-        .orderBy(desc(recentTracks.playedAt))
-        .limit(take)
-        .offset(skip);
-
-      log(
-        `processing batch ${batchNumber} for user ${userId} (all-time): ${rows.length} tracks (skip: ${skip})`,
-        "stats",
-      );
-
-      if (rows.length < take) {
-        all = true;
-      }
-
-      skip += rows.length;
-      const batch = calculateStats(rows);
-      played += batch.played;
-      minutes += batch.minutes;
-
-      for (const [artist, count] of Object.entries(batch.artists)) {
-        artists[artist] = (artists[artist] ?? 0) + count;
-      }
-      for (const [album, count] of Object.entries(batch.albums)) {
-        albums[album] = (albums[album] ?? 0) + count;
-      }
-      for (const [track, count] of Object.entries(batch.tracks)) {
-        tracks[track] = (tracks[track] ?? 0) + count;
-      }
-    }
+    const { played, minutes, artists, albums, tracks } =
+      await getListeningStats(userId);
 
     const topItems = getTopItems({ tracks, albums, artists });
 
@@ -344,16 +249,14 @@ export async function syncUserStats({
     });
 
   try {
-    const date = setYear(new Date(), year);
-
     const [{ count: liked }] = await db
       .select({ count: count() })
       .from(likedTracks)
       .where(
         and(
           eq(likedTracks.userId, userId),
-          gte(likedTracks.createdAt, startOfYear(date).toISOString()),
-          lte(likedTracks.createdAt, endOfYear(date).toISOString()),
+          gte(likedTracks.createdAt, `${year}-01-01T00:00:00.000Z`),
+          lt(likedTracks.createdAt, `${year + 1}-01-01T00:00:00.000Z`),
         ),
       );
 
@@ -362,69 +265,8 @@ export async function syncUserStats({
       "stats",
     );
 
-    let played = 0;
-    let minutes = 0;
-    const artists: Record<string, number> = {};
-    const albums: Record<string, number> = {};
-    const tracks: Record<string, number> = {};
-
-    const take = 2500;
-    let skip = 0;
-    let all = false;
-    let batchNumber = 0;
-
-    while (!all) {
-      batchNumber++;
-      const rows = await db
-        .select({
-          track: {
-            uri: track.uri,
-            name: track.name,
-            duration: track.duration,
-          },
-          artistName: artist.name,
-          albumNameRel: album.name,
-        })
-        .from(recentTracks)
-        .innerJoin(track, eq(recentTracks.trackId, track.id))
-        .leftJoin(trackToArtist, eq(track.id, trackToArtist.trackId))
-        .leftJoin(artist, eq(trackToArtist.artistId, artist.id))
-        .leftJoin(album, eq(track.albumId, album.id))
-        .where(
-          and(
-            eq(recentTracks.userId, userId),
-            gte(recentTracks.playedAt, startOfYear(date).toISOString()),
-            lte(recentTracks.playedAt, endOfYear(date).toISOString()),
-          ),
-        )
-        .orderBy(desc(recentTracks.playedAt))
-        .limit(take)
-        .offset(skip);
-
-      log(
-        `processing batch ${batchNumber} for user ${userId}, year ${year}: ${rows.length} tracks (skip: ${skip})`,
-        "stats",
-      );
-
-      if (rows.length < take) {
-        all = true;
-      }
-
-      skip += rows.length;
-      const batch = calculateStats(rows);
-      played += batch.played;
-      minutes += batch.minutes;
-
-      for (const [artist, count] of Object.entries(batch.artists)) {
-        artists[artist] = (artists[artist] ?? 0) + count;
-      }
-      for (const [album, count] of Object.entries(batch.albums)) {
-        albums[album] = (albums[album] ?? 0) + count;
-      }
-      for (const [track, count] of Object.entries(batch.tracks)) {
-        tracks[track] = (tracks[track] ?? 0) + count;
-      }
-    }
+    const { played, minutes, artists, albums, tracks } =
+      await getListeningStats(userId, year);
 
     const topItems = getTopItems({ tracks, albums, artists });
 
@@ -563,7 +405,7 @@ export async function syncAllUsersStats() {
             }
 
             const existingStatsYears = await getUserYearsWithStats(userId);
-            const currentYear = new Date().getFullYear();
+            const currentYear = new Date().getUTCFullYear();
             const pastYears = years.filter((year) => year < currentYear);
             const missingPastYears = pastYears.filter(
               (year) => !existingStatsYears.has(year),

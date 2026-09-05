@@ -24,6 +24,7 @@ export default [
     route("track/:trackId", "routes/track/track.tsx"),
     route("artist/:artistId", "routes/track/artist.tsx"),
     route("album/:albumId", "routes/track/album.tsx"),
+    route("history", "routes/history.tsx"),
     route("settings", "routes/settings.tsx", [
       ...prefix("admin", [
         route("syncs", "routes/admin/syncs.tsx"),
@@ -34,6 +35,7 @@ export default [
     ]),
   ]),
 
+  route("resources/history-import", "routes/resources/history-import.ts"),
   route("resources/import", "routes/resources/import.ts"),
   route("actions/:action", "routes/resources/actions.ts"),
   route("api/auth/:provider/callback", "routes/resources/authenticate.ts"),
