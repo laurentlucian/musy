@@ -184,6 +184,7 @@
   }
   .app-content {
     max-width: 1160px;
+    padding-top: 2rem;
     margin-inline: auto;
     min-width: 0;
   }
@@ -270,6 +271,9 @@
 }
 
 @media (max-width: 767px) {
+  .app-content {
+    padding-top: 1.5rem;
+  }
   .app-shell {
     padding: 0 1.25rem calc(7rem + env(safe-area-inset-bottom));
   }
