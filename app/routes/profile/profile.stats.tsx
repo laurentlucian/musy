@@ -130,7 +130,15 @@ function Stats({
   const peakWeekday = stats.weekdays.reduce((best, row) =>
     row.plays > best.plays ? row : best,
   );
-  const peakHour = stats.hourly.reduce((best, row) =>
+  const [offsetHours, setOffsetHours] = useState<number | null>(null);
+  useEffect(() => {
+    setOffsetHours(Math.round(-new Date().getTimezoneOffset() / 60));
+  }, []);
+  const hourly = stats.hourly.map((row, hour) => ({
+    ...row,
+    plays: stats.hourly[(hour - (offsetHours ?? 0) + 48) % 24].plays,
+  }));
+  const peakHour = hourly.reduce((best, row) =>
     row.plays > best.plays ? row : best,
   );
   const weekendShare = stats.played
@@ -325,7 +333,7 @@ function Stats({
               <h2 className="font-semibold text-sm">
                 Time of day{" "}
                 <span className="font-normal text-muted-foreground text-xs">
-                  UTC
+                  {offsetHours === null ? "UTC" : "local"}
                 </span>
               </h2>
               <p className="mt-3 font-semibold text-2xl tabular-nums">
@@ -335,7 +343,7 @@ function Stats({
                 </span>
               </p>
               <BarChart
-                rows={stats.hourly.map((row) => ({
+                rows={hourly.map((row) => ({
                   label: row.label,
                   value: row.plays,
                 }))}
