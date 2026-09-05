@@ -1,4 +1,8 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
+import {
+  processHistoryStats,
+  recoverHistoryStats,
+} from "~/lib.server/services/history-stats";
 import { checkAndQueueDeliveries } from "~/lib.server/services/queue/check-playback";
 import {
   processQueueDelivery,
@@ -9,15 +13,6 @@ import {
   recoverInitialImports,
 } from "~/lib.server/services/scheduler/initial-import";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
-
-import {
-  processHistoryStats,
-  recoverHistoryStats,
-} from "~/lib.server/services/history-stats";
-import {
-  processHistoryLocations,
-  recoverHistoryLocations,
-} from "~/lib.server/services/history-geolocation";
 
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
@@ -57,7 +52,6 @@ export default {
       ctx.waitUntil(checkAndQueueDeliveries());
       ctx.waitUntil(recoverInitialImports());
       ctx.waitUntil(recoverHistoryStats());
-      ctx.waitUntil(recoverHistoryLocations());
     }
   },
   async queue(batch, env, ctx) {
@@ -74,18 +68,6 @@ export default {
       ) {
         try {
           await processHistoryStats(body.userId, body.jobId);
-          message.ack();
-        } catch {
-          message.retry({ delaySeconds: 60 });
-        }
-        continue;
-      }
-      if (
-        body.type === "history-geolocation" &&
-        typeof body.userId === "string"
-      ) {
-        try {
-          await processHistoryLocations(body.userId);
           message.ack();
         } catch {
           message.retry({ delaySeconds: 60 });

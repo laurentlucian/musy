@@ -142,7 +142,7 @@ export function HistoryImport({
         )}
         {!state && (
           <p className="text-muted-foreground text-xs">
-            IP and device history stays private. Map locations are approximate.
+            IP and device history stays private.
           </p>
         )}
         {state?.phase !== "complete" && (

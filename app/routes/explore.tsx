@@ -1,24 +1,15 @@
-import { Globe2, MapPin, Monitor, RefreshCw } from "lucide-react";
-import { Suspense, use, useEffect } from "react";
-import {
-  data,
-  Link,
-  redirect,
-  useFetcher,
-  useRevalidator,
-  useSearchParams,
-} from "react-router";
+import { Globe2, MapPin, Monitor } from "lucide-react";
+import { Suspense, use } from "react";
+import { data, Link, redirect, useSearchParams } from "react-router";
 import ListeningMap from "~/components/domain/listening-map";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { normalizeCountry } from "~/lib/countries";
 import { listeningTime } from "~/lib/device";
-import { startHistoryLocations } from "~/lib.server/services/history-geolocation";
 import {
   getHistoryInsights,
   getLocationSongs,
-  parseBounds,
 } from "~/lib.server/services/history-insights";
 import type { Route } from "./+types/explore";
 
@@ -28,9 +19,6 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const userId = context.get(userContext);
   if (!userId) throw redirect("/", { headers });
   const params = new URL(request.url).searchParams;
-  const bounds = parseBounds(params.get("bounds"));
-  if (params.has("bounds") && !bounds)
-    throw data("Invalid map area", { status: 400, headers });
   const country = normalizeCountry(params.get("country"));
   if (params.has("country") && !country)
     throw data("Invalid country", { status: 400, headers });
@@ -39,30 +27,16 @@ export async function loader({ context, request }: Route.LoaderArgs) {
     throw data("Invalid page", { status: 400, headers });
   const history = Promise.all([
     getHistoryInsights(userId),
-    getLocationSongs(userId, bounds, rawPage, country),
+    getLocationSongs(userId, rawPage, country),
   ]).then(([insights, result]) => ({ ...insights, ...result }));
   return data(
     {
       history,
       page: rawPage,
       country,
-      selected: bounds !== null || country !== null,
     },
     { headers },
   );
-}
-
-export async function action({ context, request }: Route.ActionArgs) {
-  const userId = context.get(userContext);
-  if (!userId)
-    return data({ error: "Sign in to continue." }, { status: 401, headers });
-  if (request.headers.get("Origin") !== new URL(request.url).origin)
-    return data({ error: "Invalid request." }, { status: 403, headers });
-  const form = await request.formData();
-  if (form.get("intent") !== "locate")
-    return data({ error: "Invalid request." }, { status: 400, headers });
-  await startHistoryLocations(userId);
-  return data({ error: null }, { headers });
 }
 
 export default function Explore({ loaderData }: Route.ComponentProps) {
@@ -111,38 +85,14 @@ function ExploreSummary({
 function ExploreContent({
   loaderData,
 }: Pick<Route.ComponentProps, "loaderData">) {
-  const {
-    devices,
-    locations,
-    countries,
-    listens,
-    msPlayed,
-    located,
-    job,
-    songs,
-    total,
-  } = use(loaderData.history);
-  const { page, selected, country } = loaderData;
-  const [params, setParams] = useSearchParams();
-  const fetcher = useFetcher<typeof action>();
-  const revalidator = useRevalidator();
-  const active = job?.status === "queued" || job?.status === "running";
-  useEffect(() => {
-    if (!active) return;
-    const timer = window.setInterval(() => {
-      if (
-        document.visibilityState === "visible" &&
-        revalidator.state === "idle"
-      )
-        void revalidator.revalidate();
-    }, 10_000);
-    return () => window.clearInterval(timer);
-  }, [active, revalidator]);
+  const { devices, countries, listens, msPlayed, located, songs, total } = use(
+    loaderData.history,
+  );
+  const { page, country } = loaderData;
+  const [, setParams] = useSearchParams();
   const label = country
     ? countries.find((item) => item.code === country)?.label || country
-    : selected
-      ? params.get("area") || "Selected area"
-      : "All listening";
+    : "All listening";
   return (
     <>
       {!listens ? (
@@ -159,42 +109,19 @@ function ExploreContent({
       ) : (
         <>
           <section className="space-y-3" aria-label="Listening map">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="flex items-center gap-2 font-semibold text-lg">
-                  <MapPin className="size-4" />
-                  Places
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                  {located.toLocaleString()} of {listens.toLocaleString()}{" "}
-                  listens located
-                </p>
-              </div>
-              <fetcher.Form method="post">
-                <input type="hidden" name="intent" value="locate" />
-                <Button
-                  type="submit"
-                  variant="outline"
-                  disabled={active || fetcher.state !== "idle"}
-                >
-                  <RefreshCw
-                    className={`size-4 ${active ? "animate-spin" : ""}`}
-                  />
-                  {active
-                    ? "Locating cities…"
-                    : job?.status === "failed"
-                      ? "Retry cities"
-                      : "Locate cities"}
-                </Button>
-              </fetcher.Form>
+            <div>
+              <h2 className="flex items-center gap-2 font-semibold text-lg">
+                <MapPin className="size-4" />
+                Places
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                {located.toLocaleString()} of {listens.toLocaleString()} listens
+                located
+              </p>
             </div>
             <ListeningMap
-              locations={locations}
               countries={countries}
-              onSelect={(bounds, area) =>
-                setParams({ bounds: bounds.join(","), area })
-              }
-              onSelectCountry={(code) => setParams({ country: code })}
+              onSelect={(code) => setParams({ country: code })}
             />
             {countries.length > 0 && (
               <section className="flex flex-wrap gap-2" aria-label="Countries">
@@ -215,20 +142,8 @@ function ExploreContent({
               </section>
             )}
             <p className="text-muted-foreground text-xs">
-              Countries from your Spotify export. Map locations are current IP
-              estimates from ipwho.is. Select a country or marker to explore
-              songs.
+              Countries from your Spotify export. Select one to explore songs.
             </p>
-            {located < listens && !active && (
-              <p className="text-muted-foreground text-xs">
-                Unlocated listens remain in your history.
-              </p>
-            )}
-            {(job?.error || fetcher.data?.error) && (
-              <output className="block text-muted-foreground text-sm">
-                {fetcher.data?.error || job?.error}
-              </output>
-            )}
           </section>
           <section className="space-y-4" aria-label="Device statistics">
             <div>
@@ -273,7 +188,7 @@ function ExploreContent({
                   {total.toLocaleString()} listens
                 </p>
               </div>
-              {selected && (
+              {country && (
                 <Button variant="ghost" onClick={() => setParams({})}>
                   Show all
                 </Button>
