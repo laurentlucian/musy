@@ -87,19 +87,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta
-          property="og:image"
-          content="https://musy.olaurent.com/logo/musy.png"
-        />
-        <meta property="og:image:width" content="1024" />
-        <meta property="og:image:height" content="1024" />
+        <meta property="og:image" content="https://musy.olaurent.com/og.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:alt" content="Musy cat wearing headphones" />
-        <meta name="twitter:card" content="summary" />
-        <meta
-          name="twitter:image"
-          content="https://musy.olaurent.com/logo/musy.png"
-        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://musy.olaurent.com/og.png" />
         <meta name="twitter:image:alt" content="Musy cat wearing headphones" />
         <Meta />
         <Links />
