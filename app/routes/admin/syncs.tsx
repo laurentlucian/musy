@@ -20,19 +20,19 @@ export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
       <div className="overflow-y-hidden">
         <table className="min-w-max rounded-lg">
           <thead>
-            <tr className="text-left text-muted-foreground text-xs *:p-3">
-              <th>User ID</th>
-              <th>Created</th>
-              <th>Updated</th>
-              <th>Type</th>
-              <th>State</th>
+            <tr className="text-left text-muted-foreground text-xs">
+              <th className="p-3">User ID</th>
+              <th className="p-3">Created</th>
+              <th className="p-3">Updated</th>
+              <th className="p-3">Type</th>
+              <th className="p-3">State</th>
             </tr>
           </thead>
           <tbody>
             {syncs.map((sync) => (
               <tr
                 key={`${sync.userId}-${sync.type}`}
-                className="bg-card transition-colors duration-150 *:p-3 hover:bg-accent"
+                className="bg-card transition-colors duration-150 hover:bg-accent"
                 onClick={() => {
                   navigate(
                     href("/profile/:userId?", {
@@ -41,11 +41,11 @@ export default function Syncs({ loaderData: { syncs } }: Route.ComponentProps) {
                   );
                 }}
               >
-                <td className="text-sm">{sync.userId}</td>
-                <td className="">{format(sync.createdAt, "MMM d")}</td>
-                <td className="">{format(sync.updatedAt, "MMM d h:m a")}</td>
-                <td className="capitalize">{sync.type}</td>
-                <td className="capitalize">{sync.state}</td>
+                <td className="p-3 font-mono text-xs">{sync.userId}</td>
+                <td className="p-3 font-mono text-xs">{format(sync.createdAt, "MMM d")}</td>
+                <td className="p-3 font-mono text-xs">{format(sync.updatedAt, "MMM d h:m a")}</td>
+                <td className="p-3 capitalize">{sync.type}</td>
+                <td className="p-3 capitalize">{sync.state}</td>
               </tr>
             ))}
           </tbody>

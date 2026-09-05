@@ -13,6 +13,11 @@ const handler = createRequestHandler(
 
 export default {
   async fetch(request) {
+    const url = new URL(request.url);
+    if (url.hostname === "musy.llabs.site") {
+      url.hostname = "musy.olaurent.com";
+      return Response.redirect(url.toString(), 301);
+    }
     return handler(request, new RouterContextProvider());
   },
   async scheduled(controller, _env, ctx) {

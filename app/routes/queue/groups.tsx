@@ -71,7 +71,7 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
             <Link
               to={`/queue/${group.id}`}
               key={group.id}
-              className="cursor-pointer rounded-xl bg-card text-card-foreground shadow transition-colors hover:bg-accent/50 hover:ring-2 hover:ring-secondary"
+              className="cursor-pointer rounded-lg border border-border bg-card text-card-foreground transition-colors hover:bg-accent/50 hover:ring-2 hover:ring-secondary"
             >
               <div className="flex flex-col gap-2 p-6">
                 <h3 className="font-semibold leading-none tracking-tight">

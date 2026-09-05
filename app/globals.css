@@ -1,5 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
 @import "./components/icons/waver-styles.css" layer(base);
-
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -67,12 +67,13 @@
 
 @layer base {
   :root {
-    --background: 359 8% 3%;
-    --foreground: 0 0% 89%;
-    --card: 240 4.9% 7%;
-    --card-foreground: 0 0% 85%;
-    --popover: 243 11% 4%;
-    --popover-foreground: 40 22% 97%;
+    /* Grok-inspired dark theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 5.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
@@ -81,9 +82,9 @@
     --muted-foreground: 240 5% 64.9%;
     --accent: 30 0% 11%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 10%;
+    --border: 240 3.7% 11%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 10.9%;
     --chart-1: 220 70% 50%;
@@ -92,7 +93,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
-    --radius: 0.7rem;
+    --radius: 0.5rem;
   }
 }
 
@@ -138,12 +139,12 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+    scrollbar-color: rgba(168, 162, 255, 0.4) transparent;
   }
 
   *::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 8px;
+    height: 8px;
   }
 
   *::-webkit-scrollbar-track {
@@ -151,13 +152,135 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: rgba(155, 155, 155, 0.5);
-    border-radius: 6px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    background-color: rgba(168, 162, 255, 0.3);
+    border-radius: 4px;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(155, 155, 155, 0.7);
+    background-color: rgba(168, 162, 255, 0.5);
   }
+}
+
+/* Landing page animations - keeping only those not available in Tailwind */
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(5%, -5%) rotate(2deg);
+  }
+  66% {
+    transform: translate(-5%, 5%) rotate(-2deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Using Tailwind built-ins where possible: animate-bounce, animate-pulse, animate-spin */
+.animate-float {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out forwards;
+}
+
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animation delays - using Tailwind arbitrary values would be: delay-200, delay-400, etc. */
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+.animation-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 15s linear infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
 }

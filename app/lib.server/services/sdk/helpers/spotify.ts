@@ -2,8 +2,8 @@ import { and, eq } from "drizzle-orm";
 import { notNull } from "~/components/utils";
 import { album, artist, track, trackToArtist } from "~/lib.server/db/schema";
 import type { Artist, SimplifiedAlbum, Track } from "~/lib.server/sdk/spotify";
-import { type Spotified } from "~/lib.server/services/sdk/spotify";
 import { db } from "~/lib.server/services/db";
+import type { Spotified } from "~/lib.server/services/sdk/spotify";
 
 type SpotifyTrack = Track;
 
@@ -95,9 +95,8 @@ export async function transformTracks(
     if (simplifiedArtistIds.length > 0) {
       for (let i = 0; i < simplifiedArtistIds.length; i += 50) {
         const batchIds = simplifiedArtistIds.slice(i, i + 50);
-        const { artists: fullArtists } = await spotify.artist.getArtists(
-          batchIds,
-        );
+        const { artists: fullArtists } =
+          await spotify.artist.getArtists(batchIds);
         for (const fa of fullArtists) {
           if (fa?.id) artistsToEnrich.set(fa.id, fa);
         }
@@ -205,9 +204,8 @@ export async function transformArtists(
     if (simplifiedIds.length > 0) {
       for (let i = 0; i < simplifiedIds.length; i += 50) {
         const batchIds = simplifiedIds.slice(i, i + 50);
-        const { artists: fullArtists } = await spotify.artist.getArtists(
-          batchIds,
-        );
+        const { artists: fullArtists } =
+          await spotify.artist.getArtists(batchIds);
         for (const fa of fullArtists) {
           if (fa?.id) artistMap.set(fa.id, fa);
         }

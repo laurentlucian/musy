@@ -59,12 +59,13 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
     <article className="flex flex-col gap-3 font-normal text-sm sm:flex-1">
       <table className="w-full whitespace-nowrap rounded-lg">
         <thead>
-          <tr className="text-left text-muted-foreground text-xs *:p-3">
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created</th>
-            <th>Updated</th>
-            <th>Revoked</th>
+          <tr className="text-left text-muted-foreground text-xs">
+            <th className="p-3">Name</th>
+            <th className="p-3">Email</th>
+            <th className="p-3">Created</th>
+            <th className="p-3">Updated</th>
+            <th className="p-3">Revoked</th>
+            <th className="p-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -74,15 +75,18 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
             return (
               <tr
                 key={profile.id}
-                className="bg-card cursor-pointer transition-colors duration-150 hover:bg-muted *:p-3"
+                className="cursor-pointer bg-card transition-colors duration-150 hover:bg-muted"
                 onClick={() => navigate(`/profile/${profile.id}`)}
               >
-                <td className="capitalize">{profile.name}</td>
-                <td>{profile.email}</td>
-                <td>{format(profile.createdAt, "MMM d y")}</td>
-                <td>{format(profile.updatedAt, "MMM d h:m a")}</td>
-                <td>{revoked ? "Yes" : "No"}</td>
-                <td className="flex items-center gap-2" onClick={(event) => event.stopPropagation()}>
+                <td className="p-3 capitalize">{profile.name}</td>
+                <td className="p-3">{profile.email}</td>
+                <td className="p-3 font-mono text-xs">{format(profile.createdAt, "MMM d y")}</td>
+                <td className="p-3 font-mono text-xs">{format(profile.updatedAt, "MMM d h:m a")}</td>
+                <td className="p-3">{revoked ? "Yes" : "No"}</td>
+                <td
+                  className="p-3"
+                  onClick={(event) => event.stopPropagation()}
+                >
                   <Button
                     variant="destructive"
                     size="icon"

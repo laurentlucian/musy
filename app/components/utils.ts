@@ -145,12 +145,45 @@ export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
 }
 
 export function logError(error: unknown, label?: string) {
-  console.error(`${(label ?? "error")}:`, error);
+  console.error(`${label ?? "error"}:`, error);
 }
 
 export function log(message: string, label?: string) {
-  console.log(`${(label ?? "log")}: ${message}`);
+  console.log(`${label ?? "log"}: ${message}`);
 }
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const formatDuration = (ms: number) => {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+};
+
+export const formatFollowers = (count: number) => {
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(1)}M`;
+  }
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`;
+  }
+  return count.toString();
+};
+
+export const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+export const parseGenres = (genresStr: string) => {
+  return genresStr
+    .split(",")
+    .filter(Boolean)
+    .map((g) => g.trim());
+};
