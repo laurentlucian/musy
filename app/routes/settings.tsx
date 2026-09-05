@@ -33,9 +33,6 @@ export default function Settings({
   return (
     <main className="mx-auto w-full max-w-6xl py-4">
       <header className="mb-6 border-b border-border pb-4">
-        <p className="mb-3 text-xs font-semibold uppercase text-primary">
-          Your space
-        </p>
         <h1 className="font-semibold text-2xl sm:text-3xl">Settings</h1>
       </header>
       <div className="flex flex-col gap-10 md:flex-row">
@@ -63,19 +60,11 @@ export default function Settings({
         </aside>
         <div className="min-w-0 flex-1">
           {root ? (
-            <div className="py-4">
-              <h2 className="font-semibold text-3xl">A little housekeeping.</h2>
-              <p className="mt-3 text-muted-foreground">
-                {userId
-                  ? "Manage your session here."
-                  : "Sign in to manage your account."}
-              </p>
-              {!userId && (
-                <Button asChild className="mt-6">
-                  <Link to="/">Back to Musy</Link>
-                </Button>
-              )}
-            </div>
+            !userId && (
+              <Button asChild>
+                <Link to="/">Sign in</Link>
+              </Button>
+            )
           ) : (
             <Outlet />
           )}

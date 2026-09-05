@@ -36,7 +36,7 @@ export function Nav({
           aria-label="Main navigation"
           className="mt-14 flex flex-1 flex-col gap-1"
         >
-          <p className="section-label mb-2 px-4">Your listening</p>
+          <p className="section-label mb-2 px-4">Listening</p>
           <SidebarLink className="nav-item" to="/profile" end>
             <ChartNoAxesCombined size={18} />
             Overview
@@ -49,7 +49,7 @@ export function Nav({
             <History size={18} />
             History
           </SidebarLink>
-          <p className="section-label mb-2 mt-8 px-4">Your collection</p>
+          <p className="section-label mb-2 mt-8 px-4">Collection</p>
           <SidebarLink className="nav-item" to="/profile/liked">
             <Heart size={18} />
             Liked songs
@@ -58,8 +58,7 @@ export function Nav({
             <Library size={18} />
             Playlists
           </SidebarLink>
-          <p className="section-label mb-2 mt-8 px-4">Together</p>
-          <SidebarLink className="nav-item" to="/queue">
+          <SidebarLink className="nav-item mt-8" to="/queue">
             <ListMusic size={18} />
             Shared queues
           </SidebarLink>

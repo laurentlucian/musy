@@ -1,7 +1,7 @@
 import { userContext } from "~/context";
 import { getProfile } from "~/lib.server/services/db/users";
 import type { Route } from "./+types/layout.root";
-import { Outlet, useLocation, useNavigation } from "react-router";
+import { Outlet, useNavigation } from "react-router";
 import { Nav } from "~/components/domain/nav";
 import { Logo } from "~/components/domain/logo";
 
@@ -16,17 +16,7 @@ export async function loader({ context }: Route.LoaderArgs) {
 }
 
 export default function LayoutRoot({ loaderData }: Route.ComponentProps) {
-  const { pathname } = useLocation();
   const navigation = useNavigation();
-  const section = pathname.startsWith("/queue")
-    ? "Together"
-    : pathname.startsWith("/settings")
-      ? "Your account"
-      : /\/(track|artist|album)\//.test(pathname)
-        ? "Music details"
-        : /\/(liked|playlists)(\/|$)/.test(pathname)
-          ? "Your collection"
-          : "Your listening";
   return (
     <div className="app-shell">
       <a href="#main-content" className="skip-link">
@@ -38,7 +28,6 @@ export default function LayoutRoot({ loaderData }: Route.ComponentProps) {
           <div className="md:hidden">
             <Logo />
           </div>
-          <p className="section-label hidden md:block">Musy / {section}</p>
           <output className="section-label">
             {navigation.state === "loading" ? "Loading…" : ""}
           </output>

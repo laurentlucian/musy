@@ -32,7 +32,7 @@ export function YearlyPlaylists({
             <CalendarDays className="size-5" />
           </div>
           <div>
-            <h2 className="font-semibold">Your liked songs, by year</h2>
+            <h2 className="font-semibold">Liked songs by year</h2>
             <p className="mt-1 max-w-md text-muted-foreground text-sm">
               Turn each year of saved music into a Spotify playlist.
             </p>
@@ -128,7 +128,7 @@ function YearPicker({
     return (
       <div className="py-4" aria-live="polite">
         <Check className="mb-3 size-8" />
-        <h3 className="font-semibold">Your playlists are ready</h3>
+        <h3 className="font-semibold">Playlists ready</h3>
         <p className="mt-2 text-muted-foreground text-sm">
           {fetcher.data.created ?? 0} created · {fetcher.data.updated ?? 0}{" "}
           updated

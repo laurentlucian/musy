@@ -189,9 +189,6 @@ export default function Group({ loaderData }: Route.ComponentProps) {
         <ArrowLeft className="size-4" /> Shared queues
       </Link>
       <header className="mb-8 border-b border-border pb-4">
-        <p className="mb-3 text-xs font-semibold uppercase text-primary">
-          Shared queue
-        </p>
         <h1 className="font-semibold text-2xl sm:text-3xl">{group.name}</h1>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-5">
           <PlaybackStatusPanel
@@ -216,9 +213,6 @@ export default function Group({ loaderData }: Route.ComponentProps) {
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center border-y border-border py-16 text-center">
           <h3 className="font-semibold text-3xl">No tracks yet</h3>
-          <p className="mt-3 text-muted-foreground text-sm">
-            Add a Spotify track to the queue.
-          </p>
         </div>
       ) : (
         <div className="flex w-full flex-col divide-y divide-border">

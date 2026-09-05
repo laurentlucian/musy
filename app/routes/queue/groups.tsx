@@ -54,13 +54,7 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
     <section className="mx-auto w-full max-w-5xl py-4">
       <header className="mb-6 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-4">
         <div>
-          <p className="mb-3 text-xs font-semibold uppercase text-primary">
-            Shared music
-          </p>
           <h1 className="font-semibold text-2xl sm:text-3xl">Shared queues</h1>
-          <p className="mt-4 max-w-md text-muted-foreground">
-            Queue tracks with friends.
-          </p>
         </div>
         <CreateGroupButton>
           <Plus className="size-4" /> New queue
@@ -70,9 +64,6 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
         <div className="flex flex-col items-center py-16 text-center">
           <Users className="mb-6 size-10 text-primary" strokeWidth={1} />
           <h2 className="font-semibold text-3xl">No queues yet</h2>
-          <p className="mt-3 max-w-sm text-muted-foreground">
-            Create a queue and invite friends.
-          </p>
         </div>
       ) : (
         <div className="divide-y divide-border">

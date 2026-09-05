@@ -32,13 +32,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background px-6 py-8 text-foreground">
       <div className="flex w-full max-w-xl flex-col items-center text-center">
-        <p className="mb-8 text-sm font-semibold tracking-widest">musy</p>
-        <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">
-          Get to know your music.
-        </h1>
-        <p className="mt-5 max-w-sm text-pretty text-base leading-relaxed text-muted-foreground">
-          Explore your top tracks, revisit recent listens, and find more in your Spotify library.
-        </p>
+        <h1 className="text-4xl font-semibold tracking-tight">musy</h1>
         <Form method="post" className="mt-8">
           <input type="hidden" name="mode" value="authorize" />
           <input type="hidden" name="provider" value="spotify" />
