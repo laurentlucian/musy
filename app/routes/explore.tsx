@@ -41,7 +41,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 
 export default function Explore({ loaderData }: Route.ComponentProps) {
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-8 py-4">
+    <main className="space-y-8 py-4">
       <header className="flex flex-wrap items-end justify-between gap-4 border-border border-b pb-4">
         <div>
           <h1 className="font-semibold text-2xl">Explore</h1>

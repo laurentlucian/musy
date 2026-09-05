@@ -56,7 +56,7 @@ export default function Groups({ loaderData }: Route.ComponentProps) {
   return (
     <section
       aria-labelledby="queues-title"
-      className="mx-auto w-full max-w-3xl pb-8"
+      className="pb-8"
     >
       <header className="mb-4 flex items-center justify-between gap-4">
         <div>

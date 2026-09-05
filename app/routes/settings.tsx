@@ -31,7 +31,7 @@ export default function Settings({
   const navigation = useNavigation();
 
   return (
-    <main className="mx-auto w-full max-w-6xl py-4">
+    <main className="py-4">
       <header className="mb-6 border-border border-b pb-4">
         <h1 className="font-semibold text-2xl sm:text-3xl">Settings</h1>
       </header>

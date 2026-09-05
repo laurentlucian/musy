@@ -28,7 +28,7 @@ export default function Artist({ loaderData: artist }: Route.ComponentProps) {
   const genres = parseGenres(artist.genres);
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+    <section className="pb-16">
       <Button
         type="button"
         variant="ghost"

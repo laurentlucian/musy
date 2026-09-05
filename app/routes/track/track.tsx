@@ -62,7 +62,7 @@ export default function Track({ loaderData: track }: Route.ComponentProps) {
   const genres = artist?.genres ? parseGenres(artist.genres) : [];
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8">
+    <section className="pb-16">
       <Button
         type="button"
         variant="ghost"
