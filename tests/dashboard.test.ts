@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { analyticsRebuildStatements } from "../app/lib.server/services/analytics-query";
 import { Database } from "bun:sqlite";
 import { expect, test } from "bun:test";
 import { SQLiteSyncDialect } from "drizzle-orm/sqlite-core";
@@ -11,6 +13,8 @@ import {
 test("dashboard isolates users and UTC years, retains zero durations and separates identities", () => {
   const db = new Database(":memory:");
   db.exec(`
+    CREATE TABLE Profile(id TEXT PRIMARY KEY);
+    INSERT INTO Profile VALUES ('owner'),('other');
     CREATE TABLE Track(id TEXT, name TEXT, duration INTEGER, albumId TEXT);
     CREATE TABLE Album(id TEXT, name TEXT);
     CREATE TABLE Artist(id TEXT, name TEXT);
@@ -32,6 +36,24 @@ test("dashboard isolates users and UTC years, retains zero durations and separat
       ('owner','t1','2027-01-01T00:00:00Z',999999,NULL);
     INSERT INTO LikedTracks VALUES ('owner','2026-01-01','liked'),('owner','2026-01-01','unliked'),('other','2026-01-01','liked');
   `);
+  db.exec(
+    readFileSync("app/lib.server/db/migrations/0018_analytics.sql", "utf8"),
+  );
+  for (const year of [2026, 2027]) {
+    const statements = analyticsRebuildStatements();
+    const bindings = [
+      ["owner", year],
+      [year, "owner", year],
+      ["owner", year],
+      [year, "owner", year],
+      [1, "owner", year],
+    ];
+    db.transaction(() =>
+      statements.forEach((q, i) => {
+        db.run(q, bindings[i]);
+      }),
+    )();
+  }
   const queries = dashboardQueries("owner", 2026);
   const read = (key: keyof typeof queries) => {
     const query = new SQLiteSyncDialect().sqlToQuery(queries[key]);
@@ -45,6 +67,7 @@ test("dashboard isolates users and UTC years, retains zero durations and separat
     uniqueArtists: 3,
     uniqueAlbums: 2,
     estimatedPlays: 1,
+    unknownPlays: 0,
     liked: 1,
   });
   expect(read("topTracks")).toHaveLength(3);
@@ -92,6 +115,7 @@ test("empty history and streak gaps produce finite derived values", () => {
     uniqueArtists: 0,
     uniqueAlbums: 0,
     estimatedPlays: 0,
+    unknownPlays: 0,
     liked: 0,
   };
   const empty = summarizeDashboard(totals, [], [], 0);
@@ -123,6 +147,7 @@ test("all-time trend includes silent months across year boundaries", () => {
     uniqueArtists: 0,
     uniqueAlbums: 0,
     estimatedPlays: 0,
+    unknownPlays: 0,
     liked: 0,
   };
   const result = summarizeDashboard(

@@ -1,6 +1,13 @@
 import { Globe2, MapPin, Monitor } from "lucide-react";
-import { Suspense, use } from "react";
-import { data, Link, redirect, useSearchParams } from "react-router";
+import { Suspense, use, useEffect, useRef } from "react";
+import {
+  data,
+  Link,
+  redirect,
+  type ShouldRevalidateFunctionArgs,
+  useFetcher,
+  useSearchParams,
+} from "react-router";
 import ListeningMap from "~/components/domain/listening-map";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
@@ -10,8 +17,10 @@ import { listeningTime } from "~/lib/device";
 import {
   getHistoryInsights,
   getLocationSongs,
+  parseHistoryCursor,
 } from "~/lib.server/services/history-insights";
 import type { Route } from "./+types/explore";
+import type { loader as songsLoader } from "./resources.explore-songs";
 
 const headers = { "Cache-Control": "private, no-store" };
 
@@ -22,21 +31,42 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const country = normalizeCountry(params.get("country"));
   if (params.has("country") && !country)
     throw data("Invalid country", { status: 400, headers });
-  const rawPage = Number(params.get("page") ?? 0);
-  if (!Number.isSafeInteger(rawPage) || rawPage < 0 || rawPage > 1_000_000)
-    throw data("Invalid page", { status: 400, headers });
-  const history = Promise.all([
-    getHistoryInsights(userId),
-    getLocationSongs(userId, rawPage, country),
-  ]).then(([insights, result]) => ({ ...insights, ...result }));
+  let cursor: ReturnType<typeof parseHistoryCursor>;
+  try {
+    cursor = parseHistoryCursor(params.get("cursor"));
+  } catch {
+    throw data("Invalid cursor", { status: 400, headers });
+  }
+  const songs = getLocationSongs(
+    userId,
+    cursor,
+    country,
+    params.get("direction") === "previous",
+  );
   return data(
     {
-      history,
-      page: rawPage,
+      history: getHistoryInsights(userId),
+      songs: await songs,
       country,
+      query: params.toString(),
     },
     { headers },
   );
+}
+
+export function shouldRevalidate({
+  currentUrl,
+  nextUrl,
+  defaultShouldRevalidate,
+  formMethod,
+}: ShouldRevalidateFunctionArgs) {
+  if (
+    !formMethod &&
+    currentUrl.pathname === nextUrl.pathname &&
+    currentUrl.search !== nextUrl.search
+  )
+    return false;
+  return defaultShouldRevalidate;
 }
 
 export default function Explore({ loaderData }: Route.ComponentProps) {
@@ -85,11 +115,42 @@ function ExploreSummary({
 function ExploreContent({
   loaderData,
 }: Pick<Route.ComponentProps, "loaderData">) {
-  const { devices, countries, listens, msPlayed, located, songs, total } = use(
-    loaderData.history,
+  const { devices, countries, listens, msPlayed, located } = use(
+    loaderData.history!,
   );
-  const { page, country } = loaderData;
-  const [, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams();
+  const country = normalizeCountry(params.get("country"));
+  const fetcher = useFetcher<typeof songsLoader>();
+  const query = params.toString();
+  const lastQuery = useRef(query);
+  useEffect(() => {
+    if (lastQuery.current === query) return;
+    lastQuery.current = query;
+    void fetcher.load(`/resources/explore-songs?${query}`);
+  }, [query, fetcher.load]);
+  const result =
+    fetcher.data?.query === query
+      ? fetcher.data.songs
+      : loaderData.query === query
+        ? loaderData.songs
+        : null;
+  const songs = result?.songs ?? [];
+  const total =
+    result?.total ??
+    (country
+      ? (countries.find((item) => item.code === country)?.listens ?? 0)
+      : listens);
+  const pending = !result || fetcher.state !== "idle";
+  const paginate = (cursor: string, previous = false) =>
+    setParams(
+      (current) => {
+        current.set("cursor", cursor);
+        if (previous) current.set("direction", "previous");
+        else current.delete("direction");
+        return current;
+      },
+      { preventScrollReset: true },
+    );
   const label = country
     ? countries.find((item) => item.code === country)?.label || country
     : "All listening";
@@ -195,7 +256,8 @@ function ExploreContent({
                 </Button>
               )}
             </div>
-            <div className="overflow-x-auto">
+            {pending && <Waver />}
+            <div className="overflow-x-auto" aria-busy={pending}>
               <table className="w-full text-left text-sm">
                 <thead className="border-border border-b text-muted-foreground text-xs">
                   <tr>
@@ -239,30 +301,22 @@ function ExploreContent({
                 </tbody>
               </table>
             </div>
-            {!songs.length && (
+            {!pending && !songs.length && (
               <p className="py-6 text-muted-foreground text-sm">
                 No listens here.
               </p>
             )}
             <div className="flex items-center justify-between">
               <p className="text-muted-foreground text-xs">
-                {total
-                  ? `${(page * 50 + 1).toLocaleString()}–${Math.min(total, (page + 1) * 50).toLocaleString()} of ${total.toLocaleString()}`
-                  : "0 listens"}
+                {total.toLocaleString()} listens
               </p>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={!page}
+                  disabled={pending || !result?.previous}
                   onClick={() =>
-                    setParams(
-                      (current) => {
-                        current.set("page", String(page - 1));
-                        return current;
-                      },
-                      { preventScrollReset: true },
-                    )
+                    result?.previous && paginate(result.previous, true)
                   }
                 >
                   Previous
@@ -270,16 +324,8 @@ function ExploreContent({
                 <Button
                   variant="outline"
                   size="sm"
-                  disabled={(page + 1) * 50 >= total}
-                  onClick={() =>
-                    setParams(
-                      (current) => {
-                        current.set("page", String(page + 1));
-                        return current;
-                      },
-                      { preventScrollReset: true },
-                    )
-                  }
+                  disabled={pending || !result?.next}
+                  onClick={() => result?.next && paginate(result.next)}
                 >
                   Next
                 </Button>

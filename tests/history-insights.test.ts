@@ -72,7 +72,7 @@ test("insights use actual time, keep unlocated events, and exclude another accou
   expect(result.msPlayed).toBe(12000);
   expect(result.located).toBe(1);
   expect(JSON.stringify(result)).not.toContain("1.1.1.1");
-  const songs = await getLocationSongs("owner", 0);
+  const songs = await getLocationSongs("owner", null);
   expect(songs.total).toBe(2);
   expect(JSON.stringify(songs)).not.toContain("rawJson");
   expect(JSON.stringify(songs)).not.toContain("1.1.1.1");
@@ -127,8 +127,8 @@ test("country filters paginate country-only listens and isolate accounts", async
     );
   event("outside", "owner", null, 1000, "FR");
   event("private", "other", null, 1000, "US");
-  const first = await getLocationSongs("owner", 0, " us ");
-  const second = await getLocationSongs("owner", 1, "US");
+  const first = await getLocationSongs("owner", null, " us ");
+  const second = await getLocationSongs("owner", JSON.parse(first.next!), "US");
   expect(first.total).toBe(63);
   expect(second.total).toBe(63);
   expect(first.songs).toHaveLength(50);
@@ -143,8 +143,72 @@ test("invalid country filters never fall back to all listens", async () => {
   event("us", "owner", null, 1000, "US");
   event("unknown", "owner", null, 1000, "XX");
   for (const country of ["XX", "ZZ", "", "USA"])
-    expect(await getLocationSongs("owner", 0, country)).toEqual({
+    expect(await getLocationSongs("owner", null, country)).toEqual({
       total: 0,
       songs: [],
+      next: null,
+      previous: null,
     });
+});
+
+test("summaries follow updates, retries, rollback and deletion exactly", async () => {
+  event("mutable", "owner", null, 1000, "US");
+  sqlite.exec(
+    "INSERT OR IGNORE INTO HistoryEvent SELECT * FROM HistoryEvent WHERE id='mutable'",
+  );
+  expect((await getHistoryInsights("owner")).listens).toBe(1);
+  sqlite.exec(
+    "UPDATE HistoryEvent SET country='FR', platform='osx', msPlayed=2500 WHERE id='mutable'",
+  );
+  expect((await getHistoryInsights("owner")).countries).toEqual([
+    { code: "FR", label: "France", listens: 1, msPlayed: 2500 },
+  ]);
+  sqlite.exec("BEGIN; DELETE FROM HistoryEvent WHERE id='mutable'; ROLLBACK;");
+  expect((await getHistoryInsights("owner")).msPlayed).toBe(2500);
+  sqlite.exec("DELETE FROM HistoryEvent WHERE id='mutable'");
+  expect((await getHistoryInsights("owner")).listens).toBe(0);
+});
+
+test("cursor pagination returns previous page and tolerates newer insertions", async () => {
+  for (let i = 0; i < 105; i++) event(`event-${String(i).padStart(3, "0")}`);
+  const first = await getLocationSongs("owner");
+  event("newest");
+  const second = await getLocationSongs("owner", JSON.parse(first.next!));
+  expect(second.songs).toHaveLength(50);
+  expect(
+    new Set([...first.songs, ...second.songs].map((song) => song.id)).size,
+  ).toBe(100);
+  const back = await getLocationSongs(
+    "owner",
+    JSON.parse(second.previous!),
+    null,
+    true,
+  );
+  expect(back.songs).toEqual(first.songs);
+});
+
+test("migration backfills existing events and country cursors use a range index", () => {
+  const existing = new Database(":memory:");
+  existing.exec(`CREATE TABLE Profile(id TEXT PRIMARY KEY);
+    INSERT INTO Profile VALUES ('owner');
+    CREATE TABLE HistoryEvent(id TEXT PRIMARY KEY, userId TEXT, playedAt TEXT, country TEXT, platform TEXT, msPlayed INTEGER);
+    INSERT INTO HistoryEvent VALUES ('a', 'owner', '2020-01-01', ' us ', 'ios', 123), ('b', 'owner', '2020-01-02', 'US', 'ios', 456);`);
+  existing.exec(readFileSync(new URL("0016_explore.sql", directory), "utf8"));
+  expect(
+    existing
+      .query(
+        "SELECT listens, msPlayed FROM HistoryExploreSummary WHERE kind='country' AND value='US'",
+      )
+      .get(),
+  ).toEqual({ listens: 2, msPlayed: 579 });
+  const plan = existing
+    .query(
+      "EXPLAIN QUERY PLAN SELECT id FROM HistoryEvent WHERE userId='owner' AND UPPER(TRIM(country))='US' AND (playedAt,id)<('2020-01-03','z') ORDER BY playedAt DESC,id DESC LIMIT 51",
+    )
+    .all();
+  expect(JSON.stringify(plan)).toContain(
+    "HistoryEvent_user_country_cursor_idx",
+  );
+  expect(JSON.stringify(plan)).not.toContain("TEMP B-TREE");
+  existing.close();
 });

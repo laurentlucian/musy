@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { refreshAnalytics } from "./analytics";
 import {
   syncUserStats,
   syncUserStatsAll,
@@ -20,11 +21,14 @@ export async function processHistoryStats(userId: string, jobId: string) {
       MAX(CAST(substr(playedAt,1,4) AS INTEGER)) lastYear FROM HistoryEvent WHERE userId=?`)
         .bind(userId)
         .first<{ firstYear: number | null; lastYear: number | null }>();
-    if (job.statsYear === -1) await syncUserStatsAll({ userId });
-    else await syncUserStats({ userId, year: job.statsYear });
-    const nextYear =
-      job.statsYear === -1 ? range?.firstYear : job.statsYear + 1;
+    const year = job.statsYear === -1 ? range?.firstYear : job.statsYear;
+    if (year != null) {
+      await refreshAnalytics(userId, year);
+      await syncUserStats({ userId, year });
+    }
+    const nextYear = year == null ? null : year + 1;
     const complete = nextYear == null || nextYear > (range?.lastYear ?? 0);
+    if (complete) await syncUserStatsAll({ userId });
     const result =
       await env.D1.prepare(`UPDATE HistoryImport SET statsYear=?,statsUpdatedAt=0,status=?,updatedAt=?
       WHERE userId=? AND jobId=? AND statsUpdatedAt=? AND status='processing'`)

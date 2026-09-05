@@ -72,6 +72,7 @@ export async function transformTracks(
           previewUrl: sql`excluded.preview_url`,
           link: sql`excluded.link`,
           duration: sql`excluded.duration`,
+          metadataSource: "provider",
         },
         setWhere: eq(track.duration, 0),
       });

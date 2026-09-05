@@ -1,24 +1,7 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
-import {
-  album,
-  artist,
-  likedTracks,
-  playback,
-  playbackHistory,
-  playlist,
-  playlistTrack,
-  profile,
-  provider,
-  recentTracks,
-  stats,
-  sync,
-  top,
-  topArtists,
-  topTracks,
-  track,
-  trackToArtist,
-  user,
-} from "~/lib.server/db/schema";
+import { env } from "cloudflare:workers";
+import { deleteAccount } from "../account-cleanup";
+import { and, desc, eq } from "drizzle-orm";
+import { profile, provider, stats, sync, user } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
 import { syncUserStats } from "~/lib.server/services/scheduler/scripts/sync/stats";
 
@@ -93,7 +76,7 @@ export async function getAllUsersId() {
     .select({ id: user.id })
     .from(user)
     .innerJoin(provider, eq(user.id, provider.userId))
-    .where(eq(provider.revoked, "0"));
+    .where(and(eq(provider.revoked, "0"), eq(provider.type, "spotify")));
   return users.map((u) => u.id);
 }
 
@@ -108,39 +91,7 @@ export async function revokeUser(
 }
 
 export async function deleteUser(userId: string) {
-  // Delete playlist tracks first (foreign key constraint)
-  const userPlaylists = await db
-    .select({ id: playlist.id })
-    .from(playlist)
-    .where(eq(playlist.userId, userId));
-  const playlistIds = userPlaylists.map((p) => p.id);
-
-  // Batch delete playlist tracks to avoid SQLite variable limit (D1 max is 100 params)
-  const batchSize = 100;
-  for (let i = 0; i < playlistIds.length; i += batchSize) {
-    const batch = playlistIds.slice(i, i + batchSize);
-    await db
-      .delete(playlistTrack)
-      .where(inArray(playlistTrack.playlistId, batch));
-  }
-
-  await Promise.all([
-    db.delete(provider).where(eq(provider.userId, userId)),
-    db.delete(likedTracks).where(eq(likedTracks.userId, userId)),
-    db.delete(recentTracks).where(eq(recentTracks.userId, userId)),
-    db.delete(playback).where(eq(playback.userId, userId)),
-    db.delete(playbackHistory).where(eq(playbackHistory.userId, userId)),
-    db.delete(topTracks).where(eq(topTracks.userId, userId)),
-    db.delete(topArtists).where(eq(topArtists.userId, userId)),
-  ]);
-
-  await Promise.all([
-    db.delete(top).where(eq(top.userId, userId)),
-    db.delete(playlist).where(eq(playlist.userId, userId)),
-  ]);
-
-  await db.delete(profile).where(eq(profile.id, userId));
-  await db.delete(user).where(eq(user.id, userId));
+  await deleteAccount(env.D1, userId);
 }
 
 export async function getProfile(userId: string) {
@@ -158,48 +109,17 @@ export async function getStats(userId: string, year: number) {
     return null;
   }
 
-  let trackId: string | undefined;
-  let artistId: string | undefined;
-  let albumId: string | undefined;
-
-  if (statsRecord.trackName) {
-    const trackResult = await db
-      .select({ id: track.id })
-      .from(track)
-      .where(eq(track.name, statsRecord.trackName))
-      .limit(1);
-    trackId = trackResult[0]?.id;
-  }
-
-  if (statsRecord.artist) {
-    const artistResult = await db
-      .select({ id: artist.id })
-      .from(artist)
-      .where(eq(artist.name, statsRecord.artist))
-      .limit(1);
-    artistId = artistResult[0]?.id;
-  }
-
-  if (statsRecord.album) {
-    const albumResult = await db
-      .select({ id: album.id })
-      .from(album)
-      .where(eq(album.name, statsRecord.album))
-      .limit(1);
-    albumId = albumResult[0]?.id;
-  }
-
   return {
     liked: statsRecord.liked,
     played: statsRecord.played,
     minutes: Number.parseFloat(statsRecord.minutes.toString()),
     artist: statsRecord.artist || undefined,
-    artistId,
+    artistId: statsRecord.artistId ?? undefined,
     album: statsRecord.album || undefined,
-    albumId,
+    albumId: statsRecord.albumId ?? undefined,
     trackName: statsRecord.trackName || undefined,
     trackCount: statsRecord.trackCount,
-    trackId,
+    trackId: statsRecord.trackId ?? undefined,
   };
 }
 
@@ -211,18 +131,6 @@ export async function hasStats(userId: string, year: number) {
 }
 
 export async function getStatsSyncState(userId: string) {
-  // Check for pending state first (most important for UI)
-  const pendingSync = await db.query.sync.findFirst({
-    where: and(
-      eq(sync.userId, userId),
-      eq(sync.type, "stats"),
-      eq(sync.state, "pending"),
-    ),
-  });
-
-  if (pendingSync) return "pending";
-
-  // Otherwise return the most recent sync state
   const syncRecord = await db.query.sync.findFirst({
     where: and(eq(sync.userId, userId), eq(sync.type, "stats")),
     orderBy: desc(sync.updatedAt),

@@ -37,6 +37,7 @@ export default [
     route("album/:albumId", "routes/track/album.tsx"),
   ]),
 
+  route("resources/explore-songs", "routes/resources.explore-songs.ts"),
   route("resources/history-import", "routes/resources/history-import.ts"),
   route("resources/import", "routes/resources/import.ts"),
   route("actions/:action", "routes/resources/actions.ts"),

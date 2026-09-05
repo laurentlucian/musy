@@ -2,6 +2,7 @@ import { Database } from "bun:sqlite";
 import { beforeEach, expect, mock, test } from "bun:test";
 import { readFileSync, readdirSync } from "node:fs";
 
+const archives = new Map<string, string>();
 const sqlite = new Database(":memory:");
 const directory = new URL("../app/lib.server/db/migrations/", import.meta.url);
 for (const name of readdirSync(directory)
@@ -28,6 +29,13 @@ function prepare(sql: string) {
 }
 mock.module("cloudflare:workers", () => ({
   env: {
+    HISTORY_ARCHIVES: {
+      put: async (key: string, body: string) => {
+        archives.set(key, body);
+      },
+      get: async (key: string) =>
+        archives.has(key) ? { text: async () => archives.get(key)! } : null,
+    },
     DELIVERY_QUEUE: { send: async () => {} },
     D1: {
       prepare,
@@ -101,7 +109,7 @@ test("retry and reimport are idempotent while distinct simultaneous records surv
   });
   expect(
     sqlite.query("SELECT rawJson FROM HistoryEvent LIMIT 1").get(),
-  ).toEqual({ rawJson: canonicalJson(row) });
+  ).toEqual({ rawJson: "" });
 });
 test("users own independent events and durable completion", async () => {
   await importHistoryBatch("a", "job", "0", [row]);
@@ -138,14 +146,19 @@ test("fresh progress reads recover committed batches and background completion",
   const counts = { imported: 2, duplicates: 1, skipped: 1 };
   expect(await readProgress()).toMatchObject({ ...counts, status: "running" });
   await completeHistoryImport("a", "job");
-  expect(await readProgress()).toMatchObject({ ...counts, status: "processing" });
+  expect(await readProgress()).toMatchObject({
+    ...counts,
+    status: "processing",
+  });
   expect(await getHistoryImport("a")).toMatchObject({
     ...counts,
     status: "processing",
   });
 
   sqlite
-    .query("UPDATE HistoryImport SET status='complete' WHERE userId=? AND jobId=?")
+    .query(
+      "UPDATE HistoryImport SET status='complete' WHERE userId=? AND jobId=?",
+    )
     .run("a", "job");
   expect(await readProgress()).toMatchObject({ ...counts, status: "complete" });
   expect(await readProgress()).toEqual(await getHistoryImport("a"));
@@ -277,4 +290,50 @@ test("concurrent conflicting payloads reject one without writing its metadata", 
   expect(sqlite.query("SELECT COUNT(*) n FROM HistoryEvent").get()).toEqual({
     n: 1,
   });
+});
+
+test("display metadata edits do not duplicate a playback and archives retain both payloads", async () => {
+  await importHistoryBatch("a", "first", "0", [row]);
+  const changed = {
+    ...row,
+    master_metadata_track_name: "Renamed",
+    conn_country: " us ",
+    ip_addr: "192.0.2.2",
+  };
+  expect(await importHistoryBatch("a", "second", "0", [changed])).toMatchObject(
+    { imported: 0, duplicates: 1 },
+  );
+  expect(sqlite.query("SELECT COUNT(*) n FROM HistoryEvent").get()).toEqual({
+    n: 1,
+  });
+  expect(sqlite.query("SELECT COUNT(*) n FROM RecentTracks").get()).toEqual({
+    n: 1,
+  });
+  const stored = sqlite
+    .query(
+      "SELECT archiveKey,archiveChecksum,rawJson,normalizationVersion,country FROM HistoryEvent",
+    )
+    .get() as any;
+  expect(stored.rawJson).toBe("");
+  expect(stored.normalizationVersion).toBe(2);
+  expect(JSON.parse(archives.get(stored.archiveKey)!)).toEqual([row]);
+  expect(normalizeHistoryRow(changed)?.country).toBe("US");
+});
+
+test("legacy event IDs survive a reimport with changed metadata", async () => {
+  await importHistoryBatch("a", "original", "0", [row]);
+  sqlite.exec(
+    "PRAGMA foreign_keys=OFF; UPDATE HistoryEvent SET id='legacy-id'; UPDATE RecentTracks SET historyEventId='legacy-id'; PRAGMA foreign_keys=ON;",
+  );
+  expect(
+    await importHistoryBatch("a", "new", "0", [
+      { ...row, master_metadata_track_name: "Corrected" },
+    ]),
+  ).toMatchObject({ imported: 0, duplicates: 1 });
+  expect(sqlite.query("SELECT id FROM HistoryEvent").get()).toEqual({
+    id: "legacy-id",
+  });
+  expect(sqlite.query("SELECT historyEventId FROM RecentTracks").get()).toEqual(
+    { historyEventId: "legacy-id" },
+  );
 });

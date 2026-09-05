@@ -1,8 +1,11 @@
 import {
-  calculateListeningStats,
-  listeningStatsQuery,
-  type ListeningStatsRow,
-} from "~/lib.server/services/history-stats-query";
+  prepareAllTimeAnalytics,
+  refreshAnalytics,
+} from "~/lib.server/services/analytics";
+import {
+  getDashboard,
+  refreshDashboard,
+} from "~/lib.server/services/dashboard";
 import { and, count, desc, eq, gte, lt, max, min } from "drizzle-orm";
 import { log, logError } from "~/components/utils";
 import {
@@ -18,37 +21,6 @@ import { getAllUsersId } from "~/lib.server/services/db/users";
 import { generateId } from "~/lib.server/services/utils";
 
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
-
-async function getListeningStats(userId: string, year?: number) {
-  return calculateListeningStats(
-    await db.all<ListeningStatsRow>(listeningStatsQuery(userId, year)),
-  );
-}
-
-function getTopItems(arg: {
-  artists: Record<string, number>;
-  albums: Record<string, number>;
-  tracks: Record<string, number>;
-}) {
-  const artist = Object.entries(arg.artists).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  const album = Object.entries(arg.albums).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  )[0];
-
-  const trackEntry = Object.entries(arg.tracks).reduce(
-    (a, b) => (b[1] > a[1] ? b : a),
-    ["", 0],
-  );
-  const track = trackEntry[0];
-  const trackCount = trackEntry[1];
-
-  return { artist, album, track, trackCount };
-}
 
 async function getUserYearsWithData(userId: string): Promise<number[]> {
   log(`fetching years with data for user ${userId}`, "stats");
@@ -112,6 +84,8 @@ async function getUserYearsWithStats(userId: string): Promise<Set<number>> {
 }
 
 export async function syncUserStatsAll({ userId }: { userId: string }) {
+  if (!(await prepareAllTimeAnalytics(userId))) return;
+  await refreshDashboard(userId, 0);
   log(`starting all-time stats sync for user ${userId}`, "stats");
   const now = new Date().toISOString();
 
@@ -138,10 +112,14 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
 
     log(`found ${liked} total liked tracks for user ${userId}`, "stats");
 
-    const { played, minutes, artists, albums, tracks } =
-      await getListeningStats(userId);
-
-    const topItems = getTopItems({ tracks, albums, artists });
+    const { played, minutes, topTracks, topArtists, topAlbums } =
+      await getDashboard(userId, 0);
+    const topItems = {
+      track: topTracks[0]?.name,
+      trackCount: topTracks[0]?.plays,
+      artist: topArtists[0]?.name,
+      album: topAlbums[0]?.name,
+    };
 
     log(
       `calculated all-time stats for user ${userId}: ${played} plays, ${Math.round(minutes)} minutes, top track: ${topItems.track || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
@@ -164,6 +142,9 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
         liked,
         minutes: minutes.toString(),
         trackName: topItems.track || null,
+        trackId: topTracks[0]?.id ?? null,
+        artistId: topArtists[0]?.id ?? null,
+        albumId: topAlbums[0]?.id ?? null,
         trackCount: topItems.trackCount || 0,
         artist: topItems.artist || null,
         album: topItems.album || null,
@@ -177,6 +158,9 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
           liked,
           minutes: minutes.toString(),
           trackName: topItems.track || null,
+          trackId: topTracks[0]?.id ?? null,
+          artistId: topArtists[0]?.id ?? null,
+          albumId: topAlbums[0]?.id ?? null,
           trackCount: topItems.trackCount || 0,
           artist: topItems.artist || null,
           album: topItems.album || null,
@@ -230,6 +214,8 @@ export async function syncUserStats({
   userId: string;
   year: number;
 }) {
+  await refreshAnalytics(userId, year);
+  await refreshDashboard(userId, year);
   log(`starting stats sync for user ${userId}, year ${year}`, "stats");
   const now = new Date().toISOString();
 
@@ -265,10 +251,14 @@ export async function syncUserStats({
       "stats",
     );
 
-    const { played, minutes, artists, albums, tracks } =
-      await getListeningStats(userId, year);
-
-    const topItems = getTopItems({ tracks, albums, artists });
+    const { played, minutes, topTracks, topArtists, topAlbums } =
+      await getDashboard(userId, year);
+    const topItems = {
+      track: topTracks[0]?.name,
+      trackCount: topTracks[0]?.plays,
+      artist: topArtists[0]?.name,
+      album: topAlbums[0]?.name,
+    };
 
     log(
       `calculated stats for user ${userId}, year ${year}: ${played} plays, ${Math.round(minutes)} minutes, top track: ${topItems.track || "none"}, top artist: ${topItems.artist || "none"}, top album: ${topItems.album || "none"}`,
@@ -290,6 +280,9 @@ export async function syncUserStats({
         liked,
         minutes: minutes.toString(),
         trackName: topItems.track || null,
+        trackId: topTracks[0]?.id ?? null,
+        artistId: topArtists[0]?.id ?? null,
+        albumId: topAlbums[0]?.id ?? null,
         trackCount: topItems.trackCount || 0,
         artist: topItems.artist || null,
         album: topItems.album || null,
@@ -303,6 +296,9 @@ export async function syncUserStats({
           liked,
           minutes: minutes.toString(),
           trackName: topItems.track || null,
+          trackId: topTracks[0]?.id ?? null,
+          artistId: topArtists[0]?.id ?? null,
+          albumId: topAlbums[0]?.id ?? null,
           trackCount: topItems.trackCount || 0,
           artist: topItems.artist || null,
           album: topItems.album || null,

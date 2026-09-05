@@ -1,4 +1,6 @@
 import { env } from "cloudflare:workers";
+import { normalizeCountry } from "~/lib/countries";
+import { sha256 as hash, storeHistoryArchive } from "./history-archive";
 import type { ImportProgress } from "~/lib/history-parser";
 
 export function canonicalJson(value: unknown): string {
@@ -13,16 +15,6 @@ export function canonicalJson(value: unknown): string {
       .join(",")}}`;
   }
   return JSON.stringify(value);
-}
-
-async function hash(value: string) {
-  const bytes = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value),
-  );
-  return Array.from(new Uint8Array(bytes), (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
 }
 
 function field(row: Record<string, unknown>, key: string, limit = 1000) {
@@ -69,7 +61,7 @@ export function normalizeHistoryRow(value: unknown) {
       field(row, "master_metadata_album_album_name") || "Unknown album",
     ip: field(row, "ip_addr_decrypted", 100) || field(row, "ip_addr", 100),
     platform: field(row, "platform"),
-    country: field(row, "conn_country", 100),
+    country: normalizeCountry(field(row, "conn_country", 100)),
     rawJson,
   };
 }
@@ -102,20 +94,31 @@ export async function importHistoryBatch(
       throw new Error("Invalid batch: contents changed. Start a new import.");
     return { ...previous, import: await getHistoryImport(userId) };
   }
+  const archive = await storeHistoryArchive(env, userId, rows);
   const statements: D1PreparedStatement[] = [
     env.D1.prepare(
-      "INSERT OR IGNORE INTO HistoryImportBatch(id,userId,jobId,imported,duplicates,skipped,payloadHash) VALUES (?,?,?,0,0,0,?)",
-    ).bind(id, userId, jobId, payloadHash),
+      "INSERT OR IGNORE INTO HistoryImportBatch(id,userId,jobId,imported,duplicates,skipped,payloadHash,archiveKey,archiveChecksum) VALUES (?,?,?,0,0,0,?,?,?)",
+    ).bind(id, userId, jobId, payloadHash, archive.key, archive.checksum),
   ];
-  for (const row of events) {
-    const eventId = await hash(`${userId}\n${row.rawJson}`);
+  for (const [offset, row] of normalized.entries()) {
+    if (!row) continue;
+    const identity = [
+      userId,
+      row.trackId,
+      row.playedAt,
+      row.msPlayed,
+      row.platform,
+    ];
+    const eventId = await hash(canonicalJson(identity));
+    const existingId =
+      "(SELECT id FROM HistoryEvent WHERE userId=? AND trackId=? AND playedAt=? AND msPlayed=? AND platform IS ? ORDER BY id LIMIT 1)";
     const artistId = `history:${await hash(row.artistName)}`;
     statements.push(
       env.D1.prepare(
-        "INSERT OR IGNORE INTO Artist(id,uri,name,image,popularity,followers,genres) SELECT ?,'',?,'',0,0,'[]' WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
+        "INSERT OR IGNORE INTO Artist(id,uri,name,image,popularity,followers,genres,metadataSource) SELECT ?,'',?,'',0,0,'[]','history-name' WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
       ).bind(artistId, row.artistName, id, payloadHash),
       env.D1.prepare(
-        "INSERT OR IGNORE INTO Track(id,uri,name,image,explicit,link,duration,provider) SELECT ?,?,?,'',0,?,0,'spotify' WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
+        "INSERT OR IGNORE INTO Track(id,uri,name,image,explicit,link,duration,provider,metadataSource) SELECT ?,?,?,'',0,?,0,'spotify','history-placeholder' WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
       ).bind(
         row.trackId,
         row.uri,
@@ -128,7 +131,7 @@ export async function importHistoryBatch(
         "INSERT OR IGNORE INTO _TrackToArtist(trackId,artistId) SELECT ?,? WHERE NOT EXISTS (SELECT 1 FROM _TrackToArtist WHERE trackId=?) AND EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
       ).bind(row.trackId, artistId, row.trackId, id, payloadHash),
       env.D1.prepare(
-        "INSERT OR IGNORE INTO HistoryEvent(id,userId,batchId,trackId,trackName,artistName,albumName,playedAt,msPlayed,ip,platform,country,rawJson) SELECT ?,?,?,?,?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
+        "INSERT OR IGNORE INTO HistoryEvent(id,userId,batchId,trackId,trackName,artistName,albumName,playedAt,msPlayed,ip,platform,country,rawJson,archiveKey,archiveChecksum,archiveOffset,normalizationVersion) SELECT ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,2 WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?) AND NOT EXISTS (SELECT 1 FROM HistoryEvent WHERE userId=? AND trackId=? AND playedAt=? AND msPlayed=? AND platform IS ?)",
       ).bind(
         eventId,
         userId,
@@ -142,30 +145,34 @@ export async function importHistoryBatch(
         row.ip,
         row.platform,
         row.country,
-        row.rawJson,
+        "",
+        archive.key,
+        archive.checksum,
+        offset,
         id,
         payloadHash,
+        ...identity,
       ),
       env.D1.prepare(
-        "UPDATE RecentTracks SET historyEventId=?,msPlayed=? WHERE userId=? AND trackId=? AND playedAt=? AND historyEventId IS NULL AND EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?) AND NOT EXISTS (SELECT 1 FROM RecentTracks WHERE historyEventId=?)",
+        `UPDATE RecentTracks SET historyEventId=${existingId},msPlayed=? WHERE userId=? AND trackId=? AND playedAt=? AND historyEventId IS NULL AND EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?) AND NOT EXISTS (SELECT 1 FROM RecentTracks WHERE historyEventId=${existingId})`,
       ).bind(
-        eventId,
+        ...identity,
         row.msPlayed,
         userId,
         row.trackId,
         row.playedAt,
         id,
         payloadHash,
-        eventId,
+        ...identity,
       ),
       env.D1.prepare(
-        "INSERT OR IGNORE INTO RecentTracks(userId,trackId,playedAt,msPlayed,historyEventId) SELECT ?,?,?,?,? WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)",
+        `INSERT OR IGNORE INTO RecentTracks(userId,trackId,playedAt,msPlayed,historyEventId) SELECT ?,?,?,?,${existingId} WHERE EXISTS (SELECT 1 FROM HistoryImportBatch WHERE id=? AND payloadHash=?)`,
       ).bind(
         userId,
         row.trackId,
         row.playedAt,
         row.msPlayed,
-        eventId,
+        ...identity,
         id,
         payloadHash,
       ),

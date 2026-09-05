@@ -74,11 +74,37 @@ export const historyEvent = sqliteTable(
     platform: text(),
     country: text(),
     rawJson: text().notNull(),
+    archiveKey: text(),
+    archiveChecksum: text(),
+    archiveOffset: integer(),
+    normalizationVersion: integer().notNull().default(1),
+    source: text().notNull().default("spotify-history"),
   },
   (table) => [
     index("HistoryEvent_user_date_idx").on(table.userId, table.playedAt),
     index("HistoryEvent_batch_idx").on(table.batchId),
     index("HistoryEvent_userId_ip_idx").on(table.userId, table.ip),
+    index("HistoryEvent_user_cursor_idx").on(
+      table.userId,
+      sql`${table.playedAt} DESC`,
+      sql`${table.id} DESC`,
+    ),
+    index("HistoryEvent_user_country_cursor_idx").on(
+      table.userId,
+      sql`UPPER(TRIM(${table.country}))`,
+      sql`${table.playedAt} DESC`,
+      sql`${table.id} DESC`,
+    ),
+    index("HistoryEvent_identity_idx").on(
+      table.userId,
+      table.trackId,
+      table.playedAt,
+      table.msPlayed,
+      table.platform,
+    ),
+    index("HistoryEvent_unarchived_idx")
+      .on(table.userId, table.id)
+      .where(sql`${table.archiveKey} IS NULL`),
   ],
 );
 
@@ -94,10 +120,119 @@ export const historyImport = sqliteTable("HistoryImport", {
   updatedAt: integer().notNull(),
 });
 
+export const historyExploreSummary = sqliteTable(
+  "HistoryExploreSummary",
+  {
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    kind: text().notNull(),
+    value: text().notNull(),
+    listens: integer().notNull(),
+    msPlayed: integer().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.kind, table.value] })],
+);
+
+export const analyticsYear = sqliteTable(
+  "AnalyticsYear",
+  {
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    year: integer().notNull(),
+    revision: integer().notNull().default(1),
+    publishedRevision: integer().notNull().default(0),
+    updatedAt: integer().notNull().default(0),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.year] })],
+);
+
+export const archiveCleanup = sqliteTable("ArchiveCleanup", {
+  userId: text().primaryKey().notNull(),
+  retryAt: integer().notNull(),
+});
+
+export const dashboardSnapshot = sqliteTable(
+  "DashboardSnapshot",
+  {
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    year: integer().notNull(),
+    sourceRevision: text().notNull(),
+    payload: text().notNull(),
+    updatedAt: integer().notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.year] })],
+);
+
+export const dashboardMetadataRevision = sqliteTable(
+  "DashboardMetadataRevision",
+  {
+    id: integer().primaryKey(),
+    revision: integer().notNull(),
+  },
+);
+
+export const dashboardUserRevision = sqliteTable("DashboardUserRevision", {
+  userId: text()
+    .primaryKey()
+    .references(() => profile.id, { onDelete: "cascade" }),
+  revision: integer().notNull().default(1),
+});
+
+export const listeningTrackSummary = sqliteTable(
+  "ListeningTrackSummary",
+  {
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    year: integer().notNull(),
+    trackId: text().notNull(),
+    archiveArtist: text().notNull(),
+    archiveAlbum: text().notNull(),
+    plays: integer().notNull(),
+    milliseconds: integer().notNull(),
+    estimatedPlays: integer().notNull(),
+    unknownPlays: integer().notNull(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [
+        table.userId,
+        table.year,
+        table.trackId,
+        table.archiveArtist,
+        table.archiveAlbum,
+      ],
+    }),
+  ],
+);
+
+export const listeningDaySummary = sqliteTable(
+  "ListeningDaySummary",
+  {
+    userId: text()
+      .notNull()
+      .references(() => profile.id, { onDelete: "cascade" }),
+    year: integer().notNull(),
+    day: text().notNull(),
+    hour: text().notNull(),
+    plays: integer().notNull(),
+    milliseconds: integer().notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.year, table.day, table.hour] }),
+  ],
+);
+
 export const historyImportBatch = sqliteTable(
   "HistoryImportBatch",
   {
     payloadHash: text().notNull(),
+    archiveKey: text(),
+    archiveChecksum: text(),
     id: text().primaryKey().notNull(),
     userId: text()
       .notNull()
@@ -138,6 +273,11 @@ export const recentTracks = sqliteTable(
       .on(table.playedAt, table.userId, table.trackId)
       .where(sql`${table.historyEventId} IS NULL`),
     uniqueIndex("RecentTracks_historyEventId_key").on(table.historyEventId),
+    index("RecentTracks_trackId_analytics_idx").on(table.trackId, table.userId),
+    index("RecentTracks_user_utc_year_idx").on(
+      table.userId,
+      sql`CAST(strftime('%Y',${table.playedAt}) AS INTEGER)`,
+    ),
   ],
 );
 
@@ -153,6 +293,7 @@ export const track = sqliteTable(
     link: text().notNull(),
     duration: integer().notNull(),
     provider: text().default("spotify").notNull(),
+    metadataSource: text().notNull().default("provider"),
     albumId: text().references(() => album.id, {
       onDelete: "restrict",
       onUpdate: "cascade",
@@ -226,6 +367,7 @@ export const artist = sqliteTable("Artist", {
   popularity: integer().notNull(),
   followers: integer().notNull(),
   genres: text().notNull(),
+  metadataSource: text().notNull().default("provider"),
 });
 
 export const album = sqliteTable("Album", {
@@ -439,6 +581,9 @@ export const stats = sqliteTable(
     liked: integer().default(0).notNull(),
     minutes: numeric().default("0").notNull(),
     trackName: text(),
+    trackId: text(),
+    artistId: text(),
+    albumId: text(),
     trackCount: integer().default(0).notNull(),
     artist: text(),
     album: text(),

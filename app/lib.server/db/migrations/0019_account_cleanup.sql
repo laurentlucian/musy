@@ -1,0 +1,4 @@
+CREATE TABLE ArchiveCleanup (
+ userId TEXT PRIMARY KEY NOT NULL,
+ retryAt INTEGER NOT NULL
+);

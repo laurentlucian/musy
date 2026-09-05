@@ -29,6 +29,9 @@ const D1 = {
 mock.module("cloudflare:workers", () => ({
   env: { D1, DELIVERY_QUEUE: { send } },
 }));
+mock.module("../app/lib.server/services/analytics", () => ({
+  refreshAnalytics: mock(async () => {}),
+}));
 mock.module("../app/lib.server/services/scheduler/scripts/sync/stats", () => ({
   syncUserStatsAll: all,
   syncUserStats: annual,
@@ -46,36 +49,36 @@ beforeEach(() => {
   all.mockReset();
   annual.mockReset();
 });
-test("progresses all-time then each year and completes", async () => {
-  await processHistoryStats("u", "job");
-  expect(all).toHaveBeenCalledWith({ userId: "u" });
-  expect(state()).toMatchObject({ statsYear: 2023, status: "processing" });
+test("rebuilds each year before publishing all-time stats", async () => {
   await processHistoryStats("u", "job");
   expect(annual).toHaveBeenLastCalledWith({ userId: "u", year: 2023 });
+  expect(all).not.toHaveBeenCalled();
+  expect(state()).toMatchObject({ statsYear: 2024, status: "processing" });
   await processHistoryStats("u", "job");
   expect(annual).toHaveBeenLastCalledWith({ userId: "u", year: 2024 });
+  expect(all).toHaveBeenCalledWith({ userId: "u" });
   expect(state()).toMatchObject({ statsYear: null, status: "complete" });
-  expect(send).toHaveBeenCalledTimes(2);
+  expect(send).toHaveBeenCalledTimes(1);
 });
 test("failed computation releases lease and retries same checkpoint", async () => {
-  all.mockImplementationOnce(async () => {
+  annual.mockImplementationOnce(async () => {
     throw new Error("temporary");
   });
   await expect(processHistoryStats("u", "job")).rejects.toThrow("temporary");
   expect(state()).toMatchObject({ statsYear: -1, statsUpdatedAt: 0 });
   await processHistoryStats("u", "job");
-  expect(state()).toMatchObject({ statsYear: 2023 });
+  expect(state()).toMatchObject({ statsYear: 2024 });
 });
 test("duplicate queue messages acquire one lease", async () => {
   await Promise.all([
     processHistoryStats("u", "job"),
     processHistoryStats("u", "job"),
   ]);
-  expect(all).toHaveBeenCalledTimes(1);
+  expect(annual).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledTimes(1);
 });
 test("stale job cannot advance or enqueue a replacement import", async () => {
-  all.mockImplementationOnce(async () => {
+  annual.mockImplementationOnce(async () => {
     db.exec(
       "UPDATE HistoryImport SET jobId='replacement',statsYear=-1,statsUpdatedAt=0",
     );
@@ -106,7 +109,7 @@ test("queue delivery failure leaves next checkpoint recoverable", async () => {
     "queue unavailable",
   );
   expect(state()).toMatchObject({
-    statsYear: 2023,
+    statsYear: 2024,
     statsUpdatedAt: 0,
     status: "processing",
   });

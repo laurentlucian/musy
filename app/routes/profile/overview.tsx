@@ -163,9 +163,14 @@ function Stats({
 
   return (
     <>
+      {stats.pending && stats.played > 0 && (
+        <output className="text-muted-foreground text-xs">
+          Updating stats…
+        </output>
+      )}
       {!stats.played ? (
         <ImportEmptyState>
-          {importing
+          {importing || stats.pending
             ? "Preparing your stats…"
             : "No listening history for this period."}
         </ImportEmptyState>
@@ -192,7 +197,10 @@ function Stats({
             (unit === "minutes"
               ? `${number(stats.minutes / 60, 1)} hours`
               : `${number(stats.minutes)} minutes`) +
-            (stats.estimatedPlays > 0 ? " · estimated" : "")
+            (stats.estimatedPlays > 0 ? " · estimated" : "") +
+            (stats.unknownPlays > 0
+              ? ` · ${number(stats.unknownPlays)} unknown duration`
+              : "")
           }
           action={
             <fieldset

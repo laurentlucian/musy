@@ -7,6 +7,7 @@ export type DashboardTotals = {
   minutes: number;
   uniqueTracks: number;
   estimatedPlays: number;
+  unknownPlays: number;
   uniqueArtists: number;
   uniqueAlbums: number;
   liked: number;
@@ -18,43 +19,42 @@ export function dashboardQueries(userId: string, year: number) {
       ? sql`AND datetime(${column}) >= ${`${year}-01-01 00:00:00`} AND datetime(${column}) < ${`${year + 1}-01-01 00:00:00`}`
       : sql``;
   const base = sql`WITH events AS (
-    SELECT r.trackId, r.playedAt, r.msPlayed,
-      COALESCE(r.msPlayed, t.duration) AS milliseconds, t.name, t.albumId,
-      a.name AS albumName, h.albumName AS archiveAlbum, h.artistName AS archiveArtist
-    FROM RecentTracks r JOIN Track t ON t.id = r.trackId
+    SELECT r.trackId, r.plays, r.milliseconds, r.estimatedPlays, r.unknownPlays, t.name, t.albumId,
+      a.name AS albumName, r.archiveAlbum, r.archiveArtist
+    FROM ListeningTrackSummary r JOIN Track t ON t.id = r.trackId
     LEFT JOIN Album a ON a.id = t.albumId
-    LEFT JOIN HistoryEvent h ON h.id = r.historyEventId AND h.userId = r.userId
-    WHERE r.userId = ${userId} ${range(sql`r.playedAt`)}
+    WHERE r.userId = ${userId} ${year ? sql`AND r.year = ${year}` : sql``}
   ), artists AS (
-    SELECT 'id:' || a.id AS identity, a.id, a.name, COUNT(*) AS plays
+    SELECT 'id:' || a.id AS identity, a.id, a.name, SUM(e.plays) AS plays
     FROM events e JOIN _TrackToArtist ta ON ta.trackId = e.trackId
     JOIN Artist a ON a.id = ta.artistId GROUP BY a.id
     UNION ALL
-    SELECT 'archive:' || e.archiveArtist, NULL, e.archiveArtist, COUNT(*)
+    SELECT 'archive:' || e.archiveArtist, NULL, e.archiveArtist, SUM(e.plays)
     FROM events e WHERE NULLIF(trim(e.archiveArtist), '') IS NOT NULL
     AND NOT EXISTS (SELECT 1 FROM _TrackToArtist ta JOIN Artist a ON a.id = ta.artistId WHERE ta.trackId = e.trackId)
     GROUP BY e.archiveArtist
   ), albums AS (
-    SELECT 'id:' || e.albumId AS identity, e.albumId AS id, e.albumName AS name, COUNT(*) AS plays
+    SELECT 'id:' || e.albumId AS identity, e.albumId AS id, e.albumName AS name, SUM(e.plays) AS plays
     FROM events e WHERE e.albumName IS NOT NULL GROUP BY e.albumId
     UNION ALL
-    SELECT json_array(e.archiveArtist, e.archiveAlbum), NULL, e.archiveAlbum, COUNT(*)
+    SELECT json_array(e.archiveArtist, e.archiveAlbum), NULL, e.archiveAlbum, SUM(e.plays)
     FROM events e WHERE e.albumName IS NULL AND NULLIF(trim(e.archiveAlbum), '') IS NOT NULL
     AND NULLIF(trim(e.archiveArtist), '') IS NOT NULL GROUP BY e.archiveArtist, e.archiveAlbum
   )`;
   return {
-    totals: sql`${base} SELECT COUNT(*) AS played, COALESCE(SUM(milliseconds),0)/60000.0 AS minutes,
-      COUNT(DISTINCT trackId) AS uniqueTracks, COALESCE(SUM(msPlayed IS NULL),0) AS estimatedPlays,
+    totals: sql`${base} SELECT COALESCE(SUM(plays),0) AS played, COALESCE(SUM(milliseconds),0)/60000.0 AS minutes,
+      COUNT(DISTINCT trackId) AS uniqueTracks, COALESCE(SUM(estimatedPlays),0) AS estimatedPlays, COALESCE(SUM(unknownPlays),0) AS unknownPlays,
       (SELECT COUNT(*) FROM artists) AS uniqueArtists, (SELECT COUNT(*) FROM albums) AS uniqueAlbums,
       (SELECT COUNT(*) FROM LikedTracks l WHERE l.userId = ${userId} AND l.action = 'liked' ${range(sql`l.createdAt`)}) AS liked
       FROM events`,
-    days: sql`${base} SELECT date(playedAt) AS key, COUNT(*) AS plays, SUM(milliseconds)/60000.0 AS minutes
-      FROM events WHERE date(playedAt) IS NOT NULL GROUP BY date(playedAt) ORDER BY key`,
-    hourly: sql`${base} SELECT strftime('%H', playedAt) AS key, COUNT(*) AS plays FROM events GROUP BY key`,
-    topTracks: sql`${base} SELECT trackId AS id, name, COUNT(*) AS plays FROM events GROUP BY trackId ORDER BY plays DESC, id LIMIT 5`,
+    days: sql`SELECT day AS key, SUM(plays) AS plays, SUM(milliseconds)/60000.0 AS minutes
+      FROM ListeningDaySummary WHERE userId=${userId} ${year ? sql`AND year=${year}` : sql``} GROUP BY day ORDER BY day`,
+    hourly: sql`SELECT hour AS key, SUM(plays) AS plays FROM ListeningDaySummary
+      WHERE userId=${userId} ${year ? sql`AND year=${year}` : sql``} GROUP BY hour`,
+    topTracks: sql`${base} SELECT trackId AS id, name, SUM(plays) AS plays FROM events GROUP BY trackId ORDER BY plays DESC, id LIMIT 5`,
     topArtists: sql`${base} SELECT id, name, plays FROM artists ORDER BY plays DESC, identity LIMIT 5`,
     topAlbums: sql`${base} SELECT id, name, plays FROM albums ORDER BY plays DESC, identity LIMIT 5`,
-    years: sql`SELECT year FROM (SELECT DISTINCT CAST(strftime('%Y', playedAt) AS INTEGER) AS year FROM RecentTracks WHERE userId = ${userId}
+    years: sql`SELECT year FROM (SELECT year FROM AnalyticsYear WHERE userId = ${userId}
       UNION SELECT DISTINCT CAST(strftime('%Y', createdAt) AS INTEGER) FROM LikedTracks WHERE userId = ${userId}) WHERE year BETWEEN 1900 AND ${new Date().getUTCFullYear()} ORDER BY year DESC`,
   };
 }

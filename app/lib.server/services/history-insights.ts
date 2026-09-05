@@ -1,4 +1,4 @@
-import { and, count, desc, eq, sql, sum } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { countryName, normalizeCountry } from "~/lib/countries";
 import { deviceLabel } from "~/lib/device";
 import { historyEvent } from "~/lib.server/db/schema";
@@ -29,30 +29,21 @@ export function summarizeDevices(
 }
 
 export async function getHistoryInsights(userId: string) {
-  const [platforms, [totals], coverage] = await Promise.all([
-    db
-      .select({
-        platform: historyEvent.platform,
-        listens: count(),
-        msPlayed: sum(historyEvent.msPlayed),
-      })
-      .from(historyEvent)
-      .where(eq(historyEvent.userId, userId))
-      .groupBy(historyEvent.platform),
-    db
-      .select({ listens: count(), msPlayed: sum(historyEvent.msPlayed) })
-      .from(historyEvent)
-      .where(eq(historyEvent.userId, userId)),
-    db
-      .select({
-        country: historyEvent.country,
-        listens: count(),
-        msPlayed: sum(historyEvent.msPlayed),
-      })
-      .from(historyEvent)
-      .where(eq(historyEvent.userId, userId))
-      .groupBy(historyEvent.country),
-  ]);
+  const rows = await db.all<{
+    kind: string;
+    value: string;
+    listens: number;
+    msPlayed: number;
+  }>(
+    sql`SELECT kind, value, listens, msPlayed FROM HistoryExploreSummary WHERE userId=${userId}`,
+  );
+  const platforms = rows
+    .filter((row) => row.kind === "platform")
+    .map((row) => ({ ...row, platform: row.value }));
+  const totals = rows.find((row) => row.kind === "total");
+  const coverage = rows
+    .filter((row) => row.kind === "country")
+    .map((row) => ({ ...row, country: row.value }));
   const countries = new Map<string, ListeningCountry>();
   let located = 0;
   for (const row of coverage) {
@@ -82,10 +73,32 @@ export async function getHistoryInsights(userId: string) {
   };
 }
 
+export type HistoryCursor = { playedAt: string; id: string };
+
+export function parseHistoryCursor(value: string | null): HistoryCursor | null {
+  if (!value) return null;
+  if (value.length > 1000) throw new Error("Invalid cursor");
+  try {
+    const parsed = JSON.parse(value);
+    if (
+      typeof parsed.playedAt !== "string" ||
+      !Number.isFinite(Date.parse(parsed.playedAt)) ||
+      typeof parsed.id !== "string" ||
+      !parsed.id ||
+      parsed.id.length > 200
+    )
+      throw new Error("Invalid cursor");
+    return { playedAt: parsed.playedAt, id: parsed.id };
+  } catch {
+    throw new Error("Invalid cursor");
+  }
+}
+
 export async function getLocationSongs(
   userId: string,
-  page: number,
+  cursor: HistoryCursor | null = null,
   country: string | null = null,
+  previous = false,
 ) {
   const code = normalizeCountry(country);
   const where = and(
@@ -95,9 +108,17 @@ export async function getLocationSongs(
         ? eq(sql`UPPER(TRIM(${historyEvent.country}))`, code)
         : sql`0`
       : undefined,
+    cursor
+      ? previous
+        ? sql`(${historyEvent.playedAt}, ${historyEvent.id}) > (${cursor.playedAt}, ${cursor.id})`
+        : sql`(${historyEvent.playedAt}, ${historyEvent.id}) < (${cursor.playedAt}, ${cursor.id})`
+      : undefined,
   );
-  const [[total], songs] = await Promise.all([
-    db.select({ count: count() }).from(historyEvent).where(where),
+  const order = previous ? asc : desc;
+  const [totals, rows] = await Promise.all([
+    db.all<{ listens: number }>(
+      sql`SELECT listens FROM HistoryExploreSummary WHERE userId=${userId} AND kind=${country === null ? "total" : "country"} AND value=${country === null ? "" : (code ?? "!invalid")}`,
+    ),
     db
       .select({
         id: historyEvent.id,
@@ -110,12 +131,18 @@ export async function getLocationSongs(
       })
       .from(historyEvent)
       .where(where)
-      .orderBy(desc(historyEvent.playedAt), desc(historyEvent.id))
-      .limit(50)
-      .offset(page * 50),
+      .orderBy(order(historyEvent.playedAt), order(historyEvent.id))
+      .limit(51),
   ]);
+  const more = rows.length > 50;
+  const songs = rows.slice(0, 50);
+  if (previous) songs.reverse();
+  const encode = (song: HistoryCursor | undefined) =>
+    song ? JSON.stringify({ playedAt: song.playedAt, id: song.id }) : null;
   return {
-    total: total.count,
+    total: totals[0]?.listens ?? 0,
+    next: (!previous ? more : Boolean(cursor)) ? encode(songs.at(-1)) : null,
+    previous: (previous ? more : Boolean(cursor)) ? encode(songs[0]) : null,
     songs: songs.map(({ platform, ...song }) => ({
       ...song,
       device: deviceLabel(platform),

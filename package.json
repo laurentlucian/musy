@@ -14,7 +14,11 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply -c ./wrangler.jsonc --remote musy",
     "typegen": "wrangler types -c ./wrangler.jsonc --env-interface Env",
-    "env": "dotenv -e .env"
+    "env": "dotenv -e .env",
+    "db:archive": "bun build scripts/archive-history.ts --target=node --packages=external --outfile=node_modules/.cache/musy-archive-history.mjs && node node_modules/.cache/musy-archive-history.mjs --all",
+    "db:analytics": "bun build scripts/rebuild-analytics.ts --target=node --packages=external --outfile=node_modules/.cache/musy-rebuild-analytics.mjs && node node_modules/.cache/musy-rebuild-analytics.mjs",
+    "db:dashboards": "bun build scripts/rebuild-dashboards.ts --target=node --packages=external --outfile=node_modules/.cache/musy-rebuild-dashboards.mjs && node node_modules/.cache/musy-rebuild-dashboards.mjs",
+    "db:verify": "bun build scripts/verify-data.ts --target=node --packages=external --outfile=node_modules/.cache/musy-verify-data.mjs && node node_modules/.cache/musy-verify-data.mjs"
   },
   "engines": {
     "bun": ">=1.0.0"

@@ -1,0 +1,13 @@
+ALTER TABLE HistoryEvent ADD COLUMN archiveKey TEXT;
+ALTER TABLE HistoryEvent ADD COLUMN archiveChecksum TEXT;
+ALTER TABLE HistoryEvent ADD COLUMN archiveOffset INTEGER;
+ALTER TABLE HistoryEvent ADD COLUMN normalizationVersion INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE HistoryEvent ADD COLUMN source TEXT NOT NULL DEFAULT 'spotify-history';
+ALTER TABLE HistoryImportBatch ADD COLUMN archiveKey TEXT;
+ALTER TABLE HistoryImportBatch ADD COLUMN archiveChecksum TEXT;
+CREATE INDEX HistoryEvent_identity_idx ON HistoryEvent(userId,trackId,playedAt,msPlayed,platform);
+CREATE INDEX HistoryEvent_unarchived_idx ON HistoryEvent(userId,id) WHERE archiveKey IS NULL;
+ALTER TABLE Track ADD COLUMN metadataSource TEXT NOT NULL DEFAULT 'provider';
+ALTER TABLE Artist ADD COLUMN metadataSource TEXT NOT NULL DEFAULT 'provider';
+UPDATE Artist SET metadataSource='history-name' WHERE id LIKE 'history:%';
+UPDATE Track SET metadataSource='history-placeholder' WHERE duration=0 AND image='' AND id IN (SELECT trackId FROM HistoryEvent);

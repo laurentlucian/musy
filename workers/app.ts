@@ -1,5 +1,11 @@
 import { createRequestHandler, RouterContextProvider } from "react-router";
 import {
+  recoverAnalytics,
+  refreshAnalytics,
+} from "~/lib.server/services/analytics";
+import { recoverArchiveCleanup } from "~/lib.server/services/account-cleanup";
+import { archiveHistoryChunk } from "~/lib.server/services/history-archive";
+import {
   processHistoryStats,
   recoverHistoryStats,
 } from "~/lib.server/services/history-stats";
@@ -13,6 +19,10 @@ import {
   recoverInitialImports,
 } from "~/lib.server/services/scheduler/initial-import";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
+import {
+  syncUserStats,
+  syncUserStatsAll,
+} from "~/lib.server/services/scheduler/scripts/sync/stats";
 
 const handler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
@@ -28,7 +38,7 @@ export default {
     }
     return handler(request, new RouterContextProvider());
   },
-  async scheduled(controller, _env, ctx) {
+  async scheduled(controller, env, ctx) {
     const cron = controller.cron;
 
     if (cron === "0 * * * *") {
@@ -52,6 +62,17 @@ export default {
       ctx.waitUntil(checkAndQueueDeliveries());
       ctx.waitUntil(recoverInitialImports());
       ctx.waitUntil(recoverHistoryStats());
+      ctx.waitUntil(recoverAnalytics());
+      ctx.waitUntil(recoverArchiveCleanup(env));
+      ctx.waitUntil(
+        (async () => {
+          const pending = await env.D1.prepare(
+            "SELECT userId FROM HistoryEvent WHERE archiveKey IS NULL GROUP BY userId LIMIT 5",
+          ).all<{ userId: string }>();
+          for (const { userId } of pending.results)
+            await env.DELIVERY_QUEUE.send({ type: "history-archive", userId });
+        })(),
+      );
     }
   },
   async queue(batch, env, ctx) {
@@ -60,7 +81,50 @@ export default {
         type?: string;
         userId?: string;
         jobId?: string;
+        year?: number;
       };
+      if (body.type === "history-archive" && typeof body.userId === "string") {
+        try {
+          let more = true;
+          for (let chunk = 0; chunk < 10 && more; chunk++)
+            more = await archiveHistoryChunk(env, body.userId);
+          if (more)
+            await env.DELIVERY_QUEUE.send({
+              type: "history-archive",
+              userId: body.userId,
+            });
+          message.ack();
+        } catch (error) {
+          console.error("History archive transfer failed", { error });
+          message.retry({ delaySeconds: 60 });
+        }
+        continue;
+      }
+      if (
+        body.type === "analytics" &&
+        typeof body.userId === "string" &&
+        Number.isInteger(body.year)
+      ) {
+        try {
+          const profile = await env.D1.prepare(
+            "SELECT 1 FROM Profile WHERE id=?",
+          )
+            .bind(body.userId)
+            .first();
+          if (!profile) {
+            message.ack();
+            continue;
+          }
+          await refreshAnalytics(body.userId, body.year!);
+          await syncUserStats({ userId: body.userId, year: body.year! });
+          await syncUserStatsAll({ userId: body.userId });
+          message.ack();
+        } catch (error) {
+          console.error("Analytics refresh failed", { error });
+          message.retry({ delaySeconds: 60 });
+        }
+        continue;
+      }
       if (
         body.type === "history-stats" &&
         typeof body.userId === "string" &&
