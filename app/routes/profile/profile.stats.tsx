@@ -114,8 +114,10 @@ function StatsSyncButton({ userId, year }: { userId: string; year: number }) {
   return (
     <Button
       type="button"
-      size="sm"
+      size="lg"
       variant="outline"
+      className="w-11 shrink-0 px-0"
+      aria-label="Refresh stats"
       disabled={isSyncing}
       onClick={() => {
         fetcher.submit(
