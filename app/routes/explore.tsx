@@ -121,6 +121,7 @@ function ExploreContent({
             </div>
             <ListeningMap
               countries={countries}
+              selected={country}
               onSelect={(code) => setParams({ country: code })}
             />
             {countries.length > 0 && (

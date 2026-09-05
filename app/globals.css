@@ -333,33 +333,62 @@
   }
 }
 @keyframes surface-enter {
-  from { opacity: 0; scale: 0.98; }
-  to { opacity: 1; scale: 1; }
+  from {
+    opacity: 0;
+    scale: 0.98;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
 }
 @keyframes surface-exit {
-  to { opacity: 0; scale: 0.98; }
+  to {
+    opacity: 0;
+    scale: 0.98;
+  }
 }
 @keyframes overlay-enter {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes overlay-exit {
-  to { opacity: 0; }
+  to {
+    opacity: 0;
+  }
 }
 @layer components {
   [data-slot="dialog-content"],
   [data-slot="dropdown-menu-content"],
   [data-slot="dropdown-menu-sub-content"] {
-    &[data-state="open"] { animation: surface-enter 150ms ease-out; }
-    &[data-state="closed"] { animation: surface-exit 100ms ease-in; }
+    &[data-state="open"] {
+      animation: surface-enter 150ms ease-out;
+    }
+    &[data-state="closed"] {
+      animation: surface-exit 100ms ease-in;
+    }
   }
   [data-slot="dialog-overlay"] {
-    &[data-state="open"] { animation: overlay-enter 150ms ease-out; }
-    &[data-state="closed"] { animation: overlay-exit 100ms ease-in; }
+    &[data-state="open"] {
+      animation: overlay-enter 150ms ease-out;
+    }
+    &[data-state="closed"] {
+      animation: overlay-exit 100ms ease-in;
+    }
   }
   [data-slot="select-content"] {
-    transition: opacity 100ms, scale 100ms;
-    &[data-starting-style], &[data-ending-style] { opacity: 0; scale: 0.98; }
+    transition:
+      opacity 100ms,
+      scale 100ms;
+    &[data-starting-style],
+    &[data-ending-style] {
+      opacity: 0;
+      scale: 0.98;
+    }
   }
 }
 
@@ -380,5 +409,24 @@
   :focus-visible {
     outline: 1px solid hsl(var(--ring));
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .listening-popup .maplibregl-popup-content {
+    background: hsl(var(--popover));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    padding: 0.75rem 0.875rem;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  }
+  .listening-popup .maplibregl-popup-tip {
+    border-top-color: hsl(var(--popover));
+    border-bottom-color: hsl(var(--popover));
+  }
+  .listening-popup .maplibregl-popup-close-button {
+    color: hsl(var(--muted-foreground));
+    font-size: 1.125rem;
+    padding: 0.25rem 0.5rem;
   }
 }
