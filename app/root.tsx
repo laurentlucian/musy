@@ -35,7 +35,7 @@ export const links: LinksFunction = () => [
 ];
 
 export const meta: MetaFunction = () => [
-  { title: "musy" },
+  { title: "Musy" },
   { name: "description", content: "" },
   {
     name: "viewport",

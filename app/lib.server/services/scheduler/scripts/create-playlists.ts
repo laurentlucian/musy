@@ -89,7 +89,7 @@ export async function createPlaylistsByYear({
     for (const [year, tracks] of sortedYears) {
       const yearAbbr = `'${year.toString().slice(-2)}`;
       const playlistName = yearAbbr;
-      const description = `made by musy`;
+      const description = `made by Musy`;
 
       let playlistId: string;
       const existingPlaylist = await findExistingPlaylistByName(

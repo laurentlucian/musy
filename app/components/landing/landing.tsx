@@ -55,7 +55,7 @@ export function Landing({ signedIn = false }: { signedIn?: boolean }) {
       <header className="landing-header landing-width">
         <Link to="/landing" className="landing-brand" aria-label="Musy home">
           <img src="/logo/musy-128.png" alt="" width="36" height="36" />
-          <span>musy</span>
+          <span>Musy</span>
         </Link>
         <nav aria-label="Main navigation">
           <a href="#features">Why Musy</a>
@@ -115,7 +115,7 @@ export function Landing({ signedIn = false }: { signedIn?: boolean }) {
           <div className="preview-topbar">
             <span>
               <img src="/logo/musy-128.png" alt="" width="24" height="24" />{" "}
-              musy <span className="preview-divider">/</span> Overview
+              Musy <span className="preview-divider">/</span> Overview
             </span>
             <span>
               Sample listening year <span className="preview-status" />
@@ -181,7 +181,7 @@ export function Landing({ signedIn = false }: { signedIn?: boolean }) {
       </main>
       <footer className="landing-footer landing-width">
         <span>
-          musy <span>For the love of listening.</span>
+          Musy <span>For the love of listening.</span>
         </span>
         <span>
           Connect with{" "}
