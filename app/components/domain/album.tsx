@@ -8,29 +8,55 @@ export function Album(
     album: AlbumType & { artist?: { name?: string; uri?: string } };
   } & React.ComponentProps<"a">,
 ) {
-  const { album, ...rest } = props;
+  const { album, className, ...rest } = props;
   return (
-    <Link to={`/album/${album.id}`} viewTransition {...rest}>
-      <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
+    <div
+      className={cn(
+        "group flex min-w-0 items-center gap-3 border-b border-border py-3",
+        className,
+      )}
+    >
+      <Link
+        to={`/album/${album.id}`}
+        viewTransition
+        aria-label={`View ${album.name}`}
+        {...rest}
+        className="shrink-0"
+      >
         <AlbumImage
           id={album.id}
           src={album.image}
           alt={album.name}
-          width={80}
-          height={80}
+          width={56}
+          height={56}
+          className="size-14 object-cover"
         />
-
-        <div>
-          <AlbumName name={album.name} uri={album.uri} />
-          {album.artist && (
-            <AlbumArtist
-              artist={album.artist.name || "Unknown"}
-              uri={album.artist.uri || album.uri}
-            />
-          )}
-        </div>
+      </Link>
+      <div className="min-w-0 flex-1">
+        <Link
+          to={`/album/${album.id}`}
+          viewTransition
+          className="block truncate font-medium leading-snug hover:text-primary"
+        >
+          {album.name}
+        </Link>
+        {album.artist && (
+          <AlbumArtist
+            artist={album.artist.name || "Unknown"}
+            uri={album.artist.uri || album.uri}
+          />
+        )}
       </div>
-    </Link>
+      <a
+        href={album.uri}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${album.name} in Spotify`}
+        className="flex size-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-primary"
+      >
+        ↗
+      </a>
+    </div>
   );
 }
 

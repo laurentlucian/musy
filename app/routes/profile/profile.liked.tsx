@@ -1,20 +1,12 @@
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { Plus, RefreshCcw } from "lucide-react";
-import { Suspense, use } from "react";
+import { Suspense, use, useEffect } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { userContext } from "~/context";
 import { db } from "~/lib.server/services/db";
 import { getUserLiked, type UserLiked } from "~/lib.server/services/db/tracks";
@@ -31,7 +23,7 @@ export async function loader({ context, params, request }: Route.LoaderArgs) {
 
   const url = new URL(request.url);
   const yearParam = url.searchParams.get("year");
-  const year = yearParam ? +yearParam : undefined;
+  const year = yearParam && yearParam !== "all" ? +yearParam : undefined;
 
   return {
     userId,
@@ -87,10 +79,10 @@ export default function ProfileLiked({
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="page-toolbar">
         <Selector year={year} />
         {isOwnProfile && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <CreatePlaylistsButton userId={userId} />
             <LikedSyncButton userId={userId} />
             <Suspense
@@ -116,26 +108,35 @@ export default function ProfileLiked({
 
 function LikedList(props: { tracks: UserLiked }) {
   const { tracks, count } = use(props.tracks);
-  const rest = count - tracks.length;
+
+  if (!tracks.length)
+    return <div className="empty-state">No saved tracks for this period.</div>;
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col">
       {tracks.map((track) => {
         const extraInfo = track.likedAt
           ? format(new Date(track.likedAt), "MMM d, y")
           : undefined;
-        return <Track key={track.name} track={track} extraInfo={extraInfo} />;
+        return <Track key={track.id} track={track} extraInfo={extraInfo} />;
       })}
 
-      <p className="mx-auto font-semibold text-muted-foreground text-xs">
-        {rest ? `+ ${rest.toLocaleString()}` : "NONE"}
+      <p className="py-6 text-center text-muted-foreground text-xs">
+        {tracks.length < count
+          ? `${tracks.length.toLocaleString()} of ${count.toLocaleString()} ${count === 1 ? "track" : "tracks"}`
+          : `${count.toLocaleString()} ${count === 1 ? "track" : "tracks"}`}
       </p>
     </div>
   );
 }
 
 function CreatePlaylistsButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Updated");
+  }, [fetcher.state, fetcher.data]);
   const isCreating =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -147,31 +148,26 @@ function CreatePlaylistsButton({ userId }: { userId: string }) {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button type="button" size="sm" variant="outline" disabled={isCreating}>
-          {isCreating ? <Waver /> : <Plus />}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Playlists</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuItem
-              onClick={handleCreateByYear}
-              disabled={isCreating}
-            >
-              By Year
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      disabled={isCreating}
+      onClick={handleCreateByYear}
+    >
+      {isCreating ? <Waver /> : <Plus />}
+      {isCreating ? "Creating…" : "Make yearly playlists"}
+    </Button>
   );
 }
 
 function LikedSyncButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Updated");
+  }, [fetcher.state, fetcher.data]);
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -186,6 +182,7 @@ function LikedSyncButton({ userId }: { userId: string }) {
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
+      {isSyncing ? "Refreshing…" : "Refresh"}
     </Button>
   );
 }

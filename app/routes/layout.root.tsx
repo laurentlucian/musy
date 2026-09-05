@@ -1,11 +1,39 @@
-import { Outlet } from "react-router";
+import { Outlet, useLocation, useNavigation } from "react-router";
 import { Nav } from "~/components/domain/nav";
+import { Logo } from "~/components/domain/logo";
 
 export default function LayoutRoot() {
+  const { pathname } = useLocation();
+  const navigation = useNavigation();
+  const section = pathname.startsWith("/queue")
+    ? "Together"
+    : pathname.startsWith("/settings")
+      ? "Your account"
+      : /\/(track|artist|album)\//.test(pathname)
+        ? "Music details"
+        : /\/(liked|playlists)(\/|$)/.test(pathname)
+          ? "Your collection"
+          : "Your listening";
   return (
-    <main className="mx-auto flex max-w-(--breakpoint-2xl) flex-col items-center gap-y-10 py-3 pb-[72px] sm:pb-3 sm:pl-[120px]">
-      <Outlet />
+    <div className="app-shell">
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
       <Nav />
-    </main>
+      <div className="app-content">
+        <header className="app-masthead">
+          <div className="md:hidden">
+            <Logo />
+          </div>
+          <p className="section-label hidden md:block">Musy / {section}</p>
+          <output className="section-label">
+            {navigation.state === "loading" ? "Loading…" : ""}
+          </output>
+        </header>
+        <main id="main-content" tabIndex={-1}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }

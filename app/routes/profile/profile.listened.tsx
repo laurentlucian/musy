@@ -1,6 +1,7 @@
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
-import { Suspense, use } from "react";
+import { Suspense, use, useEffect } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { TracksQueueButton } from "~/components/domain/track-actions";
@@ -63,7 +64,7 @@ export default function ProfileListened({
   return (
     <>
       {currentUserId === userId && (
-        <div className="flex items-center gap-2">
+        <div className="page-toolbar">
           <ListenedSyncButton userId={userId} />
           <Suspense
             fallback={
@@ -86,7 +87,12 @@ export default function ProfileListened({
 }
 
 function ListenedSyncButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Updated");
+  }, [fetcher.state, fetcher.data]);
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -101,6 +107,7 @@ function ListenedSyncButton({ userId }: { userId: string }) {
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
+      {isSyncing ? "Refreshing…" : "Refresh"}
     </Button>
   );
 }
@@ -113,10 +120,16 @@ function ListenedQueueButton({ recent }: { recent: UserRecent }) {
 
 function ListenedList(props: { tracks: UserRecent }) {
   const { tracks, count } = use(props.tracks);
-  const rest = count - tracks.length;
+
+  if (!tracks.length)
+    return (
+      <div className="empty-state">
+        No listens yet. Your next tracks will appear here.
+      </div>
+    );
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col">
       {tracks.map((track) => {
         const extraInfo = track.playedAt ? (
           <>
@@ -127,11 +140,19 @@ function ListenedList(props: { tracks: UserRecent }) {
             </span>
           </>
         ) : undefined;
-        return <Track key={track.name} track={track} extraInfo={extraInfo} />;
+        return (
+          <Track
+            key={`${track.id}-${track.playedAt ?? ""}`}
+            track={track}
+            extraInfo={extraInfo}
+          />
+        );
       })}
 
-      <p className="mx-auto font-semibold text-muted-foreground text-xs">
-        {rest ? `+ ${rest.toLocaleString()}` : "NONE"}
+      <p className="py-6 text-center text-muted-foreground text-xs">
+        {tracks.length < count
+          ? `${tracks.length.toLocaleString()} of ${count.toLocaleString()} ${count === 1 ? "track" : "tracks"}`
+          : `${count.toLocaleString()} ${count === 1 ? "track" : "tracks"}`}
       </p>
     </div>
   );

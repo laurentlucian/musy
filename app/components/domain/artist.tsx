@@ -8,21 +8,50 @@ export function Artist(
     artist: ArtistType;
   } & React.ComponentProps<"a">,
 ) {
-  const { artist, ...rest } = props;
+  const { artist, className, ...rest } = props;
   return (
-    <Link to={`/artist/${artist.id}`} viewTransition {...rest}>
-      <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
+    <div
+      className={cn(
+        "group flex min-w-0 items-center gap-3 border-b border-border py-3",
+        className,
+      )}
+    >
+      <Link
+        to={`/artist/${artist.id}`}
+        viewTransition
+        aria-label={`View ${artist.name}`}
+        {...rest}
+        className="shrink-0"
+      >
         <ArtistImage
           id={artist.id}
           src={artist.image}
           alt={artist.name}
-          width={80}
-          height={80}
+          width={56}
+          height={56}
+          className="size-14 object-cover"
         />
-
-        <ArtistName name={artist.name} uri={artist.uri} />
+      </Link>
+      <div className="min-w-0 flex-1">
+        <Link
+          to={`/artist/${artist.id}`}
+          viewTransition
+          className="block truncate font-medium leading-snug hover:text-primary"
+        >
+          {artist.name}
+        </Link>
+        <span className="text-sm text-muted-foreground">Artist</span>
       </div>
-    </Link>
+      <a
+        href={artist.uri}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${artist.name} in Spotify`}
+        className="flex size-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-primary"
+      >
+        ↗
+      </a>
+    </div>
   );
 }
 

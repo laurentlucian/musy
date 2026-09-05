@@ -1,6 +1,13 @@
+import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
-import { use } from "react";
-import { useFetcher, useNavigation, useSearchParams } from "react-router";
+import { use, useEffect } from "react";
+import {
+  useFetcher,
+  useNavigation,
+  useSearchParams,
+  useLocation,
+  useParams,
+} from "react-router";
 import { Artist } from "~/components/domain/artist";
 import { NavLinkSub } from "~/components/domain/nav";
 import { Track } from "~/components/domain/track";
@@ -24,7 +31,7 @@ export function Selector({ year }: { year: number | null }) {
 
   return (
     <Select
-      value={isAll ? "All" : year.toString()}
+      value={isAll ? "all" : year.toString()}
       onValueChange={(data) => {
         const newParams = { ...Object.fromEntries(params) };
         if (data === "all") {
@@ -39,11 +46,11 @@ export function Selector({ year }: { year: number | null }) {
         });
       }}
     >
-      <SelectTrigger className="min-w-[100px]">
+      <SelectTrigger aria-label="Year" className="min-w-[100px]">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All</SelectItem>
+        <SelectItem value="all">All time</SelectItem>
         {years.map((y) => (
           <SelectItem key={y} value={y.toString()}>
             {y}
@@ -65,30 +72,58 @@ export function SyncButton({ userId }: { userId: string }) {
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      if (fetcher.data.success) toast.success("Music refreshed");
+      else if (fetcher.data.error) toast.error(fetcher.data.error);
+    }
+  }, [fetcher.state, fetcher.data]);
+
   return (
     <Button
       type="button"
       size="sm"
       variant="outline"
       className="ml-auto"
+      aria-label="Refresh your music"
       disabled={isSyncing}
       onClick={() => {
         fetcher.submit({ intent: "sync", userId }, { method: "post" });
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
+      {isSyncing ? "Refreshing…" : "Refresh"}
     </Button>
   );
 }
 
 export function Links() {
+  const { pathname } = useLocation();
+  const { userId } = useParams();
+  const base = userId ? `/profile/${userId}` : "/profile";
+  const collection = /\/(liked|playlists)(\/|$)/.test(pathname);
   return (
-    <nav className="flex w-full gap-2 overflow-x-auto overflow-y-hidden scroll-smooth p-1">
-      <NavLinkSub to=".">Stats</NavLinkSub>
-      <NavLinkSub to="top">Top</NavLinkSub>
-      <NavLinkSub to="liked">Liked</NavLinkSub>
-      <NavLinkSub to="listened">Listened</NavLinkSub>
-      <NavLinkSub to="playlists">Playlists</NavLinkSub>
+    <nav
+      className="sub-nav"
+      aria-label={collection ? "Collection" : "Listening"}
+    >
+      {collection ? (
+        <>
+          <NavLinkSub to={`${base}/liked`}>Liked songs</NavLinkSub>
+          <NavLinkSub to={`${base}/playlists`}>Playlists</NavLinkSub>
+        </>
+      ) : (
+        <>
+          <NavLinkSub to={base}>Overview</NavLinkSub>
+          <NavLinkSub to={`${base}/top`}>On repeat</NavLinkSub>
+          <NavLinkSub to={`${base}/listened`}>History</NavLinkSub>
+        </>
+      )}
+      {userId && (
+        <NavLinkSub to={collection ? base : `${base}/liked`}>
+          {collection ? "Listening ↗" : "Collection ↗"}
+        </NavLinkSub>
+      )}
     </nav>
   );
 }
@@ -108,7 +143,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
   const [params, setParams] = useSearchParams();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Select
         value={type}
         onValueChange={(data) => {
@@ -123,7 +158,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
           });
         }}
       >
-        <SelectTrigger className="min-w-[100px]">
+        <SelectTrigger aria-label="Ranking filter" className="min-w-[100px]">
           <SelectValue>{typeLabels[type] || type}</SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -145,7 +180,7 @@ export function TopSelector({ type, range }: { type: string; range: string }) {
           });
         }}
       >
-        <SelectTrigger className="min-w-[100px]">
+        <SelectTrigger aria-label="Ranking filter" className="min-w-[100px]">
           <SelectValue>{rangeLabels[range] || range}</SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -166,11 +201,21 @@ export function TopList({
   type: string;
 }) {
   const data = use(promise);
-  if (!data) return null;
+  if (!data)
+    return (
+      <p className="empty-state">
+        No favorites yet. Refresh to bring in your music.
+      </p>
+    );
 
   if (type === "tracks") {
     const tracks = data.tracks;
-    if (!tracks) return null;
+    if (!tracks?.length)
+      return (
+        <p className="empty-state">
+          No top tracks yet. Refresh to bring in your favorites.
+        </p>
+      );
     return (
       <div className="flex flex-col gap-2">
         {tracks.map((track) => (
@@ -180,7 +225,12 @@ export function TopList({
     );
   } else {
     const artists = data.artists;
-    if (!artists) return null;
+    if (!artists?.length)
+      return (
+        <p className="empty-state">
+          No top artists yet. Refresh to bring in your favorites.
+        </p>
+      );
     return (
       <div className="flex flex-col gap-2">
         {artists.map((artist) => (

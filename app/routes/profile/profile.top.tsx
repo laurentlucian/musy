@@ -1,5 +1,6 @@
+import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
-import { Suspense, use } from "react";
+import { Suspense, use, useEffect } from "react";
 import { data, redirect, useFetcher } from "react-router";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { Waver } from "~/components/icons/waver";
@@ -62,7 +63,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 export default function ProfileTop({ loaderData }: Route.ComponentProps) {
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="page-toolbar">
         <TopSelector type={loaderData.type} range={loaderData.range} />
         {loaderData.currentUserId === loaderData.userId && (
           <>
@@ -89,7 +90,12 @@ export default function ProfileTop({ loaderData }: Route.ComponentProps) {
 }
 
 function TopSyncButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Updated");
+  }, [fetcher.state, fetcher.data]);
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -104,6 +110,7 @@ function TopSyncButton({ userId }: { userId: string }) {
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
+      {isSyncing ? "Refreshing…" : "Refresh"}
     </Button>
   );
 }

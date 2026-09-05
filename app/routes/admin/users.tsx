@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { desc, eq } from "drizzle-orm";
 import { TrashIcon } from "lucide-react";
-import { data, useNavigate, useNavigation, useSubmit } from "react-router";
+import { data, Link, useNavigation, useSubmit } from "react-router";
 import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
@@ -53,10 +53,10 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
   const navigation = useNavigation();
   const userId = navigation.formData?.get("userId");
   const submit = useSubmit();
-  const navigate = useNavigate();
 
   return (
-    <article className="flex flex-col gap-3 font-normal text-sm sm:flex-1">
+    <article className="flex min-w-0 flex-col gap-5 overflow-x-auto text-sm">
+      <h2 className="font-semibold text-3xl">People</h2>
       <table className="w-full whitespace-nowrap rounded-lg">
         <thead>
           <tr className="text-left text-muted-foreground text-xs">
@@ -75,20 +75,28 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
             return (
               <tr
                 key={profile.id}
-                className="cursor-pointer bg-card transition-colors duration-150 hover:bg-muted"
-                onClick={() => navigate(`/profile/${profile.id}`)}
+                className="border-b border-border transition-colors duration-150 hover:bg-muted"
               >
-                <td className="p-3 capitalize">{profile.name}</td>
+                <td className="p-3 capitalize">
+                  <Link
+                    className="hover:text-primary hover:underline"
+                    to={`/profile/${profile.id}`}
+                  >
+                    {profile.name || "View profile"}
+                  </Link>
+                </td>
                 <td className="p-3">{profile.email}</td>
-                <td className="p-3 font-mono text-xs">{format(profile.createdAt, "MMM d y")}</td>
-                <td className="p-3 font-mono text-xs">{format(profile.updatedAt, "MMM d h:m a")}</td>
+                <td className="p-3 font-mono text-xs">
+                  {format(profile.createdAt, "MMM d y")}
+                </td>
+                <td className="p-3 font-mono text-xs">
+                  {format(profile.updatedAt, "MMM d h:mm a")}
+                </td>
                 <td className="p-3">{revoked ? "Yes" : "No"}</td>
-                <td
-                  className="p-3"
-                  onClick={(event) => event.stopPropagation()}
-                >
+                <td className="p-3">
                   <Button
-                    variant="destructive"
+                    aria-label={`Delete ${profile.name ?? "user"}`}
+                    variant="ghost"
                     size="icon"
                     disabled={userId === profile.id}
                     onClick={() => {
@@ -105,7 +113,7 @@ export default function Users({ loaderData: { users } }: Route.ComponentProps) {
       </table>
       {users.length === 0 && (
         <p className="mx-auto font-semibold text-muted-foreground text-xs">
-          NONE
+          Nothing here yet.
         </p>
       )}
     </article>

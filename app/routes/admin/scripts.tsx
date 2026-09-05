@@ -1,41 +1,47 @@
+import { Form, useNavigation } from "react-router";
 import { Button } from "~/components/ui/button";
 import { logMissingData } from "~/lib.server/services/scheduler/scripts/log-missing-data";
 import { syncUsers } from "~/lib.server/services/scheduler/sync";
 import type { Route } from "./+types/scripts";
 
 export default function Scripts(_: Route.ComponentProps) {
+  const navigation = useNavigation();
   return (
-    <article className="flex flex-col gap-3 rounded-lg sm:flex-1">
-      <form method="post">
-        <Button type="submit" name="intent" value="sync-recent">
-          Sync Recent
-        </Button>
-      </form>
-      <form method="post">
-        <Button type="submit" name="intent" value="sync-top">
-          Sync Top
-        </Button>
-      </form>
-      <form method="post">
-        <Button type="submit" name="intent" value="sync-profile">
-          Sync Profile
-        </Button>
-      </form>
-      <form method="post">
-        <Button type="submit" name="intent" value="sync-liked-full">
-          Sync Liked (Full)
-        </Button>
-      </form>
-      <form method="post">
-        <Button type="submit" name="intent" value="enrich-artists-albums">
-          Enrich Artists & Albums
-        </Button>
-      </form>
-      <form method="post">
-        <Button type="submit" name="intent" value="log-missing-data">
-          Log Missing Data
-        </Button>
-      </form>
+    <article>
+      <h2 className="mb-3 font-semibold text-3xl">Maintenance</h2>
+      <p className="mb-8 text-sm text-muted-foreground">
+        Refresh listening data across accounts.
+      </p>
+      <div className="divide-y divide-border border-y border-border">
+        {[
+          ["sync-recent", "Recent listening"],
+          ["sync-top", "Top music"],
+          ["sync-profile", "Profiles"],
+          ["sync-liked-full", "Liked tracks"],
+          ["log-missing-data", "Find missing data"],
+        ].map(([intent, label]) => (
+          <Form
+            key={intent}
+            method="post"
+            className="flex items-center justify-between gap-4 py-5"
+          >
+            <span>{label}</span>
+            <Button
+              variant="outline"
+              type="submit"
+              name="intent"
+              value={intent}
+              disabled={navigation.state !== "idle"}
+            >
+              {navigation.formData?.get("intent") === intent
+                ? "Running…"
+                : intent === "log-missing-data"
+                  ? "Inspect"
+                  : "Refresh"}
+            </Button>
+          </Form>
+        ))}
+      </div>
     </article>
   );
 }

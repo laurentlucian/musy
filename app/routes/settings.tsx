@@ -1,5 +1,13 @@
-import { ArrowLeft } from "lucide-react";
-import { data, Form, Link, Outlet, redirect, useLocation } from "react-router";
+import { LogOut } from "lucide-react";
+import {
+  data,
+  Form,
+  Link,
+  Outlet,
+  redirect,
+  useLocation,
+  useNavigation,
+} from "react-router";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { ADMIN_USER_ID, DEV } from "~/lib.server/services/auth/const";
@@ -20,32 +28,58 @@ export default function Settings({
 }: Route.ComponentProps) {
   const { pathname } = useLocation();
   const root = pathname === "/settings";
+  const navigation = useNavigation();
 
   return (
-    <main className="flex w-full max-w-dvw flex-1 flex-col gap-4 px-8 font-medium">
-      <div className="relative w-full">
-        {!root && (
-          <Link to="/settings" className="absolute top-0 left-0 sm:hidden">
-            <ArrowLeft />
-          </Link>
-        )}
-      </div>
-      <div className="flex flex-1 flex-col gap-4 sm:flex-row">
-        <div
-          className="hidden flex-col gap-3 data-root:flex md:flex"
-          data-root={root ? 1 : undefined}
-        >
+    <main className="mx-auto w-full max-w-6xl py-4">
+      <header className="mb-6 border-b border-border pb-4">
+        <p className="mb-3 text-xs font-semibold uppercase text-primary">
+          Your space
+        </p>
+        <h1 className="font-semibold text-2xl sm:text-3xl">Settings</h1>
+      </header>
+      <div className="flex flex-col gap-10 md:flex-row">
+        <aside className="flex shrink-0 flex-col gap-6 md:w-44">
           {(userId === ADMIN_USER_ID || DEV) && <AdminNav />}
           {userId && (
-            <Form method="post">
+            <Form
+              method="post"
+              action="/settings"
+              className="border-t border-border pt-5"
+            >
               <input type="hidden" name="mode" value="logout" />
-              <Button type="submit" variant="nav-sub">
-                logout
+              <Button
+                type="submit"
+                variant="ghost"
+                disabled={navigation.formData?.get("mode") === "logout"}
+              >
+                <LogOut className="size-4" />{" "}
+                {navigation.formData?.get("mode") === "logout"
+                  ? "Signing out…"
+                  : "Sign out"}
               </Button>
             </Form>
           )}
+        </aside>
+        <div className="min-w-0 flex-1">
+          {root ? (
+            <div className="py-4">
+              <h2 className="font-semibold text-3xl">A little housekeeping.</h2>
+              <p className="mt-3 text-muted-foreground">
+                {userId
+                  ? "Manage your session here."
+                  : "Sign in to manage your account."}
+              </p>
+              {!userId && (
+                <Button asChild className="mt-6">
+                  <Link to="/">Back to Musy</Link>
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Outlet />
+          )}
         </div>
-        <Outlet />
       </div>
     </main>
   );

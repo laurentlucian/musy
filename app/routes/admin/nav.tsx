@@ -1,13 +1,27 @@
-import { Fragment } from "react";
-import { NavLinkSub } from "~/components/domain/nav";
+import { NavLink } from "react-router";
 
 export function AdminNav() {
   return (
-    <Fragment>
-      <NavLinkSub to="/settings/admin/users">users</NavLinkSub>
-      <NavLinkSub to="/settings/admin/counts">counts</NavLinkSub>
-      <NavLinkSub to="/settings/admin/syncs">syncs</NavLinkSub>
-      <NavLinkSub to="/settings/admin/scripts">scripts</NavLinkSub>
-    </Fragment>
+    <nav
+      aria-label="Administration"
+      className="flex flex-wrap gap-1 md:flex-col"
+    >
+      {[
+        ["users", "People"],
+        ["counts", "Catalog"],
+        ["syncs", "Sync activity"],
+        ["scripts", "Maintenance"],
+      ].map(([path, label]) => (
+        <NavLink
+          key={path}
+          to={`/settings/admin/${path}`}
+          className={({ isActive }) =>
+            `rounded-md px-3 py-2.5 text-sm transition-colors ${isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`
+          }
+        >
+          {label}
+        </NavLink>
+      ))}
+    </nav>
   );
 }

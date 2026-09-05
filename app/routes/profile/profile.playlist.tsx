@@ -1,6 +1,8 @@
+import { toast } from "sonner";
+import { TracksQueueButton } from "~/components/domain/track-actions";
 import { format } from "date-fns";
-import { ChevronLeft, RefreshCcw, Settings } from "lucide-react";
-import { Suspense, use, useState } from "react";
+import { ChevronLeft, RefreshCcw, Heart, MoreHorizontal } from "lucide-react";
+import { Suspense, use, useState, useEffect } from "react";
 import { data, Link, redirect, useFetcher } from "react-router";
 import { Track } from "~/components/domain/track";
 import { Waver } from "~/components/icons/waver";
@@ -16,9 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
@@ -127,7 +126,7 @@ function BackButton({ userId }: { userId: string }) {
         to={`/profile/${userId}/playlists`}
         className="text-muted-foreground"
       >
-        <ChevronLeft />
+        <ChevronLeft /> Playlists
       </Link>
     </Button>
   );
@@ -156,8 +155,8 @@ function PlaylistDetailContent({
   const hasImage = playlist.image && playlist.image.trim() !== "";
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-6">
+      <div className="page-toolbar">
         <BackButton userId={userId} />
         {currentUserId === userId && (
           <PlaylistActions
@@ -169,30 +168,38 @@ function PlaylistDetailContent({
           />
         )}
       </div>
-      <div className="flex items-center gap-3 rounded-lg bg-card p-4">
+      <div className="flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-end">
         {hasImage ? (
           <Image
-            className="size-16 rounded"
+            className="size-40 rounded-lg object-cover sm:size-48"
             src={playlist.image}
             alt={playlist.name}
             name={playlist.name}
           />
         ) : (
-          <div className="flex size-16 items-center justify-center rounded bg-muted font-bold text-2xl">
+          <div className="flex size-40 items-center justify-center rounded-lg bg-muted font-semibold text-3xl sm:size-48">
             {firstLetter}
           </div>
         )}
         <div className="flex flex-1 flex-col gap-1">
-          <h1 className="font-bold text-xl">{playlist.name}</h1>
+          <h1 className="font-semibold text-2xl tracking-tight sm:text-2xl">
+            {playlist.name}
+          </h1>
+          <p className="section-label mt-3">
+            {tracks.length.toLocaleString()} tracks
+          </p>
           {playlist.description && (
-            <p className="line-clamp-2 text-muted-foreground text-sm">
+            <p className="mt-3 max-w-lg text-muted-foreground text-sm leading-relaxed">
               {decodeHtmlEntity(playlist.description)}
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col">
+        {!tracks.length && (
+          <div className="empty-state">No tracks in this playlist yet.</div>
+        )}
         {tracks.map((track) => {
           const extraInfo = track.addedAt
             ? format(new Date(track.addedAt), "MMM d, y")
@@ -217,96 +224,33 @@ function PlaylistActions({
   trackCount: number;
   playlistName: string;
 }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
   const [unlikeDialogOpen, setUnlikeDialogOpen] = useState(false);
-  const [unlikeCount, setUnlikeCount] = useState<number | "all">("all");
+  const isSubmitting = fetcher.state !== "idle";
 
-  const isSubmitting =
-    fetcher.state === "submitting" || fetcher.state === "loading";
-  const currentIntent = fetcher.formData?.get("intent")?.toString();
-
-  const isSyncing = isSubmitting && currentIntent === "sync-playlist";
-  const isBulkAction =
-    isSubmitting &&
-    (currentIntent === "like-playlist" ||
-      currentIntent === "unlike-playlist" ||
-      currentIntent === "queue-multiple");
-
-  const handleBulkLike = (count: number | "all") => {
-    if (count === "all") {
-      fetcher.submit(
-        { intent: "like-playlist", userId, playlistId },
-        { method: "post" },
-      );
-    } else {
-      // For partial likes, we'd need a new action - for now just use full like
-      fetcher.submit(
-        { intent: "like-playlist", userId, playlistId },
-        { method: "post" },
-      );
-    }
-  };
-
-  const handleBulkUnlike = (count: number | "all") => {
-    setUnlikeCount(count);
-    if (count === "all") {
-      setUnlikeDialogOpen(true);
-    } else {
-      // For partial unlikes, we'd need a new action - for now just use full unlike
-      setUnlikeDialogOpen(true);
-    }
-  };
-
-  const handleBulkQueue = (count: number) => {
-    const tracksToQueue = tracks.slice(0, count);
-    const formData = new FormData();
-    formData.set(
-      "uris",
-      JSON.stringify(tracksToQueue.map((track) => track.uri)),
-    );
-    formData.set("provider", "spotify");
-    fetcher.submit(formData, {
-      method: "post",
-      action: "/actions/queue-multiple",
-    });
-  };
-
-  const handleUnlikeConfirm = () => {
-    setUnlikeDialogOpen(false);
-    fetcher.submit(
-      { intent: "unlike-playlist", userId, playlistId },
-      { method: "post" },
-    );
-  };
-
-  const handleSync = () => {
-    fetcher.submit(
-      { intent: "sync-playlist", userId, playlistId },
-      { method: "post" },
-    );
-  };
-
-  const likeOptions = (["all" as const, 5, 10, 20, 50, 100] as const).filter(
-    (count) => count === "all" || count <= tracks.length,
-  );
-  const unlikeOptions = (["all" as const, 5, 10, 20, 50, 100] as const).filter(
-    (count) => count === "all" || count <= tracks.length,
-  );
-  const queueOptions = [5, 10, 20, 50, 100].filter(
-    (count) => count <= tracks.length,
-  );
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Playlist updated");
+  }, [fetcher.state, fetcher.data]);
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <TracksQueueButton tracks={tracks} provider="spotify" />
         <Button
           type="button"
           size="sm"
           variant="outline"
-          disabled={isSyncing}
-          onClick={handleSync}
+          disabled={isSubmitting || !trackCount}
+          onClick={() => {
+            fetcher.submit(
+              { intent: "like-playlist", userId, playlistId },
+              { method: "post" },
+            );
+          }}
         >
-          {isSyncing ? <Waver /> : <RefreshCcw />}
+          <Heart /> Save all
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -314,98 +258,59 @@ function PlaylistActions({
               type="button"
               size="sm"
               variant="outline"
-              disabled={isBulkAction}
+              disabled={isSubmitting}
+              aria-label="Playlist options"
             >
-              {isBulkAction ? <Waver /> : <Settings />}
+              <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger disabled={isBulkAction}>
-                Bulk
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger disabled={isBulkAction}>
-                    Like
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {likeOptions.map((count) => (
-                      <DropdownMenuItem
-                        key={`like-${count}`}
-                        onClick={() => handleBulkLike(count)}
-                        disabled={isBulkAction}
-                      >
-                        {count === "all" ? "All" : `${count} tracks`}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger disabled={isBulkAction}>
-                    Unlike
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {unlikeOptions.map((count) => (
-                      <DropdownMenuItem
-                        key={`unlike-${count}`}
-                        onClick={() => handleBulkUnlike(count)}
-                        disabled={isBulkAction}
-                      >
-                        {count === "all" ? "All" : `${count} tracks`}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger disabled={isBulkAction}>
-                    Queue
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    {queueOptions.map((count) => (
-                      <DropdownMenuItem
-                        key={`queue-${count}`}
-                        onClick={() => handleBulkQueue(count)}
-                        disabled={isBulkAction}
-                      >
-                        {count} tracks
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={() => {
+                fetcher.submit(
+                  { intent: "sync-playlist", userId, playlistId },
+                  { method: "post" },
+                );
+              }}
+            >
+              <RefreshCcw /> Refresh playlist
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive"
+              disabled={!trackCount}
+              onClick={() => setUnlikeDialogOpen(true)}
+            >
+              Remove all from liked songs
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        {isSubmitting && (
+          <output className="text-xs text-muted-foreground">Updating…</output>
+        )}
       </div>
-
       <Dialog open={unlikeDialogOpen} onOpenChange={setUnlikeDialogOpen}>
         <DialogContent>
-          <DialogTitle>Unlike tracks?</DialogTitle>
+          <DialogTitle>Remove liked songs?</DialogTitle>
           <DialogDescription>
-            This will unlike{" "}
-            {unlikeCount === "all"
-              ? `all ${trackCount.toLocaleString()}`
-              : unlikeCount}{" "}
-            tracks in "{playlistName}". This action cannot be undone.
+            Remove all {trackCount.toLocaleString()} tracks in “{playlistName}”
+            from your Spotify liked songs. The playlist stays intact.
           </DialogDescription>
           <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
-              <Button variant="outline" size="sm">
-                Cancel
-              </Button>
+              <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button
               variant="destructive"
-              size="sm"
-              onClick={handleUnlikeConfirm}
-              disabled={isBulkAction}
+              disabled={isSubmitting}
+              onClick={() => {
+                setUnlikeDialogOpen(false);
+                fetcher.submit(
+                  { intent: "unlike-playlist", userId, playlistId },
+                  { method: "post" },
+                );
+              }}
             >
-              {isBulkAction ? (
-                <Waver />
-              ) : (
-                `Unlike ${unlikeCount === "all" ? "All" : unlikeCount}`
-              )}
+              Remove likes
             </Button>
           </div>
         </DialogContent>

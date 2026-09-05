@@ -19,21 +19,25 @@ export default function Counts({
   loaderData: { tracks, artists, albums },
 }: Route.ComponentProps) {
   return (
-    <article className="flex flex-col gap-6 sm:flex-1">
-      <div className="flex flex-col gap-4">
-        <div className="rounded-lg bg-card p-6">
-          <p className="text-muted-foreground text-sm">Tracks</p>
-          <p className="font-semibold text-3xl">{tracks.toLocaleString()}</p>
-        </div>
-        <div className="rounded-lg bg-card p-6">
-          <p className="text-muted-foreground text-sm">Artists</p>
-          <p className="font-semibold text-3xl">{artists.toLocaleString()}</p>
-        </div>
-        <div className="rounded-lg bg-card p-6">
-          <p className="text-muted-foreground text-sm">Albums</p>
-          <p className="font-semibold text-3xl">{albums.toLocaleString()}</p>
-        </div>
-      </div>
+    <article>
+      <h2 className="mb-8 font-semibold text-3xl">The catalog</h2>
+      <dl className="divide-y divide-border border-y border-border">
+        {[
+          ["Tracks", tracks],
+          ["Artists", artists],
+          ["Albums", albums],
+        ].map(([label, total]) => (
+          <div
+            key={label}
+            className="flex items-baseline justify-between gap-6 py-7"
+          >
+            <dt className="text-muted-foreground">{label}</dt>
+            <dd className="font-semibold text-2xl tabular-nums">
+              {total.toLocaleString()}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </article>
   );
 }

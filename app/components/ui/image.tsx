@@ -25,7 +25,7 @@ export function Image({
 }: ComponentProps<"img"> & { name?: string | null }) {
   const [showInitials, setShowInitials] = useState(false);
 
-  if (showInitials && name) {
+  if (!src || showInitials) {
     const size = width || height;
     return (
       <div
@@ -39,7 +39,7 @@ export function Image({
           ...style,
         }}
       >
-        <span className="font-medium">{getInitials(name)}</span>
+        <span className="font-medium">{getInitials(name || alt)}</span>
       </div>
     );
   }
@@ -48,16 +48,14 @@ export function Image({
     <img
       {...props}
       src={src}
-      alt={alt || "image"}
+      alt={alt ?? name ?? ""}
       draggable={false}
       className={cn("rounded", className)}
       width={width}
       height={height}
       style={style}
       onError={() => {
-        if (name) {
-          setShowInitials(true);
-        }
+        setShowInitials(true);
       }}
     />
   );

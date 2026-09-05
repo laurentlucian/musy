@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { cn } from "~/components/utils";
 import type { Track as TrackType } from "~/lib.server/services/db";
 import { Image } from "../ui/image";
@@ -33,32 +33,58 @@ export function Track(
     extraInfo?: React.ReactNode;
   } & React.ComponentProps<"a">,
 ) {
-  const { track, extraInfo, ...rest } = props;
+  const { track, extraInfo, className, ...rest } = props;
   return (
-    <Link to={`/track/${track.id}`} viewTransition {...rest}>
-      <div className="flex flex-1 gap-x-2 rounded-md bg-card px-3.5 py-3 transition-colors duration-150 hover:bg-accent">
+    <div
+      className={cn(
+        "group flex min-w-0 items-center gap-3 border-b border-border py-3",
+        className,
+      )}
+    >
+      <Link
+        to={`/track/${track.id}`}
+        viewTransition
+        aria-label={`View ${track.name}`}
+        {...rest}
+        className="shrink-0"
+      >
         <TrackImage
           id={track.id}
           src={track.image}
           alt={track.name}
-          width={80}
-          height={80}
+          width={56}
+          height={56}
+          className="size-14 object-cover"
         />
-        <div className="flex flex-1 flex-col gap-px">
-          <TrackName name={track.name} uri={track.uri} />
-          <TrackArtist
-            artist={getArtistName(track)}
-            artistId={getArtistId(track)}
-            uri={getArtistUri(track)}
-          />
-          {extraInfo && (
-            <div className="mt-auto text-muted-foreground text-xs">
-              {extraInfo}
-            </div>
-          )}
-        </div>
+      </Link>
+      <div className="min-w-0 flex-1">
+        <Link
+          to={`/track/${track.id}`}
+          viewTransition
+          className="block truncate font-medium leading-snug hover:text-primary"
+        >
+          {track.name}
+        </Link>
+        <TrackArtist
+          artist={getArtistName(track)}
+          artistId={getArtistId(track)}
+          uri={getArtistUri(track)}
+          className="block truncate"
+        />
+        {extraInfo && (
+          <div className="mt-1 text-xs text-muted-foreground">{extraInfo}</div>
+        )}
       </div>
-    </Link>
+      <a
+        href={track.uri}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${track.name} in Spotify`}
+        className="flex size-11 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-primary"
+      >
+        ↗
+      </a>
+    </div>
   );
 }
 
@@ -122,6 +148,7 @@ export function TrackArtist(
       onClick={(event) => {
         event.stopPropagation();
       }}
+      {...rest}
     >
       {artist}
     </a>
@@ -141,7 +168,7 @@ export function TrackAlbum(
     return (
       <Link
         className={cn(
-          "text-muted-foreground text-s hover:underline",
+          "text-muted-foreground text-sm hover:underline",
           className,
         )}
         to={`/album/${albumId}`}
@@ -176,13 +203,5 @@ export function TrackImage(
   props: React.ComponentProps<"img"> & { id: string },
 ) {
   const { className, id, ...rest } = props;
-  return (
-    <Image
-      className={cn("rounded-md", className)}
-      style={{
-        viewTransitionName: `track-image-${id}`,
-      }}
-      {...rest}
-    />
-  );
+  return <Image className={cn("rounded-md", className)} {...rest} />;
 }

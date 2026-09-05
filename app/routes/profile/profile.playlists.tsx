@@ -1,8 +1,8 @@
+import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
-import { Suspense, use } from "react";
+import { Suspense, use, useEffect } from "react";
 import {
   data,
-  href,
   Link,
   Outlet,
   redirect,
@@ -75,7 +75,7 @@ export default function ProfilePlaylists({
   return (
     <>
       {!isDetailRoute && isOwnProfile && (
-        <div className="flex items-center gap-2">
+        <div className="page-toolbar">
           <PlaylistsSyncButton userId={userId} />
         </div>
       )}
@@ -92,8 +92,15 @@ export default function ProfilePlaylists({
 function PlaylistsList(props: { playlists: UserPlaylists; userId: string }) {
   const { playlists } = use(props.playlists);
 
+  if (!playlists.length)
+    return (
+      <div className="empty-state">
+        Your playlists will appear here after syncing Spotify.
+      </div>
+    );
+
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-3 xl:grid-cols-4">
       {playlists.map((playlist) => {
         return (
           <PlaylistItem
@@ -121,29 +128,43 @@ function PlaylistItem({
   userId: string;
 }) {
   return (
-    <Link to={`/profile/${userId}/playlists/${playlist.id}`} viewTransition>
-      <div className="flex items-center gap-3 rounded-lg bg-card p-3 transition-colors duration-150 hover:bg-accent">
-        {playlist.image && (
+    <Link
+      to={`/profile/${userId}/playlists/${playlist.id}`}
+      viewTransition
+      className="group min-w-0"
+    >
+      <div className="mb-3 aspect-square overflow-hidden rounded-lg bg-muted">
+        {playlist.image ? (
           <Image
-            className="size-12 rounded"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             src={playlist.image}
-            alt={playlist.name}
+            alt=""
             name={playlist.name}
           />
+        ) : (
+          <div className="flex h-full items-center justify-center font-semibold text-3xl text-muted-foreground">
+            {playlist.name.charAt(0)}
+          </div>
         )}
-        <div className="flex flex-1 flex-col gap-1">
-          <p className="font-semibold text-sm">{playlist.name}</p>
-          <p className="text-muted-foreground text-xs">
-            {playlist.total} {playlist.total === 1 ? "track" : "tracks"}
-          </p>
-        </div>
       </div>
+      <p className="truncate font-medium group-hover:underline">
+        {playlist.name}
+      </p>
+      <p className="mt-1 text-muted-foreground text-xs">
+        {playlist.total.toLocaleString()}{" "}
+        {playlist.total === 1 ? "track" : "tracks"}
+      </p>
     </Link>
   );
 }
 
 function PlaylistsSyncButton({ userId }: { userId: string }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<{ success?: boolean; error?: string }>();
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+    if (fetcher.data.error) toast.error(fetcher.data.error);
+    else if (fetcher.data.success) toast.success("Updated");
+  }, [fetcher.state, fetcher.data]);
   const isSyncing =
     fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -161,6 +182,7 @@ function PlaylistsSyncButton({ userId }: { userId: string }) {
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}
+      {isSyncing ? "Refreshing…" : "Refresh"}
     </Button>
   );
 }

@@ -69,7 +69,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
 export default function Profile({ loaderData }: Route.ComponentProps) {
   return (
-    <article className="flex flex-1 flex-col gap-6 self-stretch px-6 py-2">
+    <article className="flex flex-1 flex-col gap-6 self-stretch py-2">
       <Suspense
         fallback={
           <div className="mx-auto py-10">

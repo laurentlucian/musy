@@ -1,6 +1,8 @@
 import type { Route } from ".react-router/types/app/routes/queue/+types/group";
 import { formatDistanceToNow } from "date-fns";
 import {
+  ArrowLeft,
+  Copy,
   Check,
   Circle,
   ListMusic,
@@ -143,7 +145,6 @@ export async function action({ request, params, context }: Route.ActionArgs) {
         finalTrackId = savedTrackIds[0];
       }
 
-
       // Add to queue
       await addQueueItem({
         groupId,
@@ -180,57 +181,76 @@ export default function Group({ loaderData }: Route.ComponentProps) {
   );
 
   return (
-    <div className="flex w-full flex-col gap-6 p-6">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <h1 className="flex-1 font-bold text-3xl">{group.name}</h1>
+    <section className="mx-auto w-full max-w-5xl py-4">
+      <Link
+        to="/queue"
+        className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" /> Shared queues
+      </Link>
+      <header className="mb-8 border-b border-border pb-4">
+        <p className="mb-3 text-xs font-semibold uppercase text-primary">
+          Shared queue
+        </p>
+        <h1 className="font-semibold text-2xl sm:text-3xl">{group.name}</h1>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-5">
           <PlaybackStatusPanel
             group={group}
             statusByUser={statusByUser}
             currentUserId={userId}
           />
+          <div className="flex flex-wrap items-center gap-2">
+            <InviteAction />
+            <AddTrackAction />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <AddTrackAction />
-          {isOwner ? <DeleteGroupAction /> : <LeaveGroupAction />}
-        </div>
+      </header>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase">
+          Tracks{" "}
+          <span className="ml-2 text-muted-foreground">{items.length}</span>
+        </h2>
+        {isOwner ? <DeleteGroupAction /> : <LeaveGroupAction />}
       </div>
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg text-center">
-          <h3 className="font-semibold text-lg">Nothing yet</h3>
-          <p className="text-muted-foreground text-sm">
-            Queue tracks to this group to see them here.
+        <div className="flex flex-col items-center justify-center border-y border-border py-16 text-center">
+          <h3 className="font-semibold text-3xl">No tracks yet</h3>
+          <p className="mt-3 text-muted-foreground text-sm">
+            Add a Spotify track to the queue.
           </p>
         </div>
       ) : (
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col divide-y divide-border">
           {items.map((item) => {
             const myDelivery = item.deliveries.find((d) => d.userId === userId);
 
             return (
-              <Link
+              <div
                 key={item.id}
-                to={`/track/${item.track.id}`}
-                viewTransition
-                className="flex items-center gap-4 rounded-md bg-card p-4 shadow-sm transition-colors hover:bg-accent/50"
+                className="flex flex-wrap items-center gap-4 py-5"
               >
-                <Image
-                  src={item.track.image}
-                  alt={item.track.name}
-                  className="h-12 w-12 rounded-md object-cover"
-                  height={48}
-                  width={48}
-                />
-                <div className="flex flex-1 flex-col overflow-hidden">
-                  <span className="truncate font-medium">
-                    {item.track.name}
-                  </span>
-                  <span className="truncate text-muted-foreground text-sm">
-                    {item.track.artists.map((a) => a.artist.name).join(", ")}
-                  </span>
-                </div>
-
+                <Link
+                  to={`/track/${item.track.id}`}
+                  viewTransition
+                  className="flex min-w-0 flex-1 items-center gap-4 hover:text-primary"
+                >
+                  <Image
+                    src={item.track.image}
+                    alt={item.track.name}
+                    className="h-12 w-12 rounded-md object-cover"
+                    height={48}
+                    width={48}
+                  />
+                  <div className="flex flex-1 flex-col overflow-hidden">
+                    <span className="truncate font-medium">
+                      {item.track.name}
+                    </span>
+                    <span className="truncate text-muted-foreground text-sm">
+                      {item.track.artists.map((a) => a.artist.name).join(", ")}
+                    </span>
+                  </div>
+                </Link>
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-3">
                     {myDelivery && userId !== item.userId && (
@@ -304,10 +324,40 @@ export default function Group({ loaderData }: Route.ComponentProps) {
                     })}
                   </span>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
+      )}
+    </section>
+  );
+}
+
+function InviteAction() {
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(false);
+  return (
+    <div>
+      <Button
+        variant="outline"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            setCopied(true);
+            setError(false);
+            window.setTimeout(() => setCopied(false), 2500);
+          } catch {
+            setError(true);
+          }
+        }}
+      >
+        {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+        {copied ? "Link copied" : "Invite friends"}
+      </Button>
+      {error && (
+        <p role="alert" className="mt-2 max-w-48 text-xs text-destructive">
+          Copy this page’s address to invite friends.
+        </p>
       )}
     </div>
   );
@@ -322,7 +372,7 @@ function ReactionButton({
   reaction: "like" | "dislike";
   isActive: boolean;
 }) {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
 
   return (
     <fetcher.Form method="post">
@@ -337,8 +387,10 @@ function ReactionButton({
         type="submit"
         variant="ghost"
         size="icon"
-        onClick={(e) => e.stopPropagation()}
-        className={`h-8 w-8 ${isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground opacity-50 hover:opacity-100"}`}
+        aria-label={reaction === "like" ? "Like track" : "Dislike track"}
+        aria-pressed={isActive}
+        disabled={fetcher.state !== "idle"}
+        className={`h-10 w-10 ${isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground opacity-50 hover:opacity-100"}`}
       >
         {reaction === "like" ? (
           <ThumbsUp className="h-4 w-4" />
@@ -351,16 +403,14 @@ function ReactionButton({
 }
 
 function AddTrackAction() {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const [open, setOpen] = useState(false);
   const isAddingTrack = fetcher.formData?.get("intent") === "add-track";
   const error =
-    fetcher.data && "error" in (fetcher.data as any)
-      ? (fetcher.data as any).error
-      : undefined;
+    fetcher.data && "error" in fetcher.data ? fetcher.data.error : undefined;
 
   useEffect(() => {
-    if (fetcher.data && "success" in (fetcher.data as any)) {
+    if (fetcher.data && "success" in fetcher.data) {
       setOpen(false);
     }
   }, [fetcher.data]);
@@ -368,23 +418,27 @@ function AddTrackAction() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Plus className="h-4 w-4" />
+        <Button>
+          <Plus className="h-4 w-4" /> Add track
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Track</DialogTitle>
+          <DialogTitle className="font-semibold text-3xl">
+            Add a track
+          </DialogTitle>
           <DialogDescription>
             Paste a Spotify link or track ID to add it to the queue.
           </DialogDescription>
         </DialogHeader>
         <fetcher.Form method="post" className="flex flex-col gap-4">
+          <input type="hidden" name="intent" value="add-track" />
           <div className="relative">
             <Input
               required
               name="spotifyLink"
-              placeholder="Paste Spotify Link"
+              aria-label="Spotify track link or ID"
+              placeholder="Spotify track link or ID"
               className="w-full"
               disabled={isAddingTrack}
               autoFocus
@@ -401,7 +455,10 @@ function AddTrackAction() {
               </div>
             )}
             {error && !isAddingTrack && (
-              <div className="mt-2 flex items-center gap-2 text-destructive text-sm">
+              <div
+                role="alert"
+                className="mt-2 flex items-center gap-2 text-destructive text-sm"
+              >
                 <X className="h-4 w-4" />
                 <span>{error}</span>
               </div>
@@ -411,17 +468,13 @@ function AddTrackAction() {
             <Button
               type="button"
               variant="outline"
+              disabled={isAddingTrack}
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              name="intent"
-              value="add-track"
-              disabled={isAddingTrack}
-            >
-              Queue
+            <Button type="submit" disabled={isAddingTrack}>
+              {isAddingTrack ? "Adding…" : "Add to queue"}
             </Button>
           </div>
         </fetcher.Form>
@@ -431,7 +484,7 @@ function AddTrackAction() {
 }
 
 function DeleteGroupAction() {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const [open, setOpen] = useState(false);
   const isDeleting = fetcher.formData?.get("intent") === "delete-group";
 
@@ -450,18 +503,17 @@ function DeleteGroupAction() {
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           className="text-muted-foreground hover:text-destructive"
         >
-          <Trash className="h-4 w-4" />
+          <Trash className="h-4 w-4" /> Delete queue
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Group</DialogTitle>
+          <DialogTitle>Delete queue?</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this group? This action cannot be
-            undone.
+            This removes the shared queue for everyone. This cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end gap-2">
@@ -481,7 +533,13 @@ function DeleteGroupAction() {
               variant="destructive"
               disabled={isDeleting}
             >
-              {isDeleting ? <Loader /> : "Delete"}
+              {isDeleting ? (
+                <>
+                  <Loader /> Deleting…
+                </>
+              ) : (
+                "Delete queue"
+              )}
             </Button>
           </fetcher.Form>
         </div>
@@ -511,22 +569,30 @@ function extractTrackId(input: string): string | null {
 }
 
 function LeaveGroupAction() {
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<typeof action>();
   const isLeaving = fetcher.formData?.get("intent") === "leave-group";
 
   return (
     <fetcher.Form method="post">
       <Button
         variant="ghost"
-        size="icon"
+        size="sm"
         name="intent"
         value="leave-group"
         className="text-muted-foreground hover:text-destructive"
         disabled={isLeaving}
-        title="Leave group"
+        title="Leave queue"
       >
-        {isLeaving ? <Loader /> : <LogOut className="h-4 w-4" />}
+        {isLeaving ? <Loader /> : <LogOut className="h-4 w-4" />}{" "}
+        {isLeaving ? "Leaving…" : "Leave queue"}
       </Button>
+      {fetcher.data &&
+        typeof fetcher.data === "object" &&
+        "error" in fetcher.data && (
+          <p role="alert" className="text-sm text-destructive">
+            {String(fetcher.data.error)}
+          </p>
+        )}
     </fetcher.Form>
   );
 }
@@ -549,7 +615,9 @@ function PlaybackStatusPanel({
 }) {
   const allUsers = [
     { userId: group.userId, user: group.owner },
-    ...group.members.map((m) => ({ userId: m.userId, user: m.user })),
+    ...group.members
+      .filter((m) => m.userId !== group.userId)
+      .map((m) => ({ userId: m.userId, user: m.user })),
   ];
 
   return (
@@ -559,10 +627,7 @@ function PlaybackStatusPanel({
         const isCurrentUser = userId === currentUserId;
 
         return (
-          <div
-            key={userId}
-            className="flex items-center gap-2 rounded-md bg-accent/50 px-3 py-2"
-          >
+          <div key={userId} className="flex items-center gap-2 py-2 pr-3">
             <div className="relative">
               <Image
                 src={user.image ?? ""}
