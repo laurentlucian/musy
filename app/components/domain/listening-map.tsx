@@ -176,7 +176,7 @@ export default function ListeningMap({
           const content = document.createElement("div");
           content.className = "space-y-2 text-popover-foreground";
           content.innerHTML = `
-            <p class="font-semibold text-base">${item.label}</p>
+            <p class="pr-5 font-semibold text-base">${item.label}</p>
             <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
               <dt class="text-muted-foreground">Listens</dt><dd class="tabular-nums">${item.listens.toLocaleString()}</dd>
               <dt class="text-muted-foreground">Time</dt><dd class="tabular-nums">${listeningTime(item.msPlayed)}</dd>
