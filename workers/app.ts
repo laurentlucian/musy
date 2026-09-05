@@ -80,9 +80,18 @@ export default {
         );
         continue;
       }
+      const delivery = message.body as Partial<QueueDeliveryMessage>;
+      if (
+        typeof delivery.groupId !== "string" ||
+        typeof delivery.userId !== "string"
+      ) {
+        message.ack();
+        continue;
+      }
       ctx.waitUntil(
-        processQueueDelivery(env, message.body as QueueDeliveryMessage).then(
+        processQueueDelivery(env, delivery as QueueDeliveryMessage).then(
           () => message.ack(),
+          () => message.retry({ delaySeconds: 60 }),
         ),
       );
     }

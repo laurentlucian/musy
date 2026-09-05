@@ -1,4 +1,4 @@
-import { and, eq, inArray, ne } from "drizzle-orm";
+import { and, eq, gt, inArray, ne } from "drizzle-orm";
 import {
   playback,
   queueGroup,
@@ -8,6 +8,8 @@ import {
 } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
 import { generateId } from "~/lib.server/services/utils";
+
+const PLAYBACK_FRESH_MS = 5 * 60_000;
 
 export async function getUserQueueGroups(userId: string) {
   const [ownedGroups, memberships] = await Promise.all([
@@ -110,6 +112,33 @@ export async function joinQueueGroup(args: {
     .insert(queueGroupToUser)
     .values({ groupId, userId })
     .onConflictDoNothing();
+  await markExistingItemsDelivered({ groupId, userId });
+}
+
+// New members only receive tracks added after they joined.
+async function markExistingItemsDelivered(args: {
+  groupId: string;
+  userId: string;
+}) {
+  const { groupId, userId } = args;
+  const items = await db
+    .select({ id: queueItem.id })
+    .from(queueItem)
+    .where(and(eq(queueItem.groupId, groupId), ne(queueItem.userId, userId)));
+  if (items.length === 0) return;
+
+  const updatedAt = new Date();
+  const batchSize = 30;
+  for (let i = 0; i < items.length; i += batchSize) {
+    await db
+      .insert(queueItemDelivery)
+      .values(
+        items
+          .slice(i, i + batchSize)
+          .map(({ id }) => ({ queueItemId: id, userId, updatedAt })),
+      )
+      .onConflictDoNothing();
+  }
 }
 
 export async function leaveQueueGroup(args: {
@@ -146,7 +175,7 @@ export async function updateQueueItemReaction(args: {
   reaction: "like" | "dislike" | null;
 }) {
   const { queueItemId, userId, reaction } = args;
-  await db
+  const updated = await db
     .update(queueItemDelivery)
     .set({ reaction, updatedAt: new Date() })
     .where(
@@ -154,13 +183,19 @@ export async function updateQueueItemReaction(args: {
         eq(queueItemDelivery.queueItemId, queueItemId),
         eq(queueItemDelivery.userId, userId),
       ),
-    );
+    )
+    .returning({ id: queueItemDelivery.id });
+  return updated.length > 0;
 }
 
 export async function getPlaybacks(userIds: string[]) {
   if (userIds.length === 0) return [];
+  const since = new Date(Date.now() - PLAYBACK_FRESH_MS).toISOString();
   return db.query.playback.findMany({
-    where: inArray(playback.userId, userIds),
+    where: and(
+      inArray(playback.userId, userIds),
+      gt(playback.updatedAt, since),
+    ),
     columns: { userId: true, updatedAt: true },
     with: { track: { columns: { id: true, name: true } } },
   });
@@ -238,13 +273,19 @@ export async function getNextQueueItemForDelivery(args: {
   });
 }
 
-export async function recordQueueItemDelivery(args: {
+export async function claimQueueItemDelivery(args: {
   queueItemId: string;
   userId: string;
 }) {
   const { queueItemId, userId } = args;
-  await db
+  const [row] = await db
     .insert(queueItemDelivery)
     .values({ queueItemId, userId, updatedAt: new Date() })
-    .onConflictDoNothing();
+    .onConflictDoNothing()
+    .returning({ id: queueItemDelivery.id });
+  return row ?? null;
+}
+
+export async function releaseQueueItemDelivery(id: number) {
+  await db.delete(queueItemDelivery).where(eq(queueItemDelivery.id, id));
 }

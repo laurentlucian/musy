@@ -185,7 +185,14 @@ export async function action({ request, params, context }: Route.ActionArgs) {
       columns: { id: true },
     });
     if (!item) return data({ error: "Track not found" }, { status: 404 });
-    await updateQueueItemReaction({ queueItemId, userId, reaction });
+    const updated = await updateQueueItemReaction({
+      queueItemId,
+      userId,
+      reaction,
+    });
+    if (!updated) {
+      return data({ error: "Not delivered yet" }, { status: 409 });
+    }
     return { success: true, intent };
   }
 
@@ -193,6 +200,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 }
 
 type Person = { id: string; name: string | null; image: string | null };
+type Reaction = "like" | "dislike";
 
 export default function Group({ loaderData }: Route.ComponentProps) {
   const { group, items, playbacks, userId, isOwner } = loaderData;
@@ -338,8 +346,33 @@ function QueueRow({
   item: Route.ComponentProps["loaderData"]["items"][number];
   userId: string;
 }) {
+  const fetcher = useFetcher<typeof action>();
   const myDelivery = item.deliveries.find((d) => d.userId === userId);
   const canReact = !!myDelivery && item.userId !== userId;
+
+  const pending = fetcher.formData?.get("reaction");
+  const current: Reaction | null =
+    typeof pending === "string"
+      ? pending === "like" || pending === "dislike"
+        ? pending
+        : null
+      : ((myDelivery?.reaction as Reaction | null) ?? null);
+
+  useEffect(() => {
+    if (fetcher.state !== "idle") return;
+    if (fetcher.data && "error" in fetcher.data)
+      toast.error(fetcher.data.error);
+  }, [fetcher.state, fetcher.data]);
+
+  const react = (reaction: Reaction) =>
+    void fetcher.submit(
+      {
+        intent: "reaction",
+        queueItemId: item.id,
+        reaction: current === reaction ? "" : reaction,
+      },
+      { method: "post" },
+    );
 
   return (
     <li className="flex flex-wrap items-center gap-4 py-4">
@@ -368,14 +401,14 @@ function QueueRow({
           {canReact && (
             <div className="flex items-center gap-1">
               <ReactionButton
-                queueItemId={item.id}
                 reaction="like"
-                isActive={myDelivery?.reaction === "like"}
+                active={current === "like"}
+                onClick={() => react("like")}
               />
               <ReactionButton
-                queueItemId={item.id}
                 reaction="dislike"
-                isActive={myDelivery?.reaction === "dislike"}
+                active={current === "dislike"}
+                onClick={() => react("dislike")}
               />
             </div>
           )}
@@ -486,38 +519,30 @@ function Badge({
 }
 
 function ReactionButton({
-  queueItemId,
   reaction,
-  isActive,
+  active,
+  onClick,
 }: {
-  queueItemId: string;
-  reaction: "like" | "dislike";
-  isActive: boolean;
+  reaction: Reaction;
+  active: boolean;
+  onClick: () => void;
 }) {
-  const fetcher = useFetcher<typeof action>();
-  const pending = fetcher.formData?.get("reaction");
-  const active = pending != null ? pending === reaction : isActive;
-
   return (
-    <fetcher.Form method="post">
-      <input type="hidden" name="intent" value="reaction" />
-      <input type="hidden" name="queueItemId" value={queueItemId} />
-      <input type="hidden" name="reaction" value={isActive ? "" : reaction} />
-      <Button
-        type="submit"
-        variant="ghost"
-        size="icon"
-        aria-label={reaction === "like" ? "Like" : "Dislike"}
-        aria-pressed={active}
-        className={active ? "bg-accent text-accent-foreground" : undefined}
-      >
-        {reaction === "like" ? (
-          <ThumbsUp className="size-4" />
-        ) : (
-          <ThumbsDown className="size-4" />
-        )}
-      </Button>
-    </fetcher.Form>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={reaction === "like" ? "Like" : "Dislike"}
+      aria-pressed={active}
+      className={active ? "bg-accent text-accent-foreground" : undefined}
+      onClick={onClick}
+    >
+      {reaction === "like" ? (
+        <ThumbsUp className="size-4" />
+      ) : (
+        <ThumbsDown className="size-4" />
+      )}
+    </Button>
   );
 }
 
@@ -550,8 +575,9 @@ function InviteButton() {
 }
 
 function AddTrackDialog() {
-  const fetcher = useFetcher<typeof action>();
   const [open, setOpen] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const fetcher = useFetcher<typeof action>({ key: `add-track-${attempt}` });
   const busy = fetcher.state !== "idle";
   const error =
     !busy && fetcher.data && "error" in fetcher.data
@@ -568,7 +594,12 @@ function AddTrackDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button onClick={() => setOpen(true)}>
+      <Button
+        onClick={() => {
+          setAttempt((n) => n + 1);
+          setOpen(true);
+        }}
+      >
         <Plus className="size-4" /> Add track
       </Button>
       <DialogContent className="sm:max-w-md">
@@ -634,7 +665,8 @@ function AddTrackDialog() {
 
 function QueueMenu({ isOwner, name }: { isOwner: boolean; name: string }) {
   const [dialog, setDialog] = useState<"rename" | "delete" | null>(null);
-  const fetcher = useFetcher<typeof action>();
+  const [attempt, setAttempt] = useState(0);
+  const fetcher = useFetcher<typeof action>({ key: `queue-menu-${attempt}` });
   const busy = fetcher.state !== "idle";
   const error =
     !busy && fetcher.data && "error" in fetcher.data
@@ -645,6 +677,15 @@ function QueueMenu({ isOwner, name }: { isOwner: boolean; name: string }) {
     if (fetcher.state !== "idle") return;
     if (fetcher.data && "success" in fetcher.data) setDialog(null);
   }, [fetcher.state, fetcher.data]);
+
+  useEffect(() => {
+    if (dialog === null && !busy && error) toast.error(error);
+  }, [dialog, busy, error]);
+
+  const openDialog = (next: "rename" | "delete") => {
+    setAttempt((n) => n + 1);
+    setDialog(next);
+  };
 
   return (
     <>
@@ -657,13 +698,13 @@ function QueueMenu({ isOwner, name }: { isOwner: boolean; name: string }) {
         <DropdownMenuContent align="end">
           {isOwner ? (
             <>
-              <DropdownMenuItem onClick={() => setDialog("rename")}>
+              <DropdownMenuItem onClick={() => openDialog("rename")}>
                 <Pencil className="size-4" /> Rename
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 variant="destructive"
-                onClick={() => setDialog("delete")}
+                onClick={() => openDialog("delete")}
               >
                 <Trash className="size-4" /> Delete queue
               </DropdownMenuItem>
@@ -672,12 +713,13 @@ function QueueMenu({ isOwner, name }: { isOwner: boolean; name: string }) {
             <DropdownMenuItem
               variant="destructive"
               disabled={busy}
-              onClick={() =>
+              onClick={() => {
+                setAttempt((n) => n + 1);
                 void fetcher.submit(
                   { intent: "leave-group" },
                   { method: "post" },
-                )
-              }
+                );
+              }}
             >
               <LogOut className="size-4" /> Leave queue
             </DropdownMenuItem>

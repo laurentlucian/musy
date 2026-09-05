@@ -1,8 +1,9 @@
 import { log, logError } from "~/components/utils";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
+  claimQueueItemDelivery,
   getNextQueueItemForDelivery,
-  recordQueueItemDelivery,
+  releaseQueueItemDelivery,
 } from "../db/queue";
 
 export interface QueueDeliveryMessage {
@@ -22,12 +23,22 @@ export async function processQueueDelivery(
     const spotify = await getSpotifyClient({ userId });
     let delivered = 0;
 
-    while (delivered < MAX_DELIVERIES) {
+    for (let i = 0; i < MAX_DELIVERIES * 2 && delivered < MAX_DELIVERIES; i++) {
       const item = await getNextQueueItemForDelivery({ groupId, userId });
       if (!item) break;
 
-      await spotify.player.addItemToPlaybackQueue(item.track.uri);
-      await recordQueueItemDelivery({ queueItemId: item.id, userId });
+      const claim = await claimQueueItemDelivery({
+        queueItemId: item.id,
+        userId,
+      });
+      if (!claim) continue;
+
+      try {
+        await spotify.player.addItemToPlaybackQueue(item.track.uri);
+      } catch (error) {
+        await releaseQueueItemDelivery(claim.id);
+        throw error;
+      }
       delivered++;
     }
 
