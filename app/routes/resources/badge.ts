@@ -2,32 +2,44 @@ import { env } from "cloudflare:workers";
 import { renderBadge } from "~/lib/badge";
 import { getDashboard } from "~/lib.server/services/dashboard";
 import { getProfileGenres } from "~/lib.server/services/profile-genres";
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import type { Route } from "./+types/badge";
 
-const owner = "0d9bfa6e-dd69-4b0a-90c1-175947ab8bf5";
 const labels: Record<string, string> = {
   "hours.svg": "Hours listened",
   "genres.svg": "Top genres",
   "repeat.svg": "On repeat",
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   const label = labels[params.badge];
   if (!Object.hasOwn(labels, params.badge))
-    throw new Response("Not found", { status: 404 });
+    throw new Response("Not found", {
+      status: 404,
+      headers: { "Cache-Control": "no-store" },
+    });
+  const users = new URL(request.url).searchParams.getAll("user");
+  const user = users[0]?.trim();
+  if (users.length !== 1 || !user || users[0].length > 128)
+    throw new Response("Provide one user ID or username", {
+      status: 400,
+      headers: { "Cache-Control": "no-store" },
+    });
   let value = "No listening yet";
   let detail = "Listen with Musy";
   let status = 200;
   try {
+    const userId = await resolveProfileId(user, null);
+    if (!userId) throw new Error("Profile resolution returned no user");
     if (params.badge === "hours.svg") {
-      const stats = await getDashboard(owner, 0);
+      const stats = await getDashboard(userId, 0);
       value = `${stats.estimatedPlays || stats.unknownPlays ? "~" : ""}${Math.round(stats.minutes / 60).toLocaleString("en-US")} hours`;
       detail = stats.pending
         ? "All-time recorded listening · Updating"
         : "All-time recorded listening";
       if (!stats.played && stats.pending) value = "Updating";
     } else if (params.badge === "genres.svg") {
-      const { genres, updatedAt } = await getProfileGenres(owner);
+      const { genres, updatedAt } = await getProfileGenres(userId);
       if (genres.length) {
         value = genres
           .slice(0, 2)
@@ -42,7 +54,7 @@ export async function loader({ params }: Route.LoaderArgs) {
       const snapshot = await env.D1.prepare(
         "SELECT trackIds, createdAt FROM TopTracks WHERE userId=? AND type='short_term' ORDER BY createdAt DESC LIMIT 1",
       )
-        .bind(owner)
+        .bind(userId)
         .first<{ trackIds: string; createdAt: string }>();
       const track = snapshot?.trackIds.split(",")[0];
       const song = track
@@ -61,6 +73,20 @@ export async function loader({ params }: Route.LoaderArgs) {
       }
     }
   } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "init" in error &&
+      error.init &&
+      typeof error.init === "object" &&
+      "status" in error.init &&
+      error.init.status === 404
+    ) {
+      throw new Response("User not found", {
+        status: 404,
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
     console.error("Badge unavailable", params.badge, error);
     value = "Unavailable";
     detail = "Try again soon";
