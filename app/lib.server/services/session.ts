@@ -16,6 +16,7 @@ export const cookieOptions = {
 } satisfies SessionIdStorageStrategy["cookie"];
 
 export type SessionData = {
+  historyRequestedBy: string;
   data: { id: string };
   "spotify:session": {
     // legacy

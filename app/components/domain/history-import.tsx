@@ -8,7 +8,7 @@ import {
   useTransform,
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { Link, useRevalidator } from "react-router";
+import { Link, useFetcher, useRevalidator } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import type { ImportMessage, ImportProgress } from "~/lib/history-parser";
@@ -56,9 +56,13 @@ function Count({ value, instant }: { value: number; instant: boolean }) {
 
 export function HistoryImport({
   initialImport,
+  requested,
 }: {
   initialImport: ImportProgress | null;
+  requested: boolean;
 }) {
+  const requestFetcher = useFetcher();
+  const [showUpload, setShowUpload] = useState(false);
   const reduceMotion = useReducedMotion();
   const { transform, ...spinEvents } = useRecordSpin(!!reduceMotion);
   const [files, setFiles] = useState<File[]>([]);
@@ -71,6 +75,7 @@ export function HistoryImport({
   const uploading = state?.phase === "reading" || state?.phase === "uploading";
   const processing = state?.phase === "processing";
   const busy = uploading || processing;
+  const needsHistory = !initialImport && !state && !showUpload;
   const [pollError, setPollError] = useState<string | null>(null);
   const savedJob = state?.progress?.jobId;
   const shouldPoll =
@@ -117,7 +122,7 @@ export function HistoryImport({
       <motion.div
         aria-hidden="true"
         {...spinEvents}
-        className="relative mb-10 flex size-48 shrink-0 touch-none select-none items-center justify-center rounded-full cursor-grab active:cursor-grabbing shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.12)] sm:size-64"
+        className="relative mb-10 flex size-48 shrink-0 cursor-grab touch-none select-none items-center justify-center rounded-full shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.12)] active:cursor-grabbing sm:size-64"
         style={{
           transform,
           backgroundImage: [
@@ -184,7 +189,11 @@ export function HistoryImport({
                   ? "Bringing it all back."
                   : state?.phase === "error"
                     ? "Let’s pick up here."
-                    : "Every listen. Back with you."}
+                    : needsHistory
+                      ? requested
+                        ? "History requested"
+                        : "Import your history"
+                      : "Every listen. Back with you."}
             </h1>
             <p className="mx-auto mt-4 max-w-sm text-pretty text-base text-muted-foreground leading-snug">
               {processing
@@ -193,11 +202,86 @@ export function HistoryImport({
                   ? "Keep this page open as your listening history arrives."
                   : state?.phase === "complete"
                     ? "Explore the music you’ve spent time with."
-                    : "Choose your Spotify Extended streaming history ZIP or JSON files."}
+                    : needsHistory
+                      ? requested
+                        ? "Spotify will email you when it’s ready. This can take up to 30 days."
+                        : "Request your Extended streaming history from Spotify to bring your past listens here."
+                      : "Choose your Spotify Extended streaming history ZIP or JSON files."}
             </p>
           </motion.div>
         </AnimatePresence>
-        {!busy && state?.phase !== "complete" && (
+        {needsHistory && (
+          <div className="space-y-4" aria-live="polite">
+            <ol className="mx-auto max-w-sm list-decimal space-y-2 pl-5 text-left text-muted-foreground text-sm">
+              {requested ? (
+                <>
+                  <li>
+                    Confirm your request in Spotify’s email, if you haven’t yet.
+                  </li>
+                  <li>
+                    Check your inbox and spam folder for the download email.
+                  </li>
+                  <li>
+                    Download the ZIP from that email or Spotify’s privacy page,
+                    then import it here.
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    Open Spotify’s privacy page and find Download your data.
+                  </li>
+                  <li>Select Extended streaming history and request it.</li>
+                  <li>Confirm the request in your email.</li>
+                </>
+              )}
+            </ol>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button asChild variant={requested ? "secondary" : "default"}>
+                <a
+                  href="https://www.spotify.com/account/privacy/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {requested ? "Check Spotify" : "Request on Spotify"}
+                </a>
+              </Button>
+              {!requested && (
+                <requestFetcher.Form method="post" action="/import">
+                  <Button
+                    name="intent"
+                    value="requested"
+                    variant="secondary"
+                    disabled={requestFetcher.state !== "idle"}
+                  >
+                    {requestFetcher.state !== "idle"
+                      ? "Saving…"
+                      : "I’ve requested it"}
+                  </Button>
+                </requestFetcher.Form>
+              )}
+            </div>
+            <Button
+              variant={requested ? "default" : "ghost"}
+              onClick={() => setShowUpload(true)}
+            >
+              {requested ? "I have my file" : "Already have your file?"}
+            </Button>
+            {requested && (
+              <requestFetcher.Form method="post" action="/import">
+                <Button
+                  name="intent"
+                  value="reset"
+                  variant="ghost"
+                  disabled={requestFetcher.state !== "idle"}
+                >
+                  Request instructions
+                </Button>
+              </requestFetcher.Form>
+            )}
+          </div>
+        )}
+        {!needsHistory && !busy && state?.phase !== "complete" && (
           <Input
             aria-label="Spotify history files"
             type="file"
@@ -212,12 +296,12 @@ export function HistoryImport({
             }}
           />
         )}
-        {!state && (
+        {!needsHistory && !state && (
           <p className="text-muted-foreground text-xs">
             IP and device history stays private.
           </p>
         )}
-        {state?.phase !== "complete" && (
+        {!needsHistory && state?.phase !== "complete" && (
           <Button
             disabled={busy || !files.length}
             onClick={() => {
