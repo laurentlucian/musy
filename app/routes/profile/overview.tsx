@@ -1,6 +1,12 @@
 import { CalendarDays, Clock, Heart, Play, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect, useRef, useState } from "react";
-import { Link, redirect, useNavigation, useRevalidator } from "react-router";
+import {
+  Link,
+  redirect,
+  useNavigation,
+  useRevalidator,
+  useSearchParams,
+} from "react-router";
 import {
   ImportEmptyState,
   useInitialImport,
@@ -120,7 +126,10 @@ function Stats({
   importing: boolean;
 }) {
   const stats = use(promise);
-  const [unit, setUnit] = useState<"minutes" | "hours">("minutes");
+  const [searchParams] = useSearchParams();
+  const [unit, setUnit] = useState<"minutes" | "hours">(
+    searchParams.get("unit") === "hours" ? "hours" : "minutes",
+  );
   const [metric, setMetric] = useState<"plays" | "minutes">("plays");
   const peakMonth = stats.monthly.reduce<(typeof stats.monthly)[number] | null>(
     (best, row) => (!best || row[metric] > best[metric] ? row : best),

@@ -182,8 +182,20 @@ export const formatDate = (dateStr: string) => {
 };
 
 export const parseGenres = (genresStr: string) => {
+  if (genresStr.trim().startsWith("[")) {
+    try {
+      const genres: unknown = JSON.parse(genresStr);
+      if (Array.isArray(genres))
+        return genres
+          .filter((genre): genre is string => typeof genre === "string")
+          .map((genre) => genre.trim())
+          .filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
   return genresStr
     .split(",")
-    .filter(Boolean)
-    .map((g) => g.trim());
+    .map((g) => g.trim())
+    .filter(Boolean);
 };

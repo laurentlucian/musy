@@ -13,6 +13,7 @@ export default [
     route("profile/:userId?", "routes/profile/profile.tsx", [
       index("routes/profile/overview.tsx"),
       route("repeating", "routes/profile/repeating.tsx"),
+      route("genres", "routes/profile/genres.tsx"),
       route("history", "routes/profile/history.tsx"),
       route("liked", "routes/profile/liked.tsx"),
       route("playlists", "routes/profile/playlists.tsx", [
@@ -38,6 +39,7 @@ export default [
   ]),
 
   route("resources/explore-songs", "routes/resources.explore-songs.ts"),
+  route("badges/:badge", "routes/resources/badge.ts"),
   route("resources/history-import", "routes/resources/history-import.ts"),
   route("resources/import", "routes/resources/import.ts"),
   route("actions/:action", "routes/resources/actions.ts"),
