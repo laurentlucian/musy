@@ -11,6 +11,6 @@ test("escapes provider text in SVG content and attributes", () => {
 test("limits visible text while preserving the accessible full title", () => {
   const value = "A very long song title that cannot fit into this badge";
   const svg = renderBadge("On repeat", value, "Artist");
-  expect(svg).toContain(`<title>On repeat: ${value}. Artist</title>`);
+  expect(svg).toContain(`<title>Musy · On repeat: ${value}. Artist</title>`);
   expect(svg).toContain("A very long song title that…");
 });
