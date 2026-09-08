@@ -1,3 +1,5 @@
+import { badgeIcons } from "./badge-icons";
+
 export function escapeSvg(value: string) {
   return value.replace(
     /[&<>"']/g,
@@ -27,7 +29,7 @@ export function renderBadge(label: string, value: string, detail: string) {
     <path fill="#30363d" d="M0 0h${labelWidth}v28H0z"/>
     <path fill="#a3e635" d="M${labelWidth} 0h${valueWidth}v28H${labelWidth}z"/>
   </g>
-  <g fill="#a3e635"><rect x="10" y="11" width="2" height="6" rx="1"/><rect x="14" y="8" width="2" height="12" rx="1"/><rect x="18" y="6" width="2" height="16" rx="1"/><rect x="22" y="10" width="2" height="8" rx="1"/></g>
+  <svg x="9" y="5" width="18" height="18" viewBox="0 0 256 256" fill="#a3e635" aria-hidden="true">${badgeIcons[label] ?? badgeIcons["Hours listened"]}</svg>
   <g font-family="DejaVu Sans Mono,Consolas,monospace" font-size="11" text-anchor="middle">
     <text x="${(labelWidth + 28) / 2}" y="18" fill="#ffffff" textLength="${label.length * 6.6}" lengthAdjust="spacingAndGlyphs">${escapeSvg(label.toUpperCase())}</text>
     <text x="${labelWidth + valueWidth / 2}" y="18" fill="#172009" textLength="${Array.from(visible).length * 6.6}" lengthAdjust="spacingAndGlyphs">${escapeSvg(visible)}</text>
