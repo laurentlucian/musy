@@ -12,7 +12,12 @@ export async function loader({ context }: Route.LoaderArgs) {
   return {
     initialImport: userId ? await getInitialImport(userId) : null,
     profile: profile
-      ? { id: profile.id, name: profile.name, image: profile.image }
+      ? {
+          id: profile.id,
+          name: profile.name,
+          image: profile.image,
+          username: profile.username,
+        }
       : null,
   };
 }

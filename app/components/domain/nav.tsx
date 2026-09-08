@@ -9,23 +9,29 @@ import {
   TrendingUp,
   Upload,
 } from "lucide-react";
-import { Link, NavLink, useLocation, type To } from "react-router";
-import { Image } from "~/components/ui/image";
-import { SyncButton } from "~/routes/profile/utils/profile.utils";
+import { Link, NavLink, type To, useLocation } from "react-router";
+import { Logo } from "~/components/domain/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Logo } from "~/components/domain/logo";
+import { Image } from "~/components/ui/image";
+import { SyncButton } from "~/routes/profile/utils/profile.utils";
 
 export function Nav({
   profile,
 }: {
-  profile: { id: string; name: string | null; image: string | null } | null;
+  profile: {
+    id: string;
+    name: string | null;
+    image: string | null;
+    username: string | null;
+  } | null;
 }) {
   const { pathname } = useLocation();
+  const base = profile?.username ? `/profile/${profile.username}` : "/profile";
   const library = /\/(liked|playlists)(\/|$)/.test(pathname);
   const journal =
     (pathname.startsWith("/profile") && !library) || pathname === "/explore";
@@ -40,15 +46,15 @@ export function Nav({
           className="mt-14 flex flex-1 flex-col gap-1"
         >
           <p className="section-label mb-2 px-4">Listening</p>
-          <SidebarLink className="nav-item" to="/profile" end>
+          <SidebarLink className="nav-item" to={base} end>
             <ChartNoAxesCombined size={18} />
             Overview
           </SidebarLink>
-          <SidebarLink className="nav-item" to="/profile/repeating">
+          <SidebarLink className="nav-item" to={`${base}/repeating`}>
             <TrendingUp size={18} />
             Repeating
           </SidebarLink>
-          <SidebarLink className="nav-item" to="/profile/history">
+          <SidebarLink className="nav-item" to={`${base}/history`}>
             <History size={18} />
             History
           </SidebarLink>
@@ -59,11 +65,11 @@ export function Nav({
             </SidebarLink>
           )}
           <p className="section-label mb-2 mt-8 px-4">Collection</p>
-          <SidebarLink className="nav-item" to="/profile/liked">
+          <SidebarLink className="nav-item" to={`${base}/liked`}>
             <Heart size={18} />
             Liked
           </SidebarLink>
-          <SidebarLink className="nav-item" to="/profile/playlists">
+          <SidebarLink className="nav-item" to={`${base}/playlists`}>
             <Library size={18} />
             Playlists
           </SidebarLink>
@@ -76,7 +82,7 @@ export function Nav({
             {profile && (
               <div className="mb-1 flex min-h-9 items-center gap-2 px-3">
                 <Link
-                  to="/profile"
+                  to={base}
                   className="flex min-w-0 flex-1 items-center gap-2"
                 >
                   <Image
@@ -116,13 +122,13 @@ export function Nav({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" sideOffset={12}>
             <DropdownMenuItem asChild>
-              <Link to="/profile">Overview</Link>
+              <Link to={base}>Overview</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/repeating">Repeating</Link>
+              <Link to={`${base}/repeating`}>Repeating</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/history">History</Link>
+              <Link to={`${base}/history`}>History</Link>
             </DropdownMenuItem>
             {profile && (
               <DropdownMenuItem asChild>
@@ -141,10 +147,10 @@ export function Nav({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" sideOffset={12}>
             <DropdownMenuItem asChild>
-              <Link to="/profile/liked">Liked</Link>
+              <Link to={`${base}/liked`}>Liked</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile/playlists">Playlists</Link>
+              <Link to={`${base}/playlists`}>Playlists</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -223,13 +229,13 @@ function SidebarLink({
   className: string;
 }) {
   const { pathname } = useLocation();
-  const normalized = pathname.replace(
-    /^\/profile\/(?!repeating(?:\/|$)|history(?:\/|$)|liked(?:\/|$)|playlists(?:\/|$))[^/]+/,
-    "/profile",
-  );
+  const profileRe =
+    /^\/profile\/(?!repeating(?:\/|$)|history(?:\/|$)|liked(?:\/|$)|playlists(?:\/|$))[^/]+/;
+  const normalized = pathname.replace(profileRe, "/profile");
+  const target = to.replace(profileRe, "/profile");
   const active = end
-    ? normalized === to
-    : normalized === to || normalized.startsWith(`${to}/`);
+    ? normalized === target
+    : normalized === target || normalized.startsWith(`${target}/`);
   return (
     <Link
       to={to}
