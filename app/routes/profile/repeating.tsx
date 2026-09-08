@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { toast } from "sonner";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
@@ -13,7 +14,10 @@ import { TopList, TopSelector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/repeating";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
 
   if (!userId) throw redirect("/");

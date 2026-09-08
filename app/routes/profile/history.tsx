@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
@@ -19,7 +20,10 @@ import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/history";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
@@ -104,7 +108,10 @@ function ListenedSyncButton({ userId }: { userId: string }) {
       variant="outline"
       disabled={isSyncing}
       onClick={() => {
-        void fetcher.submit({ intent: "sync-listened", userId }, { method: "post" });
+        void fetcher.submit(
+          { intent: "sync-listened", userId },
+          { method: "post" },
+        );
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}

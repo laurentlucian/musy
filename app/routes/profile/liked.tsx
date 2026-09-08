@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { format } from "date-fns";
 import { Plus, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
@@ -18,7 +19,10 @@ import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/liked";
 
 export async function loader({ context, params, request }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
@@ -161,7 +165,10 @@ function LikedSyncButton({ userId }: { userId: string }) {
       className="text-muted-foreground transition-colors duration-150"
       disabled={isSyncing}
       onClick={() => {
-        void fetcher.submit({ intent: "sync-liked", userId }, { method: "post" });
+        void fetcher.submit(
+          { intent: "sync-liked", userId },
+          { method: "post" },
+        );
       }}
     >
       {isSyncing ? <Waver /> : <RefreshCcw />}

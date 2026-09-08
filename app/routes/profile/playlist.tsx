@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { toast } from "sonner";
 import { TracksQueueButton } from "~/components/domain/track-actions";
 import { format } from "date-fns";
@@ -34,7 +35,10 @@ import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/playlist";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
   const playlistId = params.playlistId;
 

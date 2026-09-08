@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { data, Outlet, redirect } from "react-router";
 import { userContext } from "~/context";
 import { getProfile } from "~/lib.server/services/db/users";
@@ -8,14 +9,23 @@ import { syncUserTop } from "~/lib.server/services/scheduler/scripts/sync/top";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/profile";
 
-export async function loader({ params, context }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+export async function loader({ params, context, request }: Route.LoaderArgs) {
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
 
   if (!userId) throw redirect("/");
 
-  if (userId !== currentUserId && !(await getProfile(userId))) {
-    throw data(null, { status: 404 });
+  const profile = await getProfile(userId);
+  if (!profile) throw data(null, { status: 404 });
+  if (profile.username && params.userId !== profile.username) {
+    const url = new URL(request.url);
+    const suffix = params.userId
+      ? url.pathname.slice(`/profile/${params.userId}`.length)
+      : url.pathname.slice("/profile".length);
+    throw redirect(`/profile/${profile.username}${suffix}${url.search}`);
   }
 
   return {

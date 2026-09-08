@@ -50,10 +50,14 @@ export const profile = sqliteTable(
     updatedAt: numeric().default(sql`(CURRENT_TIMESTAMP)`).notNull(),
     name: text(),
     bio: text(),
+    username: text(),
     email: text().notNull(),
     image: text(),
   },
-  (table) => [uniqueIndex("Profile_email_key").on(table.email)],
+  (table) => [
+    uniqueIndex("Profile_email_key").on(table.email),
+    uniqueIndex("Profile_username_key").on(table.username),
+  ],
 );
 
 export const historyEvent = sqliteTable(

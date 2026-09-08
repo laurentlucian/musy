@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { CalendarDays, Clock, Heart, Play, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect, useRef, useState } from "react";
 import {
@@ -19,7 +20,10 @@ import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/overview";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   if (!userId) throw redirect("/");
   const yearParam = new URL(request.url).searchParams.get("year");
   const currentYear = new Date().getUTCFullYear();

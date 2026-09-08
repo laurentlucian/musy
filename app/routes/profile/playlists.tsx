@@ -1,3 +1,4 @@
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
 import {
@@ -27,7 +28,10 @@ import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import type { Route } from "./+types/playlists";
 
 export async function loader({ context, params }: Route.LoaderArgs) {
-  const userId = params.userId ?? context.get(userContext);
+  const userId = await resolveProfileId(
+    params.userId,
+    context.get(userContext),
+  );
   const currentUserId = context.get(userContext);
   if (!userId) throw redirect("/");
 
