@@ -69,7 +69,7 @@ export function Landing({ signedIn = false }: { signedIn?: boolean }) {
       <main id="landing-main" className="landing-width" tabIndex={-1}>
         <section className="landing-hero" aria-labelledby="landing-title">
           <p className="landing-eyebrow">
-            <span /> Your music, in perspective
+            <span /> First open-source music companion
           </p>
           <h1 id="landing-title">
             There’s more to
@@ -202,13 +202,13 @@ export const landingMeta = () => [
   {
     name: "description",
     content:
-      "Get to know your music with Musy. Explore your Spotify listening habits, import your history, and listen together with shared queues.",
+      "Musy is the first open-source music companion. Explore your Spotify listening habits, import your history, and listen together with shared queues.",
   },
   { property: "og:title", content: "Musy — There’s more to your music" },
   {
     property: "og:description",
     content:
-      "Your listening habits, lifelong favorites, and next shared obsession.",
+      "Open source. Your listening habits, lifelong favorites, and next shared obsession.",
   },
   { property: "og:type", content: "website" },
   { tagName: "link", rel: "canonical", href: "https://musy.olaurent.com/" },
