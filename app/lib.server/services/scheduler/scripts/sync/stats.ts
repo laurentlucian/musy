@@ -1,13 +1,5 @@
-import {
-  prepareAllTimeAnalytics,
-  refreshAnalytics,
-} from "~/lib.server/services/analytics";
-import {
-  getDashboard,
-  refreshDashboard,
-} from "~/lib.server/services/dashboard";
 import { and, count, desc, eq, gte, lt, max, min } from "drizzle-orm";
-import { log, logError } from "~/components/utils";
+import { errorMessage, log, logError } from "~/components/utils";
 import {
   likedTracks,
   provider,
@@ -16,6 +8,14 @@ import {
   sync,
   user,
 } from "~/lib.server/db/schema";
+import {
+  prepareAllTimeAnalytics,
+  refreshAnalytics,
+} from "~/lib.server/services/analytics";
+import {
+  getDashboard,
+  refreshDashboard,
+} from "~/lib.server/services/dashboard";
 import { db } from "~/lib.server/services/db";
 import { getAllUsersId } from "~/lib.server/services/db/users";
 import { generateId } from "~/lib.server/services/utils";
@@ -187,7 +187,9 @@ export async function syncUserStatsAll({ userId }: { userId: string }) {
 
     log(`successfully synced all-time stats for user ${userId}`, "stats");
   } catch (error) {
-    logError(`failed to sync all-time stats for user ${userId}: ${error}`);
+    logError(
+      `failed to sync all-time stats for user ${userId}: ${errorMessage(error)}`,
+    );
     // Mark sync as error
     const errorAt = new Date().toISOString();
     await db
@@ -325,7 +327,9 @@ export async function syncUserStats({
 
     log(`successfully synced stats for user ${userId}, year ${year}`, "stats");
   } catch (error) {
-    logError(`failed to sync stats for user ${userId}, year ${year}: ${error}`);
+    logError(
+      `failed to sync stats for user ${userId}, year ${year}: ${errorMessage(error)}`,
+    );
     // Mark sync as error
     const errorAt = new Date().toISOString();
     await db
@@ -462,7 +466,7 @@ export async function syncAllUsersStats() {
 
             log(`completed stats sync for ${userId}`, "stats");
           } catch (error) {
-            logError(`stats sync failed for ${userId}: ${error}`);
+            logError(`stats sync failed for ${userId}: ${errorMessage(error)}`);
             const now = new Date().toISOString();
             await db
               .insert(sync)
@@ -489,7 +493,7 @@ export async function syncAllUsersStats() {
 
     log(`completed stats sync for all ${activeUsers.length} users`, "stats");
   } catch (error) {
-    logError(`stats sync failed: ${error}`);
+    logError(`stats sync failed: ${errorMessage(error)}`);
     throw error;
   }
 }

@@ -35,7 +35,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Image } from "~/components/ui/image";
 import { Input } from "~/components/ui/input";
-import { cn, logError } from "~/components/utils";
+import { cn, errorMessage, logError } from "~/components/utils";
 import { userContext } from "~/context";
 import { db } from "~/lib.server/services/db";
 import {
@@ -170,7 +170,7 @@ export async function action({ request, params, context }: Route.ActionArgs) {
 
       return { success: true, intent };
     } catch (error) {
-      logError(`Failed to add track: ${error}`, "queue");
+      logError(`Failed to add track: ${errorMessage(error)}`, "queue");
       return data({ error: "Couldn’t add track. Try again." }, { status: 500 });
     }
   }

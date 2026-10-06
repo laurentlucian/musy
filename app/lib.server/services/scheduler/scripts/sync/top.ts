@@ -1,5 +1,5 @@
 import { and, desc, eq } from "drizzle-orm";
-import { log } from "~/components/utils";
+import { errorMessage, log } from "~/components/utils";
 import {
   artistToTopArtists,
   sync,
@@ -67,7 +67,7 @@ export async function syncUserTop({
         set: { state: "success", updatedAt: now },
       });
   } catch (error) {
-    log(`failure:${error}`, "top");
+    log(`failure:${errorMessage(error)}`, "top");
     const now = new Date().toISOString();
     await db
       .insert(sync)

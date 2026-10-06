@@ -1,6 +1,6 @@
 import { redirect } from "react-router";
+import { errorMessage, logError } from "~/components/utils";
 import { SpotifyApiError } from "~/lib.server/sdk/spotify";
-import { logError } from "~/components/utils";
 import { authenticator } from "~/lib.server/services/auth";
 import { commitSession, getSession } from "~/lib.server/services/session";
 import type { Route } from "./+types/authenticate";
@@ -18,9 +18,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
     });
   } catch (error) {
     if (error instanceof Response) throw error;
-    logError(`auth/callback/error: ${error}`, "auth");
+    logError(`auth/callback/error: ${errorMessage(error)}`, "auth");
 
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const message = errorMessage(error);
     const errorCode =
       error instanceof SpotifyApiError
         ? String(error.status)
@@ -29,7 +29,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
           : "unknown";
 
     const params = new URLSearchParams({
-      error: errorMessage,
+      error: message,
       code: errorCode,
     });
 

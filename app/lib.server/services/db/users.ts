@@ -1,11 +1,10 @@
 import { env } from "cloudflare:workers";
-import { deleteAccount } from "../account-cleanup";
 import { and, desc, eq } from "drizzle-orm";
+import { logError } from "~/components/utils";
 import { profile, provider, stats, sync, user } from "~/lib.server/db/schema";
 import { db } from "~/lib.server/services/db";
 import { syncUserStats } from "~/lib.server/services/scheduler/scripts/sync/stats";
-
-import { logError } from "~/components/utils";
+import { deleteAccount } from "../account-cleanup";
 
 export async function getProvider(args: {
   userId: string;

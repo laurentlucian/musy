@@ -1,4 +1,4 @@
-import { log, logError } from "~/components/utils";
+import { errorMessage, log, logError } from "~/components/utils";
 import { SpotifyApiError } from "~/lib.server/sdk/spotify";
 import { getAllUsersId, revokeUser } from "~/lib.server/services/db/users";
 import {
@@ -64,7 +64,9 @@ export async function syncUsers(type: SyncType) {
             const spotify = await getSpotifyClient({ userId });
             await getSyncFunction(type)({ userId, spotify });
           } catch (error) {
-            logError(`${type} sync failed for ${userId}: ${error}`);
+            logError(
+              `${type} sync failed for ${userId}: ${errorMessage(error)}`,
+            );
             if (error instanceof SpotifyApiError) {
               if (error.message.includes("invalid_grant")) {
                 await revokeUser(userId, "spotify");
@@ -81,6 +83,6 @@ export async function syncUsers(type: SyncType) {
 
     log(`completed ${type} sync`, "cron");
   } catch (error) {
-    logError(`${type} sync failed: ${error}`);
+    logError(`${type} sync failed: ${errorMessage(error)}`);
   }
 }

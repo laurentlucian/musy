@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { log, logError, notNull } from "~/components/utils";
+import { errorMessage, log, logError, notNull } from "~/components/utils";
 import { playlist, playlistTrack, sync, track } from "~/lib.server/db/schema";
 import type { Track } from "~/lib.server/sdk/spotify";
 import { db } from "~/lib.server/services/db";
@@ -249,7 +249,7 @@ export async function syncUserPlaylists({
 
     log(`completed playlist sync for ${userId}`, "playlist");
   } catch (error) {
-    logError(`playlist sync failed for ${userId}: ${error}`);
+    logError(`playlist sync failed for ${userId}: ${errorMessage(error)}`);
     await updateSyncMetadata(userId, "failure");
     throw error;
   }
@@ -299,7 +299,7 @@ async function fetchAndInsertMissingTracks(
         tracksToInsert.push(...validTracks);
       }
     } catch (error) {
-      logError(`failed to fetch tracks batch: ${error}`);
+      logError(`failed to fetch tracks batch: ${errorMessage(error)}`);
     }
   }
 
@@ -352,7 +352,7 @@ async function syncPlaylistTracks({
   try {
     fullPlaylist = await spotify.playlist.getPlaylist(playlistId);
   } catch (error) {
-    logError(`failed to fetch playlist ${playlistId}: ${error}`);
+    logError(`failed to fetch playlist ${playlistId}: ${errorMessage(error)}`);
     return;
   }
 

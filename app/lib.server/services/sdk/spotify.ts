@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { log } from "~/components/utils";
+import { errorMessage, log } from "~/components/utils";
 import { createSpotifyClient } from "~/lib.server/sdk/spotify";
 import {
   getProvider,
@@ -75,7 +75,7 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
     });
   } catch (error) {
     log(
-      `token refresh failed for ${args.userId}: ${JSON.stringify(error)}`,
+      `token refresh failed for ${args.userId}: ${errorMessage(error)}`,
       "spotify",
     );
     const status = (error as { status?: number })?.status;

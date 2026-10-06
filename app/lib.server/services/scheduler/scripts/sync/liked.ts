@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { log, logError, notNull } from "~/components/utils";
+import { errorMessage, log, logError, notNull } from "~/components/utils";
 import { likedTracks, sync, track } from "~/lib.server/db/schema";
 import type { Track } from "~/lib.server/sdk/spotify";
 import { db } from "~/lib.server/services/db";
@@ -230,7 +230,7 @@ export async function syncUserLikedFull({
 
     log(`completed full liked sync for ${userId}`, "liked-full");
   } catch (error) {
-    logError(`full liked sync failed for ${userId}: ${error}`);
+    logError(`full liked sync failed for ${userId}: ${errorMessage(error)}`);
     await updateSyncMetadata(userId, "failure");
     throw error;
   }
@@ -404,7 +404,9 @@ export async function syncUserLikedIncremental({
 
     log(`completed incremental liked sync for ${userId}`, "liked-inc");
   } catch (error) {
-    logError(`incremental liked sync failed for ${userId}: ${error}`);
+    logError(
+      `incremental liked sync failed for ${userId}: ${errorMessage(error)}`,
+    );
     await updateSyncMetadata(userId, "failure");
     throw error;
   }

@@ -1,7 +1,7 @@
-import { resolveProfileId } from "~/lib.server/services/usernames";
 import { Link, redirect } from "react-router";
 import { userContext } from "~/context";
 import { getProfileGenres } from "~/lib.server/services/profile-genres";
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import type { Route } from "./+types/genres";
 
 export async function loader({ params, context }: Route.LoaderArgs) {

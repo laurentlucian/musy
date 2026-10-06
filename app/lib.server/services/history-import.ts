@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { normalizeCountry } from "~/lib/countries";
-import { sha256 as hash, storeHistoryArchive } from "./history-archive";
 import type { ImportProgress } from "~/lib/history-parser";
+import { sha256 as hash, storeHistoryArchive } from "./history-archive";
 
 export function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;

@@ -144,6 +144,23 @@ export function getCacheControl(args: { browser: Duration; cdn: Duration }) {
   return `max-age=${durationToSeconds(args.browser)}, s-maxage=${durationToSeconds(args.cdn)}`;
 }
 
+export function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object") {
+    const e = error as Record<string, unknown>;
+    const detail = e.error_description ?? e.message ?? e.error;
+    const text =
+      typeof detail === "string"
+        ? detail
+        : detail && typeof detail === "object"
+          ? ((detail as { message?: string }).message ?? JSON.stringify(detail))
+          : JSON.stringify(error);
+    return e.status ? `${e.status} ${text}` : text;
+  }
+  return String(error);
+}
+
 export function logError(error: unknown, label?: string) {
   console.error(`${label ?? "error"}:`, error);
 }

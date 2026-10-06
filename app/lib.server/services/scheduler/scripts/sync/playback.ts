@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { log, notNull } from "~/components/utils";
+import { errorMessage, log, notNull } from "~/components/utils";
 import { playback, provider, track } from "~/lib.server/db/schema";
 import type { PlaybackState } from "~/lib.server/sdk/spotify";
 import { db } from "~/lib.server/services/db";
@@ -101,7 +101,7 @@ const upsertPlayback = async (
         },
       });
   } catch (error) {
-    log(`failure upserting playback: ${error}`, "playback");
+    log(`failure upserting playback: ${errorMessage(error)}`, "playback");
   }
 };
 
@@ -129,7 +129,7 @@ async function getPlaybackState(userId: string) {
         log(`unknown: ${error.message}`, "playback");
       }
     } else {
-      log(`unknown: ${error}`, "playback");
+      log(`unknown: ${errorMessage(error)}`, "playback");
     }
   }
 

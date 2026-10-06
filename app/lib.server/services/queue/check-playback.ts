@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { log, logError } from "~/components/utils";
+import { errorMessage, log, logError } from "~/components/utils";
 import { db } from "~/lib.server/services/db";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
@@ -51,7 +51,7 @@ export async function checkAndQueueDeliveries() {
               await revokeUser(userId, "spotify");
             }
             logError(
-              `Error syncing playback for user ${userId}: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
+              `Error syncing playback for user ${userId}: ${errorMessage(error)}`,
               "playback",
             );
           }
@@ -87,14 +87,17 @@ export async function checkAndQueueDeliveries() {
       deliveries.map((delivery) =>
         env.DELIVERY_QUEUE.send(delivery).catch((error) => {
           logError(
-            `Failed to queue delivery for user ${delivery.userId}: ${error}`,
+            `Failed to queue delivery for user ${delivery.userId}: ${errorMessage(error)}`,
             "playback",
           );
         }),
       ),
     );
   } catch (error) {
-    logError(`Error in checkAndQueueDeliveries: ${error}`, "playback");
+    logError(
+      `Error in checkAndQueueDeliveries: ${errorMessage(error)}`,
+      "playback",
+    );
     throw error;
   }
 }

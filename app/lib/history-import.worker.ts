@@ -1,8 +1,8 @@
 import { BlobReader, TextWriter, ZipReader } from "@zip.js/zip.js";
 import {
   historyBatches,
-  parseHistory,
   type ImportMessage,
+  parseHistory,
 } from "./history-parser";
 
 const report = (message: ImportMessage) => self.postMessage(message);

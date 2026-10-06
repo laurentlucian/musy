@@ -1,4 +1,4 @@
-import { log, logError } from "~/components/utils";
+import { errorMessage, log, logError } from "~/components/utils";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
 import {
   claimQueueItemDelivery,
@@ -47,7 +47,7 @@ export async function processQueueDelivery(
     }
   } catch (error) {
     logError(
-      `Error delivering queue ${groupId} to user ${userId}: ${error}`,
+      `Error delivering queue ${groupId} to user ${userId}: ${errorMessage(error)}`,
       "delivery",
     );
     throw error;

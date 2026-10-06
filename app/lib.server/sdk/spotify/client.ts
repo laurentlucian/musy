@@ -1,6 +1,6 @@
-import { refreshAccessToken } from "./endpoints/auth";
-import * as artistEndpoints from "./endpoints/artist";
 import * as albumEndpoints from "./endpoints/album";
+import * as artistEndpoints from "./endpoints/artist";
+import { refreshAccessToken } from "./endpoints/auth";
 import * as playerEndpoints from "./endpoints/player";
 import * as playlistEndpoints from "./endpoints/playlist";
 import * as trackEndpoints from "./endpoints/track";

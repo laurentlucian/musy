@@ -1,5 +1,5 @@
 import { useAnimationFrame, useMotionValue, useTransform } from "motion/react";
-import { useRef, type PointerEvent } from "react";
+import { type PointerEvent, useRef } from "react";
 
 const idleSpeed = 12;
 const friction = 1.4;
@@ -70,10 +70,15 @@ export function useRecordSpin(reducedMotion: boolean) {
       if (Math.hypot(x, y) >= 16 && elapsed > 0) {
         const difference = nextAngle - previous.angle;
         const degrees =
-          (Math.atan2(Math.sin(difference), Math.cos(difference)) * 180) / Math.PI;
+          (Math.atan2(Math.sin(difference), Math.cos(difference)) * 180) /
+          Math.PI;
         angle.set(angle.get() + degrees);
-        const speed = Math.max(-1080, Math.min(1080, (degrees * 1000) / elapsed));
-        velocity.current += (speed - velocity.current) * (1 - Math.exp(-elapsed / 30));
+        const speed = Math.max(
+          -1080,
+          Math.min(1080, (degrees * 1000) / elapsed),
+        );
+        velocity.current +=
+          (speed - velocity.current) * (1 - Math.exp(-elapsed / 30));
       } else {
         velocity.current = 0;
       }

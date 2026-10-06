@@ -1,4 +1,3 @@
-import { resolveProfileId } from "~/lib.server/services/usernames";
 import { CalendarDays, Clock, Heart, Play, RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect, useRef, useState } from "react";
 import {
@@ -16,6 +15,7 @@ import { Waver } from "~/components/icons/waver";
 import { Button } from "~/components/ui/button";
 import { userContext } from "~/context";
 import { getDashboard } from "~/lib.server/services/dashboard";
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import { Selector } from "~/routes/profile/utils/profile.utils";
 import type { Route } from "./+types/overview";
 

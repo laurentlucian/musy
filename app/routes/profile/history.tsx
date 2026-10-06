@@ -1,4 +1,3 @@
-import { resolveProfileId } from "~/lib.server/services/usernames";
 import { format } from "date-fns";
 import { RefreshCcw } from "lucide-react";
 import { Suspense, use, useEffect } from "react";
@@ -17,6 +16,7 @@ import {
 } from "~/lib.server/services/db/tracks";
 import { syncUserRecent } from "~/lib.server/services/scheduler/scripts/sync/recent";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import type { Route } from "./+types/history";
 
 export async function loader({ context, params }: Route.LoaderArgs) {

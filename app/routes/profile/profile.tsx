@@ -1,4 +1,3 @@
-import { resolveProfileId } from "~/lib.server/services/usernames";
 import { data, Outlet, redirect } from "react-router";
 import { userContext } from "~/context";
 import { getProfile } from "~/lib.server/services/db/users";
@@ -7,6 +6,7 @@ import { syncUserProfile } from "~/lib.server/services/scheduler/scripts/sync/pr
 import { syncUserRecent } from "~/lib.server/services/scheduler/scripts/sync/recent";
 import { syncUserTop } from "~/lib.server/services/scheduler/scripts/sync/top";
 import { getSpotifyClient } from "~/lib.server/services/sdk/spotify";
+import { resolveProfileId } from "~/lib.server/services/usernames";
 import type { Route } from "./+types/profile";
 
 export async function loader({ params, context, request }: Route.LoaderArgs) {
