@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { log } from "~/components/utils";
-import { createSpotifyClient, SpotifyApiError } from "~/lib.server/sdk/spotify";
+import { createSpotifyClient } from "~/lib.server/sdk/spotify";
 import {
   getProvider,
   revokeUser,
@@ -74,15 +74,13 @@ export async function getSpotifyClient(args: GetSpotifyClientOptions) {
       accessToken: newAccessToken,
     });
   } catch (error) {
-    log(`token refresh failed for ${args.userId}: ${error}`, "spotify");
-    if (error instanceof SpotifyApiError) {
-      log(`spotify error: ${error.message}`, "spotify");
-      if (
-        error.message.includes("Revoked") ||
-        error.message.includes("invalid_grant")
-      ) {
-        await revokeUser(args.userId, "spotify");
-      }
+    log(
+      `token refresh failed for ${args.userId}: ${JSON.stringify(error)}`,
+      "spotify",
+    );
+    const status = (error as { status?: number })?.status;
+    if (status === 400 || status === 401 || status === 403) {
+      await revokeUser(args.userId, "spotify");
     }
     throw error;
   }

@@ -8,7 +8,7 @@ import {
   getUniqueGroupUserIds,
   updatePlaybackStatus,
 } from "../db/queue";
-import { getAllUsersId } from "../db/users";
+import { getAllUsersId, revokeUser } from "../db/users";
 
 export async function checkAndQueueDeliveries() {
   try {
@@ -46,8 +46,12 @@ export async function checkAndQueueDeliveries() {
                 : null,
             });
           } catch (error) {
+            const status = (error as { status?: number })?.status;
+            if (status === 401 || status === 403) {
+              await revokeUser(userId, "spotify");
+            }
             logError(
-              `Error syncing playback for user ${userId}: ${error}`,
+              `Error syncing playback for user ${userId}: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
               "playback",
             );
           }
