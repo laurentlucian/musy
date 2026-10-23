@@ -204,7 +204,12 @@ export async function transformTracks(
         await db
           .update(track)
           .set({ albumId: fullAlbumData.id })
-          .where(eq(track.id, trackModel.id));
+          .where(
+            and(
+              eq(track.id, trackModel.id),
+              sql`${track.albumId} IS NOT ${fullAlbumData.id}`,
+            ),
+          );
       }
     }
   }

@@ -58,11 +58,11 @@ export default {
       ctx.waitUntil(syncUsers("top"));
       ctx.waitUntil(syncUsers("playlist"));
     } else if (cron === "* * * * *") {
-      // Every minute - check Spotify playback and queue deliveries
       ctx.waitUntil(checkAndQueueDeliveries());
       ctx.waitUntil(recoverInitialImports());
       ctx.waitUntil(recoverHistoryStats());
-      ctx.waitUntil(recoverAnalytics());
+      if (new Date(controller.scheduledTime).getUTCMinutes() % 5 === 0)
+        ctx.waitUntil(recoverAnalytics());
       ctx.waitUntil(recoverArchiveCleanup(env));
       ctx.waitUntil(
         (async () => {
