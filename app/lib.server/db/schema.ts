@@ -202,6 +202,10 @@ export const listeningTrackSummary = sqliteTable(
     unknownPlays: integer().notNull(),
   },
   (table) => [
+    index("ListeningTrackSummary_track_user_idx").on(
+      table.trackId,
+      table.userId,
+    ),
     primaryKey({
       columns: [
         table.userId,
@@ -303,7 +307,10 @@ export const track = sqliteTable(
       onUpdate: "cascade",
     }),
   },
-  (table) => [uniqueIndex("Track_id_key").on(table.id)],
+  (table) => [
+    uniqueIndex("Track_id_key").on(table.id),
+    index("Track_albumId_dashboard_idx").on(table.albumId),
+  ],
 );
 
 export const playlist = sqliteTable(
